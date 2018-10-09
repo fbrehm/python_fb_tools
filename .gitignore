@@ -1,0 +1,15 @@
+*.swp
+*.old
+*.pyc
+*.egg
+*-stamp
+*.bak
+build
+trace
+MANIFEST
+/pb_base.egg-info
+/pb_base/local_version.py
+/dist/*
+.idea
+.cache
+.env
