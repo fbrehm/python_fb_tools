@@ -23,7 +23,7 @@ from .errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
 
 from .app import BaseApplication
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -60,15 +60,15 @@ class KeepOptionAction(argparse.Action):
 class GetFileRmApplication(BaseApplication):
     """Class for the get-file-to-remove application object."""
 
-    default_keep_daily = 6
-    default_keep_weekly = 3
-    default_keep_monthly = 3
-    default_keep_yearly = 3
+    default_keep_days = 6
+    default_keep_weeks = 3
+    default_keep_months = 3
+    default_keep_years = 3
 
-    min_keep_daily = 1
-    min_keep_weekly = 1
-    min_keep_monthly = 1
-    min_keep_yearly = 0
+    min_keep_days = 1
+    min_keep_weeks = 1
+    min_keep_months = 1
+    min_keep_years = 0
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -85,10 +85,10 @@ class GetFileRmApplication(BaseApplication):
             should not be removed.
             """).strip()
 
-        self._keep_daily = self.default_keep_daily
-        self._keep_weekly = self.default_keep_weekly
-        self._keep_monthly = self.default_keep_monthly
-        self._keep_yearly = self.default_keep_yearly
+        self._keep_days = self.default_keep_days
+        self._keep_weeks = self.default_keep_weeks
+        self._keep_months = self.default_keep_months
+        self._keep_years = self.default_keep_years
 
         self.files_given = []
         self.files = []
@@ -104,66 +104,66 @@ class GetFileRmApplication(BaseApplication):
 
     # -----------------------------------------------------------
     @property
-    def keep_daily(self):
+    def keep_days(self):
         """The number of last days to keep a file."""
-        return self._keep_daily
+        return self._keep_days
 
-    @keep_daily.setter
-    def keep_daily(self, value):
+    @keep_days.setter
+    def keep_days(self, value):
         v = int(value)
-        if v >= self.min_keep_daily:
-            self._keep_daily = v
+        if v >= self.min_keep_days:
+            self._keep_days = v
         else:
             msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
-                v=value, n='keep_daily', m=self.min_keep_daily)
+                v=value, n='keep_days', m=self.min_keep_days)
             raise ValueError(msg)
 
     # -----------------------------------------------------------
     @property
-    def keep_weekly(self):
+    def keep_weeks(self):
         """The number of last weeks to keep a file."""
-        return self._keep_weekly
+        return self._keep_weeks
 
-    @keep_weekly.setter
-    def keep_weekly(self, value):
+    @keep_weeks.setter
+    def keep_weeks(self, value):
         v = int(value)
-        if v >= self.min_keep_weekly:
-            self._keep_weekly = v
+        if v >= self.min_keep_weeks:
+            self._keep_weeks = v
         else:
             msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
-                v=value, n='keep_weekly', m=self.min_keep_weekly)
+                v=value, n='keep_weeks', m=self.min_keep_weeks)
             raise ValueError(msg)
 
     # -----------------------------------------------------------
     @property
-    def keep_monthly(self):
+    def keep_months(self):
         """The number of last months to keep a file."""
-        return self._keep_monthly
+        return self._keep_months
 
-    @keep_monthly.setter
-    def keep_monthly(self, value):
+    @keep_months.setter
+    def keep_months(self, value):
         v = int(value)
-        if v >= self.min_keep_monthly:
-            self._keep_monthly = v
+        if v >= self.min_keep_months:
+            self._keep_months = v
         else:
             msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
-                v=value, n='keep_monthly', m=self.min_keep_monthly)
+                v=value, n='keep_months', m=self.min_keep_months)
             raise ValueError(msg)
 
     # -----------------------------------------------------------
     @property
-    def keep_yearly(self):
+    def keep_years(self):
         """The number of last years to keep a file."""
-        return self._keep_yearly
+        return self._keep_years
 
-    @keep_yearly.setter
-    def keep_yearly(self, value):
+    @keep_years.setter
+    def keep_years(self, value):
         v = int(value)
-        if v >= self.min_keep_yearly:
-            self._keep_yearly = v
+        if v >= self.min_keep_years:
+            self._keep_years = v
         else:
             msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
-                v=value, n='keep_yearly', m=self.min_keep_yearly)
+                v=value, n='keep_years', m=self.min_keep_years)
             raise ValueError(msg)
 
     # -------------------------------------------------------------------------
@@ -183,39 +183,39 @@ class GetFileRmApplication(BaseApplication):
         keep_group = self.arg_parser.add_argument_group('Keep options')
 
         keep_group.add_argument(
-            '-D', '--daily', metavar='DAYS', dest='daily', type=int,
-            action=KeepOptionAction, min_val=self.min_keep_daily,
+            '-D', '--days', metavar='DAYS', dest='days', type=int,
+            action=KeepOptionAction, min_val=self.min_keep_days,
             help=(
                 "How many files one per day from today on should be kept "
                 "(default: {default}, minimum: {min})?").format(
-                default=self.default_keep_daily, min=self.min_keep_daily),
+                default=self.default_keep_days, min=self.min_keep_days),
         )
 
         keep_group.add_argument(
-            '-W', '--weekly', metavar='WEEKS', dest='weekly', type=int,
-            action=KeepOptionAction, min_val=self.min_keep_weekly,
+            '-W', '--weeks', metavar='WEEKS', dest='weeks', type=int,
+            action=KeepOptionAction, min_val=self.min_keep_weeks,
             help=(
                 "How many files one per week from today on should be kept "
                 "(default: {default}, minimum: {min})?").format(
-                default=self.default_keep_weekly, min=self.min_keep_weekly),
+                default=self.default_keep_weeks, min=self.min_keep_weeks),
         )
 
         keep_group.add_argument(
-            '-M', '--monthly', metavar='MONTHS', dest='monthly', type=int,
-            action=KeepOptionAction, min_val=self.min_keep_monthly,
+            '-M', '--months', metavar='MONTHS', dest='months', type=int,
+            action=KeepOptionAction, min_val=self.min_keep_months,
             help=(
                 "How many files one per month from today on should be kept "
                 "(default: {default}, minimum: {min})?").format(
-                default=self.default_keep_monthly, min=self.min_keep_monthly),
+                default=self.default_keep_months, min=self.min_keep_months),
         )
 
         keep_group.add_argument(
-            '-Y', '--yearly', metavar='YEARS', dest='yearly', type=int,
-            action=KeepOptionAction, min_val=self.min_keep_yearly,
+            '-Y', '--years', metavar='YEARS', dest='years', type=int,
+            action=KeepOptionAction, min_val=self.min_keep_years,
             help=(
                 "How many files one per year from today on should be kept "
                 "(default: {default}, minimum: {min})?").format(
-                default=self.default_keep_yearly, min=self.min_keep_yearly),
+                default=self.default_keep_years, min=self.min_keep_years),
         )
 
         self.arg_parser.add_argument(
@@ -226,17 +226,17 @@ class GetFileRmApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
 
-        if self.args.daily is not None:
-            self.keep_daily = self.args.daily
+        if self.args.days is not None:
+            self.keep_days = self.args.days
 
-        if self.args.weekly is not None:
-            self.keep_weekly = self.args.weekly
+        if self.args.weeks is not None:
+            self.keep_weeks = self.args.weeks
 
-        if self.args.monthly is not None:
-            self.keep_monthly = self.args.monthly
+        if self.args.months is not None:
+            self.keep_months = self.args.months
 
-        if self.args.yearly is not None:
-            self.keep_yearly = self.args.yearly
+        if self.args.years is not None:
+            self.keep_years = self.args.years
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -252,20 +252,20 @@ class GetFileRmApplication(BaseApplication):
 
         res = super(GetFileRmApplication, self).as_dict(short=short)
 
-        res['default_keep_daily'] = self.default_keep_daily
-        res['default_keep_weekly'] = self.default_keep_weekly
-        res['default_keep_monthly'] = self.default_keep_monthly
-        res['default_keep_yearly'] = self.default_keep_yearly
+        res['default_keep_days'] = self.default_keep_days
+        res['default_keep_weeks'] = self.default_keep_weeks
+        res['default_keep_months'] = self.default_keep_months
+        res['default_keep_years'] = self.default_keep_years
 
-        res['min_keep_daily'] = self.min_keep_daily
-        res['min_keep_weekly'] = self.min_keep_weekly
-        res['min_keep_monthly'] = self.min_keep_monthly
-        res['min_keep_yearly'] = self.min_keep_yearly
+        res['min_keep_days'] = self.min_keep_days
+        res['min_keep_weeks'] = self.min_keep_weeks
+        res['min_keep_months'] = self.min_keep_months
+        res['min_keep_years'] = self.min_keep_years
 
-        res['keep_daily'] = self.keep_daily
-        res['keep_weekly'] = self.keep_weekly
-        res['keep_monthly'] = self.keep_monthly
-        res['keep_yearly'] = self.keep_yearly
+        res['keep_days'] = self.keep_days
+        res['keep_weeks'] = self.keep_weeks
+        res['keep_months'] = self.keep_months
+        res['keep_years'] = self.keep_years
 
         #res['config'] = None
         #if self.config:
