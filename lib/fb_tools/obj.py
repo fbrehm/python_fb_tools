@@ -13,6 +13,7 @@ import os
 import logging
 import datetime
 import traceback
+import pathlib
 
 # Third party modules
 
@@ -21,7 +22,7 @@ from .common import pp, to_bytes
 
 from .errors import FbError
 
-__version__ = '0.2.4'
+__version__ = '0.2.5'
 
 LOG = logging.getLogger(__name__)
 
@@ -85,23 +86,25 @@ class FbBaseObject(object):
         @type: bool
         """
 
-        self._base_dir = base_dir
+        self._base_dir = None
         """
         @ivar: base directory used for different purposes, must be an existent
                directory. Defaults to directory of current script daemon.py.
-        @type: str
+        @type: str or pathlib.Path
         """
         if base_dir:
-            if not os.path.exists(base_dir):
-                msg = "Base directory {!r} does not exists.".format(base_dir)
+            pase_dir_path = pathlib.Path(base_dir)
+            if not pase_dir_path.exists():
+                msg = "Base directory {!r} does not exists.".format(str(pase_dir_path))
+                self.handle_error(msg)
+            elif not pase_dir_path.is_dir():
+                msg = "Base directory {!r} is not a directory.".format(str(pase_dir_path))
                 self.handle_error(msg)
                 self._base_dir = None
-            elif not os.path.isdir(base_dir):
-                msg = "Base directory {!r} is not a directory.".format(base_dir)
-                self.handle_error(msg)
-                self._base_dir = None
+            else:
+                self._base_dir = pase_dir_path
         if not self._base_dir:
-            self._base_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+            self._base_dir = pathlib.Path(sys.argv[0]).resolve().parent
 
         self._initialized = bool(initialized)
 
@@ -158,16 +161,17 @@ class FbBaseObject(object):
 
     @base_dir.setter
     def base_dir(self, value):
-        if value.startswith('~'):
-            value = os.path.expanduser(value)
-        if not os.path.exists(value):
-            msg = "Base directory {!r} does not exists.".format(value)
+        base_dir_path = pathlib.Path(value)
+        if str(base_dir_path).startswith('~'):
+            base_dir_path = base_dir_path.expanduser()
+        if not base_dir_path.exists():
+            msg = "Base directory {!r} does not exists.".format(str(value))
             LOG.error(msg)
-        elif not os.path.isdir(value):
-            msg = "Base directory {!r} is not a directory.".format(value)
+        elif not base_dir_path.is_dir():
+            msg = "Base directory {!r} is not a directory.".format(str(value))
             LOG.error(msg)
         else:
-            self._base_dir = value
+            self._base_dir = base_dir_path
 
     # -------------------------------------------------------------------------
     def __str__(self):

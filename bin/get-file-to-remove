@@ -39,12 +39,12 @@ base_dir = bin_path.parent
 lib_dir = base_dir.joinpath('lib')
 module_dir = lib_dir.joinpath('fb_tools')
 
-#print("My path:      {!r}".format(str(my_path)))
-#print("My real path: {!r}".format(str(my_real_path)))
-#print("Bin path:     {!r}".format(str(bin_path)))
-#print("Base dir:     {!r}".format(str(base_dir)))
-#print("Lib dir:      {!r}".format(str(lib_dir)))
-#print("Module dir:   {!r}".format(str(module_dir)))
+# print("My path:      {!r}".format(str(my_path)))
+# print("My real path: {!r}".format(str(my_real_path)))
+# print("Bin path:     {!r}".format(str(bin_path)))
+# print("Base dir:     {!r}".format(str(base_dir)))
+# print("Lib dir:      {!r}".format(str(lib_dir)))
+# print("Module dir:   {!r}".format(str(module_dir)))
 
 if module_dir.exists():
     sys.path.insert(0, str(lib_dir))
