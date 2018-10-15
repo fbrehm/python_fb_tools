@@ -17,6 +17,8 @@ import datetime
 import argparse
 import pathlib
 import glob
+import re
+import sre_constants
 
 # Third party modules
 
@@ -27,7 +29,7 @@ from .common import pp
 
 from .app import BaseApplication
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -60,6 +62,48 @@ class KeepOptionAction(argparse.Action):
 
         setattr(namespace, self.dest, values)
 
+
+# =============================================================================
+def check_date_pattern(pattern):
+    """Function to check, whether the given pattern is a valid pattern for
+        files with an timestamp in it."""
+
+    if not pattern:
+        return False
+
+    pat = str(pattern).strip()
+    if not pattern:
+        return False
+
+    if pat.count('%Y') != 1:
+        return False
+
+    if pat.count('%m') != 1:
+        return False
+
+    if pat.count('%d') != 1:
+        return False
+
+    return True
+
+# =============================================================================
+class WrongDatePattern(GetFileRmError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, pattern, add_info=None):
+        self.pattern = pattern
+        self.add_info = add_info
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg =  "The given pattern {!r} is not a valid date pattern".format(self.pattern)
+        if self.add_info:
+            msg += ': ' + self.add_info
+        else:
+            msg += ". The must be exactly one occurence of '%Y', one of '%m' and one of '%d.'"
+        return msg
+
 # =============================================================================
 class GetFileRmApplication(BaseApplication):
     """Class for the get-file-to-remove application object."""
@@ -73,6 +117,8 @@ class GetFileRmApplication(BaseApplication):
     min_keep_weeks = 1
     min_keep_months = 1
     min_keep_years = 0
+
+    default_date_pattern = r'%Y[-_]?%m[-_]?%d'
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -93,6 +139,10 @@ class GetFileRmApplication(BaseApplication):
         self._keep_weeks = self.default_keep_weeks
         self._keep_months = self.default_keep_months
         self._keep_years = self.default_keep_years
+
+        self._date_pattern = self.default_date_pattern
+        self._pattern = None
+        self.re_date = None
 
         self.files_given = []
         self.files = []
@@ -170,11 +220,18 @@ class GetFileRmApplication(BaseApplication):
                 v=value, n='keep_years', m=self.min_keep_years)
             raise ValueError(msg)
 
-    # -------------------------------------------------------------------------
-    def _run(self):
-        """The underlaying startpoint of the application."""
+    # -----------------------------------------------------------
+    @property
+    def date_pattern(self):
+        """The pattern to extract the date from filename before transition to
+            a regular expression pattern."""
+        return self._date_pattern
 
-        print("Working ...")
+    # -----------------------------------------------------------
+    @property
+    def pattern(self):
+        """The translated pattern to extract the date from filename."""
+        return self._pattern
 
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
@@ -242,6 +299,24 @@ class GetFileRmApplication(BaseApplication):
         if self.args.years is not None:
             self.keep_years = self.args.years
 
+    # -------------------------------------------------------------------------
+    def _xlate_date_pattern(self):
+
+        pat = self.date_pattern.strip()
+        if not check_date_pattern(pat):
+            raise WrongDatePattern(self.date_pattern)
+        if self.verbose > 1:
+            LOG.debug("Resolving date pattern {!r}.".format(pat))
+
+        self._pattern = pat.replace(
+            '%Y', r'(?P<year>\d{4})').replace(
+            '%m', r'(?P<month>\d\d?)').replace(
+            '%d', r'(?P<day>\d\d?)')
+
+        try:
+            self.re_date = re.compile(self.pattern)
+        except sre_constants.error as e:
+            raise WrongDatePattern(self.date_pattern, str(e))
 
     # -------------------------------------------------------------------------
     def post_init(self):
@@ -250,6 +325,9 @@ class GetFileRmApplication(BaseApplication):
         """
 
         super(GetFileRmApplication, self).post_init()
+        self.initialized = False
+
+        self._xlate_date_pattern()
 
         if self.verbose > 1:
             LOG.debug("Checking given files...")
@@ -280,9 +358,17 @@ class GetFileRmApplication(BaseApplication):
                 if not fpath.is_file():
                     LOG.warn("File {!r} is not a regular file.".format(str(fpath)))
                     continue
+
+                if not self.re_date.search(str(fpath)):
+                    LOG.warn("File {fi!r} does not match pattern {pa!r}.".format(
+                        fi=str(fpath), pa=self.date_pattern))
+                    continue
+
                 fpath_abs = fpath.resolve()
                 if fpath_abs not in self.files_given:
                     self.files_given.append(fpath_abs)
+
+        self.initialized = True
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -313,11 +399,25 @@ class GetFileRmApplication(BaseApplication):
         res['keep_months'] = self.keep_months
         res['keep_years'] = self.keep_years
 
-        #res['config'] = None
-        #if self.config:
-        #    res['config'] = self.config.as_dict(short=short, show_secrets=self.force)
+        res['date_pattern'] = self.date_pattern
+        res['pattern'] = self.pattern
 
         return res
+
+    # -------------------------------------------------------------------------
+    def pre_run(self):
+
+        if not self.files_given:
+            msg = "Did not found any files to evaluate."
+            LOG.error(msg)
+            self.exit(1)
+
+    # -------------------------------------------------------------------------
+    def _run(self):
+        """The underlaying startpoint of the application."""
+
+        print("Working ...")
+
 
 # =============================================================================
 
