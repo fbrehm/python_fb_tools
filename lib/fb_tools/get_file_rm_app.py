@@ -15,15 +15,19 @@ import logging
 import textwrap
 import datetime
 import argparse
+import pathlib
+import glob
 
 # Third party modules
 
 # Own modules
 from .errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
 
+from .common import pp
+
 from .app import BaseApplication
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -237,6 +241,48 @@ class GetFileRmApplication(BaseApplication):
 
         if self.args.years is not None:
             self.keep_years = self.args.years
+
+
+    # -------------------------------------------------------------------------
+    def post_init(self):
+        """
+        Method to execute before calling run().
+        """
+
+        super(GetFileRmApplication, self).post_init()
+
+        if self.verbose > 1:
+            LOG.debug("Checking given files...")
+
+        for fname in self.args.files:
+
+            if self.verbose > 2:
+                 LOG.debug("Checking given file {!r} ...".format(fname))
+
+            given_paths = []
+            single_fpath = pathlib.Path(fname)
+            if single_fpath.exists():
+                given_paths = [single_fpath]
+            else:
+                given_paths = glob.glob(fname)
+                if self.verbose > 2:
+                    LOG.debug("Resolved paths:\n{}".format(pp(given_paths)))
+                if not given_paths:
+                    LOG.warn("File pattern {!r} does not match any files.".format(fname))
+                    continue
+            for f_name in given_paths:
+                fpath = pathlib.Path(f_name)
+                if self.verbose > 2:
+                    LOG.debug("Checking {!r} ...".format(fpath))
+                if not fpath.exists():
+                    LOG.warn("File {!r} does not exists.".format(str(fpath)))
+                    continue
+                if not fpath.is_file():
+                    LOG.warn("File {!r} is not a regular file.".format(str(fpath)))
+                    continue
+                fpath_abs = fpath.resolve()
+                if fpath_abs not in self.files_given:
+                    self.files_given.append(fpath_abs)
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
