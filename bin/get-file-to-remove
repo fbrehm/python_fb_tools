@@ -66,7 +66,7 @@ app = GetFileRmApplication(appname=appname, base_dir=base_dir)
 app.initialized = True
 
 if app.verbose > 2:
-    print("{c}-Object:\n{a}".format(c=app.__class__.__name__, a=app))
+    print("{c}-Object:\n{a}".format(c=app.__class__.__name__, a=app), file=sys.stderr)
 
 app()
 

@@ -29,7 +29,7 @@ from .common import pp
 
 from .app import BaseApplication
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -359,9 +359,21 @@ class GetFileRmApplication(BaseApplication):
                     LOG.warn("File {!r} is not a regular file.".format(str(fpath)))
                     continue
 
-                if not self.re_date.search(str(fpath)):
+                match = self.re_date.search(str(fpath))
+                if not match:
                     LOG.warn("File {fi!r} does not match pattern {pa!r}.".format(
                         fi=str(fpath), pa=self.date_pattern))
+                    continue
+
+                year = int(match.group('year'))
+                month = int(match.group('month'))
+                day = int(match.group('day'))
+                try:
+                    fdate = datetime.date(year, month, day)
+                except ValueError as e:
+                    msg = "Date in file {fi!r} is not a valid date: {e}.".format(
+                        fi=str(fpath), e=e)
+                    LOG.warn(msg)
                     continue
 
                 fpath_abs = fpath.resolve()
@@ -416,7 +428,9 @@ class GetFileRmApplication(BaseApplication):
     def _run(self):
         """The underlaying startpoint of the application."""
 
-        print("Working ...")
+        print("Working ...", file=sys.stderr)
+
+        files_to_keep = []
 
 
 # =============================================================================
