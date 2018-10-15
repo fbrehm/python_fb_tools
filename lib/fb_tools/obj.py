@@ -22,7 +22,7 @@ from .common import pp, to_bytes
 
 from .errors import FbError
 
-__version__ = '0.2.5'
+__version__ = '0.3.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -34,6 +34,24 @@ class FbBaseObjectError(FbError):
     """
 
     pass
+
+
+# =============================================================================
+class BasedirNotExistingError(FbBaseObjectError):
+    """Special error class for the case, if the base directory is not existing."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, dir_name):
+
+        self.dir_name = dir_name
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = (
+            "The base directory {!r} is not existing or not "
+            "a directory.").format(str(self.dir_name))
+        return msg
 
 
 # =============================================================================
@@ -93,18 +111,9 @@ class FbBaseObject(object):
         @type: str or pathlib.Path
         """
         if base_dir:
-            pase_dir_path = pathlib.Path(base_dir)
-            if not pase_dir_path.exists():
-                msg = "Base directory {!r} does not exists.".format(str(pase_dir_path))
-                self.handle_error(msg)
-            elif not pase_dir_path.is_dir():
-                msg = "Base directory {!r} is not a directory.".format(str(pase_dir_path))
-                self.handle_error(msg)
-                self._base_dir = None
-            else:
-                self._base_dir = pase_dir_path
+            self.base_dir = base_dir
         if not self._base_dir:
-            self._base_dir = pathlib.Path(sys.argv[0]).resolve().parent
+            self._base_dir = pathlib.Path(os.getcwd()).resolve()
 
         self._initialized = bool(initialized)
 
@@ -166,10 +175,10 @@ class FbBaseObject(object):
             base_dir_path = base_dir_path.expanduser()
         if not base_dir_path.exists():
             msg = "Base directory {!r} does not exists.".format(str(value))
-            LOG.error(msg)
+            self.handle_error(msg, self.appname)
         elif not base_dir_path.is_dir():
             msg = "Base directory {!r} is not a directory.".format(str(value))
-            LOG.error(msg)
+            self.handle_error(msg, self.appname)
         else:
             self._base_dir = base_dir_path
 
@@ -241,7 +250,7 @@ class FbBaseObject(object):
         Print a traceback and continue.
 
         @param error_message: the error message to display
-        @type error_message: str
+        @type error_message: Exception or str
         @param exception_name: name of the exception class
         @type exception_name: str
         @param do_traceback: allways show a traceback
@@ -249,17 +258,20 @@ class FbBaseObject(object):
 
         """
 
-        msg = 'Exception happened: '
-        if exception_name is not None:
-            exception_name = exception_name.strip()
-            if exception_name:
-                msg = exception_name + ': '
-            else:
-                msg = ''
-        if error_message:
-            msg += str(error_message)
+        #msg = 'Exception happened: '
+        msg = str(error_message).strip()
+        if not msg:
+            msg = 'undefined error.'
+        title = None
+
+        if isinstance(error_message, Exception):
+            title = error_message.__class__.__name__
         else:
-            msg += 'undefined error.'
+            if exception_name is not None:
+                title = exception_name.strip()
+            else:
+                title = 'Exception happened'
+        msg = title + ': ' + msg
 
         root_log = logging.getLogger()
         has_handlers = False
