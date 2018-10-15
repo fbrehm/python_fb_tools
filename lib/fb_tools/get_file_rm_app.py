@@ -29,7 +29,7 @@ from .common import pp
 
 from .app import BaseApplication
 
-__version__ = '0.3.2'
+__version__ = '0.4.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -428,10 +428,158 @@ class GetFileRmApplication(BaseApplication):
     def _run(self):
         """The underlaying startpoint of the application."""
 
-        print("Working ...", file=sys.stderr)
+        files_assigned = self.get_date_from_filenames()
+        files_to_keep = self.get_files_to_keep(files_assigned)
+
+        for fpath in sorted(self.files_given):
+            if fpath not in files_to_keep:
+                print(str(fpath))
+
+    # -------------------------------------------------------------------------
+    def get_files_to_keep(self, files_assigned):
 
         files_to_keep = []
+        files_to_keep += self.get_files_to_keep_year(files_assigned['year'])
+        files_to_keep += self.get_files_to_keep_month(files_assigned['month'])
+        files_to_keep += self.get_files_to_keep_day(files_assigned['day'])
 
+        if self.verbose > 2:
+            LOG.debug("Files to keep:\n{}".format(pp(files_to_keep)))
+        return files_to_keep
+
+    # -------------------------------------------------------------------------
+    def get_files_to_keep_year(self, files_assigned):
+
+        files_to_keep = []
+        i = 0
+
+        this_year = datetime.date.today().year
+        last_year = this_year - self.keep_years
+
+        for year_str in files_assigned.keys():
+            year = int(year_str)
+            if year <= last_year:
+                continue
+
+            files = sorted(files_assigned[year_str])
+            if len(files) > 0:
+                files_to_keep.append(files[0])
+
+        if self.verbose > 2:
+            LOG.debug("Files to keep for year:\n{}".format(pp(files_to_keep)))
+
+        return files_to_keep
+
+    # -------------------------------------------------------------------------
+    def get_files_to_keep_month(self, files_assigned):
+
+        files_to_keep = []
+        i = 0
+
+        today = datetime.date.today()
+        y = today.year
+        m = today.month
+        last_month = today
+        while i < self.keep_months:
+            m = today.month - i
+            y = today.year
+            while m <= 0:
+                y -= 1
+                m += 12
+            last_month = datetime.date(y, m, 1)
+            i += 1
+        LOG.debug("Got last month: {!r}".format(last_month.strftime('%Y-%m')))
+
+        re_date = re.compile(r'(\d+)-(\d+)')
+        for month_str in files_assigned.keys():
+            match = re_date.match(month_str)
+            this_month = datetime.date(
+                int(match.group(1)), int(match.group(2)), 1)
+            if this_month < last_month:
+                continue
+            files = sorted(files_assigned[month_str])
+            if len(files) > 0:
+                files_to_keep.append(files[0])
+
+        if self.verbose > 2:
+            LOG.debug("Files to keep for month:\n{}".format(pp(files_to_keep)))
+
+        return files_to_keep
+
+    # -------------------------------------------------------------------------
+    def get_files_to_keep_day(self, files_assigned):
+
+        files_to_keep = []
+        i = 0
+
+        today = datetime.date.today()
+        tdelta = datetime.timedelta(self.keep_days - 1)
+        last_day = today - tdelta
+
+        LOG.debug("Got last day: {!r}".format(last_day.strftime('%Y-%m-%d')))
+
+        re_date = re.compile(r'(\d+)-(\d+)-(\d+)')
+        for day_str in files_assigned.keys():
+            match = re_date.match(day_str)
+            this_day = datetime.date(
+                int(match.group(1)), int(match.group(2)), int(match.group(3)))
+            if this_day < last_day:
+                continue
+            files = sorted(files_assigned[day_str])
+            if len(files) > 0:
+                files_to_keep.append(files[0])
+
+        if self.verbose > 2:
+            LOG.debug("Files to keep for day:\n{}".format(pp(files_to_keep)))
+
+        return files_to_keep
+
+    # -------------------------------------------------------------------------
+    def get_date_from_filenames(self):
+
+        files = {}
+        files['year'] = {}
+        files['month'] = {}
+        files['day'] = {}
+
+        for fpath in self.files_given:
+
+            fname = str(fpath)
+            if self.verbose > 2:
+                LOG.debug("Trying to get dat of file {!r}.".format(fname))
+
+            match = self.re_date.search(fname)
+            if not match:
+                continue
+
+            year = int(match.group('year'))
+            month = int(match.group('month'))
+            day = int(match.group('day'))
+            fdate = datetime.date(year, month, day)
+            if self.verbose > 2:
+                LOG.debug("Got date {!r}.".format(fdate.isoformat()))
+
+            y = fdate.strftime('%Y')
+            if y not in files['year']:
+                files['year'][y] = []
+            if fpath not in files['year'][y]:
+                files['year'][y].append(fpath)
+
+            m = fdate.strftime('%Y-%m')
+            if m not in files['month']:
+                files['month'][m] = []
+            if fpath not in files['month'][m]:
+                files['month'][m].append(fpath)
+
+            d = fdate.strftime('%Y-%m-%d')
+            if d not in files['day']:
+                files['day'][d] = []
+            if fpath not in files['day'][d]:
+                files['day'][d].append(fpath)
+
+        if self.verbose > 1:
+            LOG.debug("Explored and assigned files:\n{}".format(pp(files)))
+        return files
 
 # =============================================================================
 
