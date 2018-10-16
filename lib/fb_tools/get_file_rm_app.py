@@ -29,7 +29,7 @@ from .common import pp
 
 from .app import BaseApplication
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -439,9 +439,15 @@ class GetFileRmApplication(BaseApplication):
     def get_files_to_keep(self, files_assigned):
 
         files_to_keep = []
-        files_to_keep += self.get_files_to_keep_year(files_assigned['year'])
-        files_to_keep += self.get_files_to_keep_month(files_assigned['month'])
-        files_to_keep += self.get_files_to_keep_day(files_assigned['day'])
+        for f in self.get_files_to_keep_year(files_assigned['year']):
+            if f not in files_to_keep:
+                files_to_keep.append(f)
+        for f in self.get_files_to_keep_month(files_assigned['month']):
+            if f not in files_to_keep:
+                files_to_keep.append(f)
+        for f in self.get_files_to_keep_day(files_assigned['day']):
+            if f not in files_to_keep:
+                files_to_keep.append(f)
 
         if self.verbose > 2:
             LOG.debug("Files to keep:\n{}".format(pp(files_to_keep)))
@@ -526,7 +532,11 @@ class GetFileRmApplication(BaseApplication):
             if this_day < last_day:
                 continue
             files = sorted(files_assigned[day_str])
-            if len(files) > 0:
+            if this_day == today:
+                LOG.debug("Keeping all files from today.")
+                for f in files:
+                    files_to_keep.append(f)
+            elif len(files) > 0:
                 files_to_keep.append(files[0])
 
         if self.verbose > 2:
