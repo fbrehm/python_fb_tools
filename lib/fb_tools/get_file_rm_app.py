@@ -29,7 +29,7 @@ from .common import pp
 
 from .app import BaseApplication
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -346,7 +346,7 @@ class GetFileRmApplication(BaseApplication):
                 if self.verbose > 2:
                     LOG.debug("Resolved paths:\n{}".format(pp(given_paths)))
                 if not given_paths:
-                    LOG.warn("File pattern {!r} does not match any files.".format(fname))
+                    LOG.info("File pattern {!r} does not match any files.".format(fname))
                     continue
             for f_name in given_paths:
                 fpath = pathlib.Path(f_name)
@@ -421,8 +421,8 @@ class GetFileRmApplication(BaseApplication):
 
         if not self.files_given:
             msg = "Did not found any files to evaluate."
-            LOG.error(msg)
-            self.exit(1)
+            LOG.info(msg)
+            self.exit(0)
 
     # -------------------------------------------------------------------------
     def _run(self):
