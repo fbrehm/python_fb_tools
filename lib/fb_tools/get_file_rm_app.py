@@ -29,7 +29,7 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '0.4.4'
+__version__ = '0.5.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -112,11 +112,13 @@ class GetFileRmApplication(BaseApplication):
     default_keep_weeks = 3
     default_keep_months = 3
     default_keep_years = 3
+    default_keep_last = 1
 
     min_keep_days = 1
     min_keep_weeks = 1
     min_keep_months = 1
     min_keep_years = 0
+    min_keep_last = 1
 
     default_date_pattern = r'%Y[-_]?%m[-_]?%d'
 
@@ -139,6 +141,7 @@ class GetFileRmApplication(BaseApplication):
         self._keep_weeks = self.default_keep_weeks
         self._keep_months = self.default_keep_months
         self._keep_years = self.default_keep_years
+        self._keep_last = self.default_keep_last
 
         self._date_pattern = self.default_date_pattern
         self._pattern = None
@@ -222,6 +225,22 @@ class GetFileRmApplication(BaseApplication):
 
     # -----------------------------------------------------------
     @property
+    def keep_last(self):
+        """The number of last files to keep."""
+        return self._keep_last
+
+    @keep_last.setter
+    def keep_last(self, value):
+        v = int(value)
+        if v >= self.min_keep_last:
+            self._keep_last = v
+        else:
+            msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
+                v=value, n='keep_last', m=self.min_keep_last)
+            raise ValueError(msg)
+
+    # -----------------------------------------------------------
+    @property
     def date_pattern(self):
         """The pattern to extract the date from filename before transition to
             a regular expression pattern."""
@@ -242,6 +261,15 @@ class GetFileRmApplication(BaseApplication):
         super(GetFileRmApplication, self).init_arg_parser()
 
         keep_group = self.arg_parser.add_argument_group('Keep options')
+
+        keep_group.add_argument(
+            '-L', '--last', metavar='NR_FILES', dest='last', type=int,
+            action=KeepOptionAction, min_val=self.min_keep_last,
+            help=(
+                "How many of the last files should be kept "
+                "(default: {default}, minimum: {min})?").format(
+                default=self.default_keep_last, min=self.min_keep_last),
+        )
 
         keep_group.add_argument(
             '-D', '--days', metavar='DAYS', dest='days', type=int,
@@ -298,6 +326,9 @@ class GetFileRmApplication(BaseApplication):
 
         if self.args.years is not None:
             self.keep_years = self.args.years
+
+        if self.args.last is not None:
+            self.keep_last = self.args.last
 
     # -------------------------------------------------------------------------
     def _xlate_date_pattern(self):
@@ -400,16 +431,19 @@ class GetFileRmApplication(BaseApplication):
         res['default_keep_weeks'] = self.default_keep_weeks
         res['default_keep_months'] = self.default_keep_months
         res['default_keep_years'] = self.default_keep_years
+        res['default_keep_last'] = self.default_keep_last
 
         res['min_keep_days'] = self.min_keep_days
         res['min_keep_weeks'] = self.min_keep_weeks
         res['min_keep_months'] = self.min_keep_months
         res['min_keep_years'] = self.min_keep_years
+        res['min_keep_last'] = self.min_keep_last
 
         res['keep_days'] = self.keep_days
         res['keep_weeks'] = self.keep_weeks
         res['keep_months'] = self.keep_months
         res['keep_years'] = self.keep_years
+        res['keep_last'] = self.keep_last
 
         res['date_pattern'] = self.date_pattern
         res['pattern'] = self.pattern
@@ -445,9 +479,22 @@ class GetFileRmApplication(BaseApplication):
         for f in self.get_files_to_keep_month(files_assigned['month']):
             if f not in files_to_keep:
                 files_to_keep.append(f)
+        for f in self.get_files_to_keep_week(files_assigned['week']):
+            if f not in files_to_keep:
+                files_to_keep.append(f)
         for f in self.get_files_to_keep_day(files_assigned['day']):
             if f not in files_to_keep:
                 files_to_keep.append(f)
+
+        if self.keep_last:
+            LOG.debug("Keeping last {} files ...".format(self.keep_last))
+            files = sorted(self.files_given)
+            index = self.keep_last * -1
+            for f in files[index:]:
+                if self.verbose > 1:
+                    LOG.debug("Keep last file {!r}.".format(str(f)))
+                if f not in files_to_keep:
+                    files_to_keep.append(f)
 
         if self.verbose > 2:
             LOG.debug("Files to keep:\n{}".format(pp(files_to_keep)))
@@ -509,6 +556,34 @@ class GetFileRmApplication(BaseApplication):
 
         if self.verbose > 2:
             LOG.debug("Files to keep for month:\n{}".format(pp(files_to_keep)))
+
+        return files_to_keep
+
+    # -------------------------------------------------------------------------
+    def get_files_to_keep_week(self, files_assigned):
+
+        files_to_keep = []
+        i = 0
+
+        today = datetime.date.today()
+        this_monday = get_monday(today)
+        tdelta = datetime.timedelta((self.keep_weeks - 1) * 7)
+        last_monday = this_monday - tdelta
+
+        LOG.debug("Got last monday: {!r}".format(last_monday.strftime('%Y-%m-%d')))
+
+        re_date = re.compile(r'(\d+)-(\d+)-(\d+)')
+        for day_str in files_assigned.keys():
+            match = re_date.match(day_str)
+            this_day = datetime.date(
+                int(match.group(1)), int(match.group(2)), int(match.group(3)))
+            if this_day < last_monday:
+                continue
+            files = sorted(files_assigned[day_str])
+            files_to_keep.append(files[0])
+
+        if self.verbose > 2:
+            LOG.debug("Files to keep for week:\n{}".format(pp(files_to_keep)))
 
         return files_to_keep
 
