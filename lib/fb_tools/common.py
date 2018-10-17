@@ -17,13 +17,14 @@ import platform
 import locale
 import string
 import random
+import datetime
 
 # Third party modules
 import six
 
 # Own modules
 
-__version__ = '0.6.3'
+__version__ = '0.6.4'
 
 LOG = logging.getLogger(__name__)
 
@@ -546,12 +547,31 @@ def _get_factor_human2bytes(unit, factor_bin, factor_si):
 
     return factor
 
+
 # =============================================================================
 def generate_password(length=12):
 
     characters = string.ascii_letters + string.punctuation + string.digits
     password = "".join(random.choice(characters) for x in range(length))
     return password
+
+
+# =============================================================================
+def get_monday(day):
+
+    if not isinstance(day, (datetime.date, datetime.datetime)):
+        msg = "Argument {!r} must be of type datetime.date or datetime.datetime.".format(day)
+        raise TypeError(msg)
+
+    # copy of day as datetime.date
+    monday = datetime.date(day.year, day.month, day.day)
+    # date is Monday => date.weekday() == 0
+    if monday.weekday() == 0:
+        return monday
+
+    tdiff = datetime.timedelta(monday.weekday())
+    monday -= tdiff
+    return monday
 
 
 # =============================================================================

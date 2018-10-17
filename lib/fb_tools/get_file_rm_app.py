@@ -25,11 +25,11 @@ import sre_constants
 # Own modules
 from .errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
 
-from .common import pp
+from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '0.4.3'
+__version__ = '0.4.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -550,6 +550,7 @@ class GetFileRmApplication(BaseApplication):
         files = {}
         files['year'] = {}
         files['month'] = {}
+        files['week'] = {}
         files['day'] = {}
 
         for fpath in self.files_given:
@@ -581,11 +582,18 @@ class GetFileRmApplication(BaseApplication):
             if fpath not in files['month'][m]:
                 files['month'][m].append(fpath)
 
-            d = fdate.strftime('%Y-%m-%d')
-            if d not in files['day']:
-                files['day'][d] = []
-            if fpath not in files['day'][d]:
-                files['day'][d].append(fpath)
+            monday = get_monday(fdate)
+            monday_s = monday.strftime('%Y-%m-%d')
+            if monday_s not in files['week']:
+                files['week'][monday_s] = []
+            if fpath not in files['week'][monday_s]:
+                files['week'][monday_s].append(fpath)
+
+            this_day = fdate.strftime('%Y-%m-%d')
+            if this_day not in files['day']:
+                files['day'][this_day] = []
+            if fpath not in files['day'][this_day]:
+                files['day'][this_day].append(fpath)
 
         if self.verbose > 1:
             LOG.debug("Explored and assigned files:\n{}".format(pp(files)))
