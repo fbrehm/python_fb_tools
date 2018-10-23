@@ -26,7 +26,7 @@ from .errors import FbError
 
 from .obj import FbBaseObject
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -207,6 +207,7 @@ class BaseConfiguration(FbBaseObject):
 
             if section_name.lower() == 'default' or section_name.lower() == 'global':
                 self.eval_config_global(config, section_name)
+                continue
 
             self.eval_config_section(config, section_name)
 
