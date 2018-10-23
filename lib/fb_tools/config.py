@@ -224,8 +224,6 @@ class BaseConfiguration(FbBaseObject):
                 if val > self.verbose:
                     self.verbose = val
 
-        return
-
     # -------------------------------------------------------------------------
     def eval_config_section(self, config, section_name):
         """Evaluating section with given name of configuration.
