@@ -36,7 +36,7 @@ from ..errors import CommandNotFoundError
 
 from ..handling_obj import HandlingObject
 
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -67,10 +67,8 @@ class BaseHandler(HandlingObject):
             terminal_has_colors=False, simulate=None, force=None, initialized=None):
 
         self._chown_cmd = CHOWN_CMD
-        """
-        @ivar: the chown command for changing ownership of file objects
-        @type: str
-        """
+        self._echo_cmd = ECHO_CMD
+        self._sudo_cmd = SUDO_CMD
 
         super(BaseHandler, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -78,9 +76,9 @@ class BaseHandler(HandlingObject):
             initialized=False,
         )
 
-#        if not self.chown_cmd.exists():
-#            self._chown_cmd = self.get_command('chown')
         self._chown_cmd = self.get_command('chown')
+        self._echo_cmd = self.get_command('echo')
+        self._sudo_cmd = self.get_command('sudo')
 
         if initialized:
             self.initialized = True
@@ -90,6 +88,18 @@ class BaseHandler(HandlingObject):
     def chown_cmd(self):
         """The absolute path to the OS command 'chown'."""
         return self._chown_cmd
+
+    # -----------------------------------------------------------
+    @property
+    def echo_cmd(self):
+        """The absolute path to the OS command 'echo'."""
+        return self._echo_cmd
+
+    # -----------------------------------------------------------
+    @property
+    def sudo_cmd(self):
+        """The absolute path to the OS command 'sudo'."""
+        return self._sudo_cmd
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -109,6 +119,8 @@ class BaseHandler(HandlingObject):
         res['open_opts'] = self.open_opts
         res['tz_name'] = self.tz_name
         res['chown_cmd'] = self.chown_cmd
+        res['echo_cmd'] = self.echo_cmd
+        res['sudo_cmd'] = self.sudo_cmd
 
         return res
 

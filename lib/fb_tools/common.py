@@ -25,7 +25,7 @@ import six
 
 # Own modules
 
-__version__ = '0.6.5'
+__version__ = '0.6.6'
 
 LOG = logging.getLogger(__name__)
 
@@ -324,7 +324,7 @@ def caller_search_path(*additional_paths):
     for d in search_path_list:
         if not d.exists():
             continue
-        if not d.is_dir(d):
+        if not d.is_dir():
             continue
         d_abs = d.resolve()
         if d_abs not in path_list:
