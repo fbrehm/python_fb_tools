@@ -26,7 +26,7 @@ from .errors import FbError
 
 from .obj import FbBaseObject
 
-__version__ = '0.1.2'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -196,14 +196,13 @@ class BaseConfiguration(FbBaseObject):
             self.handle_error(msg, "Configuration parse error")
             return
 
+        self.eval_config(config)
+
     # -------------------------------------------------------------------------
     def eval_config(self, config):
         """Evaluating of all found configuration options."""
 
         for section_name in config.sections():
-
-            if self.verbose > 2:
-                LOG.debug("Options of section {!r} ...".format(section_name))
 
             if section_name.lower() == 'default' or section_name.lower() == 'global':
                 self.eval_config_global(config, section_name)
@@ -216,7 +215,7 @@ class BaseConfiguration(FbBaseObject):
         """Evaluating section [global] of configuration.
             May be overridden in descendant classes."""
 
-        if self.verbose > 2:
+        if self.verbose > 1:
             LOG.debug("Checking config section {!r} ...".format(section_name))
 
         for (key, value) in config.items(section_name):
@@ -230,8 +229,7 @@ class BaseConfiguration(FbBaseObject):
         """Evaluating section with given name of configuration.
             Should be overridden in descendant classes."""
 
-        if self.verbose > 2:
-            LOG.debug("Checking config section {!r} ...".format(section_name))
+        pass
 
 
 # =============================================================================
