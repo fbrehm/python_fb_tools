@@ -13,6 +13,7 @@ import os
 import logging
 import pipes
 import textwrap
+import pathlib
 
 from subprocess import Popen, PIPE, SubprocessError
 
@@ -25,7 +26,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -202,30 +203,32 @@ class HandlingObject(FbBaseObject):
 
         """
 
+        cmd = pathlib.Path(cmd)
+
         if self.verbose > 2:
             LOG.debug("Searching for command {!r} ...".format(cmd))
 
         # Checking an absolute path
-        if os.path.isabs(cmd):
-            if not os.path.exists(cmd):
-                LOG.warning("Command {!r} doesn't exists.".format(cmd))
+        if cmd.is_absolute():
+            if not cmd.exists():
+                LOG.warning("Command {!r} doesn't exists.".format(str(cmd)))
                 return None
-            if not os.access(cmd, os.X_OK):
-                msg = "Command {!r} is not executable.".format(cmd)
+            if not os.access(str(cmd), os.X_OK):
+                msg = "Command {!r} is not executable.".format(str(cmd))
                 LOG.warning(msg)
                 return None
-            return os.path.normpath(cmd)
+            return cmd.resolve()
 
         # Checking a relative path
         for d in caller_search_path():
             if self.verbose > 3:
                 LOG.debug("Searching command in {!r} ...".format(d))
-            p = os.path.join(d, cmd)
-            if os.path.exists(p):
+            p = d.joinpath(cmd)
+            if p.exists():
                 if self.verbose > 2:
                     LOG.debug("Found {!r} ...".format(p))
-                if os.access(p, os.X_OK):
-                    return os.path.normpath(p)
+                if os.access(str(p), os.X_OK):
+                    return p.resolve()
                 else:
                     LOG.debug("Command {!r} is not executable.".format(p))
 
@@ -234,7 +237,7 @@ class HandlingObject(FbBaseObject):
             if self.verbose > 2:
                 LOG.debug("Command {!r} not found.".format(cmd))
         else:
-            LOG.warning("Command {!r} not found.".format(cmd))
+            LOG.warning("Command {!r} not found.".format(str(cmd)))
 
         return None
 

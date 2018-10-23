@@ -18,13 +18,14 @@ import locale
 import string
 import random
 import datetime
+import pathlib
 
 # Third party modules
 import six
 
 # Own modules
 
-__version__ = '0.6.4'
+__version__ = '0.6.5'
 
 LOG = logging.getLogger(__name__)
 
@@ -277,7 +278,7 @@ def to_str(obj, encoding='utf-8'):
 
 
 # =============================================================================
-def caller_search_path():
+def caller_search_path(*additional_paths):
     """
     Builds a search path for executables from environment $PATH
     including some standard paths.
@@ -292,11 +293,16 @@ def caller_search_path():
         search_path = os.defpath
 
     search_path_list = [
-        '/opt/PPlocal/bin',
+        pathlib.Path('/opt/PPlocal/bin'),
+        pathlib.Path('/opt/puppetlabs/bin'),
+        pathlib.Path('/opt/puppetlabs/puppet/bin'),
     ]
 
+    for d in additional_paths:
+        search_path_list.append(pathlib.Path(d))
+
     for d in search_path.split(os.pathsep):
-        search_path_list.append(d)
+        search_path_list.append(pathlib.Path(d))
 
     default_path = [
         '/bin',
@@ -313,14 +319,14 @@ def caller_search_path():
     ]
 
     for d in default_path:
-        search_path_list.append(d)
+        search_path_list.append(pathlib.Path(d))
 
     for d in search_path_list:
-        if not os.path.exists(d):
+        if not d.exists():
             continue
-        if not os.path.isdir(d):
+        if not d.is_dir(d):
             continue
-        d_abs = os.path.realpath(d)
+        d_abs = d.resolve()
         if d_abs not in path_list:
             path_list.append(d_abs)
 
