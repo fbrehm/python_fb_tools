@@ -26,7 +26,6 @@ from subprocess import PIPE
 
 # Third party modules
 import pytz
-import yaml
 import six
 
 # Own modules
@@ -37,7 +36,7 @@ from ..errors import CommandNotFoundError
 
 from ..handling_obj import HandlingObject
 
-__version__ = '0.6.1'
+__version__ = '0.6.2'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
