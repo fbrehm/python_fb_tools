@@ -36,7 +36,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.5'
+__version__ = '0.7.6'
 LOG = logging.getLogger(__name__)
 
 
@@ -133,7 +133,7 @@ class VsphereServer(BaseVsphereHandler):
             LOG.debug("Found about-information:\n{}".format(pp(self.about)))
 
     # -------------------------------------------------------------------------
-    def get_clusters(self):
+    def get_clusters(self, disconnect=False):
 
         LOG.debug("Trying to get all clusters from VSphere ...")
 
@@ -141,7 +141,8 @@ class VsphereServer(BaseVsphereHandler):
 
         try:
 
-            self.connect()
+            if not self.service_instance:
+                self.connect()
 
             content = self.service_instance.RetrieveContent()
             dc = self.get_obj(content, [vim.Datacenter], self.dc)
@@ -151,7 +152,8 @@ class VsphereServer(BaseVsphereHandler):
                 self._get_clusters(child)
 
         finally:
-            self.disconnect()
+            if disconnect:
+                self.disconnect()
 
         if self.verbose > 2:
             out = []
