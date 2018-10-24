@@ -36,7 +36,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.7'
+__version__ = '0.7.8'
 LOG = logging.getLogger(__name__)
 
 
@@ -491,20 +491,22 @@ class VsphereServer(BaseVsphereHandler):
         return None
 
     # -------------------------------------------------------------------------
-    def ensure_folders(self, folders):
+    def ensure_vm_folders(self, folders, disconnect=False):
         LOG.debug("Ensuring existence of VSphere VM folders:\n{}".format(pp(folders)))
         try:
 
-            self.connect()
+            if not self.service_instance:
+                self.connect()
 
             for folder in folders:
-                self.ensure_folder(folder, connected=True)
+                self.ensure_vm_folder(folder, disconnect=False)
 
         finally:
-            self.disconnect()
+            if disconnect:
+                self.disconnect()
 
     # -------------------------------------------------------------------------
-    def get_folder(self, folder, connected=False):
+    def get_vm_folder(self, folder, disconnect=False):
 
         if self.verbose > 1:
             LOG.debug("Trying to get folder object for path {!r}.".format(folder))
@@ -517,7 +519,7 @@ class VsphereServer(BaseVsphereHandler):
 
         try:
 
-            if not connected:
+            if not self.service_instance:
                 self.connect()
 
             content = self.service_instance.RetrieveContent()
@@ -555,11 +557,11 @@ class VsphereServer(BaseVsphereHandler):
             return folder_object
 
         finally:
-            if not connected:
+            if disconnect:
                 self.disconnect()
 
     # -------------------------------------------------------------------------
-    def ensure_folder(self, folder, connected=False):
+    def ensure_vm_folder(self, folder, disconnect=False):
 
         LOG.debug("Ensuring existence of VSphere folder {!r}.".format(folder))
 
@@ -571,7 +573,7 @@ class VsphereServer(BaseVsphereHandler):
 
         try:
 
-            if not connected:
+            if not self.service_instance:
                 self.connect()
 
             content = self.service_instance.RetrieveContent()
@@ -584,7 +586,7 @@ class VsphereServer(BaseVsphereHandler):
             for part in parts:
 
                 abs_path = '/' + paths[index]
-                folder_object = self.get_folder(paths[index], connected=True)
+                folder_object = self.get_vm_folder(paths[index], disconnect=False)
                 if folder_object:
                     LOG.debug("Folder {!r} already exists.".format(abs_path))
                 else:
@@ -594,12 +596,12 @@ class VsphereServer(BaseVsphereHandler):
                         break
                     parent_folder = root_folder
                     if index != 0:
-                        parent_folder = self.get_folder(paths[index - 1], connected=True)
+                        parent_folder = self.get_vm_folder(paths[index - 1], disconnect=False)
                     parent_folder.CreateFolder(part)
                 index += 1
 
         finally:
-            if not connected:
+            if disconnect:
                 self.disconnect()
 
 
