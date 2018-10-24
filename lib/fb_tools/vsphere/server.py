@@ -36,7 +36,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.6'
+__version__ = '0.7.7'
 LOG = logging.getLogger(__name__)
 
 
@@ -181,10 +181,11 @@ class VsphereServer(BaseVsphereHandler):
                 child, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
             if self.verbose > 1:
                 LOG.debug((
-                    "Found cluster {cl!r}, {h} hosts, {cpu} CPUs, {thr} threads "
-                    "and {mem:0.1f} GiB Memory.").format(
+                    "Found cluster {cl!r}, {h} hosts, {cpu} CPUs, {thr} threads, "
+                    "{mem:0.1f} GiB Memory, {net} networks and {ds} datastores.").format(
                     cl=cluster.name, h=cluster.hosts_total, cpu=cluster.cpu_cores,
-                    thr=cluster.cpu_threads, mem=cluster.mem_gb_total))
+                    thr=cluster.cpu_threads, mem=cluster.mem_gb_total,
+                    net=len(cluster.networks), ds=len(cluster.datastores)))
             self.clusters.append(cluster)
 
         return

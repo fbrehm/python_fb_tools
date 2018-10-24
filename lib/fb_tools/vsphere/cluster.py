@@ -20,7 +20,7 @@ from ..common import pp
 from .object import VsphereObject
 
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -44,6 +44,8 @@ class VsphereCluster(VsphereObject):
         self._hosts_total = None
         self._mem_mb_effective = None
         self._mem_total = None
+        self.networks = []
+        self.datastores = []
 
         super(VsphereCluster, self).__init__(
             name=name, obj_type='vsphere_cluster', name_prefix="cluster",
@@ -286,6 +288,21 @@ class VsphereCluster(VsphereObject):
                 c=cls.__name__, p=pp(params)))
 
         cluster = cls(**params)
+        for network in data.network:
+            nname = network.name
+            if nname not in cluster.networks:
+                if verbose > 2:
+                    LOG.debug("Cluster {c!r} has network {n!r}.".format(
+                        c=cluster.name, n=nname))
+                cluster.networks.append(nname)
+
+        for ds in data.datastore:
+            if ds.name not in cluster.datastores:
+                if verbose > 2:
+                    LOG.debug("Cluster {c!r} has datastore {d!r}.".format(
+                        c=cluster.name, d=ds.name))
+                cluster.datastores.append(ds.name)
+
         return cluster
 
 
