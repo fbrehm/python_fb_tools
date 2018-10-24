@@ -36,7 +36,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.9'
+__version__ = '0.7.10'
 LOG = logging.getLogger(__name__)
 
 
@@ -373,7 +373,7 @@ class VsphereServer(BaseVsphereHandler):
         return
 
     # -------------------------------------------------------------------------
-    def get_vm(self, vm_name, no_error=False):
+    def get_vm(self, vm_name, no_error=False, disconnect=False):
 
         LOG.debug("Trying to get VM {!r} from VSphere ...".format(vm_name))
 
@@ -381,7 +381,8 @@ class VsphereServer(BaseVsphereHandler):
 
         try:
 
-            self.connect()
+            if not self.service_instance:
+                self.connect()
 
             content = self.service_instance.RetrieveContent()
             dc = self.get_obj(content, [vim.Datacenter], self.dc)
@@ -393,7 +394,8 @@ class VsphereServer(BaseVsphereHandler):
                     break
 
         finally:
-            self.disconnect()
+            if disconnect:
+                self.disconnect()
 
         if not vm:
             msg = "VSphere VM {!r} not found.".format(vm_name)
