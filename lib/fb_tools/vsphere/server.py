@@ -36,7 +36,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.10'
+__version__ = '0.7.11'
 LOG = logging.getLogger(__name__)
 
 
@@ -200,7 +200,7 @@ class VsphereServer(BaseVsphereHandler):
         return None
 
     # -------------------------------------------------------------------------
-    def get_datastores(self):
+    def get_datastores(self, disconnect=False):
 
         LOG.debug("Trying to get all datastores from VSphere ...")
         self.datastores = VsphereDatastoreDict()
@@ -208,7 +208,8 @@ class VsphereServer(BaseVsphereHandler):
 
         try:
 
-            self.connect()
+            if not self.service_instance:
+                self.connect()
 
             content = self.service_instance.RetrieveContent()
             dc = self.get_obj(content, [vim.Datacenter], self.dc)
@@ -218,7 +219,8 @@ class VsphereServer(BaseVsphereHandler):
                 self._get_datastores(child)
 
         finally:
-            self.disconnect()
+            if disconnect:
+                self.disconnect()
 
         if self.datastores:
             if self.verbose > 1:
@@ -260,7 +262,7 @@ class VsphereServer(BaseVsphereHandler):
         return
 
     # -------------------------------------------------------------------------
-    def get_ds_clusters(self):
+    def get_ds_clusters(self, disconnect=False):
 
         LOG.debug("Trying to get all datastore clusters from VSphere ...")
         self.ds_clusters = VsphereDsClusterDict()
@@ -268,7 +270,8 @@ class VsphereServer(BaseVsphereHandler):
 
         try:
 
-            self.connect()
+            if not self.service_instance:
+                self.connect()
 
             content = self.service_instance.RetrieveContent()
             dc = self.get_obj(content, [vim.Datacenter], self.dc)
@@ -278,7 +281,8 @@ class VsphereServer(BaseVsphereHandler):
                 self._get_ds_clusters(child)
 
         finally:
-            self.disconnect()
+            if disconnect:
+                self.disconnect()
 
         if self.ds_clusters:
             if self.verbose > 1:
@@ -317,7 +321,7 @@ class VsphereServer(BaseVsphereHandler):
         return
 
     # -------------------------------------------------------------------------
-    def get_networks(self):
+    def get_networks(self, disconnect=False):
 
         LOG.debug("Trying to get all networks from VSphere ...")
         self.networks = VsphereNetworkDict()
@@ -325,7 +329,8 @@ class VsphereServer(BaseVsphereHandler):
 
         try:
 
-            self.connect()
+            if not self.service_instance:
+                self.connect()
 
             content = self.service_instance.RetrieveContent()
             dc = self.get_obj(content, [vim.Datacenter], self.dc)
@@ -335,7 +340,8 @@ class VsphereServer(BaseVsphereHandler):
                 self._get_networks(child)
 
         finally:
-            self.disconnect()
+            if disconnect:
+                self.disconnect()
 
         if self.networks:
             LOG.debug("Found {} VSphere networks.".format(len(self.networks)))
@@ -456,6 +462,7 @@ class VsphereServer(BaseVsphereHandler):
                 if vm_config.uuid:
                     vm_info['uuid'] = uuid.UUID(vm_config.uuid)
                 vm_info['vmPathName'] = vm_config.vmPathName
+                vm_info['cfg_version'] = child.config.version
                 vm_info['disks'] = {}
                 for device in child.config.hardware.device:
                     if not isinstance(device, vim.vm.device.VirtualDisk):
