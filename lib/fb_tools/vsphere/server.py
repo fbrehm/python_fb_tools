@@ -36,7 +36,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.8'
+__version__ = '0.7.9'
 LOG = logging.getLogger(__name__)
 
 
@@ -509,7 +509,7 @@ class VsphereServer(BaseVsphereHandler):
     def get_vm_folder(self, folder, disconnect=False):
 
         if self.verbose > 1:
-            LOG.debug("Trying to get folder object for path {!r}.".format(folder))
+            LOG.debug("Trying to get VM folder object for path {!r}.".format(folder))
 
         paths = []
         parts = folder.split('/')
@@ -534,7 +534,7 @@ class VsphereServer(BaseVsphereHandler):
             for part in parts:
                 abs_path = '/' + paths[index]
                 if self.verbose > 1:
-                    LOG.debug("Checking single folder {i}: {f!r}.".format(
+                    LOG.debug("Checking single VM folder {i}: {f!r}.".format(
                         i=index, f=abs_path))
                 if index == len(parts) - 1:
                     last = True
@@ -545,7 +545,7 @@ class VsphereServer(BaseVsphereHandler):
                     if child.name != part:
                         continue
                     if self.verbose > 1:
-                        LOG.debug("Found folder {n}, parent: {p}".format(
+                        LOG.debug("Found VM folder {n}, parent: {p}".format(
                             n=child.name, p=parent_folder.name))
                     parent_folder = child
                     if last:
@@ -563,7 +563,7 @@ class VsphereServer(BaseVsphereHandler):
     # -------------------------------------------------------------------------
     def ensure_vm_folder(self, folder, disconnect=False):
 
-        LOG.debug("Ensuring existence of VSphere folder {!r}.".format(folder))
+        LOG.debug("Ensuring existence of VSphere VM folder {!r}.".format(folder))
 
         paths = []
         parts = folder.split('/')
@@ -588,9 +588,9 @@ class VsphereServer(BaseVsphereHandler):
                 abs_path = '/' + paths[index]
                 folder_object = self.get_vm_folder(paths[index], disconnect=False)
                 if folder_object:
-                    LOG.debug("Folder {!r} already exists.".format(abs_path))
+                    LOG.debug("VM Folder {!r} already exists.".format(abs_path))
                 else:
-                    LOG.info("Creating folder {!r} ...".format(abs_path))
+                    LOG.info("Creating VM folder {!r} ...".format(abs_path))
                     if self.simulate:
                         LOG.debug("Simulation mode, don't creating it.")
                         break
