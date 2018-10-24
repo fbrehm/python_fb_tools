@@ -22,9 +22,8 @@ import urllib3
 # Own modules
 from ..common import pp, RE_TF_NAME
 
-from ..config import CrTfConfiguration
-
 from . import BaseVsphereHandler
+from . import DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USER, DEFAULT_DC, DEFAULT_CLUSTER
 
 from .cluster import VsphereCluster
 
@@ -37,7 +36,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.2'
+__version__ = '0.7.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -52,10 +51,8 @@ class VsphereServer(BaseVsphereHandler):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
-            host=CrTfConfiguration.default_vsphere_host,
-            port=CrTfConfiguration.default_vsphere_port,
-            user=CrTfConfiguration.default_vsphere_user, password=None,
-            dc=CrTfConfiguration.default_vsphere_dc, simulate=None, force=None,
+            host=DEFAULT_HOST, port=DEFAULT_PORT, user=DEFAULT_USER, password=None,
+            dc=DEFAULT_DC, cluster=DEFAULT_CLUSTER, simulate=None, force=None,
             terminal_has_colors=False, initialized=False):
 
         self.datastores = VsphereDatastoreDict()
@@ -71,7 +68,7 @@ class VsphereServer(BaseVsphereHandler):
 
         super(VsphereServer, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            host=host, port=port, user=user, password=password, dc=dc,
+            host=host, port=port, user=user, password=password, dc=dc, cluster=cluster,
             simulate=simulate, force=force, terminal_has_colors=terminal_has_colors,
             initialized=False,
         )

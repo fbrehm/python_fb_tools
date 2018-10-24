@@ -18,16 +18,16 @@ import copy
 # Own modules
 from ..common import pp, RE_TF_NAME
 
-from ..obj import PpBaseObject
+from ..obj import FbBaseObject
 
 from .errors import VSphereNameError
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 LOG = logging.getLogger(__name__)
 
 
 # =============================================================================
-class VsphereObject(PpBaseObject):
+class VsphereObject(FbBaseObject):
 
     re_ws = re.compile(r'\s+')
 
