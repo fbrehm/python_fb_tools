@@ -20,11 +20,12 @@ from six import add_metaclass
 from pyVim.connect import SmartConnect, Disconnect
 
 # Own modules
+from ..common import to_bool
 from ..handling_obj import HandlingObject
 
 from .errors import VSphereCannotConnectError
 
-__version__ = '0.2.3'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_HOST = 'vcs01.ppbrln.internal'
@@ -47,8 +48,8 @@ class BaseVsphereHandler(HandlingObject):
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             host=DEFAULT_HOST, port=DEFAULT_PORT, user=DEFAULT_USER, password=None,
-            dc=DEFAULT_DC, cluster=DEFAULT_CLUSTER, simulate=None, force=None,
-            terminal_has_colors=False, initialized=False):
+            dc=DEFAULT_DC, cluster=DEFAULT_CLUSTER, auto_close=False, simulate=None,
+            force=None, terminal_has_colors=False, initialized=False):
 
         self._host = host
         self._port = port
@@ -56,6 +57,7 @@ class BaseVsphereHandler(HandlingObject):
         self._password = password
         self._dc = dc
         self._cluster = cluster
+        self._auto_close = False
 
         self.service_instance = None
 
@@ -66,6 +68,7 @@ class BaseVsphereHandler(HandlingObject):
         )
 
         self.port = port
+        self.auto_close = auto_close
 
         self.initialized = initialized
 
@@ -94,6 +97,17 @@ class BaseVsphereHandler(HandlingObject):
             msg = err_msg.format(value)
             raise ValueError(msg)
         self._port = val
+
+    # -----------------------------------------------------------
+    @property
+    def auto_close(self):
+        """Flage, whether an existing connection should be closed on
+            destroying the current object."""
+        return self._auto_close
+
+    @auto_close.setter
+    def auto_close(self, value):
+        self._auto_close = to_bool(value)
 
     # -----------------------------------------------------------
     @property
@@ -137,6 +151,7 @@ class BaseVsphereHandler(HandlingObject):
         res['user'] = self.user
         res['dc'] = self.dc
         res['cluster'] = self.cluster
+        res['auto_close'] = self.auto_close
         res['max_search_depth'] = self.max_search_depth
         res['password'] = None
         if self.password:
@@ -189,7 +204,8 @@ class BaseVsphereHandler(HandlingObject):
 
     # -------------------------------------------------------------------------
     def __del__(self):
-        self.disconnect()
+        if self.auto_close:
+            self.disconnect()
 
 
 # =============================================================================

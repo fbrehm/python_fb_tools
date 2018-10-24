@@ -36,7 +36,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.3'
+__version__ = '0.7.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -52,8 +52,8 @@ class VsphereServer(BaseVsphereHandler):
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             host=DEFAULT_HOST, port=DEFAULT_PORT, user=DEFAULT_USER, password=None,
-            dc=DEFAULT_DC, cluster=DEFAULT_CLUSTER, simulate=None, force=None,
-            terminal_has_colors=False, initialized=False):
+            dc=DEFAULT_DC, cluster=DEFAULT_CLUSTER, auto_close=True, simulate=None,
+            force=None, terminal_has_colors=False, initialized=False):
 
         self.datastores = VsphereDatastoreDict()
         self.ds_clusters = VsphereDsClusterDict()
@@ -69,8 +69,8 @@ class VsphereServer(BaseVsphereHandler):
         super(VsphereServer, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             host=host, port=port, user=user, password=password, dc=dc, cluster=cluster,
-            simulate=simulate, force=force, terminal_has_colors=terminal_has_colors,
-            initialized=False,
+            simulate=simulate, force=force, auto_close=auto_close,
+            terminal_has_colors=terminal_has_colors, initialized=False,
         )
 
         self.initialized = initialized
