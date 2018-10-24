@@ -36,7 +36,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.4'
+__version__ = '0.7.5'
 LOG = logging.getLogger(__name__)
 
 
@@ -76,12 +76,14 @@ class VsphereServer(BaseVsphereHandler):
         self.initialized = initialized
 
     # -------------------------------------------------------------------------
-    def get_about(self):
+    def get_about(self, disconnect=False):
 
         LOG.debug("Trying to get some 'about' information from VSphere.")
 
         try:
-            self.connect()
+
+            if not self.service_instance:
+                self.connect()
 
             about = self.service_instance.content.about
             self.about = {}
@@ -123,9 +125,12 @@ class VsphereServer(BaseVsphereHandler):
             raise VSphereExpectedError(msg)
 
         finally:
-            self.disconnect()
+            if disconnect:
+                self.disconnect()
 
         LOG.info("VSphere server version: {!r}".format(self.about['version']))
+        if self.verbose > 2:
+            LOG.debug("Found about-information:\n{}".format(pp(self.about)))
 
     # -------------------------------------------------------------------------
     def get_clusters(self):
