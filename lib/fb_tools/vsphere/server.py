@@ -13,9 +13,10 @@ import logging
 import re
 import uuid
 import socket
+import time
 
 # Third party modules
-from pyVmomi import vim
+from pyVmomi import vim, vmodl
 import requests
 import urllib3
 
@@ -36,7 +37,7 @@ from .network import VsphereNetwork, VsphereNetworkDict
 from .errors import VSphereExpectedError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.7.11'
+__version__ = '0.8.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -608,6 +609,63 @@ class VsphereServer(BaseVsphereHandler):
                         parent_folder = self.get_vm_folder(paths[index - 1], disconnect=False)
                     parent_folder.CreateFolder(part)
                 index += 1
+
+        finally:
+            if disconnect:
+                self.disconnect()
+
+    # -------------------------------------------------------------------------
+    def wait_for_tasks(self, tasks, poll_time=0.1, disconnect=False):
+
+        LOG.debug("Waiting for tasks to finish ...")
+
+        try:
+
+            if not self.service_instance:
+                self.connect()
+
+            property_collector = self.service_instance.content.propertyCollector
+            task_list = [str(task) for task in tasks]
+            LOG.debug("Waiting for tasks {} to finish ...".format(task_list))
+            # Create filter
+            obj_specs = [vmodl.query.PropertyCollector.ObjectSpec(obj=task) for task in tasks]
+            property_spec = vmodl.query.PropertyCollector.PropertySpec(
+                type=vim.Task, pathSet=[], all=True)
+            filter_spec = vmodl.query.PropertyCollector.FilterSpec()
+            filter_spec.objectSet = obj_specs
+            filter_spec.propSet = [property_spec]
+            pcfilter = property_collector.CreateFilter(filter_spec, True)
+            try:
+                version, state = None, None
+                # Loop looking for updates till the state moves to a completed state.
+                while len(task_list):
+                    update = property_collector.WaitForUpdates(version)
+                    for filter_set in update.filterSet:
+                        time.sleep(poll_time)
+                        LOG.debug("Waiting ...")
+                        for obj_set in filter_set.objectSet:
+                            task = obj_set.obj
+                            for change in obj_set.changeSet:
+                                if change.name == 'info':
+                                    state = change.val.state
+                                elif change.name == 'info.state':
+                                    state = change.val
+                                else:
+                                    continue
+
+                                if not str(task) in task_list:
+                                    continue
+
+                                if state == vim.TaskInfo.State.success:
+                                    # Remove task from taskList
+                                    task_list.remove(str(task))
+                                elif state == vim.TaskInfo.State.error:
+                                    raise task.info.error
+                        # Move to next version
+                    version = update.version
+            finally:
+                if pcfilter:
+                    pcfilter.Destroy()
 
         finally:
             if disconnect:
