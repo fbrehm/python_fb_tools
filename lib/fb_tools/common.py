@@ -25,7 +25,7 @@ import six
 
 # Own modules
 
-__version__ = '0.6.6'
+__version__ = '0.6.7'
 
 LOG = logging.getLogger(__name__)
 
@@ -41,6 +41,8 @@ RE_DOT_AT_END = re.compile(r'(\.)*$')
 RE_DECIMAL = re.compile(r'^\d+$')
 RE_IPV4_PTR = re.compile(r'\.in-addr\.arpa\.$', re.IGNORECASE)
 RE_IPV6_PTR = re.compile(r'\.ip6\.arpa\.$', re.IGNORECASE)
+
+RE_MAC_ADRESS = re.compile(r'^(?:[0-9a-f]{2}:){5}[0-9a-f]{2}$', re.IGNORECASE)
 
 RE_TF_NAME = re.compile(r'[^a-z0-9_]+', re.IGNORECASE)
 

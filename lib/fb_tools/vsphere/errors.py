@@ -137,6 +137,27 @@ class VSphereCannotConnectError(VSphereExpectedError):
             h=self.host, p=self.port, u=self.user)
         return msg
 
+# =============================================================================
+class TimeoutCreateVmError(VSphereExpectedError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, vm, timeout):
+
+        t_o = None
+        try:
+            t_o = float(timeout)
+        except ValueError:
+            pass
+        self.timeout = t_o
+
+        self.vm = vm
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = "Timeout on creating VM {vm!r} after {to:0.1f} seconds.".format(
+            vm=self.vm, to=self.timeout)
+        return msg
 
 # =============================================================================
 if __name__ == "__main__":

@@ -14,6 +14,11 @@ import re
 import uuid
 import socket
 import time
+import datetime
+
+from numbers import Number
+
+from collections import Sequence
 
 # Third party modules
 from pyVmomi import vim, vmodl
@@ -23,7 +28,7 @@ import urllib3
 # Own modules
 from ..common import pp, RE_TF_NAME
 
-from . import BaseVsphereHandler
+from . import BaseVsphereHandler, DEFAULT_TZ_NAME
 from . import DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USER, DEFAULT_DC, DEFAULT_CLUSTER
 
 from .cluster import VsphereCluster
@@ -34,12 +39,16 @@ from .ds_cluster import VsphereDsCluster, VsphereDsClusterDict
 
 from .network import VsphereNetwork, VsphereNetworkDict
 
-from .errors import VSphereExpectedError
+from .iface import VsphereVmInterface
+
+from .errors import VSphereExpectedError, TimeoutCreateVmError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.8.1'
+__version__ = '0.9.1'
 LOG = logging.getLogger(__name__)
 
+DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
+DEFAULT_VM_CFG_VERSION = 'vmx-13'
 
 # =============================================================================
 class VsphereServer(BaseVsphereHandler):
@@ -54,7 +63,7 @@ class VsphereServer(BaseVsphereHandler):
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             host=DEFAULT_HOST, port=DEFAULT_PORT, user=DEFAULT_USER, password=None,
             dc=DEFAULT_DC, cluster=DEFAULT_CLUSTER, auto_close=True, simulate=None,
-            force=None, terminal_has_colors=False, initialized=False):
+            force=None, terminal_has_colors=False, tz=DEFAULT_TZ_NAME, initialized=False):
 
         self.datastores = VsphereDatastoreDict()
         self.ds_clusters = VsphereDsClusterDict()
@@ -71,7 +80,7 @@ class VsphereServer(BaseVsphereHandler):
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             host=host, port=port, user=user, password=password, dc=dc, cluster=cluster,
             simulate=simulate, force=force, auto_close=auto_close,
-            terminal_has_colors=terminal_has_colors, initialized=False,
+            terminal_has_colors=terminal_has_colors, tz=tz, initialized=False,
         )
 
         self.initialized = initialized
@@ -615,9 +624,12 @@ class VsphereServer(BaseVsphereHandler):
                 self.disconnect()
 
     # -------------------------------------------------------------------------
-    def wait_for_tasks(self, tasks, poll_time=0.1, disconnect=False):
+    def wait_for_tasks(
+            self, tasks, poll_time=0.1, disconnect=False, max_wait=None, start_time=None):
 
         LOG.debug("Waiting for tasks to finish ...")
+        if not start_time:
+            start_time = time.time()
 
         try:
 
@@ -626,7 +638,11 @@ class VsphereServer(BaseVsphereHandler):
 
             property_collector = self.service_instance.content.propertyCollector
             task_list = [str(task) for task in tasks]
-            LOG.debug("Waiting for tasks {} to finish ...".format(task_list))
+            if max_wait:
+                LOG.debug("Waiting at most {m} seconds for tasks {t} to finish ...".format(
+                    m=max_wait, t=task_list))
+            else:
+                LOG.debug("Waiting for tasks {} to finish ...".format(task_list))
             # Create filter
             obj_specs = [vmodl.query.PropertyCollector.ObjectSpec(obj=task) for task in tasks]
             property_spec = vmodl.query.PropertyCollector.PropertySpec(
@@ -641,6 +657,10 @@ class VsphereServer(BaseVsphereHandler):
                 while len(task_list):
                     update = property_collector.WaitForUpdates(version)
                     for filter_set in update.filterSet:
+                        if max_wait > 0:
+                            time_diff = time.time() - start_time
+                            if time_diff >= max_wait:
+                                return False
                         time.sleep(poll_time)
                         LOG.debug("Waiting ...")
                         for obj_set in filter_set.objectSet:
@@ -670,6 +690,237 @@ class VsphereServer(BaseVsphereHandler):
         finally:
             if disconnect:
                 self.disconnect()
+
+        return True
+
+    # -------------------------------------------------------------------------
+    def create_vm(self, name, vm_folder, vm_config_spec, pool, max_wait=5):
+
+        LOG.info("Creating VM {!r} ...".format(name))
+
+        if self.simulate:
+            LOG.info("Simulation mode - VM {!r} will not be created.".format(name))
+            return
+
+        start_time = time.time()
+
+        task = vm_folder.CreateVM_Task(config=vm_config_spec, pool=pool)
+
+        if not self.wait_for_tasks(
+                [task], poll_time=0.2, max_wait=max_wait, start_time=start_time):
+            time_diff = time.time() - start_time
+            raise TimeoutCreateVmError(name, time_diff)
+
+    # -------------------------------------------------------------------------
+    def generate_vm_create_spec(
+        self, name, datastore, disks=None, nw_interfaces=None, graphic_ram_mb=256,
+            videao_ram_mb=32, boot_delay_secs=3, ram_mb=1024, num_cpus=1, ds_with_timestamp=False,
+            os_version=DEFAULT_OS_VERSION, cfg_version=DEFAULT_VM_CFG_VERSION):
+
+        LOG.debug("Generating create spec for VM {!r} ...".format(name))
+
+        # File definitions
+        datastore_path = '[{ds}] {name}'.format(ds=datastore, name=name)
+        if ds_with_timestamp:
+            tstamp = datetime.datetime.now(tz=self.tz).strftime('%Y-%m-%d_%H-%M')
+            datastore_path += '-' + tstamp
+        datastore_path += '/'
+        LOG.debug("Datastore path: {!r}".format(datastore_path))
+
+        vm_path_name = datastore_path + name + '.vmx'
+        LOG.debug("VM path name: {!r}".format(vm_path_name))
+
+        vm_file_info = vim.vm.FileInfo(
+            logDirectory=datastore_path, snapshotDirectory=datastore_path,
+            suspendDirectory=datastore_path, vmPathName=vm_path_name)
+
+        # Device definitions
+        dev_changes = []
+
+        dev_changes += self.generate_disk_spec(datastore_path, disks)
+        dev_changes += self.generate_if_create_spec(nw_interfaces)
+
+        # Graphic Card
+        video_spec = vim.vm.device.VirtualDeviceSpec()
+        video_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+        video_spec.device = vim.vm.device.VirtualVideoCard()
+        video_spec.device.enable3DSupport = False
+        video_spec.device.graphicsMemorySizeInKB = graphic_ram_mb * 1024
+        video_spec.device.numDisplays = 1
+        video_spec.device.use3dRenderer = 'automatic'
+        video_spec.device.videoRamSizeInKB = videao_ram_mb * 1024
+
+        dev_changes.append(video_spec)
+
+        # Some other flags
+        vm_flags = vim.vm.FlagInfo()
+        vm_flags.diskUuidEnabled = True
+
+        # Some extra options and properties
+        extra_opts = []
+        created_opt = vim.option.OptionValue()
+        created_opt.key = 'created'
+        created_opt.value = int(time.time())
+        extra_opts.append(created_opt)
+
+        # Set waiting for 3 second in BIOS before booting
+        boot_opts = vim.vm.BootOptions()
+        boot_opts.bootDelay = boot_delay_secs * 1000
+        boot_opts.bootRetryEnabled = False
+        boot_opts.enterBIOSSetup = False
+
+        # Creating ConfigSpec
+        config = vim.vm.ConfigSpec(
+            name=name, deviceChange=dev_changes, flags=vm_flags, extraConfig=extra_opts,
+            memoryMB=ram_mb, memoryHotAddEnabled=True, numCPUs=num_cpus,
+            cpuHotAddEnabled=True, cpuHotRemoveEnabled=True, files=vm_file_info,
+            guestId=os_version, version=cfg_version, bootOptions=boot_opts,
+        )
+
+        if self.verbose > 1:
+            LOG.debug("Generated VM config:\n{}".format(pp(config)))
+
+        return config
+
+    # -------------------------------------------------------------------------
+    def generate_disk_spec(self, datastore_path, disks=None):
+
+        disk_sizes2create = []
+        if disks:
+            err_msg_tpl = "Given disksize {!r} must be greater than zero."
+            if isinstance(disks, Number):
+                if disks <= 0:
+                    raise ValueError(err_msg_tpl.format(disks))
+                disk_sizes2create.append(int(disks))
+            elif isinstance(disks, Sequence):
+                if isinstance(disks, str):
+                    size = int(disks)
+                    if size <= 0:
+                        raise ValueError(err_msg_tpl.format(disks))
+                    disk_sizes2create.append(size)
+                else:
+                    if len(disks) > 6:
+                        msg = "There may be created at most 6 disks, but {} were given.".format(
+                            len(disks))
+                    for disk in disks:
+                        size = int(disk)
+                        if size <= 0:
+                            raise ValueError(err_msg_tpl.format(disk))
+                        disk_sizes2create.append(size)
+
+        if self.verbose > 1:
+            if disk_sizes2create:
+                LOG.debug("Generating spec for SCSI controller and {n} disks: {d}.".format(
+                    n=len(disk_sizes2create), d=pp(disk_sizes2create)))
+            else:
+                LOG.debug("Generating spec for SCSI controller without disks.")
+
+        dev_changes = []
+
+        # Creating SCSI Controller
+        scsi_ctr_spec = vim.vm.device.VirtualDeviceSpec()
+        scsi_ctr_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+        scsi_ctr_spec.device = vim.vm.device.VirtualLsiLogicController()
+        scsi_ctr_spec.device.key = 0
+        scsi_ctr_spec.device.unitNumber = 1
+        scsi_ctr_spec.device.sharedBus = 'noSharing'
+        controller = scsi_ctr_spec.device
+
+        dev_changes.append(scsi_ctr_spec)
+
+        # Creating disks
+
+        i = 0
+        letter = 'a'
+
+        for size in disk_sizes2create:
+
+            size_kb = size * 1024 * 1024
+            if self.verbose > 1:
+                dname = "sd{}".format(letter)
+                LOG.debug("Adding spec for disk {n!r} with {gb} GiB => {kb} KiByte.".format(
+                    n=dname, gb=size, kb=size_kb))
+
+            disk_spec = vim.vm.device.VirtualDeviceSpec()
+            disk_spec.fileOperation = "create"
+            disk_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+            disk_spec.device = vim.vm.device.VirtualDisk()
+            disk_spec.device.backing = vim.vm.device.VirtualDisk.FlatVer2BackingInfo()
+            disk_spec.device.backing.diskMode = 'persistent'
+            disk_spec.device.backing.fileName = '{p}template-sd{l}.vmdk'.format(
+                p=datastore_path, l=letter)
+            disk_spec.device.unitNumber = i
+            # disk_spec.device.key = 1
+            disk_spec.device.capacityInKB = size_kb
+            disk_spec.device.controllerKey = controller.key
+
+            dev_changes.append(disk_spec)
+
+            i += 1
+            letter = chr(ord(letter) + 1)
+
+        return dev_changes
+
+    # -------------------------------------------------------------------------
+    def generate_if_create_spec(self, nw_interfaces=None):
+
+        if not nw_interfaces:
+            return []
+
+        ifaces = []
+        if isinstance(nw_interfaces, VsphereVmInterface):
+            ifaces.append(nw_interfaces)
+        else:
+            for iface in nw_interfaces:
+                if not isinstance(iface, VsphereVmInterface):
+                    msg = "Invalid Interface description {!r} given.".format(iface)
+                    raise TypeError(msg)
+                ifaces.append(iface)
+
+        dev_changes = []
+        dev_name = "eth{}"
+        i = 0
+
+        for iface in ifaces:
+
+            if self.verbose > 2:
+                LOG.debug("Defined interface:\n{}".format(pp(iface.as_dict())))
+
+            dname = dev_name.format(i)
+            if self.verbose > 1:
+                LOG.debug((
+                    "Adding spec for network interface {d!r} (Network {n!r}, "
+                    "MAC: {m!r}, summary: {s!r}).").format(
+                    d=dname, n=iface.network_name, m=iface.mac_address,
+                    s=iface.summary))
+
+            nic_spec = vim.vm.device.VirtualDeviceSpec()
+            nic_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.add
+            nic_spec.device = vim.vm.device.VirtualVmxnet3()
+            nic_spec.device.deviceInfo = vim.Description()
+            nic_spec.device.deviceInfo.label = dname
+            if iface.summary:
+                nic_spec.device.deviceInfo.summary = iface.summary
+
+            nic_spec.device.backing = vim.vm.device.VirtualEthernetCard.NetworkBackingInfo()
+            nic_spec.device.backing.useAutoDetect = False
+            nic_spec.device.backing.network = iface.network
+            nic_spec.device.backing.deviceName = iface.network_name
+
+            nic_spec.device.connectable = vim.vm.device.VirtualDevice.ConnectInfo()
+            nic_spec.device.connectable.startConnected = True
+            nic_spec.device.connectable.allowGuestControl = True
+            nic_spec.device.wakeOnLanEnabled = True
+            if iface.mac_address:
+                nic_spec.device.addressType = 'assigned'
+                nic_spec.device.macAddress = iface.mac_address
+            else:
+                nic_spec.device.addressType = 'generated'
+
+            dev_changes.append(nic_spec)
+
+        return dev_changes
+
 
 
 # =============================================================================

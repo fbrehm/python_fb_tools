@@ -24,7 +24,7 @@ from ..common import pp
 from .object import VsphereObject
 
 
-__version__ = '0.4.3'
+__version__ = '0.4.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -40,7 +40,7 @@ class VsphereNetwork(VsphereObject):
             name=None, accessible=True, ip_pool_id=None, ip_pool_name=None):
 
         self.repr_fields = (
-            'name', 'accessible', 'ip_pool_id', 'ip_pool_name', 'appname', 'verbose', 'version')
+            'name', 'accessible', 'ip_pool_id', 'ip_pool_name', 'appname', 'verbose')
 
         self._accessible = bool(accessible)
         self._ip_pool_id = ip_pool_id

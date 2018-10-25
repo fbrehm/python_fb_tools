@@ -17,6 +17,8 @@ from abc import ABCMeta
 # Third party modules
 from six import add_metaclass
 
+import pytz
+
 from pyVim.connect import SmartConnect, Disconnect
 
 # Own modules
@@ -25,7 +27,7 @@ from ..handling_obj import HandlingObject
 
 from .errors import VSphereCannotConnectError
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_HOST = 'vcs01.ppbrln.internal'
@@ -33,6 +35,7 @@ DEFAULT_PORT = 443
 DEFAULT_USER = 'Administrator@vsphere.local'
 DEFAULT_DC = 'vmcc'
 DEFAULT_CLUSTER = 'vmcc-l105-01'
+DEFAULT_TZ_NAME = 'Europe/Berlin'
 
 # =============================================================================
 # @add_metaclass(ABCMeta)
@@ -49,7 +52,7 @@ class BaseVsphereHandler(HandlingObject):
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             host=DEFAULT_HOST, port=DEFAULT_PORT, user=DEFAULT_USER, password=None,
             dc=DEFAULT_DC, cluster=DEFAULT_CLUSTER, auto_close=False, simulate=None,
-            force=None, terminal_has_colors=False, initialized=False):
+            force=None, terminal_has_colors=False, initialized=False, tz=DEFAULT_TZ_NAME):
 
         self._host = host
         self._port = port
@@ -58,6 +61,7 @@ class BaseVsphereHandler(HandlingObject):
         self._dc = dc
         self._cluster = cluster
         self._auto_close = False
+        self._tz = pytz.timezone(DEFAULT_TZ_NAME)
 
         self.service_instance = None
 
@@ -67,6 +71,7 @@ class BaseVsphereHandler(HandlingObject):
             initialized=False,
         )
 
+        self.tz = tz
         self.port = port
         self.auto_close = auto_close
 
@@ -133,6 +138,19 @@ class BaseVsphereHandler(HandlingObject):
         """The name of the VSphere cluster to use."""
         return self._cluster
 
+    # -----------------------------------------------------------
+    @property
+    def tz(self):
+        """The current time zone."""
+        return self._tz
+
+    @tz.setter
+    def tz(self, value):
+        if isinstance(value, pytz.tzinfo.BaseTzInfo):
+            self._tz = value
+        else:
+            self._tz = pytz.timezone(value)
+
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
@@ -150,6 +168,9 @@ class BaseVsphereHandler(HandlingObject):
         res['port'] = self.port
         res['user'] = self.user
         res['dc'] = self.dc
+        res['tz'] = None
+        if self.tz:
+            res['tz'] = self.tz.zone
         res['cluster'] = self.cluster
         res['auto_close'] = self.auto_close
         res['max_search_depth'] = self.max_search_depth
