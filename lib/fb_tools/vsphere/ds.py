@@ -23,7 +23,7 @@ from ..common import pp
 from .object import VsphereObject
 
 
-__version__ = '0.4.3'
+__version__ = '0.4.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -31,6 +31,8 @@ LOG = logging.getLogger(__name__)
 class VsphereDatastore(VsphereObject):
 
     re_is_nfs = re.compile(r'(?:share[_-]*nfs|nfs[_-]*share)', re.IGNORECASE)
+    re_vmcb_fs = re.compile(r'vmcb-\d+-fc-\d+', re.IGNORECASE)
+    re_local_ds = re.compile(r'^local_', re.IGNORECASE)
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -67,14 +69,9 @@ class VsphereDatastore(VsphereObject):
             name=name, obj_type='vsphere_datastore', name_prefix="ds",
             appname=appname, verbose=verbose, version=version, base_dir=base_dir)
 
-        if self.re_is_nfs.search(self.name):
-            self._storage_type = 'NFS'
-        elif '-sas-' in self.name.lower():
-            self._storage_type = 'SAS'
-        elif '-ssd-' in self.name.lower():
-            self._storage_type = 'SSD'
-        elif '-sata-' in self.name.lower():
-            self._storage_type = 'SATA'
+        st_type = self.storage_type_by_name(self.name)
+        if st_type:
+            self._storage_type = st_type
 
         if initialized is not None:
             self.initialized = initialized
@@ -213,6 +210,32 @@ class VsphereDatastore(VsphereObject):
 
         ds = cls(**params)
         return ds
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def storage_type_by_name(cls, name):
+        """Trying to guess the storage type by its name.
+            May be overridden in descentant classes."""
+
+        if cls.re_is_nfs.search(name):
+            return 'NFS'
+
+        if '-sas-' in name.lower():
+            return 'SAS'
+
+        if '-ssd-' in name.lower():
+            return  'SSD'
+
+        if '-sata-' in name.lower():
+            return 'SATA'
+
+        if cls.re_vmcb_fs.search(name):
+            return 'SATA'
+
+        if cls.re_local_ds.search(name):
+            return 'LOCAL'
+
+        return None
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
