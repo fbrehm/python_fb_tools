@@ -25,52 +25,22 @@ import pathlib
 # Own modules
 from . import __version__ as GLOBAL_VERSION
 
-import fb_tools
+from .common import pp, caller_search_path
 
-from fb_tools.common import pp, caller_search_path
+from .app import BaseApplication
 
-from fb_tools.app import BaseApplication
+from .errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
 
-from fb_tools.errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
+from .get_vm_cfg import GetVmConfiguration
 
-from .config import CrTplConfiguration
-
-from .handler import CrTplHandler
-
-__version__ = '0.6.4'
+__version__ = '0.1.1'
 LOG = logging.getLogger(__name__)
 
 
 # =============================================================================
-class CrTplAppError(FbAppError):
+class GetVmAppError(FbAppError):
     """ Base exception class for all exceptions in this application."""
     pass
-
-# =============================================================================
-class NrTemplatesOptionAction(argparse.Action):
-
-    # -------------------------------------------------------------------------
-    def __init__(self, option_strings, max_val, *args, **kwargs):
-
-        self._max = max_val
-
-        super(NrTemplatesOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
-
-    # -------------------------------------------------------------------------
-    def __call__(self, parser, namespace, values, option_string=None):
-
-        if values < 1:
-            msg = "Value must be at least 1, {} was given.".format(values)
-            raise argparse.ArgumentError(self, msg)
-
-        if values >= self._max:
-            msg = "Value must be at most {m} - {v} was given.".format(
-                m=self._max - 1, v=values)
-            raise argparse.ArgumentError(self, msg)
-
-        setattr(namespace, self.dest, values)
-
 
 # =============================================================================
 class CfgFileOptionAction(argparse.Action):
@@ -100,13 +70,10 @@ class CfgFileOptionAction(argparse.Action):
 
 
 # =============================================================================
-class CrTplApplication(BaseApplication):
+class GetVmApplication(BaseApplication):
     """
     Class for the application objects.
     """
-
-    re_prefix = re.compile(r'^[a-z0-9][a-z0-9_]*$', re.IGNORECASE)
-    re_anum = re.compile(r'[^A-Z0-9_]+', re.IGNORECASE)
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -115,14 +82,14 @@ class CrTplApplication(BaseApplication):
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
         desc = textwrap.dedent("""\
-            Creates in the given vSphere environment and cluster a template object,
-            which can be used to spawn different virtual machines.
+            Tries to get information about the given virtual maschines in
+            VMWare VSphere and print it out.
             """).strip()
 
         self._cfg_file = None
         self.config = None
 
-        super(CrTplApplication, self).__init__(
+        super(GetVmApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             description=desc, initialized=False,
         )
@@ -147,62 +114,10 @@ class CrTplApplication(BaseApplication):
         @rtype:  dict
         """
 
-        res = super(CrTplApplication, self).as_dict(short=short)
+        res = super(GetVmApplication, self).as_dict(short=short)
         res['cfg_file'] = self.cfg_file
 
         return res
-
-#    # -------------------------------------------------------------------------
-#    def init_logging(self):
-#        """
-#        Initialize the logger object.
-#        It creates a colored loghandler with all output to STDERR.
-#        Maybe overridden in descendant classes.
-#
-#        @return: None
-#        """
-#
-#        log_level = logging.INFO
-#        if self.verbose:
-#            log_level = logging.DEBUG
-#        elif self.quiet:
-#            log_level = logging.WARNING
-#
-#        root_logger = logging.getLogger()
-#        root_logger.setLevel(log_level)
-#
-#        # create formatter
-#        format_str = ''
-#        if self.verbose:
-#            format_str = '[%(asctime)s]: '
-#        format_str += self.appname + ': '
-#        if self.verbose:
-#            if self.verbose > 1:
-#                format_str += '%(name)s(%(lineno)d) %(funcName)s() '
-#            else:
-#                format_str += '%(name)s '
-#        format_str += '%(levelname)s - %(message)s'
-#        formatter = None
-#        if self.terminal_has_colors:
-#            formatter = ColoredFormatter(format_str)
-#        else:
-#            formatter = logging.Formatter(format_str)
-#
-#        # create log handler for console output
-#        lh_console = logging.StreamHandler(sys.stderr)
-#        lh_console.setLevel(log_level)
-#        lh_console.setFormatter(formatter)
-#
-#        root_logger.addHandler(lh_console)
-#
-#        if self.verbose < 3:
-#            paramiko_logger = logging.getLogger('paramiko.transport')
-#            if self.verbose < 1:
-#                paramiko_logger.setLevel(logging.WARNING)
-#            else:
-#                paramiko_logger.setLevel(logging.INFO)
-#
-#        return
 
     # -------------------------------------------------------------------------
     def post_init(self):
@@ -243,18 +158,6 @@ class CrTplApplication(BaseApplication):
                 h=self.config.vsphere_host, u=self.config.vsphere_user)
             self.config.password = getpass.getpass(prompt=prompt)
 
-        self.handler = CrTplHandler(
-            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            simulate=self.simulate, force=self.force, config=self.config,
-            terminal_has_colors=self.terminal_has_colors)
-
-        if self.args.rotate:
-            self.handler.rotate_only = True
-        if self.args.abort:
-            self.handler.abort = True
-
-        self.handler.vsphere.initialized = True
-        self.handler.initialized = True
         self.initialized = True
 
     # -------------------------------------------------------------------------
@@ -263,14 +166,9 @@ class CrTplApplication(BaseApplication):
         Public available method to initiate the argument parser.
         """
 
-        super(CrTplApplication, self).init_arg_parser()
+        super(GetVmApplication, self).init_arg_parser()
 
         default_cfg_file = self.base_dir.joinpath('etc').joinpath(self.appname + '.ini')
-
-        self.arg_parser.add_argument(
-            '-A', '--abort', dest='abort', action='store_true',
-            help="Abort creation of VMWare template after successsful creation of template VM.",
-        )
 
         self.arg_parser.add_argument(
             '-c', '--config', '--config-file', dest='cfg_file', metavar='FILE',
@@ -303,47 +201,6 @@ class CrTplApplication(BaseApplication):
             help="Password to use when connecting to vSphere host.",
         )
 
-        vmware_group.add_argument(
-            '-F', '--folder', dest='folder',
-            help="Folder in vSphere, where to create the template (Default: {!r}).".format(
-                CrTplConfiguration.default_folder)
-        )
-
-        vmware_group.add_argument(
-            '-C', '--cluster', dest='cluster',
-            help="Host cluster in vSphere, where to create the template (Default: {!r}).".format(
-                CrTplConfiguration.default_vsphere_cluster)
-        )
-
-        vmware_group.add_argument(
-            '-M', '--vm', dest='vm',
-            help=(
-                "The temporary VM, which will be created and converted into a "
-                "template (Default: {!r}).").format(CrTplConfiguration.default_template_vm)
-        )
-
-        vmware_group.add_argument(
-            '-T', '--template',
-            help=(
-                "The name of the created template as result of this script "
-                "(Default: {!r}).").format(CrTplConfiguration.default_template_name)
-        )
-
-        vmware_group.add_argument(
-            '-N', '--number', '--number-templates', dest='number', type=int, metavar='INT',
-            action=NrTemplatesOptionAction, max_val=CrTplConfiguration.limit_max_nr_templates_stay,
-            help=(
-                "Maximum number of templates to stay in templates folder ("
-                "1 <= x < {max_nr}, Default: {def_nr}).".format(
-                    max_nr=CrTplConfiguration.limit_max_nr_templates_stay,
-                    def_nr=CrTplConfiguration.default_max_nr_templates_stay))
-        )
-
-        vmware_group.add_argument(
-            '-R', '--rotate', '--rotate-only', dest="rotate", action='store_true',
-            help="Execute rortation of existing templates only, don't create a new one."
-        )
-
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
 
@@ -365,17 +222,6 @@ class CrTplApplication(BaseApplication):
             self.config.vsphere_user = self.args.user
         if self.args.password:
             self.config.password = self.args.password
-        if self.args.cluster:
-            self.config.vsphere_cluster = self.args.cluster
-        if self.args.folder:
-            self.config.folder = self.args.folder
-        if self.args.vm:
-            self.config.template_vm = self.args.vm
-        if self.args.template:
-            self.config.template_name = self.args.template
-
-        if self.args.number is not None:
-            self.config.max_nr_templates_stay = self.args.number
 
     # -------------------------------------------------------------------------
     def _run(self):
@@ -386,15 +232,9 @@ class CrTplApplication(BaseApplication):
 
         """
 
-        LOG.info("Starting {a!r}, version {v!r} ...".format(
+        LOG.debug("Starting {a!r}, version {v!r} ...".format(
             a=self.appname, v=self.version))
-
-        try:
-            ret = self.handler()
-            self.exit(ret)
-        except ExpectedHandlerError as e:
-            self.handle_error(str(e), "Temporary VM")
-            self.exit(5)
+        return
 
 
 # =============================================================================
