@@ -33,7 +33,9 @@ from .errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
 
 from .get_vm_cfg import GetVmConfiguration
 
-__version__ = '0.1.2'
+from .vsphere.server import VsphereServer
+
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -88,6 +90,7 @@ class GetVmApplication(BaseApplication):
 
         self._cfg_file = None
         self.config = None
+        self.vsphere = None
 
         self.vms = []
 
@@ -160,6 +163,14 @@ class GetVmApplication(BaseApplication):
                 h=self.config.vsphere_host, u=self.config.vsphere_user)
             self.config.password = getpass.getpass(prompt=prompt)
 
+        self.vsphere = VsphereServer(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            host=self.config.vsphere_host, port=self.config.vsphere_port,
+            user=self.config.vsphere_user, password=self.config.password,
+            dc=self.config.dc, auto_close=True, simulate=self.simulate, force=self.force,
+            terminal_has_colors=self.terminal_has_colors, initialized=False)
+
+        self.vsphere.initialized = True
         self.initialized = True
 
     # -------------------------------------------------------------------------
@@ -235,17 +246,38 @@ class GetVmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def _run(self):
-        """
-        Dummy function as main routine.
-
-        MUST be overwritten by descendant classes.
-
-        """
 
         LOG.debug("Starting {a!r}, version {v!r} ...".format(
             a=self.appname, v=self.version))
-        return
 
+        ret = 99
+        try:
+            ret = self.get_vms()
+        finally:
+            # Aufräumen ...
+            LOG.debug("Closing ...")
+            self.vsphere.disconnect()
+            self.vsphere = None
+
+        self.exit(ret)
+
+    # -------------------------------------------------------------------------
+    def get_vms(self):
+
+        ret = 0
+        for vm in self.vms:
+
+            print('\n{}: '.format(vm), end='')
+            vm_info = self.vsphere.get_vm(vm, no_error=True)
+
+            if not vm_info:
+                ret = 1
+                print(self.colored("NOT FOUND", 'RED'))
+                continue
+
+            print("{ok}\n{vm}".format(ok=self.colored("OK", 'GREEN'), vm=pp(vm_info)))
+
+        return ret
 
 # =============================================================================
 
