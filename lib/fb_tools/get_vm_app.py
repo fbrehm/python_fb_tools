@@ -33,7 +33,7 @@ from .errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
 
 from .get_vm_cfg import GetVmConfiguration
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -89,6 +89,8 @@ class GetVmApplication(BaseApplication):
         self._cfg_file = None
         self.config = None
 
+        self.vms = []
+
         super(GetVmApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             description=desc, initialized=False,
@@ -138,7 +140,7 @@ class GetVmApplication(BaseApplication):
 
         self.perform_arg_parser()
 
-        self.config = CrTplConfiguration(
+        self.config = GetVmConfiguration(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             config_file=self.cfg_file)
         #self.config.config_file = self.cfg_file
@@ -181,19 +183,19 @@ class GetVmApplication(BaseApplication):
         vmware_group.add_argument(
             '-H', '--host', dest='host',
             help="Remote vSphere host to connect to (Default: {!r}).".format(
-                CrTplConfiguration.default_vsphere_host)
+                GetVmConfiguration.default_vsphere_host)
         )
 
         vmware_group.add_argument(
             '-p', '--port', dest='port', type=int,
             help="Port on vSphere host to connect on (Default: {}).".format(
-                CrTplConfiguration.default_vsphere_port)
+                GetVmConfiguration.default_vsphere_port)
         )
 
         vmware_group.add_argument(
             '-U', '--user', dest='user',
             help="User name to use when connecting to vSphere host (Default: {!r}).".format(
-                CrTplConfiguration.default_vsphere_user)
+                GetVmConfiguration.default_vsphere_user)
         )
 
         vmware_group.add_argument(
@@ -201,11 +203,19 @@ class GetVmApplication(BaseApplication):
             help="Password to use when connecting to vSphere host.",
         )
 
+        self.arg_parser.add_argument(
+            'vms', metavar='VM', type=str, nargs='+',
+            help='Names of the VM to get information.',
+        )
+
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
 
         if self.args.cfg_file:
             self._cfg_file = self.args.cfg_file
+
+        for vm in self.args.vms:
+            self.vms.append(vm)
 
     # -------------------------------------------------------------------------
     def perform_arg_parser_vmware(self):
