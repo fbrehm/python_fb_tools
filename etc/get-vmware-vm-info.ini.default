@@ -1,0 +1,40 @@
+[vSphere]
+
+;host = vcs01.ppbrln.internal
+
+;port = 443
+
+;user = root
+
+;password = 
+
+;dc = vmcc
+
+;cluster = vmcc-l105-01
+
+;folder = templates
+
+[Template]
+
+;vm = template.pixelpark.com
+
+;vmware_cfg_version = vmx-13
+
+;os_version = oracleLinux7_64Guest
+
+;name = oracle-linux-7-template
+
+;data_size_gb = 32
+
+;num_cpus = 2
+
+;ram_mb = 4096
+
+;network = 192.168.88.0_23
+
+;mac_address = 00:16:3e:54:ab:2b
+
+;max_wait_for_finish_install = 3600
+
+
+; vim: filetype=dosini

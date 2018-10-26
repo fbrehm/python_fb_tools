@@ -7,9 +7,10 @@
 build
 trace
 MANIFEST
-/pb_base.egg-info
-/pb_base/local_version.py
 /dist/*
 .idea
 .cache
 .env
+tmp/*
+venv/*
+etc/*.ini
