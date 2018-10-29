@@ -478,6 +478,9 @@ class VsphereServer(BaseVsphereHandler):
                 vm_info = {}
                 vm_info['name'] = vm_config.name
                 vm_info['tf_name'] = 'vm_' + RE_TF_NAME.sub('_', vm_config.name.lower())
+                vm_info['cluster'] = None
+                if child.resourcePool:
+                    vm_info['cluster'] = child.resourcePool.owner.name
                 vm_info['path'] = cur_path
                 vm_info['memorySizeMB'] = vm_config.memorySizeMB
                 vm_info['numCpu'] = vm_config.numCpu
@@ -486,7 +489,27 @@ class VsphereServer(BaseVsphereHandler):
                 vm_info['template'] = vm_config.template
                 vm_info['guestFullName'] = vm_config.guestFullName
                 vm_info['guestId'] = vm_config.guestId
+                vm_info['vm_tools'] = {}
+                if child.guest:
+                    vm_info['vm_tools']['install_type'] = None
+                    if hasattr(child.guest, 'toolsInstallType'):
+                        vm_info['vm_tools']['install_type'] = child.guest.toolsInstallType
+                    vm_info['vm_tools']['state'] = None
+                    if hasattr(child.guest, 'toolsRunningStatus'):
+                        vm_info['vm_tools']['state'] = child.guest.toolsRunningStatus
+                    else:
+                        vm_info['vm_tools']['state'] = child.guest.toolsStatus
+                    vm_info['vm_tools']['version'] = child.guest.toolsVersion
+                    vm_info['vm_tools']['version_state'] = None
+                    if hasattr(child.guest, 'toolsVersionStatus2'):
+                        vm_info['vm_tools']['version_state'] = child.guest.toolsVersionStatus2
+                    else:
+                        vm_info['vm_tools']['version_state'] = child.guest.toolsVersionStatus
+                vm_info['host'] = None
+                if child.runtime.host:
+                    vm_info['host'] = child.runtime.host.name
                 vm_info['instanceUuid'] = vm_config.instanceUuid
+                vm_info['power_state'] = child.runtime.powerState
                 if vm_config.instanceUuid:
                     vm_info['instanceUuid'] = uuid.UUID(vm_config.instanceUuid)
                 vm_info['uuid'] = vm_config.uuid
