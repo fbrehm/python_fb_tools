@@ -44,7 +44,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.9.4'
+__version__ = '0.9.5'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -554,7 +554,7 @@ class VsphereServer(BaseVsphereHandler):
         return None
 
     # -------------------------------------------------------------------------
-    def poweron_vm(self, vm, disconnect=False):
+    def poweron_vm(self, vm, max_wait=20, disconnect=False):
 
         try:
 
@@ -572,8 +572,8 @@ class VsphereServer(BaseVsphereHandler):
 
             LOG.info("Powering on VM {!r} ...".format(vm_name))
 
-            task = self.tpl_vm.PowerOnVM_Task()
-            self.wait_for_tasks([task])
+            task = vm_obj.PowerOnVM_Task()
+            self.wait_for_tasks([task], max_wait=max_wait)
             LOG.debug("VM {!r} successful powered on.".format(vm_name))
 
         finally:
@@ -581,7 +581,7 @@ class VsphereServer(BaseVsphereHandler):
                 self.disconnect()
 
     # -------------------------------------------------------------------------
-    def poweroff_vm(self, vm, disconnect=False):
+    def poweroff_vm(self, vm, max_wait=20, disconnect=False):
 
         try:
 
@@ -599,8 +599,8 @@ class VsphereServer(BaseVsphereHandler):
 
             LOG.info("Powering off VM {!r} ...".format(vm_name))
 
-            task = self.tpl_vm.PowerOffVM_Task()
-            self.wait_for_tasks([task])
+            task = vm_obj.PowerOffVM_Task()
+            self.wait_for_tasks([task], max_wait=max_wait)
             LOG.debug("VM {!r} successful powered off.".format(vm_name))
 
         finally:
@@ -755,7 +755,7 @@ class VsphereServer(BaseVsphereHandler):
                 while len(task_list):
                     update = property_collector.WaitForUpdates(version)
                     for filter_set in update.filterSet:
-                        if max_wait > 0:
+                        if max_wait is not None and max_wait > 0:
                             time_diff = time.time() - start_time
                             if time_diff >= max_wait:
                                 return False
