@@ -58,12 +58,12 @@ class VsphereServer(BaseVsphereHandler):
 
     re_local_ds = re.compile(r'^local[_-]', re.IGNORECASE)
     vmw_api_version_to_hw_version = {
-        '5.0': 'vmx-8',
-        '5.1': 'vmx-9',
-        '5.5': 'vmx-10',
-        '6.0': 'vmx-11',
-        '6.5': 'vmx-13',
-        '6.7': 'vmx-14',
+        '5.0': 8,
+        '5.1': 9,
+        '5.5': 10,
+        '6.0': 11,
+        '6.5': 13,
+        '6.7': 14,
     }
 
     # -------------------------------------------------------------------------
@@ -138,7 +138,8 @@ class VsphereServer(BaseVsphereHandler):
             if 'apiVersion' in self.about:
                 api_version = self.about['apiVersion']
                 if api_version in self.vmw_api_version_to_hw_version:
-                    self.about['max_hw_version'] = self.vmw_api_version_to_hw_version[api_version]
+                    hw_version = self.vmw_api_version_to_hw_version[api_version]
+                    self.about['max_hw_version'] = 'vmx-{}'.format(hw_version)
         except (
                 socket.timeout, urllib3.exceptions.ConnectTimeoutError,
                 urllib3.exceptions.MaxRetryError,
