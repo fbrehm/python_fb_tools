@@ -44,7 +44,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.9.2'
+__version__ = '0.9.3'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -403,7 +403,7 @@ class VsphereServer(BaseVsphereHandler):
         return
 
     # -------------------------------------------------------------------------
-    def get_vm(self, vm_name, no_error=False, disconnect=False):
+    def get_vm(self, vm_name, no_error=False, disconnect=False, as_vmw_obj=False):
 
         LOG.debug("Trying to get VM {!r} from VSphere ...".format(vm_name))
 
@@ -419,7 +419,10 @@ class VsphereServer(BaseVsphereHandler):
             if not dc:
                 raise VSphereDatacenterNotFoundError(self.dc)
             for child in dc.vmFolder.childEntity:
-                vm = self._get_vm(child, vm_name)
+                path = child.name
+                if self.verbose > 1:
+                    LOG.debug("Searching in path {!r} ...".format(path))
+                vm = self._get_vm(child, vm_name, as_vmw_obj=as_vmw_obj)
                 if vm:
                     break
 
@@ -437,10 +440,12 @@ class VsphereServer(BaseVsphereHandler):
         return vm
 
     # -------------------------------------------------------------------------
-    def _get_vm(self, child, vm_name, cur_path='', depth=1):
+    def _get_vm(self, child, vm_name, cur_path='', depth=1, as_vmw_obj=False):
 
         vm = None
 
+        if self.verbose > 2:
+            LOG.debug("Searching in path {!r} ...".format(cur_path))
         if self.verbose > 3:
             LOG.debug("Found a {} child.".format(child.__class__.__name__))
 
@@ -453,7 +458,7 @@ class VsphereServer(BaseVsphereHandler):
                     child_path = cur_path + '/' + child.name
                 else:
                     child_path = child.name
-                vm = self._get_vm(sub_child, vm_name, child_path, depth + 1)
+                vm = self._get_vm(sub_child, vm_name, child_path, depth + 1, as_vmw_obj=as_vmw_obj)
                 if vm:
                     return vm
             return None
@@ -468,6 +473,8 @@ class VsphereServer(BaseVsphereHandler):
                 if self.verbose > 3:
                     LOG.debug("Found VM {n!r} config:\n{s}".format(
                         n=vm_name, s=pp(child.config)))
+                if as_vmw_obj:
+                    return child
                 vm_info = {}
                 vm_info['name'] = vm_config.name
                 vm_info['tf_name'] = 'vm_' + RE_TF_NAME.sub('_', vm_config.name.lower())
