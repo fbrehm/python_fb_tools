@@ -44,7 +44,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.9.1'
+__version__ = '0.9.2'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -57,6 +57,14 @@ class VsphereServer(BaseVsphereHandler):
     """
 
     re_local_ds = re.compile(r'^local[_-]', re.IGNORECASE)
+    vmw_api_version_to_hw_version = {
+        '5.0': 'vmx-8',
+        '5.1': 'vmx-9',
+        '5.5': 'vmx-10',
+        '6.0': 'vmx-11',
+        '6.5': 'vmx-13',
+        '6.7': 'vmx-14',
+    }
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -126,6 +134,11 @@ class VsphereServer(BaseVsphereHandler):
                     if attr == 'instanceUuid':
                         value = uuid.UUID(value)
                     self.about[attr] = value
+            self.about['max_hw_version'] = None
+            if 'apiVersion' in self.about:
+                api_version = self.about['apiVersion']
+                if api_version in self.vmw_api_version_to_hw_version:
+                    self.about['max_hw_version'] = self.vmw_api_version_to_hw_version[api_version]
         except (
                 socket.timeout, urllib3.exceptions.ConnectTimeoutError,
                 urllib3.exceptions.MaxRetryError,
@@ -139,8 +152,8 @@ class VsphereServer(BaseVsphereHandler):
                 self.disconnect()
 
         LOG.info("VSphere server version: {!r}".format(self.about['version']))
-        if self.verbose > 2:
-            LOG.debug("Found about-information:\n{}".format(pp(self.about)))
+        if self.verbose > 1:
+            LOG.debug("Found VSphere about-information:\n{}".format(pp(self.about)))
 
     # -------------------------------------------------------------------------
     def get_clusters(self, disconnect=False):
