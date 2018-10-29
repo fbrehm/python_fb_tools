@@ -41,10 +41,10 @@ from .network import VsphereNetwork, VsphereNetworkDict
 
 from .iface import VsphereVmInterface
 
-from .errors import VSphereExpectedError, TimeoutCreateVmError
+from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.9.3'
+__version__ = '0.9.4'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -552,6 +552,60 @@ class VsphereServer(BaseVsphereHandler):
                 return vm_info
 
         return None
+
+    # -------------------------------------------------------------------------
+    def poweron_vm(self, vm, disconnect=False):
+
+        try:
+
+            if not self.service_instance:
+                self.connect()
+
+            if isinstance(vm, vim.VirtualMachine):
+                vm_obj = vm
+                vm_name = vm.summary.config.name
+            else:
+                vm_name = vm
+                vm_obj = self.get_vm(vm, as_vmw_obj=True)
+                if not vm_obj:
+                    raise VSphereVmNotFoundError(vm)
+
+            LOG.info("Powering on VM {!r} ...".format(vm_name))
+
+            task = self.tpl_vm.PowerOnVM_Task()
+            self.wait_for_tasks([task])
+            LOG.debug("VM {!r} successful powered on.".format(vm_name))
+
+        finally:
+            if disconnect:
+                self.disconnect()
+
+    # -------------------------------------------------------------------------
+    def poweroff_vm(self, vm, disconnect=False):
+
+        try:
+
+            if not self.service_instance:
+                self.connect()
+
+            if isinstance(vm, vim.VirtualMachine):
+                vm_obj = vm
+                vm_name = vm.summary.config.name
+            else:
+                vm_name = vm
+                vm_obj = self.get_vm(vm, as_vmw_obj=True)
+                if not vm_obj:
+                    raise VSphereVmNotFoundError(vm)
+
+            LOG.info("Powering off VM {!r} ...".format(vm_name))
+
+            task = self.tpl_vm.PowerOffVM_Task()
+            self.wait_for_tasks([task])
+            LOG.debug("VM {!r} successful powered off.".format(vm_name))
+
+        finally:
+            if disconnect:
+                self.disconnect()
 
     # -------------------------------------------------------------------------
     def ensure_vm_folders(self, folders, disconnect=False):
