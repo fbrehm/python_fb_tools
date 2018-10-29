@@ -81,6 +81,22 @@ class VSphereDatacenterNotFoundError(VSphereExpectedError):
 
 
 # =============================================================================
+class VSphereVmNotFoundError(VSphereExpectedError):
+    """Special error class for the case, that the given VM was not found in VSphere."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, vm):
+
+        self.vm = vm
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = "The VSphere Virtual machine {!r} was not found.".format(self.vm)
+        return msg
+
+
+# =============================================================================
 class VSphereNoDatastoreFoundError(VSphereExpectedError):
     """Special error class for the case, that no SAN based data store was with
         enogh free space was found."""
