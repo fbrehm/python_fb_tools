@@ -14,6 +14,7 @@ import logging
 import pipes
 import textwrap
 import pathlib
+import signal
 
 from subprocess import Popen, PIPE, SubprocessError
 
@@ -22,11 +23,13 @@ from subprocess import Popen, PIPE, SubprocessError
 # Own modules
 from .common import pp, to_bool, caller_search_path, to_str
 
+from .errors import InterruptError
+
 from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '0.1.2'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -123,6 +126,13 @@ class HandlingObject(FbBaseObject):
         @type: bool
         """
 
+        self.signals_dont_interrupt = [
+            signal.SIGUSR1,
+            signal.SIGUSR2,
+        ]
+
+        self._interrupted = False
+
         super(HandlingObject, self).__init__(
             appname=appname,
             verbose=verbose,
@@ -156,6 +166,12 @@ class HandlingObject(FbBaseObject):
 
     # -----------------------------------------------------------
     @property
+    def interrupted(self):
+        """Flag indicating, that the current process was interrupted."""
+        return self._interrupted
+
+    # -----------------------------------------------------------
+    @property
     def terminal_has_colors(self):
         """A flag, that the current terminal understands color ANSI codes."""
         return self._terminal_has_colors
@@ -179,6 +195,7 @@ class HandlingObject(FbBaseObject):
         res = super(HandlingObject, self).as_dict(short=short)
         res['force'] = self.force
         res['simulate'] = self.simulate
+        res['interrupted'] = self.interrupted
         res['terminal_has_colors'] = self.terminal_has_colors
 
         return res
@@ -327,6 +344,28 @@ class HandlingObject(FbBaseObject):
         if not self.terminal_has_colors:
             return msg
         return colorstr(msg, color)
+
+    # -------------------------------------------------------------------------
+    def signal_handler(self, signum, frame):
+        """
+        Handler as a callback function for getting a signal from somewhere.
+
+        @param signum: the gotten signal number
+        @type signum: int
+        @param frame: the current stack frame
+        @type frame: None or a frame object
+
+        """
+
+        err = InterruptError(signum)
+
+        if signum in self.signals_dont_interrupt:
+            self.handle_info(str(err))
+            LOG.info("Nothing to do on signal.")
+            return
+
+        self._interrupted = True
+        raise err
 
 
 # =============================================================================
