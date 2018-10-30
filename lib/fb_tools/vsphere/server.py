@@ -28,6 +28,8 @@ import urllib3
 # Own modules
 from ..common import pp, RE_TF_NAME
 
+from ..errors import HandlerError
+
 from . import BaseVsphereHandler, DEFAULT_TZ_NAME
 from . import DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USER, DEFAULT_DC, DEFAULT_CLUSTER
 
@@ -44,7 +46,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.9.5'
+__version__ = '0.9.6'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -1019,6 +1021,83 @@ class VsphereServer(BaseVsphereHandler):
 
         return dev_changes
 
+    # -------------------------------------------------------------------------
+    def purge_vm(self, vm, max_wait=20, disconnect=False):
+
+        try:
+
+            if not self.service_instance:
+                self.connect()
+
+            if isinstance(vm, vim.VirtualMachine):
+                vm_obj = vm
+                vm_name = vm.summary.config.name
+            else:
+                vm_name = vm
+                vm_obj = self.get_vm(vm, as_vmw_obj=True)
+                if not vm_obj:
+                    raise VSphereVmNotFoundError(vm)
+
+            LOG.info("Purging VM {!r} ...".format(vm_name))
+
+            task = vm_obj.Destroy_Task()
+            self.wait_for_tasks([task], max_wait=max_wait)
+            LOG.debug("VM {!r} successful removed.".format(vm_name))
+
+        finally:
+            if disconnect:
+                self.disconnect()
+
+    # -------------------------------------------------------------------------
+    def set_mac_of_nic(self, vm, new_mac, nic_nr=0):
+
+        if not self.service_instance:
+            self.connect()
+
+        if isinstance(vm, vim.VirtualMachine):
+            vm_obj = vm
+            vm_name = vm.summary.config.name
+        else:
+            vm_name = vm
+            vm_obj = self.get_vm(vm, as_vmw_obj=True)
+            if not vm_obj:
+                raise VSphereVmNotFoundError(vm)
+
+        i = 0
+        virtual_nic_device = None
+        for dev in vm_obj.config.hardware.device:
+            if isinstance(dev, vim.vm.device.VirtualEthernetCard):
+                if i == nic_nr:
+                    virtual_nic_device = dev
+                    break
+                i += 1
+
+        if not virtual_nic_device:
+            msg = (
+                "Did not found virtual ethernet device No. {no} ("
+                "found {count} devices).").format(no=nic_nr, count=i)
+            raise HandlerError(msg)
+
+        virtual_nic_spec = vim.vm.device.VirtualDeviceSpec()
+        virtual_nic_spec.operation = vim.vm.device.VirtualDeviceSpec.Operation.edit
+        virtual_nic_spec.device = virtual_nic_device
+        virtual_nic_spec.device.macAddress = new_mac
+        virtual_nic_spec.device.backing = virtual_nic_device.backing
+        virtual_nic_spec.device.wakeOnLanEnabled = virtual_nic_device.wakeOnLanEnabled
+        virtual_nic_spec.device.connectable = virtual_nic_device.connectable
+
+        dev_changes = []
+        dev_changes.append(virtual_nic_spec)
+        spec = vim.vm.ConfigSpec()
+        spec.deviceChange = dev_changes
+
+        if self.verbose > 2:
+            LOG.debug("Changes of MAC address:\n{}".format(pp(spec)))
+
+        task = vm_obj.ReconfigVM_Task(spec=spec)
+        self.wait_for_tasks([task])
+        LOG.debug("Successful changed MAC address of VM {v!r} to {m!r}..".format(
+            v=vm_name, m=new_mac))
 
 
 # =============================================================================
