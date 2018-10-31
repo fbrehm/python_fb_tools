@@ -1,0 +1,6 @@
+pyvmomi>=v6.5.0.2017.5-1
+requests
+six
+pytz
+flake8
+pathlib

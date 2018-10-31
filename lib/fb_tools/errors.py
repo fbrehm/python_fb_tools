@@ -7,9 +7,11 @@
 
 # Standard modules
 import errno
+import signal
+import os
 
 
-__version__ = '0.2.2'
+__version__ = '0.4.1'
 
 # =============================================================================
 class FbError(Exception):
@@ -46,6 +48,37 @@ class ExpectedHandlerError(HandlerError):
 
     pass
 
+
+# =============================================================================
+class InterruptError(ExpectedHandlerError):
+    """Special error class for the case, the process was interrupted somehow."""
+
+    signal_names = {
+        signal.SIGHUP: 'HUP',
+        signal.SIGINT: 'INT',
+        signal.SIGABRT: 'ABRT',
+        signal.SIGTERM: 'TERM',
+        signal.SIGKILL: 'KILL',
+        signal.SIGUSR1: 'USR1',
+        signal.SIGUSR2: 'USR2',
+    }
+
+    # -------------------------------------------------------------------------
+    def __init__(self, signum):
+
+        self.signum = signum
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        signame = "{}".format(self.signum)
+        if self.signum in self.signal_names:
+            signame = self.signal_names[self.signum] + '(' + signame + ')'
+
+        msg = "Process with PID {pid} got signal {signal}.".format(
+            pid=os.getpid(), signal=signame)
+
+        return msg
 
 # =============================================================================
 class TerraformObjectError(FbHandlerError):
@@ -101,6 +134,28 @@ class CannotConnectVsphereError(ExpectedHandlerError):
 
         msg = "Could not connect to the vSphere host {h}:{p} as user {u!r}.".format(
             h=self.host, p=self.port, u=self.user)
+        return msg
+
+
+# =============================================================================
+class NoDatastoreFoundError(ExpectedHandlerError):
+    """Special error class for the case, that no SAN based data store was with
+        enogh free space was found."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, needed_bytes):
+
+        self.needed_bytes = int(needed_bytes)
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        mb = float(self.needed_bytes) / 1024.0 / 1024.0
+        gb = mb / 1024.0
+
+        msg = (
+            "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB "
+            "available space found.").format(m=mb, g=gb)
         return msg
 
 
