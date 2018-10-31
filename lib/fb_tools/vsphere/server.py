@@ -46,7 +46,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.9.6'
+__version__ = '0.9.7'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -556,6 +556,88 @@ class VsphereServer(BaseVsphereHandler):
         return None
 
     # -------------------------------------------------------------------------
+    def get_vms(self, re_name, is_template=None, disconnect=False):
+
+        if not hasattr(re_name, 'match'):
+            raise TypeError("Parameter 're_name' => {!r} seems not to be a regex object.".format(
+                re_name))
+
+        LOG.debug("Trying to get list of VMs with name pattern {!r}.".format(re_name.pattern))
+        vm_list = []
+
+        try:
+            if not self.service_instance:
+                self.connect()
+
+            content = self.service_instance.RetrieveContent()
+            dc = self.get_obj(content, [vim.Datacenter], self.dc)
+            if not dc:
+                raise VSphereDatacenterNotFoundError(self.dc)
+
+            for child in dc.vmFolder.childEntity:
+                path = child.name
+                if self.verbose > 1:
+                    LOG.debug("Searching in path {!r} ...".format(path))
+                vms = self._get_vms(child, re_name, is_template=is_template)
+                if vms:
+                    vm_list += vms
+
+        finally:
+            if disconnect:
+                self.disconnect()
+
+        LOG.debug("Found {no} VMs with pattern {p!r}.".format(
+            no=len(vm_list), p=re_name.pattern))
+
+        return vm_list
+
+    # -------------------------------------------------------------------------
+    def _get_vms(self, child, re_name, is_template=None, depth=1):
+
+        vm_list = []
+
+        if self.verbose > 3:
+            LOG.debug("Found a {} child.".format(child.__class__.__name__))
+
+        if hasattr(child, 'childEntity'):
+            if depth > self.max_search_depth:
+                return vms
+            for sub_child in child.childEntity:
+                vms = self._get_vms(sub_child, re_name, is_template, depth + 1)
+                if vms:
+                    vm_list += vms
+            return vm_list
+
+        if isinstance(child, vim.VirtualMachine):
+
+            summary = child.summary
+            vm_config = summary.config
+            vm_name = vm_config.name
+
+            if self.verbose > 2:
+                LOG.debug("Checking VM {!r}...".format(vm_name))
+            if is_template is not None:
+                if self.verbose > 2:
+                    not_tpl = ''
+                    if not is_template:
+                        not_tpl = 'not '
+                    LOG.debug("Checking VM {name!r} for being {no}a template ...".format(
+                        name=vm_name, no=not_tpl))
+                if is_template and not vm_config.template:
+                    return []
+                if not is_template and vm_config.template:
+                    return []
+
+            if self.verbose > 2:
+                LOG.debug("Checking VM {!r} for pattern.".format(vm_name))
+            if re_name.search(vm_name):
+                if self.verbose > 2:
+                    LOG.debug("Found VM {!r}.".format(vm_name))
+                vm_list.append(child)
+
+        return vm_list
+
+    # -------------------------------------------------------------------------
     def poweron_vm(self, vm, max_wait=20, disconnect=False):
 
         try:
@@ -571,6 +653,10 @@ class VsphereServer(BaseVsphereHandler):
                 vm_obj = self.get_vm(vm, as_vmw_obj=True)
                 if not vm_obj:
                     raise VSphereVmNotFoundError(vm)
+
+            if vm_obj.runtime.powerState.lower() == 'poweredon':
+                LOG.info("VM {!r} is already powered on.".format(vm_name))
+                return
 
             LOG.info("Powering on VM {!r} ...".format(vm_name))
 
@@ -598,6 +684,10 @@ class VsphereServer(BaseVsphereHandler):
                 vm_obj = self.get_vm(vm, as_vmw_obj=True)
                 if not vm_obj:
                     raise VSphereVmNotFoundError(vm)
+
+            if vm_obj.runtime.powerState.lower() == 'poweredoff':
+                LOG.info("VM {!r} is already powered off.".format(vm_name))
+                return
 
             LOG.info("Powering off VM {!r} ...".format(vm_name))
 
@@ -1037,6 +1127,8 @@ class VsphereServer(BaseVsphereHandler):
                 vm_obj = self.get_vm(vm, as_vmw_obj=True)
                 if not vm_obj:
                     raise VSphereVmNotFoundError(vm)
+
+            self.poweroff_vm(vm_obj)
 
             LOG.info("Purging VM {!r} ...".format(vm_name))
 
