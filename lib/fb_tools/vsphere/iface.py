@@ -10,10 +10,6 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import re
-import collections
-import ipaddress
-import functools
 
 # Third party modules
 from pyVmomi import vim
@@ -26,7 +22,7 @@ from ..obj import FbBaseObject
 from .errors import VSphereNameError
 
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -54,9 +50,9 @@ class VsphereVmInterface(FbBaseObject):
         self.mac_address = mac_address
 
         if network:
-            if not instance(network, vim.Network):
+            if not isinstance(network, vim.Network):
                 msg = "Patrameter 'network' must be a vim.Network, {!r} was given.".format(network)
-                raise TypeError(msg)  
+                raise TypeError(msg)
             self._network = network
 
         self.network_name = network_name
@@ -113,7 +109,7 @@ class VsphereVmInterface(FbBaseObject):
         if value is None:
             self._mac_address = None
             return
-        val = value.strip() 
+        val = value.strip()
         if val == '':
             self._mac_address = None
             return
@@ -134,7 +130,7 @@ class VsphereVmInterface(FbBaseObject):
         if value is None:
             self._summary = None
             return
-        val = value.strip() 
+        val = value.strip()
         if val == '':
             self._summary = None
             return
