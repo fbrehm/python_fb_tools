@@ -24,21 +24,16 @@ import signal
 # Own modules
 from . import __version__ as __pkg_version__
 
-from .errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
+from .errors import FbAppError
 from .errors import FunctionNotImplementedError
 
 from .common import terminal_can_colors
-from .common import generate_password
 
 from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 
-#from .config import ConfigError, CrTfConfiguration
-
-#from .handler import CreateTerraformHandler
-
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -322,10 +317,6 @@ class BaseApplication(HandlingObject):
         res['quiet'] = self.quiet
         res['usage'] = self.usage
 
-        #res['config'] = None
-        #if self.config:
-        #    res['config'] = self.config.as_dict(short=short, show_secrets=self.force)
-
         return res
 
     # -------------------------------------------------------------------------
@@ -410,32 +401,8 @@ class BaseApplication(HandlingObject):
         """
 
         self.init_logging()
-        #try:
-        #    self.config.read()
-        #except ConfigError as e:
-        #    LOG.error("Error in configuration: {}".format(e))
-        #    self.exit(1)
-        #if self.config.verbose > self.verbose:
-        #    self.verbose = self.config.verbose
-        #if self.config.simulate:
-        #    self.simulate = True
 
         self.perform_arg_parser()
-
-        #self.handler.config = self.config
-        #if self.simulate:
-        #    self.handler.simulate = True
-        #if self.force:
-        #    self.handler.force = True
-
-        #self.handler.set_tz(self.config.tz_name)
-
-        #try:
-        #    self.handler.init_handlers()
-        #except (CommandNotFoundError, ExpectedHandlerError) as e:
-        #    LOG.error(str(e))
-        #    self.exit(5)
-        #self.handler.initialized = True
 
     # -------------------------------------------------------------------------
     def get_secret(self, prompt, item_name):
