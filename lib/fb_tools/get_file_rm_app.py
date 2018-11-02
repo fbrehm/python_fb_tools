@@ -9,8 +9,6 @@
 from __future__ import absolute_import
 
 # Standard modules
-import sys
-import os
 import logging
 import textwrap
 import datetime
@@ -23,13 +21,13 @@ import sre_constants
 # Third party modules
 
 # Own modules
-from .errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
+from .errors import FbAppError
 
 from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -97,7 +95,7 @@ class WrongDatePattern(GetFileRmError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg =  "The given pattern {!r} is not a valid date pattern".format(self.pattern)
+        msg = "The given pattern {!r} is not a valid date pattern".format(self.pattern)
         if self.add_info:
             msg += ': ' + self.add_info
         else:
@@ -128,8 +126,6 @@ class GetFileRmApplication(BaseApplication):
         """
         Initialisation of the get-file-to-remove application object.
         """
-
-        indent = ' ' * self.usage_term_len
 
         desc = textwrap.dedent("""\
             Returns a newline separated list of files generated from file globbing patterns
@@ -366,7 +362,7 @@ class GetFileRmApplication(BaseApplication):
         for fname in self.args.files:
 
             if self.verbose > 2:
-                 LOG.debug("Checking given file {!r} ...".format(fname))
+                LOG.debug("Checking given file {!r} ...".format(fname))
 
             given_paths = []
             single_fpath = pathlib.Path(fname)
@@ -400,7 +396,7 @@ class GetFileRmApplication(BaseApplication):
                 month = int(match.group('month'))
                 day = int(match.group('day'))
                 try:
-                    fdate = datetime.date(year, month, day)
+                    fdate = datetime.date(year, month, day)                         # noqa
                 except ValueError as e:
                     msg = "Date in file {fi!r} is not a valid date: {e}.".format(
                         fi=str(fpath), e=e)
@@ -504,7 +500,6 @@ class GetFileRmApplication(BaseApplication):
     def get_files_to_keep_year(self, files_assigned):
 
         files_to_keep = []
-        i = 0
 
         this_year = datetime.date.today().year
         last_year = this_year - self.keep_years
@@ -563,7 +558,6 @@ class GetFileRmApplication(BaseApplication):
     def get_files_to_keep_week(self, files_assigned):
 
         files_to_keep = []
-        i = 0
 
         today = datetime.date.today()
         this_monday = get_monday(today)
@@ -591,7 +585,6 @@ class GetFileRmApplication(BaseApplication):
     def get_files_to_keep_day(self, files_assigned):
 
         files_to_keep = []
-        i = 0
 
         today = datetime.date.today()
         tdelta = datetime.timedelta(self.keep_days - 1)
@@ -674,8 +667,8 @@ class GetFileRmApplication(BaseApplication):
             LOG.debug("Explored and assigned files:\n{}".format(pp(files)))
         return files
 
-# =============================================================================
 
+# =============================================================================
 if __name__ == "__main__":
 
     pass
@@ -683,4 +676,3 @@ if __name__ == "__main__":
 # =============================================================================
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-
