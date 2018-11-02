@@ -46,7 +46,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.9.7'
+__version__ = '0.10.1'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -477,83 +477,96 @@ class VsphereServer(BaseVsphereHandler):
                         n=vm_name, s=pp(child.config)))
                 if as_vmw_obj:
                     return child
-                vm_info = {}
-                vm_info['name'] = vm_config.name
-                vm_info['tf_name'] = 'vm_' + RE_TF_NAME.sub('_', vm_config.name.lower())
-                vm_info['cluster'] = None
-                if child.resourcePool:
-                    vm_info['cluster'] = child.resourcePool.owner.name
-                vm_info['path'] = cur_path
-                vm_info['memorySizeMB'] = vm_config.memorySizeMB
-                vm_info['numCpu'] = vm_config.numCpu
-                vm_info['numEthernetCards'] = vm_config.numEthernetCards
-                vm_info['numVirtualDisks'] = vm_config.numVirtualDisks
-                vm_info['template'] = vm_config.template
-                vm_info['guestFullName'] = vm_config.guestFullName
-                vm_info['guestId'] = vm_config.guestId
-                vm_info['vm_tools'] = {}
-                if child.guest:
-                    vm_info['vm_tools']['install_type'] = None
-                    if hasattr(child.guest, 'toolsInstallType'):
-                        vm_info['vm_tools']['install_type'] = child.guest.toolsInstallType
-                    vm_info['vm_tools']['state'] = None
-                    if hasattr(child.guest, 'toolsRunningStatus'):
-                        vm_info['vm_tools']['state'] = child.guest.toolsRunningStatus
-                    else:
-                        vm_info['vm_tools']['state'] = child.guest.toolsStatus
-                    vm_info['vm_tools']['version'] = child.guest.toolsVersion
-                    vm_info['vm_tools']['version_state'] = None
-                    if hasattr(child.guest, 'toolsVersionStatus2'):
-                        vm_info['vm_tools']['version_state'] = child.guest.toolsVersionStatus2
-                    else:
-                        vm_info['vm_tools']['version_state'] = child.guest.toolsVersionStatus
-                vm_info['host'] = None
-                if child.runtime.host:
-                    vm_info['host'] = child.runtime.host.name
-                vm_info['instanceUuid'] = vm_config.instanceUuid
-                vm_info['power_state'] = child.runtime.powerState
-                if vm_config.instanceUuid:
-                    vm_info['instanceUuid'] = uuid.UUID(vm_config.instanceUuid)
-                vm_info['uuid'] = vm_config.uuid
-                if vm_config.uuid:
-                    vm_info['uuid'] = uuid.UUID(vm_config.uuid)
-                vm_info['vmPathName'] = vm_config.vmPathName
-                vm_info['cfg_version'] = child.config.version
-                vm_info['disks'] = {}
-                for device in child.config.hardware.device:
-                    if not isinstance(device, vim.vm.device.VirtualDisk):
-                        continue
-                    unit_nr = device.unitNumber
-                    disk = {
-                        'label': device.deviceInfo.label,
-                        'unitNumber': unit_nr,
-                        'capacityInKB': device.capacityInKB,
-                        'capacityInBytes': device.capacityInBytes,
-                        'uuid': device.backing.uuid,
-                        'fileName': device.backing.fileName
-                    }
-                    disk['capacityInGB'] = device.capacityInKB / 1024 / 1024
-                    if device.backing.uuid:
-                        disk['uuid'] = uuid.UUID(device.backing.uuid)
-                    vm_info['disks'][unit_nr] = disk
-                vm_info['interfaces'] = {}
-                for device in child.config.hardware.device:
-                    if not isinstance(device, vim.vm.device.VirtualEthernetCard):
-                        continue
-                    unit_nr = device.unitNumber
-                    iface = {
-                        'unitNumber': unit_nr,
-                        'class': device.__class__.__name__,
-                        'addressType': device.addressType,
-                        'macAddress': device.macAddress,
-                        'backing_device': device.backing.deviceName,
-                        'connected': device.connectable.connected,
-                        'status': device.connectable.status,
-                    }
-                    vm_info['interfaces'][unit_nr] = iface
-                return vm_info
+
+                return self._dict_from_vim_obj(child, cur_path)
 
         return None
+
+    # -------------------------------------------------------------------------
+    def _dict_from_vim_obj(self, vm, cur_path):
+
+        if not isinstance(vm, vim.VirtualMachine):
+            msg = "Given parameter {!r} is not a vim.VirtualMachine object".format(vm)
+            raise TypeError(msg)
+
+        summary = vm.summary
+        vm_config = summary.config
+
+        vm_info = {}
+        vm_info['name'] = vm_config.name
+        vm_info['tf_name'] = 'vm_' + RE_TF_NAME.sub('_', vm_config.name.lower())
+        vm_info['cluster'] = None
+        if vm.resourcePool:
+            vm_info['cluster'] = vm.resourcePool.owner.name
+        vm_info['path'] = cur_path
+        vm_info['memorySizeMB'] = vm_config.memorySizeMB
+        vm_info['numCpu'] = vm_config.numCpu
+        vm_info['numEthernetCards'] = vm_config.numEthernetCards
+        vm_info['numVirtualDisks'] = vm_config.numVirtualDisks
+        vm_info['template'] = vm_config.template
+        vm_info['guestFullName'] = vm_config.guestFullName
+        vm_info['guestId'] = vm_config.guestId
+        vm_info['vm_tools'] = {}
+        if vm.guest:
+            vm_info['vm_tools']['install_type'] = None
+            if hasattr(vm.guest, 'toolsInstallType'):
+                vm_info['vm_tools']['install_type'] = vm.guest.toolsInstallType
+            vm_info['vm_tools']['state'] = None
+            if hasattr(vm.guest, 'toolsRunningStatus'):
+                vm_info['vm_tools']['state'] = vm.guest.toolsRunningStatus
+            else:
+                vm_info['vm_tools']['state'] = vm.guest.toolsStatus
+            vm_info['vm_tools']['version'] = vm.guest.toolsVersion
+            vm_info['vm_tools']['version_state'] = None
+            if hasattr(vm.guest, 'toolsVersionStatus2'):
+                vm_info['vm_tools']['version_state'] = vm.guest.toolsVersionStatus2
+            else:
+                vm_info['vm_tools']['version_state'] = vm.guest.toolsVersionStatus
+        vm_info['host'] = None
+        if vm.runtime.host:
+            vm_info['host'] = vm.runtime.host.name
+        vm_info['instanceUuid'] = vm_config.instanceUuid
+        vm_info['power_state'] = vm.runtime.powerState
+        if vm_config.instanceUuid:
+            vm_info['instanceUuid'] = uuid.UUID(vm_config.instanceUuid)
+        vm_info['uuid'] = vm_config.uuid
+        if vm_config.uuid:
+            vm_info['uuid'] = uuid.UUID(vm_config.uuid)
+        vm_info['vmPathName'] = vm_config.vmPathName
+        vm_info['cfg_version'] = vm.config.version
+        vm_info['disks'] = {}
+        for device in vm.config.hardware.device:
+            if not isinstance(device, vim.vm.device.VirtualDisk):
+                continue
+            unit_nr = device.unitNumber
+            disk = {
+                'label': device.deviceInfo.label,
+                'unitNumber': unit_nr,
+                'capacityInKB': device.capacityInKB,
+                'capacityInBytes': device.capacityInBytes,
+                'uuid': device.backing.uuid,
+                'fileName': device.backing.fileName
+            }
+            disk['capacityInGB'] = device.capacityInKB / 1024 / 1024
+            if device.backing.uuid:
+                disk['uuid'] = uuid.UUID(device.backing.uuid)
+            vm_info['disks'][unit_nr] = disk
+        vm_info['interfaces'] = {}
+        for device in vm.config.hardware.device:
+            if not isinstance(device, vim.vm.device.VirtualEthernetCard):
+                continue
+            unit_nr = device.unitNumber
+            iface = {
+                'unitNumber': unit_nr,
+                'class': device.__class__.__name__,
+                'addressType': device.addressType,
+                'macAddress': device.macAddress,
+                'backing_device': device.backing.deviceName,
+                'connected': device.connectable.connected,
+                'status': device.connectable.status,
+            }
+            vm_info['interfaces'][unit_nr] = iface
+        return vm_info
 
     # -------------------------------------------------------------------------
     def get_vms(self, re_name, is_template=None, disconnect=False):
@@ -601,7 +614,7 @@ class VsphereServer(BaseVsphereHandler):
 
         if hasattr(child, 'childEntity'):
             if depth > self.max_search_depth:
-                return vms
+                return vm_list
             for sub_child in child.childEntity:
                 vms = self._get_vms(sub_child, re_name, is_template, depth + 1)
                 if vms:
@@ -992,6 +1005,7 @@ class VsphereServer(BaseVsphereHandler):
                     if len(disks) > 6:
                         msg = "There may be created at most 6 disks, but {} were given.".format(
                             len(disks))
+                        raise HandlerError(msg)
                     for disk in disks:
                         size = int(disk)
                         if size <= 0:
@@ -1037,8 +1051,8 @@ class VsphereServer(BaseVsphereHandler):
             disk_spec.device = vim.vm.device.VirtualDisk()
             disk_spec.device.backing = vim.vm.device.VirtualDisk.FlatVer2BackingInfo()
             disk_spec.device.backing.diskMode = 'persistent'
-            disk_spec.device.backing.fileName = '{p}template-sd{l}.vmdk'.format(
-                p=datastore_path, l=letter)
+            disk_spec.device.backing.fileName = '{p}template-sd{ltr}.vmdk'.format(
+                p=datastore_path, ltr=letter)
             disk_spec.device.unitNumber = i
             # disk_spec.device.key = 1
             disk_spec.device.capacityInKB = size_kb
