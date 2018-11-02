@@ -175,6 +175,7 @@ class TimeoutCreateVmError(VSphereExpectedError):
             vm=self.vm, to=self.timeout)
         return msg
 
+
 # =============================================================================
 if __name__ == "__main__":
 

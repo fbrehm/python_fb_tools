@@ -27,7 +27,7 @@ from ..handling_obj import HandlingObject
 
 from .errors import VSphereCannotConnectError
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_HOST = 'vcs01.ppbrln.internal'
@@ -38,7 +38,7 @@ DEFAULT_CLUSTER = 'vmcc-l105-01'
 DEFAULT_TZ_NAME = 'Europe/Berlin'
 
 # =============================================================================
-# @add_metaclass(ABCMeta)
+@add_metaclass(ABCMeta)
 class BaseVsphereHandler(HandlingObject):
     """
     Base class for a VSphere handler object.

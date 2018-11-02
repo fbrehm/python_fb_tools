@@ -23,7 +23,7 @@ from ..common import pp
 from .object import VsphereObject
 
 
-__version__ = '0.4.4'
+__version__ = '0.4.5'
 LOG = logging.getLogger(__name__)
 
 
@@ -224,7 +224,7 @@ class VsphereDatastore(VsphereObject):
             return 'SAS'
 
         if '-ssd-' in name.lower():
-            return  'SSD'
+            return 'SSD'
 
         if '-sata-' in name.lower():
             return 'SATA'
