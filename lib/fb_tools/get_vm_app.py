@@ -9,15 +9,10 @@
 from __future__ import absolute_import
 
 # Standard modules
-import sys
-import os
 import logging
-import re
-import traceback
 import textwrap
 import argparse
 import getpass
-import argparse
 import pathlib
 
 # Third party modules
@@ -25,17 +20,17 @@ import pathlib
 # Own modules
 from . import __version__ as GLOBAL_VERSION
 
-from .common import pp, caller_search_path
+from .common import pp
 
 from .app import BaseApplication
 
-from .errors import FbAppError, ExpectedHandlerError, CommandNotFoundError
+from .errors import FbAppError
 
 from .get_vm_cfg import GetVmConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -146,7 +141,6 @@ class GetVmApplication(BaseApplication):
         self.config = GetVmConfiguration(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             config_file=self.cfg_file)
-        #self.config.config_file = self.cfg_file
 
         self.config.read()
         if self.config.verbose > self.verbose:
@@ -279,8 +273,8 @@ class GetVmApplication(BaseApplication):
 
         return ret
 
-# =============================================================================
 
+# =============================================================================
 if __name__ == "__main__":
 
     pass
