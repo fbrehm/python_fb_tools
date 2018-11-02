@@ -9,34 +9,20 @@
 from __future__ import absolute_import, print_function
 
 # Standard module
-import os
 import logging
-import re
-import socket
-import ipaddress
-import shutil
-import glob
 import stat
-import textwrap
-import copy
-import sys
 import pathlib
-
-from subprocess import PIPE
 
 # Third party modules
 import pytz
 import six
 
 # Own modules
-from ..common import pp, to_bool
-
-from ..errors import HandlerError, ExpectedHandlerError
-from ..errors import CommandNotFoundError
+from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject
 
-__version__ = '0.6.3'
+__version__ = '0.6.4'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -145,9 +131,7 @@ class BaseHandler(HandlingObject):
         raise HandlerError("Method __call__() must be overridden in descendant classes.")
 
 
-
 # =============================================================================
-
 if __name__ == "__main__":
 
     pass
