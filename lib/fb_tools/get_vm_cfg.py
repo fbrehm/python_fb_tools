@@ -9,17 +9,14 @@
 from __future__ import absolute_import
 
 # Standard module
-import os
 import logging
-import re
 
 # Third party modules
-import six
 
 # Own modules
 from .config import ConfigError, BaseConfiguration
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 LOG = logging.getLogger(__name__)
 
 
