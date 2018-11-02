@@ -22,7 +22,7 @@ from .common import pp, to_bytes
 
 from .errors import FbError
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -258,7 +258,6 @@ class FbBaseObject(object):
 
         """
 
-        #msg = 'Exception happened: '
         msg = str(error_message).strip()
         if not msg:
             msg = 'undefined error.'
