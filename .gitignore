@@ -4,6 +4,7 @@
 *.egg
 *-stamp
 *.bak
+*.egg-info
 build
 trace
 MANIFEST
@@ -14,3 +15,4 @@ MANIFEST
 tmp/*
 venv/*
 etc/*.ini
+lib/fb_tools/local_version.py

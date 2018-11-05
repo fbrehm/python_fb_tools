@@ -4,3 +4,5 @@ six
 pytz
 flake8
 pathlib
+setuptools
+wheel
