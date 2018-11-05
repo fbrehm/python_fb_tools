@@ -81,6 +81,86 @@ class TestFbCommon(FbToolsTestcase):
 
             self.assertEqual(tgt, result)
 
+    # -------------------------------------------------------------------------
+    def test_to_utf8(self):
+
+        log.info("Testing to_utf8() ...")
+
+        from fb_tools.common import to_utf8
+
+        data = []
+        data.append((None, None))
+        data.append((1, 1))
+
+        if sys.version_info[0] <= 2:
+            data.append((u'a', 'a'))
+            data.append(('a', 'a'))
+        else:
+            data.append(('a', b'a'))
+            data.append((b'a', b'a'))
+
+        for pair in data:
+
+            src = pair[0]
+            tgt = pair[1]
+            result = to_utf8(src)
+            log.debug(
+                "Testing to_utf8(%r) => %r, result %r",
+                src, tgt, result)
+
+            if sys.version_info[0] <= 2:
+                if isinstance(src, (str, unicode)):
+                    self.assertIsInstance(result, str)
+                else:
+                    self.assertNotIsInstance(result, (str, unicode))
+            else:
+                if isinstance(src, (str, bytes)):
+                    self.assertIsInstance(result, bytes)
+                else:
+                    self.assertNotIsInstance(result, (str, bytes))
+
+            self.assertEqual(tgt, result)
+
+    # -------------------------------------------------------------------------
+    def test_to_str(self):
+
+        log.info("Testing to_str() ...")
+
+        from fb_tools.common import to_str
+
+        data = []
+        data.append((None, None))
+        data.append((1, 1))
+
+        if sys.version_info[0] <= 2:
+            data.append((u'a', 'a'))
+            data.append(('a', 'a'))
+        else:
+            data.append(('a', 'a'))
+            data.append((b'a', 'a'))
+
+        for pair in data:
+
+            src = pair[0]
+            tgt = pair[1]
+            result = to_str(src)
+            log.debug(
+                "Testing to_str(%r) => %r, result %r",
+                src, tgt, result)
+
+            if sys.version_info[0] <= 2:
+                if isinstance(src, (str, unicode)):
+                    self.assertIsInstance(result, str)
+                else:
+                    self.assertNotIsInstance(result, (str, unicode))
+            else:
+                if isinstance(src, (str, bytes)):
+                    self.assertIsInstance(result, str)
+                else:
+                    self.assertNotIsInstance(result, (str, bytes))
+
+            self.assertEqual(tgt, result)
+
 # =============================================================================
 
 if __name__ == '__main__':
@@ -96,8 +176,8 @@ if __name__ == '__main__':
 
     suite.addTest(TestFbCommon('test_import', verbose))
     suite.addTest(TestFbCommon('test_to_unicode', verbose))
-#    suite.addTest(TestFbCommon('test_to_utf8', verbose))
-#    suite.addTest(TestFbCommon('test_to_str', verbose))
+    suite.addTest(TestFbCommon('test_to_utf8', verbose))
+    suite.addTest(TestFbCommon('test_to_str', verbose))
 #    suite.addTest(TestFbCommon('test_human2mbytes', verbose))
 #    suite.addTest(TestFbCommon('test_human2mbytes_l10n', verbose))
 #    suite.addTest(TestFbCommon('test_bytes2human', verbose))
