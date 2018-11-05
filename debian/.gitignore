@@ -1,0 +1,7 @@
+*.debhelper
+*.log
+*.substvars
+files
+fb-tools
+python-fb-tools
+python3-fb-tools
