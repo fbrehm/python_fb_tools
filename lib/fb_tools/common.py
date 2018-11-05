@@ -25,7 +25,7 @@ import six
 
 # Own modules
 
-__version__ = '0.6.8'
+__version__ = '0.7.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -50,13 +50,16 @@ RE_FQDN = re.compile(
     r'(?=^.{4,253}$)(^((?!-)[a-z0-9-]{1,63}(?<!-)\.)+[a-z]{2,63}\.?$)',
     re.IGNORECASE)
 
-CUR_RADIX = '.'
-CUR_THOUSEP = ','
+CUR_RADIX = locale.nl_langinfo(locale.RADIXCHAR)
+CUR_THOUSEP = locale.nl_langinfo(locale.THOUSEP)
 H2MB_PAT = r'^\s*\+?(\d+(?:' + re.escape(CUR_THOUSEP) + r'\d+)*(?:'
 H2MB_PAT += re.escape(CUR_RADIX) + r'\d*)?)\s*(\S+)?'
 H2MB_RE = re.compile(H2MB_PAT)
 RADIX_RE = re.compile(re.escape(CUR_RADIX))
 THOUSEP_RE = re.compile(re.escape(CUR_THOUSEP))
+
+RE_B2H_FINAL_ZEROES = re.compile(r'0+$')
+RE_B2H_FINAL_SIGNS = re.compile(r'\D+$')
 
 RE_UNIT_BYTES = re.compile(r'^\s*(?:b(?:yte)?)?\s*$', re.IGNORECASE)
 RE_UNIT_KBYTES = re.compile(r'^\s*k(?:[bB](?:[Yy][Tt][Ee])?)?\s*$')
@@ -457,6 +460,33 @@ def human2mbytes(value, si_conform=False, as_float=False):
     radix = '.'
     radix = re.escape(radix)
 
+    c_radix = locale.nl_langinfo(locale.RADIXCHAR)
+    global CUR_RADIX
+    global H2MB_PAT
+    global H2MB_RE
+    global RADIX_RE
+    global CUR_THOUSEP
+    global THOUSEP_RE
+
+    c_thousep = locale.nl_langinfo(locale.THOUSEP)
+    if c_thousep != CUR_THOUSEP:
+        CUR_THOUSEP = c_thousep
+        # log.debug("Current separator character for thousands is now %r.",
+        #         CUR_THOUSEP)
+        THOUSEP_RE = re.compile(re.escape(CUR_THOUSEP))
+
+    if c_radix != CUR_RADIX:
+        CUR_RADIX = c_radix
+        # log.debug("Current decimal radix is now %r.", CUR_RADIX)
+        H2MB_PAT = r'^\s*\+?(\d+(?:' + re.escape(CUR_RADIX) + r'\d*)?)\s*(\S+)?'
+        if CUR_THOUSEP:
+            H2MB_PAT = (
+                r'^\s*\+?(\d+(?:' + re.escape(CUR_THOUSEP) + r'\d+)*(?:' +
+                re.escape(CUR_RADIX) + r'\d*)?)\s*(\S+)?')
+        H2MB_RE = re.compile(H2MB_PAT)
+        RADIX_RE = re.compile(re.escape(CUR_RADIX))
+    # log.debug("Current pattern: %r", H2MB_PAT)
+
     value_raw = ''
     unit = None
     match = H2MB_RE.search(value)
@@ -554,6 +584,90 @@ def _get_factor_human2bytes(unit, factor_bin, factor_si):
 
     return factor
 
+
+# =============================================================================
+def bytes2human(
+        value, si_conform=False, precision=None, format_str='{value} {unit}'):
+    """
+    Converts the given value in bytes into a human readable format.
+    The limit for electing the next higher prefix is at 1500.
+
+    It raises a ValueError on invalid values.
+
+    @param value: the value to convert
+    @type value: long
+    @param si_conform: use factor 1000 instead of 1024 for kB a.s.o.,
+                       if do so, than the units are for example MB instead MiB.
+    @type si_conform: bool
+    @param precision: how many digits after the decimal point have to stay
+                      in the result
+    @type precision: int
+    @param format_str: a format string to format the result.
+    @type format_str: str
+
+    @return: the value in a human readable format together with the unit
+    @rtype: str
+
+    """
+
+    val = int(value)
+
+    if not val:
+        return format_str.format(value='0', unit='Bytes')
+
+    base = 1024
+    prefixes = {
+        1: 'KiB',
+        2: 'MiB',
+        3: 'GiB',
+        4: 'TiB',
+        5: 'PiB',
+        6: 'EiB',
+        7: 'ZiB',
+        8: 'YiB',
+    }
+    if si_conform:
+        base = 1000
+        prefixes = {
+            1: 'kB',
+            2: 'MB',
+            3: 'GB',
+            4: 'TB',
+            5: 'PB',
+            6: 'EB',
+            7: 'ZB',
+            8: 'YB',
+        }
+
+    exponent = 0
+
+    float_val = float(val)
+    while float_val >= (2 * base) and exponent < 8:
+        float_val /= base
+        exponent += 1
+
+    unit = ''
+    if not exponent:
+        precision = None
+        unit = 'Bytes'
+        if val == 1:
+            unit = 'Byte'
+        value_str = locale.format_string('%d', val)
+        return format_str.format(value=value_str, unit=unit)
+
+    unit = prefixes[exponent]
+    value_str = ''
+    if precision is None:
+        value_str = locale.format_string('%f', float_val)
+        value_str = RE_B2H_FINAL_ZEROES.sub('', value_str)
+        value_str = RE_B2H_FINAL_SIGNS.sub('', value_str)
+    else:
+        value_str = locale.format_string('%.*f', (precision, float_val))
+
+    if not exponent:
+        return value_str
+
+    return format_str.format(value=value_str, unit=unit)
 
 # =============================================================================
 def generate_password(length=12):
