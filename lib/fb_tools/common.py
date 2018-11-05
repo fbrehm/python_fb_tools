@@ -25,7 +25,7 @@ import six
 
 # Own modules
 
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -480,9 +480,8 @@ def human2mbytes(value, si_conform=False, as_float=False):
         # log.debug("Current decimal radix is now %r.", CUR_RADIX)
         H2MB_PAT = r'^\s*\+?(\d+(?:' + re.escape(CUR_RADIX) + r'\d*)?)\s*(\S+)?'
         if CUR_THOUSEP:
-            H2MB_PAT = (
-                r'^\s*\+?(\d+(?:' + re.escape(CUR_THOUSEP) + r'\d+)*(?:' +
-                re.escape(CUR_RADIX) + r'\d*)?)\s*(\S+)?')
+            H2MB_PAT = r'^\s*\+?(\d+(?:' + re.escape(CUR_THOUSEP) + r'\d+)*(?:'
+            H2MB_PAT += re.escape(CUR_RADIX) + r'\d*)?)\s*(\S+)?'
         H2MB_RE = re.compile(H2MB_PAT)
         RADIX_RE = re.compile(re.escape(CUR_RADIX))
     # log.debug("Current pattern: %r", H2MB_PAT)

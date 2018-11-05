@@ -24,7 +24,7 @@ from ..common import pp
 from .object import VsphereObject
 
 
-__version__ = '0.4.4'
+__version__ = '0.4.5'
 LOG = logging.getLogger(__name__)
 
 
@@ -62,7 +62,7 @@ class VsphereNetwork(VsphereObject):
             try:
                 net = ipaddress.ip_network(ip)
                 self._network = net
-            except ValueError as e:
+            except ValueError:
                 LOG.error("Could not get IP network from network name {!r}.".format(self.name))
 
         if not self.network:
@@ -309,8 +309,8 @@ class VsphereNetworkDict(collections.MutableMapping):
             net_y = self[y]
             if net_x.network is None and net_y.network is None:
                 return (
-                    (net_x.name.lower() > net_y.name.lower()) -
-                    (net_x.name.lower() < net_y.name.lower()))
+                    (net_x.name.lower() > net_y.name.lower()) - (
+                        net_x.name.lower() < net_y.name.lower()))
             if net_x.network is None:
                 return -1
             if net_y.network is None:
