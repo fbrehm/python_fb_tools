@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
-@copyright: © 2018 by Frank Brehm, Publicies Pixelpark GmbH, Berlin
+@contact: frank@brehm-online.com
+@copyright: © 2018 Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
@@ -22,7 +22,7 @@ from .common import pp, to_bytes
 
 from .errors import FbError
 
-__version__ = '0.3.2'
+__version__ = '1.0.1'
 
 LOG = logging.getLogger(__name__)
 

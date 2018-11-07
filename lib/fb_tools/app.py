@@ -33,7 +33,7 @@ from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 
-__version__ = '0.1.1'
+__version__ = '1.0.1'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {

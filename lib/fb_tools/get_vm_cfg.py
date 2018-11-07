@@ -16,7 +16,7 @@ import logging
 # Own modules
 from .config import ConfigError, BaseConfiguration
 
-__version__ = '0.1.2'
+__version__ = '1.0.1'
 LOG = logging.getLogger(__name__)
 
 

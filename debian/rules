@@ -1,0 +1,55 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+BIN_PKGNAME  := fb-tools
+LIB2_PKGNAME := python-fb-tools
+LIB3_PKGNAME := python3-fb-tools
+
+INSTALL_DIR_BIN  := $(CURDIR)/debian/$(BIN_PKGNAME)
+INSTALL_DIR_LIB2 := $(CURDIR)/debian/$(LIB2_PKGNAME)
+INSTALL_DIR_LIB3 := $(CURDIR)/debian/$(LIB3_PKGNAME)
+
+PYTHON2S := $(shell pyversions -vr || true)
+PYTHON3S := $(shell py3versions -vr || true)
+
+%:
+	dh $@ --with python2,python3
+
+override_dh_auto_clean:
+	@echo
+	@echo "-------------------------------------------"
+	@echo "Cleaning ..."
+	@echo
+	dh_auto_clean
+	rm -rf dist
+#	rm -fv man/*
+#	rm -fv tmp/*
+
+override_dh_auto_build:
+	@echo ""
+	@echo "Building Python 2 stuff ..."
+	set -e && for pyvers in $(PYTHON2S); do python$$pyvers setup.py build; done
+	@echo ""
+	@echo "Building Python 3 stuff ..."
+	set -e && for pyvers in $(PYTHON3S); do python$$pyvers setup.py build; done
+#	@echo ""
+#	./generate-manpages.sh
+
+override_dh_auto_install:
+	@echo ""
+	@echo "Installing Python 2 stuff ..."
+	set -e && for pyvers in $(PYTHON2S); do python$$pyvers setup.py install --root=$(INSTALL_DIR_LIB2) --install-layout=deb; done
+	rm -r $(INSTALL_DIR_LIB2)/usr/bin
+	@echo ""
+	@echo "Installing Python 3 stuff ..."
+	set -e && for pyvers in $(PYTHON3S); do python$$pyvers setup.py install --root=$(INSTALL_DIR_LIB3) --install-layout=deb; done
+	rm -r $(INSTALL_DIR_LIB3)/usr/bin
+	@echo ""
+	@echo "Installing bin package ..."
+	install -d $(INSTALL_DIR_BIN)/usr/bin
+	install -m 0755 bin/get-file-to-remove $(INSTALL_DIR_BIN)/usr/bin/get-file-to-remove
+	install -m 0755 bin/get-vmware-vm-info $(INSTALL_DIR_BIN)/usr/bin/get-vmware-vm-info
+#	@echo ""
+#	@echo "Manpages ..."
+#	dh_installman
+

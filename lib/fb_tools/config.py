@@ -26,7 +26,7 @@ from .errors import FbError
 
 from .obj import FbBaseObject
 
-__version__ = '0.2.1'
+__version__ = '1.0.1'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 

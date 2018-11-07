@@ -22,7 +22,7 @@ from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject
 
-__version__ = '0.6.4'
+__version__ = '1.0.1'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
