@@ -159,8 +159,8 @@ class TestFbBaseObject(FbToolsTestcase):
         self.assertIsInstance(di, dict)
         self.assertIsInstance(obj.obj2.as_dict(), dict)
 
-# =============================================================================
 
+# =============================================================================
 if __name__ == '__main__':
 
     verbose = get_arg_verbose()

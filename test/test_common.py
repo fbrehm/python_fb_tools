@@ -39,7 +39,7 @@ class TestFbCommon(FbToolsTestcase):
     def test_import(self):
 
         LOG.info("Testing import of fb_tools.common ...")
-        import fb_tools.common                                  # noqa
+        import fb_tools.common                                          # noqa
 
     # -------------------------------------------------------------------------
     def test_to_unicode(self):
@@ -69,10 +69,10 @@ class TestFbCommon(FbToolsTestcase):
                 src, tgt, result)
 
             if sys.version_info[0] <= 2:
-                if isinstance(src, (str, unicode)):
-                    self.assertIsInstance(result, unicode)
+                if isinstance(src, (str, unicode)):                     # noqa
+                    self.assertIsInstance(result, unicode)              # noqa
                 else:
-                    self.assertNotIsInstance(result, (str, unicode))
+                    self.assertNotIsInstance(result, (str, unicode))    # noqa
             else:
                 if isinstance(src, (str, bytes)):
                     self.assertIsInstance(result, str)
@@ -109,10 +109,10 @@ class TestFbCommon(FbToolsTestcase):
                 src, tgt, result)
 
             if sys.version_info[0] <= 2:
-                if isinstance(src, (str, unicode)):
+                if isinstance(src, (str, unicode)):                     # noqa
                     self.assertIsInstance(result, str)
                 else:
-                    self.assertNotIsInstance(result, (str, unicode))
+                    self.assertNotIsInstance(result, (str, unicode))    # noqa
             else:
                 if isinstance(src, (str, bytes)):
                     self.assertIsInstance(result, bytes)
@@ -149,10 +149,10 @@ class TestFbCommon(FbToolsTestcase):
                 src, tgt, result)
 
             if sys.version_info[0] <= 2:
-                if isinstance(src, (str, unicode)):
+                if isinstance(src, (str, unicode)):                     # noqa
                     self.assertIsInstance(result, str)
                 else:
-                    self.assertNotIsInstance(result, (str, unicode))
+                    self.assertNotIsInstance(result, (str, unicode))    # noqa
             else:
                 if isinstance(src, (str, bytes)):
                     self.assertIsInstance(result, str)
@@ -171,7 +171,7 @@ class TestFbCommon(FbToolsTestcase):
         loc = locale.getlocale()    # get current locale
         encoding = loc[1]
         LOG.debug("Current locale is %r.", loc)
-        german = ('de_DE', encoding)                                # noqa
+        german = ('de_DE', encoding)                                    # noqa
 
         LOG.debug("Setting to locale 'C' to be secure.")
         locale.setlocale(locale.LC_ALL, 'C')
@@ -229,14 +229,14 @@ class TestFbCommon(FbToolsTestcase):
 
         # Switch back to saved locales
         LOG.debug("Switching back to saved locales %r.", loc)
-        locale.setlocale(locale.LC_ALL, loc)    # restore saved locale
+        locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
 
     # -------------------------------------------------------------------------
     def test_human2mbytes_l10n(self):
 
         LOG.info("Testing localisation of human2mbytes() from fb_tools.common ...")
 
-        loc = locale.getlocale()    # get current locale
+        loc = locale.getlocale()                                        # get current locale
         encoding = loc[1]
         LOG.debug("Current locale is %r.", loc)
         german = ('de_DE', encoding)
@@ -318,7 +318,7 @@ class TestFbCommon(FbToolsTestcase):
         loc = locale.getlocale()    # get current locale
         encoding = loc[1]
         LOG.debug("Current locale is %r.", loc)
-        german = ('de_DE', encoding)                                # noqa
+        german = ('de_DE', encoding)                                    # noqa
 
         LOG.debug("Setting to locale 'C' to be secure.")
         locale.setlocale(locale.LC_ALL, 'C')
@@ -372,7 +372,7 @@ class TestFbCommon(FbToolsTestcase):
 
         # Switch back to saved locales
         LOG.debug("Switching back to saved locales %r.", loc)
-        locale.setlocale(locale.LC_ALL, loc)    # restore saved locale
+        locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
 
     # -------------------------------------------------------------------------
     def test_to_bool(self):
@@ -466,7 +466,7 @@ class TestFbCommon(FbToolsTestcase):
             self.assertEqual(expected, result)
 
         # Switch to german locales
-        loc = locale.getlocale()    # get current locale
+        loc = locale.getlocale()                                        # get current locale
         encoding = loc[1]
         LOG.debug("Current locale is %r.", loc)
         german = ('de_DE', encoding)
@@ -488,7 +488,7 @@ class TestFbCommon(FbToolsTestcase):
 
         # Switch back to saved locales
         LOG.debug("Switching back to saved locales %r.", loc)
-        locale.setlocale(locale.LC_ALL, loc)    # restore saved locale
+        locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
 
 
 # =============================================================================
