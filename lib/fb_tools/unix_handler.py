@@ -17,7 +17,7 @@ from numbers import Number
 
 # Own modules
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 
 
 # =============================================================================
@@ -288,7 +288,7 @@ class UnixSyslogHandler(logging.Handler):
             syslog.syslog(level_id, msg_send)
         except (KeyboardInterrupt, SystemExit):
             raise
-        except:
+        except Exception:
             self.handleError(record)
 
 
