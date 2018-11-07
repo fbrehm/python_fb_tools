@@ -25,7 +25,7 @@ import six
 
 # Own modules
 
-__version__ = '0.7.2'
+__version__ = '1.0.1'
 
 LOG = logging.getLogger(__name__)
 

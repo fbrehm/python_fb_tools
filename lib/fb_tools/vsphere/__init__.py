@@ -27,7 +27,7 @@ from ..handling_obj import HandlingObject
 
 from .errors import VSphereCannotConnectError
 
-__version__ = '0.3.3'
+__version__ = '1.0.1'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_HOST = 'vcs01.ppbrln.internal'

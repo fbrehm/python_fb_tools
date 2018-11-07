@@ -27,7 +27,7 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '0.5.2'
+__version__ = '1.0.1'
 LOG = logging.getLogger(__name__)
 
 

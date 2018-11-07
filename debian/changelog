@@ -1,5 +1,26 @@
-fb-tools (0.4.0) UNRELEASED; urgency=medium
+fb-tools (1.0.1) all; urgency=medium
+
+  * First Debian setup files
+  * Adding debian/source/format
+  * Adding debian/rules
+  * Setting permissions to debian/rules
+  * First tests.
+  * Adding tests to test/test_common.py
+  * Adding functions bytes2human() and improving function human2mbytes() in lib/fb_tools/common.py
+  * Completing tests in test/test_common.py
+  * Applying flake8 rules
+  * Adding dark mode of colored logging formatter
+  * Some cosmetic changes
+  * Adding test/test_colored.py
+  * Adding lib/fb_tools/syslog_handler.py, lib/fb_tools/unix_handler.py and test/test_syslog.py
+  * Adding test/test_base_object.py
+  * Minor change to lib/fb_tools/unix_handler.py
+  * Applying flake8 rules
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 07 Nov 2018 15:26:49 +0100
+
+fb-tools (0.4.0) all; urgency=medium
 
   * Initial release.
 
- -- Frank Brehm <frank@brehm-online.com>  Mon, 05 Nov 2018 16:11:20 +0100
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 07 Nov 2018 15:18:30 +0100

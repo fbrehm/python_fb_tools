@@ -30,7 +30,7 @@ from .get_vm_cfg import GetVmConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '0.2.3'
+__version__ = '1.0.1'
 LOG = logging.getLogger(__name__)
 
 

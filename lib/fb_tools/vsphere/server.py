@@ -46,7 +46,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '0.10.1'
+__version__ = '1.0.1'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'

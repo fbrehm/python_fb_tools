@@ -22,7 +22,7 @@ from .common import pp, to_bytes
 
 from .errors import FbError
 
-__version__ = '0.3.2'
+__version__ = '1.0.1'
 
 LOG = logging.getLogger(__name__)
 

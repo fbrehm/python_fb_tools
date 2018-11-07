@@ -12,7 +12,7 @@ import copy
 
 # Own modules
 
-__version__ = '0.2.1'
+__version__ = '1.0.1'
 
 # =============================================================================
 # Color coding module variables and helper functions
