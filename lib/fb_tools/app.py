@@ -33,7 +33,7 @@ from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -637,7 +637,7 @@ class BaseApplication(HandlingObject):
         )
         general_group.add_argument(
             "-V", '--version', action='version',
-            version='Version of %(prog)s: {}'.format(__pkg_version__),
+            version='Version of %(prog)s: {}'.format(self.version),
             help="Show program's version number and exit"
         )
 
