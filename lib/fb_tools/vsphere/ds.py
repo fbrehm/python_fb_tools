@@ -23,7 +23,7 @@ from ..common import pp
 from .object import VsphereObject
 
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -526,7 +526,7 @@ class VsphereDatastoreDict(collections.MutableMapping):
         return res
 
     # -------------------------------------------------------------------------
-    def find_ds(self, needed_gb, ds_type='sata', reserve_space=True):
+    def find_ds(self, needed_gb, ds_type='sata', reserve_space=True, use_ds=None):
 
         search_chains = {
             'sata': ('sata', 'sas', 'ssd'),
@@ -537,7 +537,7 @@ class VsphereDatastoreDict(collections.MutableMapping):
         if ds_type not in search_chains:
             raise ValueError("Could not handle datastore type {!r}.".format(ds_type))
         for dstp in search_chains[ds_type]:
-            ds_name = self._find_ds(needed_gb, dstp, reserve_space)
+            ds_name = self._find_ds(needed_gb, dstp, reserve_space, use_ds=use_ds)
             if ds_name:
                 return ds_name
 
@@ -546,13 +546,16 @@ class VsphereDatastoreDict(collections.MutableMapping):
         return None
 
     # -------------------------------------------------------------------------
-    def _find_ds(self, needed_gb, ds_type, reserve_space=True):
+    def _find_ds(self, needed_gb, ds_type, reserve_space=True, use_ds=None):
 
         LOG.debug("Searching datastore for {c:0.1f} GiB of type {t!r}.".format(
             c=needed_gb, t=ds_type))
 
         avail_ds_names = []
         for (ds_name, ds) in self.items():
+            if use_ds:
+                if ds.name not in use_ds:
+                    continue
             if ds.storage_type.lower() != ds_type.lower():
                 continue
             if ds.avail_space_gb >= needed_gb:
