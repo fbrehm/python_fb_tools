@@ -13,6 +13,6 @@ MANIFEST
 .cache
 .env
 tmp/*
-venv/*
+venv*/*
 etc/*.ini
 lib/fb_tools/local_version.py
