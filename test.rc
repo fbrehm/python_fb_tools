@@ -1,0 +1,32 @@
+#!/bin/bash
+
+PYTHON="${PYTHON:-python}"
+VENV="${VENV:-venv}"
+
+# --------------------------------------------------
+prepare_env() {
+    echo
+    echo "Preparing environment."
+    echo "----------------------"
+}
+
+# --------------------------------------------------
+start_tests() {
+    echo
+    echo "Starting tests."
+    echo "---------------"
+}
+
+# --------------------------------------------------
+exec_tests() {
+    echo "Workdir:     '$(pwd)'."
+    echo "Python:      '${PYTHON}'."
+    echo "Virtual env: '${VENV}'."
+    prepare_env
+    start_tests
+    echo
+    echo "Finished."
+
+}
+
+# vim: ts=4 filetype=sh
