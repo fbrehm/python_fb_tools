@@ -18,12 +18,12 @@ import re
 from pyVmomi import vim
 
 # Own modules
-from ..common import pp
+from ..common import pp, to_bool
 
 from .object import VsphereObject
 
 
-__version__ = '1.0.2'
+__version__ = '1.1.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -33,12 +33,13 @@ class VsphereDatastore(VsphereObject):
     re_is_nfs = re.compile(r'(?:share[_-]*nfs|nfs[_-]*share)', re.IGNORECASE)
     re_vmcb_fs = re.compile(r'vmcb-\d+-fc-\d+', re.IGNORECASE)
     re_local_ds = re.compile(r'^local_', re.IGNORECASE)
+    re_k8s_ds = re.compile(r'[_-](?:k8s|kubernetes)[_-]', re.IGNORECASE)
 
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
             name=None, accessible=True, capacity=None, free_space=None, maintenance_mode=None,
-            multiple_host_access=True, fs_type=None, uncommitted=None, url=None):
+            multiple_host_access=True, fs_type=None, uncommitted=None, url=None, for_k8s=None):
 
         self.repr_fields = (
             'name', 'accessible', 'capacity', 'free_space', 'fs_type', 'storage_type',
@@ -60,6 +61,7 @@ class VsphereDatastore(VsphereObject):
         self._url = None
         if url is not None:
             self._url = str(url)
+        self._for_k8s = False
 
         self._storage_type = 'unknown'
 
@@ -72,6 +74,11 @@ class VsphereDatastore(VsphereObject):
         st_type = self.storage_type_by_name(self.name)
         if st_type:
             self._storage_type = st_type
+
+        if for_k8s is not None:
+            self.for_k8s = for_k8s
+        else:
+            self.for_k8s = self.detect_k8s(self.name)
 
         if initialized is not None:
             self.initialized = initialized
@@ -144,6 +151,16 @@ class VsphereDatastore(VsphereObject):
     def url(self):
         """The unique locator for the datastore."""
         return self._url
+
+    # -----------------------------------------------------------
+    @property
+    def for_k8s(self):
+        """This datastore is intended to use for Kubernetes PV."""
+        return self._for_k8s
+
+    @for_k8s.setter
+    def for_k8s(self, value):
+        self._for_k8s = to_bool(value)
 
     # -----------------------------------------------------------
     @property
@@ -238,6 +255,16 @@ class VsphereDatastore(VsphereObject):
         return None
 
     # -------------------------------------------------------------------------
+    @classmethod
+    def detect_k8s(cls, name):
+        """Method for detecting from given name, whether the datastore
+            is intended to use as PV in Kubernetes or not."""
+
+        if cls.re_k8s_ds.search(name):
+            return True
+        return False
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -258,6 +285,7 @@ class VsphereDatastore(VsphereObject):
         res['maintenance_mode'] = self.maintenance_mode
         res['multiple_host_access'] = self.multiple_host_access
         res['fs_type'] = self.fs_type
+        res['for_k8s'] = self.for_k8s
         res['uncommitted'] = self.uncommitted
         res['uncommitted_gb'] = self.uncommitted_gb
         res['url'] = self.url
@@ -273,7 +301,7 @@ class VsphereDatastore(VsphereObject):
         return VsphereDatastore(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             initialized=self.initialized, name=self.name, accessible=self.accessible,
-            capacity=self.capacity, free_space=self.free_space,
+            capacity=self.capacity, free_space=self.free_space, for_k8s=self.for_k8s,
             maintenance_mode=self.maintenance_mode, multiple_host_access=self.multiple_host_access,
             fs_type=self.fs_type, uncommitted=self.uncommitted, url=self.url)
 
@@ -526,7 +554,7 @@ class VsphereDatastoreDict(collections.MutableMapping):
         return res
 
     # -------------------------------------------------------------------------
-    def find_ds(self, needed_gb, ds_type='sata', reserve_space=True, use_ds=None):
+    def find_ds(self, needed_gb, ds_type='sata', reserve_space=True, use_ds=None, no_k8s=False):
 
         search_chains = {
             'sata': ('sata', 'sas', 'ssd'),
@@ -537,7 +565,8 @@ class VsphereDatastoreDict(collections.MutableMapping):
         if ds_type not in search_chains:
             raise ValueError("Could not handle datastore type {!r}.".format(ds_type))
         for dstp in search_chains[ds_type]:
-            ds_name = self._find_ds(needed_gb, dstp, reserve_space, use_ds=use_ds)
+            ds_name = self._find_ds(
+                needed_gb, dstp, reserve_space, use_ds=use_ds, no_k8s=no_k8s)
             if ds_name:
                 return ds_name
 
@@ -546,7 +575,7 @@ class VsphereDatastoreDict(collections.MutableMapping):
         return None
 
     # -------------------------------------------------------------------------
-    def _find_ds(self, needed_gb, ds_type, reserve_space=True, use_ds=None):
+    def _find_ds(self, needed_gb, ds_type, reserve_space=True, use_ds=None, no_k8s=False):
 
         LOG.debug("Searching datastore for {c:0.1f} GiB of type {t!r}.".format(
             c=needed_gb, t=ds_type))
@@ -557,6 +586,8 @@ class VsphereDatastoreDict(collections.MutableMapping):
                 if ds.name not in use_ds:
                     continue
             if ds.storage_type.lower() != ds_type.lower():
+                continue
+            if no_k8s and ds.for_k8s:
                 continue
             if ds.avail_space_gb >= needed_gb:
                 avail_ds_names.append(ds_name)
