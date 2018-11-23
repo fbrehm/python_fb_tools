@@ -1,3 +1,10 @@
+fb-tools (1.0.3) all; urgency=medium
+
+  * Detecting, whether a VSphere datastore is intended for Kubernetes or
+    not
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 23 Nov 2018 16:00:04 +0100
+
 fb-tools (1.0.2) all; urgency=medium
 
   * Bugfixing in lib/fb_tools/pdns/server.py
