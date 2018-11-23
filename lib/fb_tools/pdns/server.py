@@ -26,7 +26,7 @@ from .errors import PDNSApiNotFoundError, PDNSApiValidationError
 
 from .zone import PowerDNSZone, PowerDNSZoneDict
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -50,7 +50,7 @@ class PowerDNSServer(BasePowerDNSHandler):
         super(PowerDNSServer, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             master_server=master_server, port=port, key=key, use_https=use_https,
-            path_prefix=path_prefix, simulate=None, force=None,
+            path_prefix=path_prefix, simulate=simulate, force=force,
             terminal_has_colors=terminal_has_colors, initialized=False,
         )
 
