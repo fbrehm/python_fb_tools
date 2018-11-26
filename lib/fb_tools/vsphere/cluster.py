@@ -20,7 +20,7 @@ from ..common import pp
 from .object import VsphereObject
 
 
-__version__ = '1.0.1'
+__version__ = '1.1.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -30,12 +30,12 @@ class VsphereCluster(VsphereObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
-            name=None, status='gray', cpu_cores=0, cpu_threads=0,
+            name=None, status='gray', cpu_cores=0, cpu_threads=0, config_status='gray',
             hosts_effective=0, hosts_total=0, mem_mb_effective=0, mem_total=0):
 
         self.repr_fields = (
-            'name', 'status', 'cpu_cores', 'cpu_threads', 'hosts_effective', 'hosts_total',
-            'mem_mb_effective', 'mem_total', 'appname', 'verbose', 'version')
+            'name', 'status', 'config_status', 'cpu_cores', 'cpu_threads', 'hosts_effective',
+            'hosts_total', 'mem_mb_effective', 'mem_total', 'appname', 'verbose', 'version')
 
         self._status = None
         self._cpu_cores = None
@@ -49,10 +49,10 @@ class VsphereCluster(VsphereObject):
         self.resource_pool = None
 
         super(VsphereCluster, self).__init__(
-            name=name, obj_type='vsphere_cluster', name_prefix="cluster",
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir)
+            name=name, obj_type='vsphere_cluster', name_prefix="cluster", status=status,
+            config_status=config_status, appname=appname, verbose=verbose,
+            version=version, base_dir=base_dir)
 
-        self.status = status
         self.cpu_cores = cpu_cores
         self.cpu_threads = cpu_threads
         self.hosts_effective = hosts_effective
@@ -74,24 +74,6 @@ class VsphereCluster(VsphereObject):
     def resource_pool_var(self):
         """The variable name of the default resource pool used for terraform."""
         return 'pool_' + self.tf_name
-
-    # -----------------------------------------------------------
-    @property
-    def status(self):
-        """Overall alarm status of the cluster."""
-        return self._status
-
-    @status.setter
-    def status(self, value):
-        if value is None:
-            self._status = 'gray'
-            return
-
-        val = str(value).strip().lower()
-        if val == '':
-            self._status = 'gray'
-            return
-        self._status = val
 
     # -----------------------------------------------------------
     @property
@@ -222,7 +204,6 @@ class VsphereCluster(VsphereObject):
         """
 
         res = super(VsphereCluster, self).as_dict(short=short)
-        res['status'] = self.status
         res['resource_pool_name'] = self.resource_pool_name
         res['resource_pool_var'] = self.resource_pool_var
         res['cpu_cores'] = self.cpu_cores
@@ -282,7 +263,8 @@ class VsphereCluster(VsphereObject):
             'base_dir': base_dir,
             'initialized': True,
             'name': data.name,
-            'status': data.summary.overallStatus,
+            'status': data.overallStatus,
+            'config_status': data.configStatus,
             'cpu_cores': data.summary.numCpuCores,
             'cpu_threads': data.summary.numCpuThreads,
             'hosts_effective': data.summary.numEffectiveHosts,

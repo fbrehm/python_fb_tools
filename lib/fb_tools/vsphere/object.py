@@ -22,7 +22,7 @@ from ..obj import FbBaseObject
 
 from .errors import VSphereNameError
 
-__version__ = '1.0.1'
+__version__ = '1.1.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -31,20 +31,27 @@ class VsphereObject(FbBaseObject):
 
     re_ws = re.compile(r'\s+')
 
-    repr_fields = ('name', 'obj_type', 'name_prefix', 'appname', 'verbose', 'version')
+    repr_fields = (
+        'name', 'obj_type', 'name_prefix', 'status', 'config_status',
+        'appname', 'verbose', 'version')
+    available_status_color = ['red', 'yellow', 'green', 'gray']
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, name=None, obj_type=None, name_prefix="unknown",
+        self, name=None, obj_type=None, name_prefix="unknown", status='gray', config_status='gray',
             appname=None, verbose=0, version=__version__, base_dir=None, initialized=None):
 
         self._name = None
         self._obj_type = None
         self._name_prefix = None
+        self._status = None
+        self._config_status = None
 
         super(VsphereObject, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir)
 
+        self.status = status
+        self.config_status = config_status
         self.obj_type = obj_type
         self.name_prefix = name_prefix
         self.name = name
@@ -69,6 +76,48 @@ class VsphereObject(FbBaseObject):
             raise ValueError("Invalid VsphereObject type {!r}.".format(value))
 
         self._obj_type = val
+
+    # -----------------------------------------------------------
+    @property
+    def status(self):
+        """Overall alarm status of the object."""
+        return self._status
+
+    @status.setter
+    def status(self, value):
+        if value is None:
+            self._status = 'gray'
+            return
+
+        val = str(value).strip().lower()
+        if val == '':
+            self._status = 'gray'
+            return
+        if val not in self.available_status_color:
+            raise ValueError("Invalid VsphereObject status {!r}.".format(value))
+
+        self._status = val
+
+    # -----------------------------------------------------------
+    @property
+    def config_status(self):
+        """Overall config status of the object."""
+        return self._config_status
+
+    @config_status.setter
+    def config_status(self, value):
+        if value is None:
+            self._config_status = 'gray'
+            return
+
+        val = str(value).strip().lower()
+        if val == '':
+            self._config_status = 'gray'
+            return
+        if val not in self.available_status_color:
+            raise ValueError("Invalid VsphereObject config_status {!r}.".format(value))
+
+        self._config_status = val
 
     # -----------------------------------------------------------
     @property
@@ -139,6 +188,8 @@ class VsphereObject(FbBaseObject):
         res['tf_name'] = self.tf_name
         res['var_name'] = self.var_name
         res['repr_fields'] = copy.copy(self.repr_fields)
+        res['status'] = self.status
+        res['config_status'] = self.config_status
 
         return res
 

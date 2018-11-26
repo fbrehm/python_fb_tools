@@ -23,7 +23,7 @@ from ..common import pp, to_bool
 from .object import VsphereObject
 
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -38,11 +38,12 @@ class VsphereDatastore(VsphereObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
-            name=None, accessible=True, capacity=None, free_space=None, maintenance_mode=None,
-            multiple_host_access=True, fs_type=None, uncommitted=None, url=None, for_k8s=None):
+            name=None, status='gray', config_status='gray', accessible=True, capacity=None,
+            free_space=None, maintenance_mode=None, multiple_host_access=True, fs_type=None,
+            uncommitted=None, url=None, for_k8s=None):
 
         self.repr_fields = (
-            'name', 'accessible', 'capacity', 'free_space', 'fs_type', 'storage_type',
+            'name', 'status', 'accessible', 'capacity', 'free_space', 'fs_type', 'storage_type',
             'appname', 'verbose', 'version')
 
         self._accessible = bool(accessible)
@@ -68,8 +69,9 @@ class VsphereDatastore(VsphereObject):
         self._calculated_usage = 0.0
 
         super(VsphereDatastore, self).__init__(
-            name=name, obj_type='vsphere_datastore', name_prefix="ds",
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir)
+            name=name, obj_type='vsphere_datastore', name_prefix="ds", status=status,
+            config_status=config_status, appname=appname, verbose=verbose,
+            version=version, base_dir=base_dir)
 
         st_type = self.storage_type_by_name(self.name)
         if st_type:
@@ -191,10 +193,10 @@ class VsphereDatastore(VsphereObject):
 
     # -------------------------------------------------------------------------
     @classmethod
-    def from_summary(cls, summary, appname=None, verbose=0, base_dir=None):
+    def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
-        if not isinstance(summary, vim.Datastore.Summary):
-            msg = "Argument {!r} is not a datastore summary.".format(summary)
+        if not isinstance(data, vim.Datastore):
+            msg = "Argument {!r} is not a VSphere datastore.".format(data)
             raise TypeError(msg)
 
         params = {
@@ -202,24 +204,26 @@ class VsphereDatastore(VsphereObject):
             'verbose': verbose,
             'base_dir': base_dir,
             'initialized': True,
-            'capacity': summary.capacity,
-            'free_space': summary.freeSpace,
-            'name': summary.name,
-            'fs_type': summary.type,
-            'url': summary.url,
+            'capacity': data.summary.capacity,
+            'free_space': data.summary.freeSpace,
+            'name': data.summary.name,
+            'fs_type': data.summary.type,
+            'url': data.summary.url,
+            'status': data.overallStatus,
+            'config_status': data.configStatus,
         }
 
-        if hasattr(summary, 'accessible'):
-            params['accessible'] = summary.accessible
+        if hasattr(data.summary, 'accessible'):
+            params['accessible'] = data.summary.accessible
 
-        if hasattr(summary, 'maintenanceMode'):
-            params['maintenance_mode'] = summary.maintenanceMode
+        if hasattr(data.summary, 'maintenanceMode'):
+            params['maintenance_mode'] = data.summary.maintenanceMode
 
-        if hasattr(summary, 'multipleHostAccess'):
-            params['multiple_host_access'] = summary.multipleHostAccess
+        if hasattr(data.summary, 'multipleHostAccess'):
+            params['multiple_host_access'] = data.summary.multipleHostAccess
 
-        if hasattr(summary, 'uncommitted'):
-            params['uncommitted'] = summary.uncommitted
+        if hasattr(data.summary, 'uncommitted'):
+            params['uncommitted'] = data.summary.uncommitted
 
         if verbose > 2:
             LOG.debug("Creating {c} object from:\n{p}".format(
@@ -303,7 +307,8 @@ class VsphereDatastore(VsphereObject):
             initialized=self.initialized, name=self.name, accessible=self.accessible,
             capacity=self.capacity, free_space=self.free_space, for_k8s=self.for_k8s,
             maintenance_mode=self.maintenance_mode, multiple_host_access=self.multiple_host_access,
-            fs_type=self.fs_type, uncommitted=self.uncommitted, url=self.url)
+            fs_type=self.fs_type, uncommitted=self.uncommitted, url=self.url,
+            status=self.status, config_status=config_status)
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):

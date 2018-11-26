@@ -21,7 +21,7 @@ from ..common import pp
 from .object import VsphereObject
 
 
-__version__ = '1.0.1'
+__version__ = '1.1.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -31,9 +31,11 @@ class VsphereDsCluster(VsphereObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
-            name=None, capacity=None, free_space=None):
+            name=None, status='gray', config_status='gray', capacity=None, free_space=None):
 
-        self.repr_fields = ('name', 'capacity', 'free_space', 'appname', 'verbose', 'version')
+        self.repr_fields = (
+            'name', 'status', 'config_status', 'capacity', 'free_space',
+            'appname', 'verbose', 'version')
 
         self._capacity = int(capacity)
         self._free_space = int(free_space)
@@ -42,6 +44,7 @@ class VsphereDsCluster(VsphereObject):
 
         super(VsphereDsCluster, self).__init__(
             name=name, obj_type='vsphere_datastore_cluster', name_prefix="dspod",
+            status=status, config_status=config_status,
             appname=appname, verbose=verbose, version=version, base_dir=base_dir)
 
         if initialized is not None:
@@ -94,10 +97,10 @@ class VsphereDsCluster(VsphereObject):
 
     # -------------------------------------------------------------------------
     @classmethod
-    def from_summary(cls, summary, appname=None, verbose=0, base_dir=None):
+    def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
-        if not isinstance(summary, vim.StoragePod.Summary):
-            msg = "Argument {!r} is not a datastore cluster summary.".format(summary)
+        if not isinstance(data, vim.StoragePod):
+            msg = "Argument {!r} is not a VSphere datastore cluster.".format(data)
             raise TypeError(msg)
 
         params = {
@@ -105,9 +108,11 @@ class VsphereDsCluster(VsphereObject):
             'verbose': verbose,
             'base_dir': base_dir,
             'initialized': True,
-            'capacity': summary.capacity,
-            'free_space': summary.freeSpace,
-            'name': summary.name,
+            'capacity': data.summary.capacity,
+            'free_space': data.summary.freeSpace,
+            'name': data.summary.name,
+            'status': data.overallStatus,
+            'config_status': data.configStatus,
         }
 
         if verbose > 2:
@@ -144,8 +149,8 @@ class VsphereDsCluster(VsphereObject):
 
         return VsphereDsCluster(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            initialized=self.initialized, name=self.name,
-            capacity=self.capacity, free_space=self.free_space,)
+            initialized=self.initialized, name=self.name, status=self.status,
+            config_status=config_status, capacity=self.capacity, free_space=self.free_space,)
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
