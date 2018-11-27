@@ -33,7 +33,7 @@ from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -150,10 +150,11 @@ class BaseApplication(HandlingObject):
             ep = self.appname.upper() + '_'
             self._env_prefix = self.re_anum.sub('_', ep)
 
-        self._description = textwrap.dedent('''\
-            Creates or updates a directory with a terraform environment
-            on base of a given YAML file.
-            ''').strip()
+        if not self.description:
+            self._description = textwrap.dedent('''\
+                Creates or updates a directory with a terraform environment
+                on base of a given YAML file.
+                ''').strip()
 
         self._init_arg_parser()
         self._perform_arg_parser()
