@@ -23,7 +23,7 @@ import re
 # Own modules
 from . import __version__ as GLOBAL_VERSION
 
-from .common import pp
+from .common import pp, to_bool
 
 from .app import BaseApplication
 
@@ -37,7 +37,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -69,6 +69,7 @@ class PdnsBulkRmApp(BaseApplication):
         self._cfg_file = None
         self.config = None
         self.pdns = None
+        self._rm_reverse = True
 
         self.address_file = None
 
@@ -88,6 +89,17 @@ class PdnsBulkRmApp(BaseApplication):
         return self._cfg_file
 
     # -------------------------------------------------------------------------
+    @property
+    def rm_reverse(self):
+        """Flag indicating, that the reverse DNS entries (PTR records)
+            should not be removed."""
+        return self._rm_reverse
+
+    @rm_reverse.setter
+    def rm_reverse(self, value):
+        self._rm_reverse = to_bool(value)
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -101,6 +113,7 @@ class PdnsBulkRmApp(BaseApplication):
 
         res = super(PdnsBulkRmApp, self).as_dict(short=short)
         res['cfg_file'] = self.cfg_file
+        res['rm_reverse'] = self.rm_reverse
 
         return res
 
@@ -205,6 +218,13 @@ class PdnsBulkRmApp(BaseApplication):
         # source_group = self.arg_parser.add_mutually_exclusive_group()
 
         self.arg_parser.add_argument(
+            '-N', '--no-reverse', action="store_true", dest='no_reverse',
+            help=(
+                "Don't remove reverse DNS entries (PTR records) to the given addresses. "
+                "(Default: False - reverse entries will be removed).")
+        )
+
+        self.arg_parser.add_argument(
             '-F', '--file', metavar='FILE', dest='addr_file', type=pathlib.Path,
             help=(
                 "File containing the addresses to remove. The addresses must be "
@@ -217,7 +237,7 @@ class PdnsBulkRmApp(BaseApplication):
             'addresses', metavar='ADDRESS', type=str, nargs='*',
             help=(
                 "Addresses to remove. This option is mutually exclusive with "
-                "the --file option."),
+                "the -F/--file option."),
         )
 
     # -------------------------------------------------------------------------
@@ -267,6 +287,9 @@ class PdnsBulkRmApp(BaseApplication):
             self.config.pdns_api_https = True
         if self.args.api_path_prefix is not None:
             self.config.pdns_api_prefix = self.args.api_path_prefix.strip()
+
+        if self.args.no_reverse:
+            self.rm_reverse = False
 
         if self.args.addresses:
             for address in self.args.addresses:
