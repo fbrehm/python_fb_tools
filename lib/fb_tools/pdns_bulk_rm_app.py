@@ -16,6 +16,7 @@ import getpass
 import pathlib
 import sys
 import os
+import re
 
 # Third party modules
 
@@ -36,7 +37,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.2.1'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -136,6 +137,13 @@ class PdnsBulkRmApp(BaseApplication):
 
         self.perform_arg_parser_pdns()
 
+        if self.address_file:
+            self.read_address_file()
+
+        if not self.addresses:
+            LOG.error("No addresses to remove given.")
+            self.exit(1)
+
         self.pdns = PowerDNSServer(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             master_server=self.config.pdns_master, port=self.config.pdns_api_port,
@@ -197,7 +205,7 @@ class PdnsBulkRmApp(BaseApplication):
         # source_group = self.arg_parser.add_mutually_exclusive_group()
 
         self.arg_parser.add_argument(
-            '-F', '--file', metavar='FILE', dest='addr_file',
+            '-F', '--file', metavar='FILE', dest='addr_file', type=pathlib.Path,
             help=(
                 "File containing the addresses to remove. The addresses must be "
                 "whitespace separeted, lines may be commented out by prepending them "
@@ -235,16 +243,16 @@ class PdnsBulkRmApp(BaseApplication):
 
         if self.args.addr_file:
             afile = self.args.addr_file
-            if not os.path.exists(afile):
-                msg = "File {!r} does not exists.".format(afile)
+            if not afile.exists():
+                msg = "File {!r} does not exists.".format(str(afile))
                 LOG.error(msg)
                 self.exit(1)
-            if not os.path.isfile(afile):
-                msg = "File {!r} is not a regular file.".format(afile)
+            if not afile.is_file():
+                msg = "File {!r} is not a regular file.".format(str(afile))
                 LOG.error(msg)
                 self.exit(1)
-            if not os.access(afile, os.R_OK):
-                msg = "No read access to file {!r}.".format(afile)
+            if not os.access(str(afile), os.R_OK):
+                msg = "No read access to file {!r}.".format(str(afile))
                 LOG.error(msg)
                 self.exit(1)
             self.address_file = afile
@@ -263,6 +271,31 @@ class PdnsBulkRmApp(BaseApplication):
         if self.args.addresses:
             for address in self.args.addresses:
                 self.addresses.append(address)
+
+    # -------------------------------------------------------------------------
+    def read_address_file(self):
+
+        content = self.read_file(self.address_file)
+        if self.verbose > 2:
+            LOG.debug("Content of {f!r}:\n{c}".format(f=str(self.address_file), c=content))
+
+        re_comment = re.compile(r'\s*#.*')
+        re_whitespace = re.compile(r'\s+')
+
+        addresses = []
+        for line in content.splitlines():
+            l = re_comment.sub('', line).strip()
+            if l == '':
+                continue
+            for token in re_whitespace.split(l):
+                addresses.append(token)
+
+        if addresses:
+            self.addresses = addresses
+
+        if not self.addresses:
+            LOG.error("No addresses to remove found in {!r}.".format(str(self.address_file)))
+            self.exit(1)
 
     # -------------------------------------------------------------------------
     def _run(self):
