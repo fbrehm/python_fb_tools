@@ -34,7 +34,9 @@ from .errors import FbAppError
 
 from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
-__version__ = '0.1.1'
+from .pdns.server import PowerDNSServer
+
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -134,19 +136,15 @@ class PdnsBulkRmApp(BaseApplication):
 
         self.perform_arg_parser_pdns()
 
-#        if not self.config.password:
-#            prompt = 'Enter password for host {h!r} and user {u!r}: '.format(
-#                h=self.config.vsphere_host, u=self.config.vsphere_user)
-#            self.config.password = getpass.getpass(prompt=prompt)
+        self.pdns = PowerDNSServer(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            master_server=self.config.pdns_master, port=self.config.pdns_api_port,
+            key=self.config.pdns_api_key, use_https=self.config.pdns_api_https,
+            path_prefix=self.config.pdns_api_prefix,
+            simulate=self.simulate, force=self.force, initialized=True,
+        )
 
-#        self.vsphere = VsphereServer(
-#            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-#            host=self.config.vsphere_host, port=self.config.vsphere_port,
-#            user=self.config.vsphere_user, password=self.config.password,
-#            dc=self.config.dc, auto_close=True, simulate=self.simulate, force=self.force,
-#            terminal_has_colors=self.terminal_has_colors, initialized=False)
-
-#        self.vsphere.initialized = True
+        self.pdns.initialized = True
         self.initialized = True
 
     # -------------------------------------------------------------------------
