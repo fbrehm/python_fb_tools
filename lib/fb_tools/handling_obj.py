@@ -31,7 +31,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -370,7 +370,8 @@ class HandlingObject(FbBaseObject):
         raise err
 
     # -------------------------------------------------------------------------
-    def read_file(self, filename, timeout=2, binary=False, quiet=False):
+    def read_file(
+            self, filename, timeout=2, binary=False, quiet=False, encoding='utf-8'):
         """
         Reads the content of the given filename.
 
@@ -426,7 +427,7 @@ class HandlingObject(FbBaseObject):
 
         open_args = {}
         if six.PY3 and not binary:
-            open_args['encoding'] = 'utf-8'
+            open_args['encoding'] = encoding
             open_args['errors'] = 'surrogateescape'
 
         mode = 'r'
@@ -440,6 +441,9 @@ class HandlingObject(FbBaseObject):
             fh.close()
 
         signal.alarm(0)
+
+        if six.PY2 and not binary:
+            content = content.decode(encoding, 'replace')
 
         return content
 
