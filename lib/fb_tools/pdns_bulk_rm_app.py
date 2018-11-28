@@ -37,7 +37,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -341,7 +341,7 @@ class PdnsBulkRmApp(BaseApplication):
         ret = 0
         try:
             self.pdns.get_api_zones()
-            self.verify_addresses()
+            ret = self.verify_addresses()
         finally:
             # Aufräumen ...
             self.pdns = None
@@ -354,6 +354,9 @@ class PdnsBulkRmApp(BaseApplication):
         LOG.debug("Verifying all given DNS addresses.")
 
         self.records2remove = {}
+        zones_of_records = {}
+        all_fqdns = []
+        fqdns_found = []
 
         for addr in self.addresses:
 
@@ -361,18 +364,73 @@ class PdnsBulkRmApp(BaseApplication):
             if not fqdn:
                 LOG.warn("Address {!r} could not interpreted as a FQDN.".format(addr))
                 continue
+            if fqdn not in all_fqdns:
+                all_fqdns.append(fqdn)
             zones = self.pdns.get_all_zones_for_item(addr)
             if not zones:
                 LOG.warn("Did not found an appropriate zone for address {!r}.".format(addr))
                 continue
 
             for zone_name in zones:
-                if zone_name not in self.records2remove:
-                    self.records2remove[zone_name] = {}
-                self.records2remove[zone_name][fqdn] = {}
+                if zone_name not in zones_of_records:
+                    zones_of_records[zone_name] = {}
+                zones_of_records[zone_name][fqdn] = {}
+
+        if not zones_of_records:
+            msg = "Did not found any addresses with an appropriate zone in PwerDNS."
+            LOG.error(msg)
+            return 1
 
         if self.verbose > 1:
-            LOG.debug("Found zones for addresses:\n{}".format(pp(self.records2remove)))
+            LOG.debug("Found zones for addresses:\n{}".format(pp(zones_of_records)))
+
+        for zone_name in zones_of_records:
+            zone = self.pdns.zones[zone_name]
+            zone.update()
+            if self.verbose > 1:
+                LOG.debug("Found {c} resource record sets (RRSET) for zone {z!r}.".format(
+                    c=len(zone.rrsets), z=zone_name))
+            for fqdn in zones_of_records[zone_name]:
+                if self.verbose > 1:
+                    LOG.debug("Searching {f!r} in zone {z!r} ...".format(f=fqdn, z=zone_name))
+                rrsets_found = False
+                for rrset in zone.rrsets:
+                    if rrset.name != fqdn:
+                        continue
+                    rrset2remove = {'fqdn': fqdn, 'type': rrset.type.upper(), 'records': []}
+                    found = False
+                    if zone.reverse_zone:
+                        if rrset.type.upper() == 'PTR':
+                            found = True
+                    else:
+                        if rrset.type.upper() in ('A', 'AAAA', 'CNAME'):
+                            found = True
+                    if not found:
+                        continue
+                    rrsets_found = True
+                    for record in rrset.records:
+                        record2remove = {'content': record.content, 'disabled': record.disabled,}
+                        rrset2remove['records'].append(record2remove)
+                    if zone_name not in self.records2remove:
+                        self.records2remove[zone_name] = []
+                    self.records2remove[zone_name].append(rrset2remove)
+                    if fqdn not in fqdns_found:
+                        fqdns_found.append(fqdn)
+
+        fqdns_not_found = []
+        for fqdn in all_fqdns:
+            if fqdn not in fqdns_found:
+                fqdns_not_found.append(fqdn)
+        if fqdns_not_found:
+            msg = "The following addresses (FQDNs) are not found:"
+            for fqdn in fqdns_not_found:
+                msg += '\n  * {!r}'.format(fqdn)
+            LOG.warn(msg)
+
+        if self.verbose > 2:
+            LOG.debug("Found resource record sets to remove:\n{}".format(pp(self.records2remove)))
+
+        return 0
 
 # =============================================================================
 if __name__ == "__main__":
