@@ -37,7 +37,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -321,21 +321,26 @@ class PdnsBulkRmApp(BaseApplication):
             self.exit(1)
 
     # -------------------------------------------------------------------------
+    def __del__(self):
+        """Destructor."""
+
+        if self.pdns:
+            self.pdns = None
+
+    # -------------------------------------------------------------------------
     def _run(self):
 
         LOG.info("Starting {a!r}, version {v!r} ...".format(
             a=self.appname, v=self.version))
 
         ret = 0
-#        try:
-#            ret = self.get_vms()
-#        finally:
-#            # Aufräumen ...
-#            LOG.debug("Closing ...")
-#            self.vsphere.disconnect()
-#            self.vsphere = None
+        try:
+            self.pdns.get_api_zones()
+        finally:
+            # Aufräumen ...
+            self.pdns = None
 
-        self.exit(ret)
+        self.exit_value = ret
 
 
 # =============================================================================
