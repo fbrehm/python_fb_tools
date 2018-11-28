@@ -17,6 +17,8 @@ import pathlib
 import sys
 import os
 import re
+import ipaddress
+import copy
 
 # Third party modules
 
@@ -37,7 +39,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.3.4'
+__version__ = '0.3.5'
 LOG = logging.getLogger(__name__)
 
 
@@ -341,7 +343,9 @@ class PdnsBulkRmApp(BaseApplication):
         ret = 0
         try:
             self.pdns.get_api_zones()
-            ret = self.verify_addresses()
+            ret = self.verify_addresses(copy.copy(self.addresses))
+            if self.rm_reverse and not ret:
+                ret = self.get_reverse_records()
         finally:
             # Aufräumen ...
             self.pdns = None
@@ -349,16 +353,15 @@ class PdnsBulkRmApp(BaseApplication):
         self.exit_value = ret
 
     # -------------------------------------------------------------------------
-    def verify_addresses(self):
+    def verify_addresses(self, addresses):
 
         LOG.debug("Verifying all given DNS addresses.")
 
-        self.records2remove = {}
         zones_of_records = {}
         all_fqdns = []
         fqdns_found = []
 
-        for addr in self.addresses:
+        for addr in addresses:
 
             fqdn = self.pdns.name2fqdn(addr)
             if not fqdn:
@@ -431,6 +434,42 @@ class PdnsBulkRmApp(BaseApplication):
             LOG.debug("Found resource record sets to remove:\n{}".format(pp(self.records2remove)))
 
         return 0
+
+    # -------------------------------------------------------------------------
+    def get_reverse_records(self):
+
+        LOG.debug("Retrieving reverse records of A and AAAA records.")
+
+        addresses = []
+
+        for zone_name in self.records2remove:
+
+            for rrset in self.records2remove[zone_name]:
+
+                if rrset['type'] not in ('A', 'AAAA'):
+                    continue
+
+                for record in rrset['records']:
+                    addr_str = record['content']
+                    LOG.debug("Trying to get reverse address of {!r} ...".format(addr_str))
+                    addr = None
+                    fqdn = None
+
+                    try:
+                        addr = ipaddress.ip_address(addr_str)
+                        fqdn = self.pdns.canon_name(addr.reverse_pointer)
+                    except ValueError:
+                        msg = "IP address {!r} seems not to be a valid IP address.".format(addr_str)
+                        LOG.error(msg)
+                        continue
+                    LOG.debug("Found reverse address {!r}.".format(fqdn))
+                    if fqdn not in addresses:
+                        addresses.append(fqdn)
+
+        if not addresses:
+            return 0
+
+        return self.verify_addresses(addresses)
 
 # =============================================================================
 if __name__ == "__main__":
