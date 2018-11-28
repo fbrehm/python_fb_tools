@@ -74,6 +74,7 @@ class PdnsBulkRmApp(BaseApplication):
         self.address_file = None
 
         self.addresses = []
+        self.records2remove = {}
 
         super(PdnsBulkRmApp, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -293,7 +294,9 @@ class PdnsBulkRmApp(BaseApplication):
 
         if self.args.addresses:
             for address in self.args.addresses:
-                self.addresses.append(address)
+                addr = address.strip().lower()
+                if addr != '' and addr not in self.addresses:
+                    self.addresses.append(addr)
 
     # -------------------------------------------------------------------------
     def read_address_file(self):
@@ -311,7 +314,9 @@ class PdnsBulkRmApp(BaseApplication):
             if l == '':
                 continue
             for token in re_whitespace.split(l):
-                addresses.append(token)
+                addr = token.strip().lower()
+                if addr != '' and addr not in addresses:
+                    addresses.append(addr)
 
         if addresses:
             self.addresses = addresses
@@ -336,12 +341,38 @@ class PdnsBulkRmApp(BaseApplication):
         ret = 0
         try:
             self.pdns.get_api_zones()
+            self.verify_addresses()
         finally:
             # Aufräumen ...
             self.pdns = None
 
         self.exit_value = ret
 
+    # -------------------------------------------------------------------------
+    def verify_addresses(self):
+
+        LOG.debug("Verifying all given DNS addresses.")
+
+        self.records2remove = {}
+
+        for addr in self.addresses:
+
+            fqdn = self.pdns.name2fqdn(addr)
+            if not fqdn:
+                LOG.warn("Address {!r} could not interpreted as a FQDN.".format(addr))
+                continue
+            zones = self.pdns.get_all_zones_for_item(addr)
+            if not zones:
+                LOG.warn("Did not found an appropriate zone for address {!r}.".format(addr))
+                continue
+
+            for zone_name in zones:
+                if zone_name not in self.records2remove:
+                    self.records2remove[zone_name] = {}
+                self.records2remove[zone_name][fqdn] = {}
+
+        if self.verbose > 1:
+            LOG.debug("Found zones for addresses:\n{}".format(pp(self.records2remove)))
 
 # =============================================================================
 if __name__ == "__main__":
