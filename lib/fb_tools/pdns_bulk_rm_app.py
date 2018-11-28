@@ -20,12 +20,14 @@ import re
 import ipaddress
 import copy
 
+from functools import cmp_to_key
+
 # Third party modules
 
 # Own modules
 from . import __version__ as GLOBAL_VERSION
 
-from .common import pp, to_bool
+from .common import pp, compare_fqdn, to_bool
 
 from .app import BaseApplication
 
@@ -39,7 +41,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.3.5'
+__version__ = '0.4.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -337,7 +339,8 @@ class PdnsBulkRmApp(BaseApplication):
     # -------------------------------------------------------------------------
     def _run(self):
 
-        LOG.info("Starting {a!r}, version {v!r} ...".format(
+        print()
+        LOG.debug("Starting {a!r}, version {v!r} ...".format(
             a=self.appname, v=self.version))
 
         ret = 0
@@ -346,6 +349,7 @@ class PdnsBulkRmApp(BaseApplication):
             ret = self.verify_addresses(copy.copy(self.addresses))
             if self.rm_reverse and not ret:
                 ret = self.get_reverse_records()
+            self.show_records()
         finally:
             # Aufräumen ...
             self.pdns = None
@@ -470,6 +474,63 @@ class PdnsBulkRmApp(BaseApplication):
             return 0
 
         return self.verify_addresses(addresses)
+
+    # -------------------------------------------------------------------------
+    def show_records(self):
+
+        title = "All DNS record to remove"
+        print()
+        print(title)
+        print("=" * len(title))
+        print()
+
+        disabled = 'Disabled.'
+        lengths = {
+            'z': 4,
+            'fqdn': 4,
+            'rec': 4,
+            'dis': len(disabled),
+        }
+
+        for zone_name in self.records2remove.keys():
+            if len(zone_name) > lengths['z']:
+                lengths['z'] = len(zone_name)
+            for rrset in self.records2remove[zone_name]:
+                fqdn = self.pdns.decanon_name(rrset['fqdn'])
+                if len(fqdn) > lengths['fqdn']:
+                    lengths['fqdn'] = len(fqdn)
+                for record in rrset['records']:
+                    content = self.pdns.decanon_name(record['content'])
+                    if len(content) > lengths['rec']:
+                        lengths['rec'] = len(content)
+
+        tpl = "{{z:<{}}}  ".format(lengths['z'])
+        tpl += "{{fqdn:<{}}}  {{type:<8}}  ".format(lengths['fqdn'])
+        tpl += "{{rec:<{}}}  ".format(lengths['rec'])
+        tpl += "{{dis:<{}}}".format(lengths['dis'])
+
+        header = tpl.format(
+            z='Zone', fqdn="Name", type="Type", rec='Record', dis='')
+        print(header)
+        print('-' * len(header))
+
+        for zone_name in sorted(
+                self.records2remove.keys(), key=lambda x: cmp_to_key(compare_fqdn)(x)):
+            for rrset in self.records2remove[zone_name]:
+                for record in rrset['records']:
+                    content = self.pdns.decanon_name(record['content'])
+                    out = {}
+                    out['z'] = self.pdns.decanon_name(zone_name)
+                    out['fqdn'] = self.pdns.decanon_name(rrset['fqdn'])
+                    out['type'] = rrset['type']
+                    out['rec'] = content
+                    if record['disabled']:
+                        out['dis'] = disabled
+                    else:
+                        out['dis'] = ''
+                    print(tpl.format(**out))
+
+        print()
 
 # =============================================================================
 if __name__ == "__main__":
