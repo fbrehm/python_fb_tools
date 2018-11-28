@@ -26,7 +26,7 @@ from .errors import PDNSApiNotFoundError, PDNSApiValidationError
 
 from .zone import PowerDNSZone, PowerDNSZoneDict
 
-__version__ = '0.5.2'
+__version__ = '0.6.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -150,24 +150,9 @@ class PowerDNSServer(BasePowerDNSHandler):
         if not len(self.zones):
             self.get_api_zones()
 
-        fqdn = item
-
-        if not is_fqdn:
-            try:
-                address = ipaddress.ip_address(item)
-                fqdn = address.reverse_pointer
-                is_fqdn = False
-            except ValueError:
-                if self.verbose > 3:
-                    LOG.debug("Item {!r} is not a valid IP address.".format(item))
-                is_fqdn = True
-                fqdn = item
-
-        if ':' in fqdn:
-            LOG.error("Invalid FQDN {!r}.".format(fqdn))
+        fqdn = self.name2fqdn(item, is_fqdn=is_fqdn)
+        if not fqdn:
             return None
-
-        fqdn = self.canon_name(fqdn)
 
         if self.verbose > 2:
             LOG.debug("Searching an appropriate zone for FQDN {!r} ...".format(fqdn))
@@ -181,6 +166,28 @@ class PowerDNSServer(BasePowerDNSHandler):
 
         return None
 
+    # -------------------------------------------------------------------------
+    def get_all_zones_for_item(self, item, is_fqdn=False):
+
+        if not len(self.zones):
+            self.get_api_zones()
+
+        fqdn = self.name2fqdn(item, is_fqdn=is_fqdn)
+        if not fqdn:
+            return []
+
+        if self.verbose > 2:
+            LOG.debug("Searching all appropriate zones for FQDN {!r} ...".format(fqdn))
+        zones = []
+
+        for zone_name in self.zones.keys():
+            pattern = r'\.' + re.escape(zone_name) + '$'
+            if self.verbose > 3:
+                LOG.debug("Search pattern: {}".format(pattern))
+            if re.search(pattern, fqdn):
+                zones.append(zone_name)
+
+        return zones
 
 # =============================================================================
 
