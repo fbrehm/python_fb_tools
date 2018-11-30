@@ -11,8 +11,6 @@ from __future__ import absolute_import
 # Standard modules
 import logging
 import textwrap
-import argparse
-import getpass
 import pathlib
 import sys
 import os
@@ -41,7 +39,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -314,10 +312,10 @@ class PdnsBulkRmApp(BaseApplication):
 
         addresses = []
         for line in content.splitlines():
-            l = re_comment.sub('', line).strip()
-            if l == '':
+            line_stripped = re_comment.sub('', line).strip()
+            if line_stripped == '':
                 continue
-            for token in re_whitespace.split(l):
+            for token in re_whitespace.split(line_stripped):
                 addr = token.strip().lower()
                 if addr != '' and addr not in addresses:
                     addresses.append(addr)
@@ -426,7 +424,6 @@ class PdnsBulkRmApp(BaseApplication):
             for fqdn in zones_of_records[zone_name]:
                 if self.verbose > 1:
                     LOG.debug("Searching {f!r} in zone {z!r} ...".format(f=fqdn, z=zone_name))
-                rrsets_found = False
                 for rrset in zone.rrsets:
                     if rrset.name != fqdn:
                         continue
@@ -440,9 +437,8 @@ class PdnsBulkRmApp(BaseApplication):
                             found = True
                     if not found:
                         continue
-                    rrsets_found = True
                     for record in rrset.records:
-                        record2remove = {'content': record.content, 'disabled': record.disabled,}
+                        record2remove = {'content': record.content, 'disabled': record.disabled}
                         rrset2remove['records'].append(record2remove)
                     if zone_name not in self.records2remove:
                         self.records2remove[zone_name] = []
@@ -492,7 +488,8 @@ class PdnsBulkRmApp(BaseApplication):
                         addr = ipaddress.ip_address(addr_str)
                         fqdn = self.pdns.canon_name(addr.reverse_pointer)
                     except ValueError:
-                        msg = "IP address {!r} seems not to be a valid IP address.".format(addr_str)
+                        msg = "IP address {!r} seems not to be a valid IP address.".format(
+                            addr_str)
                         LOG.error(msg)
                         continue
                     LOG.debug("Found reverse address {!r}.".format(fqdn))
@@ -567,6 +564,7 @@ class PdnsBulkRmApp(BaseApplication):
         print("Total {c} DNS record{s} to remove.".format(
             c=count, s=s))
         print()
+
 
 # =============================================================================
 if __name__ == "__main__":
