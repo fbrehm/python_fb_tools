@@ -24,13 +24,15 @@ from .common import pp
 
 from .app import BaseApplication
 
+from .config import CfgFileOptionAction
+
 from .errors import FbAppError
 
 from .get_vm_cfg import GetVmConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '1.0.1'
+__version__ = '1.1.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -38,32 +40,6 @@ LOG = logging.getLogger(__name__)
 class GetVmAppError(FbAppError):
     """ Base exception class for all exceptions in this application."""
     pass
-
-# =============================================================================
-class CfgFileOptionAction(argparse.Action):
-
-    # -------------------------------------------------------------------------
-    def __init__(self, option_strings, *args, **kwargs):
-
-        super(CfgFileOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
-
-    # -------------------------------------------------------------------------
-    def __call__(self, parser, namespace, values, option_string=None):
-
-        if values is None:
-            setattr(namespace, self.dest, None)
-            return
-
-        path = pathlib.Path(values)
-        if not path.exists():
-            msg = "File {!r} does not exists.".format(values)
-            raise argparse.ArgumentError(self, msg)
-        if not path.is_file():
-            msg = "File {!r} is not a regular file.".format(values)
-            raise argparse.ArgumentError(self, msg)
-
-        setattr(namespace, self.dest, path.resolve())
 
 
 # =============================================================================
@@ -79,7 +55,7 @@ class GetVmApplication(BaseApplication):
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
         desc = textwrap.dedent("""\
-            Tries to get information about the given virtual maschines in
+            Tries to get information about the given virtual machines in
             VMWare VSphere and print it out.
             """).strip()
 

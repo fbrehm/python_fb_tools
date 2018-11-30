@@ -15,6 +15,7 @@ import re
 import json
 import copy
 import socket
+import ipaddress
 
 from abc import ABCMeta
 
@@ -34,7 +35,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.4.1'
+__version__ = '0.5.1'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -397,6 +398,28 @@ class BasePowerDNSHandler(HandlingObject):
 
         ret = RE_DOT_AT_END.sub('.', name)
         return ret
+
+    # -------------------------------------------------------------------------
+    def name2fqdn(self, name, is_fqdn=False):
+
+        fqdn = name
+
+        if not is_fqdn:
+            try:
+                address = ipaddress.ip_address(name)
+                fqdn = address.reverse_pointer
+                is_fqdn = False
+            except ValueError:
+                if self.verbose > 3:
+                    LOG.debug("Name {!r} is not a valid IP address.".format(name))
+                is_fqdn = True
+                fqdn = name
+
+        if ':' in fqdn:
+            LOG.error("Invalid FQDN {!r}.".format(fqdn))
+            return None
+
+        return self.canon_name(fqdn)
 
     # -------------------------------------------------------------------------
     def decanon_name(self, name):

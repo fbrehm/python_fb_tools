@@ -32,9 +32,24 @@ from .errors import PowerDNSZoneError
 from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.6.1'
+__version__ = '0.7.1'
 
 LOG = logging.getLogger(__name__)
+
+
+# =============================================================================
+class PDNSNoRecordsToRemove(PowerDNSZoneError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, zone_name):
+        self.zone_name = zone_name
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = "No Resource Record Sets found to remove from zone {!r}.".format(self.zone_name)
+        return msg
+
 
 # =============================================================================
 class PowerDNSZone(BasePowerDNSHandler):
@@ -831,6 +846,62 @@ class PowerDNSZone(BasePowerDNSHandler):
 
         return True
 
+    # -------------------------------------------------------------------------
+    def add_rrset_for_remove(self, fqdn, rr_type, rrsets=None):
+
+        if rrsets is None:
+            rrsets = []
+
+        rrset = {
+            "name": self.canon_name(fqdn),
+            "type": rr_type.upper(),
+            "records": [],
+            "comments": [],
+            "changetype": "DELETE",
+        }
+        rrsets.append(rrset)
+        return rrsets
+
+    # -------------------------------------------------------------------------
+    def del_rrsets(self, rrsets):
+
+        if not rrsets:
+            raise PDNSNoRecordsToRemove(self.name_unicode)
+
+        self.update()
+        if self.verbose > 3:
+            LOG.debug("Current zone:\n{}".format(pp(self.as_dict())))
+
+        rrsets_rm = []
+
+        for rrset in rrsets:
+            found = False
+            for item in self.rrsets:
+                if item.name == rrset["name"] and item.type == rrset["type"]:
+                    found = True
+                    break
+            if not found:
+                msg = "DNS {t!r}-record {n!r} is already deleted.".format(
+                    t=rrset["type"], n=rrset["name"])
+                LOG.warn(msg)
+                continue
+            rrsets_rm.append(rrset)
+        if not rrsets_rm:
+            raise PDNSNoRecordsToRemove(self.name_unicode)
+
+        payload = {"rrsets": rrsets_rm}
+        s = ''
+        if len(rrsets_rm) != 1:
+            s = 's'
+        LOG.info("Removing {c} resource record set{s} from zone {z!r}.".format(
+            c=len(rrsets_rm), s=s, z=self.name_unicode))
+        if self.verbose > 1:
+            LOG.debug("Resorce record sets:\n{}".format(pp(payload)))
+
+        self.patch(payload)
+        LOG.info("Done.")
+
+        return True
     # -------------------------------------------------------------------------
 
     def notify(self):
