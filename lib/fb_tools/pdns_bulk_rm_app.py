@@ -41,7 +41,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -351,6 +351,7 @@ class PdnsBulkRmApp(BaseApplication):
                 ret = self.get_reverse_records()
             if not ret:
                 self.show_records()
+                self.countdown()
         finally:
             # Aufräumen ...
             self.pdns = None

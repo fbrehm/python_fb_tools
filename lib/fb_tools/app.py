@@ -18,6 +18,7 @@ import textwrap
 import argparse
 import getpass
 import signal
+import time
 
 # Third party modules
 
@@ -33,7 +34,7 @@ from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 
-__version__ = '1.0.3'
+__version__ = '1.1.1'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -766,6 +767,40 @@ class BaseApplication(HandlingObject):
         """
 
         pass
+
+    # -------------------------------------------------------------------------
+    def countdown(self, number=5, delay=1, prompt=None):
+
+        if prompt:
+            prompt = str(prompt).strip()
+        if not prompt:
+            prompt = "Starting in:"
+        prompt = self.colored(prompt, 'YELLOW')
+
+        try:
+            if not self.force:
+                i = number
+                out = self.colored("%d" % (i), 'RED')
+                msg = '\n{p} {o}'.format(p=prompt, o=out)
+                sys.stdout.write(msg)
+                sys.stdout.flush()
+                while i > 0:
+                    sys.stdout.write(' ')
+                    sys.stdout.flush()
+                    time.sleep(delay)
+                    i -= 1
+                    out = self.colored("{}".format(i), 'RED')
+                    sys.stdout.write(out)
+                    sys.stdout.flush()
+                sys.stdout.write("\n")
+                sys.stdout.flush()
+        except KeyboardInterrupt:
+            sys.stderr.write("\n")
+            LOG.warn("Aborted by user interrupt.")
+            sys.exit(99)
+
+        go = self.colored('Go go go ...', 'GREEN')
+        sys.stdout.write("\n%s\n\n" % (go))
 
 
 # =============================================================================
