@@ -1,3 +1,7 @@
+fb-tools (1.2.0) all; urgency=medium
+
+  * Adding script bin/pdns-bulk-remove and all necessary modules for.
+
 fb-tools (1.0.3) all; urgency=medium
 
   * Detecting, whether a VSphere datastore is intended for Kubernetes or
