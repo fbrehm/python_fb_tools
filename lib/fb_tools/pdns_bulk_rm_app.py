@@ -41,7 +41,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -349,7 +349,8 @@ class PdnsBulkRmApp(BaseApplication):
             ret = self.verify_addresses(copy.copy(self.addresses))
             if self.rm_reverse and not ret:
                 ret = self.get_reverse_records()
-            self.show_records()
+            if not ret:
+                self.show_records()
         finally:
             # Aufräumen ...
             self.pdns = None
@@ -384,7 +385,7 @@ class PdnsBulkRmApp(BaseApplication):
                 zones_of_records[zone_name][fqdn] = {}
 
         if not zones_of_records:
-            msg = "Did not found any addresses with an appropriate zone in PwerDNS."
+            msg = "Did not found any addresses with an appropriate zone in PowerDNS."
             LOG.error(msg)
             return 1
 
