@@ -41,7 +41,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.4.3'
+__version__ = '0.5.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -352,11 +352,35 @@ class PdnsBulkRmApp(BaseApplication):
             if not ret:
                 self.show_records()
                 self.countdown()
+                self.show_simulation()
+                self.do_remove()
         finally:
             # Aufräumen ...
             self.pdns = None
 
         self.exit_value = ret
+
+    # -------------------------------------------------------------------------
+    def show_simulation(self):
+
+        if not self.simulate:
+            return
+        print(self.colored("Simulation mode - nothing will be removed in real.", 'YELLOW'))
+        print()
+
+    # -------------------------------------------------------------------------
+    def do_remove(self):
+
+        for zone_name in sorted(
+                self.records2remove.keys(), key=lambda x: cmp_to_key(compare_fqdn)(x)):
+            print()
+            zone = self.pdns.zones[zone_name]
+            rrsets_rm = []
+            for rrset in self.records2remove[zone_name]:
+                zone.add_rrset_for_remove(rrset['fqdn'], rrset['type'], rrsets_rm)
+            zone.del_rrsets(rrsets_rm)
+
+        print()
 
     # -------------------------------------------------------------------------
     def verify_addresses(self, addresses):
@@ -436,6 +460,9 @@ class PdnsBulkRmApp(BaseApplication):
                 msg += '\n  * {!r}'.format(fqdn)
             LOG.warn(msg)
 
+        if not self.records2remove:
+            return 1
+
         if self.verbose > 2:
             LOG.debug("Found resource record sets to remove:\n{}".format(pp(self.records2remove)))
 
@@ -480,7 +507,7 @@ class PdnsBulkRmApp(BaseApplication):
     # -------------------------------------------------------------------------
     def show_records(self):
 
-        title = "All DNS record to remove"
+        title = "All DNS records to remove"
         print()
         print(title)
         print("=" * len(title))
@@ -493,6 +520,7 @@ class PdnsBulkRmApp(BaseApplication):
             'rec': 4,
             'dis': len(disabled),
         }
+        count = 0
 
         for zone_name in self.records2remove.keys():
             if len(zone_name) > lengths['z']:
@@ -502,12 +530,13 @@ class PdnsBulkRmApp(BaseApplication):
                 if len(fqdn) > lengths['fqdn']:
                     lengths['fqdn'] = len(fqdn)
                 for record in rrset['records']:
+                    count += 1
                     content = self.pdns.decanon_name(record['content'])
                     if len(content) > lengths['rec']:
                         lengths['rec'] = len(content)
 
-        tpl = "{{z:<{}}}  ".format(lengths['z'])
-        tpl += "{{fqdn:<{}}}  {{type:<8}}  ".format(lengths['fqdn'])
+        tpl = "{{fqdn:<{}}}  ".format(lengths['fqdn'])
+        tpl += "{{z:<{}}}  {{type:<8}}  ".format(lengths['z'])
         tpl += "{{rec:<{}}}  ".format(lengths['rec'])
         tpl += "{{dis:<{}}}".format(lengths['dis'])
 
@@ -531,7 +560,12 @@ class PdnsBulkRmApp(BaseApplication):
                     else:
                         out['dis'] = ''
                     print(tpl.format(**out))
-
+        s = ''
+        if count != 1:
+            s = 's'
+        print()
+        print("Total {c} DNS record{s} to remove.".format(
+            c=count, s=s))
         print()
 
 # =============================================================================
