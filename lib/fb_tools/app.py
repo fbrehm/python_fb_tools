@@ -34,7 +34,7 @@ from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -60,7 +60,7 @@ class BaseApplication(HandlingObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None,
+        self, appname=None, verbose=0, version=__pkg_version__, base_dir=None,
             terminal_has_colors=False, initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
