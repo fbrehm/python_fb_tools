@@ -22,8 +22,7 @@ from ..common import pp, to_bool
 
 from .object import VsphereObject
 
-
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -308,7 +307,7 @@ class VsphereDatastore(VsphereObject):
             capacity=self.capacity, free_space=self.free_space, for_k8s=self.for_k8s,
             maintenance_mode=self.maintenance_mode, multiple_host_access=self.multiple_host_access,
             fs_type=self.fs_type, uncommitted=self.uncommitted, url=self.url,
-            status=self.status, config_status=config_status)
+            status=self.status, config_status=self.config_status)
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):

@@ -23,8 +23,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -171,7 +170,7 @@ class VsphereNetwork(VsphereObject):
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             initialized=self.initialized, name=self.name, accessible=self.accessible,
             ip_pool_id=self.ip_pool_id, ip_pool_name=self.ip_pool_name,
-            status=self.status, config_status=config_status)
+            status=self.status, config_status=self.config_status)
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):

@@ -20,8 +20,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -150,7 +149,7 @@ class VsphereDsCluster(VsphereObject):
         return VsphereDsCluster(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             initialized=self.initialized, name=self.name, status=self.status,
-            config_status=config_status, capacity=self.capacity, free_space=self.free_space,)
+            config_status=self.config_status, capacity=self.capacity, free_space=self.free_space,)
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
