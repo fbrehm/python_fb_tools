@@ -10,23 +10,16 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import re
-import uuid
-import socket
-import time
-import datetime
 
 # Third party modules
-from pyVmomi import vim, vmodl
+from pyVmomi import vim
 
 # Own modules
-from ..common import pp, RE_TF_NAME
-
-from ..errors import HandlerError
+from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 LOG = logging.getLogger(__name__)
 
 # =============================================================================
@@ -113,7 +106,7 @@ class VsphereDatacenter(VsphereObject):
         return VsphereDatacenter(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             initialized=self.initialized, name=self.name,
-            status=self.status, config_status=config_status)
+            status=self.status, config_status=self.config_status)
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
