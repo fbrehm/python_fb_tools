@@ -11,7 +11,6 @@ from __future__ import absolute_import
 # Standard modules
 import logging
 import re
-import ipaddress
 
 # Third party modules
 
@@ -26,7 +25,7 @@ from .errors import PDNSApiNotFoundError, PDNSApiValidationError
 
 from .zone import PowerDNSZone, PowerDNSZoneDict
 
-__version__ = '0.6.1'
+__version__ = '0.6.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -189,8 +188,8 @@ class PowerDNSServer(BasePowerDNSHandler):
 
         return zones
 
-# =============================================================================
 
+# =============================================================================
 if __name__ == "__main__":
 
     pass
