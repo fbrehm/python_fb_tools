@@ -11,9 +11,7 @@ from __future__ import absolute_import
 # Standard modules
 import logging
 import textwrap
-import argparse
 import getpass
-import pathlib
 
 # Third party modules
 
@@ -32,7 +30,7 @@ from .get_vm_cfg import GetVmConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 LOG = logging.getLogger(__name__)
 
 
