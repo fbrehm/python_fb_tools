@@ -39,7 +39,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.5.3'
+__version__ = '0.5.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -77,6 +77,7 @@ class PdnsBulkRmApp(BaseApplication):
 
         self.addresses = []
         self.records2remove = {}
+        self.expected_ptr = None
 
         super(PdnsBulkRmApp, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -455,6 +456,19 @@ class PdnsBulkRmApp(BaseApplication):
                 if not found:
                     continue
                 for record in rrset.records:
+                    if zone.reverse_zone and rrset.type.upper() == 'PTR':
+                        if self.expected_ptr is not None and fqdn in self.expected_ptr:
+                            ptr = self.pdns.decanon_name(fqdn)
+                            exp = self.pdns.decanon_name(self.expected_ptr[fqdn])
+                            addr = self.pdns.decanon_name(record.content)
+                            if self.verbose > 1:
+                                LOG.debug("Expexted PTR: {p!r} => {a!r}.".format(p=ptr, a=exp))
+                            if record.content != self.expected_ptr[fqdn]:
+                                LOG.warn((
+                                    "PTR {p!r} does not pointing to expected {e!r}, "
+                                    "but to {c!r} instead, ignoring for deletion.").format(
+                                    p=ptr, e=exp, c=addr))
+                                continue
                     record2remove = {'content': record.content, 'disabled': record.disabled}
                     rrset2remove['records'].append(record2remove)
                 if zone_name not in self.records2remove:
@@ -513,6 +527,7 @@ class PdnsBulkRmApp(BaseApplication):
         LOG.debug("Retrieving reverse records of A and AAAA records.")
 
         addresses = []
+        self.expected_ptr = {}
 
         for zone_name in self.records2remove:
 
@@ -538,9 +553,13 @@ class PdnsBulkRmApp(BaseApplication):
                     LOG.debug("Found reverse address {!r}.".format(fqdn))
                     if fqdn not in addresses:
                         addresses.append(fqdn)
+                    self.expected_ptr[fqdn] = rrset['fqdn']
 
         if not addresses:
             return 0
+
+        if self.verbose > 1:
+            LOG.debug("Expected PTR records:\n{}".format(pp(self.expected_ptr)))
 
         return self.verify_addresses(addresses)
 
