@@ -1,3 +1,10 @@
+fb-tools (1.2.2) all; urgency=medium
+
+  * Ignoring found PTR records, if they are not pointing to their
+    original address
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 04 Dec 2018 18:31:11 +0100
+
 fb-tools (1.2.1) all; urgency=medium
 
   * Applying flake8 rules to all Python modules and scripts
