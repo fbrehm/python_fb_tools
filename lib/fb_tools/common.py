@@ -19,13 +19,14 @@ import string
 import random
 import datetime
 import pathlib
+import ipaddress
 
 # Third party modules
 import six
 
 # Own modules
 
-__version__ = '1.0.1'
+__version__ = '1.1.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -692,6 +693,19 @@ def get_monday(day):
     tdiff = datetime.timedelta(monday.weekday())
     monday -= tdiff
     return monday
+
+
+# =============================================================================
+def reverse_pointer(address):
+
+    addr = ipaddress.ip_address(address)
+
+    if addr.version == 4:
+        reverse_octets = str(addr).split('.')[::-1]
+        return '.'.join(reverse_octets) + '.in-addr.arpa'
+    else:
+        reverse_chars = addr.exploded[::-1].replace(':', '')
+        return '.'.join(reverse_chars) + '.ip6.arpa'
 
 
 # =============================================================================

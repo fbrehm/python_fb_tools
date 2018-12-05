@@ -26,7 +26,7 @@ import urllib3
 from six import add_metaclass
 
 # Own modules
-from ..common import pp, to_bool, RE_DOT_AT_END
+from ..common import pp, to_bool, RE_DOT_AT_END, reverse_pointer
 
 from ..handling_obj import HandlingObject
 
@@ -35,7 +35,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -407,7 +407,7 @@ class BasePowerDNSHandler(HandlingObject):
         if not is_fqdn:
             try:
                 address = ipaddress.ip_address(name)
-                fqdn = address.reverse_pointer
+                fqdn = reverse_pointer(address)
                 is_fqdn = False
             except ValueError:
                 if self.verbose > 3:
