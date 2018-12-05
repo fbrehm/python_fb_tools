@@ -25,7 +25,7 @@ from functools import cmp_to_key
 # Own modules
 from . import __version__ as GLOBAL_VERSION
 
-from .common import pp, compare_fqdn, to_bool
+from .common import pp, compare_fqdn, to_bool, reverse_pointer
 
 from .app import BaseApplication
 
@@ -39,7 +39,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.5.4'
+__version__ = '0.5.5'
 LOG = logging.getLogger(__name__)
 
 
@@ -544,7 +544,7 @@ class PdnsBulkRmApp(BaseApplication):
 
                     try:
                         addr = ipaddress.ip_address(addr_str)
-                        fqdn = self.pdns.canon_name(addr.reverse_pointer)
+                        fqdn = self.pdns.canon_name(reverse_pointer(addr))
                     except ValueError:
                         msg = "IP address {!r} seems not to be a valid IP address.".format(
                             addr_str)

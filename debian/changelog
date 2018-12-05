@@ -1,3 +1,11 @@
+fb-tools (1.2.3) all; urgency=medium
+
+  * Substituting property reverse_pointer of ipaddress objects by a
+    function in lib/fb_tools/common.py, because it is not available with
+    Python3.4
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 05 Dec 2018 15:17:23 +0100
+
 fb-tools (1.2.2) all; urgency=medium
 
   * Ignoring found PTR records, if they are not pointing to their
