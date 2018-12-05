@@ -18,6 +18,7 @@ import textwrap
 import argparse
 import getpass
 import signal
+import time
 
 # Third party modules
 
@@ -33,7 +34,7 @@ from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 
-__version__ = '1.0.1'
+__version__ = '1.1.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -59,7 +60,7 @@ class BaseApplication(HandlingObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None,
+        self, appname=None, verbose=0, version=__pkg_version__, base_dir=None,
             terminal_has_colors=False, initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
@@ -150,10 +151,11 @@ class BaseApplication(HandlingObject):
             ep = self.appname.upper() + '_'
             self._env_prefix = self.re_anum.sub('_', ep)
 
-        self._description = textwrap.dedent('''\
-            Creates or updates a directory with a terraform environment
-            on base of a given YAML file.
-            ''').strip()
+        if not self.description:
+            self._description = textwrap.dedent('''\
+                Creates or updates a directory with a terraform environment
+                on base of a given YAML file.
+                ''').strip()
 
         self._init_arg_parser()
         self._perform_arg_parser()
@@ -637,7 +639,7 @@ class BaseApplication(HandlingObject):
         )
         general_group.add_argument(
             "-V", '--version', action='version',
-            version='Version of %(prog)s: {}'.format(__pkg_version__),
+            version='Version of %(prog)s: {}'.format(self.version),
             help="Show program's version number and exit"
         )
 
@@ -765,6 +767,40 @@ class BaseApplication(HandlingObject):
         """
 
         pass
+
+    # -------------------------------------------------------------------------
+    def countdown(self, number=5, delay=1, prompt=None):
+
+        if prompt:
+            prompt = str(prompt).strip()
+        if not prompt:
+            prompt = "Starting in:"
+        prompt = self.colored(prompt, 'YELLOW')
+
+        try:
+            if not self.force:
+                i = number
+                out = self.colored("%d" % (i), 'RED')
+                msg = '\n{p} {o}'.format(p=prompt, o=out)
+                sys.stdout.write(msg)
+                sys.stdout.flush()
+                while i > 0:
+                    sys.stdout.write(' ')
+                    sys.stdout.flush()
+                    time.sleep(delay)
+                    i -= 1
+                    out = self.colored("{}".format(i), 'RED')
+                    sys.stdout.write(out)
+                    sys.stdout.flush()
+                sys.stdout.write("\n")
+                sys.stdout.flush()
+        except KeyboardInterrupt:
+            sys.stderr.write("\n")
+            LOG.warn("Aborted by user interrupt.")
+            sys.exit(99)
+
+        go = self.colored('Go go go ...', 'GREEN')
+        sys.stdout.write("\n%s\n\n" % (go))
 
 
 # =============================================================================

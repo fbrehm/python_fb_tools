@@ -1,3 +1,35 @@
+fb-tools (1.2.2) all; urgency=medium
+
+  * Ignoring found PTR records, if they are not pointing to their
+    original address
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 04 Dec 2018 18:31:11 +0100
+
+fb-tools (1.2.1) all; urgency=medium
+
+  * Applying flake8 rules to all Python modules and scripts
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 04 Dec 2018 17:45:29 +0100
+
+fb-tools (1.2.0) all; urgency=medium
+
+  * Adding script bin/pdns-bulk-remove and all necessary modules for.
+
+ -- Frank Brehm <frank@brehm-online.com>  Fri, 30 Nov 2018 12:38:16 +0100
+
+fb-tools (1.0.3) all; urgency=medium
+
+  * Detecting, whether a VSphere datastore is intended for Kubernetes or
+    not
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 23 Nov 2018 16:00:04 +0100
+
+fb-tools (1.0.2) all; urgency=medium
+
+  * Bugfixing in lib/fb_tools/pdns/server.py
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 23 Nov 2018 12:28:14 +0100
+
 fb-tools (1.0.1) all; urgency=medium
 
   * First Debian setup files

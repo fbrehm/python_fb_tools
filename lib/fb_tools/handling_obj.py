@@ -15,21 +15,23 @@ import pipes
 import textwrap
 import pathlib
 import signal
+import errno
 
 from subprocess import Popen, PIPE, SubprocessError
 
 # Third party modules
+import six
 
 # Own modules
 from .common import pp, to_bool, caller_search_path, to_str
 
-from .errors import InterruptError
+from .errors import InterruptError, ReadTimeoutError
 
 from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.0.1'
+__version__ = '1.1.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -366,6 +368,84 @@ class HandlingObject(FbBaseObject):
 
         self._interrupted = True
         raise err
+
+    # -------------------------------------------------------------------------
+    def read_file(
+            self, filename, timeout=2, binary=False, quiet=False, encoding='utf-8'):
+        """
+        Reads the content of the given filename.
+
+        @raise IOError: if file doesn't exists or isn't readable
+        @raise PbReadTimeoutError: on timeout reading the file
+
+        @param filename: name of the file to read
+        @type filename: str
+        @param timeout: the amount in seconds when this method should timeout
+        @type timeout: int
+        @param binary: Read the file as binary data.
+        @type binary: bool
+        @param quiet: increases the necessary verbosity level to
+                      put some debug messages
+        @type quiet: bool
+
+        @return: file content
+        @rtype:  str
+
+        """
+
+        needed_verbose_level = 1
+        if quiet:
+            needed_verbose_level = 3
+
+        def read_alarm_caller(signum, sigframe):
+            '''
+            This nested function will be called in event of a timeout
+
+            @param signum:   the signal number (POSIX) which happend
+            @type signum:    int
+            @param sigframe: the frame of the signal
+            @type sigframe:  object
+            '''
+
+            raise ReadTimeoutError(timeout, filename)
+
+        timeout = abs(int(timeout))
+        ifile = str(filename)
+
+        if not os.path.isfile(ifile):
+            raise IOError(
+                errno.ENOENT, "File doesn't exists.", ifile)
+        if not os.access(ifile, os.R_OK):
+            raise IOError(
+                errno.EACCES, 'Read permission denied.', ifile)
+
+        if self.verbose > needed_verbose_level:
+            LOG.debug("Reading file content of {!r} ...".format(ifile))
+
+        signal.signal(signal.SIGALRM, read_alarm_caller)
+        signal.alarm(timeout)
+
+        open_args = {}
+        if six.PY3 and not binary:
+            open_args['encoding'] = encoding
+            open_args['errors'] = 'surrogateescape'
+
+        mode = 'r'
+        if binary:
+            mode += 'b'
+
+        content = ''
+        with open(ifile, mode, **open_args) as fh:
+            for line in fh.readlines():
+                content += line
+            fh.close()
+
+        signal.alarm(0)
+
+        if six.PY2 and not binary:
+            content = content.decode(encoding, 'replace')
+
+        return content
 
 
 # =============================================================================

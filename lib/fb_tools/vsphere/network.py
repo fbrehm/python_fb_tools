@@ -23,8 +23,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-
-__version__ = '1.0.1'
+__version__ = '1.1.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -37,10 +36,12 @@ class VsphereNetwork(VsphereObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
-            name=None, accessible=True, ip_pool_id=None, ip_pool_name=None):
+            name=None, status='gray', config_status='gray', accessible=True,
+            ip_pool_id=None, ip_pool_name=None):
 
         self.repr_fields = (
-            'name', 'accessible', 'ip_pool_id', 'ip_pool_name', 'appname', 'verbose')
+            'name', 'obj_type', 'status', 'config_status', 'accessible',
+            'ip_pool_id', 'ip_pool_name', 'appname', 'verbose')
 
         self._accessible = bool(accessible)
         self._ip_pool_id = ip_pool_id
@@ -49,8 +50,9 @@ class VsphereNetwork(VsphereObject):
         self._network = None
 
         super(VsphereNetwork, self).__init__(
-            name=name, obj_type='vsphere_network', name_prefix="net",
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir)
+            name=name, obj_type='vsphere_network', name_prefix="net", status=status,
+            config_status=config_status, appname=appname, verbose=verbose,
+            version=version, base_dir=base_dir)
 
         match = self.re_ipv4_name.search(self.name)
         if match:
@@ -108,10 +110,10 @@ class VsphereNetwork(VsphereObject):
 
     # -------------------------------------------------------------------------
     @classmethod
-    def from_summary(cls, summary, appname=None, verbose=0, base_dir=None):
+    def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
-        if not isinstance(summary, vim.Network.Summary):
-            msg = "Argument {!r} is not a network summary.".format(summary)
+        if not isinstance(data, vim.Network):
+            msg = "Argument {!r} is not a network summary.".format(data)
             raise TypeError(msg)
 
         params = {
@@ -119,17 +121,19 @@ class VsphereNetwork(VsphereObject):
             'verbose': verbose,
             'base_dir': base_dir,
             'initialized': True,
-            'name': summary.name,
+            'name': data.summary.name,
+            'status': data.overallStatus,
+            'config_status': data.configStatus,
         }
 
-        if hasattr(summary, 'accessible'):
-            params['accessible'] = summary.accessible
+        if hasattr(data.summary, 'accessible'):
+            params['accessible'] = data.summary.accessible
 
-        if hasattr(summary, 'ipPoolId'):
-            params['ip_pool_id'] = summary.ipPoolId
+        if hasattr(data.summary, 'ipPoolId'):
+            params['ip_pool_id'] = data.summary.ipPoolId
 
-        if hasattr(summary, 'ipPoolName'):
-            params['ip_pool_name'] = summary.ipPoolName
+        if hasattr(data.summary, 'ipPoolName'):
+            params['ip_pool_name'] = data.summary.ipPoolName
 
         if verbose > 3:
             LOG.debug("Creating {c} object from:\n{p}".format(
@@ -165,7 +169,8 @@ class VsphereNetwork(VsphereObject):
         return VsphereNetwork(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             initialized=self.initialized, name=self.name, accessible=self.accessible,
-            ip_pool_id=self.ip_pool_id, ip_pool_name=self.ip_pool_name)
+            ip_pool_id=self.ip_pool_id, ip_pool_name=self.ip_pool_name,
+            status=self.status, config_status=self.config_status)
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):

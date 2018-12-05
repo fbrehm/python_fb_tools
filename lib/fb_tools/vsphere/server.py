@@ -33,6 +33,8 @@ from ..errors import HandlerError
 from . import BaseVsphereHandler, DEFAULT_TZ_NAME
 from . import DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USER, DEFAULT_DC, DEFAULT_CLUSTER
 
+from .dc import VsphereDatacenter
+
 from .cluster import VsphereCluster
 
 from .ds import VsphereDatastore, VsphereDatastoreDict
@@ -46,7 +48,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.0.1'
+__version__ = '1.1.0'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -79,6 +81,7 @@ class VsphereServer(BaseVsphereHandler):
         self.ds_clusters = VsphereDsClusterDict()
         self.networks = VsphereNetworkDict()
         self.about = None
+        self.dc_obj = None
 
         self.ds_mapping = {}
         self.ds_cluster_mapping = {}
@@ -157,6 +160,33 @@ class VsphereServer(BaseVsphereHandler):
         LOG.info("VSphere server version: {!r}".format(self.about['version']))
         if self.verbose > 1:
             LOG.debug("Found VSphere about-information:\n{}".format(pp(self.about)))
+
+    # -------------------------------------------------------------------------
+    def get_datacenter(self, disconnect=False):
+
+        LOG.debug("Trying to get datacenter from VSphere ...")
+
+        try:
+
+            if not self.service_instance:
+                self.connect()
+
+            content = self.service_instance.RetrieveContent()
+            dc_obj = self.get_obj(content, [vim.Datacenter], self.dc)
+            if not dc_obj:
+                raise VSphereDatacenterNotFoundError(self.dc)
+
+            self.dc_obj = VsphereDatacenter.from_summary(
+                dc_obj, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
+            LOG.debug("Found VSphere datacenter {!r}.".format(self.dc_obj.name))
+            if self.verbose > 2:
+                LOG.debug("Info about datacenter:\n{}".format(self.dc_obj))
+
+        finally:
+            if disconnect:
+                self.disconnect()
+
+        return
 
     # -------------------------------------------------------------------------
     def get_clusters(self, disconnect=False):
@@ -279,7 +309,7 @@ class VsphereServer(BaseVsphereHandler):
                     LOG.debug("Datastore {!r} seems to be local.".format(child.summary.name))
                 return
             ds = VsphereDatastore.from_summary(
-                child.summary, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
+                child, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
             if self.verbose > 2:
                 LOG.debug("Found datastore {ds!r} of type {t!r}, capacity {c:0.1f} GByte.".format(
                     ds=ds.name, t=ds.storage_type, c=ds.capacity_gb))
@@ -341,7 +371,7 @@ class VsphereServer(BaseVsphereHandler):
 
         if isinstance(child, vim.StoragePod):
             ds = VsphereDsCluster.from_summary(
-                child.summary, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
+                child, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
             self.ds_clusters.append(ds)
 
         return
@@ -399,7 +429,7 @@ class VsphereServer(BaseVsphereHandler):
 
         if isinstance(child, vim.Network):
             ds = VsphereNetwork.from_summary(
-                child.summary, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
+                child, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
             self.networks.append(ds)
 
         return
@@ -422,7 +452,7 @@ class VsphereServer(BaseVsphereHandler):
                 raise VSphereDatacenterNotFoundError(self.dc)
             for child in dc.vmFolder.childEntity:
                 path = child.name
-                if self.verbose > 1:
+                if self.verbose > 2:
                     LOG.debug("Searching in path {!r} ...".format(path))
                 vm = self._get_vm(child, vm_name, as_vmw_obj=as_vmw_obj)
                 if vm:
@@ -446,9 +476,9 @@ class VsphereServer(BaseVsphereHandler):
 
         vm = None
 
-        if self.verbose > 2:
-            LOG.debug("Searching in path {!r} ...".format(cur_path))
         if self.verbose > 3:
+            LOG.debug("Searching in path {!r} ...".format(cur_path))
+        if self.verbose > 4:
             LOG.debug("Found a {} child.".format(child.__class__.__name__))
 
         if hasattr(child, 'childEntity'):
