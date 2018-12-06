@@ -1,5 +1,12 @@
 fb-tools (1.2.4) all; urgency=medium
 
+  * Adding new exception classes InvalidMailAddressError and
+    CouldntOccupyLockfileError
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 06 Dec 2018 18:17:48 +0100
+
+fb-tools (1.2.4) all; urgency=medium
+
   * Adding function is_sequence() to lib/fb_tools/common.py
   * Extending search path in lib/fb_tools/common.py
 
