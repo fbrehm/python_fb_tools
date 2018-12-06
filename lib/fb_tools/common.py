@@ -20,13 +20,14 @@ import random
 import datetime
 import pathlib
 import ipaddress
+import collections
 
 # Third party modules
 import six
 
 # Own modules
 
-__version__ = '1.1.1'
+__version__ = '1.2.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -283,6 +284,17 @@ def to_str(obj, encoding='utf-8'):
 
 
 # =============================================================================
+def is_sequence(arg):
+
+    if not isinstance(arg, collections.Sequence):
+        return False
+
+    if hasattr(arg, "strip"):
+        return False
+
+    return True
+
+# =============================================================================
 def caller_search_path(*additional_paths):
     """
     Builds a search path for executables from environment $PATH
@@ -298,6 +310,8 @@ def caller_search_path(*additional_paths):
         search_path = os.defpath
 
     search_path_list = [
+        pathlib.Path('/opt/pixelpark/bin'),
+        pathlib.Path('/www/bin'),
         pathlib.Path('/opt/PPlocal/bin'),
         pathlib.Path('/opt/puppetlabs/bin'),
         pathlib.Path('/opt/puppetlabs/puppet/bin'),
