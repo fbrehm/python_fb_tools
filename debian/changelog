@@ -1,3 +1,10 @@
+fb-tools (1.2.4) all; urgency=medium
+
+  * Adding function is_sequence() to lib/fb_tools/common.py
+  * Extending search path in lib/fb_tools/common.py
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 06 Dec 2018 17:46:51 +0100
+
 fb-tools (1.2.3) all; urgency=medium
 
   * Substituting property reverse_pointer of ipaddress objects by a
