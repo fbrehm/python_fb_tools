@@ -11,7 +11,7 @@ import signal
 import os
 
 
-__version__ = '1.0.1'
+__version__ = '1.1.1'
 
 # =============================================================================
 class FbError(Exception):
@@ -20,6 +20,28 @@ class FbError(Exception):
     """
 
     pass
+
+# =============================================================================
+class InvalidMailAddressError(FbError):
+    """Class for a exception in case of a malformed mail address."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, address, msg=None):
+
+        self.address = address
+        self.msg = msg
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = "Wrong mail address {a!r} ({c})".format(
+            a=self.address, c=self.address.__class__.__name__)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
 
 # =============================================================================
 class FbHandlerError(FbError):
@@ -316,6 +338,38 @@ class CommandNotFoundError(HandlerError):
             msg += 's'
         msg += ": " + cmds
         return msg
+
+
+# =============================================================================
+class CouldntOccupyLockfileError(FbError):
+    """
+    Special error class indicating, that a lockfile couldn't coccupied
+    after a defined time.
+    """
+
+    # -----------------------------------------------------
+    def __init__(self, lockfile, duration, tries):
+        """
+        Constructor.
+
+        @param lockfile: the lockfile, which could't be occupied.
+        @type lockfile: str
+        @param duration: The duration in seconds, which has lead to this situation
+        @type duration: float
+        @param tries: the number of tries creating the lockfile
+        @type tries: int
+
+        """
+
+        self.lockfile = str(lockfile)
+        self.duration = float(duration)
+        self.tries = int(tries)
+
+    # -----------------------------------------------------
+    def __str__(self):
+
+        return "Couldn't occupy lockfile {!r} in {:0.1f} seconds with {} tries.".format(
+            self.lockfile, self.duration, self.tries)
 
 
 # =============================================================================
