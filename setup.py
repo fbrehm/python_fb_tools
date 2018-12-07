@@ -19,7 +19,6 @@ import textwrap
 import glob
 
 # Third party modules
-import six
 from setuptools import setup
 
 # own modules:
@@ -66,7 +65,7 @@ __url__ = 'https://github.com/fbrehm/python_fb_tools'
 
 
 __open_args__ = {}
-if six.PY3:
+if sys.version_info[0] < 3:
     __open_args__ = {'encoding': ENCODING, 'errors': 'surrogateescape'}
 
 # -----------------------------------
@@ -148,36 +147,10 @@ def write_local_version():
 # Write lib/storage_tools/local_version.py
 write_local_version()
 
-
-# -----------------------------------
-__pkgs__ = [
-    'fb_tools',
-]
-
-
-def get_packages():
-
-    re_sep = re.compile(re.escape(os.sep) + r'+')
-
-    for root, dirs, files in os.walk(__module_dir__):
-        rel_dir = os.path.relpath(root, __lib_dir__)
-        if '__init__.py' not in files:
-            continue
-        module = re_sep.sub('.', rel_dir)
-        if module not in __pkgs__:
-            __pkgs__.append(module)
-
-    __pkgs__.sort(key=str.lower)
-
-    print("Found packages: {}\n".format(pp(__pkgs__)))
-
-
-get_packages()
-
 # -----------------------------------
 __requirements__ = [
     'argparse',
-    'six',
+    'six'
 ]
 
 
@@ -192,7 +165,7 @@ def read_requirements():
         return
 
     re_comment = re.compile(r'\s*#.*')
-    re_module = re.compile(r'([a-z][a-z0-9_]*[a-z0-9])')
+    re_module = re.compile(r'([a-z][a-z0-9_]*[a-z0-9])', re.IGNORECASE)
 
     for line in f_content.splitlines():
         line = line.strip()
@@ -234,32 +207,8 @@ get_scripts()
 
 # -----------------------------------
 setup(
-    name=__packet_name__,
     version=__packet_version__,
-    description='Modules for common used objects, error classes and methods.',
     long_description=read('README.md'),
-    author=__author__,
-    author_email=__contact__,
-    url=__url__,
-    license=__license__,
-    platforms=['posix'],
-    package_dir={'': 'lib'},
-    packages=__pkgs__,
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Environment :: Console',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
-        'Natural Language :: English',
-        'Operating System :: POSIX',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    provides=[__packet_name__],
     scripts=__scripts__,
     requires=__requirements__,
 )
