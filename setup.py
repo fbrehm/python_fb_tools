@@ -177,7 +177,7 @@ get_packages()
 # -----------------------------------
 __requirements__ = [
     'argparse',
-    'six',
+    'six'
 ]
 
 
@@ -192,7 +192,7 @@ def read_requirements():
         return
 
     re_comment = re.compile(r'\s*#.*')
-    re_module = re.compile(r'([a-z][a-z0-9_]*[a-z0-9])')
+    re_module = re.compile(r'([a-z][a-z0-9_]*[a-z0-9])', re.IGNORECASE)
 
     for line in f_content.splitlines():
         line = line.strip()
