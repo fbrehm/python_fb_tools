@@ -1,3 +1,11 @@
+fb-tools (1.2.6) all; urgency=medium
+
+  * Modifying and cleaning up setup.cfg and setup.py
+  * Adding methods get_cmd() and write_file() to class HandlingObject.
+  * Adding property 'sudo' and method call() to class BaseHandler.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 07 Dec 2018 14:16:34 +0100
+
 fb-tools (1.2.4) all; urgency=medium
 
   * Adding new exception classes InvalidMailAddressError and
