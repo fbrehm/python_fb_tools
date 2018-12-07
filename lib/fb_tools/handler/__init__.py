@@ -130,7 +130,7 @@ class BaseHandler(HandlingObject):
         res['chown_cmd'] = self.chown_cmd
         res['echo_cmd'] = self.echo_cmd
         res['sudo_cmd'] = self.sudo_cmd
-        res['sudo'] = self.sudo_cmd
+        res['sudo'] = self.sudo
 
         return res
 
@@ -209,12 +209,12 @@ class BaseHandler(HandlingObject):
             sudo = self.sudo
         if sudo:
             cmd_list.insert(0, '-n')
-            cmd_list.insert(0, self.sudo_cmd)
+            cmd_list.insert(0, str(self.sudo_cmd))
 
         if simulate is None:
             simulate = self.simulate
         if simulate:
-            cmd_list.insert(0, self.echo_cmd)
+            cmd_list.insert(0, str(self.echo_cmd))
             quiet = False
 
         if quiet is None:
