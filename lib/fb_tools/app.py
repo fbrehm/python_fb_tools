@@ -34,6 +34,8 @@ from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 
+from .xlate import XLATOR
+
 __version__ = '1.1.2'
 LOG = logging.getLogger(__name__)
 
@@ -47,6 +49,8 @@ SIGNAL_NAMES = {
     signal.SIGUSR1: 'USR1',
     signal.SIGUSR2: 'USR2',
 }
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -575,7 +579,7 @@ class BaseApplication(HandlingObject):
         """
 
         if self.verbose > 1:
-            LOG.info("executing post_run() ...")
+            LOG.info(_("Executing {} ...").format('post_run()'))
 
     # -------------------------------------------------------------------------
     def _init_arg_parser(self):

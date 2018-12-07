@@ -10,17 +10,23 @@ from __future__ import print_function
 
 # Standard modules
 import sys
+import gettext
 
-if sys.version_info[0] != 3:
-    print("This script is intended to use with Python3.", file=sys.stderr)
-    print("You are using Python: {0}.{1}.{2}-{3}-{4}.\n".format(
-        *sys.version_info), file=sys.stderr)
+__exp_py_version_major__ = 3
+__min_py_version_minor__ = 4
+
+if sys.version_info[0] != __exp_py_version_major__:
+    print("This script is intended to use with Python {}.".format(
+            __exp_py_version_major__), file=sys.stderr)
+    print("You are using Python: {0}.{1}.{2}-{3}-{4}.".format(
+        *sys.version_info) + "\n", file=sys.stderr)
     sys.exit(1)
 
-if sys.version_info[1] < 4:
-    print("A minimal Python version of 3.4 is necessary to execute this script.", file=sys.stderr)
-    print("You are using Python: {0}.{1}.{2}-{3}-{4}.\n".format(
-        *sys.version_info), file=sys.stderr)
+if sys.version_info[1] < __min_py_version_minor__:
+    print("A minimal Python version of {maj}.{min} is necessary to execute this script.".format(
+        maj=__exp_py_version_major__, min=__min_py_version_minor__), file=sys.stderr)
+    print("You are using Python: {0}.{1}.{2}-{3}-{4}.".format(
+        *sys.version_info) + "\n", file=sys.stderr)
     sys.exit(1)
 
 import os
@@ -53,7 +59,11 @@ from fb_tools.common import pp
 
 from fb_tools.get_file_rm_app import GetFileRmApplication
 
-log = logging.getLogger(__name__)
+from fb_tools.xlate import XLATOR
+
+_ = XLATOR.gettext
+
+LOG = logging.getLogger(__name__)
 
 __author__ = 'Frank Brehm <frank.brehm@pixelpark.com>'
 __copyright__ = '(C) 2018 by Frank Brehm, Pixelpark GmbH, Berlin'
@@ -66,7 +76,7 @@ app = GetFileRmApplication(appname=appname, base_dir=base_dir)
 app.initialized = True
 
 if app.verbose > 2:
-    print("{c}-Object:\n{a}".format(c=app.__class__.__name__, a=app), file=sys.stderr)
+    print(_("{c}-Object:\n{a}").format(c=app.__class__.__name__, a=app), file=sys.stderr)
 
 app()
 
