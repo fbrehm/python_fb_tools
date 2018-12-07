@@ -25,13 +25,13 @@ import six
 # Own modules
 from .common import pp, to_bool, caller_search_path, to_str, encode_or_bust
 
-from .errors import InterruptError, ReadTimeoutError
+from .errors import InterruptError, ReadTimeoutError, WriteTimeoutError
 
 from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.1.3'
+__version__ = '1.1.4'
 LOG = logging.getLogger(__name__)
 
 
