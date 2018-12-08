@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-08 08:15+0100\n"
+"POT-Creation-Date: 2018-12-08 08:54+0100\n"
 "PO-Revision-Date: 2018-12-05 16:36+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en_US\n"
@@ -24,8 +24,103 @@ msgid ""
 "{a}"
 msgstr ""
 
-#: lib/fb_tools/app.py:592
+#: lib/fb_tools/app.py:68
+msgid "Forced execution - whatever it means."
+msgstr ""
+
+#: lib/fb_tools/app.py:149
+msgid "Invalid env_prefix {!r} given - it may not be empty."
+msgstr ""
+
+#: lib/fb_tools/app.py:153
+msgid ""
+"Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
+"underscore (this not as the first character) are allowed."
+msgstr ""
+
+#: lib/fb_tools/app.py:164
+msgid "Unknown and undescriped application."
+msgstr ""
+
+#: lib/fb_tools/app.py:189
+msgid "Wrong exit_value {!r}, must be >= 0."
+msgstr ""
+
+#: lib/fb_tools/app.py:454
+msgid "Exit on signal {n!r} ({s})."
+msgstr ""
+
+#: lib/fb_tools/app.py:479
+msgid "Enter "
+msgstr ""
+
+#: lib/fb_tools/app.py:486
+msgid "Repeat enter "
+msgstr ""
+
+#: lib/fb_tools/app.py:496
+msgid "{n} and repeated {n} did not match."
+msgstr ""
+
+#: lib/fb_tools/app.py:555
+msgid "The application is not completely initialized."
+msgstr ""
+
+#: lib/fb_tools/app.py:566
+msgid "Object {!r} seems not to be completely initialized."
+msgstr ""
+
+#: lib/fb_tools/app.py:576
+msgid "Ending."
+msgstr ""
+
+#: lib/fb_tools/app.py:595
 msgid "Executing {} ..."
+msgstr ""
+
+#: lib/fb_tools/app.py:617
+msgid "General options"
+msgstr ""
+
+#: lib/fb_tools/app.py:621
+msgid "Simulation mode, nothing is really done."
+msgstr ""
+
+#: lib/fb_tools/app.py:632
+msgid "Use colored output for messages."
+msgstr ""
+
+#: lib/fb_tools/app.py:639
+msgid "Increase the verbosity level"
+msgstr ""
+
+#: lib/fb_tools/app.py:644
+msgid "Silent execution, only warnings and errors are emitted."
+msgstr ""
+
+#: lib/fb_tools/app.py:649
+msgid "Show this help message and exit."
+msgstr ""
+
+#: lib/fb_tools/app.py:653
+msgid "Display brief usage message and exit."
+msgstr ""
+
+#: lib/fb_tools/app.py:655
+#, python-format
+msgid "Version of %(prog)s: {}"
+msgstr ""
+
+#: lib/fb_tools/app.py:658
+msgid "Show program's version number and exit."
+msgstr ""
+
+#: lib/fb_tools/app.py:792
+msgid "Starting in:"
+msgstr ""
+
+#: lib/fb_tools/app.py:814
+msgid "Aborted by user interrupt."
 msgstr ""
 
 #: lib/fb_tools/common.py:478

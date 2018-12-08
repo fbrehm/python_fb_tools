@@ -39,7 +39,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.1.2'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -64,6 +64,8 @@ class BaseApplication(HandlingObject):
 
     re_prefix = re.compile(r'^[a-z0-9][a-z0-9_]*$', re.IGNORECASE)
     re_anum = re.compile(r'[^A-Z0-9_]+', re.IGNORECASE)
+
+    default_force_desc_msg = _("Forced execution - whatever it means.")
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -144,11 +146,11 @@ class BaseApplication(HandlingObject):
         if env_prefix:
             ep = str(env_prefix).strip()
             if not ep:
-                msg = "Invalid env_prefix {!r} given - it may not be empty.".format(env_prefix)
+                msg = _("Invalid env_prefix {!r} given - it may not be empty.").format(env_prefix)
                 raise FbAppError(msg)
             match = self.re_prefix.search(ep)
             if not match:
-                msg = (
+                msg = _(
                     "Invalid characters found in env_prefix {!r}, only "
                     "alphanumeric characters and digits and underscore "
                     "(this not as the first character) are allowed.").format(env_prefix)
@@ -159,24 +161,16 @@ class BaseApplication(HandlingObject):
             self._env_prefix = self.re_anum.sub('_', ep)
 
         if not self.description:
-            self._description = textwrap.dedent('''\
-                Creates or updates a directory with a terraform environment
-                on base of a given YAML file.
-                ''').strip()
+            self._description = _("Unknown and undescriped application.")
+
+        if not hasattr(self, '_force_desc_msg'):
+            self._force_desc_msg = self.default_force_desc_msg
 
         self._init_arg_parser()
         self._perform_arg_parser()
 
         self._init_env()
         self._perform_env()
-
-#        self.config = CrTfConfiguration(
-#            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-#            terminal_has_colors=self.terminal_has_colors)
-
-#        self.handler = CreateTerraformHandler(
-#            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-#            terminal_has_colors=self.terminal_has_colors)
 
         self.post_init()
 
@@ -192,7 +186,15 @@ class BaseApplication(HandlingObject):
         if v >= 0:
             self._exit_value = v
         else:
-            LOG.warn("Wrong exit_value {!r}, must be >= 0".format(value))
+            LOG.warn(_("Wrong exit_value {!r}, must be >= 0.").format(value))
+
+    # -----------------------------------------------------------
+    @property
+    def force_desc_msg(self):
+        msg = getattr(self, '_force_desc_msg', None)
+        if not msg:
+            msg = self.default_force_desc_msg
+        return msg
 
     # -----------------------------------------------------------
     @property
@@ -325,6 +327,7 @@ class BaseApplication(HandlingObject):
         res['exit_value'] = self.exit_value
         res['quiet'] = self.quiet
         res['usage'] = self.usage
+        res['force_desc_msg'] = self.force_desc_msg
         res['fb_tools.xlate'] = {
                 '__module_dir__': __xlate_module_dir__,
                 '__base_dir__': __xlate_base_dir__,
@@ -448,7 +451,7 @@ class BaseApplication(HandlingObject):
             if signum in (
                     signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
                     signal.SIGTERM, signal.SIGKILL, signal.SIGQUIT):
-                LOG.info("Exit on signal {n!r} ({s}).".format(
+                LOG.info(_("Exit on signal {n!r} ({s}).").format(
                     n=signame, s=signum))
                 self.exit(1)
 
@@ -473,14 +476,14 @@ class BaseApplication(HandlingObject):
 
             while True:
 
-                p = "Enter " + prompt + ': '
+                p = _("Enter ") + prompt + ': '
                 while True:
                     secret = getpass.getpass(prompt=p)
                     secret = secret.strip()
                     if secret != '':
                         break
 
-                p = "Repeat enter " + prompt + ': '
+                p = _("Repeat enter ") + prompt + ': '
                 while True:
                     secret_repeat = getpass.getpass(prompt=p)
                     secret_repeat = secret_repeat.strip()
@@ -490,7 +493,7 @@ class BaseApplication(HandlingObject):
                 if secret == secret_repeat:
                     break
 
-                LOG.error("{n} and repeated {n} did not match.".format(n=item_name))
+                LOG.error(_("{n} and repeated {n} did not match.").format(n=item_name))
 
         finally:
             if self.verbose > 2:
@@ -549,7 +552,7 @@ class BaseApplication(HandlingObject):
 
         if not self.initialized:
             self.handle_error(
-                "The application is not completely initialized.", '', True)
+                _("The application is not completely initialized."), '', True)
             self.exit(9)
 
         try:
@@ -560,7 +563,7 @@ class BaseApplication(HandlingObject):
 
         if not self.initialized:
             raise FbAppError(
-                "Object {!r} seems not to be completely initialized.".format(
+                _("Object {!r} seems not to be completely initialized.").format(
                     self.__class__.__name__))
 
         try:
@@ -570,7 +573,7 @@ class BaseApplication(HandlingObject):
             self.exit_value = 99
 
         if self.verbose > 1:
-            LOG.info("Ending.")
+            LOG.info(_("Ending."))
 
         try:
             self.post_run()
@@ -611,50 +614,48 @@ class BaseApplication(HandlingObject):
 
         self.init_arg_parser()
 
-        general_group = self.arg_parser.add_argument_group('General options')
+        general_group = self.arg_parser.add_argument_group(_('General options'))
 
         general_group.add_argument(
             '-s', "--simulate", action="store_true", dest="simulate",
-            help="Simulation mode, nothing is really done."
+            help=_("Simulation mode, nothing is really done.")
         )
 
         general_group.add_argument(
             '-f', "--force", action="store_true", dest="force",
-            help=(
-                "Forced execution - removing of output directory, if already existing, "
-                "before it will be recreated.")
+            help=self.force_desc_msg,
         )
 
         general_group.add_argument(
             '--color', action="store", dest='color', const='yes',
             default='auto', nargs='?', choices=['yes', 'no', 'auto'],
-            help="Use colored output for messages.",
+            help=_("Use colored output for messages."),
         )
 
         verbose_group = general_group.add_mutually_exclusive_group()
 
         verbose_group.add_argument(
             "-v", "--verbose", action="count", dest='verbose',
-            help='Increase the verbosity level',
+            help=_('Increase the verbosity level'),
         )
 
         verbose_group.add_argument(
             "-q", "--quiet", action="store_true", dest='quiet',
-            help='Silent execution, only warnings and errors are emitted.',
+            help=_('Silent execution, only warnings and errors are emitted.'),
         )
 
         general_group.add_argument(
             "-h", "--help", action='help', dest='help',
-            help='Show this help message and exit'
+            help=_('Show this help message and exit.')
         )
         general_group.add_argument(
             "--usage", action='store_true', dest='usage',
-            help="Display brief usage message and exit"
+            help=_("Display brief usage message and exit.")
         )
+        v_msg = _("Version of %(prog)s: {}").format(self.version)
         general_group.add_argument(
-            "-V", '--version', action='version',
-            version='Version of %(prog)s: {}'.format(self.version),
-            help="Show program's version number and exit"
+            "-V", '--version', action='version', version=v_msg,
+            help=_("Show program's version number and exit.")
         )
 
     # -------------------------------------------------------------------------
@@ -788,7 +789,7 @@ class BaseApplication(HandlingObject):
         if prompt:
             prompt = str(prompt).strip()
         if not prompt:
-            prompt = "Starting in:"
+            prompt = _("Starting in:")
         prompt = self.colored(prompt, 'YELLOW')
 
         try:
@@ -810,7 +811,7 @@ class BaseApplication(HandlingObject):
                 sys.stdout.flush()
         except KeyboardInterrupt:
             sys.stderr.write("\n")
-            LOG.warn("Aborted by user interrupt.")
+            LOG.warn(_("Aborted by user interrupt."))
             sys.exit(99)
 
         go = self.colored('Go go go ...', 'GREEN')
