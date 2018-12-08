@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-08 08:05+0100\n"
-"PO-Revision-Date: 2018-12-08 08:05+0100\n"
+"POT-Creation-Date: 2018-12-08 08:15+0100\n"
+"PO-Revision-Date: 2018-12-08 08:17+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -45,6 +45,38 @@ msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
 #: lib/fb_tools/common.py:704
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
+
+#: lib/fb_tools/config.py:64
+msgid "File {!r} does not exists."
+msgstr "Die Datei {!r} existiert nicht."
+
+#: lib/fb_tools/config.py:67
+msgid "File {!r} is not a regular file."
+msgstr "Die Datei {!r} ist keine reguläre Datei."
+
+#: lib/fb_tools/config.py:123
+msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
+msgstr "Die Kodierung {v!r} muss ein {s!r}-Objekt sein, ist aber statt dessen ein {c!r}-Objekt."
+
+#: lib/fb_tools/config.py:141
+msgid "A configuration directory may not be None."
+msgstr "Ein Konfigurations-Verzeichnis darf nicht None sein."
+
+#: lib/fb_tools/config.py:157
+msgid "A configuration file may not be None."
+msgstr "Eine Konfigurations-Datei darf nicht None sein."
+
+#: lib/fb_tools/config.py:162 lib/fb_tools/config.py:170
+msgid "Configuration file {!r} exists, but is not a regular file."
+msgstr "Die Konfigurations-Datei {!r} existiert, ist aber keine reguläre Datei."
+
+#: lib/fb_tools/config.py:204
+msgid "Configuration file {!r} not found."
+msgstr "Die Konfigurations-Datei {!r} wurde nicht gefunden."
+
+#: lib/fb_tools/config.py:228
+msgid "Wrong configuration in {!r} found"
+msgstr "False Konfiguration in {!r} gefunden"
 
 #: lib/fb_tools/obj.py:55
 msgid "The base directory {!r} is not existing or not a directory."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.6\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-08 08:05+0100\n"
+"POT-Creation-Date: 2018-12-08 08:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,6 +41,38 @@ msgstr ""
 
 #: lib/fb_tools/common.py:704
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
+msgstr ""
+
+#: lib/fb_tools/config.py:64
+msgid "File {!r} does not exists."
+msgstr ""
+
+#: lib/fb_tools/config.py:67
+msgid "File {!r} is not a regular file."
+msgstr ""
+
+#: lib/fb_tools/config.py:123
+msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
+msgstr ""
+
+#: lib/fb_tools/config.py:141
+msgid "A configuration directory may not be None."
+msgstr ""
+
+#: lib/fb_tools/config.py:157
+msgid "A configuration file may not be None."
+msgstr ""
+
+#: lib/fb_tools/config.py:162 lib/fb_tools/config.py:170
+msgid "Configuration file {!r} exists, but is not a regular file."
+msgstr ""
+
+#: lib/fb_tools/config.py:204
+msgid "Configuration file {!r} not found."
+msgstr ""
+
+#: lib/fb_tools/config.py:228
+msgid "Wrong configuration in {!r} found"
 msgstr ""
 
 #: lib/fb_tools/obj.py:55
