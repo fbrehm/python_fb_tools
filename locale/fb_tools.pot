@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.6\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-08 07:48+0100\n"
+"POT-Creation-Date: 2018-12-08 08:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,22 @@ msgstr ""
 
 #: lib/fb_tools/app.py:592
 msgid "Executing {} ..."
+msgstr ""
+
+#: lib/fb_tools/common.py:478
+msgid "Given value is {!r}."
+msgstr ""
+
+#: lib/fb_tools/common.py:517
+msgid "Could not determine bytes in {!r}."
+msgstr ""
+
+#: lib/fb_tools/common.py:602
+msgid "Couldn't detect unit {!r}."
+msgstr ""
+
+#: lib/fb_tools/common.py:704
+msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr ""
 
 #: lib/fb_tools/obj.py:55

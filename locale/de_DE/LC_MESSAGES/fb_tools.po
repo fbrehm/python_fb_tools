@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-08 07:48+0100\n"
-"PO-Revision-Date: 2018-12-08 07:52+0100\n"
+"POT-Creation-Date: 2018-12-08 08:05+0100\n"
+"PO-Revision-Date: 2018-12-08 08:05+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -29,6 +29,22 @@ msgstr ""
 #: lib/fb_tools/app.py:592
 msgid "Executing {} ..."
 msgstr "Führe {} aus ..."
+
+#: lib/fb_tools/common.py:478
+msgid "Given value is {!r}."
+msgstr "Der übergebene Wert ist {!r}."
+
+#: lib/fb_tools/common.py:517
+msgid "Could not determine bytes in {!r}."
+msgstr "Konnte die Bytes nicht in {!r} ermitteln."
+
+#: lib/fb_tools/common.py:602
+msgid "Couldn't detect unit {!r}."
+msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
+
+#: lib/fb_tools/common.py:704
+msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
+msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
 
 #: lib/fb_tools/obj.py:55
 msgid "The base directory {!r} is not existing or not a directory."
