@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.6\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-08 07:42+0100\n"
+"POT-Creation-Date: 2018-12-08 07:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,30 @@ msgstr ""
 
 #: lib/fb_tools/app.py:592
 msgid "Executing {} ..."
+msgstr ""
+
+#: lib/fb_tools/obj.py:55
+msgid "The base directory {!r} is not existing or not a directory."
+msgstr ""
+
+#: lib/fb_tools/obj.py:101 lib/fb_tools/obj.py:157
+msgid "Wrong verbose level {!r}, must be >= 0"
+msgstr ""
+
+#: lib/fb_tools/obj.py:181
+msgid "Base directory {!r} does not exists."
+msgstr ""
+
+#: lib/fb_tools/obj.py:184
+msgid "Path for base directory {!r} is not a directory."
+msgstr ""
+
+#: lib/fb_tools/obj.py:267
+msgid "undefined error."
+msgstr ""
+
+#: lib/fb_tools/obj.py:276
+msgid "Exception happened"
 msgstr ""
 
 #: lib/fb_tools/xlate.py:60

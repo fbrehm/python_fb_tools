@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-08 07:42+0100\n"
-"PO-Revision-Date: 2018-12-05 16:36+0100\n"
+"POT-Creation-Date: 2018-12-08 07:48+0100\n"
+"PO-Revision-Date: 2018-12-08 07:52+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -29,6 +29,30 @@ msgstr ""
 #: lib/fb_tools/app.py:592
 msgid "Executing {} ..."
 msgstr "Führe {} aus ..."
+
+#: lib/fb_tools/obj.py:55
+msgid "The base directory {!r} is not existing or not a directory."
+msgstr "Das Basis-Verzeichnis {!r} existiert nicht oder ist kein Verzeichnis."
+
+#: lib/fb_tools/obj.py:101 lib/fb_tools/obj.py:157
+msgid "Wrong verbose level {!r}, must be >= 0"
+msgstr "Falsches Ausführlichkeits-Niveau, muss größer als oder gleich Null sein"
+
+#: lib/fb_tools/obj.py:181
+msgid "Base directory {!r} does not exists."
+msgstr "Das Basis-Verzeichnis {!r} existiert nicht."
+
+#: lib/fb_tools/obj.py:184
+msgid "Path for base directory {!r} is not a directory."
+msgstr "Der Pfad zum Basis-Verzeichnis {!r} is kein Verzeichnis"
+
+#: lib/fb_tools/obj.py:267
+msgid "undefined error."
+msgstr "unbestimmter Fehler."
+
+#: lib/fb_tools/obj.py:276
+msgid "Exception happened"
+msgstr "Aufgetretene Ausnahme"
 
 #: lib/fb_tools/xlate.py:60
 msgid "Module directory: {!r}"
