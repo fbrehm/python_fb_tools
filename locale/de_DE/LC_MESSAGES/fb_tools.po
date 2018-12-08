@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-05 17:14+0100\n"
+"POT-Creation-Date: 2018-12-08 07:42+0100\n"
 "PO-Revision-Date: 2018-12-05 16:36+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -23,7 +23,12 @@ msgid ""
 "{c}-Object:\n"
 "{a}"
 msgstr ""
-"{c}-Object:\n{a}"
+"{c}-Objekt:\n"
+"{a}"
+
+#: lib/fb_tools/app.py:592
+msgid "Executing {} ..."
+msgstr "Führe {} aus ..."
 
 #: lib/fb_tools/xlate.py:60
 msgid "Module directory: {!r}"
