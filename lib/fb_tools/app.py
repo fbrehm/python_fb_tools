@@ -39,7 +39,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -328,7 +328,9 @@ class BaseApplication(HandlingObject):
         res['quiet'] = self.quiet
         res['usage'] = self.usage
         res['force_desc_msg'] = self.force_desc_msg
-        res['fb_tools.xlate'] = {
+        if not 'xlate' in res:
+            res['xlate'] = {}
+        res['xlate']['fb_tools'] = {
                 '__module_dir__': __xlate_module_dir__,
                 '__base_dir__': __xlate_base_dir__,
                 'LOCALE_DIR': LOCALE_DIR,
