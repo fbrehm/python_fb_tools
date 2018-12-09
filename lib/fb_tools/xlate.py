@@ -15,6 +15,7 @@ import os
 import logging
 import gettext
 import pathlib
+import sys
 
 from pathlib import Path
 
@@ -22,12 +23,6 @@ from pathlib import Path
 import six
 
 from babel.support import Translations
-
-# Own modules
-#if __name__ == "__main__":
-#    from common import to_str
-#else:
-#    from .common import to_str
 
 DOMAIN = 'fb_tools'
 
@@ -39,7 +34,9 @@ __lib_dir__ = __module_dir__.parent
 __base_dir__ = __lib_dir__.parent
 LOCALE_DIR = __base_dir__.joinpath('locale')
 if not LOCALE_DIR.is_dir():
-    LOCALE_DIR = None
+    LOCALE_DIR = Path(sys.prefix).joinpath('share').joinpath('locale')
+    if not LOCALE_DIR.is_dir():
+        LOCALE_DIR = None
 
 __mo_file__ = gettext.find(DOMAIN, str(LOCALE_DIR))
 if __mo_file__:
