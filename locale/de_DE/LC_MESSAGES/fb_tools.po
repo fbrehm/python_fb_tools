@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-10 07:37+0100\n"
-"PO-Revision-Date: 2018-12-10 07:27+0100\n"
+"POT-Creation-Date: 2018-12-11 00:15+0100\n"
+"PO-Revision-Date: 2018-12-11 00:14+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -194,38 +194,43 @@ msgstr "Konnte mich nicht zum vSphere-Host {h}:{p} als Nutzer {u!r} verbinden."
 #: lib/fb_tools/errors.py:184
 msgid "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB available space."
 msgstr ""
+"Keinen SAN-basierten Datastore mit wenigstens {m:0.0f} MiB == {g:0.1f} GiB verfügbaren Platz "
+"gefunden."
 
 #: lib/fb_tools/errors.py:222
-msgid "Function {func}() has to be overridden in class {cls!r}."
-msgstr ""
+msgid "Method {func}() has to be overridden in class {cls!r}."
+msgstr "Die Methode {func}() der Klasse {cls!r} muss überschrieben werden."
 
 #: lib/fb_tools/errors.py:254
 msgid " (timeout after {:0.1f} secs)"
-msgstr ""
+msgstr " (Timeout nach {:0.1f} Sekunden)"
 
 #: lib/fb_tools/errors.py:281
 msgid "Timeout error on reading"
-msgstr ""
+msgstr "Timeout-Fehler beim Lesen"
 
 #: lib/fb_tools/errors.py:303
 msgid "Timeout error on writing"
-msgstr ""
+msgstr "Timeout-Fehler beim Schreiben"
 
 #: lib/fb_tools/errors.py:326
 msgid "Unknown OS command."
-msgstr ""
+msgstr "Unbekanntes Betriebssystem-Kommando."
 
 #: lib/fb_tools/errors.py:333
 msgid "Empty command list given."
-msgstr ""
+msgstr "Leere Kommando-Liste übergeben."
 
 #: lib/fb_tools/errors.py:343
+#, fuzzy
 msgid "Could not found OS command:"
-msgstr ""
+msgid_plural "Could not found OS commands:"
+msgstr[0] "Konnte das Betriebssystem-Kommando nicht finden:"
+msgstr[1] "Konnte die Betriebssystem-Kommandos nicht finden:"
 
 #: lib/fb_tools/errors.py:376
 msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
-msgstr ""
+msgstr "Konnte die Lock-Datei {lf!r} nicht in {d:0.1f} Sekunden mit {tries} Versuchen vereinnahmen."
 
 #: lib/fb_tools/obj.py:55
 msgid "The base directory {!r} is not existing or not a directory."
