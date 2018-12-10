@@ -21,14 +21,18 @@ import sre_constants
 # Third party modules
 
 # Own modules
+from .xlate import XLATOR
+
 from .errors import FbAppError
 
 from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '1.0.1'
+__version__ = '1.1.1'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -54,7 +58,7 @@ class KeepOptionAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
 
         if values < self._min:
-            msg = "Value must be at least {m} - {v} was given.".format(
+            msg = _("Value must be at least {m} - {v} was given.").format(
                 m=self._min, v=values)
             raise argparse.ArgumentError(self, msg)
 
@@ -95,11 +99,11 @@ class WrongDatePattern(GetFileRmError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "The given pattern {!r} is not a valid date pattern".format(self.pattern)
+        msg = _("The given pattern {!r} is not a valid date pattern").format(self.pattern)
         if self.add_info:
             msg += ': ' + self.add_info
         else:
-            msg += ". The must be exactly one occurence of '%Y', one of '%m' and one of '%d.'"
+            msg += _(". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'.")
         return msg
 
 # =============================================================================
@@ -127,11 +131,10 @@ class GetFileRmApplication(BaseApplication):
         Initialisation of the get-file-to-remove application object.
         """
 
-        desc = textwrap.dedent("""\
-            Returns a newline separated list of files generated from file globbing patterns
-            given as arguments to this application, where all files are omitted, which
-            should not be removed.
-            """).strip()
+        desc = _(
+            "Returns a newline separated list of files generated from file globbing patterns "
+            "given as arguments to this application, where all files are omitted, which "
+            "should not be removed.")
 
         self._keep_days = self.default_keep_days
         self._keep_weeks = self.default_keep_weeks
@@ -167,7 +170,7 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_days:
             self._keep_days = v
         else:
-            msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
+            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
                 v=value, n='keep_days', m=self.min_keep_days)
             raise ValueError(msg)
 
@@ -183,7 +186,7 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_weeks:
             self._keep_weeks = v
         else:
-            msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
+            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
                 v=value, n='keep_weeks', m=self.min_keep_weeks)
             raise ValueError(msg)
 
@@ -199,7 +202,7 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_months:
             self._keep_months = v
         else:
-            msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
+            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
                 v=value, n='keep_months', m=self.min_keep_months)
             raise ValueError(msg)
 
@@ -215,7 +218,7 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_years:
             self._keep_years = v
         else:
-            msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
+            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
                 v=value, n='keep_years', m=self.min_keep_years)
             raise ValueError(msg)
 
@@ -231,7 +234,7 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_last:
             self._keep_last = v
         else:
-            msg = "Wrong value {v!r} for {n}, must be >= {m}".format(
+            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
                 v=value, n='keep_last', m=self.min_keep_last)
             raise ValueError(msg)
 
@@ -256,56 +259,56 @@ class GetFileRmApplication(BaseApplication):
 
         super(GetFileRmApplication, self).init_arg_parser()
 
-        keep_group = self.arg_parser.add_argument_group('Keep options')
+        keep_group = self.arg_parser.add_argument_group(_('Keep options'))
 
         keep_group.add_argument(
-            '-L', '--last', metavar='NR_FILES', dest='last', type=int,
+            '-L', '--last', metavar=_('NR_FILES'), dest='last', type=int,
             action=KeepOptionAction, min_val=self.min_keep_last,
-            help=(
+            help=_(
                 "How many of the last files should be kept "
                 "(default: {default}, minimum: {min})?").format(
                 default=self.default_keep_last, min=self.min_keep_last),
         )
 
         keep_group.add_argument(
-            '-D', '--days', metavar='DAYS', dest='days', type=int,
+            '-D', '--days', metavar=_('DAYS'), dest='days', type=int,
             action=KeepOptionAction, min_val=self.min_keep_days,
-            help=(
+            help=_(
                 "How many files one per day from today on should be kept "
                 "(default: {default}, minimum: {min})?").format(
                 default=self.default_keep_days, min=self.min_keep_days),
         )
 
         keep_group.add_argument(
-            '-W', '--weeks', metavar='WEEKS', dest='weeks', type=int,
+            '-W', '--weeks', metavar=_('WEEKS'), dest='weeks', type=int,
             action=KeepOptionAction, min_val=self.min_keep_weeks,
-            help=(
+            help=_(
                 "How many files one per week from today on should be kept "
                 "(default: {default}, minimum: {min})?").format(
                 default=self.default_keep_weeks, min=self.min_keep_weeks),
         )
 
         keep_group.add_argument(
-            '-M', '--months', metavar='MONTHS', dest='months', type=int,
+            '-M', '--months', metavar=_('MONTHS'), dest='months', type=int,
             action=KeepOptionAction, min_val=self.min_keep_months,
-            help=(
+            help=_(
                 "How many files one per month from today on should be kept "
                 "(default: {default}, minimum: {min})?").format(
                 default=self.default_keep_months, min=self.min_keep_months),
         )
 
         keep_group.add_argument(
-            '-Y', '--years', metavar='YEARS', dest='years', type=int,
+            '-Y', '--years', metavar=_('YEARS'), dest='years', type=int,
             action=KeepOptionAction, min_val=self.min_keep_years,
-            help=(
+            help=_(
                 "How many files one per year from today on should be kept "
                 "(default: {default}, minimum: {min})?").format(
                 default=self.default_keep_years, min=self.min_keep_years),
         )
 
         self.arg_parser.add_argument(
-            'files', metavar='FILE', type=str, nargs='+',
-            help='File pattern to generate list of files to remove.',
+            'files', metavar=_('FILE'), type=str, nargs='+',
+            help=_('File pattern to generate list of files to remove.'),
         )
 
     # -------------------------------------------------------------------------
@@ -373,22 +376,22 @@ class GetFileRmApplication(BaseApplication):
                 if self.verbose > 2:
                     LOG.debug("Resolved paths:\n{}".format(pp(given_paths)))
                 if not given_paths:
-                    LOG.info("File pattern {!r} does not match any files.".format(fname))
+                    LOG.info(_("File pattern {!r} does not match any files.").format(fname))
                     continue
             for f_name in given_paths:
                 fpath = pathlib.Path(f_name)
                 if self.verbose > 2:
                     LOG.debug("Checking {!r} ...".format(fpath))
                 if not fpath.exists():
-                    LOG.warn("File {!r} does not exists.".format(str(fpath)))
+                    LOG.warn(_("File {!r} does not exists.").format(str(fpath)))
                     continue
                 if not fpath.is_file():
-                    LOG.warn("File {!r} is not a regular file.".format(str(fpath)))
+                    LOG.warn(_("File {!r} is not a regular file.").format(str(fpath)))
                     continue
 
                 match = self.re_date.search(str(fpath))
                 if not match:
-                    LOG.warn("File {fi!r} does not match pattern {pa!r}.".format(
+                    LOG.warn(_("File {fi!r} does not match pattern {pa!r}.").format(
                         fi=str(fpath), pa=self.date_pattern))
                     continue
 
@@ -398,7 +401,7 @@ class GetFileRmApplication(BaseApplication):
                 try:
                     fdate = datetime.date(year, month, day)                         # noqa
                 except ValueError as e:
-                    msg = "Date in file {fi!r} is not a valid date: {e}.".format(
+                    msg = _("Date in file {fi!r} is not a valid date: {e}.").format(
                         fi=str(fpath), e=e)
                     LOG.warn(msg)
                     continue
@@ -450,7 +453,7 @@ class GetFileRmApplication(BaseApplication):
     def pre_run(self):
 
         if not self.files_given:
-            msg = "Did not found any files to evaluate."
+            msg = _("Did not found any files to evaluate.")
             LOG.info(msg)
             self.exit(0)
 

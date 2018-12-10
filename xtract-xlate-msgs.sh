@@ -17,7 +17,6 @@ pkg_version=$( cat debian/changelog | head -n 1 | sed -e 's/^[^(]*(//' -e 's/).*
 pybabel extract bin/* lib \
     -o "${pot_file}" \
     -F etc/babel.ini \
-    --keyword="_" --keyword="__" \
     --width=${po_with} \
     --sort-by-file \
     --msgid-bugs-address="${my_address}" \

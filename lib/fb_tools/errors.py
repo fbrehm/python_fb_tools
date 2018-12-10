@@ -13,10 +13,9 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 
 _ = XLATOR.gettext
-__ = XLATOR.ngettext
 
 
 # =============================================================================
@@ -219,7 +218,7 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
         Typecasting into a string for error output.
         """
 
-        msg = _("Function {func}() has to be overridden in class {cls!r}.")
+        msg = _("Method {func}() has to be overridden in class {cls!r}.")
         return msg.format(func=self.function_name, cls=self.class_name)
 
 
@@ -339,7 +338,7 @@ class CommandNotFoundError(HandlerError):
         """
 
         cmds = ', '.join(map(lambda x: ("'" + str(x) + "'"), self.cmd_list))
-        msg = __('Could not found OS command:', 'Could not found OS commands:',
+        msg = XLATOR.ngettext('Could not found OS command:', 'Could not found OS commands:',
                 len(self.cmd_list)) + cmds
 
         return msg
