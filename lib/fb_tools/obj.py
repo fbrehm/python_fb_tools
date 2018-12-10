@@ -22,9 +22,13 @@ from .common import pp, to_bytes
 
 from .errors import FbError
 
-__version__ = '1.0.1'
+from .xlate import XLATOR
+
+__version__ = '1.1.0'
 
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -48,7 +52,7 @@ class BasedirNotExistingError(FbBaseObjectError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = (
+        msg = _(
             "The base directory {!r} is not existing or not "
             "a directory.").format(str(self.dir_name))
         return msg
@@ -94,7 +98,7 @@ class FbBaseObject(object):
         @type: int
         """
         if self._verbose < 0:
-            msg = "Wrong verbose level {!r}, must be >= 0".format(verbose)
+            msg = _("Wrong verbose level {!r}, must be >= 0").format(verbose)
             raise ValueError(msg)
 
         self._initialized = False
@@ -150,7 +154,7 @@ class FbBaseObject(object):
         if v >= 0:
             self._verbose = v
         else:
-            LOG.warn("Wrong verbose level {!r}, must be >= 0".format(value))
+            LOG.warn(_("Wrong verbose level {!r}, must be >= 0").format(value))
 
     # -----------------------------------------------------------
     @property
@@ -174,10 +178,10 @@ class FbBaseObject(object):
         if str(base_dir_path).startswith('~'):
             base_dir_path = base_dir_path.expanduser()
         if not base_dir_path.exists():
-            msg = "Base directory {!r} does not exists.".format(str(value))
+            msg = _("Base directory {!r} does not exists.").format(str(value))
             self.handle_error(msg, self.appname)
         elif not base_dir_path.is_dir():
-            msg = "Base directory {!r} is not a directory.".format(str(value))
+            msg = _("Path for base directory {!r} is not a directory.").format(str(value))
             self.handle_error(msg, self.appname)
         else:
             self._base_dir = base_dir_path
@@ -260,7 +264,7 @@ class FbBaseObject(object):
 
         msg = str(error_message).strip()
         if not msg:
-            msg = 'undefined error.'
+            msg = _('undefined error.')
         title = None
 
         if isinstance(error_message, Exception):
@@ -269,7 +273,7 @@ class FbBaseObject(object):
             if exception_name is not None:
                 title = exception_name.strip()
             else:
-                title = 'Exception happened'
+                title = _('Exception happened')
         msg = title + ': ' + msg
 
         root_log = logging.getLogger()

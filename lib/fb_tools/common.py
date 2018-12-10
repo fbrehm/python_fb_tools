@@ -27,7 +27,11 @@ import six
 
 # Own modules
 
-__version__ = '1.2.1'
+from .xlate import XLATOR
+
+__version__ = '1.3.0'
+
+_ = XLATOR.gettext
 
 LOG = logging.getLogger(__name__)
 
@@ -141,14 +145,16 @@ def terminal_can_colors(debug=False):
     for handle in [sys.stdout, sys.stderr]:
         if (hasattr(handle, "isatty") and handle.isatty()):
             if debug:
-                sys.stderr.write("%s is a tty.\n" % (handle.name))
+                msg = "{} is a tty.".format(handle.name)
+                sys.stderr.write(msg + '\n')
             if (platform.system() == 'Windows' and not ansi_term):
                 if debug:
                     sys.stderr.write("platform is Windows and not ansi_term.\n")
                 has_colors = False
         else:
             if debug:
-                sys.stderr.write("%s is not a tty.\n" % (handle.name))
+                msg = "{} is not a tty.".format(handle.name)
+                sys.stderr.write(msg + '\n')
             if ansi_term:
                 pass
             else:
@@ -469,7 +475,7 @@ def human2mbytes(value, si_conform=False, as_float=False):
     """
 
     if value is None:
-        msg = ("Given value is 'None'.")
+        msg = _("Given value is {!r}.").format(None)
         raise ValueError(msg)
 
     radix = '.'
@@ -508,7 +514,7 @@ def human2mbytes(value, si_conform=False, as_float=False):
         value_raw = match.group(1)
         unit = match.group(2)
     else:
-        msg = "Could not determine bytes in {!r}.".format(value)
+        msg = _("Could not determine bytes in {!r}.").format(value)
         raise ValueError(msg)
 
     if CUR_THOUSEP:
@@ -593,7 +599,7 @@ def _get_factor_human2bytes(unit, factor_bin, factor_si):
     elif RE_UNIT_ZIBYTES.search(unit):
         factor = (factor_bin ** 7)
     else:
-        msg = "Couldn't detect unit {!r}.".format(unit)
+        msg = _("Couldn't detect unit {!r}.").format(unit)
         raise ValueError(msg)
 
     return factor
@@ -695,7 +701,8 @@ def generate_password(length=12):
 def get_monday(day):
 
     if not isinstance(day, (datetime.date, datetime.datetime)):
-        msg = "Argument {!r} must be of type datetime.date or datetime.datetime.".format(day)
+        msg = _("Argument {a!r} must be of type {t1!r} or {t2!r}.").format(
+                a=day, t1='datetime.date', t2='datetime.datetime')
         raise TypeError(msg)
 
     # copy of day as datetime.date

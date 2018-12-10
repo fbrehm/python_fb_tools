@@ -20,6 +20,7 @@ import glob
 
 # Third party modules
 from setuptools import setup
+from setuptools.command.install import install
 
 # own modules:
 __base_dir__ = os.path.abspath(os.path.dirname(__file__))
@@ -206,11 +207,60 @@ def get_scripts():
 get_scripts()
 
 # -----------------------------------
+__locale_files__ = {}
+__data__files__ = []
+
+def is_locale_file(filename):
+    if filename.endswith('.po') or filename.endswith('.mo'):
+        return True
+    else:
+        return False
+
+def get_locales():
+
+    share_prefix = os.path.join(sys.prefix, 'share')
+    for root, dirs, files in os.walk('locale'):
+        if files:
+            for f in filter(is_locale_file, files):
+                if root not in __locale_files__:
+                    __locale_files__[root] = []
+                loc_file = os.path.join(root, f)
+                __locale_files__[root].append(loc_file)
+
+    print("Found locale files: {}\n".format(pp(__locale_files__)))
+
+    for root in sorted(__locale_files__.keys()):
+        target = os.path.join(share_prefix, root)
+        __data__files__.append((target, __locale_files__[root]))
+
+    print("Found data files: {}\n".format(pp(__data__files__)))
+
+
+get_locales()
+
+# -----------------------------------
+class InstallWithCompile(install):
+    def run(self):
+        from babel.messages.frontend import compile_catalog
+        compiler = compile_catalog(self.distribution)
+        option_dict = self.distribution.get_option_dict('compile_catalog')
+        compiler.domain = [option_dict['domain'][1]]
+        compiler.directory = option_dict['directory'][1]
+        compiler.statistics = bool(option_dict['statistics'][1])
+        compiler.run()
+        super().run()
+
+
+# -----------------------------------
 setup(
     version=__packet_version__,
     long_description=read('README.md'),
     scripts=__scripts__,
     requires=__requirements__,
+    data_files=__data__files__,
+    cmdclass={
+        'install': InstallWithCompile,
+    },
 )
 
 

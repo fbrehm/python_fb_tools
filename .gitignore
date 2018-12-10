@@ -5,6 +5,7 @@
 *-stamp
 *.bak
 *.egg-info
+*.mo
 build
 trace
 MANIFEST

@@ -1,0 +1,268 @@
+# Translations template for fb_tools.
+# Copyright (C) 2018 Frank Brehm, Berlin
+# This file is distributed under the same license as the fb_tools project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: fb_tools 1.2.6\n"
+"Report-Msgid-Bugs-To: frank@brehm-online.com\n"
+"POT-Creation-Date: 2018-12-10 07:37+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: bin/get-file-to-remove:79
+msgid ""
+"{c}-Object:\n"
+"{a}"
+msgstr ""
+
+#: lib/fb_tools/app.py:68
+msgid "Forced execution - whatever it means."
+msgstr ""
+
+#: lib/fb_tools/app.py:149
+msgid "Invalid env_prefix {!r} given - it may not be empty."
+msgstr ""
+
+#: lib/fb_tools/app.py:153
+msgid ""
+"Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
+"underscore (this not as the first character) are allowed."
+msgstr ""
+
+#: lib/fb_tools/app.py:164
+msgid "Unknown and undescriped application."
+msgstr ""
+
+#: lib/fb_tools/app.py:189
+msgid "Wrong exit_value {!r}, must be >= 0."
+msgstr ""
+
+#: lib/fb_tools/app.py:456
+msgid "Exit on signal {n!r} ({s})."
+msgstr ""
+
+#: lib/fb_tools/app.py:481
+msgid "Enter "
+msgstr ""
+
+#: lib/fb_tools/app.py:488
+msgid "Repeat enter "
+msgstr ""
+
+#: lib/fb_tools/app.py:498
+msgid "{n} and repeated {n} did not match."
+msgstr ""
+
+#: lib/fb_tools/app.py:557
+msgid "The application is not completely initialized."
+msgstr ""
+
+#: lib/fb_tools/app.py:568
+msgid "Object {!r} seems not to be completely initialized."
+msgstr ""
+
+#: lib/fb_tools/app.py:578
+msgid "Ending."
+msgstr ""
+
+#: lib/fb_tools/app.py:597
+msgid "Executing {} ..."
+msgstr ""
+
+#: lib/fb_tools/app.py:619
+msgid "General options"
+msgstr ""
+
+#: lib/fb_tools/app.py:623
+msgid "Simulation mode, nothing is really done."
+msgstr ""
+
+#: lib/fb_tools/app.py:634
+msgid "Use colored output for messages."
+msgstr ""
+
+#: lib/fb_tools/app.py:641
+msgid "Increase the verbosity level"
+msgstr ""
+
+#: lib/fb_tools/app.py:646
+msgid "Silent execution, only warnings and errors are emitted."
+msgstr ""
+
+#: lib/fb_tools/app.py:651
+msgid "Show this help message and exit."
+msgstr ""
+
+#: lib/fb_tools/app.py:655
+msgid "Display brief usage message and exit."
+msgstr ""
+
+#: lib/fb_tools/app.py:657
+#, python-format
+msgid "Version of %(prog)s: {}"
+msgstr ""
+
+#: lib/fb_tools/app.py:660
+msgid "Show program's version number and exit."
+msgstr ""
+
+#: lib/fb_tools/app.py:794
+msgid "Starting in:"
+msgstr ""
+
+#: lib/fb_tools/app.py:816
+msgid "Aborted by user interrupt."
+msgstr ""
+
+#: lib/fb_tools/common.py:478
+msgid "Given value is {!r}."
+msgstr ""
+
+#: lib/fb_tools/common.py:517
+msgid "Could not determine bytes in {!r}."
+msgstr ""
+
+#: lib/fb_tools/common.py:602
+msgid "Couldn't detect unit {!r}."
+msgstr ""
+
+#: lib/fb_tools/common.py:704
+msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
+msgstr ""
+
+#: lib/fb_tools/config.py:64
+msgid "File {!r} does not exists."
+msgstr ""
+
+#: lib/fb_tools/config.py:67
+msgid "File {!r} is not a regular file."
+msgstr ""
+
+#: lib/fb_tools/config.py:123
+msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
+msgstr ""
+
+#: lib/fb_tools/config.py:141
+msgid "A configuration directory may not be None."
+msgstr ""
+
+#: lib/fb_tools/config.py:157
+msgid "A configuration file may not be None."
+msgstr ""
+
+#: lib/fb_tools/config.py:162 lib/fb_tools/config.py:170
+msgid "Configuration file {!r} exists, but is not a regular file."
+msgstr ""
+
+#: lib/fb_tools/config.py:204
+msgid "Configuration file {!r} not found."
+msgstr ""
+
+#: lib/fb_tools/config.py:228
+msgid "Wrong configuration in {!r} found"
+msgstr ""
+
+#: lib/fb_tools/errors.py:43
+msgid "Wrong mail address {a!r} ({c})"
+msgstr ""
+
+#: lib/fb_tools/errors.py:106
+msgid "Process with PID {pid} got signal {signal}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:144
+msgid "The network {!r} is not existing."
+msgstr ""
+
+#: lib/fb_tools/errors.py:163
+msgid "Could not connect to the vSphere host {h}:{p} as user {u!r}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:184
+msgid "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB available space."
+msgstr ""
+
+#: lib/fb_tools/errors.py:222
+msgid "Function {func}() has to be overridden in class {cls!r}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:254
+msgid " (timeout after {:0.1f} secs)"
+msgstr ""
+
+#: lib/fb_tools/errors.py:281
+msgid "Timeout error on reading"
+msgstr ""
+
+#: lib/fb_tools/errors.py:303
+msgid "Timeout error on writing"
+msgstr ""
+
+#: lib/fb_tools/errors.py:326
+msgid "Unknown OS command."
+msgstr ""
+
+#: lib/fb_tools/errors.py:333
+msgid "Empty command list given."
+msgstr ""
+
+#: lib/fb_tools/errors.py:343
+msgid "Could not found OS command:"
+msgstr ""
+
+#: lib/fb_tools/errors.py:376
+msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
+msgstr ""
+
+#: lib/fb_tools/obj.py:55
+msgid "The base directory {!r} is not existing or not a directory."
+msgstr ""
+
+#: lib/fb_tools/obj.py:101 lib/fb_tools/obj.py:157
+msgid "Wrong verbose level {!r}, must be >= 0"
+msgstr ""
+
+#: lib/fb_tools/obj.py:181
+msgid "Base directory {!r} does not exists."
+msgstr ""
+
+#: lib/fb_tools/obj.py:184
+msgid "Path for base directory {!r} is not a directory."
+msgstr ""
+
+#: lib/fb_tools/obj.py:267
+msgid "undefined error."
+msgstr ""
+
+#: lib/fb_tools/obj.py:276
+msgid "Exception happened"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:57
+msgid "Module directory: {!r}"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:58
+msgid "Base directory: {!r}"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:59
+msgid "Locale directory: {!r}"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:60
+msgid "Locale domain: {!r}"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:61
+msgid "Found .mo-file: {!r}"
+msgstr ""
+

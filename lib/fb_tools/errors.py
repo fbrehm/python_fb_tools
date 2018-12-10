@@ -10,8 +10,14 @@ import errno
 import signal
 import os
 
+# Own modules
+from .xlate import XLATOR
 
-__version__ = '1.1.1'
+__version__ = '1.2.1'
+
+_ = XLATOR.gettext
+__ = XLATOR.ngettext
+
 
 # =============================================================================
 class FbError(Exception):
@@ -34,7 +40,7 @@ class InvalidMailAddressError(FbError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "Wrong mail address {a!r} ({c})".format(
+        msg = _("Wrong mail address {a!r} ({c})").format(
             a=self.address, c=self.address.__class__.__name__)
         if self.msg:
             msg += ': ' + self.msg
@@ -97,7 +103,7 @@ class InterruptError(ExpectedHandlerError):
         if self.signum in self.signal_names:
             signame = self.signal_names[self.signum] + '(' + signame + ')'
 
-        msg = "Process with PID {pid} got signal {signal}.".format(
+        msg = _("Process with PID {pid} got signal {signal}.").format(
             pid=os.getpid(), signal=signame)
 
         return msg
@@ -135,7 +141,7 @@ class NetworkNotExistingError(ExpectedHandlerError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "The network {!r} is not existing.".format(self.net_name)
+        msg = _("The network {!r} is not existing.").format(self.net_name)
         return msg
 
 
@@ -154,7 +160,7 @@ class CannotConnectVsphereError(ExpectedHandlerError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "Could not connect to the vSphere host {h}:{p} as user {u!r}.".format(
+        msg = _("Could not connect to the vSphere host {h}:{p} as user {u!r}.").format(
             h=self.host, p=self.port, u=self.user)
         return msg
 
@@ -175,9 +181,9 @@ class NoDatastoreFoundError(ExpectedHandlerError):
         mb = float(self.needed_bytes) / 1024.0 / 1024.0
         gb = mb / 1024.0
 
-        msg = (
+        msg = _(
             "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB "
-            "available space found.").format(m=mb, g=gb)
+            "available space.").format(m=mb, g=gb)
         return msg
 
 
@@ -213,7 +219,7 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
         Typecasting into a string for error output.
         """
 
-        msg = "Function {func}() has to be overridden in class {cls!r}."
+        msg = _("Function {func}() has to be overridden in class {cls!r}.")
         return msg.format(func=self.function_name, cls=self.class_name)
 
 
@@ -245,7 +251,7 @@ class IoTimeoutError(FbError, IOError):
         self.timeout = t_o
 
         if t_o is not None:
-            strerror += " (timeout after {:0.1f} secs)".format(t_o)
+            strerror += _(" (timeout after {:0.1f} secs)").format(t_o)
 
         if filename is None:
             super(IoTimeoutError, self).__init__(errno.ETIMEDOUT, strerror)
@@ -272,7 +278,7 @@ class ReadTimeoutError(IoTimeoutError):
 
         """
 
-        strerror = "Timeout error on reading"
+        strerror = _("Timeout error on reading")
         super(ReadTimeoutError, self).__init__(strerror, timeout, filename)
 
 
@@ -294,7 +300,7 @@ class WriteTimeoutError(IoTimeoutError):
 
         """
 
-        strerror = "Timeout error on writing"
+        strerror = _("Timeout error on writing")
         super(WriteTimeoutError, self).__init__(strerror, timeout, filename)
 
 
@@ -317,14 +323,14 @@ class CommandNotFoundError(HandlerError):
 
         self.cmd_list = None
         if cmd_list is None:
-            self.cmd_list = ["Unknown OS command."]
+            self.cmd_list = [_("Unknown OS command.")]
         elif isinstance(cmd_list, list):
             self.cmd_list = cmd_list
         else:
             self.cmd_list = [cmd_list]
 
         if len(self.cmd_list) < 1:
-            raise ValueError("Empty command list given.")
+            raise ValueError(_("Empty command list given."))
 
     # -------------------------------------------------------------------------
     def __str__(self):
@@ -333,10 +339,9 @@ class CommandNotFoundError(HandlerError):
         """
 
         cmds = ', '.join(map(lambda x: ("'" + str(x) + "'"), self.cmd_list))
-        msg = "Could not found OS command"
-        if len(self.cmd_list) != 1:
-            msg += 's'
-        msg += ": " + cmds
+        msg = __('Could not found OS command:', 'Could not found OS commands:',
+                len(self.cmd_list)) + cmds
+
         return msg
 
 
@@ -368,8 +373,8 @@ class CouldntOccupyLockfileError(FbError):
     # -----------------------------------------------------
     def __str__(self):
 
-        return "Couldn't occupy lockfile {!r} in {:0.1f} seconds with {} tries.".format(
-            self.lockfile, self.duration, self.tries)
+        return _("Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries.").format(
+            lf=self.lockfile, s=self.duration, tries=self.tries)
 
 
 # =============================================================================
