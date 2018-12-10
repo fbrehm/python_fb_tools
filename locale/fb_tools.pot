@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.6\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-08 08:54+0100\n"
+"POT-Creation-Date: 2018-12-10 07:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,80 +45,80 @@ msgstr ""
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr ""
 
-#: lib/fb_tools/app.py:454
+#: lib/fb_tools/app.py:456
 msgid "Exit on signal {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:479
+#: lib/fb_tools/app.py:481
 msgid "Enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:486
+#: lib/fb_tools/app.py:488
 msgid "Repeat enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:496
+#: lib/fb_tools/app.py:498
 msgid "{n} and repeated {n} did not match."
 msgstr ""
 
-#: lib/fb_tools/app.py:555
+#: lib/fb_tools/app.py:557
 msgid "The application is not completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:566
+#: lib/fb_tools/app.py:568
 msgid "Object {!r} seems not to be completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:576
+#: lib/fb_tools/app.py:578
 msgid "Ending."
 msgstr ""
 
-#: lib/fb_tools/app.py:595
+#: lib/fb_tools/app.py:597
 msgid "Executing {} ..."
 msgstr ""
 
-#: lib/fb_tools/app.py:617
+#: lib/fb_tools/app.py:619
 msgid "General options"
 msgstr ""
 
-#: lib/fb_tools/app.py:621
+#: lib/fb_tools/app.py:623
 msgid "Simulation mode, nothing is really done."
 msgstr ""
 
-#: lib/fb_tools/app.py:632
+#: lib/fb_tools/app.py:634
 msgid "Use colored output for messages."
 msgstr ""
 
-#: lib/fb_tools/app.py:639
+#: lib/fb_tools/app.py:641
 msgid "Increase the verbosity level"
 msgstr ""
 
-#: lib/fb_tools/app.py:644
+#: lib/fb_tools/app.py:646
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr ""
 
-#: lib/fb_tools/app.py:649
+#: lib/fb_tools/app.py:651
 msgid "Show this help message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:653
+#: lib/fb_tools/app.py:655
 msgid "Display brief usage message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:655
+#: lib/fb_tools/app.py:657
 #, python-format
 msgid "Version of %(prog)s: {}"
 msgstr ""
 
-#: lib/fb_tools/app.py:658
+#: lib/fb_tools/app.py:660
 msgid "Show program's version number and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:792
+#: lib/fb_tools/app.py:794
 msgid "Starting in:"
 msgstr ""
 
-#: lib/fb_tools/app.py:814
+#: lib/fb_tools/app.py:816
 msgid "Aborted by user interrupt."
 msgstr ""
 
@@ -170,6 +170,58 @@ msgstr ""
 msgid "Wrong configuration in {!r} found"
 msgstr ""
 
+#: lib/fb_tools/errors.py:43
+msgid "Wrong mail address {a!r} ({c})"
+msgstr ""
+
+#: lib/fb_tools/errors.py:106
+msgid "Process with PID {pid} got signal {signal}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:144
+msgid "The network {!r} is not existing."
+msgstr ""
+
+#: lib/fb_tools/errors.py:163
+msgid "Could not connect to the vSphere host {h}:{p} as user {u!r}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:184
+msgid "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB available space."
+msgstr ""
+
+#: lib/fb_tools/errors.py:222
+msgid "Function {func}() has to be overridden in class {cls!r}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:254
+msgid " (timeout after {:0.1f} secs)"
+msgstr ""
+
+#: lib/fb_tools/errors.py:281
+msgid "Timeout error on reading"
+msgstr ""
+
+#: lib/fb_tools/errors.py:303
+msgid "Timeout error on writing"
+msgstr ""
+
+#: lib/fb_tools/errors.py:326
+msgid "Unknown OS command."
+msgstr ""
+
+#: lib/fb_tools/errors.py:333
+msgid "Empty command list given."
+msgstr ""
+
+#: lib/fb_tools/errors.py:343
+msgid "Could not found OS command:"
+msgstr ""
+
+#: lib/fb_tools/errors.py:376
+msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
+msgstr ""
+
 #: lib/fb_tools/obj.py:55
 msgid "The base directory {!r} is not existing or not a directory."
 msgstr ""
@@ -194,23 +246,23 @@ msgstr ""
 msgid "Exception happened"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:60
+#: lib/fb_tools/xlate.py:57
 msgid "Module directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:61
+#: lib/fb_tools/xlate.py:58
 msgid "Base directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:62
+#: lib/fb_tools/xlate.py:59
 msgid "Locale directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:63
+#: lib/fb_tools/xlate.py:60
 msgid "Locale domain: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:64
+#: lib/fb_tools/xlate.py:61
 msgid "Found .mo-file: {!r}"
 msgstr ""
 

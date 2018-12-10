@@ -183,7 +183,7 @@ class NoDatastoreFoundError(ExpectedHandlerError):
 
         msg = _(
             "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB "
-            "available space found.").format(m=mb, g=gb)
+            "available space.").format(m=mb, g=gb)
         return msg
 
 
@@ -339,9 +339,7 @@ class CommandNotFoundError(HandlerError):
         """
 
         cmds = ', '.join(map(lambda x: ("'" + str(x) + "'"), self.cmd_list))
-        msg = __(
-                'Could not found OS command:',
-                'Could not found OS commands:',
+        msg = __('Could not found OS command:', 'Could not found OS commands:',
                 len(self.cmd_list)) + cmds
 
         return msg

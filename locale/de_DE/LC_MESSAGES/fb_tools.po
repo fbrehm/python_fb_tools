@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-08 08:54+0100\n"
-"PO-Revision-Date: 2018-12-08 08:57+0100\n"
+"POT-Creation-Date: 2018-12-10 07:37+0100\n"
+"PO-Revision-Date: 2018-12-10 07:27+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -50,80 +50,80 @@ msgstr "Unbekannte und nicht beschriebene Anwendung."
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr "Falscher Wert für exit_value {!r}, muss größer als oder gleich Null sein."
 
-#: lib/fb_tools/app.py:454
+#: lib/fb_tools/app.py:456
 msgid "Exit on signal {n!r} ({s})."
 msgstr "Beendigung auf Signal {n!r} ({s})."
 
-#: lib/fb_tools/app.py:479
+#: lib/fb_tools/app.py:481
 msgid "Enter "
 msgstr "Eingabe von "
 
-#: lib/fb_tools/app.py:486
+#: lib/fb_tools/app.py:488
 msgid "Repeat enter "
 msgstr "Wiederholen der Eingabe von "
 
-#: lib/fb_tools/app.py:496
+#: lib/fb_tools/app.py:498
 msgid "{n} and repeated {n} did not match."
 msgstr "{n} und das wiederholte {n} stimmen nicht überein."
 
-#: lib/fb_tools/app.py:555
+#: lib/fb_tools/app.py:557
 msgid "The application is not completely initialized."
 msgstr "Die Anwendung ist nicht vollständig initialisiert."
 
-#: lib/fb_tools/app.py:566
+#: lib/fb_tools/app.py:568
 msgid "Object {!r} seems not to be completely initialized."
 msgstr "Das {!r}-Objekt scheit noch nicht vollständig initialisiert zu sein."
 
-#: lib/fb_tools/app.py:576
+#: lib/fb_tools/app.py:578
 msgid "Ending."
 msgstr "Beenden."
 
-#: lib/fb_tools/app.py:595
+#: lib/fb_tools/app.py:597
 msgid "Executing {} ..."
 msgstr "Führe {} aus ..."
 
-#: lib/fb_tools/app.py:617
+#: lib/fb_tools/app.py:619
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
-#: lib/fb_tools/app.py:621
+#: lib/fb_tools/app.py:623
 msgid "Simulation mode, nothing is really done."
 msgstr "Simulations-Modus, es wird nichts wirklich verändert."
 
-#: lib/fb_tools/app.py:632
+#: lib/fb_tools/app.py:634
 msgid "Use colored output for messages."
 msgstr "Verwenden kolorierter Ausgabe für Mitteilungen."
 
-#: lib/fb_tools/app.py:639
+#: lib/fb_tools/app.py:641
 msgid "Increase the verbosity level"
 msgstr "Erhöhen des Ausführichkeits-Niveaus"
 
-#: lib/fb_tools/app.py:644
+#: lib/fb_tools/app.py:646
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr "Stillschweigende Ausführung, nur Warnungen und Fehler werden ausgegeben."
 
-#: lib/fb_tools/app.py:649
+#: lib/fb_tools/app.py:651
 msgid "Show this help message and exit."
 msgstr "Zeigt diesen Hilfe-Bildschirm und beendet sich."
 
-#: lib/fb_tools/app.py:653
+#: lib/fb_tools/app.py:655
 msgid "Display brief usage message and exit."
 msgstr "Zeigt eine kurze Darstellug zur Verwendung und beendet sich."
 
-#: lib/fb_tools/app.py:655
+#: lib/fb_tools/app.py:657
 #, python-format
 msgid "Version of %(prog)s: {}"
 msgstr "Version von %(prog)s: {}"
 
-#: lib/fb_tools/app.py:658
+#: lib/fb_tools/app.py:660
 msgid "Show program's version number and exit."
 msgstr "Stellt die Programm-Version dar und beendet sich."
 
-#: lib/fb_tools/app.py:792
+#: lib/fb_tools/app.py:794
 msgid "Starting in:"
 msgstr "Start in:"
 
-#: lib/fb_tools/app.py:814
+#: lib/fb_tools/app.py:816
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
 
@@ -175,6 +175,58 @@ msgstr "Die Konfigurations-Datei {!r} wurde nicht gefunden."
 msgid "Wrong configuration in {!r} found"
 msgstr "False Konfiguration in {!r} gefunden"
 
+#: lib/fb_tools/errors.py:43
+msgid "Wrong mail address {a!r} ({c})"
+msgstr "Ungültige Mailadresse {a!r} ({c})"
+
+#: lib/fb_tools/errors.py:106
+msgid "Process with PID {pid} got signal {signal}."
+msgstr "Der Prozess mit der PID {pid} hat das Signal {signal} erhalten."
+
+#: lib/fb_tools/errors.py:144
+msgid "The network {!r} is not existing."
+msgstr "Das Netzerk {!r} existiert nicht."
+
+#: lib/fb_tools/errors.py:163
+msgid "Could not connect to the vSphere host {h}:{p} as user {u!r}."
+msgstr "Konnte mich nicht zum vSphere-Host {h}:{p} als Nutzer {u!r} verbinden."
+
+#: lib/fb_tools/errors.py:184
+msgid "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB available space."
+msgstr ""
+
+#: lib/fb_tools/errors.py:222
+msgid "Function {func}() has to be overridden in class {cls!r}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:254
+msgid " (timeout after {:0.1f} secs)"
+msgstr ""
+
+#: lib/fb_tools/errors.py:281
+msgid "Timeout error on reading"
+msgstr ""
+
+#: lib/fb_tools/errors.py:303
+msgid "Timeout error on writing"
+msgstr ""
+
+#: lib/fb_tools/errors.py:326
+msgid "Unknown OS command."
+msgstr ""
+
+#: lib/fb_tools/errors.py:333
+msgid "Empty command list given."
+msgstr ""
+
+#: lib/fb_tools/errors.py:343
+msgid "Could not found OS command:"
+msgstr ""
+
+#: lib/fb_tools/errors.py:376
+msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
+msgstr ""
+
 #: lib/fb_tools/obj.py:55
 msgid "The base directory {!r} is not existing or not a directory."
 msgstr "Das Basis-Verzeichnis {!r} existiert nicht oder ist kein Verzeichnis."
@@ -199,23 +251,23 @@ msgstr "unbestimmter Fehler."
 msgid "Exception happened"
 msgstr "Aufgetretene Ausnahme"
 
-#: lib/fb_tools/xlate.py:60
+#: lib/fb_tools/xlate.py:57
 msgid "Module directory: {!r}"
 msgstr "Modul-Verzeichnis: {!r}"
 
-#: lib/fb_tools/xlate.py:61
+#: lib/fb_tools/xlate.py:58
 msgid "Base directory: {!r}"
 msgstr "Basis-Verzeichnis: {!r}"
 
-#: lib/fb_tools/xlate.py:62
+#: lib/fb_tools/xlate.py:59
 msgid "Locale directory: {!r}"
 msgstr "Verzeichnis für Locales: {!r}"
 
-#: lib/fb_tools/xlate.py:63
+#: lib/fb_tools/xlate.py:60
 msgid "Locale domain: {!r}"
 msgstr "Locale-Domäne: {!r}"
 
-#: lib/fb_tools/xlate.py:64
+#: lib/fb_tools/xlate.py:61
 msgid "Found .mo-file: {!r}"
 msgstr "Gefundene .mo-Datei: {!r}"
 
