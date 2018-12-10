@@ -16,7 +16,6 @@ from .xlate import XLATOR
 __version__ = '1.2.2'
 
 _ = XLATOR.gettext
-__ = XLATOR.ngettext
 
 
 # =============================================================================
