@@ -18,6 +18,8 @@ import getpass
 # Own modules
 from . import __version__ as GLOBAL_VERSION
 
+from .xlate import XLATOR
+
 from .common import pp
 
 from .app import BaseApplication
@@ -30,8 +32,10 @@ from .get_vm_cfg import GetVmConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '1.1.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -52,10 +56,9 @@ class GetVmApplication(BaseApplication):
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
-        desc = textwrap.dedent("""\
-            Tries to get information about the given virtual machines in
-            VMWare VSphere and print it out.
-            """).strip()
+        desc = _(
+            "Tries to get information about the given virtual machines in "
+            "VMWare VSphere and print it out.")
 
         self._cfg_file = None
         self.config = None
@@ -127,7 +130,7 @@ class GetVmApplication(BaseApplication):
         self.perform_arg_parser_vmware()
 
         if not self.config.password:
-            prompt = 'Enter password for host {h!r} and user {u!r}: '.format(
+            prompt = _('Enter password for host {h!r} and user {u!r}: ').format(
                 h=self.config.vsphere_host, u=self.config.vsphere_user)
             self.config.password = getpass.getpass(prompt=prompt)
 
@@ -152,39 +155,39 @@ class GetVmApplication(BaseApplication):
         default_cfg_file = self.base_dir.joinpath('etc').joinpath(self.appname + '.ini')
 
         self.arg_parser.add_argument(
-            '-c', '--config', '--config-file', dest='cfg_file', metavar='FILE',
+            '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
             action=CfgFileOptionAction,
-            help="Configuration file (default: {!r})".format(default_cfg_file)
+            help=_("Configuration file (default: {!r})").format(str(default_cfg_file))
         )
 
-        vmware_group = self.arg_parser.add_argument_group('VMWare options')
+        vmware_group = self.arg_parser.add_argument_group(_('VMWare options'))
 
         vmware_group.add_argument(
             '-H', '--host', dest='host',
-            help="Remote vSphere host to connect to (Default: {!r}).".format(
+            help=_("Remote vSphere host to connect to (Default: {!r}).").format(
                 GetVmConfiguration.default_vsphere_host)
         )
 
         vmware_group.add_argument(
             '-p', '--port', dest='port', type=int,
-            help="Port on vSphere host to connect on (Default: {}).".format(
+            help=_("Port on vSphere host to connect on (Default: {}).").format(
                 GetVmConfiguration.default_vsphere_port)
         )
 
         vmware_group.add_argument(
-            '-U', '--user', dest='user',
-            help="User name to use when connecting to vSphere host (Default: {!r}).".format(
+            '-U', '--user', dest='user', metavar=_('USER'),
+            help=_("User name to use when connecting to vSphere host (Default: {!r}).").format(
                 GetVmConfiguration.default_vsphere_user)
         )
 
         vmware_group.add_argument(
-            '-P', '--password', dest='password',
-            help="Password to use when connecting to vSphere host.",
+            '-P', '--password', dest='password', metavar=_('PASSWORD'),
+            help=_("Password to use when connecting to vSphere host."),
         )
 
         self.arg_parser.add_argument(
             'vms', metavar='VM', type=str, nargs='+',
-            help='Names of the VM to get information.',
+            help=_('Names of the VM to get information.'),
         )
 
     # -------------------------------------------------------------------------
@@ -215,7 +218,7 @@ class GetVmApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def _run(self):
 
-        LOG.debug("Starting {a!r}, version {v!r} ...".format(
+        LOG.debug(_("Starting {a!r}, version {v!r} ...").format(
             a=self.appname, v=self.version))
 
         ret = 99
@@ -223,7 +226,7 @@ class GetVmApplication(BaseApplication):
             ret = self.get_vms()
         finally:
             # Aufräumen ...
-            LOG.debug("Closing ...")
+            LOG.debug(_("Closing ..."))
             self.vsphere.disconnect()
             self.vsphere = None
 
@@ -240,7 +243,7 @@ class GetVmApplication(BaseApplication):
 
             if not vm_info:
                 ret = 1
-                print(self.colored("NOT FOUND", 'RED'))
+                print(self.colored(_("NOT FOUND"), 'RED'))
                 continue
 
             print("{ok}\n{vm}".format(ok=self.colored("OK", 'GREEN'), vm=pp(vm_info)))
