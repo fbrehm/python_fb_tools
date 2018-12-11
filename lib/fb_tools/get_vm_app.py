@@ -32,7 +32,7 @@ from .get_vm_cfg import GetVmConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -157,7 +157,7 @@ class GetVmApplication(BaseApplication):
         self.arg_parser.add_argument(
             '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
             action=CfgFileOptionAction,
-            help=_("Configuration file (default: {!r})").format(default_cfg_file)
+            help=_("Configuration file (default: {!r})").format(str(default_cfg_file))
         )
 
         vmware_group = self.arg_parser.add_argument_group(_('VMWare options'))
