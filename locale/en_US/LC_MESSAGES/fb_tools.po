@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-11 00:42+0100\n"
+"POT-Creation-Date: 2018-12-11 15:48+0100\n"
 "PO-Revision-Date: 2018-12-05 16:36+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en_US\n"
@@ -295,7 +295,7 @@ msgstr ""
 msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:310
+#: lib/fb_tools/get_file_rm_app.py:310 lib/fb_tools/get_vm_app.py:158
 msgid "FILE"
 msgstr ""
 
@@ -317,6 +317,118 @@ msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:456
 msgid "Did not found any files to evaluate."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:59
+msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:133
+msgid "Enter password for host {h!r} and user {u!r}: "
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:160
+msgid "Configuration file (default: {!r})"
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:163
+msgid "VMWare options"
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:167
+msgid "Remote vSphere host to connect to (Default: {!r})."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:173
+msgid "Port on vSphere host to connect on (Default: {})."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:178
+msgid "USER"
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:179
+msgid "User name to use when connecting to vSphere host (Default: {!r})."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:184
+msgid "PASSWORD"
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:185
+msgid "Password to use when connecting to vSphere host."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:190
+msgid "Names of the VM to get information."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:221
+msgid "Starting {a!r}, version {v!r} ..."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:229
+msgid "Closing ..."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:246
+msgid "NOT FOUND"
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:63
+msgid "Command {c!r} returned non-zero exit status {rc}."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:100
+msgid "Command {c!r} timed out after {s} seconds."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:243
+msgid "Command {!r} doesn't exists."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:246
+msgid "Command {!r} is not executable."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:269
+msgid "Command {!r} not found."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:306
+msgid "STDIN and input arguments may not both be used."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:320
+msgid "Simulation mode, not executing: {}"
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:376
+msgid "Nothing to do on signal."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:427 lib/fb_tools/handling_obj.py:511
+msgid "File doesn't exists."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:430
+msgid "Read permission denied."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:433
+msgid "Reading file content of {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:516 lib/fb_tools/handling_obj.py:523
+msgid "Write permission to {!r} denied."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:518 lib/fb_tools/handling_obj.py:525
+msgid "Write permission denied."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:606
+msgid "Completed process"
 msgstr ""
 
 #: lib/fb_tools/obj.py:55
