@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.6\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2018-12-11 15:48+0100\n"
+"POT-Creation-Date: 2018-12-12 11:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -371,6 +371,24 @@ msgstr ""
 
 #: lib/fb_tools/get_vm_app.py:246
 msgid "NOT FOUND"
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:146
+msgid "Invalid time zone name {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:157
+msgid "{}-object not initialized."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:159
+msgid "Method {} must be overridden in descendant classes."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:312 lib/fb_tools/handler/__init__.py:328
+msgid ""
+"Output on {where}:\n"
+"{what}."
 msgstr ""
 
 #: lib/fb_tools/handling_obj.py:63

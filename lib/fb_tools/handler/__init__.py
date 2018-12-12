@@ -25,18 +25,22 @@ import pytz
 import six
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import to_bool
 
 from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
 ECHO_CMD = pathlib.Path('/bin/echo')
 SUDO_CMD = pathlib.Path('/usr/bin/sudo')
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -139,7 +143,7 @@ class BaseHandler(HandlingObject):
     def set_tz(cls, tz_name):
 
         if not tz_name.strip():
-            raise ValueError("Invalid time zone name {!r}.".format(tz_name))
+            raise ValueError(_("Invalid time zone name {!r}.").format(tz_name))
         tz_name = tz_name.strip()
         LOG.debug("Setting time zone to {!r}.".format(tz_name))
         cls.tz = pytz.timezone(tz_name)
@@ -150,9 +154,10 @@ class BaseHandler(HandlingObject):
         """Executing the underlying action."""
 
         if not self.initialized:
-            raise HandlerError("{}-object not initialized.".format(self.__class__.__name__))
+            raise HandlerError(_("{}-object not initialized.").format(self.__class__.__name__))
 
-        raise HandlerError("Method __call__() must be overridden in descendant classes.")
+        raise HandlerError(_("Method {} must be overridden in descendant classes.").format(
+            '__call__()'))
 
     # -------------------------------------------------------------------------
     def call(
@@ -304,7 +309,7 @@ class BaseHandler(HandlingObject):
                         what='STDERR', enc=cur_encoding))
                 stderrdata = stderrdata.decode(cur_encoding)
             if not quiet:
-                msg = "Output on {where}:\n{what}.".format(
+                msg = _("Output on {where}:\n{what}.").format(
                     where="STDERR", what=stderrdata.strip())
                 if ret:
                     LOG.warn(msg)
@@ -320,7 +325,7 @@ class BaseHandler(HandlingObject):
                         what='STDOUT', enc=cur_encoding))
                 stdoutdata = stdoutdata.decode(cur_encoding)
             if not quiet:
-                msg = "Output on {where}:\n{what}.".format(
+                msg = _("Output on {where}:\n{what}.").format(
                     where="STDOUT", what=stdoutdata.strip())
                 if log_output:
                     LOG.info(msg)

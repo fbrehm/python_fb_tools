@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-11 15:48+0100\n"
+"POT-Creation-Date: 2018-12-12 11:24+0100\n"
 "PO-Revision-Date: 2018-12-11 15:50+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -339,7 +339,8 @@ msgstr "Fand keine Dateien zur Auswertung"
 #: lib/fb_tools/get_vm_app.py:59
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
 msgstr ""
-"Versucht, Informationen über Virtuelle Maschinen in VMWare VSphere zu ermitteln und gibt diese aus."
+"Versucht, Informationen über Virtuelle Maschinen in VMWare VSphere zu ermitteln und gibt diese "
+"aus."
 
 #: lib/fb_tools/get_vm_app.py:133
 msgid "Enter password for host {h!r} and user {u!r}: "
@@ -392,6 +393,26 @@ msgstr "Schließe ..."
 #: lib/fb_tools/get_vm_app.py:246
 msgid "NOT FOUND"
 msgstr "NICHT GEFUNDEN"
+
+#: lib/fb_tools/handler/__init__.py:146
+msgid "Invalid time zone name {!r}."
+msgstr "Ungültiger Zeitzonenname {!r}."
+
+#: lib/fb_tools/handler/__init__.py:157
+msgid "{}-object not initialized."
+msgstr "Das {}-Objekt ist noch nicht initialisiert."
+
+#: lib/fb_tools/handler/__init__.py:159
+msgid "Method {} must be overridden in descendant classes."
+msgstr "Die Methode {} muss in abgeleiteten Klassen überschrieben werden."
+
+#: lib/fb_tools/handler/__init__.py:312 lib/fb_tools/handler/__init__.py:328
+msgid ""
+"Output on {where}:\n"
+"{what}."
+msgstr ""
+"Ausgabe auf {where}:\n"
+"{what}."
 
 #: lib/fb_tools/handling_obj.py:63
 msgid "Command {c!r} returned non-zero exit status {rc}."
