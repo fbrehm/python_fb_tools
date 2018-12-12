@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.2.6\n"
+"Project-Id-Version: fb_tools 1.3.0\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2018-12-12 11:24+0100\n"
+"POT-Creation-Date: 2018-12-12 12:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -138,11 +138,11 @@ msgstr ""
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr ""
 
-#: lib/fb_tools/config.py:64 lib/fb_tools/get_file_rm_app.py:386
+#: lib/fb_tools/config.py:64 lib/fb_tools/get_file_rm_app.py:386 lib/fb_tools/pdns_bulk_rm_app.py:276
 msgid "File {!r} does not exists."
 msgstr ""
 
-#: lib/fb_tools/config.py:67 lib/fb_tools/get_file_rm_app.py:389
+#: lib/fb_tools/config.py:67 lib/fb_tools/get_file_rm_app.py:389 lib/fb_tools/pdns_bulk_rm_app.py:280
 msgid "File {!r} is not a regular file."
 msgstr ""
 
@@ -294,6 +294,7 @@ msgid "How many files one per year from today on should be kept (default: {defau
 msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:310 lib/fb_tools/get_vm_app.py:158
+#: lib/fb_tools/pdns_bulk_rm_app.py:190 lib/fb_tools/pdns_bulk_rm_app.py:237
 msgid "FILE"
 msgstr ""
 
@@ -325,7 +326,7 @@ msgstr ""
 msgid "Enter password for host {h!r} and user {u!r}: "
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:160
+#: lib/fb_tools/get_vm_app.py:160 lib/fb_tools/pdns_bulk_rm_app.py:192
 msgid "Configuration file (default: {!r})"
 msgstr ""
 
@@ -470,6 +471,137 @@ msgstr ""
 #: lib/fb_tools/obj.py:276
 msgid "Exception happened"
 msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:69
+msgid ""
+"Removes the given addresses (A-, AAAA- or CNAME-Records) completety from PowerDNS. If there are "
+"multiple entries to a DNS-Name, all appropriate records are removed. Additionally all "
+"appropriate reverse entries (PTR-records) were also removed, if they are pointing back to the "
+"given A- or AAAA-record."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:165
+msgid "No addresses to remove given."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:195
+msgid "PowerDNS options"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:198
+msgid "HOST"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:199
+msgid "Address or hostname of the PowerDNS server providing the API (Default: {!r})."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:205
+msgid "PORT"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:206
+msgid "Port on PowerDNS server for API on (Default: {})."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:210
+msgid "The API key for accessing the PowerDNS API."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:215
+msgid "Use HTTPS to access the PowerDNS API (Default: {})."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:221
+msgid "The global prefix for all paths for accessing the PowerDNS API (Default: {!r})."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:231
+msgid ""
+"Don't remove reverse DNS entries (PTR records) to the given addresses. (Default: False - reverse"
+" entries will be removed)."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:238
+msgid ""
+"File containing the addresses to remove. The addresses must be whitespace separeted, lines may "
+"be commented out by prepending them with a hash sign '#'. This option is mutually exclusive with"
+" giving the addresses as command line arguments."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:246
+msgid "ADDRESS"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:247
+msgid "Addresses to remove. This option is mutually exclusive with the {!r} option."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:266
+msgid "The option {!r} is mutually exclusive with giving the addresses as command line arguments."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:284
+msgid "No read access to file {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:333
+msgid "No addresses to remove found in {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:372
+msgid "Simulation mode - nothing will be removed in real."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:400
+msgid "Address {!r} could not interpreted as a FQDN."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:420
+msgid "Did not found an appropriate zone for address {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:472
+msgid "PTR {p!r} does not pointing to expected {e!r}, but to {c!r} instead, ignoring for deletion."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:498
+msgid "Did not found any addresses with an appropriate zone in PowerDNS."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:516
+msgid "The following addresses (FQDNs) are not found:"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:554
+msgid "IP address {!r} seems not to be a valid IP address."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:574
+msgid "All DNS records to remove"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:580
+msgid "Disabled."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:582
+msgid "Zone"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:583
+msgid "Name"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:584
+msgid "Type"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:636
+msgid "Total one DNS record to remove."
+msgid_plural "Total {} DNS records to remove."
+msgstr[0] ""
+msgstr[1] ""
 
 #: lib/fb_tools/xlate.py:57
 msgid "Module directory: {!r}"
