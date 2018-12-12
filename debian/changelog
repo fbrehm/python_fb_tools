@@ -1,3 +1,19 @@
+fb-tools (1.3.0) UNRELEASED; urgency=medium
+
+  * Preparing for internationalization.
+  * Adding modiule lib/fb_tools/xlate.py for providing a translator
+    object dedicated for this package.
+  * Adding script ./xtract-xlate-msgs.sh for generating and updating
+    localization files
+  * Adding script ./compile-xlate-msgs.sh for compiling *.po files into
+    *.mo files
+  * Modifying setup.py and setup.cfg for for automatic compiling *.po
+    files on calling setup.py
+  * Marking all translatable strings in Python modules and scripts.
+  * Translating all messages into locale de_DE.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 12 Dec 2018 11:30:04 +0100
+
 fb-tools (1.2.6) all; urgency=medium
 
   * Modifying and cleaning up setup.cfg and setup.py

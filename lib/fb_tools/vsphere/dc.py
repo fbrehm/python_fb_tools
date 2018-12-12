@@ -15,12 +15,17 @@ import logging
 from pyVmomi import vim
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '0.1.2'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
+
 
 # =============================================================================
 class VsphereDatacenter(VsphereObject):
@@ -127,7 +132,8 @@ class VsphereDatacenter(VsphereObject):
     def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
         if not isinstance(data, vim.Datacenter):
-            msg = "Argument {!r} is not a VSphere Datacenter source.".format(data)
+            msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='data', e='vim.Datacenter', v=data)
             raise TypeError(msg)
 
         params = {

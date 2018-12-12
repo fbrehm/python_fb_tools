@@ -13,10 +13,10 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 
 _ = XLATOR.gettext
-
+ngettext = XLATOR.ngettext
 
 # =============================================================================
 class FbError(Exception):
@@ -338,7 +338,7 @@ class CommandNotFoundError(HandlerError):
         """
 
         cmds = ', '.join(map(lambda x: ("'" + str(x) + "'"), self.cmd_list))
-        msg = XLATOR.ngettext('Could not found OS command:', 'Could not found OS commands:',
+        msg = ngettext('Could not found OS command:', 'Could not found OS commands:',
                 len(self.cmd_list)) + cmds
 
         return msg

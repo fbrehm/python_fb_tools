@@ -22,13 +22,17 @@ import pytz
 from pyVim.connect import SmartConnect, Disconnect
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import to_bool
 from ..handling_obj import HandlingObject
 
 from .errors import VSphereCannotConnectError
 
-__version__ = '1.0.1'
+__version__ = '1.1.1'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 DEFAULT_HOST = 'vcs01.ppbrln.internal'
 DEFAULT_PORT = 443
@@ -95,10 +99,10 @@ class BaseVsphereHandler(HandlingObject):
             self._port = self.default_port
             return
         val = int(value)
-        err_msg = (
-            "Invalid port number {!r} for the VSphere server, "
-            "must be 0 < PORT < 65536.")
         if val <= 0 or val > 65536:
+            err_msg = _(
+                "Invalid port number {!r} for the VSphere server, "
+                "must be 0 < PORT <= 65536.")
             msg = err_msg.format(value)
             raise ValueError(msg)
         self._port = val

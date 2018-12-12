@@ -18,6 +18,8 @@ import collections
 # Third party modules
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp, compare_fqdn, to_utf8, to_str
 
 from ..obj import FbBaseObject
@@ -26,10 +28,9 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.3.7'
+__version__ = '0.4.1'
 
 LOG = logging.getLogger(__name__)
-
 
 TYPE_ORDER = {
     'SOA': 0,
@@ -44,15 +45,19 @@ TYPE_ORDER = {
     'PTR': 9,
 }
 
+_ = XLATOR.gettext
+
 
 # =============================================================================
 def compare_rrsets(x, y):
 
     if not isinstance(x, PowerDNSRecordSet):
-        raise TypeError("Argument x {!r} must be a PowerDNSRecordSet object.".format(x))
+        raise TypeError("Argument {a} {v!r} must be a PowerDNSRecordSet object.".format(
+            a='x', v=x))
 
     if not isinstance(y, PowerDNSRecordSet):
-        raise TypeError("Argument y {!r} must be a PowerDNSRecordSet object.".format(y))
+        raise TypeError("Argument {a} {v!r} must be a PowerDNSRecordSet object.".format(
+            a='y', v=y))
 
     ret = compare_fqdn(x.name, y.name)
     if ret:
@@ -415,7 +420,7 @@ class PowerDnsSOAData(FbBaseObject):
                 break
             i += 1
             if i > 99:
-                msg = (
+                msg = _(
                     "Serial overflow - old serial {o} is in future, new serial {n} "
                     "has reached its maximum value.").format(o=self.serial, n=new_serial)
                 raise ValueError(msg)
@@ -431,7 +436,7 @@ class PowerDNSRecordList(collections.MutableSequence):
     A list containing Power DNS Records (as parts of a Record Set).
     """
 
-    msg_no_pdns_record = "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
+    msg_no_pdns_record = _("Invalid type {t!r} as an item of a {c}, only {o} objects are allowed.")
 
     # -------------------------------------------------------------------------
     def __init__(self, *records):
@@ -449,8 +454,8 @@ class PowerDNSRecordList(collections.MutableSequence):
 
         if len(args) > 0:
             if len(args) > 2:
-                raise TypeError("index() takes at most 3 arguments ({} given).".format(
-                    len(args) + 1))
+                raise TypeError(_("{m} takes at most {max} arguments ({n} given).").format(
+                    m='index()', max=3, n=len(args) + 1))
             i = int(args[0])
             if len(args) > 1:
                 j = int(args[1])
@@ -486,7 +491,7 @@ class PowerDNSRecordList(collections.MutableSequence):
             if item == record:
                 return index
 
-        msg = "Record {!r} is not in Record list.".format(record.content)
+        msg = _("Record {!r} is not in Record list.").format(record.content)
         raise ValueError(msg)
 
     # -------------------------------------------------------------------------
@@ -651,7 +656,7 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
             terminal_has_colors=False, initialized=None):
 
         if not isinstance(data, dict):
-            raise PowerDNSRecordSetError("Given data {!r} is not a dict object.".format(data))
+            raise PowerDNSRecordSetError(_("Given data {!r} is not a dict object.").format(data))
 
         if verbose > 3:
             LOG.debug("Creating {c}-object from data:\n{d}".format(
@@ -791,12 +796,12 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
     def get_soa_data(self):
 
         if self.type != 'SOA':
-            msg = "Cannot create PowerDnsSOAData from record set:\n{}".format(
-                pp(self.as_dict()))
+            msg = (_("Cannot create {o} from record set:") + "\n{rs}").format(
+                o='PowerDnsSOAData', rs=pp(self.as_dict()))
             raise PowerDNSRecordSetError(msg)
 
         if not self.records:
-            msg = "RecordSet has no records:\n{}".format(
+            msg = (_("RecordSet has no records:") + "\n{}").format(
                 pp(self.as_dict()))
             raise PowerDNSRecordSetError(msg)
 
@@ -804,7 +809,7 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
         soa = PowerDnsSOAData.init_from_data(
             record.content, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
         if self.verbose > 3:
-            LOG.debug("Got SOA:\n{}".format(pp(soa.as_dict())))
+            LOG.debug((_("Got SOA:") + "\n{}").format(pp(soa.as_dict())))
         return soa
 
 
@@ -814,7 +819,7 @@ class PowerDNSRecordSetList(collections.MutableSequence):
     A list containing Power DNS Record Sets (of a zone).
     """
 
-    msg_no_pdns_rrset = "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
+    msg_no_pdns_rrset = _("Invalid type {t!r} as an item of a {c}, only {o} objects are allowed.")
 
     # -------------------------------------------------------------------------
     def __init__(self, *rrsets):
@@ -832,8 +837,8 @@ class PowerDNSRecordSetList(collections.MutableSequence):
 
         if len(args) > 0:
             if len(args) > 2:
-                raise TypeError("index() takes at most 3 arguments ({} given).".format(
-                    len(args) + 1))
+                raise TypeError(_("{m} takes at most {max} arguments ({n} given).").format(
+                    m='index()', max=3, n=len(args) + 1))
             i = int(args[0])
             if len(args) > 1:
                 j = int(args[1])
@@ -869,7 +874,7 @@ class PowerDNSRecordSetList(collections.MutableSequence):
             if item == rrset:
                 return index
 
-        msg = "RecordSet {n!r} ({n})is not in RecordSet list.".format(
+        msg = _("RecordSet {n!r} ({n}) is not in RecordSet list.").format(
             n=rrset.name, t=rrset.type)
         raise ValueError(msg)
 
