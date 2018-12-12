@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 17:15+0100\n"
+"POT-Creation-Date: 2018-12-12 17:21+0100\n"
 "PO-Revision-Date: 2018-12-12 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -617,6 +617,7 @@ msgid "Notifying slave servers of zone {!r} ..."
 msgstr ""
 
 #: lib/fb_tools/pdns/zone.py:932 lib/fb_tools/vsphere/ds.py:339 lib/fb_tools/vsphere/ds_cluster.py:180
+#: lib/fb_tools/vsphere/network.py:202
 msgid "Invalid item type {{!r}} to set, only {} allowed."
 msgstr ""
 
@@ -625,10 +626,12 @@ msgid "The key {k!r} must be equal to the zone name {n!r}."
 msgstr ""
 
 #: lib/fb_tools/pdns/zone.py:935 lib/fb_tools/vsphere/ds_cluster.py:183
+#: lib/fb_tools/vsphere/network.py:205
 msgid "None type as key is not allowed."
 msgstr ""
 
 #: lib/fb_tools/pdns/zone.py:936 lib/fb_tools/vsphere/ds_cluster.py:184
+#: lib/fb_tools/vsphere/network.py:206
 msgid "Empty key {!r} is not allowed."
 msgstr ""
 
@@ -793,6 +796,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
 #: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
+#: lib/fb_tools/vsphere/network.py:120
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr ""
 
@@ -830,6 +834,26 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/iface.py:122
 msgid "Invalid MAC address {!r} for interface given."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:72
+msgid "Could not get IP network from network name {!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:75
+msgid "Network {!r} has no IP network assigned."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:204
+msgid "The key {k!r} must be equal to the network name {n!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:207
+msgid "Object {!r} is not a VsphereNetworkDict object."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:465
+msgid "Could not find VSphere network for IP addresses {}."
 msgstr ""
 
 #: lib/fb_tools/xlate.py:57
