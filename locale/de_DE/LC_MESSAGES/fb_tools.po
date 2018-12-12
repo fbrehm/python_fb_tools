@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 16:36+0100\n"
-"PO-Revision-Date: 2018-12-12 16:40+0100\n"
+"POT-Creation-Date: 2018-12-12 16:52+0100\n"
+"PO-Revision-Date: 2018-12-12 16:51+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -183,11 +183,11 @@ msgstr "Ungültige Mailadresse {a!r} ({c})"
 msgid "Process with PID {pid} got signal {signal}."
 msgstr "Der Prozess mit der PID {pid} hat das Signal {signal} erhalten."
 
-#: lib/fb_tools/errors.py:143
+#: lib/fb_tools/errors.py:143 lib/fb_tools/vsphere/errors.py:137
 msgid "The network {!r} is not existing."
 msgstr "Das Netzerk {!r} existiert nicht."
 
-#: lib/fb_tools/errors.py:162
+#: lib/fb_tools/errors.py:162 lib/fb_tools/vsphere/errors.py:156
 msgid "Could not connect to the vSphere host {h}:{p} as user {u!r}."
 msgstr "Konnte mich nicht zum vSphere-Host {h}:{p} als Nutzer {u!r} verbinden."
 
@@ -835,6 +835,36 @@ msgstr "Das Argument {a!r} ist keine {s} Quelle."
 #: lib/fb_tools/vsphere/ds_cluster.py:182
 msgid "The key {k!r} must be equal to the datastore cluster name {n!r}."
 msgstr "Der Key {k!r} muss gleich dem Namen des Datastore-Clusters {n!r} sein."
+
+#: lib/fb_tools/vsphere/errors.py:34
+msgid "No VSphere datastores found."
+msgstr "Keine VSphere-Datastores gefunden."
+
+#: lib/fb_tools/vsphere/errors.py:63
+msgid "Invalid name {n!r} for a {o} VSphere object."
+msgstr "Ungültiger Name für ein {o}-VSphere-Objekt."
+
+#: lib/fb_tools/vsphere/errors.py:66
+msgid "Invalid name {!r} for a VSphere object."
+msgstr "Ungültiger Name für ein VSphere-Objekt."
+
+#: lib/fb_tools/vsphere/errors.py:83
+msgid "The VSphere datacenter {!r} is not existing."
+msgstr "Das VSphere-Datacenter existiert nicht."
+
+#: lib/fb_tools/vsphere/errors.py:99
+msgid "The VSphere Virtual machine {!r} was not found."
+msgstr "Die VSphere-VM {!r} wurde nicht gefunden."
+
+#: lib/fb_tools/vsphere/errors.py:119
+msgid "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB available space found."
+msgstr ""
+"Kein SAN-basierter Datastore mit wenigstens {m:0.0f} MiB == {g:0.1f} GiB verfügbarem Platz "
+"gefunden."
+
+#: lib/fb_tools/vsphere/errors.py:178
+msgid "Timeout on creating VM {vm!r} after {to:0.1f} seconds."
+msgstr "Timeout bei der Erstellung der VM {vm!r} nach {to:0.1f} Sekunden."
 
 #: lib/fb_tools/xlate.py:57
 msgid "Module directory: {!r}"
