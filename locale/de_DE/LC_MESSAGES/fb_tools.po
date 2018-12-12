@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 16:52+0100\n"
-"PO-Revision-Date: 2018-12-12 16:51+0100\n"
+"POT-Creation-Date: 2018-12-12 17:07+0100\n"
+"PO-Revision-Date: 2018-12-12 17:09+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -641,7 +641,7 @@ msgstr "Erledigt."
 msgid "Notifying slave servers of zone {!r} ..."
 msgstr "Benachrichtige Slave-Server der Zone {!r} ..."
 
-#: lib/fb_tools/pdns/zone.py:932 lib/fb_tools/vsphere/ds.py:338 lib/fb_tools/vsphere/ds_cluster.py:180
+#: lib/fb_tools/pdns/zone.py:932 lib/fb_tools/vsphere/ds.py:339 lib/fb_tools/vsphere/ds_cluster.py:180
 msgid "Invalid item type {{!r}} to set, only {} allowed."
 msgstr "Ungültiger Typ {{!r}} des Eintrags beim Setzen, nur {} ist erlaubt."
 
@@ -828,9 +828,10 @@ msgstr "Kein Schreibzugriff auf den Socket"
 msgid "Invalid value {!r} for facility."
 msgstr "Ungültiger Wert für Fazilität."
 
-#: lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds_cluster.py:106
-msgid "Argument {a!r} is not a {s} source."
-msgstr "Das Argument {a!r} ist keine {s} Quelle."
+#: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
+#: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
+msgid "Parameter {t!r} must be a {e}, {v!r} was given."
+msgstr "Der Parameter {t!r} must be ein {e} ein, statt dessen wurde {v!r} übergeben."
 
 #: lib/fb_tools/vsphere/ds_cluster.py:182
 msgid "The key {k!r} must be equal to the datastore cluster name {n!r}."
@@ -865,6 +866,10 @@ msgstr ""
 #: lib/fb_tools/vsphere/errors.py:178
 msgid "Timeout on creating VM {vm!r} after {to:0.1f} seconds."
 msgstr "Timeout bei der Erstellung der VM {vm!r} nach {to:0.1f} Sekunden."
+
+#: lib/fb_tools/vsphere/iface.py:122
+msgid "Invalid MAC address {!r} for interface given."
+msgstr "Ungültige MAC-Adresse {!r} für das Interface übergeben."
 
 #: lib/fb_tools/xlate.py:57
 msgid "Module directory: {!r}"

@@ -22,7 +22,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -103,8 +103,8 @@ class VsphereDsCluster(VsphereObject):
     def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
         if not isinstance(data, vim.StoragePod):
-            msg = _("Argument {a!r} is not a {s} source.").format(
-                    a=data, s='VSphere Datastore Cluster')
+            msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='data', e='vim.StoragePod', v=data)
             raise TypeError(msg)
 
         params = {

@@ -21,7 +21,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -132,8 +132,8 @@ class VsphereDatacenter(VsphereObject):
     def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
         if not isinstance(data, vim.Datacenter):
-            msg = _("Argument {a!r} is not a {s} source.").format(
-                    a=data, s='VSphere Datacenter')
+            msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='data', e='vim.Datacenter', v=data)
             raise TypeError(msg)
 
         params = {

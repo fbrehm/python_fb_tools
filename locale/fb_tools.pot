@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.3.0\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2018-12-12 16:52+0100\n"
+"POT-Creation-Date: 2018-12-12 17:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -614,7 +614,7 @@ msgstr ""
 msgid "Notifying slave servers of zone {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:932 lib/fb_tools/vsphere/ds.py:338 lib/fb_tools/vsphere/ds_cluster.py:180
+#: lib/fb_tools/pdns/zone.py:932 lib/fb_tools/vsphere/ds.py:339 lib/fb_tools/vsphere/ds_cluster.py:180
 msgid "Invalid item type {{!r}} to set, only {} allowed."
 msgstr ""
 
@@ -785,8 +785,9 @@ msgstr ""
 msgid "Invalid value {!r} for facility."
 msgstr ""
 
-#: lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds_cluster.py:106
-msgid "Argument {a!r} is not a {s} source."
+#: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
+#: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
+msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr ""
 
 #: lib/fb_tools/vsphere/ds_cluster.py:182
@@ -819,6 +820,10 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/errors.py:178
 msgid "Timeout on creating VM {vm!r} after {to:0.1f} seconds."
+msgstr ""
+
+#: lib/fb_tools/vsphere/iface.py:122
+msgid "Invalid MAC address {!r} for interface given."
 msgstr ""
 
 #: lib/fb_tools/xlate.py:57

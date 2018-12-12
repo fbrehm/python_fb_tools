@@ -24,7 +24,7 @@ from ..common import pp, to_bool
 
 from .object import VsphereObject
 
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -199,7 +199,8 @@ class VsphereDatastore(VsphereObject):
     def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
         if not isinstance(data, vim.Datastore):
-            msg = "Argument {!r} is not a VSphere datastore.".format(data)
+            msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='data', e='vim.Datastore', v=data)
             raise TypeError(msg)
 
         params = {
