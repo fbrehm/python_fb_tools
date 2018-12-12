@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 12:30+0100\n"
+"POT-Creation-Date: 2018-12-12 14:34+0100\n"
 "PO-Revision-Date: 2018-12-12 11:58+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -369,7 +369,7 @@ msgstr "NUTZER"
 
 #: lib/fb_tools/get_vm_app.py:179
 msgid "User name to use when connecting to vSphere host (Default: {!r})."
-msgstr "iDer Nutzername, der zum Verbinden zum vSphere-Server verwendet werden soll (Vorgabe: {!r})"
+msgstr "Der Nutzername, der zum Verbinden zum vSphere-Server verwendet werden soll (Vorgabe: {!r})"
 
 #: lib/fb_tools/get_vm_app.py:184
 msgid "PASSWORD"
@@ -494,6 +494,50 @@ msgstr "unbestimmter Fehler."
 #: lib/fb_tools/obj.py:276
 msgid "Exception happened"
 msgstr "Aufgetretene Ausnahme"
+
+#: lib/fb_tools/pdns/__init__.py:135
+msgid "Invalid port number {!r} for the PowerDNS API, must be 0 < PORT < 65536."
+msgstr "Ungültige Portnummer {!r} für die PowerDNS-API, muss 0 < PORT < 65536 sein."
+
+#: lib/fb_tools/pdns/__init__.py:188
+msgid "The path prefix {!r} must be an absolute path."
+msgstr "Der Pfad-Prefix muss ein absoluter Pfad sein."
+
+#: lib/fb_tools/pdns/__init__.py:204
+msgid "Invalid timeout {!r} for requesting the PowerDNS API, must be 0 < SECONDS < 3600."
+msgstr "Ungültiger Timeout zur Abfrage der PowerDNS-API, muss 0 < SEKUNDEN < 3600 sein."
+
+#: lib/fb_tools/pdns/__init__.py:221
+msgid "Invalid user agent {!r} given."
+msgstr "Ungültiger User-Agent {!r} übergeben."
+
+#: lib/fb_tools/pdns/__init__.py:233
+msgid "Invalid API server name {!r} given."
+msgstr "Ungültiger API-Servername {!r} übergeben."
+
+#: lib/fb_tools/pdns/__init__.py:280
+msgid "Failed to extract request ID from response header 'location': {!r}"
+msgstr "Konnte Request-ID nicht aus dem Rückgabe-Header 'location' ermitteln: {!r}"
+
+#: lib/fb_tools/pdns/__init__.py:288
+msgid "The path {!r} must be an absolute path."
+msgstr "Der Pfad muss ein absoluter Pfad sein."
+
+#: lib/fb_tools/pdns/__init__.py:357
+msgid "Got a {c} on connecting to {h!r}: {e}."
+msgstr "Bekam ein {c} bei der Verbindung zu {h!r}: {e}."
+
+#: lib/fb_tools/pdns/__init__.py:365
+msgid "Failed to parse the response"
+msgstr "Konnte Rückgabe nicht auswerten"
+
+#: lib/fb_tools/pdns/__init__.py:425
+msgid "Invalid FQDN {!r}."
+msgstr "Ungültiger FQDN {!r}."
+
+#: lib/fb_tools/pdns/errors.py:52
+msgid "Could not interprete SOA data: {!r}."
+msgstr "Konnte SOA-Daten nicht interpretieren: {!r}."
 
 #: lib/fb_tools/pdns_bulk_rm_app.py:69
 msgid ""
@@ -625,18 +669,22 @@ msgid "Disabled."
 msgstr "Deaktiviert"
 
 #: lib/fb_tools/pdns_bulk_rm_app.py:582
-msgid "Zone"
-msgstr "Zone"
-
-#: lib/fb_tools/pdns_bulk_rm_app.py:583
 msgid "Name"
 msgstr "Name"
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:583
+msgid "Zone"
+msgstr "Zone"
 
 #: lib/fb_tools/pdns_bulk_rm_app.py:584
 msgid "Type"
 msgstr "Typ"
 
-#: lib/fb_tools/pdns_bulk_rm_app.py:636
+#: lib/fb_tools/pdns_bulk_rm_app.py:585
+msgid "Record"
+msgstr "Record"
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:644
 msgid "Total one DNS record to remove."
 msgid_plural "Total {} DNS records to remove."
 msgstr[0] "Insgesamt ein DNS-Record, der gelöscht wird."

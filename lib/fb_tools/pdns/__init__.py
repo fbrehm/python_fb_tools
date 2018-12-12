@@ -26,6 +26,8 @@ import urllib3
 from six import add_metaclass
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp, to_bool, RE_DOT_AT_END, reverse_pointer
 
 from ..handling_obj import HandlingObject
@@ -35,7 +37,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.5.2'
+__version__ = '0.6.1'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -45,6 +47,9 @@ DEFAULT_PORT = 8081
 DEFAULT_TIMEOUT = 20
 DEFAULT_API_PREFIX = '/api/v1'
 DEFAULT_USE_HTTPS = False
+
+_ = XLATOR.gettext
+
 
 # =============================================================================
 @add_metaclass(ABCMeta)
@@ -127,7 +132,7 @@ class BasePowerDNSHandler(HandlingObject):
             self._port = self.default_port
             return
         val = int(value)
-        err_msg = (
+        err_msg = _(
             "Invalid port number {!r} for the PowerDNS API, "
             "must be 0 < PORT < 65536.")
         if val <= 0 or val > 65536:
@@ -180,7 +185,7 @@ class BasePowerDNSHandler(HandlingObject):
             self._path_prefix = None
         else:
             if not os.path.isabs(val):
-                msg = "The path prefix {!r} must be an absolute path.".format(value)
+                msg = _("The path prefix {!r} must be an absolute path.").format(value)
                 raise ValueError(msg)
             self._path_prefix = val
 
@@ -196,7 +201,7 @@ class BasePowerDNSHandler(HandlingObject):
             self._timeout = self.default_timeout
             return
         val = int(value)
-        err_msg = (
+        err_msg = _(
             "Invalid timeout {!r} for requesting the PowerDNS API, "
             "must be 0 < SECONDS < 3600.")
         if val <= 0 or val > 3600:
@@ -213,7 +218,7 @@ class BasePowerDNSHandler(HandlingObject):
     @user_agent.setter
     def user_agent(self, value):
         if value is None or str(value).strip() == '':
-            raise PowerDNSHandlerError("Invalid user agent {!r} given.".format(value))
+            raise PowerDNSHandlerError(_("Invalid user agent {!r} given.").format(value))
         self._user_agent = str(value).strip()
 
     # -----------------------------------------------------------
@@ -225,7 +230,7 @@ class BasePowerDNSHandler(HandlingObject):
     @api_servername.setter
     def api_servername(self, value):
         if value is None or str(value).strip() == '':
-            raise PowerDNSHandlerError("Invalid API server name {!r} given.".format(value))
+            raise PowerDNSHandlerError(_("Invalid API server name {!r} given.").format(value))
         self._api_servername = str(value).strip()
 
     # -------------------------------------------------------------------------
@@ -272,14 +277,15 @@ class BasePowerDNSHandler(HandlingObject):
         if match:
             return match.group(1)
         else:
-            msg = "Failed to extract request ID from response header 'location': {!r}".format(loc)
+            msg = _("Failed to extract request ID from response header 'location': {!r}").format(
+                loc)
             raise PowerDNSHandlerError(msg)
 
     # -------------------------------------------------------------------------
     def _build_url(self, path, no_prefix=False):
 
         if not os.path.isabs(path):
-            msg = "The path {!r} must be an absolute path.".format(path)
+            msg = _("The path {!r} must be an absolute path.").format(path)
             raise ValueError(msg)
 
         url = 'http://{}'.format(self.master_server)
@@ -348,7 +354,7 @@ class BasePowerDNSHandler(HandlingObject):
                 socket.timeout, urllib3.exceptions.ConnectTimeoutError,
                 urllib3.exceptions.MaxRetryError,
                 requests.exceptions.ConnectTimeout) as e:
-            msg = "Got a {c} on connecting to {h!r}: {e}.".format(
+            msg = _("Got a {c} on connecting to {h!r}: {e}.").format(
                 c=e.__class__.__name__, h=self.master_server, e=e)
             raise PowerDNSHandlerError(msg)
 
@@ -356,7 +362,7 @@ class BasePowerDNSHandler(HandlingObject):
             self._eval_response(url, response)
 
         except ValueError:
-            raise PDNSApiError('Failed to parse the response', response.text)
+            raise PDNSApiError(_('Failed to parse the response'), response.text)
 
         if self.verbose > 3:
             LOG.debug("RAW response: {!r}.".format(response.text))
@@ -416,7 +422,7 @@ class BasePowerDNSHandler(HandlingObject):
                 fqdn = name
 
         if ':' in fqdn:
-            LOG.error("Invalid FQDN {!r}.".format(fqdn))
+            LOG.error(_("Invalid FQDN {!r}.").format(fqdn))
             return None
 
         return self.canon_name(fqdn)

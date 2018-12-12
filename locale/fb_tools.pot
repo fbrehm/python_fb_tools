@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.3.0\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2018-12-12 12:30+0100\n"
+"POT-Creation-Date: 2018-12-12 14:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -472,6 +472,50 @@ msgstr ""
 msgid "Exception happened"
 msgstr ""
 
+#: lib/fb_tools/pdns/__init__.py:135
+msgid "Invalid port number {!r} for the PowerDNS API, must be 0 < PORT < 65536."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:188
+msgid "The path prefix {!r} must be an absolute path."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:204
+msgid "Invalid timeout {!r} for requesting the PowerDNS API, must be 0 < SECONDS < 3600."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:221
+msgid "Invalid user agent {!r} given."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:233
+msgid "Invalid API server name {!r} given."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:280
+msgid "Failed to extract request ID from response header 'location': {!r}"
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:288
+msgid "The path {!r} must be an absolute path."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:357
+msgid "Got a {c} on connecting to {h!r}: {e}."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:365
+msgid "Failed to parse the response"
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:425
+msgid "Invalid FQDN {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/errors.py:52
+msgid "Could not interprete SOA data: {!r}."
+msgstr ""
+
 #: lib/fb_tools/pdns_bulk_rm_app.py:69
 msgid ""
 "Removes the given addresses (A-, AAAA- or CNAME-Records) completety from PowerDNS. If there are "
@@ -586,18 +630,22 @@ msgid "Disabled."
 msgstr ""
 
 #: lib/fb_tools/pdns_bulk_rm_app.py:582
-msgid "Zone"
+msgid "Name"
 msgstr ""
 
 #: lib/fb_tools/pdns_bulk_rm_app.py:583
-msgid "Name"
+msgid "Zone"
 msgstr ""
 
 #: lib/fb_tools/pdns_bulk_rm_app.py:584
 msgid "Type"
 msgstr ""
 
-#: lib/fb_tools/pdns_bulk_rm_app.py:636
+#: lib/fb_tools/pdns_bulk_rm_app.py:585
+msgid "Record"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:644
 msgid "Total one DNS record to remove."
 msgid_plural "Total {} DNS records to remove."
 msgstr[0] ""
