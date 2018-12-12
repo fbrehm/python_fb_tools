@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.3.0\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2018-12-12 14:34+0100\n"
+"POT-Creation-Date: 2018-12-12 15:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -514,6 +514,42 @@ msgstr ""
 
 #: lib/fb_tools/pdns/errors.py:52
 msgid "Could not interprete SOA data: {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:423
+msgid "Serial overflow - old serial {o} is in future, new serial {n} has reached its maximum value."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:439 lib/fb_tools/pdns/record.py:822
+msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:457 lib/fb_tools/pdns/record.py:840
+msgid "{m} takes at most {max} arguments ({n} given)."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:494
+msgid "Record {!r} is not in Record list."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:659
+msgid "Given data {!r} is not a dict object."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:799
+msgid "Cannot create {o} from record set:"
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:804
+msgid "RecordSet has no records:"
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:812
+msgid "Got SOA:"
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:877
+msgid "RecordSet {n!r} ({n}) is not in RecordSet list."
 msgstr ""
 
 #: lib/fb_tools/pdns_bulk_rm_app.py:69
