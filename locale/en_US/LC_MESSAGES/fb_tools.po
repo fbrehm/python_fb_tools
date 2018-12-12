@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 17:07+0100\n"
+"POT-Creation-Date: 2018-12-12 17:15+0100\n"
 "PO-Revision-Date: 2018-12-12 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -785,6 +785,10 @@ msgstr ""
 
 #: lib/fb_tools/unix_handler.py:220 lib/fb_tools/unix_handler.py:226
 msgid "Invalid value {!r} for facility."
+msgstr ""
+
+#: lib/fb_tools/vsphere/__init__.py:103
+msgid "Invalid port number {!r} for the VSphere server, must be 0 < PORT <= 65536."
 msgstr ""
 
 #: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
