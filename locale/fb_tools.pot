@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.3.0\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2018-12-12 17:38+0100\n"
+"POT-Creation-Date: 2018-12-12 17:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -500,7 +500,7 @@ msgstr ""
 msgid "The path {!r} must be an absolute path."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:357
+#: lib/fb_tools/pdns/__init__.py:357 lib/fb_tools/vsphere/server.py:157
 msgid "Got a {c} on connecting to {h!r}: {e}."
 msgstr ""
 
@@ -794,7 +794,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
 #: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
-#: lib/fb_tools/vsphere/network.py:120
+#: lib/fb_tools/vsphere/network.py:120 lib/fb_tools/vsphere/server.py:524
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr ""
 
@@ -869,6 +869,70 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/object.py:147
 msgid "Invalid name prefix {p!r} for a {o}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:165
+msgid "VSphere server version: {!r}"
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:357
+msgid "No VSphere datastore clusters found."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:415
+msgid "No VSphere networks found."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:471
+msgid "VSphere VM {!r} not found."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:611
+msgid "Parameter {p!r} => {r!r} seems not to be a regex object."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:708
+msgid "VM {!r} is already powered on."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:711
+msgid "Powering on VM {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:739
+msgid "VM {!r} is already powered off."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:742
+msgid "Powering off VM {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:852
+msgid "Creating VM folder {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:942
+msgid "Simulation mode - VM {!r} will not be created."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1030
+msgid "Given disksize {!r} must be greater than zero."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1043
+msgid "There may be created at most 6 disks, but {} were given."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1117
+msgid "Invalid Interface description {!r} given."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1184
+msgid "Purging VM {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1219
+msgid "Did not found virtual ethernet device No. {no} (found {count} devices)."
 msgstr ""
 
 #: lib/fb_tools/xlate.py:57
