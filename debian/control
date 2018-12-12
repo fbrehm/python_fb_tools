@@ -7,11 +7,13 @@ Build-Depends: debhelper (>= 9),
                help2man,
                python-all,
                python-argparse,
+               python-babel,
                python-setuptools,
                python-pathlib,
                python-six,
                python-tz,
                python3-all,
+               python3-babel,
                python3-setuptools,
                python3-six,
                python3-tz
@@ -35,10 +37,12 @@ Description: Python modules for common used objects, error classes and functions
 Package: python-fb-tools
 Architecture: all
 Depends: python-argparse,
+         python-babel,
          python-requests,
          python-six,
          python-pathlib,
          python-tz,
+         python-fb-tools-nls (= ${binary:Version}),
          ${misc:Depends},
          ${python:Depends}
 Description: Python modules for common used objects, error classes and functions
@@ -48,9 +52,22 @@ Description: Python modules for common used objects, error classes and functions
 Package: python3-fb-tools
 Architecture: all
 Depends: python3-six,
+         python3-babel,
          python3-tz,
+         python-fb-tools-nls (= ${binary:Version}),
          ${misc:Depends},
          ${python3:Depends}
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python3 modules for this package.
+
+Package: python-fb-tools-nls
+Architecture: all
+Pre-Depends: ${misc:Pre-Depends}
+Depends: gettext,
+         python-babel-localedata,
+         ${misc:Depends}
+Description: Python modules for common used objects, error classes and functions
+ .
+ This package includes the i18n files.
+

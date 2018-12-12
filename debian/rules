@@ -4,10 +4,12 @@
 BIN_PKGNAME  := fb-tools
 LIB2_PKGNAME := python-fb-tools
 LIB3_PKGNAME := python3-fb-tools
+NLS_PKGNAME  := python-fb-tools-nls
 
 INSTALL_DIR_BIN  := $(CURDIR)/debian/$(BIN_PKGNAME)
 INSTALL_DIR_LIB2 := $(CURDIR)/debian/$(LIB2_PKGNAME)
 INSTALL_DIR_LIB3 := $(CURDIR)/debian/$(LIB3_PKGNAME)
+INSTALL_NLS_DIR  := $(CURDIR)/debian/$(NLS_PKGNAME)
 
 PYTHON2S := $(shell pyversions -vr || true)
 PYTHON3S := $(shell py3versions -vr || true)
