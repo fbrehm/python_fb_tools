@@ -16,8 +16,10 @@ from numbers import Number
 # Third party modules
 
 # Own modules
+from .xlate import XLATOR
 
-__version__ = '1.0.1'
+__version__ = '1.1.0'
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -215,12 +217,14 @@ class UnixSyslogHandler(logging.Handler):
         if isinstance(value, Number):
             v = int(value)
             if v not in self.facility_ids:
-                raise ValueError("Invalid value %r for facility." % (value))
+                msg = _("Invalid value {!r} for facility.").format(value)
+                raise ValueError(msg)
             used_facility = self.facility_ids[v]
         else:
             used_facility = str(value).lower()
             if used_facility not in self.facility_names:
-                raise ValueError("Invalid value %r for facility." % (value))
+                msg = _("Invalid value {!r} for facility.").format(value)
+                raise ValueError(msg)
         self._facility = used_facility
 
     # -------------------------------------------------------------------------

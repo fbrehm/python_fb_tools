@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 15:50+0100\n"
-"PO-Revision-Date: 2018-12-12 15:52+0100\n"
+"POT-Creation-Date: 2018-12-12 15:58+0100\n"
+"PO-Revision-Date: 2018-12-12 16:03+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -811,6 +811,22 @@ msgid "Total one DNS record to remove."
 msgid_plural "Total {} DNS records to remove."
 msgstr[0] "Insgesamt ein DNS-Record, der gelöscht wird."
 msgstr[1] "Insgesamt {} DNS-Records, die gelöscht werden."
+
+#: lib/fb_tools/syslog_handler.py:76
+msgid "File doesn't exists"
+msgstr "Die Datei existiert nicht"
+
+#: lib/fb_tools/syslog_handler.py:80
+msgid "File is not a UNIX socket file"
+msgstr "Die Datei ist keine UNIX-Socket-Datei"
+
+#: lib/fb_tools/syslog_handler.py:83
+msgid "No write access to socket"
+msgstr "Kein Schreinzugriff auf den Socket"
+
+#: lib/fb_tools/unix_handler.py:220 lib/fb_tools/unix_handler.py:226
+msgid "Invalid value {!r} for facility."
+msgstr "Ungültiger Wert für Fazilität."
 
 #: lib/fb_tools/xlate.py:57
 msgid "Module directory: {!r}"
