@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 17:21+0100\n"
-"PO-Revision-Date: 2018-12-12 17:24+0100\n"
+"POT-Creation-Date: 2018-12-12 17:38+0100\n"
+"PO-Revision-Date: 2018-12-12 17:37+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -898,6 +898,23 @@ msgstr "Das Objekt {!r} ist kein VsphereNetworkDict-Objekt."
 #: lib/fb_tools/vsphere/network.py:465
 msgid "Could not find VSphere network for IP addresses {}."
 msgstr "Konnte kein VSphere-Netzwerk für die IP-Adresse {} ermitteln."
+
+#: lib/fb_tools/vsphere/object.py:76
+msgid "The type of a {} may not be None."
+msgstr "Der Typ von einem {} darf nicht None sein."
+
+#: lib/fb_tools/vsphere/object.py:81 lib/fb_tools/vsphere/object.py:104
+#: lib/fb_tools/vsphere/object.py:127
+msgid "Invalid {c}.{p} {v!r}."
+msgstr "Ungültiger {c}.{p} {v!r}."
+
+#: lib/fb_tools/vsphere/object.py:143
+msgid "The name prefix of a {} may not be None."
+msgstr "Der Namenspräfix eines {} darf nicht None sein."
+
+#: lib/fb_tools/vsphere/object.py:147
+msgid "Invalid name prefix {p!r} for a {o}."
+msgstr "Ungültiger Namenspräfix {p!r} für ein {o}."
 
 #: lib/fb_tools/xlate.py:57
 msgid "Module directory: {!r}"

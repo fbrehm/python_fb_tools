@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 17:21+0100\n"
+"POT-Creation-Date: 2018-12-12 17:38+0100\n"
 "PO-Revision-Date: 2018-12-12 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -854,6 +854,23 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/network.py:465
 msgid "Could not find VSphere network for IP addresses {}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/object.py:76
+msgid "The type of a {} may not be None."
+msgstr ""
+
+#: lib/fb_tools/vsphere/object.py:81 lib/fb_tools/vsphere/object.py:104
+#: lib/fb_tools/vsphere/object.py:127
+msgid "Invalid {c}.{p} {v!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/object.py:143
+msgid "The name prefix of a {} may not be None."
+msgstr ""
+
+#: lib/fb_tools/vsphere/object.py:147
+msgid "Invalid name prefix {p!r} for a {o}."
 msgstr ""
 
 #: lib/fb_tools/xlate.py:57
