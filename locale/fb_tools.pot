@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.3.0\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2018-12-12 15:07+0100\n"
+"POT-Creation-Date: 2018-12-12 15:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -532,7 +532,7 @@ msgstr ""
 msgid "Record {!r} is not in Record list."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:659
+#: lib/fb_tools/pdns/record.py:659 lib/fb_tools/pdns/zone.py:131
 msgid "Given data {!r} is not a dict object."
 msgstr ""
 
@@ -550,6 +550,88 @@ msgstr ""
 
 #: lib/fb_tools/pdns/record.py:877
 msgid "RecordSet {n!r} ({n}) is not in RecordSet list."
+msgstr ""
+
+#: lib/fb_tools/pdns/server.py:105
+msgid "Could not found server info."
+msgstr ""
+
+#: lib/fb_tools/pdns/server.py:112
+msgid "PowerDNS server version {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/server.py:114
+msgid "Did not found version info in server info:"
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:55
+msgid "No Resource Record Sets found to remove from zone {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:459
+msgid "Invalid source tuples for detecting IPv4-network: {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:547
+msgid "Cannot update zone {!r}, no API URL defined."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:654
+msgid "Did not get SOA for zone {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:661
+msgid "New SOA must be of type {e}, given {t}: {s!r}"
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:672
+msgid "Got no SOA for zone {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:730
+msgid "Parameter address {a!r} is not an IPv4Address or IPv6Address object, but a {c} object instead."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:789 lib/fb_tools/pdns/zone.py:848
+msgid "Creating {t}-record {f!r} => {a!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:890
+msgid "DNS {t!r}-record {n!r} is already deleted."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:905
+msgid "Removing one resource record set from zone {z!r}."
+msgid_plural "Removing {c} resource record sets from zone {z!r}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/fb_tools/pdns/zone.py:914
+msgid "Done."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:921
+msgid "Notifying slave servers of zone {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:937
+msgid "Invalid item type {!r} to set, only PowerDNSZone allowed."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:938
+msgid "The key {k!r} must be equal to the zone name {n!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:939
+msgid "None type as key is not allowed."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:940
+msgid "Empty key {!r} is not allowed."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:941
+msgid "Object {o!r} is not a {e} object."
 msgstr ""
 
 #: lib/fb_tools/pdns_bulk_rm_app.py:69

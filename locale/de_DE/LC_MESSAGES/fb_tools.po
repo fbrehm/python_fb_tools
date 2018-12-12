@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 15:07+0100\n"
-"PO-Revision-Date: 2018-12-12 14:58+0100\n"
+"POT-Creation-Date: 2018-12-12 15:50+0100\n"
+"PO-Revision-Date: 2018-12-12 15:52+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -557,7 +557,7 @@ msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
 msgid "Record {!r} is not in Record list."
 msgstr "Der Record {!r} ist nicht in der Recordliste."
 
-#: lib/fb_tools/pdns/record.py:659
+#: lib/fb_tools/pdns/record.py:659 lib/fb_tools/pdns/zone.py:131
 msgid "Given data {!r} is not a dict object."
 msgstr "Die übergebenen Daten {!r} sind kein dict-Objekt."
 
@@ -576,6 +576,90 @@ msgstr "Erhielt SOA:"
 #: lib/fb_tools/pdns/record.py:877
 msgid "RecordSet {n!r} ({n}) is not in RecordSet list."
 msgstr "Der RecordSet {n!r} ({n}) befindet sich nicht in der RecordSet-Liste."
+
+#: lib/fb_tools/pdns/server.py:105
+msgid "Could not found server info."
+msgstr "Konnte Serverinformationen nicht finden."
+
+#: lib/fb_tools/pdns/server.py:112
+msgid "PowerDNS server version {!r}."
+msgstr "Version des PowerDNS-Servers {!r}."
+
+#: lib/fb_tools/pdns/server.py:114
+msgid "Did not found version info in server info:"
+msgstr "Keine Version in den Serverinformationen gefunden:"
+
+#: lib/fb_tools/pdns/zone.py:55
+msgid "No Resource Record Sets found to remove from zone {!r}."
+msgstr "Keine ResourceRecord-Sets gefunden, die man von der Zone {!r} löschen kann."
+
+#: lib/fb_tools/pdns/zone.py:459
+msgid "Invalid source tuples for detecting IPv4-network: {!r}."
+msgstr "Ungültige Source-Tupel zur Ermittlung des IPv4-Netzwerkes: {!r}."
+
+#: lib/fb_tools/pdns/zone.py:547
+msgid "Cannot update zone {!r}, no API URL defined."
+msgstr "Konnte Zone {!r} nicht aktualisieren, keine API-URL definiert."
+
+#: lib/fb_tools/pdns/zone.py:654
+msgid "Did not get SOA for zone {!r}."
+msgstr "Keinen SOA für Zone {!r} erhalten."
+
+#: lib/fb_tools/pdns/zone.py:661
+msgid "New SOA must be of type {e}, given {t}: {s!r}"
+msgstr "Neuer SOA muss vom Typ {e}, übergeben {t}: {s!r}"
+
+#: lib/fb_tools/pdns/zone.py:672
+msgid "Got no SOA for zone {!r}."
+msgstr "Keinen SOA für Zone {!r} erhalten."
+
+#: lib/fb_tools/pdns/zone.py:730
+msgid "Parameter address {a!r} is not an IPv4Address or IPv6Address object, but a {c} object instead."
+msgstr ""
+"Der Parameter Adresse {a!r} ist kein IPv4Address- oder IPv6Address-Objekt, ist statt dessen ein "
+"{c}-Objekt."
+
+#: lib/fb_tools/pdns/zone.py:789 lib/fb_tools/pdns/zone.py:848
+msgid "Creating {t}-record {f!r} => {a!r}."
+msgstr "Erstelle {t}-Record {f!r} => {a!r}."
+
+#: lib/fb_tools/pdns/zone.py:890
+msgid "DNS {t!r}-record {n!r} is already deleted."
+msgstr "Der DNS-{t}-Record wurde bereits gelöscht."
+
+#: lib/fb_tools/pdns/zone.py:905
+msgid "Removing one resource record set from zone {z!r}."
+msgid_plural "Removing {c} resource record sets from zone {z!r}."
+msgstr[0] "Lösche einen ResourceRecord-Set von Zone {z!r}."
+msgstr[1] "Lösche {c} ResourceRecord-Sets von Zone {z!r}."
+
+#: lib/fb_tools/pdns/zone.py:914
+msgid "Done."
+msgstr "Erledigt."
+
+#: lib/fb_tools/pdns/zone.py:921
+msgid "Notifying slave servers of zone {!r} ..."
+msgstr "Benachrichtige Slave-Server der Zone {!r} ..."
+
+#: lib/fb_tools/pdns/zone.py:937
+msgid "Invalid item type {!r} to set, only PowerDNSZone allowed."
+msgstr "Ungültiger Typ des Eintrags beim Setzen, nur PowerDNSZone ist erlaubt."
+
+#: lib/fb_tools/pdns/zone.py:938
+msgid "The key {k!r} must be equal to the zone name {n!r}."
+msgstr "Der Key {k!r} muss gleich dem Zonennamen {n!r} sein."
+
+#: lib/fb_tools/pdns/zone.py:939
+msgid "None type as key is not allowed."
+msgstr "Ein None-Typ ist als Key nicht erlaubt."
+
+#: lib/fb_tools/pdns/zone.py:940
+msgid "Empty key {!r} is not allowed."
+msgstr "Ein leerer Key {!r} ist als Key nicht erlaubt."
+
+#: lib/fb_tools/pdns/zone.py:941
+msgid "Object {o!r} is not a {e} object."
+msgstr "Das Objekt {o!r} ist kein {e}-Objekt."
 
 #: lib/fb_tools/pdns_bulk_rm_app.py:69
 msgid ""
