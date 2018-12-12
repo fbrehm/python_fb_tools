@@ -34,7 +34,7 @@ from .errors import PowerDNSZoneError
 from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.8.2'
+__version__ = '0.8.3'
 
 LOG = logging.getLogger(__name__)
 
@@ -929,7 +929,8 @@ class PowerDNSZoneDict(collections.MutableMapping):
     zones['pp.com'] returns a PowerDNSZone object for zone 'pp.com'
     """
 
-    msg_invalid_zone_type = _("Invalid item type {!r} to set, only PowerDNSZone allowed.")
+    msg_invalid_zone_type = _("Invalid item type {{!r}} to set, only {} allowed.").format(
+            'PowerDNSZone')
     msg_key_not_name = _("The key {k!r} must be equal to the zone name {n!r}.")
     msg_none_type_error = _("None type as key is not allowed.")
     msg_empty_key_error = _("Empty key {!r} is not allowed.")

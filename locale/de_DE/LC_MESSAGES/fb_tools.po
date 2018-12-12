@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-12 15:58+0100\n"
-"PO-Revision-Date: 2018-12-12 16:03+0100\n"
+"POT-Creation-Date: 2018-12-12 16:36+0100\n"
+"PO-Revision-Date: 2018-12-12 16:40+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -627,37 +627,37 @@ msgstr "Erstelle {t}-Record {f!r} => {a!r}."
 msgid "DNS {t!r}-record {n!r} is already deleted."
 msgstr "Der DNS-{t}-Record wurde bereits gelöscht."
 
-#: lib/fb_tools/pdns/zone.py:905
+#: lib/fb_tools/pdns/zone.py:900
 msgid "Removing one resource record set from zone {z!r}."
 msgid_plural "Removing {c} resource record sets from zone {z!r}."
 msgstr[0] "Lösche einen ResourceRecord-Set von Zone {z!r}."
 msgstr[1] "Lösche {c} ResourceRecord-Sets von Zone {z!r}."
 
-#: lib/fb_tools/pdns/zone.py:914
+#: lib/fb_tools/pdns/zone.py:909
 msgid "Done."
 msgstr "Erledigt."
 
-#: lib/fb_tools/pdns/zone.py:921
+#: lib/fb_tools/pdns/zone.py:916
 msgid "Notifying slave servers of zone {!r} ..."
 msgstr "Benachrichtige Slave-Server der Zone {!r} ..."
 
-#: lib/fb_tools/pdns/zone.py:937
-msgid "Invalid item type {!r} to set, only PowerDNSZone allowed."
-msgstr "Ungültiger Typ des Eintrags beim Setzen, nur PowerDNSZone ist erlaubt."
+#: lib/fb_tools/pdns/zone.py:932 lib/fb_tools/vsphere/ds.py:338 lib/fb_tools/vsphere/ds_cluster.py:180
+msgid "Invalid item type {{!r}} to set, only {} allowed."
+msgstr "Ungültiger Typ {{!r}} des Eintrags beim Setzen, nur {} ist erlaubt."
 
-#: lib/fb_tools/pdns/zone.py:938
+#: lib/fb_tools/pdns/zone.py:934
 msgid "The key {k!r} must be equal to the zone name {n!r}."
 msgstr "Der Key {k!r} muss gleich dem Zonennamen {n!r} sein."
 
-#: lib/fb_tools/pdns/zone.py:939
+#: lib/fb_tools/pdns/zone.py:935 lib/fb_tools/vsphere/ds_cluster.py:183
 msgid "None type as key is not allowed."
 msgstr "Ein None-Typ ist als Key nicht erlaubt."
 
-#: lib/fb_tools/pdns/zone.py:940
+#: lib/fb_tools/pdns/zone.py:936 lib/fb_tools/vsphere/ds_cluster.py:184
 msgid "Empty key {!r} is not allowed."
 msgstr "Ein leerer Key {!r} ist als Key nicht erlaubt."
 
-#: lib/fb_tools/pdns/zone.py:941
+#: lib/fb_tools/pdns/zone.py:937 lib/fb_tools/vsphere/ds_cluster.py:185
 msgid "Object {o!r} is not a {e} object."
 msgstr "Das Objekt {o!r} ist kein {e}-Objekt."
 
@@ -822,11 +822,19 @@ msgstr "Die Datei ist keine UNIX-Socket-Datei"
 
 #: lib/fb_tools/syslog_handler.py:83
 msgid "No write access to socket"
-msgstr "Kein Schreinzugriff auf den Socket"
+msgstr "Kein Schreibzugriff auf den Socket"
 
 #: lib/fb_tools/unix_handler.py:220 lib/fb_tools/unix_handler.py:226
 msgid "Invalid value {!r} for facility."
 msgstr "Ungültiger Wert für Fazilität."
+
+#: lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds_cluster.py:106
+msgid "Argument {a!r} is not a {s} source."
+msgstr "Das Argument {a!r} ist keine {s} Quelle."
+
+#: lib/fb_tools/vsphere/ds_cluster.py:182
+msgid "The key {k!r} must be equal to the datastore cluster name {n!r}."
+msgstr "Der Key {k!r} muss gleich dem Namen des Datastore-Clusters {n!r} sein."
 
 #: lib/fb_tools/xlate.py:57
 msgid "Module directory: {!r}"
