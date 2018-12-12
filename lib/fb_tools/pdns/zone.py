@@ -34,7 +34,7 @@ from .errors import PowerDNSZoneError
 from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.8.1'
+__version__ = '0.8.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -896,16 +896,11 @@ class PowerDNSZone(BasePowerDNSHandler):
             raise PDNSNoRecordsToRemove(self.name_unicode)
 
         payload = {"rrsets": rrsets_rm}
-        #s = ''
-        #if len(rrsets_rm) != 1:
-        #    s = 's'
-        #LOG.info(_("Removing {c} resource record set{s} from zone {z!r}.").format(
-        #    c=len(rrsets_rm), s=s, z=self.name_unicode))
         count = len(rrsets_rm)
         msg = ngettext(
                 "Removing one resource record set from zone {z!r}.",
                 "Removing {c} resource record sets from zone {z!r}.", count).format(
-                c=count, z=name_unicode)
+                c=count, z=self.name_unicode)
         LOG.info(msg)
         if self.verbose > 1:
             LOG.debug("Resorce record sets:\n{}".format(pp(payload)))
