@@ -11,7 +11,11 @@ from __future__ import absolute_import
 # Standard modules
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..errors import FbHandlerError
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -45,7 +49,7 @@ class PowerDNSWrongSoaDataError(PowerDNSRecordSetError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "Could not interprete SOA data: {!r}.".format(self.data)
+        msg = _("Could not interprete SOA data: {!r}.").format(self.data)
         return msg
 
 

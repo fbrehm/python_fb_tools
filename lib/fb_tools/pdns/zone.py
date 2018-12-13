@@ -21,6 +21,8 @@ from functools import cmp_to_key
 # Third party modules
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp, to_utf8, to_bool, compare_fqdn, RE_DOT
 
 from ..obj import FbBaseObject
@@ -32,9 +34,12 @@ from .errors import PowerDNSZoneError
 from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.7.1'
+__version__ = '0.8.3'
 
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
+ngettext = XLATOR.ngettext
 
 
 # =============================================================================
@@ -47,7 +52,8 @@ class PDNSNoRecordsToRemove(PowerDNSZoneError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "No Resource Record Sets found to remove from zone {!r}.".format(self.zone_name)
+        msg = _("No Resource Record Sets found to remove from zone {!r}.").format(
+                self.zone_name)
         return msg
 
 
@@ -122,7 +128,7 @@ class PowerDNSZone(BasePowerDNSHandler):
             simulate=None, force=None, terminal_has_colors=False, initialized=None):
 
         if not isinstance(data, dict):
-            raise PowerDNSZoneError("Given data {!r} is not a dict object.".format(data))
+            raise PowerDNSZoneError(_("Given data {!r} is not a dict object.").format(data))
 
         # {   'account': 'local',
         #     'api_rectify': False,
@@ -450,7 +456,7 @@ class PowerDNSZone(BasePowerDNSHandler):
             tokens.append('0')
             bitmask = 8
         else:
-            msg = "Invalid source tuples for detecting IPv4-network: {!r}.".format(tuples)
+            msg = _("Invalid source tuples for detecting IPv4-network: {!r}.").format(tuples)
             raise ValueError(msg)
 
         ip_str = '.'.join(tokens) + '/{}'.format(bitmask)
@@ -538,7 +544,7 @@ class PowerDNSZone(BasePowerDNSHandler):
     def update(self):
 
         if not self.url:
-            msg = "Cannot update zone {!r}, no API URL defined.".format(self.name)
+            msg = _("Cannot update zone {!r}, no API URL defined.").format(self.name)
             raise PowerDNSZoneError(msg)
 
         LOG.debug("Updating data of zone {n!r} from API path {u!r} ...".format(
@@ -645,15 +651,15 @@ class PowerDNSZone(BasePowerDNSHandler):
                 soa = rrset.get_soa_data()
                 return soa
 
-        LOG.warn("Did not get SOA for zone {!r}.".format(self.name))
+        LOG.warn(_("Did not get SOA for zone {!r}.").format(self.name))
         return None
 
     # -------------------------------------------------------------------------
     def update_soa(self, new_soa, comment=None, ttl=None):
 
         if not isinstance(new_soa, PowerDnsSOAData):
-            msg = "New SOA must by of type PowerDnsSOAData, given {t}: {s!r}".format(
-                t=new_soa.__class__.__name__, s=new_soa)
+            msg = _("New SOA must be of type {e}, given {t}: {s!r}").format(
+                e='PowerDnsSOAData', t=new_soa.__class__.__name__, s=new_soa)
             raise TypeError(msg)
 
         if ttl:
@@ -663,7 +669,7 @@ class PowerDNSZone(BasePowerDNSHandler):
                 self.update()
             cur_soa_rrset = self.get_soa()
             if not cur_soa_rrset:
-                raise RuntimeError("Got no SOA for zone {!r}.".format(self.name))
+                raise RuntimeError(_("Got no SOA for zone {!r}.").format(self.name))
             ttl = cur_soa_rrset.ttl
 
         if comment is not None:
@@ -721,9 +727,9 @@ class PowerDNSZone(BasePowerDNSHandler):
     def add_address_record(self, fqdn, address, ttl=None):
 
         if not isinstance(address, (ipaddress.IPv4Address, ipaddress.IPv6Address)):
-            msg = (
+            msg = _(
                 "Parameter address {a!r} is not an IPv4Address or IPv6Address object, "
-                " but a {c} object instead..").format(a=address, c=address.__class__.__name__)
+                "but a {c} object instead.").format(a=address, c=address.__class__.__name__)
             raise TypeError(msg)
 
         record_type = 'A'
@@ -780,7 +786,7 @@ class PowerDNSZone(BasePowerDNSHandler):
         }
 
         payload = {"rrsets": [new_rrset]}
-        LOG.info("Creating {t}-record {f!r} => {a!r}.".format(
+        LOG.info(_("Creating {t}-record {f!r} => {a!r}.").format(
             t=record_type, f=fqdn, a=str(address)))
 
         self.patch(payload)
@@ -839,8 +845,8 @@ class PowerDNSZone(BasePowerDNSHandler):
         }
 
         payload = {"rrsets": [new_rrset]}
-        LOG.info("Creating PTR-record {p!r} => {f!r}.".format(
-            p=pointer, f=fqdn))
+        LOG.info(_("Creating {t}-record {f!r} => {a!r}.").format(
+            t='PTR', f=pointer, a=str(fqdn)))
 
         self.patch(payload)
 
@@ -881,7 +887,7 @@ class PowerDNSZone(BasePowerDNSHandler):
                     found = True
                     break
             if not found:
-                msg = "DNS {t!r}-record {n!r} is already deleted.".format(
+                msg = _("DNS {t!r}-record {n!r} is already deleted.").format(
                     t=rrset["type"], n=rrset["name"])
                 LOG.warn(msg)
                 continue
@@ -890,23 +896,24 @@ class PowerDNSZone(BasePowerDNSHandler):
             raise PDNSNoRecordsToRemove(self.name_unicode)
 
         payload = {"rrsets": rrsets_rm}
-        s = ''
-        if len(rrsets_rm) != 1:
-            s = 's'
-        LOG.info("Removing {c} resource record set{s} from zone {z!r}.".format(
-            c=len(rrsets_rm), s=s, z=self.name_unicode))
+        count = len(rrsets_rm)
+        msg = ngettext(
+                "Removing one resource record set from zone {z!r}.",
+                "Removing {c} resource record sets from zone {z!r}.", count).format(
+                c=count, z=self.name_unicode)
+        LOG.info(msg)
         if self.verbose > 1:
             LOG.debug("Resorce record sets:\n{}".format(pp(payload)))
 
         self.patch(payload)
-        LOG.info("Done.")
+        LOG.info(_("Done."))
 
         return True
     # -------------------------------------------------------------------------
 
     def notify(self):
 
-        LOG.info("Notifying slaves of zone {!r} ...".format(self.name))
+        LOG.info(_("Notifying slave servers of zone {!r} ...").format(self.name))
         path = self.url + '/notify'
         return self.perform_request(path, method='PUT', may_simulate=True)
 
@@ -922,11 +929,12 @@ class PowerDNSZoneDict(collections.MutableMapping):
     zones['pp.com'] returns a PowerDNSZone object for zone 'pp.com'
     """
 
-    msg_invalid_zone_type = "Invalid value type {!r} to set, only PowerDNSZone allowed."
-    msg_key_not_name = "The key {k!r} must be equal to the zone name {n!r}."
-    msg_none_type_error = "None type as key is not allowed."
-    msg_empty_key_error = "Empty key {!r} is not allowed."
-    msg_no_zone_dict = "Object {!r} is not a PowerDNSZoneDict object."
+    msg_invalid_zone_type = _("Invalid item type {{!r}} to set, only {} allowed.").format(
+            'PowerDNSZone')
+    msg_key_not_name = _("The key {k!r} must be equal to the zone name {n!r}.")
+    msg_none_type_error = _("None type as key is not allowed.")
+    msg_empty_key_error = _("Empty key {!r} is not allowed.")
+    msg_no_zone_dict = _("Object {o!r} is not a {e} object.")
 
     # -------------------------------------------------------------------------
     # __init__() method required to create instance from class.
@@ -1064,7 +1072,7 @@ class PowerDNSZoneDict(collections.MutableMapping):
     def __eq__(self, other):
 
         if not isinstance(other, PowerDNSZoneDict):
-            raise TypeError(self.msg_no_zone_dict.format(other))
+            raise TypeError(self.msg_no_zone_dict.format(o=other, e='PowerDNSZoneDict'))
 
         return self._map == other._map
 
@@ -1072,7 +1080,7 @@ class PowerDNSZoneDict(collections.MutableMapping):
     def __ne__(self, other):
 
         if not isinstance(other, PowerDNSZoneDict):
-            raise TypeError(self.msg_no_zone_dict.format(other))
+            raise TypeError(self.msg_no_zone_dict.format(o=other, e='PowerDNSZoneDict'))
 
         return self._map != other._map
 

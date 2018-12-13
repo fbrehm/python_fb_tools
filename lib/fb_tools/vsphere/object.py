@@ -16,14 +16,18 @@ import copy
 # Third party modules
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp, RE_TF_NAME
 
 from ..obj import FbBaseObject
 
 from .errors import VSphereNameError
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -69,11 +73,14 @@ class VsphereObject(FbBaseObject):
     def obj_type(self, value):
 
         if value is None:
-            raise TypeError("The type of a VsphereObject may not be None.")
+            msg = _("The type of a {} may not be None.").format('VsphereObject')
+            raise TypeError(msg)
 
         val = self.re_ws.sub('', str(value))
         if val == '':
-            raise ValueError("Invalid VsphereObject type {!r}.".format(value))
+            msg = _("Invalid {c}.{p} {v!r}.").format(
+                w='VsphereObject', p='type', v=value)
+            raise ValueError(msg)
 
         self._obj_type = val
 
@@ -94,7 +101,9 @@ class VsphereObject(FbBaseObject):
             self._status = 'gray'
             return
         if val not in self.available_status_color:
-            raise ValueError("Invalid VsphereObject status {!r}.".format(value))
+            msg = _("Invalid {c}.{p} {v!r}.").format(
+                w='VsphereObject', p='status', v=value)
+            raise ValueError(msg)
 
         self._status = val
 
@@ -115,7 +124,9 @@ class VsphereObject(FbBaseObject):
             self._config_status = 'gray'
             return
         if val not in self.available_status_color:
-            raise ValueError("Invalid VsphereObject config_status {!r}.".format(value))
+            msg = _("Invalid {c}.{p} {v!r}.").format(
+                w='VsphereObject', p='config_status', v=value)
+            raise ValueError(msg)
 
         self._config_status = val
 
@@ -129,11 +140,12 @@ class VsphereObject(FbBaseObject):
     def name_prefix(self, value):
 
         if value is None:
-            raise TypeError("The name prefix of a VsphereObject may not be None.")
+            raise TypeError(_("The name prefix of a {} may not be None.").format('VsphereObject'))
 
         val = self.re_ws.sub('', str(value))
         if val == '':
-            raise ValueError("Invalid name prefix {!r} for a VsphereObject.".format(value))
+            msg = _("Invalid name prefix {p!r} for a {o}.").format(p=value, o='VsphereObject')
+            raise ValueError(msg)
 
         self._name_prefix = val
 

@@ -19,8 +19,8 @@ import textwrap
 import glob
 
 # Third party modules
-import six
 from setuptools import setup
+from setuptools.command.install import install
 
 # own modules:
 __base_dir__ = os.path.abspath(os.path.dirname(__file__))
@@ -42,7 +42,7 @@ def pp(obj):
     pprinter = pprint.PrettyPrinter(indent=4)
     return pprinter.pformat(obj)
 
-print("Paths:\n{}".format(pp(PATHS)))
+#print("Paths:\n{}".format(pp(PATHS)))
 
 if os.path.exists(__module_dir__) and os.path.isfile(__init_py__):
     sys.path.insert(0, os.path.abspath(__lib_dir__))
@@ -66,7 +66,7 @@ __url__ = 'https://github.com/fbrehm/python_fb_tools'
 
 
 __open_args__ = {}
-if six.PY3:
+if sys.version_info[0] < 3:
     __open_args__ = {'encoding': ENCODING, 'errors': 'surrogateescape'}
 
 # -----------------------------------
@@ -74,8 +74,12 @@ def read(fname):
 
     content = None
 
-    with open(fname, 'r', **__open_args__) as fh:
-        content = fh.read()
+    if sys.version_info[0] < 3:
+        with open(fname, 'r') as fh:
+            content = fh.read()
+    else:
+        with open(fname, 'r', **__open_args__) as fh:
+            content = fh.read()
 
     return content
 
@@ -141,43 +145,21 @@ def write_local_version():
         author=__author__, contact=__contact__, cur_year=cur_year,
         version=__packet_version__, license=__license__)
 
-    with open(local_version_file, 'wt', **__open_args__) as fh:
-        fh.write(content)
+    if sys.version_info[0] < 3:
+        with open(local_version_file, 'wt') as fh:
+            fh.write(content)
+    else:
+        with open(local_version_file, 'wt', **__open_args__) as fh:
+            fh.write(content)
 
 
 # Write lib/storage_tools/local_version.py
 write_local_version()
 
-
-# -----------------------------------
-__pkgs__ = [
-    'fb_tools',
-]
-
-
-def get_packages():
-
-    re_sep = re.compile(re.escape(os.sep) + r'+')
-
-    for root, dirs, files in os.walk(__module_dir__):
-        rel_dir = os.path.relpath(root, __lib_dir__)
-        if '__init__.py' not in files:
-            continue
-        module = re_sep.sub('.', rel_dir)
-        if module not in __pkgs__:
-            __pkgs__.append(module)
-
-    __pkgs__.sort(key=str.lower)
-
-    print("Found packages: {}\n".format(pp(__pkgs__)))
-
-
-get_packages()
-
 # -----------------------------------
 __requirements__ = [
     'argparse',
-    'six',
+    'six'
 ]
 
 
@@ -192,7 +174,7 @@ def read_requirements():
         return
 
     re_comment = re.compile(r'\s*#.*')
-    re_module = re.compile(r'([a-z][a-z0-9_]*[a-z0-9])')
+    re_module = re.compile(r'([a-z][a-z0-9_]*[a-z0-9])', re.IGNORECASE)
 
     for line in f_content.splitlines():
         line = line.strip()
@@ -206,7 +188,7 @@ def read_requirements():
         if module not in __requirements__:
             __requirements__.append(module)
 
-    print("Found required modules: {}\n".format(pp(__requirements__)))
+    #print("Found required modules: {}\n".format(pp(__requirements__)))
 
 
 read_requirements()
@@ -227,41 +209,67 @@ def get_scripts():
         if script_name not in __scripts__:
             __scripts__.append(script_name)
 
-    print("Found scripts: {}\n".format(pp(__scripts__)))
+    #print("Found scripts: {}\n".format(pp(__scripts__)))
 
 
 get_scripts()
 
 # -----------------------------------
+__locale_files__ = {}
+__data__files__ = []
+
+def is_locale_file(filename):
+    if filename.endswith('.po') or filename.endswith('.mo'):
+        return True
+    else:
+        return False
+
+def get_locales():
+
+    share_prefix = os.path.join(sys.prefix, 'share')
+    for root, dirs, files in os.walk('locale'):
+        if files:
+            for f in filter(is_locale_file, files):
+                if root not in __locale_files__:
+                    __locale_files__[root] = []
+                loc_file = os.path.join(root, f)
+                __locale_files__[root].append(loc_file)
+
+    #print("Found locale files: {}\n".format(pp(__locale_files__)))
+
+    for root in sorted(__locale_files__.keys()):
+        target = os.path.join(share_prefix, root)
+        __data__files__.append((target, __locale_files__[root]))
+
+    #print("Found data files: {}\n".format(pp(__data__files__)))
+
+
+get_locales()
+
+# -----------------------------------
+class InstallWithCompile(install, object):
+    def run(self):
+        from babel.messages.frontend import compile_catalog
+        compiler = compile_catalog(self.distribution)
+        option_dict = self.distribution.get_option_dict('compile_catalog')
+        compiler.domain = [option_dict['domain'][1]]
+        compiler.directory = option_dict['directory'][1]
+        compiler.statistics = bool(option_dict['statistics'][1])
+        compiler.run()
+        super(InstallWithCompile, self).run()
+
+
+# -----------------------------------
 setup(
-    name=__packet_name__,
     version=__packet_version__,
-    description='Modules for common used objects, error classes and methods.',
     long_description=read('README.md'),
-    author=__author__,
-    author_email=__contact__,
-    url=__url__,
-    license=__license__,
-    platforms=['posix'],
-    package_dir={'': 'lib'},
-    packages=__pkgs__,
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Environment :: Console',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
-        'Natural Language :: English',
-        'Operating System :: POSIX',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    provides=[__packet_name__],
     scripts=__scripts__,
     requires=__requirements__,
+    data_files=__data__files__,
+    package_dir={'': 'lib'},
+    cmdclass={
+        'install': InstallWithCompile,
+    },
 )
 
 

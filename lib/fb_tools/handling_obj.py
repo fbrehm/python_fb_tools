@@ -23,16 +23,20 @@ from subprocess import Popen, PIPE, SubprocessError
 import six
 
 # Own modules
-from .common import pp, to_bool, caller_search_path, to_str
+from .common import pp, to_bool, caller_search_path, to_str, encode_or_bust
 
-from .errors import InterruptError, ReadTimeoutError
+from .xlate import XLATOR
+
+from .errors import InterruptError, ReadTimeoutError, WriteTimeoutError
 
 from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.1.2'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -56,7 +60,8 @@ class CalledProcessError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        return "Command '%s' returned non-zero exit status %d" % (self.cmd, self.returncode)
+        return _("Command {c!r} returned non-zero exit status {rc}.").format(
+            c=self.cmd, rc=self.returncode)
 
     # -------------------------------------------------------------------------
     @property
@@ -92,8 +97,8 @@ class TimeoutExpired(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        return ("Command '%s' timed out after %s seconds" %
-                (self.cmd, self.timeout))
+        return _("Command {c!r} timed out after {s} seconds.").format(
+            c=self.cmd, s=self.timeout)
 
     # -------------------------------------------------------------------------
     @property
@@ -203,6 +208,11 @@ class HandlingObject(FbBaseObject):
         return res
 
     # -------------------------------------------------------------------------
+    def get_cmd(self, cmd, quiet=False):
+
+        return self.get_command(cmd, quiet=quiet)
+
+    # -------------------------------------------------------------------------
     def get_command(self, cmd, quiet=False):
         """
         Searches the OS search path for the given command and gives back the
@@ -230,11 +240,11 @@ class HandlingObject(FbBaseObject):
         # Checking an absolute path
         if cmd.is_absolute():
             if not cmd.exists():
-                LOG.warning("Command {!r} doesn't exists.".format(str(cmd)))
+                LOG.warn(_("Command {!r} doesn't exists.").format(str(cmd)))
                 return None
             if not os.access(str(cmd), os.X_OK):
-                msg = "Command {!r} is not executable.".format(str(cmd))
-                LOG.warning(msg)
+                msg = _("Command {!r} is not executable.").format(str(cmd))
+                LOG.warn(msg)
                 return None
             return cmd.resolve()
 
@@ -256,12 +266,12 @@ class HandlingObject(FbBaseObject):
             if self.verbose > 2:
                 LOG.debug("Command {!r} not found.".format(cmd))
         else:
-            LOG.warning("Command {!r} not found.".format(str(cmd)))
+            LOG.warn(_("Command {!r} not found.").format(str(cmd)))
 
         return None
 
     # -------------------------------------------------------------------------
-    def run(self, *popenargs, input=None, timeout=None, check=False, may_simulate=True, **kwargs):
+    def run(self, input=None, timeout=None, check=False, may_simulate=True, *popenargs, **kwargs):
         """
         Run command with arguments and return a CompletedProcess instance.
 
@@ -293,7 +303,7 @@ class HandlingObject(FbBaseObject):
 
         if input is not None:
             if 'stdin' in kwargs:
-                raise ValueError('stdin and input arguments may not both be used.')
+                raise ValueError(_('STDIN and input arguments may not both be used.'))
             kwargs['stdin'] = PIPE
 
         LOG.debug("Executing command args:\n{}".format(pp(popenargs)))
@@ -307,7 +317,7 @@ class HandlingObject(FbBaseObject):
         LOG.debug("Executing: {}".format(cmd_str))
 
         if may_simulate and self.simulate:
-            LOG.info("Simulation mode, not executing: {}".format(cmd_str))
+            LOG.info(_("Simulation mode, not executing: {}").format(cmd_str))
             return CompletedProcess(popenargs, 0, "Simulated execution.\n", '')
 
         with Popen(*popenargs, **kwargs) as process:
@@ -363,7 +373,7 @@ class HandlingObject(FbBaseObject):
 
         if signum in self.signals_dont_interrupt:
             self.handle_info(str(err))
-            LOG.info("Nothing to do on signal.")
+            LOG.info(_("Nothing to do on signal."))
             return
 
         self._interrupted = True
@@ -414,13 +424,13 @@ class HandlingObject(FbBaseObject):
 
         if not os.path.isfile(ifile):
             raise IOError(
-                errno.ENOENT, "File doesn't exists.", ifile)
+                errno.ENOENT, _("File doesn't exists."), ifile)
         if not os.access(ifile, os.R_OK):
             raise IOError(
-                errno.EACCES, 'Read permission denied.', ifile)
+                errno.EACCES, _('Read permission denied.'), ifile)
 
         if self.verbose > needed_verbose_level:
-            LOG.debug("Reading file content of {!r} ...".format(ifile))
+            LOG.debug(_("Reading file content of {!r} ...").format(ifile))
 
         signal.signal(signal.SIGALRM, read_alarm_caller)
         signal.alarm(timeout)
@@ -446,6 +456,101 @@ class HandlingObject(FbBaseObject):
             content = content.decode(encoding, 'replace')
 
         return content
+
+    # -------------------------------------------------------------------------
+    def write_file(
+            self, filename, content, timeout=2, must_exists=True, quiet=False, encoding='utf-8'):
+        """
+        Writes the given content into the given filename.
+        It should only be used for small things, because it writes unbuffered.
+
+        @raise IOError: if file doesn't exists or isn't writeable
+        @raise WriteTimeoutError: on timeout writing into the file
+
+        @param filename: name of the file to write
+        @type filename: str
+        @param content: the content to write into the file
+        @type content: str
+        @param timeout: the amount in seconds when this method should timeout
+        @type timeout: int
+        @param must_exists: the file must exists before writing
+        @type must_exists: bool
+        @param quiet: increases the necessary verbosity level to
+                      put some debug messages
+        @type quiet: bool
+
+        @return: None
+
+        """
+
+        def write_alarm_caller(signum, sigframe):
+            '''
+            This nested function will be called in event of a timeout
+
+            @param signum:   the signal number (POSIX) which happend
+            @type signum:    int
+            @param sigframe: the frame of the signal
+            @type sigframe:  object
+            '''
+
+            raise WriteTimeoutError(timeout, filename)
+
+        verb_level1 = 0
+        verb_level2 = 1
+        verb_level3 = 3
+        if quiet:
+            verb_level1 = 2
+            verb_level2 = 3
+            verb_level3 = 4
+
+        timeout = int(timeout)
+        ofile = str(filename)
+
+        if must_exists:
+            if not os.path.isfile(ofile):
+                raise IOError(errno.ENOENT, _("File doesn't exists."), ofile)
+
+        if os.path.exists(ofile):
+            if not os.access(ofile, os.W_OK):
+                if self.simulate:
+                    LOG.error(_("Write permission to {!r} denied.").format(ofile))
+                else:
+                    raise IOError(errno.EACCES, _('Write permission denied.'), ofile)
+        else:
+            parent_dir = os.path.dirname(ofile)
+            if not os.access(parent_dir, os.W_OK):
+                if self.simulate:
+                    LOG.error(_("Write permission to {!r} denied.").format(parent_dir))
+                else:
+                    raise IOError(errno.EACCES, _('Write permission denied.'), parent_dir)
+
+        if self.verbose > verb_level1:
+            if self.verbose > verb_level2:
+                LOG.debug("Write {what!r} into {to!r}.".format(what=content, to=ofile))
+            else:
+                LOG.debug("Writing {!r} ...".format(ofile))
+
+        content_bin = encode_or_bust(content, encoding)
+
+        if self.simulate:
+            if self.verbose > verb_level2:
+                LOG.debug("Simulating write into {!r}.".format(ofile))
+            return
+
+        signal.signal(signal.SIGALRM, write_alarm_caller)
+        signal.alarm(timeout)
+
+        # Open filename for writing unbuffered
+        if self.verbose > verb_level3:
+            LOG.debug("Opening {!r} for write unbuffered ...".format(ofile))
+        with open(ofile, 'wb', 0) as fh:
+            fh.write(content_bin)
+            if self.verbose > verb_level3:
+                LOG.debug("Closing {!r} ...".format(ofile))
+
+        signal.alarm(0)
+
+        return
 
 
 # =============================================================================
@@ -498,7 +603,7 @@ class CompletedProcess(object):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        out = 'Completed process:\n'
+        out = _('Completed process') + ':\n'
         out += '  args:       {!r}\n'.format(self.args)
         out += '  returncode: {}\n'.format(self.returncode)
         if self.stdout is not None:

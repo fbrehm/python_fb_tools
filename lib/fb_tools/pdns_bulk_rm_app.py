@@ -25,7 +25,9 @@ from functools import cmp_to_key
 # Own modules
 from . import __version__ as GLOBAL_VERSION
 
-from .common import pp, compare_fqdn, to_bool, reverse_pointer
+from .xlate import XLATOR
+
+from .common import pp, compare_fqdn, to_bool, reverse_pointer, to_str
 
 from .app import BaseApplication
 
@@ -39,8 +41,11 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.5.5'
+__version__ = '0.6.2'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
+ngettext = XLATOR.ngettext
 
 
 # =============================================================================
@@ -61,12 +66,11 @@ class PdnsBulkRmApp(BaseApplication):
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
-        desc = textwrap.dedent("""\
-            Removes the given addresses (A-, AAAA- or CNAME-Records) completety from
-            PowerDNS. If there are multiple entries to a DNS-Name, all appropriate
-            records are removed. Additionally all appropriate reverse entries (PTR-records)
-            were also removed.
-            """).strip()
+        desc = _(
+            "Removes the given addresses (A-, AAAA- or CNAME-Records) completety from "
+            "PowerDNS. If there are multiple entries to a DNS-Name, all appropriate "
+            "records are removed. Additionally all appropriate reverse entries (PTR-records) "
+            "were also removed, if they are pointing back to the given A- or AAAA-record.")
 
         self._cfg_file = None
         self.config = None
@@ -158,7 +162,7 @@ class PdnsBulkRmApp(BaseApplication):
             self.read_address_file()
 
         if not self.addresses:
-            LOG.error("No addresses to remove given.")
+            LOG.error(_("No addresses to remove given."))
             self.exit(1)
 
         self.pdns = PowerDNSServer(
@@ -183,37 +187,38 @@ class PdnsBulkRmApp(BaseApplication):
         default_cfg_file = self.base_dir.joinpath('etc').joinpath(self.appname + '.ini')
 
         self.arg_parser.add_argument(
-            '-c', '--config', '--config-file', dest='cfg_file', metavar='FILE',
+            '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
             action=CfgFileOptionAction,
-            help="Configuration file (default: {!r})".format(default_cfg_file)
+            help=_("Configuration file (default: {!r})").format(default_cfg_file)
         )
 
-        pdns_group = self.arg_parser.add_argument_group('PowerDNS options')
+        pdns_group = self.arg_parser.add_argument_group(_('PowerDNS options'))
 
         pdns_group.add_argument(
-            '-H', '--host', dest='host',
-            help="PowerDNS server providing the API (Default: {!r}).".format(
-                PdnsBulkRmCfg.default_pdns_master)
+            '-H', '--host', dest='host', metavar=_('HOST'),
+            help=_(
+                "Address or hostname of the PowerDNS server providing "
+                "the API (Default: {!r}).").format(PdnsBulkRmCfg.default_pdns_master)
         )
 
         pdns_group.add_argument(
-            '-P', '--port', dest='port', type=int,
-            help="Port on PowerDNS server for API on (Default: {}).".format(DEFAULT_PORT))
+            '-P', '--port', dest='port', type=int, metavar=_('PORT'),
+            help=_("Port on PowerDNS server for API on (Default: {}).").format(DEFAULT_PORT))
 
         pdns_group.add_argument(
             '-K', '--key', '--api-key', metavar='KEY', dest='api_key',
-            help="The API key for accessing the PowerDNS API."
+            help=_("The API key for accessing the PowerDNS API.")
         )
 
         pdns_group.add_argument(
             '--https', action="store_true", dest='https',
-            help="Use HTTPS to access the PowerDNS API (Default: {}).".format(
+            help=_("Use HTTPS to access the PowerDNS API (Default: {}).").format(
                 PdnsBulkRmCfg.default_pdns_api_https),
         )
 
         pdns_group.add_argument(
             '--prefix', dest='api_path_prefix',
-            help=(
+            help=_(
                 "The global prefix for all paths for accessing the PowerDNS API "
                 "(Default: {!r}).").format(DEFAULT_API_PREFIX)
         )
@@ -223,14 +228,14 @@ class PdnsBulkRmApp(BaseApplication):
 
         self.arg_parser.add_argument(
             '-N', '--no-reverse', action="store_true", dest='no_reverse',
-            help=(
+            help=_(
                 "Don't remove reverse DNS entries (PTR records) to the given addresses. "
                 "(Default: False - reverse entries will be removed).")
         )
 
         self.arg_parser.add_argument(
-            '-F', '--file', metavar='FILE', dest='addr_file', type=pathlib.Path,
-            help=(
+            '-F', '--file', metavar=_('FILE'), dest='addr_file', type=pathlib.Path,
+            help=_(
                 "File containing the addresses to remove. The addresses must be "
                 "whitespace separeted, lines may be commented out by prepending them "
                 "with a hash sign '#'. This option is mutually exclusive with "
@@ -238,10 +243,10 @@ class PdnsBulkRmApp(BaseApplication):
         )
 
         self.arg_parser.add_argument(
-            'addresses', metavar='ADDRESS', type=str, nargs='*',
-            help=(
+            'addresses', metavar=_('ADDRESS'), type=str, nargs='*',
+            help=_(
                 "Addresses to remove. This option is mutually exclusive with "
-                "the -F/--file option."),
+                "the {!r} option.").format('-F/--file'),
         )
 
     # -------------------------------------------------------------------------
@@ -258,9 +263,9 @@ class PdnsBulkRmApp(BaseApplication):
         """
 
         if self.args.addr_file and self.args.addresses:
-            msg = (
-                "The option '-F|--file' is mutually exclusive with giving the addresses "
-                "as command line arguments.")
+            msg = _(
+                "The option {!r} is mutually exclusive with giving the addresses "
+                "as command line arguments.").format('-F/--file')
             LOG.error(msg)
             self.arg_parser.print_usage(sys.stderr)
             self.exit(1)
@@ -268,15 +273,15 @@ class PdnsBulkRmApp(BaseApplication):
         if self.args.addr_file:
             afile = self.args.addr_file
             if not afile.exists():
-                msg = "File {!r} does not exists.".format(str(afile))
+                msg = _("File {!r} does not exists.").format(str(afile))
                 LOG.error(msg)
                 self.exit(1)
             if not afile.is_file():
-                msg = "File {!r} is not a regular file.".format(str(afile))
+                msg = _("File {!r} is not a regular file.").format(str(afile))
                 LOG.error(msg)
                 self.exit(1)
             if not os.access(str(afile), os.R_OK):
-                msg = "No read access to file {!r}.".format(str(afile))
+                msg = _("No read access to file {!r}.").format(str(afile))
                 LOG.error(msg)
                 self.exit(1)
             self.address_file = afile
@@ -325,7 +330,7 @@ class PdnsBulkRmApp(BaseApplication):
             self.addresses = addresses
 
         if not self.addresses:
-            LOG.error("No addresses to remove found in {!r}.".format(str(self.address_file)))
+            LOG.error(_("No addresses to remove found in {!r}.").format(str(self.address_file)))
             self.exit(1)
 
     # -------------------------------------------------------------------------
@@ -364,7 +369,7 @@ class PdnsBulkRmApp(BaseApplication):
 
         if not self.simulate:
             return
-        print(self.colored("Simulation mode - nothing will be removed in real.", 'YELLOW'))
+        print(self.colored(_("Simulation mode - nothing will be removed in real."), 'YELLOW'))
         print()
 
     # -------------------------------------------------------------------------
@@ -392,7 +397,7 @@ class PdnsBulkRmApp(BaseApplication):
 
             fqdn = self.pdns.name2fqdn(addr)
             if not fqdn:
-                LOG.warn("Address {!r} could not interpreted as a FQDN.".format(addr))
+                LOG.warn(_("Address {!r} could not interpreted as a FQDN.").format(addr))
                 continue
             if fqdn not in all_fqdns:
                 all_fqdns.append(fqdn)
@@ -412,7 +417,7 @@ class PdnsBulkRmApp(BaseApplication):
 
             zones = self.pdns.get_all_zones_for_item(fqdn)
             if not zones:
-                LOG.warn("Did not found an appropriate zone for address {!r}.".format(fqdn))
+                LOG.warn(_("Did not found an appropriate zone for address {!r}.").format(fqdn))
                 continue
 
             for zone_name in zones:
@@ -440,12 +445,20 @@ class PdnsBulkRmApp(BaseApplication):
                 c=len(zone.rrsets), z=zone_name))
 
         for fqdn in zones_of_records[zone_name]:
+            fqdn_puny = to_str(fqdn.encode('idna'))
             if self.verbose > 1:
-                LOG.debug("Searching {f!r} in zone {z!r} ...".format(f=fqdn, z=zone_name))
+                if fqdn != fqdn_puny:
+                    LOG.debug("Searching {f!r} ({p!r}) in zone {z!r} ...".format(
+                        f=fqdn, p=fqdn_puny, z=zone_name))
+                else:
+                    LOG.debug("Searching {f!r} in zone {z!r} ...".format(f=fqdn, z=zone_name))
             for rrset in zone.rrsets:
                 if rrset.name != fqdn:
-                    continue
-                rrset2remove = {'fqdn': fqdn, 'type': rrset.type.upper(), 'records': []}
+                    if fqdn == fqdn_puny:
+                        continue
+                    if rrset.name != fqdn_puny:
+                        continue
+                rrset2remove = {'fqdn': fqdn_puny, 'type': rrset.type.upper(), 'records': []}
                 found = False
                 if zone.reverse_zone:
                     if rrset.type.upper() == 'PTR':
@@ -457,14 +470,14 @@ class PdnsBulkRmApp(BaseApplication):
                     continue
                 for record in rrset.records:
                     if zone.reverse_zone and rrset.type.upper() == 'PTR':
-                        if self.expected_ptr is not None and fqdn in self.expected_ptr:
-                            ptr = self.pdns.decanon_name(fqdn)
-                            exp = self.pdns.decanon_name(self.expected_ptr[fqdn])
+                        if self.expected_ptr is not None and fqdn_puny in self.expected_ptr:
+                            ptr = self.pdns.decanon_name(fqdn_puny)
+                            exp = self.pdns.decanon_name(self.expected_ptr[fqdn_puny])
                             addr = self.pdns.decanon_name(record.content)
                             if self.verbose > 1:
                                 LOG.debug("Expexted PTR: {p!r} => {a!r}.".format(p=ptr, a=exp))
-                            if record.content != self.expected_ptr[fqdn]:
-                                LOG.warn((
+                            if record.content != self.expected_ptr[fqdn_puny]:
+                                LOG.warn(_(
                                     "PTR {p!r} does not pointing to expected {e!r}, "
                                     "but to {c!r} instead, ignoring for deletion.").format(
                                     p=ptr, e=exp, c=addr))
@@ -474,8 +487,8 @@ class PdnsBulkRmApp(BaseApplication):
                 if zone_name not in self.records2remove:
                     self.records2remove[zone_name] = []
                 self.records2remove[zone_name].append(rrset2remove)
-                if fqdn not in fqdns_found:
-                    fqdns_found.append(fqdn)
+                if fqdn_puny not in fqdns_found:
+                    fqdns_found.append(fqdn_puny)
 
         return fqdns_found
 
@@ -490,7 +503,7 @@ class PdnsBulkRmApp(BaseApplication):
         zones_of_records = self._get_zones_of_addresses(all_fqdns)
 
         if not zones_of_records:
-            msg = "Did not found any addresses with an appropriate zone in PowerDNS."
+            msg = _("Did not found any addresses with an appropriate zone in PowerDNS.")
             LOG.error(msg)
             return 1
 
@@ -508,7 +521,7 @@ class PdnsBulkRmApp(BaseApplication):
             if fqdn not in fqdns_found:
                 fqdns_not_found.append(fqdn)
         if fqdns_not_found:
-            msg = "The following addresses (FQDNs) are not found:"
+            msg = _("The following addresses (FQDNs) are not found:")
             for fqdn in fqdns_not_found:
                 msg += '\n  * {!r}'.format(fqdn)
             LOG.warn(msg)
@@ -546,7 +559,7 @@ class PdnsBulkRmApp(BaseApplication):
                         addr = ipaddress.ip_address(addr_str)
                         fqdn = self.pdns.canon_name(reverse_pointer(addr))
                     except ValueError:
-                        msg = "IP address {!r} seems not to be a valid IP address.".format(
+                        msg = _("IP address {!r} seems not to be a valid IP address.").format(
                             addr_str)
                         LOG.error(msg)
                         continue
@@ -566,28 +579,41 @@ class PdnsBulkRmApp(BaseApplication):
     # -------------------------------------------------------------------------
     def show_records(self):
 
-        title = "All DNS records to remove"
+        title = _("All DNS records to remove")
         print()
         print(title)
         print("=" * len(title))
         print()
 
-        disabled = 'Disabled.'
+        disabled = _('Disabled.')
+        headers = {
+            'fqdn': _("Name"),
+            'z': _('Zone'),
+            'type': _("Type"),
+            'rec': _("Record"),
+            'dis': '',
+        }
         lengths = {
-            'z': 4,
-            'fqdn': 4,
-            'rec': 4,
+            'fqdn': len(headers['fqdn']),
+            'z': len(headers['z']),
+            'type': len(headers['type']),
+            'rec': len(headers['rec']),
             'dis': len(disabled),
         }
         count = 0
+        if lengths['type'] < 8:
+            lengths['type'] = 8
 
         for zone_name in self.records2remove.keys():
             if len(zone_name) > lengths['z']:
                 lengths['z'] = len(zone_name)
             for rrset in self.records2remove[zone_name]:
                 fqdn = self.pdns.decanon_name(rrset['fqdn'])
+                rr_type = rrset['type']
                 if len(fqdn) > lengths['fqdn']:
                     lengths['fqdn'] = len(fqdn)
+                if len(rr_type) > lengths['type']:
+                    lengths['type'] = len(rr_type)
                 for record in rrset['records']:
                     count += 1
                     content = self.pdns.decanon_name(record['content'])
@@ -595,12 +621,12 @@ class PdnsBulkRmApp(BaseApplication):
                         lengths['rec'] = len(content)
 
         tpl = "{{fqdn:<{}}}  ".format(lengths['fqdn'])
-        tpl += "{{z:<{}}}  {{type:<8}}  ".format(lengths['z'])
+        tpl += "{{z:<{}}}  ".format(lengths['z'])
+        tpl += "{{type:<{}}}  ".format(lengths['type'])
         tpl += "{{rec:<{}}}  ".format(lengths['rec'])
         tpl += "{{dis:<{}}}".format(lengths['dis'])
 
-        header = tpl.format(
-            z='Zone', fqdn="Name", type="Type", rec='Record', dis='')
+        header = tpl.format(**headers)
         print(header)
         print('-' * len(header))
 
@@ -619,12 +645,14 @@ class PdnsBulkRmApp(BaseApplication):
                     else:
                         out['dis'] = ''
                     print(tpl.format(**out))
-        s = ''
-        if count != 1:
-            s = 's'
+        #s = ''
+        #if count != 1:
+        #    s = 's'
         print()
-        print("Total {c} DNS record{s} to remove.".format(
-            c=count, s=s))
+        msg = ngettext("Total one DNS record to remove.", "Total {} DNS records to remove.", count)
+        print(msg.format(count))
+        #print(_("Total {c} DNS record{s} to remove.").format(
+        #    c=count, s=s))
         print()
 
 

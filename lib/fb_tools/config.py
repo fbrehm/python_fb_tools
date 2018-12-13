@@ -27,9 +27,13 @@ from .errors import FbError
 
 from .obj import FbBaseObject
 
-__version__ = '1.1.0'
+from .xlate import XLATOR
+
+__version__ = '1.2.0'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
+
+_ = XLATOR.gettext
 
 # =============================================================================
 class ConfigError(FbError):
@@ -57,10 +61,10 @@ class CfgFileOptionAction(argparse.Action):
 
         path = pathlib.Path(values)
         if not path.exists():
-            msg = "File {!r} does not exists.".format(values)
+            msg = _("File {!r} does not exists.").format(values)
             raise argparse.ArgumentError(self, msg)
         if not path.is_file():
-            msg = "File {!r} is not a regular file.".format(values)
+            msg = _("File {!r} is not a regular file.").format(values)
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, path.resolve())
@@ -116,8 +120,10 @@ class BaseConfiguration(FbBaseObject):
     @encoding.setter
     def encoding(self, value):
         if not isinstance(value, str):
-            msg = "Encoding {v!r} must be 'str' object, but is a {c!r} object instead.".format(
-                v=value, c=value.__class__.__name__)
+            msg = _(
+                    "Encoding {v!r} must be a {s!r} object, "
+                    "but is a {c!r} object instead.").format(
+                v=value, s='str', c=value.__class__.__name__)
             raise TypeError(msg)
 
         encoder = codecs.lookup(value)
@@ -132,7 +138,7 @@ class BaseConfiguration(FbBaseObject):
     @config_dir.setter
     def config_dir(self, value):
         if value is None:
-            raise TypeError("A configuration directory may not be None.")
+            raise TypeError(_("A configuration directory may not be None."))
         cdir = pathlib.Path(value)
         if cdir.exists():
             self._config_dir = cdir.resolve()
@@ -148,12 +154,12 @@ class BaseConfiguration(FbBaseObject):
     @config_file.setter
     def config_file(self, value):
         if value is None:
-            raise TypeError("A configuration file may not be None.")
+            raise TypeError(_("A configuration file may not be None."))
 
         cfile = pathlib.Path(value)
         if cfile.exists():
             if not cfile.is_file():
-                msg = "Configuration file {!r} exists, but is not a regular file.".format(
+                msg = _("Configuration file {!r} exists, but is not a regular file.").format(
                     str(cfile))
                 raise ConfigError(msg)
             self._config_file = cfile.resolve()
@@ -161,7 +167,7 @@ class BaseConfiguration(FbBaseObject):
         cfile = self.config_dir.joinpath(cfile)
         if cfile.exists():
             if not cfile.is_file():
-                msg = "Configuration file {!r} exists, but is not a regular file.".format(
+                msg = _("Configuration file {!r} exists, but is not a regular file.").format(
                     str(cfile))
                 raise ConfigError(msg)
             self._config_file = cfile.resolve()
@@ -195,7 +201,7 @@ class BaseConfiguration(FbBaseObject):
         if self.verbose > 2:
             LOG.debug("Searching for {!r} ...".format(self.config_file))
         if not self.config_file.exists():
-            msg = "Config file {!r} not found.".format(str(self.config_file))
+            msg = _("Configuration file {!r} not found.").format(str(self.config_file))
             if error_if_not_exists:
                 self.handle_error(msg, "Configuration file error")
             else:
@@ -219,8 +225,8 @@ class BaseConfiguration(FbBaseObject):
                 else:
                     config.read_file(stream)
         except ConfigParseError as e:
-            msg = "Wrong configuration in {!r} found: ".format(str(self.config_file))
-            msg += str(e)
+            msg = _("Wrong configuration in {!r} found").format(str(self.config_file))
+            msg += ': ' + str(e)
             self.handle_error(msg, "Configuration parse error")
             return
 
