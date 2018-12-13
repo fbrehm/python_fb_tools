@@ -27,7 +27,7 @@ from . import __version__ as GLOBAL_VERSION
 
 from .xlate import XLATOR
 
-from .common import pp, compare_fqdn, to_bool, reverse_pointer
+from .common import pp, compare_fqdn, to_bool, reverse_pointer, to_str
 
 from .app import BaseApplication
 
@@ -41,7 +41,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.6.1'
+__version__ = '0.6.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -445,12 +445,20 @@ class PdnsBulkRmApp(BaseApplication):
                 c=len(zone.rrsets), z=zone_name))
 
         for fqdn in zones_of_records[zone_name]:
+            fqdn_puny = to_str(fqdn.encode('idna'))
             if self.verbose > 1:
-                LOG.debug("Searching {f!r} in zone {z!r} ...".format(f=fqdn, z=zone_name))
+                if fqdn != fqdn_puny:
+                    LOG.debug("Searching {f!r} ({p!r}) in zone {z!r} ...".format(
+                        f=fqdn, p=fqdn_puny, z=zone_name))
+                else:
+                    LOG.debug("Searching {f!r} in zone {z!r} ...".format(f=fqdn, z=zone_name))
             for rrset in zone.rrsets:
                 if rrset.name != fqdn:
-                    continue
-                rrset2remove = {'fqdn': fqdn, 'type': rrset.type.upper(), 'records': []}
+                    if fqdn == fqdn_puny:
+                        continue
+                    if rrset.name != fqdn_puny:
+                        continue
+                rrset2remove = {'fqdn': fqdn_puny, 'type': rrset.type.upper(), 'records': []}
                 found = False
                 if zone.reverse_zone:
                     if rrset.type.upper() == 'PTR':
@@ -462,13 +470,13 @@ class PdnsBulkRmApp(BaseApplication):
                     continue
                 for record in rrset.records:
                     if zone.reverse_zone and rrset.type.upper() == 'PTR':
-                        if self.expected_ptr is not None and fqdn in self.expected_ptr:
-                            ptr = self.pdns.decanon_name(fqdn)
-                            exp = self.pdns.decanon_name(self.expected_ptr[fqdn])
+                        if self.expected_ptr is not None and fqdn_puny in self.expected_ptr:
+                            ptr = self.pdns.decanon_name(fqdn_puny)
+                            exp = self.pdns.decanon_name(self.expected_ptr[fqdn_puny])
                             addr = self.pdns.decanon_name(record.content)
                             if self.verbose > 1:
                                 LOG.debug("Expexted PTR: {p!r} => {a!r}.".format(p=ptr, a=exp))
-                            if record.content != self.expected_ptr[fqdn]:
+                            if record.content != self.expected_ptr[fqdn_puny]:
                                 LOG.warn(_(
                                     "PTR {p!r} does not pointing to expected {e!r}, "
                                     "but to {c!r} instead, ignoring for deletion.").format(
@@ -479,8 +487,8 @@ class PdnsBulkRmApp(BaseApplication):
                 if zone_name not in self.records2remove:
                     self.records2remove[zone_name] = []
                 self.records2remove[zone_name].append(rrset2remove)
-                if fqdn not in fqdns_found:
-                    fqdns_found.append(fqdn)
+                if fqdn_puny not in fqdns_found:
+                    fqdns_found.append(fqdn_puny)
 
         return fqdns_found
 

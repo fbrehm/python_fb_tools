@@ -27,7 +27,7 @@ from .errors import PDNSApiNotFoundError, PDNSApiValidationError
 
 from .zone import PowerDNSZone, PowerDNSZoneDict
 
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -159,7 +159,8 @@ class PowerDNSServer(BasePowerDNSHandler):
             return None
 
         if self.verbose > 2:
-            LOG.debug("Searching an appropriate zone for FQDN {!r} ...".format(fqdn))
+            LOG.debug("Searching an appropriate zone for item {i!r} - FQDN {f!r} ...".format(
+                    i=item, f=fqdn))
 
         for zone_name in reversed(self.zones.keys()):
             pattern = r'\.' + re.escape(zone_name) + '$'
@@ -167,6 +168,13 @@ class PowerDNSServer(BasePowerDNSHandler):
                 LOG.debug("Search pattern: {}".format(pattern))
             if re.search(pattern, fqdn):
                 return zone_name
+            zone = self.zones[zone_name]
+            if zone_name != zone.name_unicode:
+                pattern = r'\.' + re.escape(zone.name_unicode) + '$'
+                if self.verbose > 3:
+                    LOG.debug("Search pattern Unicode: {}".format(pattern))
+                if re.search(pattern, fqdn):
+                    return zone_name
 
         return None
 
@@ -181,7 +189,8 @@ class PowerDNSServer(BasePowerDNSHandler):
             return []
 
         if self.verbose > 2:
-            LOG.debug("Searching all appropriate zones for FQDN {!r} ...".format(fqdn))
+            LOG.debug("Searching all appropriate zones for item {i!r} - FQDN {f!r} ...".format(
+                    i=item, f=fqdn))
         zones = []
 
         for zone_name in self.zones.keys():
@@ -190,6 +199,14 @@ class PowerDNSServer(BasePowerDNSHandler):
                 LOG.debug("Search pattern: {}".format(pattern))
             if re.search(pattern, fqdn):
                 zones.append(zone_name)
+                continue
+            zone = self.zones[zone_name]
+            if zone_name != zone.name_unicode:
+                pattern = r'\.' + re.escape(zone.name_unicode) + '$'
+                if self.verbose > 3:
+                    LOG.debug("Search pattern Unicode: {}".format(pattern))
+                if re.search(pattern, fqdn):
+                    zones.append(zone_name)
 
         return zones
 
