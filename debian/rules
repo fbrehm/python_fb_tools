@@ -41,16 +41,19 @@ override_dh_auto_install:
 	@echo ""
 	@echo "Installing Python 2 stuff ..."
 	set -e && for pyvers in $(PYTHON2S); do python$$pyvers setup.py install --root=$(INSTALL_DIR_LIB2) --install-layout=deb; done
-	rm -r $(INSTALL_DIR_LIB2)/usr/bin
+	rm -rv $(INSTALL_DIR_LIB2)/usr/bin
+	rm -rv $(INSTALL_DIR_LIB2)/usr/share
 	@echo ""
 	@echo "Installing Python 3 stuff ..."
 	set -e && for pyvers in $(PYTHON3S); do python$$pyvers setup.py install --root=$(INSTALL_DIR_LIB3) --install-layout=deb; done
-	rm -r $(INSTALL_DIR_LIB3)/usr/bin
 	@echo ""
 	@echo "Installing bin package ..."
-	install -d $(INSTALL_DIR_BIN)/usr/bin
-	install -m 0755 bin/get-file-to-remove $(INSTALL_DIR_BIN)/usr/bin/get-file-to-remove
-	install -m 0755 bin/get-vmware-vm-info $(INSTALL_DIR_BIN)/usr/bin/get-vmware-vm-info
+	install -d $(INSTALL_DIR_BIN)/usr
+	mv -v $(INSTALL_DIR_LIB3)/usr/bin $(INSTALL_DIR_BIN)/usr
+	@echo ""
+	@echo "Installing i18n files ..."
+	install -d $(INSTALL_NLS_DIR)/usr
+	mv -v $(INSTALL_DIR_LIB3)/usr/share $(INSTALL_NLS_DIR)/usr
 #	@echo ""
 #	@echo "Manpages ..."
 #	dh_installman

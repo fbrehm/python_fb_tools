@@ -271,7 +271,7 @@ class HandlingObject(FbBaseObject):
         return None
 
     # -------------------------------------------------------------------------
-    def run(self, *popenargs, input=None, timeout=None, check=False, may_simulate=True, **kwargs):
+    def run(self, input=None, timeout=None, check=False, may_simulate=True, *popenargs, **kwargs):
         """
         Run command with arguments and return a CompletedProcess instance.
 

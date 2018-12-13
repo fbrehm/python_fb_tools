@@ -6,7 +6,7 @@
 @copyright: © 2018 by Frank Brehm, Berlin
 @summary: The module for the application object.
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 # Standard modules
 import logging

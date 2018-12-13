@@ -42,7 +42,7 @@ def pp(obj):
     pprinter = pprint.PrettyPrinter(indent=4)
     return pprinter.pformat(obj)
 
-print("Paths:\n{}".format(pp(PATHS)))
+#print("Paths:\n{}".format(pp(PATHS)))
 
 if os.path.exists(__module_dir__) and os.path.isfile(__init_py__):
     sys.path.insert(0, os.path.abspath(__lib_dir__))
@@ -188,7 +188,7 @@ def read_requirements():
         if module not in __requirements__:
             __requirements__.append(module)
 
-    print("Found required modules: {}\n".format(pp(__requirements__)))
+    #print("Found required modules: {}\n".format(pp(__requirements__)))
 
 
 read_requirements()
@@ -209,7 +209,7 @@ def get_scripts():
         if script_name not in __scripts__:
             __scripts__.append(script_name)
 
-    print("Found scripts: {}\n".format(pp(__scripts__)))
+    #print("Found scripts: {}\n".format(pp(__scripts__)))
 
 
 get_scripts()
@@ -235,19 +235,19 @@ def get_locales():
                 loc_file = os.path.join(root, f)
                 __locale_files__[root].append(loc_file)
 
-    print("Found locale files: {}\n".format(pp(__locale_files__)))
+    #print("Found locale files: {}\n".format(pp(__locale_files__)))
 
     for root in sorted(__locale_files__.keys()):
         target = os.path.join(share_prefix, root)
         __data__files__.append((target, __locale_files__[root]))
 
-    print("Found data files: {}\n".format(pp(__data__files__)))
+    #print("Found data files: {}\n".format(pp(__data__files__)))
 
 
 get_locales()
 
 # -----------------------------------
-class InstallWithCompile(install):
+class InstallWithCompile(install, object):
     def run(self):
         from babel.messages.frontend import compile_catalog
         compiler = compile_catalog(self.distribution)
@@ -256,7 +256,7 @@ class InstallWithCompile(install):
         compiler.directory = option_dict['directory'][1]
         compiler.statistics = bool(option_dict['statistics'][1])
         compiler.run()
-        super().run()
+        super(InstallWithCompile, self).run()
 
 
 # -----------------------------------
@@ -266,6 +266,7 @@ setup(
     scripts=__scripts__,
     requires=__requirements__,
     data_files=__data__files__,
+    package_dir={'': 'lib'},
     cmdclass={
         'install': InstallWithCompile,
     },
