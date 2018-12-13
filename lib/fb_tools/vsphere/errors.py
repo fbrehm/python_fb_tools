@@ -11,7 +11,11 @@ from __future__ import absolute_import
 # Standard modules
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..errors import FbHandlerError
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -27,7 +31,7 @@ class VSphereNoDatastoresFoundError(FbHandlerError):
     def __init__(self, msg=None):
 
         if not msg:
-            msg = "No VSphere datastores found."
+            msg = _("No VSphere datastores found.")
         self.msg = msg
 
     # -------------------------------------------------------------------------
@@ -56,10 +60,10 @@ class VSphereNameError(VSphereExpectedError):
     def __str__(self):
 
         if self.obj_type:
-            msg = "Invalid name {n!r} for a {o} VSphere object.".format(
+            msg = _("Invalid name {n!r} for a {o} VSphere object.").format(
                 n=self.name, o=self.obj_type)
         else:
-            msg = "Invalid name {!r} for a VSphere object.".format(self.name)
+            msg = _("Invalid name {!r} for a VSphere object.").format(self.name)
 
         return msg
 
@@ -76,7 +80,7 @@ class VSphereDatacenterNotFoundError(VSphereExpectedError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "The VSphere datacenter {!r} is not existing.".format(self.dc)
+        msg = _("The VSphere datacenter {!r} is not existing.").format(self.dc)
         return msg
 
 
@@ -92,7 +96,7 @@ class VSphereVmNotFoundError(VSphereExpectedError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "The VSphere Virtual machine {!r} was not found.".format(self.vm)
+        msg = _("The VSphere Virtual machine {!r} was not found.").format(self.vm)
         return msg
 
 
@@ -112,7 +116,7 @@ class VSphereNoDatastoreFoundError(VSphereExpectedError):
         mb = float(self.needed_bytes) / 1024.0 / 1024.0
         gb = mb / 1024.0
 
-        msg = (
+        msg = _(
             "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB "
             "available space found.").format(m=mb, g=gb)
         return msg
@@ -130,7 +134,7 @@ class VSphereNetworkNotExistingError(VSphereExpectedError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "The network {!r} is not existing.".format(self.net_name)
+        msg = _("The network {!r} is not existing.").format(self.net_name)
         return msg
 
 
@@ -149,7 +153,7 @@ class VSphereCannotConnectError(VSphereExpectedError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "Could not connect to the vSphere host {h}:{p} as user {u!r}.".format(
+        msg = _("Could not connect to the vSphere host {h}:{p} as user {u!r}.").format(
             h=self.host, p=self.port, u=self.user)
         return msg
 
@@ -171,7 +175,7 @@ class TimeoutCreateVmError(VSphereExpectedError):
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = "Timeout on creating VM {vm!r} after {to:0.1f} seconds.".format(
+        msg = _("Timeout on creating VM {vm!r} after {to:0.1f} seconds.").format(
             vm=self.vm, to=self.timeout)
         return msg
 

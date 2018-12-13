@@ -26,6 +26,8 @@ import requests
 import urllib3
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp, RE_TF_NAME
 
 from ..errors import HandlerError
@@ -48,11 +50,14 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
 DEFAULT_VM_CFG_VERSION = 'vmx-13'
+
+_ = XLATOR.gettext
+
 
 # =============================================================================
 class VsphereServer(BaseVsphereHandler):
@@ -149,7 +154,7 @@ class VsphereServer(BaseVsphereHandler):
                 socket.timeout, urllib3.exceptions.ConnectTimeoutError,
                 urllib3.exceptions.MaxRetryError,
                 requests.exceptions.ConnectTimeout) as e:
-            msg = "Got a {c} on connecting to {h!r}: {e}.".format(
+            msg = _("Got a {c} on connecting to {h!r}: {e}.").format(
                 c=e.__class__.__name__, h=self.host, e=e)
             raise VSphereExpectedError(msg)
 
@@ -157,7 +162,7 @@ class VsphereServer(BaseVsphereHandler):
             if disconnect:
                 self.disconnect()
 
-        LOG.info("VSphere server version: {!r}".format(self.about['version']))
+        LOG.info(_("VSphere server version: {!r}").format(self.about['version']))
         if self.verbose > 1:
             LOG.debug("Found VSphere about-information:\n{}".format(pp(self.about)))
 
@@ -349,7 +354,7 @@ class VsphereServer(BaseVsphereHandler):
                     LOG.debug(
                         "Found datastores clusters:\n{}".format(pp(list(self.ds_clusters.keys()))))
         else:
-            LOG.warn("No VSphere datastore clusters found.")
+            LOG.warn(_("No VSphere datastore clusters found."))
 
         for (dsc_name, dsc) in self.ds_clusters.items():
             self.ds_cluster_mapping[dsc_name] = dsc.tf_name
@@ -407,7 +412,7 @@ class VsphereServer(BaseVsphereHandler):
                 else:
                     LOG.debug("Found VSphere networks:\n{}".format(pp(list(self.networks.keys()))))
         else:
-            LOG.error("No VSphere networks found.")
+            LOG.error(_("No VSphere networks found."))
 
         for (net_name, net) in self.networks.items():
             self.network_mapping[net_name] = net.tf_name
@@ -463,7 +468,7 @@ class VsphereServer(BaseVsphereHandler):
                 self.disconnect()
 
         if not vm:
-            msg = "VSphere VM {!r} not found.".format(vm_name)
+            msg = _("VSphere VM {!r} not found.").format(vm_name)
             if no_error:
                 LOG.debug(msg)
             else:
@@ -516,7 +521,8 @@ class VsphereServer(BaseVsphereHandler):
     def _dict_from_vim_obj(self, vm, cur_path):
 
         if not isinstance(vm, vim.VirtualMachine):
-            msg = "Given parameter {!r} is not a vim.VirtualMachine object".format(vm)
+            msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='vm', e='vim.VirtualMachine', v=vm)
             raise TypeError(msg)
 
         summary = vm.summary
@@ -602,8 +608,9 @@ class VsphereServer(BaseVsphereHandler):
     def get_vms(self, re_name, is_template=None, disconnect=False):
 
         if not hasattr(re_name, 'match'):
-            raise TypeError("Parameter 're_name' => {!r} seems not to be a regex object.".format(
-                re_name))
+            msg = _("Parameter {p!r} => {r!r} seems not to be a regex object.").format(
+                    p='re_name', r=re_name)
+            raise TypeError(msg)
 
         LOG.debug("Trying to get list of VMs with name pattern {!r}.".format(re_name.pattern))
         vm_list = []
@@ -698,10 +705,10 @@ class VsphereServer(BaseVsphereHandler):
                     raise VSphereVmNotFoundError(vm)
 
             if vm_obj.runtime.powerState.lower() == 'poweredon':
-                LOG.info("VM {!r} is already powered on.".format(vm_name))
+                LOG.info(_("VM {!r} is already powered on.").format(vm_name))
                 return
 
-            LOG.info("Powering on VM {!r} ...".format(vm_name))
+            LOG.info(_("Powering on VM {!r} ...").format(vm_name))
 
             task = vm_obj.PowerOnVM_Task()
             self.wait_for_tasks([task], max_wait=max_wait)
@@ -729,10 +736,10 @@ class VsphereServer(BaseVsphereHandler):
                     raise VSphereVmNotFoundError(vm)
 
             if vm_obj.runtime.powerState.lower() == 'poweredoff':
-                LOG.info("VM {!r} is already powered off.".format(vm_name))
+                LOG.info(_("VM {!r} is already powered off.").format(vm_name))
                 return
 
-            LOG.info("Powering off VM {!r} ...".format(vm_name))
+            LOG.info(_("Powering off VM {!r} ...").format(vm_name))
 
             task = vm_obj.PowerOffVM_Task()
             self.wait_for_tasks([task], max_wait=max_wait)
@@ -842,7 +849,7 @@ class VsphereServer(BaseVsphereHandler):
                 if folder_object:
                     LOG.debug("VM Folder {!r} already exists.".format(abs_path))
                 else:
-                    LOG.info("Creating VM folder {!r} ...".format(abs_path))
+                    LOG.info(_("Creating VM folder {!r} ...").format(abs_path))
                     if self.simulate:
                         LOG.debug("Simulation mode, don't creating it.")
                         break
@@ -932,7 +939,7 @@ class VsphereServer(BaseVsphereHandler):
         LOG.info("Creating VM {!r} ...".format(name))
 
         if self.simulate:
-            LOG.info("Simulation mode - VM {!r} will not be created.".format(name))
+            LOG.info(_("Simulation mode - VM {!r} will not be created.").format(name))
             return
 
         start_time = time.time()
@@ -1020,7 +1027,7 @@ class VsphereServer(BaseVsphereHandler):
 
         disk_sizes2create = []
         if disks:
-            err_msg_tpl = "Given disksize {!r} must be greater than zero."
+            err_msg_tpl = _("Given disksize {!r} must be greater than zero.")
             if isinstance(disks, Number):
                 if disks <= 0:
                     raise ValueError(err_msg_tpl.format(disks))
@@ -1033,7 +1040,7 @@ class VsphereServer(BaseVsphereHandler):
                     disk_sizes2create.append(size)
                 else:
                     if len(disks) > 6:
-                        msg = "There may be created at most 6 disks, but {} were given.".format(
+                        msg = _("There may be created at most 6 disks, but {} were given.").format(
                             len(disks))
                         raise HandlerError(msg)
                     for disk in disks:
@@ -1107,7 +1114,7 @@ class VsphereServer(BaseVsphereHandler):
         else:
             for iface in nw_interfaces:
                 if not isinstance(iface, VsphereVmInterface):
-                    msg = "Invalid Interface description {!r} given.".format(iface)
+                    msg = _("Invalid Interface description {!r} given.").format(iface)
                     raise TypeError(msg)
                 ifaces.append(iface)
 
@@ -1174,7 +1181,7 @@ class VsphereServer(BaseVsphereHandler):
 
             self.poweroff_vm(vm_obj)
 
-            LOG.info("Purging VM {!r} ...".format(vm_name))
+            LOG.info(_("Purging VM {!r} ...").format(vm_name))
 
             task = vm_obj.Destroy_Task()
             self.wait_for_tasks([task], max_wait=max_wait)
@@ -1209,7 +1216,7 @@ class VsphereServer(BaseVsphereHandler):
                 i += 1
 
         if not virtual_nic_device:
-            msg = (
+            msg = _(
                 "Did not found virtual ethernet device No. {no} ("
                 "found {count} devices).").format(no=nic_nr, count=i)
             raise HandlerError(msg)

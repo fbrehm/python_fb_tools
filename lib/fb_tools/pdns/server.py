@@ -15,6 +15,8 @@ import re
 # Third party modules
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp, to_bool
 
 from ..handling_obj import HandlingObject
@@ -25,8 +27,10 @@ from .errors import PDNSApiNotFoundError, PDNSApiValidationError
 
 from .zone import PowerDNSZone, PowerDNSZoneDict
 
-__version__ = '0.6.2'
+__version__ = '0.7.2'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -98,16 +102,17 @@ class PowerDNSServer(BasePowerDNSHandler):
         try:
             json_response = self.perform_request(path)
         except (PDNSApiNotFoundError, PDNSApiValidationError):
-            LOG.error("Could not found server info.")
+            LOG.error(_("Could not found server info."))
             return None
         if self.verbose > 2:
             LOG.debug("Got a response:\n{}".format(pp(json_response)))
 
         if 'version' in json_response:
             self._api_server_version = json_response['version']
-            LOG.info("PowerDNS server version {!r}.".format(self.api_server_version))
+            LOG.info(_("PowerDNS server version {!r}.").format(self.api_server_version))
             return self.api_server_version
-        LOG.error("Did not found version info in server info:\n{}".format(pp(json_response)))
+        LOG.error((_("Did not found version info in server info:") + "\n{}").format(pp(
+                json_response)))
         return None
 
     # -------------------------------------------------------------------------
@@ -154,7 +159,8 @@ class PowerDNSServer(BasePowerDNSHandler):
             return None
 
         if self.verbose > 2:
-            LOG.debug("Searching an appropriate zone for FQDN {!r} ...".format(fqdn))
+            LOG.debug("Searching an appropriate zone for item {i!r} - FQDN {f!r} ...".format(
+                    i=item, f=fqdn))
 
         for zone_name in reversed(self.zones.keys()):
             pattern = r'\.' + re.escape(zone_name) + '$'
@@ -162,6 +168,13 @@ class PowerDNSServer(BasePowerDNSHandler):
                 LOG.debug("Search pattern: {}".format(pattern))
             if re.search(pattern, fqdn):
                 return zone_name
+            zone = self.zones[zone_name]
+            if zone_name != zone.name_unicode:
+                pattern = r'\.' + re.escape(zone.name_unicode) + '$'
+                if self.verbose > 3:
+                    LOG.debug("Search pattern Unicode: {}".format(pattern))
+                if re.search(pattern, fqdn):
+                    return zone_name
 
         return None
 
@@ -176,7 +189,8 @@ class PowerDNSServer(BasePowerDNSHandler):
             return []
 
         if self.verbose > 2:
-            LOG.debug("Searching all appropriate zones for FQDN {!r} ...".format(fqdn))
+            LOG.debug("Searching all appropriate zones for item {i!r} - FQDN {f!r} ...".format(
+                    i=item, f=fqdn))
         zones = []
 
         for zone_name in self.zones.keys():
@@ -185,6 +199,14 @@ class PowerDNSServer(BasePowerDNSHandler):
                 LOG.debug("Search pattern: {}".format(pattern))
             if re.search(pattern, fqdn):
                 zones.append(zone_name)
+                continue
+            zone = self.zones[zone_name]
+            if zone_name != zone.name_unicode:
+                pattern = r'\.' + re.escape(zone.name_unicode) + '$'
+                if self.verbose > 3:
+                    LOG.debug("Search pattern Unicode: {}".format(pattern))
+                if re.search(pattern, fqdn):
+                    zones.append(zone_name)
 
         return zones
 

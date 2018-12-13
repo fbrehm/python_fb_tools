@@ -1,0 +1,957 @@
+# Translations template for fb_tools.
+# Copyright (C) 2018 Frank Brehm, Berlin
+# This file is distributed under the same license as the fb_tools project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: fb_tools 1.3.0\n"
+"Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
+"POT-Creation-Date: 2018-12-12 17:53+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: bin/get-file-to-remove:79
+msgid ""
+"{c}-Object:\n"
+"{a}"
+msgstr ""
+
+#: lib/fb_tools/app.py:68
+msgid "Forced execution - whatever it means."
+msgstr ""
+
+#: lib/fb_tools/app.py:149
+msgid "Invalid env_prefix {!r} given - it may not be empty."
+msgstr ""
+
+#: lib/fb_tools/app.py:153
+msgid ""
+"Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
+"underscore (this not as the first character) are allowed."
+msgstr ""
+
+#: lib/fb_tools/app.py:164
+msgid "Unknown and undescriped application."
+msgstr ""
+
+#: lib/fb_tools/app.py:189
+msgid "Wrong exit_value {!r}, must be >= 0."
+msgstr ""
+
+#: lib/fb_tools/app.py:456
+msgid "Exit on signal {n!r} ({s})."
+msgstr ""
+
+#: lib/fb_tools/app.py:481
+msgid "Enter "
+msgstr ""
+
+#: lib/fb_tools/app.py:488
+msgid "Repeat enter "
+msgstr ""
+
+#: lib/fb_tools/app.py:498
+msgid "{n} and repeated {n} did not match."
+msgstr ""
+
+#: lib/fb_tools/app.py:557
+msgid "The application is not completely initialized."
+msgstr ""
+
+#: lib/fb_tools/app.py:568
+msgid "Object {!r} seems not to be completely initialized."
+msgstr ""
+
+#: lib/fb_tools/app.py:578
+msgid "Ending."
+msgstr ""
+
+#: lib/fb_tools/app.py:597
+msgid "Executing {} ..."
+msgstr ""
+
+#: lib/fb_tools/app.py:619
+msgid "General options"
+msgstr ""
+
+#: lib/fb_tools/app.py:623
+msgid "Simulation mode, nothing is really done."
+msgstr ""
+
+#: lib/fb_tools/app.py:634
+msgid "Use colored output for messages."
+msgstr ""
+
+#: lib/fb_tools/app.py:641
+msgid "Increase the verbosity level"
+msgstr ""
+
+#: lib/fb_tools/app.py:646
+msgid "Silent execution, only warnings and errors are emitted."
+msgstr ""
+
+#: lib/fb_tools/app.py:651
+msgid "Show this help message and exit."
+msgstr ""
+
+#: lib/fb_tools/app.py:655
+msgid "Display brief usage message and exit."
+msgstr ""
+
+#: lib/fb_tools/app.py:657
+#, python-format
+msgid "Version of %(prog)s: {}"
+msgstr ""
+
+#: lib/fb_tools/app.py:660
+msgid "Show program's version number and exit."
+msgstr ""
+
+#: lib/fb_tools/app.py:794
+msgid "Starting in:"
+msgstr ""
+
+#: lib/fb_tools/app.py:816
+msgid "Aborted by user interrupt."
+msgstr ""
+
+#: lib/fb_tools/common.py:478
+msgid "Given value is {!r}."
+msgstr ""
+
+#: lib/fb_tools/common.py:517
+msgid "Could not determine bytes in {!r}."
+msgstr ""
+
+#: lib/fb_tools/common.py:602
+msgid "Couldn't detect unit {!r}."
+msgstr ""
+
+#: lib/fb_tools/common.py:704
+msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
+msgstr ""
+
+#: lib/fb_tools/config.py:64 lib/fb_tools/get_file_rm_app.py:386 lib/fb_tools/pdns_bulk_rm_app.py:276
+msgid "File {!r} does not exists."
+msgstr ""
+
+#: lib/fb_tools/config.py:67 lib/fb_tools/get_file_rm_app.py:389 lib/fb_tools/pdns_bulk_rm_app.py:280
+msgid "File {!r} is not a regular file."
+msgstr ""
+
+#: lib/fb_tools/config.py:123
+msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
+msgstr ""
+
+#: lib/fb_tools/config.py:141
+msgid "A configuration directory may not be None."
+msgstr ""
+
+#: lib/fb_tools/config.py:157
+msgid "A configuration file may not be None."
+msgstr ""
+
+#: lib/fb_tools/config.py:162 lib/fb_tools/config.py:170
+msgid "Configuration file {!r} exists, but is not a regular file."
+msgstr ""
+
+#: lib/fb_tools/config.py:204
+msgid "Configuration file {!r} not found."
+msgstr ""
+
+#: lib/fb_tools/config.py:228
+msgid "Wrong configuration in {!r} found"
+msgstr ""
+
+#: lib/fb_tools/errors.py:42
+msgid "Wrong mail address {a!r} ({c})"
+msgstr ""
+
+#: lib/fb_tools/errors.py:105
+msgid "Process with PID {pid} got signal {signal}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:143 lib/fb_tools/vsphere/errors.py:137
+msgid "The network {!r} is not existing."
+msgstr ""
+
+#: lib/fb_tools/errors.py:162 lib/fb_tools/vsphere/errors.py:156
+msgid "Could not connect to the vSphere host {h}:{p} as user {u!r}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:183
+msgid "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB available space."
+msgstr ""
+
+#: lib/fb_tools/errors.py:221
+msgid "Method {func}() has to be overridden in class {cls!r}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:253
+msgid " (timeout after {:0.1f} secs)"
+msgstr ""
+
+#: lib/fb_tools/errors.py:280
+msgid "Timeout error on reading"
+msgstr ""
+
+#: lib/fb_tools/errors.py:302
+msgid "Timeout error on writing"
+msgstr ""
+
+#: lib/fb_tools/errors.py:325
+msgid "Unknown OS command."
+msgstr ""
+
+#: lib/fb_tools/errors.py:332
+msgid "Empty command list given."
+msgstr ""
+
+#: lib/fb_tools/errors.py:342
+msgid "Could not found OS command:"
+msgid_plural "Could not found OS commands:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/fb_tools/errors.py:375
+msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:61
+msgid "Value must be at least {m} - {v} was given."
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:102
+msgid "The given pattern {!r} is not a valid date pattern"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:106
+#, python-format
+msgid ". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:134
+msgid ""
+"Returns a newline separated list of files generated from file globbing patterns given as "
+"arguments to this application, where all files are omitted, which should not be removed."
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:173 lib/fb_tools/get_file_rm_app.py:189
+#: lib/fb_tools/get_file_rm_app.py:205 lib/fb_tools/get_file_rm_app.py:221
+#: lib/fb_tools/get_file_rm_app.py:237
+msgid "Wrong value {v!r} for {n}, must be >= {m}"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:262
+msgid "Keep options"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:265
+msgid "NR_FILES"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:267
+msgid "How many of the last files should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:274
+msgid "DAYS"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:276
+msgid "How many files one per day from today on should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:283
+msgid "WEEKS"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:285
+msgid "How many files one per week from today on should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:292
+msgid "MONTHS"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:294
+msgid "How many files one per month from today on should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:301
+msgid "YEARS"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:303
+msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:310 lib/fb_tools/get_vm_app.py:158
+#: lib/fb_tools/pdns_bulk_rm_app.py:190 lib/fb_tools/pdns_bulk_rm_app.py:237
+msgid "FILE"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:311
+msgid "File pattern to generate list of files to remove."
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:379
+msgid "File pattern {!r} does not match any files."
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:394
+msgid "File {fi!r} does not match pattern {pa!r}."
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:404
+msgid "Date in file {fi!r} is not a valid date: {e}."
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:456
+msgid "Did not found any files to evaluate."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:59
+msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:133
+msgid "Enter password for host {h!r} and user {u!r}: "
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:160 lib/fb_tools/pdns_bulk_rm_app.py:192
+msgid "Configuration file (default: {!r})"
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:163
+msgid "VMWare options"
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:167
+msgid "Remote vSphere host to connect to (Default: {!r})."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:173
+msgid "Port on vSphere host to connect on (Default: {})."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:178
+msgid "USER"
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:179
+msgid "User name to use when connecting to vSphere host (Default: {!r})."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:184
+msgid "PASSWORD"
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:185
+msgid "Password to use when connecting to vSphere host."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:190
+msgid "Names of the VM to get information."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:221
+msgid "Starting {a!r}, version {v!r} ..."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:229
+msgid "Closing ..."
+msgstr ""
+
+#: lib/fb_tools/get_vm_app.py:246
+msgid "NOT FOUND"
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:146
+msgid "Invalid time zone name {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:157
+msgid "{}-object not initialized."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:159
+msgid "Method {} must be overridden in descendant classes."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:312 lib/fb_tools/handler/__init__.py:328
+msgid ""
+"Output on {where}:\n"
+"{what}."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:63
+msgid "Command {c!r} returned non-zero exit status {rc}."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:100
+msgid "Command {c!r} timed out after {s} seconds."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:243
+msgid "Command {!r} doesn't exists."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:246
+msgid "Command {!r} is not executable."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:269
+msgid "Command {!r} not found."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:306
+msgid "STDIN and input arguments may not both be used."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:320
+msgid "Simulation mode, not executing: {}"
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:376
+msgid "Nothing to do on signal."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:427 lib/fb_tools/handling_obj.py:511
+msgid "File doesn't exists."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:430
+msgid "Read permission denied."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:433
+msgid "Reading file content of {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:516 lib/fb_tools/handling_obj.py:523
+msgid "Write permission to {!r} denied."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:518 lib/fb_tools/handling_obj.py:525
+msgid "Write permission denied."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:606
+msgid "Completed process"
+msgstr ""
+
+#: lib/fb_tools/obj.py:55
+msgid "The base directory {!r} is not existing or not a directory."
+msgstr ""
+
+#: lib/fb_tools/obj.py:101 lib/fb_tools/obj.py:157
+msgid "Wrong verbose level {!r}, must be >= 0"
+msgstr ""
+
+#: lib/fb_tools/obj.py:181
+msgid "Base directory {!r} does not exists."
+msgstr ""
+
+#: lib/fb_tools/obj.py:184
+msgid "Path for base directory {!r} is not a directory."
+msgstr ""
+
+#: lib/fb_tools/obj.py:267
+msgid "undefined error."
+msgstr ""
+
+#: lib/fb_tools/obj.py:276
+msgid "Exception happened"
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:135
+msgid "Invalid port number {!r} for the PowerDNS API, must be 0 < PORT < 65536."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:188
+msgid "The path prefix {!r} must be an absolute path."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:204
+msgid "Invalid timeout {!r} for requesting the PowerDNS API, must be 0 < SECONDS < 3600."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:221
+msgid "Invalid user agent {!r} given."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:233
+msgid "Invalid API server name {!r} given."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:280
+msgid "Failed to extract request ID from response header 'location': {!r}"
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:288
+msgid "The path {!r} must be an absolute path."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:357 lib/fb_tools/vsphere/server.py:157
+msgid "Got a {c} on connecting to {h!r}: {e}."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:365
+msgid "Failed to parse the response"
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:425
+msgid "Invalid FQDN {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/errors.py:52
+msgid "Could not interprete SOA data: {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:423
+msgid "Serial overflow - old serial {o} is in future, new serial {n} has reached its maximum value."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:439 lib/fb_tools/pdns/record.py:822
+msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:457 lib/fb_tools/pdns/record.py:840
+msgid "{m} takes at most {max} arguments ({n} given)."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:494
+msgid "Record {!r} is not in Record list."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:659 lib/fb_tools/pdns/zone.py:131
+msgid "Given data {!r} is not a dict object."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:799
+msgid "Cannot create {o} from record set:"
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:804
+msgid "RecordSet has no records:"
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:812
+msgid "Got SOA:"
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:877
+msgid "RecordSet {n!r} ({n}) is not in RecordSet list."
+msgstr ""
+
+#: lib/fb_tools/pdns/server.py:105
+msgid "Could not found server info."
+msgstr ""
+
+#: lib/fb_tools/pdns/server.py:112
+msgid "PowerDNS server version {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/server.py:114
+msgid "Did not found version info in server info:"
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:55
+msgid "No Resource Record Sets found to remove from zone {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:459
+msgid "Invalid source tuples for detecting IPv4-network: {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:547
+msgid "Cannot update zone {!r}, no API URL defined."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:654
+msgid "Did not get SOA for zone {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:661
+msgid "New SOA must be of type {e}, given {t}: {s!r}"
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:672
+msgid "Got no SOA for zone {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:730
+msgid "Parameter address {a!r} is not an IPv4Address or IPv6Address object, but a {c} object instead."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:789 lib/fb_tools/pdns/zone.py:848
+msgid "Creating {t}-record {f!r} => {a!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:890
+msgid "DNS {t!r}-record {n!r} is already deleted."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:900
+msgid "Removing one resource record set from zone {z!r}."
+msgid_plural "Removing {c} resource record sets from zone {z!r}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/fb_tools/pdns/zone.py:909
+msgid "Done."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:916
+msgid "Notifying slave servers of zone {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:932 lib/fb_tools/vsphere/ds.py:339 lib/fb_tools/vsphere/ds_cluster.py:180
+#: lib/fb_tools/vsphere/network.py:202
+msgid "Invalid item type {{!r}} to set, only {} allowed."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:934
+msgid "The key {k!r} must be equal to the zone name {n!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:935 lib/fb_tools/vsphere/ds_cluster.py:183
+#: lib/fb_tools/vsphere/network.py:205
+msgid "None type as key is not allowed."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:936 lib/fb_tools/vsphere/ds_cluster.py:184
+#: lib/fb_tools/vsphere/network.py:206
+msgid "Empty key {!r} is not allowed."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:937 lib/fb_tools/vsphere/ds_cluster.py:185
+msgid "Object {o!r} is not a {e} object."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:69
+msgid ""
+"Removes the given addresses (A-, AAAA- or CNAME-Records) completety from PowerDNS. If there are "
+"multiple entries to a DNS-Name, all appropriate records are removed. Additionally all "
+"appropriate reverse entries (PTR-records) were also removed, if they are pointing back to the "
+"given A- or AAAA-record."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:165
+msgid "No addresses to remove given."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:195
+msgid "PowerDNS options"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:198
+msgid "HOST"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:199
+msgid "Address or hostname of the PowerDNS server providing the API (Default: {!r})."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:205
+msgid "PORT"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:206
+msgid "Port on PowerDNS server for API on (Default: {})."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:210
+msgid "The API key for accessing the PowerDNS API."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:215
+msgid "Use HTTPS to access the PowerDNS API (Default: {})."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:221
+msgid "The global prefix for all paths for accessing the PowerDNS API (Default: {!r})."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:231
+msgid ""
+"Don't remove reverse DNS entries (PTR records) to the given addresses. (Default: False - reverse"
+" entries will be removed)."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:238
+msgid ""
+"File containing the addresses to remove. The addresses must be whitespace separeted, lines may "
+"be commented out by prepending them with a hash sign '#'. This option is mutually exclusive with"
+" giving the addresses as command line arguments."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:246
+msgid "ADDRESS"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:247
+msgid "Addresses to remove. This option is mutually exclusive with the {!r} option."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:266
+msgid "The option {!r} is mutually exclusive with giving the addresses as command line arguments."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:284
+msgid "No read access to file {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:333
+msgid "No addresses to remove found in {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:372
+msgid "Simulation mode - nothing will be removed in real."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:400
+msgid "Address {!r} could not interpreted as a FQDN."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:420
+msgid "Did not found an appropriate zone for address {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:472
+msgid "PTR {p!r} does not pointing to expected {e!r}, but to {c!r} instead, ignoring for deletion."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:498
+msgid "Did not found any addresses with an appropriate zone in PowerDNS."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:516
+msgid "The following addresses (FQDNs) are not found:"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:554
+msgid "IP address {!r} seems not to be a valid IP address."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:574
+msgid "All DNS records to remove"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:580
+msgid "Disabled."
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:582
+msgid "Name"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:583
+msgid "Zone"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:584
+msgid "Type"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:585
+msgid "Record"
+msgstr ""
+
+#: lib/fb_tools/pdns_bulk_rm_app.py:644
+msgid "Total one DNS record to remove."
+msgid_plural "Total {} DNS records to remove."
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/fb_tools/syslog_handler.py:76
+msgid "File doesn't exists"
+msgstr ""
+
+#: lib/fb_tools/syslog_handler.py:80
+msgid "File is not a UNIX socket file"
+msgstr ""
+
+#: lib/fb_tools/syslog_handler.py:83
+msgid "No write access to socket"
+msgstr ""
+
+#: lib/fb_tools/unix_handler.py:220 lib/fb_tools/unix_handler.py:226
+msgid "Invalid value {!r} for facility."
+msgstr ""
+
+#: lib/fb_tools/vsphere/__init__.py:103
+msgid "Invalid port number {!r} for the VSphere server, must be 0 < PORT <= 65536."
+msgstr ""
+
+#: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
+#: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
+#: lib/fb_tools/vsphere/network.py:120 lib/fb_tools/vsphere/server.py:524
+msgid "Parameter {t!r} must be a {e}, {v!r} was given."
+msgstr ""
+
+#: lib/fb_tools/vsphere/ds_cluster.py:182
+msgid "The key {k!r} must be equal to the datastore cluster name {n!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/errors.py:34
+msgid "No VSphere datastores found."
+msgstr ""
+
+#: lib/fb_tools/vsphere/errors.py:63
+msgid "Invalid name {n!r} for a {o} VSphere object."
+msgstr ""
+
+#: lib/fb_tools/vsphere/errors.py:66
+msgid "Invalid name {!r} for a VSphere object."
+msgstr ""
+
+#: lib/fb_tools/vsphere/errors.py:83
+msgid "The VSphere datacenter {!r} is not existing."
+msgstr ""
+
+#: lib/fb_tools/vsphere/errors.py:99
+msgid "The VSphere Virtual machine {!r} was not found."
+msgstr ""
+
+#: lib/fb_tools/vsphere/errors.py:119
+msgid "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB available space found."
+msgstr ""
+
+#: lib/fb_tools/vsphere/errors.py:178
+msgid "Timeout on creating VM {vm!r} after {to:0.1f} seconds."
+msgstr ""
+
+#: lib/fb_tools/vsphere/iface.py:122
+msgid "Invalid MAC address {!r} for interface given."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:72
+msgid "Could not get IP network from network name {!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:75
+msgid "Network {!r} has no IP network assigned."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:204
+msgid "The key {k!r} must be equal to the network name {n!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:207
+msgid "Object {!r} is not a VsphereNetworkDict object."
+msgstr ""
+
+#: lib/fb_tools/vsphere/network.py:465
+msgid "Could not find VSphere network for IP addresses {}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/object.py:76
+msgid "The type of a {} may not be None."
+msgstr ""
+
+#: lib/fb_tools/vsphere/object.py:81 lib/fb_tools/vsphere/object.py:104
+#: lib/fb_tools/vsphere/object.py:127
+msgid "Invalid {c}.{p} {v!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/object.py:143
+msgid "The name prefix of a {} may not be None."
+msgstr ""
+
+#: lib/fb_tools/vsphere/object.py:147
+msgid "Invalid name prefix {p!r} for a {o}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:165
+msgid "VSphere server version: {!r}"
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:357
+msgid "No VSphere datastore clusters found."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:415
+msgid "No VSphere networks found."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:471
+msgid "VSphere VM {!r} not found."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:611
+msgid "Parameter {p!r} => {r!r} seems not to be a regex object."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:708
+msgid "VM {!r} is already powered on."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:711
+msgid "Powering on VM {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:739
+msgid "VM {!r} is already powered off."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:742
+msgid "Powering off VM {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:852
+msgid "Creating VM folder {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:942
+msgid "Simulation mode - VM {!r} will not be created."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1030
+msgid "Given disksize {!r} must be greater than zero."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1043
+msgid "There may be created at most 6 disks, but {} were given."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1117
+msgid "Invalid Interface description {!r} given."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1184
+msgid "Purging VM {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:1219
+msgid "Did not found virtual ethernet device No. {no} (found {count} devices)."
+msgstr ""
+
+#: lib/fb_tools/xlate.py:57
+msgid "Module directory: {!r}"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:58
+msgid "Base directory: {!r}"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:59
+msgid "Locale directory: {!r}"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:60
+msgid "Locale domain: {!r}"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:61
+msgid "Found .mo-file: {!r}"
+msgstr ""
+

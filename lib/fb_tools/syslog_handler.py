@@ -18,8 +18,11 @@ from logging.handlers import SysLogHandler
 # Third party modules
 
 # Own modules
+from .xlate import XLATOR
 
-__version__ = '1.0.1'
+__version__ = '1.1.0'
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -70,14 +73,14 @@ class FbSysLogHandler(SysLogHandler):
 
         if isinstance(address, str):
             if not os.path.exists(address):
-                raise OSError(errno.ENOENT, "File doesn't exists", address)
+                raise OSError(errno.ENOENT, _("File doesn't exists"), address)
             mode = os.stat(address).st_mode
             if not stat.S_ISSOCK(mode):
                 raise OSError(
-                    errno.EPERM, "File is not a UNIX socket file", address)
+                    errno.EPERM, _("File is not a UNIX socket file"), address)
             if not os.access(address, os.W_OK):
                 raise OSError(
-                    errno.EPERM, "No write access to socket", address)
+                    errno.EPERM, _("No write access to socket"), address)
 
             do_ux_socket = True
 

@@ -18,12 +18,16 @@ import re
 from pyVmomi import vim
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp, to_bool
 
 from .object import VsphereObject
 
-__version__ = '1.2.1'
+__version__ = '1.3.2'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -195,7 +199,8 @@ class VsphereDatastore(VsphereObject):
     def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
         if not isinstance(data, vim.Datastore):
-            msg = "Argument {!r} is not a VSphere datastore.".format(data)
+            msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='data', e='vim.Datastore', v=data)
             raise TypeError(msg)
 
         params = {
@@ -331,7 +336,8 @@ class VsphereDatastoreDict(collections.MutableMapping):
     It works like a dict.
     """
 
-    msg_invalid_ds_type = "Invalid value type {!r} to set, only VsphereDatastore allowed."
+    msg_invalid_ds_type = _("Invalid item type {{!r}} to set, only {} allowed.").format(
+            'VsphereDatastore')
     msg_key_not_name = "The key {k!r} must be equal to the datastore name {n!r}."
     msg_none_type_error = "None type as key is not allowed."
     msg_empty_key_error = "Empty key {!r} is not allowed."

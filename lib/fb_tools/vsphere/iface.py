@@ -15,6 +15,8 @@ import logging
 from pyVmomi import vim
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp, RE_MAC_ADRESS
 
 from ..obj import FbBaseObject
@@ -22,8 +24,10 @@ from ..obj import FbBaseObject
 from .errors import VSphereNameError
 
 
-__version__ = '1.0.1'
+__version__ = '1.1.1'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -51,7 +55,8 @@ class VsphereVmInterface(FbBaseObject):
 
         if network:
             if not isinstance(network, vim.Network):
-                msg = "Patrameter 'network' must be a vim.Network, {!r} was given.".format(network)
+                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='network', e='vim.Network', v=network)
                 raise TypeError(msg)
             self._network = network
 
@@ -114,7 +119,7 @@ class VsphereVmInterface(FbBaseObject):
             self._mac_address = None
             return
         if not RE_MAC_ADRESS.match(val):
-            msg = "Invalid MAC address {!r} for interface given.".format(value)
+            msg = _("Invalid MAC address {!r} for interface given.").format(value)
             raise ValueError(msg)
 
         self._mac_address = val.lower()

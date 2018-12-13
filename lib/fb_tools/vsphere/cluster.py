@@ -15,14 +15,17 @@ import logging
 from pyVmomi import vim
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp
 
 from .object import VsphereObject
 
-
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 LOG = logging.getLogger(__name__)
 
+
+_ = XLATOR.gettext
 
 # =============================================================================
 class VsphereCluster(VsphereObject):
@@ -254,7 +257,8 @@ class VsphereCluster(VsphereObject):
     def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
         if not isinstance(data, vim.ClusterComputeResource):
-            msg = "Argument {!r} is not a cluster compute resource.".format(data)
+            msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='data', e='vim.ClusterComputeResource', v=data)
             raise TypeError(msg)
 
         params = {

@@ -25,14 +25,18 @@ import six
 # Own modules
 from .common import pp, to_bool, caller_search_path, to_str, encode_or_bust
 
+from .xlate import XLATOR
+
 from .errors import InterruptError, ReadTimeoutError, WriteTimeoutError
 
 from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.1.4'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -56,7 +60,8 @@ class CalledProcessError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        return "Command '%s' returned non-zero exit status %d" % (self.cmd, self.returncode)
+        return _("Command {c!r} returned non-zero exit status {rc}.").format(
+            c=self.cmd, rc=self.returncode)
 
     # -------------------------------------------------------------------------
     @property
@@ -92,8 +97,8 @@ class TimeoutExpired(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        return ("Command '%s' timed out after %s seconds" %
-                (self.cmd, self.timeout))
+        return _("Command {c!r} timed out after {s} seconds.").format(
+            c=self.cmd, s=self.timeout)
 
     # -------------------------------------------------------------------------
     @property
@@ -235,11 +240,11 @@ class HandlingObject(FbBaseObject):
         # Checking an absolute path
         if cmd.is_absolute():
             if not cmd.exists():
-                LOG.warning("Command {!r} doesn't exists.".format(str(cmd)))
+                LOG.warn(_("Command {!r} doesn't exists.").format(str(cmd)))
                 return None
             if not os.access(str(cmd), os.X_OK):
-                msg = "Command {!r} is not executable.".format(str(cmd))
-                LOG.warning(msg)
+                msg = _("Command {!r} is not executable.").format(str(cmd))
+                LOG.warn(msg)
                 return None
             return cmd.resolve()
 
@@ -261,12 +266,12 @@ class HandlingObject(FbBaseObject):
             if self.verbose > 2:
                 LOG.debug("Command {!r} not found.".format(cmd))
         else:
-            LOG.warning("Command {!r} not found.".format(str(cmd)))
+            LOG.warn(_("Command {!r} not found.").format(str(cmd)))
 
         return None
 
     # -------------------------------------------------------------------------
-    def run(self, *popenargs, input=None, timeout=None, check=False, may_simulate=True, **kwargs):
+    def run(self, input=None, timeout=None, check=False, may_simulate=True, *popenargs, **kwargs):
         """
         Run command with arguments and return a CompletedProcess instance.
 
@@ -298,7 +303,7 @@ class HandlingObject(FbBaseObject):
 
         if input is not None:
             if 'stdin' in kwargs:
-                raise ValueError('stdin and input arguments may not both be used.')
+                raise ValueError(_('STDIN and input arguments may not both be used.'))
             kwargs['stdin'] = PIPE
 
         LOG.debug("Executing command args:\n{}".format(pp(popenargs)))
@@ -312,7 +317,7 @@ class HandlingObject(FbBaseObject):
         LOG.debug("Executing: {}".format(cmd_str))
 
         if may_simulate and self.simulate:
-            LOG.info("Simulation mode, not executing: {}".format(cmd_str))
+            LOG.info(_("Simulation mode, not executing: {}").format(cmd_str))
             return CompletedProcess(popenargs, 0, "Simulated execution.\n", '')
 
         with Popen(*popenargs, **kwargs) as process:
@@ -368,7 +373,7 @@ class HandlingObject(FbBaseObject):
 
         if signum in self.signals_dont_interrupt:
             self.handle_info(str(err))
-            LOG.info("Nothing to do on signal.")
+            LOG.info(_("Nothing to do on signal."))
             return
 
         self._interrupted = True
@@ -419,13 +424,13 @@ class HandlingObject(FbBaseObject):
 
         if not os.path.isfile(ifile):
             raise IOError(
-                errno.ENOENT, "File doesn't exists.", ifile)
+                errno.ENOENT, _("File doesn't exists."), ifile)
         if not os.access(ifile, os.R_OK):
             raise IOError(
-                errno.EACCES, 'Read permission denied.', ifile)
+                errno.EACCES, _('Read permission denied.'), ifile)
 
         if self.verbose > needed_verbose_level:
-            LOG.debug("Reading file content of {!r} ...".format(ifile))
+            LOG.debug(_("Reading file content of {!r} ...").format(ifile))
 
         signal.signal(signal.SIGALRM, read_alarm_caller)
         signal.alarm(timeout)
@@ -503,21 +508,21 @@ class HandlingObject(FbBaseObject):
 
         if must_exists:
             if not os.path.isfile(ofile):
-                raise IOError(errno.ENOENT, "File doesn't exists.", ofile)
+                raise IOError(errno.ENOENT, _("File doesn't exists."), ofile)
 
         if os.path.exists(ofile):
             if not os.access(ofile, os.W_OK):
                 if self.simulate:
-                    LOG.error("Write permission to {!r} denied.".format(ofile))
+                    LOG.error(_("Write permission to {!r} denied.").format(ofile))
                 else:
-                    raise IOError(errno.EACCES, 'Write permission denied.', ofile)
+                    raise IOError(errno.EACCES, _('Write permission denied.'), ofile)
         else:
             parent_dir = os.path.dirname(ofile)
             if not os.access(parent_dir, os.W_OK):
                 if self.simulate:
-                    LOG.error("Write permission to {!r} denied.".format(parent_dir))
+                    LOG.error(_("Write permission to {!r} denied.").format(parent_dir))
                 else:
-                    raise IOError(errno.EACCES, 'Write permission denied.', parent_dir)
+                    raise IOError(errno.EACCES, _('Write permission denied.'), parent_dir)
 
         if self.verbose > verb_level1:
             if self.verbose > verb_level2:
@@ -598,7 +603,7 @@ class CompletedProcess(object):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        out = 'Completed process:\n'
+        out = _('Completed process') + ':\n'
         out += '  args:       {!r}\n'.format(self.args)
         out += '  returncode: {}\n'.format(self.returncode)
         if self.stdout is not None:

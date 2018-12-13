@@ -19,12 +19,16 @@ import functools
 from pyVmomi import vim
 
 # Own modules
+from ..xlate import XLATOR
+
 from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.1.1'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -65,10 +69,10 @@ class VsphereNetwork(VsphereObject):
                 net = ipaddress.ip_network(ip)
                 self._network = net
             except ValueError:
-                LOG.error("Could not get IP network from network name {!r}.".format(self.name))
+                LOG.error(_("Could not get IP network from network name {!r}.").format(self.name))
 
         if not self.network:
-            LOG.warn("Network {!r} has no IP network assigned.".format(self.name))
+            LOG.warn(_("Network {!r} has no IP network assigned.").format(self.name))
 
         if initialized is not None:
             self.initialized = initialized
@@ -113,7 +117,8 @@ class VsphereNetwork(VsphereObject):
     def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
         if not isinstance(data, vim.Network):
-            msg = "Argument {!r} is not a network summary.".format(data)
+            msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='data', e='vim.Network', v=data)
             raise TypeError(msg)
 
         params = {
@@ -194,11 +199,12 @@ class VsphereNetworkDict(collections.MutableMapping):
     It works like a dict.
     """
 
-    msg_invalid_net_type = "Invalid value type {!r} to set, only VsphereNetwork allowed."
-    msg_key_not_name = "The key {k!r} must be equal to the network name {n!r}."
-    msg_none_type_error = "None type as key is not allowed."
-    msg_empty_key_error = "Empty key {!r} is not allowed."
-    msg_no_net_dict = "Object {!r} is not a VsphereNetworkDict object."
+    msg_invalid_net_type = _("Invalid item type {{!r}} to set, only {} allowed.").format(
+            'VsphereNetwork')
+    msg_key_not_name = _("The key {k!r} must be equal to the network name {n!r}.")
+    msg_none_type_error = _("None type as key is not allowed.")
+    msg_empty_key_error = _("Empty key {!r} is not allowed.")
+    msg_no_net_dict = _("Object {!r} is not a VsphereNetworkDict object.")
 
     # -------------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
@@ -456,7 +462,7 @@ class VsphereNetworkDict(collections.MutableMapping):
             LOG.debug("Could not find VSphere network for IP {}.".format(ip))
 
         ips_str = ', '.join(map(lambda x: str(x), list(filter(bool, ips))))
-        LOG.error("Could not find VSphere network for IP addresses {}.".format(ips_str))
+        LOG.error(_("Could not find VSphere network for IP addresses {}.").format(ips_str))
         return None
 
 
