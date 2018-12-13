@@ -1,4 +1,4 @@
-fb-tools (1.3.0) UNRELEASED; urgency=medium
+fb-tools (1.3.0) all; urgency=medium
 
   * Preparing for internationalization.
   * Adding modiule lib/fb_tools/xlate.py for providing a translator
@@ -12,6 +12,7 @@ fb-tools (1.3.0) UNRELEASED; urgency=medium
   * Marking all translatable strings in Python modules and scripts.
   * Translating all messages into locale de_DE.
   * Bugfixing because of Punycode
+  * Some modifications and bugfixes for creating Debian packages
 
  -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 12 Dec 2018 11:30:04 +0100
 
