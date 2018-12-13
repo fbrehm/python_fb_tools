@@ -74,8 +74,12 @@ def read(fname):
 
     content = None
 
-    with open(fname, 'r', **__open_args__) as fh:
-        content = fh.read()
+    if sys.version_info[0] < 3:
+        with open(fname, 'r') as fh:
+            content = fh.read()
+    else:
+        with open(fname, 'r', **__open_args__) as fh:
+            content = fh.read()
 
     return content
 
@@ -141,8 +145,12 @@ def write_local_version():
         author=__author__, contact=__contact__, cur_year=cur_year,
         version=__packet_version__, license=__license__)
 
-    with open(local_version_file, 'wt', **__open_args__) as fh:
-        fh.write(content)
+    if sys.version_info[0] < 3:
+        with open(local_version_file, 'wt') as fh:
+            fh.write(content)
+    else:
+        with open(local_version_file, 'wt', **__open_args__) as fh:
+            fh.write(content)
 
 
 # Write lib/storage_tools/local_version.py
