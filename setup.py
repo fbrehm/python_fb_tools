@@ -151,8 +151,9 @@ def write_local_version():
         with open(local_version_file, 'wt') as fh:
             fh.write(content)
     else:
-        with open(local_version_file, 'wt', **__open_args__) as fh:
-            fh.write(content)
+        content_bin = content.encode('utf-8')
+        with open(local_version_file, 'wb') as fh:
+            fh.write(content_bin)
 
 
 # Write lib/storage_tools/local_version.py
