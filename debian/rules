@@ -9,7 +9,6 @@ NLS_PKGNAME  := python-fb-tools-nls
 INSTALL_DIR_BIN  := $(CURDIR)/debian/$(BIN_PKGNAME)
 INSTALL_DIR_LIB2 := $(CURDIR)/debian/$(LIB2_PKGNAME)
 INSTALL_DIR_LIB3 := $(CURDIR)/debian/$(LIB3_PKGNAME)
-INSTALL_NLS_DIR  := $(CURDIR)/debian/$(NLS_PKGNAME)
 
 PYTHON2S := $(shell pyversions -vr || true)
 PYTHON3S := $(shell py3versions -vr || true)
@@ -42,7 +41,7 @@ override_dh_auto_install:
 	@echo "Installing Python 2 stuff ..."
 	set -e && for pyvers in $(PYTHON2S); do python$$pyvers setup.py install --root=$(INSTALL_DIR_LIB2) --install-layout=deb; done
 	rm -rv $(INSTALL_DIR_LIB2)/usr/bin
-	rm -rv $(INSTALL_DIR_LIB2)/usr/share
+	rm -rvf $(INSTALL_DIR_LIB2)/usr/share
 	@echo ""
 	@echo "Installing Python 3 stuff ..."
 	set -e && for pyvers in $(PYTHON3S); do python$$pyvers setup.py install --root=$(INSTALL_DIR_LIB3) --install-layout=deb; done
@@ -50,10 +49,6 @@ override_dh_auto_install:
 	@echo "Installing bin package ..."
 	install -d $(INSTALL_DIR_BIN)/usr
 	mv -v $(INSTALL_DIR_LIB3)/usr/bin $(INSTALL_DIR_BIN)/usr
-	@echo ""
-	@echo "Installing i18n files ..."
-	install -d $(INSTALL_NLS_DIR)/usr
-	mv -v $(INSTALL_DIR_LIB3)/usr/share $(INSTALL_NLS_DIR)/usr
 #	@echo ""
 #	@echo "Manpages ..."
 #	dh_installman

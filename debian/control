@@ -3,6 +3,7 @@ Section: python
 Priority: extra
 Maintainer: Frank Brehm <frank@brehm-online.com>
 Build-Depends: debhelper (>= 9),
+               gettext,
                dh-python,
                help2man,
                python-all,
@@ -62,14 +63,4 @@ Depends: python3-six,
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python3 modules for this package.
-
-Package: python-fb-tools-nls
-Architecture: all
-Pre-Depends: ${misc:Pre-Depends}
-Depends: gettext,
-         python-babel-localedata,
-         ${misc:Depends}
-Description: Python modules for common used objects, error classes and functions
- .
- This package includes the i18n files.
 
