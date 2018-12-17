@@ -17,6 +17,8 @@ import pprint
 import datetime
 import textwrap
 import glob
+import pathlib
+import subprocess
 
 # Third party modules
 from setuptools import setup
@@ -253,11 +255,14 @@ def get_locales():
 get_locales()
 
 MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
+PO_FILES = 'locale/*/LC_MESSAGES/*.po'
 
 def create_mo_files():
     mo_files = []
-    for mo_path in glob.glob(MO_FILES):
-        mo_files.append(mo_path)
+    for po_path in glob.glob(PO_FILES):
+        mo = pathlib.Path(po_path.replace('.po', '.mo'))
+        subprocess.run(['msgfmt', '-o', str(mo), po_path], check=True)
+        mo_files.append(str(mo))
 
     print("Found mo files: {}\n".format(pp(mo_files)))
     return mo_files
