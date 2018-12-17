@@ -226,7 +226,13 @@ def is_locale_file(filename):
 
 def get_locales():
 
-    share_prefix = os.path.join(sys.prefix, 'share')
+    if hasattr(sys, 'real_prefix'):
+        print("Real prefix: {!r}".format(sys.real_prefix))
+        share_prefix = os.path.join(sys.real_prefix, 'share')
+    else:
+        share_prefix = os.path.join(sys.prefix, 'share')
+    share_prefix  = os.sep + 'share'
+    print("Share prefix: {!r}.".format(share_prefix))
     for root, dirs, files in os.walk('locale'):
         if files:
             for f in filter(is_locale_file, files):
