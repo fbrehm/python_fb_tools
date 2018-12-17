@@ -252,6 +252,17 @@ def get_locales():
 
 get_locales()
 
+MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
+
+def create_mo_files():
+    mo_files = []
+    for mo_path in glob.glob(MO_FILES):
+        mo_files.append(mo_path)
+
+    print("Found mo files: {}\n".format(pp(mo_files)))
+    return mo_files
+
+
 # -----------------------------------
 class InstallWithCompile(install, object):
     def run(self):
@@ -271,10 +282,13 @@ setup(
     long_description=read('README.md'),
     scripts=__scripts__,
     requires=__requirements__,
-    data_files=__data__files__,
+    #data_files=__data__files__,
     package_dir={'': 'lib'},
     cmdclass={
         'install': InstallWithCompile,
+    },
+    package_data = {
+        '': create_mo_files(),
     },
 )
 

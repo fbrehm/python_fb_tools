@@ -34,7 +34,8 @@ __lib_dir__ = __module_dir__.parent
 __base_dir__ = __lib_dir__.parent
 LOCALE_DIR = __base_dir__.joinpath('locale')
 if not LOCALE_DIR.is_dir():
-    LOCALE_DIR = Path(sys.prefix).joinpath('share').joinpath('locale')
+    #LOCALE_DIR = Path(sys.prefix).joinpath('share').joinpath('locale')
+    LOCALE_DIR = __module_dir__.joinpath('locale')
     if not LOCALE_DIR.is_dir():
         LOCALE_DIR = None
 
