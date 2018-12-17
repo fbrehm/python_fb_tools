@@ -261,7 +261,9 @@ def create_mo_files():
     mo_files = []
     for po_path in glob.glob(PO_FILES):
         mo = pathlib.Path(po_path.replace('.po', '.mo'))
-        subprocess.run(['msgfmt', '-o', str(mo), po_path], check=True)
+        if not mo.exists():
+            subprocess.call(['msgfmt', '-o', str(mo), po_path])
+            #subprocess.run(['msgfmt', '-o', str(mo), po_path], check=True)
         mo_files.append(str(mo))
 
     print("Found mo files: {}\n".format(pp(mo_files)))
