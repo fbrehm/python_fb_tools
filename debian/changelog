@@ -1,7 +1,18 @@
+fb-tools (1.3.1) all; urgency=medium
+
+  * Changing setup.py because a more stable generation of .mo-files for
+    i18n
+  * Applying flake8 rules to all Python modules
+  * Cleaning up setup.py and minor changes because of character encoding
+  * Removing Debian package python-fb-tools-nls from debian/control and
+    debian/rules
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 18 Dec 2018 23:20:05 +0100
+
 fb-tools (1.3.0) all; urgency=medium
 
   * Preparing for internationalization.
-  * Adding modiule lib/fb_tools/xlate.py for providing a translator
+  * Adding module lib/fb_tools/xlate.py for providing a translator
     object dedicated for this package.
   * Adding script ./xtract-xlate-msgs.sh for generating and updating
     localization files
