@@ -29,7 +29,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '1.3.0'
+__version__ = '1.3.1'
 
 _ = XLATOR.gettext
 
@@ -702,7 +702,7 @@ def get_monday(day):
 
     if not isinstance(day, (datetime.date, datetime.datetime)):
         msg = _("Argument {a!r} must be of type {t1!r} or {t2!r}.").format(
-                a=day, t1='datetime.date', t2='datetime.datetime')
+            a=day, t1='datetime.date', t2='datetime.datetime')
         raise TypeError(msg)
 
     # copy of day as datetime.date

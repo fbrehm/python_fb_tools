@@ -14,7 +14,6 @@ import os
 import logging
 import re
 import traceback
-import textwrap
 import argparse
 import getpass
 import signal
@@ -39,7 +38,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -328,14 +327,14 @@ class BaseApplication(HandlingObject):
         res['quiet'] = self.quiet
         res['usage'] = self.usage
         res['force_desc_msg'] = self.force_desc_msg
-        if not 'xlate' in res:
+        if 'xlate' not in res:
             res['xlate'] = {}
         res['xlate']['fb_tools'] = {
-                '__module_dir__': __xlate_module_dir__,
-                '__base_dir__': __xlate_base_dir__,
-                'LOCALE_DIR': LOCALE_DIR,
-                'DOMAIN': DOMAIN,
-                '__mo_file__': __xlate_mo_file__,
+            '__module_dir__': __xlate_module_dir__,
+            '__base_dir__': __xlate_base_dir__,
+            'LOCALE_DIR': LOCALE_DIR,
+            'DOMAIN': DOMAIN,
+            '__mo_file__': __xlate_mo_file__,
         }
 
         return res
