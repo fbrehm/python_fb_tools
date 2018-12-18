@@ -11,22 +11,19 @@
 from __future__ import absolute_import, print_function
 
 # Standard modules
-import os
 import logging
 import gettext
-import pathlib
-import sys
 
 from pathlib import Path
 
 # Third party modules
-import six
-
 from babel.support import Translations
 
 DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
+
+__version__ = '1.1.2'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
@@ -34,7 +31,6 @@ __lib_dir__ = __module_dir__.parent
 __base_dir__ = __lib_dir__.parent
 LOCALE_DIR = __base_dir__.joinpath('locale')
 if not LOCALE_DIR.is_dir():
-    #LOCALE_DIR = Path(sys.prefix).joinpath('share').joinpath('locale')
     LOCALE_DIR = __module_dir__.joinpath('locale')
     if not LOCALE_DIR.is_dir():
         LOCALE_DIR = None
@@ -64,5 +60,3 @@ if __name__ == "__main__":
 # =============================================================================
 
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-
-

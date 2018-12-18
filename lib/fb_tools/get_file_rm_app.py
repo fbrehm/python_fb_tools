@@ -10,7 +10,6 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import textwrap
 import datetime
 import argparse
 import pathlib
@@ -29,7 +28,7 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
