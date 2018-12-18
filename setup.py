@@ -165,7 +165,7 @@ __requirements__ = [
     'six'
 ]
 
-
+# -----------------------------------
 def read_requirements():
 
     req_file = os.path.join(__base_dir__, 'requirements.txt')
@@ -191,7 +191,7 @@ def read_requirements():
         if module not in __requirements__:
             __requirements__.append(module)
 
-    #print("Found required modules: {}\n".format(pp(__requirements__)))
+    # print("Found required modules: {}\n".format(pp(__requirements__)))
 
 
 read_requirements()
@@ -212,49 +212,12 @@ def get_scripts():
         if script_name not in __scripts__:
             __scripts__.append(script_name)
 
-    #print("Found scripts: {}\n".format(pp(__scripts__)))
+    # print("Found scripts: {}\n".format(pp(__scripts__)))
 
 
 get_scripts()
 
 # -----------------------------------
-__locale_files__ = {}
-__data__files__ = []
-
-def is_locale_file(filename):
-    if filename.endswith('.po') or filename.endswith('.mo'):
-        return True
-    else:
-        return False
-
-def get_locales():
-
-    if hasattr(sys, 'real_prefix'):
-        print("Real prefix: {!r}".format(sys.real_prefix))
-        share_prefix = os.path.join(sys.real_prefix, 'share')
-    else:
-        share_prefix = os.path.join(sys.prefix, 'share')
-    share_prefix  = os.sep + 'share'
-    print("Share prefix: {!r}.".format(share_prefix))
-    for root, dirs, files in os.walk('locale'):
-        if files:
-            for f in filter(is_locale_file, files):
-                if root not in __locale_files__:
-                    __locale_files__[root] = []
-                loc_file = os.path.join(root, f)
-                __locale_files__[root].append(loc_file)
-
-    #print("Found locale files: {}\n".format(pp(__locale_files__)))
-
-    for root in sorted(__locale_files__.keys()):
-        target = os.path.join(share_prefix, root)
-        __data__files__.append((target, __locale_files__[root]))
-
-    #print("Found data files: {}\n".format(pp(__data__files__)))
-
-
-get_locales()
-
 MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
 PO_FILES = 'locale/*/LC_MESSAGES/*.po'
 
@@ -264,10 +227,9 @@ def create_mo_files():
         mo = pathlib.Path(po_path.replace('.po', '.mo'))
         if not mo.exists():
             subprocess.call(['msgfmt', '-o', str(mo), po_path])
-            #subprocess.run(['msgfmt', '-o', str(mo), po_path], check=True)
         mo_files.append(str(mo))
 
-    print("Found mo files: {}\n".format(pp(mo_files)))
+    # print("Found mo files: {}\n".format(pp(mo_files)))
     return mo_files
 
 
@@ -290,7 +252,6 @@ setup(
     long_description=read('README.md'),
     scripts=__scripts__,
     requires=__requirements__,
-    #data_files=__data__files__,
     package_dir={'': 'lib'},
     cmdclass={
         'install': InstallWithCompile,
