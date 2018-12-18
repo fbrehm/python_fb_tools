@@ -22,7 +22,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -104,7 +104,7 @@ class VsphereDsCluster(VsphereObject):
 
         if not isinstance(data, vim.StoragePod):
             msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
-                    t='data', e='vim.StoragePod', v=data)
+                t='data', e='vim.StoragePod', v=data)
             raise TypeError(msg)
 
         params = {
@@ -178,7 +178,7 @@ class VsphereDsClusterDict(collections.MutableMapping):
     """
 
     msg_invalid_cluster_type = _("Invalid item type {{!r}} to set, only {} allowed.").format(
-            'VsphereDsCluster')
+        'VsphereDsCluster')
     msg_key_not_name = _("The key {k!r} must be equal to the datastore cluster name {n!r}.")
     msg_none_type_error = _("None type as key is not allowed.")
     msg_empty_key_error = _("Empty key {!r} is not allowed.")
@@ -318,7 +318,7 @@ class VsphereDsClusterDict(collections.MutableMapping):
 
         if not isinstance(other, VsphereDsClusterDict):
             raise TypeError(self.msg_no_cluster_dict.format(
-                    o=other, e='VsphereDsClusterDict-Objekt.'))
+                o=other, e='VsphereDsClusterDict-Objekt.'))
 
         return self._map == other._map
 
@@ -327,7 +327,7 @@ class VsphereDsClusterDict(collections.MutableMapping):
 
         if not isinstance(other, VsphereDsClusterDict):
             raise TypeError(self.msg_no_cluster_dict.format(
-                        o=other, e='VsphereDsClusterDict-Objekt.'))
+                o=other, e='VsphereDsClusterDict-Objekt.'))
 
         return self._map != other._map
 

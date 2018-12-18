@@ -21,7 +21,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -258,7 +258,7 @@ class VsphereCluster(VsphereObject):
 
         if not isinstance(data, vim.ClusterComputeResource):
             msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
-                    t='data', e='vim.ClusterComputeResource', v=data)
+                t='data', e='vim.ClusterComputeResource', v=data)
             raise TypeError(msg)
 
         params = {
