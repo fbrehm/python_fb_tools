@@ -27,7 +27,7 @@ from .errors import PDNSApiNotFoundError, PDNSApiValidationError
 
 from .zone import PowerDNSZone, PowerDNSZoneDict
 
-__version__ = '0.7.2'
+__version__ = '0.7.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -112,7 +112,7 @@ class PowerDNSServer(BasePowerDNSHandler):
             LOG.info(_("PowerDNS server version {!r}.").format(self.api_server_version))
             return self.api_server_version
         LOG.error((_("Did not found version info in server info:") + "\n{}").format(pp(
-                json_response)))
+            json_response)))
         return None
 
     # -------------------------------------------------------------------------
@@ -160,7 +160,7 @@ class PowerDNSServer(BasePowerDNSHandler):
 
         if self.verbose > 2:
             LOG.debug("Searching an appropriate zone for item {i!r} - FQDN {f!r} ...".format(
-                    i=item, f=fqdn))
+                i=item, f=fqdn))
 
         for zone_name in reversed(self.zones.keys()):
             pattern = r'\.' + re.escape(zone_name) + '$'
@@ -190,7 +190,7 @@ class PowerDNSServer(BasePowerDNSHandler):
 
         if self.verbose > 2:
             LOG.debug("Searching all appropriate zones for item {i!r} - FQDN {f!r} ...".format(
-                    i=item, f=fqdn))
+                i=item, f=fqdn))
         zones = []
 
         for zone_name in self.zones.keys():

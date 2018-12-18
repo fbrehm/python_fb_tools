@@ -28,7 +28,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -211,8 +211,8 @@ class PowerDnsSOAData(FbBaseObject):
         self.expire = expire
         self.ttl = ttl
 
-        if (self.primary and self.email and self.serial is not None and self.refresh and
-                self.retry and self.expire and self.ttl):
+        if self.primary and self.email and self.serial is not None and self.refresh and \
+                self.retry and self.expire and self.ttl:
             self.initialized = True
         else:
             self.initialized = False
@@ -314,8 +314,8 @@ class PowerDnsSOAData(FbBaseObject):
     @property
     def data(self):
         "String representation of SOA data."
-        if (self.primary and self.email and self.serial is not None and self.refresh and
-                self.retry and self.expire and self.ttl):
+        if self.primary and self.email and self.serial is not None and self.refresh and \
+                self.retry and self.expire and self.ttl:
             return "{_primary} {_email} {_serial} {_refresh} {_retry} {_expire} {_ttl}".format(
                 **self.__dict__)
         else:
