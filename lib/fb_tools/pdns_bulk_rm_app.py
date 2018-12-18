@@ -10,7 +10,6 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import textwrap
 import pathlib
 import sys
 import os
@@ -41,7 +40,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -445,52 +444,68 @@ class PdnsBulkRmApp(BaseApplication):
                 c=len(zone.rrsets), z=zone_name))
 
         for fqdn in zones_of_records[zone_name]:
-            fqdn_puny = to_str(fqdn.encode('idna'))
-            if self.verbose > 1:
-                if fqdn != fqdn_puny:
-                    LOG.debug("Searching {f!r} ({p!r}) in zone {z!r} ...".format(
-                        f=fqdn, p=fqdn_puny, z=zone_name))
-                else:
-                    LOG.debug("Searching {f!r} in zone {z!r} ...".format(f=fqdn, z=zone_name))
-            for rrset in zone.rrsets:
-                if rrset.name != fqdn:
-                    if fqdn == fqdn_puny:
-                        continue
-                    if rrset.name != fqdn_puny:
-                        continue
-                rrset2remove = {'fqdn': fqdn_puny, 'type': rrset.type.upper(), 'records': []}
-                found = False
-                if zone.reverse_zone:
-                    if rrset.type.upper() == 'PTR':
-                        found = True
-                else:
-                    if rrset.type.upper() in ('A', 'AAAA', 'CNAME'):
-                        found = True
-                if not found:
-                    continue
-                for record in rrset.records:
-                    if zone.reverse_zone and rrset.type.upper() == 'PTR':
-                        if self.expected_ptr is not None and fqdn_puny in self.expected_ptr:
-                            ptr = self.pdns.decanon_name(fqdn_puny)
-                            exp = self.pdns.decanon_name(self.expected_ptr[fqdn_puny])
-                            addr = self.pdns.decanon_name(record.content)
-                            if self.verbose > 1:
-                                LOG.debug("Expexted PTR: {p!r} => {a!r}.".format(p=ptr, a=exp))
-                            if record.content != self.expected_ptr[fqdn_puny]:
-                                LOG.warn(_(
-                                    "PTR {p!r} does not pointing to expected {e!r}, "
-                                    "but to {c!r} instead, ignoring for deletion.").format(
-                                    p=ptr, e=exp, c=addr))
-                                continue
-                    record2remove = {'content': record.content, 'disabled': record.disabled}
-                    rrset2remove['records'].append(record2remove)
-                if zone_name not in self.records2remove:
-                    self.records2remove[zone_name] = []
-                self.records2remove[zone_name].append(rrset2remove)
-                if fqdn_puny not in fqdns_found:
-                    fqdns_found.append(fqdn_puny)
+            fqdns_in_zone_found = self._verify_fqdn_in_pdns_zone(zone_name, fqdn)
+            if fqdns_in_zone_found:
+                fqdns_found += fqdns_in_zone_found
 
         return fqdns_found
+
+    # -------------------------------------------------------------------------
+    def _verify_fqdn_in_pdns_zone(self, zone_name, fqdn):
+
+        zone = self.pdns.zones[zone_name]
+        fqdns_in_zone_found = []
+
+        fqdn_puny = to_str(fqdn.encode('idna'))
+        if self.verbose > 1:
+            if fqdn != fqdn_puny:
+                LOG.debug("Searching {f!r} ({p!r}) in zone {z!r} ...".format(
+                    f=fqdn, p=fqdn_puny, z=zone_name))
+            else:
+                LOG.debug("Searching {f!r} in zone {z!r} ...".format(f=fqdn, z=zone_name))
+
+        for rrset in zone.rrsets:
+
+            if rrset.name != fqdn:
+                if fqdn == fqdn_puny:
+                    continue
+                if rrset.name != fqdn_puny:
+                    continue
+
+            rrset2remove = {'fqdn': fqdn_puny, 'type': rrset.type.upper(), 'records': []}
+            found = False
+            if zone.reverse_zone:
+                if rrset.type.upper() == 'PTR':
+                    found = True
+            else:
+                if rrset.type.upper() in ('A', 'AAAA', 'CNAME'):
+                    found = True
+            if not found:
+                continue
+
+            for record in rrset.records:
+                if zone.reverse_zone and rrset.type.upper() == 'PTR':
+                    if self.expected_ptr is not None and fqdn_puny in self.expected_ptr:
+                        ptr = self.pdns.decanon_name(fqdn_puny)
+                        exp = self.pdns.decanon_name(self.expected_ptr[fqdn_puny])
+                        addr = self.pdns.decanon_name(record.content)
+                        if self.verbose > 1:
+                            LOG.debug("Expexted PTR: {p!r} => {a!r}.".format(p=ptr, a=exp))
+                        if record.content != self.expected_ptr[fqdn_puny]:
+                            LOG.warn(_(
+                                "PTR {p!r} does not pointing to expected {e!r}, "
+                                "but to {c!r} instead, ignoring for deletion.").format(
+                                p=ptr, e=exp, c=addr))
+                            continue
+                record2remove = {'content': record.content, 'disabled': record.disabled}
+                rrset2remove['records'].append(record2remove)
+            if zone_name not in self.records2remove:
+                self.records2remove[zone_name] = []
+            self.records2remove[zone_name].append(rrset2remove)
+            if fqdn_puny not in fqdns_in_zone_found:
+                fqdns_in_zone_found.append(fqdn_puny)
+
+        return fqdns_in_zone_found
 
     # -------------------------------------------------------------------------
     def verify_addresses(self, addresses):
@@ -645,14 +660,9 @@ class PdnsBulkRmApp(BaseApplication):
                     else:
                         out['dis'] = ''
                     print(tpl.format(**out))
-        #s = ''
-        #if count != 1:
-        #    s = 's'
         print()
         msg = ngettext("Total one DNS record to remove.", "Total {} DNS records to remove.", count)
         print(msg.format(count))
-        #print(_("Total {c} DNS record{s} to remove.").format(
-        #    c=count, s=s))
         print()
 
 

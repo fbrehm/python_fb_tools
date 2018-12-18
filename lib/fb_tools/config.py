@@ -29,7 +29,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -121,8 +121,8 @@ class BaseConfiguration(FbBaseObject):
     def encoding(self, value):
         if not isinstance(value, str):
             msg = _(
-                    "Encoding {v!r} must be a {s!r} object, "
-                    "but is a {c!r} object instead.").format(
+                "Encoding {v!r} must be a {s!r} object, "
+                "but is a {c!r} object instead.").format(
                 v=value, s='str', c=value.__class__.__name__)
             raise TypeError(msg)
 

@@ -17,6 +17,8 @@ import pprint
 import datetime
 import textwrap
 import glob
+import pathlib
+import subprocess
 
 # Third party modules
 from setuptools import setup
@@ -149,8 +151,9 @@ def write_local_version():
         with open(local_version_file, 'wt') as fh:
             fh.write(content)
     else:
-        with open(local_version_file, 'wt', **__open_args__) as fh:
-            fh.write(content)
+        content_bin = content.encode('utf-8')
+        with open(local_version_file, 'wb') as fh:
+            fh.write(content_bin)
 
 
 # Write lib/storage_tools/local_version.py
@@ -162,7 +165,7 @@ __requirements__ = [
     'six'
 ]
 
-
+# -----------------------------------
 def read_requirements():
 
     req_file = os.path.join(__base_dir__, 'requirements.txt')
@@ -188,7 +191,7 @@ def read_requirements():
         if module not in __requirements__:
             __requirements__.append(module)
 
-    #print("Found required modules: {}\n".format(pp(__requirements__)))
+    # print("Found required modules: {}\n".format(pp(__requirements__)))
 
 
 read_requirements()
@@ -209,42 +212,26 @@ def get_scripts():
         if script_name not in __scripts__:
             __scripts__.append(script_name)
 
-    #print("Found scripts: {}\n".format(pp(__scripts__)))
+    # print("Found scripts: {}\n".format(pp(__scripts__)))
 
 
 get_scripts()
 
 # -----------------------------------
-__locale_files__ = {}
-__data__files__ = []
+MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
+PO_FILES = 'locale/*/LC_MESSAGES/*.po'
 
-def is_locale_file(filename):
-    if filename.endswith('.po') or filename.endswith('.mo'):
-        return True
-    else:
-        return False
+def create_mo_files():
+    mo_files = []
+    for po_path in glob.glob(PO_FILES):
+        mo = pathlib.Path(po_path.replace('.po', '.mo'))
+        if not mo.exists():
+            subprocess.call(['msgfmt', '-o', str(mo), po_path])
+        mo_files.append(str(mo))
 
-def get_locales():
+    # print("Found mo files: {}\n".format(pp(mo_files)))
+    return mo_files
 
-    share_prefix = os.path.join(sys.prefix, 'share')
-    for root, dirs, files in os.walk('locale'):
-        if files:
-            for f in filter(is_locale_file, files):
-                if root not in __locale_files__:
-                    __locale_files__[root] = []
-                loc_file = os.path.join(root, f)
-                __locale_files__[root].append(loc_file)
-
-    #print("Found locale files: {}\n".format(pp(__locale_files__)))
-
-    for root in sorted(__locale_files__.keys()):
-        target = os.path.join(share_prefix, root)
-        __data__files__.append((target, __locale_files__[root]))
-
-    #print("Found data files: {}\n".format(pp(__data__files__)))
-
-
-get_locales()
 
 # -----------------------------------
 class InstallWithCompile(install, object):
@@ -265,10 +252,12 @@ setup(
     long_description=read('README.md'),
     scripts=__scripts__,
     requires=__requirements__,
-    data_files=__data__files__,
     package_dir={'': 'lib'},
     cmdclass={
         'install': InstallWithCompile,
+    },
+    package_data = {
+        '': create_mo_files(),
     },
 )
 

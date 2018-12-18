@@ -50,7 +50,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -522,7 +522,7 @@ class VsphereServer(BaseVsphereHandler):
 
         if not isinstance(vm, vim.VirtualMachine):
             msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
-                    t='vm', e='vim.VirtualMachine', v=vm)
+                t='vm', e='vim.VirtualMachine', v=vm)
             raise TypeError(msg)
 
         summary = vm.summary
@@ -609,7 +609,7 @@ class VsphereServer(BaseVsphereHandler):
 
         if not hasattr(re_name, 'match'):
             msg = _("Parameter {p!r} => {r!r} seems not to be a regex object.").format(
-                    p='re_name', r=re_name)
+                p='re_name', r=re_name)
             raise TypeError(msg)
 
         LOG.debug("Trying to get list of VMs with name pattern {!r}.".format(re_name.pattern))

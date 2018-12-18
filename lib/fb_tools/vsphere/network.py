@@ -25,7 +25,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -118,7 +118,7 @@ class VsphereNetwork(VsphereObject):
 
         if not isinstance(data, vim.Network):
             msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
-                    t='data', e='vim.Network', v=data)
+                t='data', e='vim.Network', v=data)
             raise TypeError(msg)
 
         params = {
@@ -200,7 +200,7 @@ class VsphereNetworkDict(collections.MutableMapping):
     """
 
     msg_invalid_net_type = _("Invalid item type {{!r}} to set, only {} allowed.").format(
-            'VsphereNetwork')
+        'VsphereNetwork')
     msg_key_not_name = _("The key {k!r} must be equal to the network name {n!r}.")
     msg_none_type_error = _("None type as key is not allowed.")
     msg_empty_key_error = _("Empty key {!r} is not allowed.")

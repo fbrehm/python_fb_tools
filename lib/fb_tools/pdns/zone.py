@@ -34,7 +34,7 @@ from .errors import PowerDNSZoneError
 from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.8.3'
+__version__ = '0.8.4'
 
 LOG = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ class PDNSNoRecordsToRemove(PowerDNSZoneError):
     def __str__(self):
 
         msg = _("No Resource Record Sets found to remove from zone {!r}.").format(
-                self.zone_name)
+            self.zone_name)
         return msg
 
 
@@ -898,9 +898,9 @@ class PowerDNSZone(BasePowerDNSHandler):
         payload = {"rrsets": rrsets_rm}
         count = len(rrsets_rm)
         msg = ngettext(
-                "Removing one resource record set from zone {z!r}.",
-                "Removing {c} resource record sets from zone {z!r}.", count).format(
-                c=count, z=self.name_unicode)
+            "Removing one resource record set from zone {z!r}.",
+            "Removing {c} resource record sets from zone {z!r}.", count).format(
+            c=count, z=self.name_unicode)
         LOG.info(msg)
         if self.verbose > 1:
             LOG.debug("Resorce record sets:\n{}".format(pp(payload)))
@@ -930,7 +930,7 @@ class PowerDNSZoneDict(collections.MutableMapping):
     """
 
     msg_invalid_zone_type = _("Invalid item type {{!r}} to set, only {} allowed.").format(
-            'PowerDNSZone')
+        'PowerDNSZone')
     msg_key_not_name = _("The key {k!r} must be equal to the zone name {n!r}.")
     msg_none_type_error = _("None type as key is not allowed.")
     msg_empty_key_error = _("Empty key {!r} is not allowed.")
