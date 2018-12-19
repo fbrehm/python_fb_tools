@@ -16,8 +16,10 @@ import textwrap
 import pathlib
 import signal
 import errno
+import sys
 
-from subprocess import Popen, PIPE, SubprocessError
+from subprocess import Popen, PIPE
+from subprocess import SubprocessError
 
 # Third party modules
 import six
@@ -33,7 +35,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -271,7 +273,7 @@ class HandlingObject(FbBaseObject):
         return None
 
     # -------------------------------------------------------------------------
-    def run(self, input=None, timeout=None, check=False, may_simulate=True, *popenargs, **kwargs):
+    def run(self, *popenargs, input=None, timeout=None, check=False, may_simulate=True, **kwargs):
         """
         Run command with arguments and return a CompletedProcess instance.
 
