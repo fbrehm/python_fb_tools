@@ -16,7 +16,6 @@ import textwrap
 import pathlib
 import signal
 import errno
-import sys
 
 from subprocess import Popen, PIPE
 from subprocess import SubprocessError
@@ -35,7 +34,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
