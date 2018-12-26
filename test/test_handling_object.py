@@ -60,7 +60,6 @@ class TestFbHandlingObject(FbToolsTestcase):
 
         LOG.info("Testing execution of a shell script.")
 
-        from subprocess import SubprocessError
         from fb_tools.handling_obj import HandlingObject, CompletedProcess
         from fb_tools.errors import CommandNotFoundError
 

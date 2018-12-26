@@ -16,9 +16,14 @@ import textwrap
 import pathlib
 import signal
 import errno
+import sys
 
 from subprocess import Popen, PIPE
-from subprocess import SubprocessError
+if sys.version_info[0] >= 3:
+    from subprocess import SubprocessError
+else:
+    class SubprocessError(Exception):
+        pass
 
 # Third party modules
 import six
@@ -34,7 +39,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.2.3'
+__version__ = '1.3.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -272,7 +277,7 @@ class HandlingObject(FbBaseObject):
         return None
 
     # -------------------------------------------------------------------------
-    def run(self, *popenargs, input=None, timeout=None, check=False, may_simulate=True, **kwargs):
+    def run(self, *popenargs, **kwargs):
         """
         Run command with arguments and return a CompletedProcess instance.
 
@@ -302,6 +307,37 @@ class HandlingObject(FbBaseObject):
         This method was taken from subprocess.py of the standard library of Python 3.5.
         """
 
+        input = None
+        if 'input' in kwargs:
+            input = kwargs['input']
+            del kwargs['input']
+
+        timeout = None
+        if 'timeout' in kwargs:
+            timeout = kwargs['timeout']
+            del kwargs['timeout']
+
+        check = False
+        if 'check' in kwargs:
+            check = bool(kwargs['check'])
+            del kwargs['check']
+
+        may_simulate = None
+        if 'may_simulate' in kwargs:
+            may_simulate = bool(kwargs['may_simulate'])
+            del kwargs['may_simulate']
+
+        if self.verbose >= 2:
+            myargs = {
+                'input': input,
+                'timeout': timeout,
+                'check': check,
+                'may_simulate': may_simulate,
+                'popenargs': popenargs,
+                'kwargs': kwargs,
+            }
+            LOG.debug("Args of run():\n{}".format(pp(myargs)))
+
         if input is not None:
             if 'stdin' in kwargs:
                 raise ValueError(_('STDIN and input arguments may not both be used.'))
@@ -321,7 +357,9 @@ class HandlingObject(FbBaseObject):
             LOG.info(_("Simulation mode, not executing: {}").format(cmd_str))
             return CompletedProcess(popenargs, 0, "Simulated execution.\n", '')
 
-        with Popen(*popenargs, **kwargs) as process:
+        process = None
+        try:
+            process = Popen(*popenargs, **kwargs)
             try:
                 stdout, stderr = process.communicate(input, timeout=timeout)
             except TimeoutExpired:
@@ -335,6 +373,17 @@ class HandlingObject(FbBaseObject):
             retcode = process.poll()
             if check and retcode:
                 raise CalledProcessError(retcode, process.args, output=stdout, stderr=stderr)
+        finally:
+            if process:
+                if process.stdout:
+                    process.stdout.close()
+                if process.stderr:
+                    process.stderr.close()
+                if process.stdin:
+                    try:
+                        process.stdin.close()
+                    finally:
+                        pass
 
         return CompletedProcess(process.args, retcode, stdout, stderr)
 
