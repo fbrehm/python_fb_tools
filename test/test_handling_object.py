@@ -54,6 +54,43 @@ class TestFbHandlingObject(FbToolsTestcase):
         LOG.info("Testing import of CompletedProcess from fb_tools.handling_obj ...")
         from fb_tools.handling_obj import CompletedProcess                  # noqa
 
+    # -------------------------------------------------------------------------
+    def test_called_process_error(self):
+
+        LOG.info("Testing raising a CalledProcessError exception ...")
+
+        from fb_tools.handling_obj import CalledProcessError
+
+        ret_val = 1
+        cmd = "/bin/wrong.command"
+        output = "Sample output"
+        stderr = "Sample error message"
+
+        with self.assertRaises(CalledProcessError) as cm:
+            raise CalledProcessError(ret_val, cmd)
+        e = cm.exception
+        LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
+        LOG.debug("Testing for returncode == {}.".format(ret_val))
+        self.assertEqual(e.returncode, ret_val)
+        LOG.debug("Testing for cmd == {!r}.".format(cmd))
+        self.assertEqual(e.cmd, cmd)
+        LOG.debug("Testing for output is None.")
+        self.assertIsNone(e.output)
+        LOG.debug("Testing for stdout is None.")
+        self.assertIsNone(e.stdout)
+        LOG.debug("Testing for stderr is None.")
+        self.assertIsNone(e.stderr)
+
+        with self.assertRaises(CalledProcessError) as cm:
+            raise CalledProcessError(ret_val, cmd, output, stderr)
+        e = cm.exception
+        LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
+        LOG.debug("Testing for output == {!r}.".format(output))
+        self.assertEqual(e.output, output)
+        LOG.debug("Testing for stdout == {!r}.".format(output))
+        self.assertEqual(e.stdout, output)
+        LOG.debug("Testing for stderr == {!r}.".format(stderr))
+        self.assertEqual(e.stderr, stderr)
 
     # -------------------------------------------------------------------------
     def test_run(self):
@@ -96,6 +133,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     suite.addTest(TestFbHandlingObject('test_import', verbose))
+    suite.addTest(TestFbHandlingObject('test_called_process_error', verbose))
     suite.addTest(TestFbHandlingObject('test_run', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
