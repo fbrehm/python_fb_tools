@@ -39,11 +39,13 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.3.2'
+__version__ = '1.3.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
+
+DEFAULT_FILEIO_TIMEOUT = 2
 
 
 # =============================================================================
@@ -126,6 +128,8 @@ class HandlingObject(FbBaseObject):
     """
     Base class for an object with extend handling possibilities.
     """
+
+    fileio_timeout = DEFAULT_FILEIO_TIMEOUT
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -213,6 +217,7 @@ class HandlingObject(FbBaseObject):
         res['simulate'] = self.simulate
         res['interrupted'] = self.interrupted
         res['terminal_has_colors'] = self.terminal_has_colors
+        res['fileio_timeout'] = self.fileio_timeout
 
         return res
 
@@ -434,7 +439,7 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def read_file(
-            self, filename, timeout=2, binary=False, quiet=False, encoding='utf-8'):
+            self, filename, timeout=None, binary=False, quiet=False, encoding='utf-8'):
         """
         Reads the content of the given filename.
 
@@ -471,6 +476,9 @@ class HandlingObject(FbBaseObject):
             '''
 
             raise ReadTimeoutError(timeout, filename)
+
+        if timeout is None:
+            timeout = self.fileio_timeout
 
         timeout = abs(int(timeout))
         ifile = str(filename)
@@ -512,7 +520,8 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def write_file(
-            self, filename, content, timeout=2, must_exists=True, quiet=False, encoding='utf-8'):
+            self, filename, content, timeout=None, must_exists=True,
+            quiet=False, encoding='utf-8'):
         """
         Writes the given content into the given filename.
         It should only be used for small things, because it writes unbuffered.
@@ -556,7 +565,9 @@ class HandlingObject(FbBaseObject):
             verb_level2 = 3
             verb_level3 = 4
 
-        timeout = int(timeout)
+        if timeout is None:
+            timeout = self.fileio_timeout
+        timeout = abs(int(timeout))
         ofile = str(filename)
 
         if must_exists:
