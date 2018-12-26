@@ -48,7 +48,7 @@ Depends: python-argparse,
          python-tz,
          ${misc:Depends},
          ${python:Depends}
-Suggests: python-pyvmomi
+Recommends: python-pyvmomi
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python2 modules for this package.
@@ -61,7 +61,7 @@ Depends: python3-six,
          python3-tz,
          ${misc:Depends},
          ${python3:Depends}
-Suggests: python3-pyvmomi
+Recommends: python3-pyvmomi
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python3 modules for this package.
