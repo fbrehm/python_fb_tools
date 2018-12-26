@@ -70,26 +70,65 @@ class TestFbHandlingObject(FbToolsTestcase):
             raise CalledProcessError(ret_val, cmd)
         e = cm.exception
         LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
-        LOG.debug("Testing for returncode == {}.".format(ret_val))
+        LOG.debug("Testing for e.returncode == {}.".format(ret_val))
         self.assertEqual(e.returncode, ret_val)
-        LOG.debug("Testing for cmd == {!r}.".format(cmd))
+        LOG.debug("Testing for e.cmd == {!r}.".format(cmd))
         self.assertEqual(e.cmd, cmd)
-        LOG.debug("Testing for output is None.")
+        LOG.debug("Testing for e.output is None.")
         self.assertIsNone(e.output)
-        LOG.debug("Testing for stdout is None.")
+        LOG.debug("Testing for e.stdout is None.")
         self.assertIsNone(e.stdout)
-        LOG.debug("Testing for stderr is None.")
+        LOG.debug("Testing for e.stderr is None.")
         self.assertIsNone(e.stderr)
 
         with self.assertRaises(CalledProcessError) as cm:
             raise CalledProcessError(ret_val, cmd, output, stderr)
         e = cm.exception
         LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
-        LOG.debug("Testing for output == {!r}.".format(output))
+        LOG.debug("Testing for e.output == {!r}.".format(output))
         self.assertEqual(e.output, output)
-        LOG.debug("Testing for stdout == {!r}.".format(output))
+        LOG.debug("Testing for e.stdout == {!r}.".format(output))
         self.assertEqual(e.stdout, output)
-        LOG.debug("Testing for stderr == {!r}.".format(stderr))
+        LOG.debug("Testing for e.stderr == {!r}.".format(stderr))
+        self.assertEqual(e.stderr, stderr)
+
+    # -------------------------------------------------------------------------
+    def test_timeout_expired_error(self):
+
+        LOG.info("Testing raising a TimeoutExpired exception ...")
+
+        from fb_tools.handling_obj import TimeoutExpired
+
+        timeout_1sec = 1
+        timeout_10sec = 10
+        cmd = "/bin/long.terming.command"
+        output = "Sample output"
+        stderr = "Sample error message"
+
+        with self.assertRaises(TimeoutExpired) as cm:
+            raise TimeoutExpired(cmd, timeout_1sec)
+        e = cm.exception
+        LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
+        LOG.debug("Testing for e.timeout == {}.".format(timeout_1sec))
+        self.assertEqual(e.timeout, timeout_1sec)
+        LOG.debug("Testing for e.cmd == {!r}.".format(cmd))
+        self.assertEqual(e.cmd, cmd)
+        LOG.debug("Testing for e.output is None.")
+        self.assertIsNone(e.output)
+        LOG.debug("Testing for e.stdout is None.")
+        self.assertIsNone(e.stdout)
+        LOG.debug("Testing for e.stderr is None.")
+        self.assertIsNone(e.stderr)
+
+        with self.assertRaises(TimeoutExpired) as cm:
+            raise TimeoutExpired(cmd, timeout_10sec, output, stderr)
+        e = cm.exception
+        LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
+        LOG.debug("Testing for e.output == {!r}.".format(output))
+        self.assertEqual(e.output, output)
+        LOG.debug("Testing for e.stdout == {!r}.".format(output))
+        self.assertEqual(e.stdout, output)
+        LOG.debug("Testing for e.stderr == {!r}.".format(stderr))
         self.assertEqual(e.stderr, stderr)
 
     # -------------------------------------------------------------------------
@@ -134,6 +173,7 @@ if __name__ == '__main__':
 
     suite.addTest(TestFbHandlingObject('test_import', verbose))
     suite.addTest(TestFbHandlingObject('test_called_process_error', verbose))
+    suite.addTest(TestFbHandlingObject('test_timeout_expired_error', verbose))
     suite.addTest(TestFbHandlingObject('test_run', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)

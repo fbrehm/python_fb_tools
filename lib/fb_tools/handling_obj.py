@@ -39,10 +39,11 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
+ngettext = XLATOR.ngettext
 
 
 # =============================================================================
@@ -103,8 +104,10 @@ class TimeoutExpired(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        return _("Command {c!r} timed out after {s} seconds.").format(
-            c=self.cmd, s=self.timeout)
+        msg = ngettext(
+            "Command {c!r} timed out after {s} second.",
+            "Command {c!r} timed out after {s} seconds.", self.timeout)
+        return msg.format(c=self.cmd, s=self.timeout)
 
     # -------------------------------------------------------------------------
     @property
