@@ -29,7 +29,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '1.3.1'
+__version__ = '1.4.1'
 
 _ = XLATOR.gettext
 
@@ -727,6 +727,39 @@ def reverse_pointer(address):
     else:
         reverse_chars = addr.exploded[::-1].replace(':', '')
         return '.'.join(reverse_chars) + '.ip6.arpa'
+
+
+# =============================================================================
+def indent(text, prefix, initial_prefix=None, predicate=None):
+    """Adds 'prefix' to the beginning of selected lines in 'text'.
+
+    If 'predicate' is provided, 'prefix' will only be added to the lines
+    where 'predicate(line)' is True. If 'predicate' is not provided,
+    it will default to adding 'prefix' to all non-empty lines that do not
+    consist solely of whitespace characters.
+
+    It's a reinventing the wheel - sorry, but in module textwrap of Python 2.7
+    this function is not existing.
+    """
+
+    if predicate is None:
+        def predicate(line):
+            return line.strip()
+
+    if initial_prefix is None:
+        initial_prefix = prefix
+
+    line_nr = 0
+    lines = []
+    for line in text.splitlines(True):
+        pfx = prefix if line_nr else initial_prefix
+        line_nr += 1
+        if predicate(line):
+            lines.append(pfx + line)
+        else:
+            lines.append(line)
+
+    return ''.join(lines)
 
 
 # =============================================================================
