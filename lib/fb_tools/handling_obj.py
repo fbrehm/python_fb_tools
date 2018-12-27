@@ -650,7 +650,13 @@ class HandlingObject(FbBaseObject):
             else:
                 LOG.debug("Writing {!r} ...".format(ofile))
 
-        content_bin = encode_or_bust(content, encoding)
+        if isinstance(content, six.binary_type):
+            content_bin = content
+        else:
+            if isinstance(content, six.text_type):
+                content_bin = encode_or_bust(content, encoding)
+            else:
+                content_bin = encode_or_bust(str(content), encoding)
 
         if self.simulate:
             if self.verbose > verb_level2:

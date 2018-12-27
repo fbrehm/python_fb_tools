@@ -359,6 +359,42 @@ class TestFbHandlingObject(FbToolsTestcase):
         LOG.debug("Read content: {!r}".format(content))
         LOG.debug("Read content:\n{}".format(to_str(content).strip()))
 
+    # -------------------------------------------------------------------------
+    def test_write_file(self):
+
+        LOG.info("Testing method write_file() of class HandlingObject.")
+
+        from fb_tools.common import to_unicode, to_str, encode_or_bust
+
+        from fb_tools.handling_obj import HandlingObject
+
+        self.write_test_file(encode_or_bust(''))
+
+        hdlr = HandlingObject(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+
+        text_ascii = "This is a pure ASCII text.\n"
+        text_ascii_as_uni = to_unicode(text_ascii)
+        text_uni = to_unicode("Das ist ein deutscher Text mit Umlauten: äöü ÄÖÜ ß@€.\n")
+
+        # Pure ASCII ...
+        text_bin = encode_or_bust(text_ascii, 'utf-8')
+        LOG.debug("Writing an UTF-8 encoded file in binary mode.")
+        hdlr.write_file(self.test_file, text_bin)
+        LOG.debug("Writing an UTF-8 encoded file in text mode.")
+        hdlr.write_file(self.test_file, text_ascii_as_uni, encoding='utf-8')
+
+        # Unicode => utf-8
+        LOG.debug("Writing text with unicode characters in an UTF-8 encoded file.")
+        hdlr.write_file(self.test_file, text_uni, encoding='utf-8')
+
+        # Unicode => WINDOWS-1252
+        LOG.debug("Writing text with unicode characters in an WINDOWS-1252 encoded file.")
+        hdlr.write_file(self.test_file, text_uni, encoding='WINDOWS-1252')
+
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -379,6 +415,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbHandlingObject('test_run_simple', verbose))
     suite.addTest(TestFbHandlingObject('test_run_timeout', verbose))
     suite.addTest(TestFbHandlingObject('test_read_file', verbose))
+    suite.addTest(TestFbHandlingObject('test_write_file', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
