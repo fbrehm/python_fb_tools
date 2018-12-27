@@ -44,7 +44,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.3.6'
+__version__ = '1.3.7'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -557,10 +557,11 @@ class HandlingObject(FbBaseObject):
             open_args['errors'] = 'surrogateescape'
 
         mode = 'r'
+        content = ''
         if binary:
             mode += 'b'
+            content = encode_or_bust('')
 
-        content = ''
         with open(ifile, mode, **open_args) as fh:
             for line in fh.readlines():
                 content += line

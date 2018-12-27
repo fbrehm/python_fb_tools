@@ -11,6 +11,7 @@
 import os
 import sys
 import logging
+import tempfile
 
 try:
     import unittest2 as unittest
@@ -35,11 +36,35 @@ class TestFbHandlingObject(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def setUp(self):
-        pass
+
+        self.test_file = None
 
     # -------------------------------------------------------------------------
     def tearDown(self):
-        pass
+
+        if self.test_file is not None:
+            if os.path.exists(self.test_file):
+                LOG.debug("Removing {!r} ...".format(self.test_file))
+                os.remove(self.test_file)
+
+    # -------------------------------------------------------------------------
+    def create_test_file(self):
+
+        (fh, self.test_file) = tempfile.mkstemp(
+            prefix="test-handling-obj.", suffix='.txt', text=False)
+        os.close(fh)
+        LOG.debug("Created temporary test file: {!r}.".format(self.test_file))
+
+    # -------------------------------------------------------------------------
+    def write_test_file(self, content_bin):
+
+        if self.test_file is None:
+            self.create_test_file()
+
+        if self.verbose > 1:
+            LOG.debug("Writing {!r} ...".format(self.test_file))
+        with open(self.test_file, 'wb') as fh:
+            fh.write(content_bin)
 
     # -------------------------------------------------------------------------
     def test_import(self):
@@ -265,6 +290,75 @@ class TestFbHandlingObject(FbToolsTestcase):
         e = cm.exception
         LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
 
+    # -------------------------------------------------------------------------
+    def test_read_file(self):
+
+        LOG.info("Testing method read_file() of class HandlingObject.")
+
+        from fb_tools.common import to_unicode, to_str, encode_or_bust
+
+        from fb_tools.handling_obj import HandlingObject
+
+        hdlr = HandlingObject(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+
+        text_ascii = "This is a pure ASCII text.\n"
+        text_uni = to_unicode("Das ist ein deutscher Text mit Umlauten: äöü ÄÖÜ ß@€.\n")
+
+        # Pure ASCII ...
+        text_bin = encode_or_bust(text_ascii, 'utf-8')
+        self.write_test_file(text_bin)
+
+        LOG.debug("Reading a pure ASCII file in binary mode.")
+        content = hdlr.read_file(self.test_file, binary=True)
+        LOG.debug("Read content: {!r}".format(content))
+        self.assertEqual(text_bin, content)
+
+        LOG.debug("Reading a pure ASCII file in text mode.")
+        content = hdlr.read_file(self.test_file, binary=False, encoding='utf-8')
+        LOG.debug("Read content: {!r}".format(content))
+        self.assertEqual(text_ascii, content)
+
+        # Unicode => utf-8
+        text_bin = encode_or_bust(text_uni, 'utf-8')
+        self.write_test_file(text_bin)
+
+        LOG.debug("Reading an UTF-8 encoded file in binary mode.")
+        content = hdlr.read_file(self.test_file, binary=True)
+        LOG.debug("Read content: {!r}".format(content))
+        self.assertEqual(text_bin, content)
+
+        LOG.debug("Reading an UTF-8 encoded file in text mode.")
+        content = hdlr.read_file(self.test_file, binary=False, encoding='utf-8')
+        LOG.debug("Read content: {!r}".format(content))
+        LOG.debug("Read content:\n{}".format(to_str(content).strip()))
+        self.assertEqual(text_uni, content)
+
+        # Unicode => WINDOWS-1252
+        text_bin = encode_or_bust(text_uni, 'WINDOWS-1252')
+        self.write_test_file(text_bin)
+
+        LOG.debug("Reading an WINDOWS-1252 encoded file in binary mode.")
+        content = hdlr.read_file(self.test_file, binary=True)
+        LOG.debug("Read content: {!r}".format(content))
+        self.assertEqual(text_bin, content)
+
+        LOG.debug("Reading an WINDOWS-1252 encoded file in text mode.")
+        content = hdlr.read_file(self.test_file, binary=False, encoding='WINDOWS-1252')
+        LOG.debug("Read content: {!r}".format(content))
+        LOG.debug("Read content:\n{}".format(to_str(content).strip()))
+        self.assertEqual(text_uni, content)
+
+        # Wrong encoding
+        LOG.debug(
+            "Reading a file with a wrong encoding (written in WINDOWS-1252, "
+            "trying to read as UTF-8) ...")
+        content = hdlr.read_file(self.test_file, binary=False, encoding='utf-8')
+        LOG.debug("Read content: {!r}".format(content))
+        LOG.debug("Read content:\n{}".format(to_str(content).strip()))
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -284,6 +378,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbHandlingObject('test_completed_process', verbose))
     suite.addTest(TestFbHandlingObject('test_run_simple', verbose))
     suite.addTest(TestFbHandlingObject('test_run_timeout', verbose))
+    suite.addTest(TestFbHandlingObject('test_read_file', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
