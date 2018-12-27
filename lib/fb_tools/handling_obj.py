@@ -34,6 +34,7 @@ import six
 
 # Own modules
 from .common import pp, to_bool, caller_search_path, to_str, encode_or_bust
+from .common import indent
 
 from .xlate import XLATOR
 
@@ -43,7 +44,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.3.4'
+__version__ = '1.3.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -717,12 +718,14 @@ class CompletedProcess(object):
         out = _('Completed process') + ':\n'
         out += '  args:       {!r}\n'.format(self.args)
         out += '  returncode: {}\n'.format(self.returncode)
+        iind = '     '
+        ind = '              '
         if self.stdout is not None:
-            o = self.stdout
-            out += '  stdout:     {}\n'.format(textwrap.indent(o, '              ').strip())
+            o = indent(self.stdout.rstrip(), ind, iind)
+            out += '  stdout:{}\n'.format(o)
         if self.stderr is not None:
-            o = self.stderr
-            out += '  stderr:     {}\n'.format(textwrap.indent(o, '              ').strip())
+            o = indent(self.stderr.rstrip(), ind, iind)
+            out += '  stderr:{}\n'.format(o)
         return out
 
     # -------------------------------------------------------------------------

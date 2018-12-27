@@ -167,6 +167,36 @@ class TestFbHandlingObject(FbToolsTestcase):
         self.assertTrue(hdlr.force)
 
     # -------------------------------------------------------------------------
+    def test_completed_process(self):
+
+        LOG.info("Testing class CompletedProcess.")
+
+        from fb_tools.handling_obj import CompletedProcess
+        from fb_tools.handling_obj import CalledProcessError
+
+        args = ['/bin/some.command', '--option', '1', 'arg2',]
+        retval = 5
+        stdout = "Message on STDOUT\n * Second line on STDOUT\n"
+        stderr = "Message on STDERR\n"
+
+        proc = CompletedProcess(args, retval, stdout, stderr)
+        LOG.debug("Got a {} object.".format(proc.__class__.__name__))
+        self.assertIsInstance(proc, CompletedProcess)
+        LOG.debug("CompletedProcess %%r: {!r}".format(proc))
+        LOG.debug("CompletedProcess %%s: {}".format(proc))
+
+        self.assertEqual(proc.returncode, retval)
+        self.assertEqual(proc.args, args)
+        self.assertEqual(proc.stdout, stdout)
+        self.assertEqual(proc.stderr, stderr)
+
+        LOG.info("Testing raising a CalledProcessError exception ...")
+        with self.assertRaises(CalledProcessError) as cm:
+            proc.check_returncode()
+        e = cm.exception
+        LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
+
+    # -------------------------------------------------------------------------
     @unittest.skipUnless(EXEC_LONG_TESTS, "Long terming tests are not executed.")
     def test_run_simple(self):
 
@@ -201,6 +231,8 @@ class TestFbHandlingObject(FbToolsTestcase):
         self.assertIsNone(proc.stdout)
         self.assertIsNone(proc.stderr)
 
+    # -------------------------------------------------------------------------
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -217,6 +249,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbHandlingObject('test_called_process_error', verbose))
     suite.addTest(TestFbHandlingObject('test_timeout_expired_error', verbose))
     suite.addTest(TestFbHandlingObject('test_generic_handling_object', verbose))
+    suite.addTest(TestFbHandlingObject('test_completed_process', verbose))
     suite.addTest(TestFbHandlingObject('test_run_simple', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
