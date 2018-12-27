@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.3.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-27 15:54+0100\n"
+"POT-Creation-Date: 2018-12-27 17:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -430,7 +430,7 @@ msgstr ""
 msgid "Nothing to do on signal."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:543 lib/fb_tools/handling_obj.py:630
+#: lib/fb_tools/handling_obj.py:543 lib/fb_tools/handling_obj.py:631
 msgid "File doesn't exists."
 msgstr ""
 
@@ -442,15 +442,15 @@ msgstr ""
 msgid "Reading file content of {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:635 lib/fb_tools/handling_obj.py:642
+#: lib/fb_tools/handling_obj.py:636 lib/fb_tools/handling_obj.py:643
 msgid "Write permission to {!r} denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:637 lib/fb_tools/handling_obj.py:644
+#: lib/fb_tools/handling_obj.py:638 lib/fb_tools/handling_obj.py:645
 msgid "Write permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:725
+#: lib/fb_tools/handling_obj.py:732
 msgid "Completed process"
 msgstr ""
 
