@@ -20,9 +20,13 @@ import sys
 
 from subprocess import Popen, PIPE
 if sys.version_info[0] >= 3:
-    from subprocess import SubprocessError
+    from subprocess import SubprocessError, TimeoutExpired
 else:
     class SubprocessError(Exception):
+        pass
+
+
+    class TimeoutExpired(SubprocessError):
         pass
 
 # Third party modules
@@ -33,19 +37,29 @@ from .common import pp, to_bool, caller_search_path, to_str, encode_or_bust
 
 from .xlate import XLATOR
 
-from .errors import InterruptError, ReadTimeoutError, WriteTimeoutError
+from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
 
 from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.3.3'
+__version__ = '1.3.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
 
 DEFAULT_FILEIO_TIMEOUT = 2
+
+
+# =============================================================================
+class ProcessCommunicationTimeout(IoTimeoutError, SubprocessError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, timeout):
+
+        msg = _("Timeout on communicating with process.")
+        super(ProcessCommunicationTimeout, self).__init__(msg, timeout)
 
 
 # =============================================================================
@@ -86,7 +100,7 @@ class CalledProcessError(SubprocessError):
 
 
 # =============================================================================
-class TimeoutExpired(SubprocessError):
+class TimeoutExpiredError(SubprocessError):
     """
     This exception is raised when the timeout expires while waiting for a
     child process.
@@ -298,7 +312,7 @@ class HandlingObject(FbBaseObject):
         in the returncode attribute, and output & stderr attributes if those streams
         were captured.
 
-        If timeout is given, and the process takes too long, a TimeoutExpired
+        If timeout is given, and the process takes too long, a TimeoutExpiredError
         exception will be raised.
 
         There is an optional argument "input", allowing you to
@@ -369,11 +383,7 @@ class HandlingObject(FbBaseObject):
         try:
             process = Popen(*popenargs, **kwargs)
             try:
-                stdout, stderr = process.communicate(input, timeout=timeout)
-            except TimeoutExpired:
-                process.kill()
-                stdout, stderr = process.communicate()
-                raise TimeoutExpired(process.args, timeout, output=stdout, stderr=stderr)
+                stdout, stderr = self._communicate(process, input=input, timeout=timeout)
             except Exception:
                 process.kill()
                 process.wait()
@@ -393,7 +403,44 @@ class HandlingObject(FbBaseObject):
                     finally:
                         pass
 
-        return CompletedProcess(process.args, retcode, stdout, stderr)
+        if six.PY3:
+            return CompletedProcess(process.args, retcode, stdout, stderr)
+        else:
+            return CompletedProcess(popenargs, retcode, stdout, stderr)
+
+    # -------------------------------------------------------------------------
+    def _communicate(self, process, input=None, timeout=None):
+
+        try:
+
+            if timeout is None:
+                return process.communicate(input)
+
+            if six.PY3:
+                return process.communicate(input, timeout)
+
+            def communicate_alarm_caller(signum, sigframe):
+                raise ProcessCommunicationTimeout(timeout)
+
+            signal.signal(signal.SIGALRM, communicate_alarm_caller)
+            signal.alarm(timeout)
+
+            stdout, stderr = process.communicate(input)
+
+            signal.alarm(0)
+
+        except TimeoutExpired:
+            stdout, stderr = process.communicate()
+            raise TimeoutExpiredError(
+                process.args, timeout, output=stdout, stderr=stderr)
+
+        except ProcessCommunicationTimeout:
+            stdout, stderr = process.communicate()
+            signal.alarm(0)
+            raise TimeoutExpiredError(
+                process.args, timeout, output=stdout, stderr=stderr)
+
+        return (stdout, stderr)
 
     # -------------------------------------------------------------------------
     def colored(self, msg, color):

@@ -22,8 +22,13 @@ sys.path.insert(0, libdir)
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
+from fb_tools.common import to_bool
+
 LOG = logging.getLogger('test_handling_object')
 
+EXEC_LONG_TESTS = True
+if 'EXEC_LONG_TESTS' in os.environ and os.environ['EXEC_LONG_TESTS'] != '':
+    EXEC_LONG_TESTS = to_bool(os.environ['EXEC_LONG_TESTS'])
 
 # =============================================================================
 class TestFbHandlingObject(FbToolsTestcase):
@@ -45,8 +50,8 @@ class TestFbHandlingObject(FbToolsTestcase):
         LOG.info("Testing import of CalledProcessError from fb_tools.handling_obj ...")
         from fb_tools.handling_obj import CalledProcessError                # noqa
 
-        LOG.info("Testing import of TimeoutExpired from fb_tools.handling_obj ...")
-        from fb_tools.handling_obj import TimeoutExpired                    # noqa
+        LOG.info("Testing import of TimeoutExpiredError from fb_tools.handling_obj ...")
+        from fb_tools.handling_obj import TimeoutExpiredError               # noqa
 
         LOG.info("Testing import of HandlingObject from fb_tools.handling_obj ...")
         from fb_tools.handling_obj import HandlingObject                    # noqa
@@ -95,9 +100,9 @@ class TestFbHandlingObject(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_timeout_expired_error(self):
 
-        LOG.info("Testing raising a TimeoutExpired exception ...")
+        LOG.info("Testing raising a TimeoutExpiredError exception ...")
 
-        from fb_tools.handling_obj import TimeoutExpired
+        from fb_tools.handling_obj import TimeoutExpiredError
 
         timeout_1sec = 1
         timeout_10sec = 10
@@ -105,8 +110,8 @@ class TestFbHandlingObject(FbToolsTestcase):
         output = "Sample output"
         stderr = "Sample error message"
 
-        with self.assertRaises(TimeoutExpired) as cm:
-            raise TimeoutExpired(cmd, timeout_1sec)
+        with self.assertRaises(TimeoutExpiredError) as cm:
+            raise TimeoutExpiredError(cmd, timeout_1sec)
         e = cm.exception
         LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
         LOG.debug("Testing for e.timeout == {}.".format(timeout_1sec))
@@ -120,8 +125,8 @@ class TestFbHandlingObject(FbToolsTestcase):
         LOG.debug("Testing for e.stderr is None.")
         self.assertIsNone(e.stderr)
 
-        with self.assertRaises(TimeoutExpired) as cm:
-            raise TimeoutExpired(cmd, timeout_10sec, output, stderr)
+        with self.assertRaises(TimeoutExpiredError) as cm:
+            raise TimeoutExpiredError(cmd, timeout_10sec, output, stderr)
         e = cm.exception
         LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
         LOG.debug("Testing for e.output == {!r}.".format(output))
@@ -132,10 +137,42 @@ class TestFbHandlingObject(FbToolsTestcase):
         self.assertEqual(e.stderr, stderr)
 
     # -------------------------------------------------------------------------
-    def test_run(self):
+    def test_generic_handling_object(self):
+
+        LOG.info("Testing init of a generic handling object.")
+
+        import fb_tools.handling_obj
+        from fb_tools.handling_obj import HandlingObject
+
+        HandlingObject.fileio_timeout = 10
+        hdlr = HandlingObject(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+        LOG.debug("HandlingObject %%r: {!r}".format(hdlr))
+        LOG.debug("HandlingObject %%s: {}".format(hdlr))
+        self.assertEqual(hdlr.appname, self.appname)
+        self.assertEqual(hdlr.verbose, self.verbose)
+        self.assertIsNotNone(hdlr.base_dir)
+        self.assertEqual(hdlr.version, fb_tools.handling_obj.__version__)
+        self.assertFalse(hdlr.simulate)
+        self.assertFalse(hdlr.force)
+        self.assertFalse(hdlr.interrupted)
+        self.assertEqual(hdlr.fileio_timeout, 10)
+
+        hdlr.simulate = True
+        self.assertTrue(hdlr.simulate)
+
+        hdlr.force = True
+        self.assertTrue(hdlr.force)
+
+    # -------------------------------------------------------------------------
+    @unittest.skipUnless(EXEC_LONG_TESTS, "Long terming tests are not executed.")
+    def test_run_simple(self):
 
         LOG.info("Testing execution of a shell script.")
 
+        from fb_tools.common import pp
         from fb_tools.handling_obj import HandlingObject, CompletedProcess
         from fb_tools.errors import CommandNotFoundError
 
@@ -152,12 +189,17 @@ class TestFbHandlingObject(FbToolsTestcase):
         )
 
         proc = hdlr.run([call_script])
+        LOG.debug("Got back a {} object.".format(proc.__class__.__name__))
+        self.assertIsInstance(proc, CompletedProcess)
 
-        LOG.debug("Got return value: %d.", proc.returncode)
-        LOG.debug("Got STDOUT: %r", proc.stdout)
-        LOG.debug("Got STDERR: %r", proc.stderr)
+        LOG.debug("Got return value: {}.".format(proc.returncode))
+        LOG.debug("Got proc args:\n{}.".format(pp(proc.args)))
+        LOG.debug("Got STDOUT: {!r}".format(proc.stdout))
+        LOG.debug("Got STDERR: {!r}".format(proc.stderr))
 
-
+        self.assertEqual(proc.returncode, 0)
+        self.assertIsNone(proc.stdout)
+        self.assertIsNone(proc.stderr)
 
 # =============================================================================
 if __name__ == '__main__':
@@ -174,7 +216,8 @@ if __name__ == '__main__':
     suite.addTest(TestFbHandlingObject('test_import', verbose))
     suite.addTest(TestFbHandlingObject('test_called_process_error', verbose))
     suite.addTest(TestFbHandlingObject('test_timeout_expired_error', verbose))
-    suite.addTest(TestFbHandlingObject('test_run', verbose))
+    suite.addTest(TestFbHandlingObject('test_generic_handling_object', verbose))
+    suite.addTest(TestFbHandlingObject('test_run_simple', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
