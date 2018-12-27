@@ -232,6 +232,38 @@ class TestFbHandlingObject(FbToolsTestcase):
         self.assertIsNone(proc.stderr)
 
     # -------------------------------------------------------------------------
+    @unittest.skipUnless(EXEC_LONG_TESTS, "Long terming tests are not executed.")
+    def test_run_timeout(self):
+
+        LOG.info("Testing timing out the run() method.")
+
+        from fb_tools.common import pp
+        from fb_tools.handling_obj import HandlingObject, CompletedProcess
+        from fb_tools.handling_obj import TimeoutExpiredError
+        from fb_tools.errors import CommandNotFoundError
+
+        curdir = os.path.dirname(os.path.abspath(__file__))
+        call_script = os.path.join(curdir, 'call_sleep.sh')
+        if not os.path.exists(call_script):
+            raise CommandNotFoundError(call_script)
+
+        sleep = 10
+        timeout = sleep - 6
+
+        LOG.debug("Trying to execute {c!r} with a timeout of {t} seconds ...".format(
+            c=call_script, t=timeout))
+
+        hdlr = HandlingObject(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+
+        cmd = [call_script, str(sleep)]
+
+        with self.assertRaises(TimeoutExpiredError) as cm:
+            proc = hdlr.run(cmd, timeout=timeout)
+        e = cm.exception
+        LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
 
 # =============================================================================
 if __name__ == '__main__':
@@ -251,6 +283,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbHandlingObject('test_generic_handling_object', verbose))
     suite.addTest(TestFbHandlingObject('test_completed_process', verbose))
     suite.addTest(TestFbHandlingObject('test_run_simple', verbose))
+    suite.addTest(TestFbHandlingObject('test_run_timeout', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

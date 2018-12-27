@@ -44,7 +44,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.3.5'
+__version__ = '1.3.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -383,15 +383,24 @@ class HandlingObject(FbBaseObject):
         process = None
         try:
             process = Popen(*popenargs, **kwargs)
+            if self.verbose > 0:
+                LOG.debug("PID of process: {}".format(process.pid))
             try:
-                stdout, stderr = self._communicate(process, input=input, timeout=timeout)
-            except Exception:
-                process.kill()
+                stdout, stderr = self._communicate(process, popenargs, input=input, timeout=timeout)
+            except Exception as e:
+                if self.verbose > 2:
+                    LOG.debug("{c} happened, killing process: {e}".format(
+                        c=e.__class__.__name__, e=e))
+                process.poll()
+                if process.returncode is None:
+                    process.kill()
                 process.wait()
                 raise
             retcode = process.poll()
             if check and retcode:
-                raise CalledProcessError(retcode, process.args, output=stdout, stderr=stderr)
+                if six.PY3:
+                    raise CalledProcessError(retcode, process.args, output=stdout, stderr=stderr)
+                raise CalledProcessError(retcode, popenargs, output=stdout, stderr=stderr)
         finally:
             if process:
                 if process.stdout:
@@ -410,17 +419,17 @@ class HandlingObject(FbBaseObject):
             return CompletedProcess(popenargs, retcode, stdout, stderr)
 
     # -------------------------------------------------------------------------
-    def _communicate(self, process, input=None, timeout=None):
+    def _communicate(self, process, popenargs, input=None, timeout=None):
 
         try:
 
             if timeout is None:
                 return process.communicate(input)
 
-            if six.PY3:
-                return process.communicate(input, timeout)
-
             def communicate_alarm_caller(signum, sigframe):
+                err = InterruptError(signum)
+                self.handle_info(str(err))
+                process.kill()
                 raise ProcessCommunicationTimeout(timeout)
 
             signal.signal(signal.SIGALRM, communicate_alarm_caller)
@@ -432,14 +441,12 @@ class HandlingObject(FbBaseObject):
 
         except TimeoutExpired:
             stdout, stderr = process.communicate()
-            raise TimeoutExpiredError(
-                process.args, timeout, output=stdout, stderr=stderr)
+            raise TimeoutExpiredError(popenargs, timeout, output=stdout, stderr=stderr)
 
         except ProcessCommunicationTimeout:
             stdout, stderr = process.communicate()
             signal.alarm(0)
-            raise TimeoutExpiredError(
-                process.args, timeout, output=stdout, stderr=stderr)
+            raise TimeoutExpiredError(popenargs, timeout, output=stdout, stderr=stderr)
 
         return (stdout, stderr)
 
