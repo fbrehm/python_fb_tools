@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-26 21:13+0100\n"
+"POT-Creation-Date: 2018-12-27 15:54+0100\n"
 "PO-Revision-Date: 2018-12-12 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -394,61 +394,65 @@ msgid ""
 "{what}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:70
+#: lib/fb_tools/handling_obj.py:62
+msgid "Timeout on communicating with process."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:87
 msgid "Command {c!r} returned non-zero exit status {rc}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:107
+#: lib/fb_tools/handling_obj.py:124
 msgid "Command {c!r} timed out after {s} second."
 msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/handling_obj.py:252
+#: lib/fb_tools/handling_obj.py:272
 msgid "Command {!r} doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:255
+#: lib/fb_tools/handling_obj.py:275
 msgid "Command {!r} is not executable."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:278
+#: lib/fb_tools/handling_obj.py:298
 msgid "Command {!r} not found."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:346
+#: lib/fb_tools/handling_obj.py:366
 msgid "STDIN and input arguments may not both be used."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:360
+#: lib/fb_tools/handling_obj.py:380
 msgid "Simulation mode, not executing: {}"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:429
+#: lib/fb_tools/handling_obj.py:489
 msgid "Nothing to do on signal."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:480 lib/fb_tools/handling_obj.py:564
+#: lib/fb_tools/handling_obj.py:543 lib/fb_tools/handling_obj.py:630
 msgid "File doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:483
+#: lib/fb_tools/handling_obj.py:546
 msgid "Read permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:486
+#: lib/fb_tools/handling_obj.py:549
 msgid "Reading file content of {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:569 lib/fb_tools/handling_obj.py:576
+#: lib/fb_tools/handling_obj.py:635 lib/fb_tools/handling_obj.py:642
 msgid "Write permission to {!r} denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:571 lib/fb_tools/handling_obj.py:578
+#: lib/fb_tools/handling_obj.py:637 lib/fb_tools/handling_obj.py:644
 msgid "Write permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:659
+#: lib/fb_tools/handling_obj.py:725
 msgid "Completed process"
 msgstr ""
 
