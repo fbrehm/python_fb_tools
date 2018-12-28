@@ -44,7 +44,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.3.7'
+__version__ = '1.4.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -148,12 +148,14 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None,
+        self, appname=None, verbose=0, version=__version__, base_dir=None, quiet=False,
             terminal_has_colors=False, simulate=None, force=None, initialized=None):
 
         self._simulate = False
 
         self._force = False
+
+        self._quiet = quiet
 
         self._terminal_has_colors = bool(terminal_has_colors)
         """
@@ -201,6 +203,17 @@ class HandlingObject(FbBaseObject):
 
     # -----------------------------------------------------------
     @property
+    def quiet(self):
+        """Quiet execution of the application,
+            only warnings and errors are emitted."""
+        return self._quiet
+
+    @quiet.setter
+    def quiet(self, value):
+        self._quiet = bool(value)
+
+    # -----------------------------------------------------------
+    @property
     def interrupted(self):
         """Flag indicating, that the current process was interrupted."""
         return self._interrupted
@@ -229,6 +242,7 @@ class HandlingObject(FbBaseObject):
 
         res = super(HandlingObject, self).as_dict(short=short)
         res['force'] = self.force
+        res['quiet'] = self.quiet
         res['simulate'] = self.simulate
         res['interrupted'] = self.interrupted
         res['terminal_has_colors'] = self.terminal_has_colors

@@ -38,7 +38,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.2.3'
+__version__ = '1.3.1'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -114,8 +114,6 @@ class BaseApplication(HandlingObject):
         @ivar: The set of characters that prefix optional arguments.
         @type: str
         """
-
-        self._quiet = False
 
         self.env = {}
         """
@@ -247,17 +245,6 @@ class BaseApplication(HandlingObject):
         """The length of the localized version of 'usage: '"""
         return len(self.usage_term)
 
-    # -----------------------------------------------------------
-    @property
-    def quiet(self):
-        """Quiet execution of the application,
-            only warnings and errors are emitted."""
-        return self._quiet
-
-    @quiet.setter
-    def quiet(self, value):
-        self._quiet = bool(value)
-
     # -------------------------------------------------------------------------
     def exit(self, retval=-1, msg=None, trace=False):
         """
@@ -324,7 +311,6 @@ class BaseApplication(HandlingObject):
         res['description'] = self.description
         res['env_prefix'] = self.env_prefix
         res['exit_value'] = self.exit_value
-        res['quiet'] = self.quiet
         res['usage'] = self.usage
         res['force_desc_msg'] = self.force_desc_msg
         if 'xlate' not in res:
