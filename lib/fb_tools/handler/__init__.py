@@ -33,7 +33,7 @@ from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -63,7 +63,7 @@ class BaseHandler(HandlingObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, sudo=False,
-            terminal_has_colors=False, simulate=None, force=None, initialized=None):
+            quiet=False, terminal_has_colors=False, simulate=None, force=None, initialized=None):
 
         self._chown_cmd = CHOWN_CMD
         self._echo_cmd = ECHO_CMD
@@ -74,7 +74,7 @@ class BaseHandler(HandlingObject):
         super(BaseHandler, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             terminal_has_colors=terminal_has_colors, simulate=simulate, force=force,
-            initialized=False,
+            quiet=quiet, initialized=False,
         )
 
         self._chown_cmd = self.get_command('chown')
