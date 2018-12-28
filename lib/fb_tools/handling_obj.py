@@ -16,28 +16,51 @@ import textwrap
 import pathlib
 import signal
 import errno
+import sys
 
 from subprocess import Popen, PIPE
-from subprocess import SubprocessError
+if sys.version_info[0] >= 3:
+    from subprocess import SubprocessError, TimeoutExpired
+else:
+    class SubprocessError(Exception):
+        pass
+
+
+    class TimeoutExpired(SubprocessError):
+        pass
 
 # Third party modules
 import six
 
 # Own modules
 from .common import pp, to_bool, caller_search_path, to_str, encode_or_bust
+from .common import indent
 
 from .xlate import XLATOR
 
-from .errors import InterruptError, ReadTimeoutError, WriteTimeoutError
+from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
 
 from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.2.3'
+__version__ = '1.3.7'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
+ngettext = XLATOR.ngettext
+
+DEFAULT_FILEIO_TIMEOUT = 2
+
+
+# =============================================================================
+class ProcessCommunicationTimeout(IoTimeoutError, SubprocessError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, timeout):
+
+        msg = _("Timeout on communicating with process.")
+        super(ProcessCommunicationTimeout, self).__init__(msg, timeout)
 
 
 # =============================================================================
@@ -78,7 +101,7 @@ class CalledProcessError(SubprocessError):
 
 
 # =============================================================================
-class TimeoutExpired(SubprocessError):
+class TimeoutExpiredError(SubprocessError):
     """
     This exception is raised when the timeout expires while waiting for a
     child process.
@@ -98,8 +121,10 @@ class TimeoutExpired(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        return _("Command {c!r} timed out after {s} seconds.").format(
-            c=self.cmd, s=self.timeout)
+        msg = ngettext(
+            "Command {c!r} timed out after {s} second.",
+            "Command {c!r} timed out after {s} seconds.", self.timeout)
+        return msg.format(c=self.cmd, s=self.timeout)
 
     # -------------------------------------------------------------------------
     @property
@@ -118,6 +143,8 @@ class HandlingObject(FbBaseObject):
     """
     Base class for an object with extend handling possibilities.
     """
+
+    fileio_timeout = DEFAULT_FILEIO_TIMEOUT
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -205,6 +232,7 @@ class HandlingObject(FbBaseObject):
         res['simulate'] = self.simulate
         res['interrupted'] = self.interrupted
         res['terminal_has_colors'] = self.terminal_has_colors
+        res['fileio_timeout'] = self.fileio_timeout
 
         return res
 
@@ -272,7 +300,7 @@ class HandlingObject(FbBaseObject):
         return None
 
     # -------------------------------------------------------------------------
-    def run(self, *popenargs, input=None, timeout=None, check=False, may_simulate=True, **kwargs):
+    def run(self, *popenargs, **kwargs):
         """
         Run command with arguments and return a CompletedProcess instance.
 
@@ -285,7 +313,7 @@ class HandlingObject(FbBaseObject):
         in the returncode attribute, and output & stderr attributes if those streams
         were captured.
 
-        If timeout is given, and the process takes too long, a TimeoutExpired
+        If timeout is given, and the process takes too long, a TimeoutExpiredError
         exception will be raised.
 
         There is an optional argument "input", allowing you to
@@ -301,6 +329,37 @@ class HandlingObject(FbBaseObject):
 
         This method was taken from subprocess.py of the standard library of Python 3.5.
         """
+
+        input = None
+        if 'input' in kwargs:
+            input = kwargs['input']
+            del kwargs['input']
+
+        timeout = None
+        if 'timeout' in kwargs:
+            timeout = kwargs['timeout']
+            del kwargs['timeout']
+
+        check = False
+        if 'check' in kwargs:
+            check = bool(kwargs['check'])
+            del kwargs['check']
+
+        may_simulate = None
+        if 'may_simulate' in kwargs:
+            may_simulate = bool(kwargs['may_simulate'])
+            del kwargs['may_simulate']
+
+        if self.verbose >= 2:
+            myargs = {
+                'input': input,
+                'timeout': timeout,
+                'check': check,
+                'may_simulate': may_simulate,
+                'popenargs': popenargs,
+                'kwargs': kwargs,
+            }
+            LOG.debug("Args of run():\n{}".format(pp(myargs)))
 
         if input is not None:
             if 'stdin' in kwargs:
@@ -321,22 +380,75 @@ class HandlingObject(FbBaseObject):
             LOG.info(_("Simulation mode, not executing: {}").format(cmd_str))
             return CompletedProcess(popenargs, 0, "Simulated execution.\n", '')
 
-        with Popen(*popenargs, **kwargs) as process:
+        process = None
+        try:
+            process = Popen(*popenargs, **kwargs)
+            if self.verbose > 0:
+                LOG.debug("PID of process: {}".format(process.pid))
             try:
-                stdout, stderr = process.communicate(input, timeout=timeout)
-            except TimeoutExpired:
-                process.kill()
-                stdout, stderr = process.communicate()
-                raise TimeoutExpired(process.args, timeout, output=stdout, stderr=stderr)
-            except Exception:
-                process.kill()
+                stdout, stderr = self._communicate(process, popenargs, input=input, timeout=timeout)
+            except Exception as e:
+                if self.verbose > 2:
+                    LOG.debug("{c} happened, killing process: {e}".format(
+                        c=e.__class__.__name__, e=e))
+                process.poll()
+                if process.returncode is None:
+                    process.kill()
                 process.wait()
                 raise
             retcode = process.poll()
             if check and retcode:
-                raise CalledProcessError(retcode, process.args, output=stdout, stderr=stderr)
+                if six.PY3:
+                    raise CalledProcessError(retcode, process.args, output=stdout, stderr=stderr)
+                raise CalledProcessError(retcode, popenargs, output=stdout, stderr=stderr)
+        finally:
+            if process:
+                if process.stdout:
+                    process.stdout.close()
+                if process.stderr:
+                    process.stderr.close()
+                if process.stdin:
+                    try:
+                        process.stdin.close()
+                    finally:
+                        pass
 
-        return CompletedProcess(process.args, retcode, stdout, stderr)
+        if six.PY3:
+            return CompletedProcess(process.args, retcode, stdout, stderr)
+        else:
+            return CompletedProcess(popenargs, retcode, stdout, stderr)
+
+    # -------------------------------------------------------------------------
+    def _communicate(self, process, popenargs, input=None, timeout=None):
+
+        try:
+
+            if timeout is None:
+                return process.communicate(input)
+
+            def communicate_alarm_caller(signum, sigframe):
+                err = InterruptError(signum)
+                self.handle_info(str(err))
+                process.kill()
+                raise ProcessCommunicationTimeout(timeout)
+
+            signal.signal(signal.SIGALRM, communicate_alarm_caller)
+            signal.alarm(timeout)
+
+            stdout, stderr = process.communicate(input)
+
+            signal.alarm(0)
+
+        except TimeoutExpired:
+            stdout, stderr = process.communicate()
+            raise TimeoutExpiredError(popenargs, timeout, output=stdout, stderr=stderr)
+
+        except ProcessCommunicationTimeout:
+            stdout, stderr = process.communicate()
+            signal.alarm(0)
+            raise TimeoutExpiredError(popenargs, timeout, output=stdout, stderr=stderr)
+
+        return (stdout, stderr)
 
     # -------------------------------------------------------------------------
     def colored(self, msg, color):
@@ -382,7 +494,7 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def read_file(
-            self, filename, timeout=2, binary=False, quiet=False, encoding='utf-8'):
+            self, filename, timeout=None, binary=False, quiet=False, encoding='utf-8'):
         """
         Reads the content of the given filename.
 
@@ -420,6 +532,9 @@ class HandlingObject(FbBaseObject):
 
             raise ReadTimeoutError(timeout, filename)
 
+        if timeout is None:
+            timeout = self.fileio_timeout
+
         timeout = abs(int(timeout))
         ifile = str(filename)
 
@@ -442,10 +557,11 @@ class HandlingObject(FbBaseObject):
             open_args['errors'] = 'surrogateescape'
 
         mode = 'r'
+        content = ''
         if binary:
             mode += 'b'
+            content = encode_or_bust('')
 
-        content = ''
         with open(ifile, mode, **open_args) as fh:
             for line in fh.readlines():
                 content += line
@@ -460,7 +576,8 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def write_file(
-            self, filename, content, timeout=2, must_exists=True, quiet=False, encoding='utf-8'):
+            self, filename, content, timeout=None, must_exists=True,
+            quiet=False, encoding='utf-8'):
         """
         Writes the given content into the given filename.
         It should only be used for small things, because it writes unbuffered.
@@ -504,7 +621,9 @@ class HandlingObject(FbBaseObject):
             verb_level2 = 3
             verb_level3 = 4
 
-        timeout = int(timeout)
+        if timeout is None:
+            timeout = self.fileio_timeout
+        timeout = abs(int(timeout))
         ofile = str(filename)
 
         if must_exists:
@@ -531,7 +650,13 @@ class HandlingObject(FbBaseObject):
             else:
                 LOG.debug("Writing {!r} ...".format(ofile))
 
-        content_bin = encode_or_bust(content, encoding)
+        if isinstance(content, six.binary_type):
+            content_bin = content
+        else:
+            if isinstance(content, six.text_type):
+                content_bin = encode_or_bust(content, encoding)
+            else:
+                content_bin = encode_or_bust(str(content), encoding)
 
         if self.simulate:
             if self.verbose > verb_level2:
@@ -607,12 +732,14 @@ class CompletedProcess(object):
         out = _('Completed process') + ':\n'
         out += '  args:       {!r}\n'.format(self.args)
         out += '  returncode: {}\n'.format(self.returncode)
+        iind = '     '
+        ind = '              '
         if self.stdout is not None:
-            o = self.stdout
-            out += '  stdout:     {}\n'.format(textwrap.indent(o, '              ').strip())
+            o = indent(self.stdout.rstrip(), ind, iind)
+            out += '  stdout:{}\n'.format(o)
         if self.stderr is not None:
-            o = self.stderr
-            out += '  stderr:     {}\n'.format(textwrap.indent(o, '              ').strip())
+            o = indent(self.stderr.rstrip(), ind, iind)
+            out += '  stderr:{}\n'.format(o)
         return out
 
     # -------------------------------------------------------------------------

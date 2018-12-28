@@ -41,13 +41,14 @@ Package: python-fb-tools
 Architecture: all
 Depends: python-argparse,
          python-babel,
+         python-ipaddress,
+         python-pathlib,
          python-requests,
          python-six,
-         python-pathlib,
          python-tz,
-         python-fb-tools-nls (= ${binary:Version}),
          ${misc:Depends},
          ${python:Depends}
+Recommends: python-pyvmomi
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python2 modules for this package.
@@ -56,10 +57,11 @@ Package: python3-fb-tools
 Architecture: all
 Depends: python3-six,
          python3-babel,
+         python3-requests,
          python3-tz,
-         python-fb-tools-nls (= ${binary:Version}),
          ${misc:Depends},
          ${python3:Depends}
+Recommends: python3-pyvmomi
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python3 modules for this package.

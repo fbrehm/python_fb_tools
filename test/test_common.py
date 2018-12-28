@@ -490,6 +490,86 @@ class TestFbCommon(FbToolsTestcase):
         LOG.debug("Switching back to saved locales %r.", loc)
         locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
 
+    # -------------------------------------------------------------------------
+    def test_indent(self):
+
+        LOG.info("Testing indent() from fb_tools.common ...")
+
+        from fb_tools.common import indent
+
+        ind = '  '
+        initial_ind = ' '
+
+        LOG.debug("Testing indent() without a separate initial_prefix.")
+        test_pairs = (
+            ('', ''),
+            ('a', ind + 'a'),
+            ('\na', '\n' + ind + 'a'),
+            ('a\nb', ind + 'a\n' + ind + 'b'),
+            ('a\n	b', ind + 'a\n' + ind + '	b'),
+            ('a\n\nb', ind + 'a\n\n' + ind + 'b'),
+            ('a\n \nb', ind + 'a\n \n' + ind + 'b'),
+        )
+        for pair in test_pairs:
+            src = pair[0]
+            expected = pair[1]
+            if self.verbose > 1:
+                LOG.debug("Testing indenting {src!r} => {tgt!r}".format(src=src, tgt=expected))
+            result = indent(src, ind)
+            if self.verbose > 1:
+                LOG.debug("Got result: {!r}".format(result))
+            self.assertEqual(expected, result)
+
+        LOG.debug("Testing indent() with a separate initial_prefix.")
+        test_pairs = (
+            ('', ''),
+            ('a', initial_ind + 'a'),
+            ('\na', '\n' + ind + 'a'),
+            ('a\nb', initial_ind + 'a\n' + ind + 'b'),
+            ('a\n	b', initial_ind + 'a\n' + ind + '	b'),
+            ('a\n\nb', initial_ind + 'a\n\n' + ind + 'b'),
+            ('a\n \nb', initial_ind + 'a\n \n' + ind + 'b'),
+        )
+        for pair in test_pairs:
+            src = pair[0]
+            expected = pair[1]
+            if self.verbose > 1:
+                LOG.debug("Testing indenting {src!r} => {tgt!r}".format(src=src, tgt=expected))
+            result = indent(src, ind, initial_prefix=initial_ind)
+            if self.verbose > 1:
+                LOG.debug("Got result: {!r}".format(result))
+            self.assertEqual(expected, result)
+
+        LOG.debug("Testing indent() with a predicate function.")
+        def test_predicate(line):
+            if line.strip().startswith('b'):
+                return False
+            return line.strip()
+        test_pairs = (
+            ('', ''),
+            ('a', ind + 'a'),
+            ('\na', '\n' + ind + 'a'),
+            ('a\nb', ind + 'a\nb'),
+            ('a\nb\nc', ind + 'a\nb\n' + ind + 'c'),
+            ('a\n b', ind + 'a\n b'),
+            ('a\nB', ind + 'a\n' + ind + 'B'),
+            ('a\nba', ind + 'a\nba'),
+            ('a\n	b', ind + 'a\n	b'),
+            ('a\n\nb', ind + 'a\n\nb'),
+            ('a\n\nc', ind + 'a\n\n' + ind + 'c'),
+            ('a\n \nb', ind + 'a\n \nb'),
+            ('a\n \nc', ind + 'a\n \n' + ind + 'c'),
+        )
+        for pair in test_pairs:
+            src = pair[0]
+            expected = pair[1]
+            if self.verbose > 1:
+                LOG.debug("Testing indenting {src!r} => {tgt!r}".format(src=src, tgt=expected))
+            result = indent(src, ind, predicate=test_predicate)
+            if self.verbose > 1:
+                LOG.debug("Got result: {!r}".format(result))
+            self.assertEqual(expected, result)
+
 
 # =============================================================================
 
@@ -512,6 +592,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCommon('test_human2mbytes_l10n', verbose))
     suite.addTest(TestFbCommon('test_bytes2human', verbose))
     suite.addTest(TestFbCommon('test_to_bool', verbose))
+    suite.addTest(TestFbCommon('test_indent', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
