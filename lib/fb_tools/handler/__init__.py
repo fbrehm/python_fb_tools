@@ -31,9 +31,9 @@ from ..common import to_bool
 
 from ..errors import HandlerError
 
-from ..handling_obj import HandlingObject
+from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.2.2'
+__version__ = '1.3.1'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -289,27 +289,32 @@ class BaseHandler(HandlingObject):
 
         ret = cmd_obj.wait()
 
-        return self._eval_call_results(
-            ret, stderrdata, stdoutdata, cur_encoding=cur_encoding,
-            log_output=log_output, quiet=quiet)
+        proc = CompletedProcess(
+            args=cmd_list, returncode=ret, stdout=stdoutdata, stderr=stderrdata)
+        return _eval_call_results(
+            proc, cur_encoding=cur_encoding, log_output=log_output, quiet=quiet)
 
     # -------------------------------------------------------------------------
     def _eval_call_results(
-        self, ret, stderrdata, stdoutdata,
-            cur_encoding='utf-8', log_output=True, quiet=False):
+        self, proc, cur_encoding='utf-8', log_output=True, quiet=False):
+
+        if not isinstance(proc, CompletedProcess):
+            msg = _("Parameter {p!r} is not of type {t!r}.").format(
+                p='proc', t='CompletedProcess')
+            raise TypeError(msg)
 
         if not quiet:
-            LOG.debug("Returncode: {}".format(ret))
+            LOG.debug("Returncode: {}".format(proc.returncode))
 
-        if stderrdata:
+        if proc.stderr:
             if six.PY3:
                 if self.verbose > 2:
                     LOG.debug("Decoding {what} from {enc!r}.".format(
-                        what='STDERR', enc=cur_encoding))
-                stderrdata = stderrdata.decode(cur_encoding)
+                        what='proc.stderr', enc=cur_encoding))
+                proc.stderr = proc.stderr.decode(cur_encoding)
             if not quiet:
-                msg = _("Output on {where}:\n{what}.").format(
-                    where="STDERR", what=stderrdata.strip())
+                msg = _("Output on {}:").format('proc.stderr')
+                msg += '\n' + proc.stderr
                 if ret:
                     LOG.warn(msg)
                 elif log_output:
@@ -317,21 +322,23 @@ class BaseHandler(HandlingObject):
                 else:
                     LOG.debug(msg)
 
-        if stdoutdata:
+        if proc.stdout:
             if six.PY3:
                 if self.verbose > 2:
                     LOG.debug("Decoding {what} from {enc!r}.".format(
-                        what='STDOUT', enc=cur_encoding))
-                stdoutdata = stdoutdata.decode(cur_encoding)
+                        what='proc.stdout', enc=cur_encoding))
+                proc.stdout = proc.stdout.decode(cur_encoding)
             if not quiet:
                 msg = _("Output on {where}:\n{what}.").format(
                     where="STDOUT", what=stdoutdata.strip())
+                msg = _("Output on {}:").format('proc.stdout')
+                msg += '\n' + proc.stdout
                 if log_output:
                     LOG.info(msg)
                 else:
                     LOG.debug(msg)
 
-        return (ret, stdoutdata, stderrdata)
+        return proc
 
     # -------------------------------------------------------------------------
     def _wait_for_proc_with_heartbeat(
