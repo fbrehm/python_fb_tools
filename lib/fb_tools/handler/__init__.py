@@ -24,6 +24,10 @@ from fcntl import fcntl, F_GETFL, F_SETFL
 import pytz
 import six
 
+import babel
+
+from babel.dates import LOCALTZ
+
 # Own modules
 from ..xlate import XLATOR
 
@@ -33,7 +37,7 @@ from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.3.1'
+__version__ = '1.4.1'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -57,8 +61,9 @@ class BaseHandler(HandlingObject):
         open_opts['encoding'] = 'utf-8'
         open_opts['errors'] = 'surrogateescape'
 
-    tz_name = 'Europe/Berlin'
-    tz = pytz.timezone(tz_name)
+    default_locale = babel.core.default_locale()
+    tz = LOCALTZ
+    tz_name = babel.dates.get_timezone_name(tz, width='long', locale=default_locale)
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -135,6 +140,7 @@ class BaseHandler(HandlingObject):
         res['echo_cmd'] = self.echo_cmd
         res['sudo_cmd'] = self.sudo_cmd
         res['sudo'] = self.sudo
+        res['default_locale'] = self.default_locale
 
         return res
 
@@ -147,7 +153,9 @@ class BaseHandler(HandlingObject):
         tz_name = tz_name.strip()
         LOG.debug("Setting time zone to {!r}.".format(tz_name))
         cls.tz = pytz.timezone(tz_name)
-        cls.tz_name = tz_name
+        cls.tz_name = babel.dates.get_timezone_name(
+            cls.tz, width='long', locale=cls.default_locale)
+        LOG.debug("Name of the time zone: {!r}.".format(cls.tz_name))
 
     # -------------------------------------------------------------------------
     def __call__(self, yaml_file):
