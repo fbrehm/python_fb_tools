@@ -182,6 +182,7 @@ class TestFbHandlingObject(FbToolsTestcase):
         self.assertEqual(hdlr.version, fb_tools.handling_obj.__version__)
         self.assertFalse(hdlr.simulate)
         self.assertFalse(hdlr.force)
+        self.assertFalse(hdlr.quiet)
         self.assertFalse(hdlr.interrupted)
         self.assertEqual(hdlr.fileio_timeout, 10)
 
@@ -190,6 +191,9 @@ class TestFbHandlingObject(FbToolsTestcase):
 
         hdlr.force = True
         self.assertTrue(hdlr.force)
+
+        hdlr.quiet = True
+        self.assertTrue(hdlr.quiet)
 
     # -------------------------------------------------------------------------
     def test_completed_process(self):
