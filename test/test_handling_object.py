@@ -12,11 +12,14 @@ import os
 import sys
 import logging
 import tempfile
+import datetime
 
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
+
+from babel.dates import LOCALTZ
 
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 sys.path.insert(0, libdir)
@@ -208,7 +211,11 @@ class TestFbHandlingObject(FbToolsTestcase):
         stdout = "Message on STDOUT\n * Second line on STDOUT\n"
         stderr = "Message on STDERR\n"
 
-        proc = CompletedProcess(args, retval, stdout, stderr)
+        tdiff = datetime.timedelta(seconds=5)
+        start_dt = datetime.datetime.now(LOCALTZ) - tdiff
+        end_dt = datetime.datetime.now(LOCALTZ)
+
+        proc = CompletedProcess(args, retval, stdout, stderr, start_dt=start_dt, end_dt=end_dt)
         LOG.debug("Got a {} object.".format(proc.__class__.__name__))
         self.assertIsInstance(proc, CompletedProcess)
         LOG.debug("CompletedProcess %%r: {!r}".format(proc))

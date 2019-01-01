@@ -18,6 +18,9 @@ try:
 except ImportError:
     import unittest
 
+import babel
+from babel.dates import LOCALTZ
+
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 sys.path.insert(0, libdir)
 
@@ -104,7 +107,11 @@ class TestFbBaseHandler(FbToolsTestcase):
         hdlr.sudo = True
         self.assertTrue(hdlr.sudo)
 
+        LOG.debug("Setting timezone to {!r}".format('America/Los_Angeles'))
         hdlr.set_tz('America/Los_Angeles')
+        tz_name = LOCALTZ.zone
+        LOG.debug("Setting timezone to {!r}".format(tz_name))
+        hdlr.set_tz(tz_name)
 
     # -------------------------------------------------------------------------
     @unittest.skipUnless(EXEC_LONG_TESTS, "Long terming tests are not executed.")
