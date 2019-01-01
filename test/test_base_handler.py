@@ -106,6 +106,44 @@ class TestFbBaseHandler(FbToolsTestcase):
 
         hdlr.set_tz('America/Los_Angeles')
 
+    # -------------------------------------------------------------------------
+    @unittest.skipUnless(EXEC_LONG_TESTS, "Long terming tests are not executed.")
+    def test_call_sync(self):
+
+        LOG.info("Testing synchronous execution of a shell script.")
+
+        from fb_tools.common import pp
+        from fb_tools.errors import CommandNotFoundError
+        from fb_tools.handling_obj import CompletedProcess
+        import fb_tools.handler
+        from fb_tools.handler import BaseHandler
+
+        curdir = os.path.dirname(os.path.abspath(__file__))
+        call_script = os.path.join(curdir, 'call_script.sh')
+        if not os.path.exists(call_script):
+            raise CommandNotFoundError(call_script)
+
+        LOG.debug("Trying to execute {!r} ...".format(call_script))
+
+        hdlr = BaseHandler(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+
+        proc = hdlr.call([call_script])
+
+        LOG.debug("Got back a {} object.".format(proc.__class__.__name__))
+        self.assertIsInstance(proc, CompletedProcess)
+
+        LOG.debug("Got return value: {}.".format(proc.returncode))
+        LOG.debug("Got proc args:\n{}.".format(pp(proc.args)))
+        LOG.debug("Got STDOUT: {!r}".format(proc.stdout))
+        LOG.debug("Got STDERR: {!r}".format(proc.stderr))
+
+        self.assertEqual(proc.returncode, 0)
+        self.assertIsNotNone(proc.stdout)
+        self.assertIsNotNone(proc.stderr)
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -120,6 +158,7 @@ if __name__ == '__main__':
 
     suite.addTest(TestFbBaseHandler('test_import', verbose))
     suite.addTest(TestFbBaseHandler('test_generic_base_handler', verbose))
+    suite.addTest(TestFbBaseHandler('test_call_sync', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
