@@ -1,4 +1,4 @@
-fb-tools (1.3.5) UNRELEASED; urgency=medium
+fb-tools (1.3.6) UNRELEASED; urgency=medium
 
   * Making module compatible to Python2
   * Updating dependencies in debian/control
@@ -10,6 +10,10 @@ fb-tools (1.3.5) UNRELEASED; urgency=medium
     HandlingObject
   * Changing BaseHandler.call() and BaseHandler._eval_call_results to
     return a CompletedProcess object
+  * Using localized version of timezone in BaseHandler
+  * Bugfixing for encoding in methods HandlingObject.run() and
+    BaseHandler.call()
+  * Including start and ent timestamps in class CompletedProcess
 
  -- Frank Brehm <frank@brehm-online.com>  Tue, 01 Jan 2019 19:28:06 +0100
 
