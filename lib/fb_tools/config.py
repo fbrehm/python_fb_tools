@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2018 by Frank Brehm, Berlin
+@copyright: © 2019 by Frank Brehm, Berlin
 @summary: A module for providing a configuration
 """
 from __future__ import absolute_import

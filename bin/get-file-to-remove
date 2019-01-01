@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2018 by Frank Brehm, Berlin
+@copyright: © 2019 by Frank Brehm, Berlin
 @summary: Returns a newline separated list of files generated from file globbing patterns
 """
 from __future__ import print_function
@@ -66,7 +66,7 @@ _ = XLATOR.gettext
 LOG = logging.getLogger(__name__)
 
 __author__ = 'Frank Brehm <frank.brehm@pixelpark.com>'
-__copyright__ = '(C) 2018 by Frank Brehm, Pixelpark GmbH, Berlin'
+__copyright__ = '(C) 2019 by Frank Brehm, Pixelpark GmbH, Berlin'
 
 appname = my_path.name
 
