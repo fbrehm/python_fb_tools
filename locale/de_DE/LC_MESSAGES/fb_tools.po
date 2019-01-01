@@ -413,7 +413,7 @@ msgstr "Der Parameter {p!r} ist nicht vom Typ {t!r}."
 
 #: lib/fb_tools/handler/__init__.py:316 lib/fb_tools/handler/__init__.py:334
 msgid "Output on {}:"
-msgstr ""
+msgstr "Ausgabe an {}:"
 
 #: lib/fb_tools/handler/__init__.py:332
 msgid ""
