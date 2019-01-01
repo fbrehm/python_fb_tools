@@ -37,7 +37,7 @@ from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.4.2'
+__version__ = '1.4.3'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -276,7 +276,6 @@ class BaseHandler(HandlingObject):
             env={'USER': pwd_info.pw_name},
             **kwargs
         )
-        # cwd=self.base_dir,
 
         # Display Output of executable
         if hb_handler is not None:
@@ -298,28 +297,22 @@ class BaseHandler(HandlingObject):
         ret = cmd_obj.wait()
 
         proc = CompletedProcess(
-            args=cmd_list, returncode=ret, stdout=stdoutdata, stderr=stderrdata)
-        return self._eval_call_results(
-            proc, cur_encoding=cur_encoding, log_output=log_output, quiet=quiet)
+            args=cmd_list, returncode=ret, encoding=cur_encoding,
+            stdout=stdoutdata, stderr=stderrdata)
+        return self._eval_call_results(proc, log_output=log_output, quiet=quiet)
 
     # -------------------------------------------------------------------------
-    def _eval_call_results(
-        self, proc, cur_encoding='utf-8', log_output=True, quiet=False):
+    def _eval_call_results(self, proc, log_output=True, quiet=False):
 
         if not isinstance(proc, CompletedProcess):
             msg = _("Parameter {p!r} is not of type {t!r}.").format(
                 p='proc', t='CompletedProcess')
             raise TypeError(msg)
 
-        if not quiet:
-            LOG.debug("Returncode: {}".format(proc.returncode))
+        if self.verbose > 2:
+            LOG.debug("Got completed process:\n{}".format(proc))
 
         if proc.stderr:
-            if six.PY3:
-                if self.verbose > 2:
-                    LOG.debug("Decoding {what} from {enc!r}.".format(
-                        what='proc.stderr', enc=cur_encoding))
-                proc.stderr = to_unicode(proc.stderr, cur_encoding)
             if not quiet:
                 msg = _("Output on {}:").format('proc.stderr')
                 msg += '\n' + proc.stderr
@@ -331,11 +324,6 @@ class BaseHandler(HandlingObject):
                     LOG.debug(msg)
 
         if proc.stdout:
-            if six.PY3:
-                if self.verbose > 2:
-                    LOG.debug("Decoding {what} from {enc!r}.".format(
-                        what='proc.stdout', enc=cur_encoding))
-                proc.stdout = to_unicode(proc.stdout, cur_encoding)
             if not quiet:
                 msg = _("Output on {}:").format('proc.stdout')
                 msg += '\n' + proc.stdout
