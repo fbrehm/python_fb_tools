@@ -1,3 +1,18 @@
+fb-tools (1.3.5) UNRELEASED; urgency=medium
+
+  * Making module compatible to Python2
+  * Updating dependencies in debian/control
+  * Extending tests for test/test_handling_object.py
+  * Updating localisation
+  * Fixing test/test_handling_object.py
+  * Adding function indent() to lib/fb_tools/common.py
+  * Moving property quiet from class BaseApplication to class
+    HandlingObject
+  * Changing BaseHandler.call() and BaseHandler._eval_call_results to
+    return a CompletedProcess object
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 01 Jan 2019 19:28:06 +0100
+
 fb-tools (1.3.2) all; urgency=medium
 
   * Fixing arguments of method run() of class HandlingObject in
