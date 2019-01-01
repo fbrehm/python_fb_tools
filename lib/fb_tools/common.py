@@ -29,7 +29,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 
 _ = XLATOR.gettext
 
@@ -237,7 +237,7 @@ def to_unicode(obj, encoding='utf-8'):
         if isinstance(obj, str):
             do_decode = True
     else:
-        if isinstance(obj, bytes):
+        if isinstance(obj, (bytes, bytearray)):
             do_decode = True
 
     if do_decode:
