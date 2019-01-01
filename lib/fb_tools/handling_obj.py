@@ -17,6 +17,7 @@ import pathlib
 import signal
 import errno
 import sys
+import locale
 
 from subprocess import Popen, PIPE
 if sys.version_info[0] >= 3:
@@ -44,7 +45,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -710,14 +711,20 @@ class CompletedProcess(object):
     """
 
     # -------------------------------------------------------------------------
-    def __init__(self, args, returncode, stdout=None, stderr=None):
+    def __init__(self, args, returncode, stdout=None, stderr=None, encoding=None):
 
         self.args = args
         self.returncode = returncode
+        self.encoding = encoding
+        if encoding is None:
+            if locale.getpreferredencoding():
+                self.encoding = locale.getpreferredencoding()
+            else:
+                self.encoding = 'utf-8'
 
         self.stdout = stdout
         if stdout is not None:
-            stdout = to_str(stdout)
+            stdout = to_str(stdout, self.encoding)
             if stdout.strip() == '':
                 self.stdout = None
             else:
@@ -725,7 +732,7 @@ class CompletedProcess(object):
 
         self.stderr = stderr
         if stderr is not None:
-            stderr = to_str(stderr)
+            stderr = to_str(stderr, self.encoding)
             if stderr.strip() == '':
                 self.stderr = None
             else:
@@ -735,6 +742,8 @@ class CompletedProcess(object):
     def __repr__(self):
         args = ['args={!r}'.format(self.args),
                 'returncode={!r}'.format(self.returncode)]
+        if self.stdout is not None or self.stderr is not None:
+            args.append('encoding={!r}'.format(self.encoding))
         if self.stdout is not None:
             args.append('stdout={!r}'.format(self.stdout))
         if self.stderr is not None:
@@ -746,6 +755,8 @@ class CompletedProcess(object):
         out = _('Completed process') + ':\n'
         out += '  args:       {!r}\n'.format(self.args)
         out += '  returncode: {}\n'.format(self.returncode)
+        if self.stdout is not None or self.stderr is not None:
+            out += '  encoding:   {!r}\n'.format(self.encoding)
         iind = '     '
         ind = '              '
         if self.stdout is not None:
