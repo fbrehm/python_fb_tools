@@ -31,13 +31,13 @@ from babel.dates import LOCALTZ
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import to_bool
+from ..common import to_bool, encode_or_bust, to_unicode
 
 from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -299,7 +299,7 @@ class BaseHandler(HandlingObject):
 
         proc = CompletedProcess(
             args=cmd_list, returncode=ret, stdout=stdoutdata, stderr=stderrdata)
-        return _eval_call_results(
+        return self._eval_call_results(
             proc, cur_encoding=cur_encoding, log_output=log_output, quiet=quiet)
 
     # -------------------------------------------------------------------------
@@ -319,11 +319,11 @@ class BaseHandler(HandlingObject):
                 if self.verbose > 2:
                     LOG.debug("Decoding {what} from {enc!r}.".format(
                         what='proc.stderr', enc=cur_encoding))
-                proc.stderr = proc.stderr.decode(cur_encoding)
+                proc.stderr = to_unicode(proc.stderr, cur_encoding)
             if not quiet:
                 msg = _("Output on {}:").format('proc.stderr')
                 msg += '\n' + proc.stderr
-                if ret:
+                if proc.returncode:
                     LOG.warn(msg)
                 elif log_output:
                     LOG.info(msg)
@@ -335,10 +335,8 @@ class BaseHandler(HandlingObject):
                 if self.verbose > 2:
                     LOG.debug("Decoding {what} from {enc!r}.".format(
                         what='proc.stdout', enc=cur_encoding))
-                proc.stdout = proc.stdout.decode(cur_encoding)
+                proc.stdout = to_unicode(proc.stdout, cur_encoding)
             if not quiet:
-                msg = _("Output on {where}:\n{what}.").format(
-                    where="STDOUT", what=stdoutdata.strip())
                 msg = _("Output on {}:").format('proc.stdout')
                 msg += '\n' + proc.stdout
                 if log_output:
