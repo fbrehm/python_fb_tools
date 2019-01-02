@@ -253,9 +253,9 @@ setup(
     scripts=__scripts__,
     requires=__requirements__,
     package_dir={'': 'lib'},
-    cmdclass={
-        'install': InstallWithCompile,
-    },
+#    cmdclass={
+#        'install': InstallWithCompile,
+#    },
     package_data = {
         '': create_mo_files(),
     },
