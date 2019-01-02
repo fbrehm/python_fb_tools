@@ -40,7 +40,7 @@ from fb_tools.get_vm_app import GetVmApplication
 log = logging.getLogger(__name__)
 
 __author__ = 'Frank Brehm <frank.brehm@pixelpark.com>'
-__copyright__ = '(C) 2018 by Frank Brehm, Pixelpark GmbH, Berlin'
+__copyright__ = '(C) 2019 by Frank Brehm, Pixelpark GmbH, Berlin'
 
 appname = os.path.basename(sys.argv[0])
 

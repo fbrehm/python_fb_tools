@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2018 Frank Brehm, Berlin
+@copyright: © 2019 Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
