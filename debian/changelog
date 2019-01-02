@@ -1,4 +1,4 @@
-fb-tools (1.3.6) UNRELEASED; urgency=medium
+fb-tools (1.3.6) all; urgency=medium
 
   * Making module compatible to Python2
   * Updating dependencies in debian/control
