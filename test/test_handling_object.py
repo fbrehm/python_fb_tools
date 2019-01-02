@@ -3,7 +3,7 @@
 '''
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2018 Frank Brehm, Berlin
+@copyright: © 2019 Frank Brehm, Berlin
 @license: GPL3
 @summary: test script (and module) for unit tests on handling object
 '''
@@ -12,11 +12,14 @@ import os
 import sys
 import logging
 import tempfile
+import datetime
 
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
+
+from babel.dates import LOCALTZ
 
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 sys.path.insert(0, libdir)
@@ -182,6 +185,7 @@ class TestFbHandlingObject(FbToolsTestcase):
         self.assertEqual(hdlr.version, fb_tools.handling_obj.__version__)
         self.assertFalse(hdlr.simulate)
         self.assertFalse(hdlr.force)
+        self.assertFalse(hdlr.quiet)
         self.assertFalse(hdlr.interrupted)
         self.assertEqual(hdlr.fileio_timeout, 10)
 
@@ -190,6 +194,9 @@ class TestFbHandlingObject(FbToolsTestcase):
 
         hdlr.force = True
         self.assertTrue(hdlr.force)
+
+        hdlr.quiet = True
+        self.assertTrue(hdlr.quiet)
 
     # -------------------------------------------------------------------------
     def test_completed_process(self):
@@ -204,7 +211,11 @@ class TestFbHandlingObject(FbToolsTestcase):
         stdout = "Message on STDOUT\n * Second line on STDOUT\n"
         stderr = "Message on STDERR\n"
 
-        proc = CompletedProcess(args, retval, stdout, stderr)
+        tdiff = datetime.timedelta(seconds=5)
+        start_dt = datetime.datetime.now(LOCALTZ) - tdiff
+        end_dt = datetime.datetime.now(LOCALTZ)
+
+        proc = CompletedProcess(args, retval, stdout, stderr, start_dt=start_dt, end_dt=end_dt)
         LOG.debug("Got a {} object.".format(proc.__class__.__name__))
         self.assertIsInstance(proc, CompletedProcess)
         LOG.debug("CompletedProcess %%r: {!r}".format(proc))

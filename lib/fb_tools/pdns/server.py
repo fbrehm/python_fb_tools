@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2018 by Frank Brehm, Berlin
+@copyright: © 2019 by Frank Brehm, Berlin
 @summary: The module for a PowerDNS server handler object.
 """
 from __future__ import absolute_import

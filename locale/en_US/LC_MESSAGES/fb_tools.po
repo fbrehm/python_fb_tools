@@ -1,13 +1,13 @@
 # English (United States) translations for fb_tools.
-# Copyright (C) 2018 Frank Brehm, Berlin
+# Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2018-12-27 17:35+0100\n"
+"POT-Creation-Date: 2019-01-01 22:43+0100\n"
 "PO-Revision-Date: 2018-12-12 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -28,98 +28,98 @@ msgstr ""
 msgid "Forced execution - whatever it means."
 msgstr ""
 
-#: lib/fb_tools/app.py:148
+#: lib/fb_tools/app.py:146
 msgid "Invalid env_prefix {!r} given - it may not be empty."
 msgstr ""
 
-#: lib/fb_tools/app.py:152
+#: lib/fb_tools/app.py:150
 msgid ""
 "Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
 "underscore (this not as the first character) are allowed."
 msgstr ""
 
-#: lib/fb_tools/app.py:163
+#: lib/fb_tools/app.py:161
 msgid "Unknown and undescriped application."
 msgstr ""
 
-#: lib/fb_tools/app.py:188
+#: lib/fb_tools/app.py:186
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr ""
 
-#: lib/fb_tools/app.py:455
+#: lib/fb_tools/app.py:441
 msgid "Exit on signal {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:480
+#: lib/fb_tools/app.py:466
 msgid "Enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:487
+#: lib/fb_tools/app.py:473
 msgid "Repeat enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:497
+#: lib/fb_tools/app.py:483
 msgid "{n} and repeated {n} did not match."
 msgstr ""
 
-#: lib/fb_tools/app.py:556
+#: lib/fb_tools/app.py:542
 msgid "The application is not completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:567
+#: lib/fb_tools/app.py:553
 msgid "Object {!r} seems not to be completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:577
+#: lib/fb_tools/app.py:563
 msgid "Ending."
 msgstr ""
 
-#: lib/fb_tools/app.py:596
+#: lib/fb_tools/app.py:582
 msgid "Executing {} ..."
 msgstr ""
 
-#: lib/fb_tools/app.py:618
+#: lib/fb_tools/app.py:604
 msgid "General options"
 msgstr ""
 
-#: lib/fb_tools/app.py:622
+#: lib/fb_tools/app.py:608
 msgid "Simulation mode, nothing is really done."
 msgstr ""
 
-#: lib/fb_tools/app.py:633
+#: lib/fb_tools/app.py:619
 msgid "Use colored output for messages."
 msgstr ""
 
-#: lib/fb_tools/app.py:640
+#: lib/fb_tools/app.py:626
 msgid "Increase the verbosity level"
 msgstr ""
 
-#: lib/fb_tools/app.py:645
+#: lib/fb_tools/app.py:631
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr ""
 
-#: lib/fb_tools/app.py:650
+#: lib/fb_tools/app.py:636
 msgid "Show this help message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:654
+#: lib/fb_tools/app.py:640
 msgid "Display brief usage message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:656
+#: lib/fb_tools/app.py:642
 #, python-format
 msgid "Version of %(prog)s: {}"
 msgstr ""
 
-#: lib/fb_tools/app.py:659
+#: lib/fb_tools/app.py:645
 msgid "Show program's version number and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:793
+#: lib/fb_tools/app.py:779
 msgid "Starting in:"
 msgstr ""
 
-#: lib/fb_tools/app.py:815
+#: lib/fb_tools/app.py:801
 msgid "Aborted by user interrupt."
 msgstr ""
 
@@ -376,83 +376,92 @@ msgstr ""
 msgid "NOT FOUND"
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:146
+#: lib/fb_tools/handler/__init__.py:153
 msgid "Invalid time zone name {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:157
+#: lib/fb_tools/handler/__init__.py:166
 msgid "{}-object not initialized."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:159
+#: lib/fb_tools/handler/__init__.py:168
 msgid "Method {} must be overridden in descendant classes."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:311 lib/fb_tools/handler/__init__.py:327
-msgid ""
-"Output on {where}:\n"
-"{what}."
+#: lib/fb_tools/handler/__init__.py:312
+msgid "Parameter {p!r} is not of type {t!r}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:62
+#: lib/fb_tools/handler/__init__.py:321 lib/fb_tools/handler/__init__.py:332
+msgid "Output on {}:"
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:64
 msgid "Timeout on communicating with process."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:87
+#: lib/fb_tools/handling_obj.py:89
 msgid "Command {c!r} returned non-zero exit status {rc}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:124
+#: lib/fb_tools/handling_obj.py:126
 msgid "Command {c!r} timed out after {s} second."
 msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/handling_obj.py:272
+#: lib/fb_tools/handling_obj.py:288
 msgid "Command {!r} doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:275
+#: lib/fb_tools/handling_obj.py:291
 msgid "Command {!r} is not executable."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:298
+#: lib/fb_tools/handling_obj.py:314
 msgid "Command {!r} not found."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:366
+#: lib/fb_tools/handling_obj.py:382
 msgid "STDIN and input arguments may not both be used."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:380
+#: lib/fb_tools/handling_obj.py:396
 msgid "Simulation mode, not executing: {}"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:489
+#: lib/fb_tools/handling_obj.py:509
 msgid "Nothing to do on signal."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:543 lib/fb_tools/handling_obj.py:631
+#: lib/fb_tools/handling_obj.py:563 lib/fb_tools/handling_obj.py:651
 msgid "File doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:546
+#: lib/fb_tools/handling_obj.py:566
 msgid "Read permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:549
+#: lib/fb_tools/handling_obj.py:569
 msgid "Reading file content of {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:636 lib/fb_tools/handling_obj.py:643
+#: lib/fb_tools/handling_obj.py:656 lib/fb_tools/handling_obj.py:663
 msgid "Write permission to {!r} denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:638 lib/fb_tools/handling_obj.py:645
+#: lib/fb_tools/handling_obj.py:658 lib/fb_tools/handling_obj.py:665
 msgid "Write permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:732
+#: lib/fb_tools/handling_obj.py:736 lib/fb_tools/handling_obj.py:742
+#: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
+#: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
+#: lib/fb_tools/vsphere/network.py:120 lib/fb_tools/vsphere/server.py:524
+msgid "Parameter {t!r} must be a {e}, {v!r} was given."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:803
 msgid "Completed process"
 msgstr ""
 
@@ -798,12 +807,6 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/__init__.py:103
 msgid "Invalid port number {!r} for the VSphere server, must be 0 < PORT <= 65536."
-msgstr ""
-
-#: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
-#: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
-#: lib/fb_tools/vsphere/network.py:120 lib/fb_tools/vsphere/server.py:524
-msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr ""
 
 #: lib/fb_tools/vsphere/ds_cluster.py:182

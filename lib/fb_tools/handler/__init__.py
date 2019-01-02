@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2018 by Frank Brehm, Berlin
+@copyright: © 2019 by Frank Brehm, Berlin
 @summary: A base handler module for underlaying actions
 """
 from __future__ import absolute_import, print_function
@@ -18,22 +18,27 @@ import pwd
 import locale
 import time
 import pipes
+import datetime
 from fcntl import fcntl, F_GETFL, F_SETFL
 
 # Third party modules
 import pytz
 import six
 
+import babel
+
+from babel.dates import LOCALTZ
+
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import to_bool
+from ..common import to_bool, encode_or_bust, to_unicode
 
 from ..errors import HandlerError
 
-from ..handling_obj import HandlingObject
+from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.2.1'
+__version__ = '1.4.4'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -57,13 +62,14 @@ class BaseHandler(HandlingObject):
         open_opts['encoding'] = 'utf-8'
         open_opts['errors'] = 'surrogateescape'
 
-    tz_name = 'Europe/Berlin'
-    tz = pytz.timezone(tz_name)
+    default_locale = babel.core.default_locale()
+    tz = LOCALTZ
+    tz_name = babel.dates.get_timezone_name(tz, width='long', locale=default_locale)
 
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, sudo=False,
-            terminal_has_colors=False, simulate=None, force=None, initialized=None):
+            quiet=False, terminal_has_colors=False, simulate=None, force=None, initialized=None):
 
         self._chown_cmd = CHOWN_CMD
         self._echo_cmd = ECHO_CMD
@@ -74,7 +80,7 @@ class BaseHandler(HandlingObject):
         super(BaseHandler, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             terminal_has_colors=terminal_has_colors, simulate=simulate, force=force,
-            initialized=False,
+            quiet=quiet, initialized=False,
         )
 
         self._chown_cmd = self.get_command('chown')
@@ -135,6 +141,7 @@ class BaseHandler(HandlingObject):
         res['echo_cmd'] = self.echo_cmd
         res['sudo_cmd'] = self.sudo_cmd
         res['sudo'] = self.sudo
+        res['default_locale'] = self.default_locale
 
         return res
 
@@ -147,7 +154,9 @@ class BaseHandler(HandlingObject):
         tz_name = tz_name.strip()
         LOG.debug("Setting time zone to {!r}.".format(tz_name))
         cls.tz = pytz.timezone(tz_name)
-        cls.tz_name = tz_name
+        cls.tz_name = babel.dates.get_timezone_name(
+            cls.tz, width='long', locale=cls.default_locale)
+        LOG.debug("Name of the time zone: {!r}.".format(cls.tz_name))
 
     # -------------------------------------------------------------------------
     def __call__(self, yaml_file):
@@ -258,6 +267,8 @@ class BaseHandler(HandlingObject):
                 cur_locale[1].upper() == 'POSIX':
             cur_encoding = 'UTF-8'
 
+        start_dt = datetime.datetime.now(self.tz)
+
         cmd_obj = subprocess.Popen(
             cmd_list,
             shell=use_shell,
@@ -268,7 +279,6 @@ class BaseHandler(HandlingObject):
             env={'USER': pwd_info.pw_name},
             **kwargs
         )
-        # cwd=self.base_dir,
 
         # Display Output of executable
         if hb_handler is not None:
@@ -289,49 +299,44 @@ class BaseHandler(HandlingObject):
 
         ret = cmd_obj.wait()
 
-        return self._eval_call_results(
-            ret, stderrdata, stdoutdata, cur_encoding=cur_encoding,
-            log_output=log_output, quiet=quiet)
+        end_dt = datetime.datetime.now(self.tz)
+        proc = CompletedProcess(
+            args=cmd_list, returncode=ret, encoding=cur_encoding,
+            stdout=stdoutdata, stderr=stderrdata, start_dt=start_dt, end_dt=end_dt)
+        return self._eval_call_results(proc, log_output=log_output, quiet=quiet)
 
     # -------------------------------------------------------------------------
-    def _eval_call_results(
-        self, ret, stderrdata, stdoutdata,
-            cur_encoding='utf-8', log_output=True, quiet=False):
+    def _eval_call_results(self, proc, log_output=True, quiet=False):
 
-        if not quiet:
-            LOG.debug("Returncode: {}".format(ret))
+        if not isinstance(proc, CompletedProcess):
+            msg = _("Parameter {p!r} is not of type {t!r}.").format(
+                p='proc', t='CompletedProcess')
+            raise TypeError(msg)
 
-        if stderrdata:
-            if six.PY3:
-                if self.verbose > 2:
-                    LOG.debug("Decoding {what} from {enc!r}.".format(
-                        what='STDERR', enc=cur_encoding))
-                stderrdata = stderrdata.decode(cur_encoding)
+        if self.verbose > 2:
+            LOG.debug("Got completed process:\n{}".format(proc))
+
+        if proc.stderr:
             if not quiet:
-                msg = _("Output on {where}:\n{what}.").format(
-                    where="STDERR", what=stderrdata.strip())
-                if ret:
+                msg = _("Output on {}:").format('proc.stderr')
+                msg += '\n' + proc.stderr
+                if proc.returncode:
                     LOG.warn(msg)
                 elif log_output:
                     LOG.info(msg)
                 else:
                     LOG.debug(msg)
 
-        if stdoutdata:
-            if six.PY3:
-                if self.verbose > 2:
-                    LOG.debug("Decoding {what} from {enc!r}.".format(
-                        what='STDOUT', enc=cur_encoding))
-                stdoutdata = stdoutdata.decode(cur_encoding)
+        if proc.stdout:
             if not quiet:
-                msg = _("Output on {where}:\n{what}.").format(
-                    where="STDOUT", what=stdoutdata.strip())
+                msg = _("Output on {}:").format('proc.stdout')
+                msg += '\n' + proc.stdout
                 if log_output:
                     LOG.info(msg)
                 else:
                     LOG.debug(msg)
 
-        return (ret, stdoutdata, stderrdata)
+        return proc
 
     # -------------------------------------------------------------------------
     def _wait_for_proc_with_heartbeat(

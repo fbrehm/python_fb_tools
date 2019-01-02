@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2018 by Frank Brehm, Berlin
+@copyright: © 2019 by Frank Brehm, Berlin
 @summary: The module for a base object with extended handling.
 """
 from __future__ import absolute_import
@@ -17,6 +17,8 @@ import pathlib
 import signal
 import errno
 import sys
+import locale
+import datetime
 
 from subprocess import Popen, PIPE
 if sys.version_info[0] >= 3:
@@ -44,7 +46,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.3.7'
+__version__ = '1.4.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -148,12 +150,14 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None,
+        self, appname=None, verbose=0, version=__version__, base_dir=None, quiet=False,
             terminal_has_colors=False, simulate=None, force=None, initialized=None):
 
         self._simulate = False
 
         self._force = False
+
+        self._quiet = quiet
 
         self._terminal_has_colors = bool(terminal_has_colors)
         """
@@ -201,6 +205,17 @@ class HandlingObject(FbBaseObject):
 
     # -----------------------------------------------------------
     @property
+    def quiet(self):
+        """Quiet execution of the application,
+            only warnings and errors are emitted."""
+        return self._quiet
+
+    @quiet.setter
+    def quiet(self, value):
+        self._quiet = bool(value)
+
+    # -----------------------------------------------------------
+    @property
     def interrupted(self):
         """Flag indicating, that the current process was interrupted."""
         return self._interrupted
@@ -229,6 +244,7 @@ class HandlingObject(FbBaseObject):
 
         res = super(HandlingObject, self).as_dict(short=short)
         res['force'] = self.force
+        res['quiet'] = self.quiet
         res['simulate'] = self.simulate
         res['interrupted'] = self.interrupted
         res['terminal_has_colors'] = self.terminal_has_colors
@@ -382,6 +398,7 @@ class HandlingObject(FbBaseObject):
 
         process = None
         try:
+            start_dt = datetime.datetime.now()
             process = Popen(*popenargs, **kwargs)
             if self.verbose > 0:
                 LOG.debug("PID of process: {}".format(process.pid))
@@ -413,10 +430,13 @@ class HandlingObject(FbBaseObject):
                     finally:
                         pass
 
+        end_dt = datetime.datetime.now()
         if six.PY3:
-            return CompletedProcess(process.args, retcode, stdout, stderr)
+            return CompletedProcess(
+                process.args, retcode, stdout, stderr, start_dt=start_dt, end_dt=end_dt)
         else:
-            return CompletedProcess(popenargs, retcode, stdout, stderr)
+            return CompletedProcess(
+                popenargs, retcode, stdout, stderr, start_dt=start_dt, end_dt=end_dt)
 
     # -------------------------------------------------------------------------
     def _communicate(self, process, popenargs, input=None, timeout=None):
@@ -696,14 +716,37 @@ class CompletedProcess(object):
     """
 
     # -------------------------------------------------------------------------
-    def __init__(self, args, returncode, stdout=None, stderr=None):
+    def __init__(
+            self, args, returncode, stdout=None, stderr=None, encoding=None,
+            start_dt=None, end_dt=None):
 
         self.args = args
         self.returncode = returncode
+        self.encoding = encoding
+        if encoding is None:
+            if locale.getpreferredencoding():
+                self.encoding = locale.getpreferredencoding()
+            else:
+                self.encoding = 'utf-8'
+
+        self._start_dt = None
+        self._end_dt = None
+        if start_dt is not None:
+            if not isinstance(start_dt, datetime.datetime):
+                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='start_dt', e='datetime.datetime', v=start_dt)
+                raise TypeError(msg)
+            self._start_dt = start_dt
+        if end_dt is not None:
+            if not isinstance(end_dt, datetime.datetime):
+                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='end_dt', e='datetime.datetime', v=end_dt)
+                raise TypeError(msg)
+            self._end_dt = end_dt
 
         self.stdout = stdout
         if stdout is not None:
-            stdout = to_str(stdout)
+            stdout = to_str(stdout, self.encoding)
             if stdout.strip() == '':
                 self.stdout = None
             else:
@@ -711,16 +754,44 @@ class CompletedProcess(object):
 
         self.stderr = stderr
         if stderr is not None:
-            stderr = to_str(stderr)
+            stderr = to_str(stderr, self.encoding)
             if stderr.strip() == '':
                 self.stderr = None
             else:
                 self.stderr = stderr
 
     # -------------------------------------------------------------------------
+    @property
+    def start_dt(self):
+        "The timestamp of starting the process."
+        return self._start_dt
+
+    # -------------------------------------------------------------------------
+    @property
+    def end_dt(self):
+        "The timestamp of ending the process."
+        return self._end_dt
+
+    # -------------------------------------------------------------------------
+    @property
+    def duration(self):
+        "The duration of executing the process."
+        if self.start_dt is None:
+            return None
+        if self.end_dt is None:
+            return None
+        return self.end_dt - self.start_dt
+
+    # -------------------------------------------------------------------------
     def __repr__(self):
         args = ['args={!r}'.format(self.args),
                 'returncode={!r}'.format(self.returncode)]
+        if self.start_dt is not None:
+            args.append('start_dt={!r}'.format(self.start_dt))
+        if self.end_dt is not None:
+            args.append('end_dt={!r}'.format(self.end_dt))
+        if self.stdout is not None or self.stderr is not None:
+            args.append('encoding={!r}'.format(self.encoding))
         if self.stdout is not None:
             args.append('stdout={!r}'.format(self.stdout))
         if self.stderr is not None:
@@ -732,6 +803,14 @@ class CompletedProcess(object):
         out = _('Completed process') + ':\n'
         out += '  args:       {!r}\n'.format(self.args)
         out += '  returncode: {}\n'.format(self.returncode)
+        if self.start_dt is not None:
+            out += '  started:    {}\n'.format(self.start_dt.isoformat(' '))
+        if self.end_dt is not None:
+            out += '  ended:      {}\n'.format(self.end_dt.isoformat(' '))
+        if self.duration is not None:
+            out += '  duration:   {}\n'.format(self.duration)
+        if self.stdout is not None or self.stderr is not None:
+            out += '  encoding:   {!r}\n'.format(self.encoding)
         iind = '     '
         ind = '              '
         if self.stdout is not None:
