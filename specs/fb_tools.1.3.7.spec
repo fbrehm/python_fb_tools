@@ -10,7 +10,7 @@
 
 Name:		python-fb-tools
 Version:	%{version}
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Python modules for common used objects, error classes and functions
 
 Group:		Development/Languages/Python
@@ -39,7 +39,7 @@ Requires:	python-libs
 Requires:	python-babel
 Requires:	python-pathlib
 Requires:	python-ipaddress
-
+BuildArch:      noarch
 
 %description
 Python modules for common used objects, error classes and functions.
@@ -100,6 +100,8 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %{python3_sitelib}/*
 
 %changelog
+*   Wed Jan 02 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.7-2
+-   Correcting build architecture
 *   Wed Jan 02 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.7-1
 -   Version bump to 1.3.7
 *   Wed Jan 02 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.6-1
