@@ -1,4 +1,4 @@
-fb-tools (1.3.8) UNRELEASED; urgency=medium
+fb-tools (1.3.8) all; urgency=medium
 
   * Minor changes of function caller_search_path() in
     lib/fb_tools/common.py
