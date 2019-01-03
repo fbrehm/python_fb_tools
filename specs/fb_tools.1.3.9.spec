@@ -4,7 +4,7 @@
 # For consistency and completeness
 %global python2_pkgversion 2
 
-%define version 1.3.8
+%define version 1.3.9
 %define builddir2 python_fb_tools-%{version}
 %define builddir3 python%{python3_pkgversion}_fb_tools-%{version}
 
@@ -100,6 +100,8 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %{python3_sitelib}/*
 
 %changelog
+*   Thu Jan 03 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.9-1
+-   Version bump to 1.3.9
 *   Thu Jan 03 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.8-1
 -   Version bump to 1.3.8
 *   Wed Jan 02 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.7-2

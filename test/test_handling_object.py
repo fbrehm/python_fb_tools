@@ -14,6 +14,8 @@ import logging
 import tempfile
 import datetime
 
+from pathlib import Path
+
 try:
     import unittest2 as unittest
 except ImportError:
@@ -405,6 +407,84 @@ class TestFbHandlingObject(FbToolsTestcase):
         LOG.debug("Writing text with unicode characters in an WINDOWS-1252 encoded file.")
         hdlr.write_file(self.test_file, text_uni, encoding='WINDOWS-1252')
 
+    # -------------------------------------------------------------------------
+    def test_get_command(self):
+
+        LOG.info("Testing method get_command() of class HandlingObject.")
+
+        from fb_tools.handling_obj import HandlingObject
+
+        hdlr = HandlingObject(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+
+        cmd = 'ls'
+        LOG.debug("Searching command {!r}.".format(cmd))
+        p = hdlr.get_command(cmd)
+        LOG.debug("Got back: {!r}".format(p))
+        self.assertIsInstance(p, Path)
+        self.assertEqual(p.name, cmd)
+
+        cmd = 'uhu-banane'
+        LOG.debug("Searching non existing command {!r}.".format(cmd))
+        p = hdlr.get_command(cmd)
+        LOG.debug("Got back: {!r}".format(p))
+        self.assertIsNone(p)
+
+        cmd = 'call_sleep.sh'
+        symlink = 'do_sleep'
+
+        LOG.debug("Searching command {!r}, which is not in path.".format(cmd))
+        p = hdlr.get_command(cmd)
+        LOG.debug("Got back: {!r}".format(p))
+        self.assertIsNone(p)
+
+        cur_dir = Path(__file__).parent.resolve()
+
+        cmd_abs = str(cur_dir / cmd)
+        LOG.debug("Searching absolute command {!r}.".format(cmd_abs))
+        p = hdlr.get_command(cmd_abs)
+        LOG.debug("Got back: {!r}".format(p))
+        self.assertIsInstance(p, Path)
+        self.assertEqual(p.name, cmd)
+
+        cmd_abs = str(cur_dir / symlink)
+        LOG.debug("Searching absolute symlink command {!r}.".format(cmd_abs))
+        p = hdlr.get_command(cmd_abs)
+        LOG.debug("Got back: {!r}".format(p))
+        self.assertIsInstance(p, Path)
+        self.assertEqual(p.name, symlink)
+
+        LOG.debug("Searching absolute symlink command {!r}, resolved.".format(cmd_abs))
+        p = hdlr.get_command(cmd_abs, resolve=True)
+        LOG.debug("Got back: {!r}".format(p))
+        self.assertIsInstance(p, Path)
+        self.assertEqual(p.name, cmd)
+
+        LOG.debug("Adding {!r} to search paths.".format(cur_dir))
+        hdlr.add_search_paths.append(cur_dir)
+
+        LOG.debug("Searching command {!r}, which is now in path.".format(cmd))
+        p = hdlr.get_command(cmd)
+        LOG.debug("Got back: {!r}".format(p))
+        self.assertIsInstance(p, Path)
+        self.assertEqual(p.name, cmd)
+
+        LOG.debug("Searching symlinked command {!r}.".format(symlink))
+        p = hdlr.get_command(symlink)
+        LOG.debug("Got back: {!r}".format(p))
+        self.assertIsInstance(p, Path)
+        self.assertEqual(p.name, symlink)
+
+        LOG.debug((
+            "Searching symlinked command {!r}, which points to {!r} "
+            "with resolved path.").format(symlink, cmd))
+        p = hdlr.get_command(symlink, resolve=True)
+        LOG.debug("Got back: {!r}".format(p))
+        self.assertIsInstance(p, Path)
+        self.assertEqual(p.name, cmd)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -427,6 +507,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbHandlingObject('test_run_timeout', verbose))
     suite.addTest(TestFbHandlingObject('test_read_file', verbose))
     suite.addTest(TestFbHandlingObject('test_write_file', verbose))
+    suite.addTest(TestFbHandlingObject('test_get_command', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
