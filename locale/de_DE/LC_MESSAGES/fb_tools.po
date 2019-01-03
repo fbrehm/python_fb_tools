@@ -1,13 +1,13 @@
 # German (Germany) translations for fb_tools.
 # Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank@brehm-online.com>, 2019
+# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.3.5\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-01-01 22:43+0100\n"
+"POT-Creation-Date: 2019-01-03 15:10+0100\n"
 "PO-Revision-Date: 2019-01-01 19:38+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -127,19 +127,19 @@ msgstr "Start in:"
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
 
-#: lib/fb_tools/common.py:478
+#: lib/fb_tools/common.py:484
 msgid "Given value is {!r}."
 msgstr "Der übergebene Wert ist {!r}."
 
-#: lib/fb_tools/common.py:517
+#: lib/fb_tools/common.py:523
 msgid "Could not determine bytes in {!r}."
 msgstr "Konnte die Bytes nicht in {!r} ermitteln."
 
-#: lib/fb_tools/common.py:602
+#: lib/fb_tools/common.py:608
 msgid "Couldn't detect unit {!r}."
 msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
 
-#: lib/fb_tools/common.py:704
+#: lib/fb_tools/common.py:710
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
 
@@ -429,58 +429,58 @@ msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] "Das Kommando {c!r} timte nach einer Sekunde aus."
 msgstr[1] "Das Kommando {c!r} timte nach {s} Sekunden aus."
 
-#: lib/fb_tools/handling_obj.py:288
+#: lib/fb_tools/handling_obj.py:290
 msgid "Command {!r} doesn't exists."
 msgstr "Das Kommando {!r} existiert nicht."
 
-#: lib/fb_tools/handling_obj.py:291
+#: lib/fb_tools/handling_obj.py:293
 msgid "Command {!r} is not executable."
 msgstr "Das Kommando {!r} ist nicht ausführbar."
 
-#: lib/fb_tools/handling_obj.py:314
+#: lib/fb_tools/handling_obj.py:322
 msgid "Command {!r} not found."
 msgstr "Das Kommando {!r} wurde nicht gefunden."
 
-#: lib/fb_tools/handling_obj.py:382
+#: lib/fb_tools/handling_obj.py:390
 msgid "STDIN and input arguments may not both be used."
 msgstr "STDIN und Eingabe-Argumente dürfen nicht zusammen verwendet werden."
 
-#: lib/fb_tools/handling_obj.py:396
+#: lib/fb_tools/handling_obj.py:404
 msgid "Simulation mode, not executing: {}"
 msgstr "Simulations-Modus, führe nicht aus: {}"
 
-#: lib/fb_tools/handling_obj.py:509
+#: lib/fb_tools/handling_obj.py:517
 msgid "Nothing to do on signal."
 msgstr "Aud das Signal gibt es nichts zu tun."
 
-#: lib/fb_tools/handling_obj.py:563 lib/fb_tools/handling_obj.py:651
+#: lib/fb_tools/handling_obj.py:571 lib/fb_tools/handling_obj.py:659
 msgid "File doesn't exists."
 msgstr "Die Datei existiert nicht."
 
-#: lib/fb_tools/handling_obj.py:566
+#: lib/fb_tools/handling_obj.py:574
 msgid "Read permission denied."
 msgstr "Lesezugriff verboten."
 
-#: lib/fb_tools/handling_obj.py:569
+#: lib/fb_tools/handling_obj.py:577
 msgid "Reading file content of {!r} ..."
 msgstr "Lese Inhalt der Datei {!r} ..."
 
-#: lib/fb_tools/handling_obj.py:656 lib/fb_tools/handling_obj.py:663
+#: lib/fb_tools/handling_obj.py:664 lib/fb_tools/handling_obj.py:671
 msgid "Write permission to {!r} denied."
 msgstr "Schreibzugriff auf {!r} verboten."
 
-#: lib/fb_tools/handling_obj.py:658 lib/fb_tools/handling_obj.py:665
+#: lib/fb_tools/handling_obj.py:666 lib/fb_tools/handling_obj.py:673
 msgid "Write permission denied."
 msgstr "Schreibzugriff verboten."
 
-#: lib/fb_tools/handling_obj.py:736 lib/fb_tools/handling_obj.py:742
+#: lib/fb_tools/handling_obj.py:744 lib/fb_tools/handling_obj.py:750
 #: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
 #: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
 #: lib/fb_tools/vsphere/network.py:120 lib/fb_tools/vsphere/server.py:524
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr "Der Parameter {t!r} muss ein {e} ein, statt dessen wurde {v!r} übergeben."
 
-#: lib/fb_tools/handling_obj.py:803
+#: lib/fb_tools/handling_obj.py:811
 msgid "Completed process"
 msgstr "Fertiggestellter Prozess"
 
