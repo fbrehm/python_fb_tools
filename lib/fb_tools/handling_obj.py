@@ -19,6 +19,7 @@ import errno
 import sys
 import locale
 import datetime
+import copy
 
 from subprocess import Popen, PIPE
 if sys.version_info[0] >= 3:
@@ -36,7 +37,7 @@ import six
 
 # Own modules
 from .common import pp, to_bool, caller_search_path, to_str, encode_or_bust
-from .common import indent
+from .common import indent, is_sequence
 
 from .xlate import XLATOR
 
@@ -46,7 +47,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.4.4'
+__version__ = '1.5.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -158,6 +159,8 @@ class HandlingObject(FbBaseObject):
         self._force = False
 
         self._quiet = quiet
+
+        self.add_search_paths = []
 
         self._terminal_has_colors = bool(terminal_has_colors)
         """
@@ -295,11 +298,14 @@ class HandlingObject(FbBaseObject):
                 return None
             if resolve:
                 return cmd.resolve()
-            else:
-                return cmd
+            return cmd
+
+        additional_paths = []
+        if self.add_search_paths and is_sequence(self.add_search_paths):
+            additional_paths = copy.copy(self.add_search_paths)
 
         # Checking a relative path
-        for d in caller_search_path():
+        for d in caller_search_path(*additional_paths):
             if self.verbose > 3:
                 LOG.debug("Searching command in {!r} ...".format(str(d)))
             p = d / cmd
@@ -309,8 +315,7 @@ class HandlingObject(FbBaseObject):
                 if os.access(str(p), os.X_OK):
                     if resolve:
                         return p.resolve()
-                    else:
-                        return
+                    return p
                 else:
                     LOG.debug("Command {!r} is not executable.".format(str(p)))
 
