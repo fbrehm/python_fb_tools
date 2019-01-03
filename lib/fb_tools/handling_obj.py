@@ -46,7 +46,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.4.3'
+__version__ = '1.4.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -258,7 +258,7 @@ class HandlingObject(FbBaseObject):
         return self.get_command(cmd, quiet=quiet)
 
     # -------------------------------------------------------------------------
-    def get_command(self, cmd, quiet=False):
+    def get_command(self, cmd, quiet=False, resolve=False):
         """
         Searches the OS search path for the given command and gives back the
         normalized position of this command.
@@ -267,9 +267,11 @@ class HandlingObject(FbBaseObject):
 
         @param cmd: the command to search
         @type cmd: str
-        @param quiet: No warning message, if the command could not be found,
-                      only a debug message
+        @param quiet: No warning message, if the command could not be found, only a debug message
         @type quiet: bool
+        @param resolve: Resolving the path to the executable by resolving any symlinks.
+                        Search paths are always resolved.
+        @type resolve: bool
 
         @return: normalized complete path of this command, or None,
                  if not found
@@ -280,7 +282,7 @@ class HandlingObject(FbBaseObject):
         cmd = pathlib.Path(cmd)
 
         if self.verbose > 2:
-            LOG.debug("Searching for command {!r} ...".format(cmd))
+            LOG.debug("Searching for command {!r} ...".format(str(cmd)))
 
         # Checking an absolute path
         if cmd.is_absolute():
@@ -291,25 +293,31 @@ class HandlingObject(FbBaseObject):
                 msg = _("Command {!r} is not executable.").format(str(cmd))
                 LOG.warn(msg)
                 return None
-            return cmd.resolve()
+            if resolve:
+                return cmd.resolve()
+            else:
+                return cmd
 
         # Checking a relative path
         for d in caller_search_path():
             if self.verbose > 3:
-                LOG.debug("Searching command in {!r} ...".format(d))
-            p = d.joinpath(cmd)
+                LOG.debug("Searching command in {!r} ...".format(str(d)))
+            p = d / cmd
             if p.exists():
                 if self.verbose > 2:
-                    LOG.debug("Found {!r} ...".format(p))
+                    LOG.debug("Found {!r} ...".format(str(p)))
                 if os.access(str(p), os.X_OK):
-                    return p.resolve()
+                    if resolve:
+                        return p.resolve()
+                    else:
+                        return
                 else:
-                    LOG.debug("Command {!r} is not executable.".format(p))
+                    LOG.debug("Command {!r} is not executable.".format(str(p)))
 
         # command not found, sorry
         if quiet:
             if self.verbose > 2:
-                LOG.debug("Command {!r} not found.".format(cmd))
+                LOG.debug("Command {!r} not found.".format(str(cmd)))
         else:
             LOG.warn(_("Command {!r} not found.").format(str(cmd)))
 

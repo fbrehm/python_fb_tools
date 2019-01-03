@@ -234,28 +234,12 @@ def create_mo_files():
 
 
 # -----------------------------------
-class InstallWithCompile(install, object):
-    def run(self):
-        from babel.messages.frontend import compile_catalog
-        compiler = compile_catalog(self.distribution)
-        option_dict = self.distribution.get_option_dict('compile_catalog')
-        compiler.domain = [option_dict['domain'][1]]
-        compiler.directory = option_dict['directory'][1]
-        compiler.statistics = bool(option_dict['statistics'][1])
-        compiler.run()
-        super(InstallWithCompile, self).run()
-
-
-# -----------------------------------
 setup(
     version=__packet_version__,
     long_description=read('README.md'),
     scripts=__scripts__,
     requires=__requirements__,
     package_dir={'': 'lib'},
-#    cmdclass={
-#        'install': InstallWithCompile,
-#    },
     package_data = {
         '': create_mo_files(),
     },
