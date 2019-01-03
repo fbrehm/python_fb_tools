@@ -1,3 +1,12 @@
+fb-tools (1.3.9) all; urgency=medium
+
+  * Fixing method HandlingObject.get_command(), adding property
+    add_search_paths to class HandlingObject
+  * Adding test method test_get_command() to
+    test/test_handling_object.py
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 03 Jan 2019 17:04:46 +0100
+
 fb-tools (1.3.8) all; urgency=medium
 
   * Minor changes of function caller_search_path() in
