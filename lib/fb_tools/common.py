@@ -29,7 +29,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '1.4.2'
+__version__ = '1.4.3'
 
 _ = XLATOR.gettext
 
@@ -324,10 +324,14 @@ def caller_search_path(*additional_paths):
     ]
 
     for d in additional_paths:
-        search_path_list.append(pathlib.Path(d))
+        p = pathlib.Path(d)
+        if p not in search_path_list:
+            search_path_list.append(p)
 
     for d in search_path.split(os.pathsep):
-        search_path_list.append(pathlib.Path(d))
+        p = pathlib.Path(d)
+        if p not in search_path_list:
+            search_path_list.append(p)
 
     default_path = [
         '/bin',
@@ -344,7 +348,9 @@ def caller_search_path(*additional_paths):
     ]
 
     for d in default_path:
-        search_path_list.append(pathlib.Path(d))
+        p = pathlib.Path(d)
+        if p not in search_path_list:
+            search_path_list.append(p)
 
     for d in search_path_list:
         if not d.exists():

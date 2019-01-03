@@ -1,3 +1,11 @@
+fb-tools (1.3.8) all; urgency=medium
+
+  * Minor changes of function caller_search_path() in
+    lib/fb_tools/common.py
+  * Extending method HandlingObject.get_command() by parameter 'resolve'
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 03 Jan 2019 15:08:26 +0100
+
 fb-tools (1.3.7) all; urgency=medium
 
   * Fixing setup.py.

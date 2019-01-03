@@ -24,6 +24,8 @@ pybabel extract bin/* lib \
     --project="${locale_domain}" \
     --version="${pkg_version}"
 
+sed -i -e "s/FIRST AUTHOR/Frank Brehm/g" -e "s/<EMAIL@ADDRESS>/<${my_address}>/g" "${pot_file}"
+
 for lang in de_DE en_US ; do
     if [[ ! -f "${locale_dir}/${lang}/LC_MESSAGES/${locale_domain}.po" ]] ; then
         pybabel init --domain "${locale_domain}" \
