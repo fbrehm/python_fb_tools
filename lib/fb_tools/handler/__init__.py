@@ -32,13 +32,13 @@ from babel.dates import LOCALTZ
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import to_bool, encode_or_bust, to_unicode
+from ..common import to_bool
 
 from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.4.4'
+__version__ = '1.4.5'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
