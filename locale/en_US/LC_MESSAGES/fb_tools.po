@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.2.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-01-03 15:10+0100\n"
+"POT-Creation-Date: 2019-01-08 18:01+0100\n"
 "PO-Revision-Date: 2018-12-12 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.4.0\n"
 
 #: bin/get-file-to-remove:79
 msgid ""
@@ -396,72 +396,170 @@ msgstr ""
 msgid "Output on {}:"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:64
+#: lib/fb_tools/handler/lock.py:91
+msgid "Locking directory {!r} doesn't exists or is not a directory."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:118 lib/fb_tools/handler/lock.py:781
+msgid "Locking directory {!r} isn't writeable."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:178
+msgid "No lockfile given on init of a LockObject object."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:181
+msgid "Lockfile {!r} doesn't exists."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:184
+msgid "Lockfile {!r} is not a regular file."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:341
+msgid "Automatic removing of {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:366
+msgid "Refreshing atime and mtime of {!r} to the current timestamp."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:502 lib/fb_tools/handler/lock.py:524 lib/fb_tools/handler/lock.py:546
+#: lib/fb_tools/handler/lock.py:569 lib/fb_tools/handler/lock.py:668 lib/fb_tools/handler/lock.py:1015
+msgid "Value {val!r} for {what} is not a Number."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:507 lib/fb_tools/handler/lock.py:529 lib/fb_tools/handler/lock.py:551
+#: lib/fb_tools/handler/lock.py:574 lib/fb_tools/handler/lock.py:673 lib/fb_tools/handler/lock.py:1019
+msgid "The value for {what} must be greater than zero (is {val!r})."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:678
+msgid "The value for {what} must be greater than or equal to zero (is {val!r})."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:764
+msgid "Invalid PID {} given on calling create_lockfile()."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:839 lib/fb_tools/handler/lock.py:962
+msgid "Removing lockfile {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:844 lib/fb_tools/handler/lock.py:970
+msgid "Error on removing lockfile {lfile!r}: {err}"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:872
+msgid "Got a lock for lockfile {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:929
+msgid "Error on creating lockfile {lfile!r}: {err}"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1031
+msgid "No read access for lockfile {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1035
+msgid "No write access for lockfile {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1041
+msgid "Unusable lockfile {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1044
+msgid "Process with PID {} is unfortunately dead."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1055
+msgid "Could not stat for file {lfile!r}: {err}"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1093
+msgid "Could not open pidfile {!r} for reading:"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1106
+msgid "First line of pidfile {!r} was empty."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1117
+msgid "Could not interprete {cont!r} as a PID from {file!r}: {err}"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1126
+msgid "Invalid PID {pid} in {file!r} found."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:65
 msgid "Timeout on communicating with process."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:89
+#: lib/fb_tools/handling_obj.py:90
 msgid "Command {c!r} returned non-zero exit status {rc}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:126
+#: lib/fb_tools/handling_obj.py:127
 msgid "Command {c!r} timed out after {s} second."
 msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/handling_obj.py:290
+#: lib/fb_tools/handling_obj.py:293
 msgid "Command {!r} doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:293
+#: lib/fb_tools/handling_obj.py:296
 msgid "Command {!r} is not executable."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:322
+#: lib/fb_tools/handling_obj.py:327
 msgid "Command {!r} not found."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:390
+#: lib/fb_tools/handling_obj.py:395
 msgid "STDIN and input arguments may not both be used."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:404
+#: lib/fb_tools/handling_obj.py:409
 msgid "Simulation mode, not executing: {}"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:517
+#: lib/fb_tools/handling_obj.py:522
 msgid "Nothing to do on signal."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:571 lib/fb_tools/handling_obj.py:659
+#: lib/fb_tools/handling_obj.py:576 lib/fb_tools/handling_obj.py:664
 msgid "File doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:574
+#: lib/fb_tools/handling_obj.py:579
 msgid "Read permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:577
+#: lib/fb_tools/handling_obj.py:582
 msgid "Reading file content of {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:664 lib/fb_tools/handling_obj.py:671
+#: lib/fb_tools/handling_obj.py:669 lib/fb_tools/handling_obj.py:676
 msgid "Write permission to {!r} denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:666 lib/fb_tools/handling_obj.py:673
+#: lib/fb_tools/handling_obj.py:671 lib/fb_tools/handling_obj.py:678
 msgid "Write permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:744 lib/fb_tools/handling_obj.py:750
+#: lib/fb_tools/handling_obj.py:749 lib/fb_tools/handling_obj.py:755
 #: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
 #: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
 #: lib/fb_tools/vsphere/network.py:120 lib/fb_tools/vsphere/server.py:524
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:811
+#: lib/fb_tools/handling_obj.py:816
 msgid "Completed process"
 msgstr ""
 

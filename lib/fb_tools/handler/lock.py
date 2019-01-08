@@ -31,7 +31,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.5.1'
+__version__ = '0.6.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -88,7 +88,8 @@ class LockdirNotExistsError(LockHandlerError):
     def __str__(self):
         """Typecasting into a string for error output."""
 
-        return "Locking directory {!r} doesn't exists or is not a directory.".format(self.lockdir)
+        return _("Locking directory {!r} doesn't exists or is not a directory.").format(
+            self.lockdir)
 
 
 # =============================================================================
@@ -114,7 +115,7 @@ class LockdirNotWriteableError(LockHandlerError):
     def __str__(self):
         """Typecasting into a string for error output."""
 
-        return "Locking directory {!r} isn't writeable.".format(self.lockdir)
+        return _("Locking directory {!r} isn't writeable.").format(self.lockdir)
 
 
 # =============================================================================
@@ -174,13 +175,13 @@ class LockObject(FbBaseObject):
         )
 
         if not lockfile:
-            raise LockObjectError("No lockfile given on init of a LockObject object.")
+            raise LockObjectError(_("No lockfile given on init of a LockObject object."))
 
         if not os.path.exists(lockfile):
-            raise LockObjectError("Lockfile {!r} doesn't exists.".format(lockfile))
+            raise LockObjectError(_("Lockfile {!r} doesn't exists.").format(lockfile))
 
         if not os.path.isfile(lockfile):
-            raise LockObjectError("Lockfile {!r} is not a regular file.".format(lockfile))
+            raise LockObjectError(_("Lockfile {!r} is not a regular file.").format(lockfile))
 
         if fd is not None:
             self._fd = fd
@@ -337,7 +338,7 @@ class LockObject(FbBaseObject):
 
         if self.autoremove and self.exists:
 
-            msg = "Automatic removing of {!r} ...".format(self.lockfile)
+            msg = _("Automatic removing of {!r} ...").format(self.lockfile)
             if self.silent:
                 if self.verbose >= 2:
                     LOG.debug(msg)
@@ -362,7 +363,8 @@ class LockObject(FbBaseObject):
         Refreshes the atime and mtime of the lockfile to the current time.
         """
 
-        msg = "Refreshing atime and mtime of {!r} to the current timestamp.".format(self.lockfile)
+        msg = _("Refreshing atime and mtime of {!r} to the current timestamp.").format(
+            self.lockfile)
         LOG.debug(msg)
 
         if not self.simulate:
@@ -497,12 +499,12 @@ class LockHandler(BaseHandler):
     @lockretry_delay_start.setter
     def lockretry_delay_start(self, value):
         if not isinstance(value, Number):
-            msg = "Value {val!r} for {what} is not a Number.".format(
+            msg = _("Value {val!r} for {what} is not a Number.").format(
                 val=value, what='lockretry_delay_start')
             raise LockHandlerError(msg)
 
         if value <= 0:
-            msg = "The value for {what} must be greater than zero (is {val!r}).".format(
+            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
                 val=value, what='lockretry_delay_start')
             raise LockHandlerError(msg)
 
@@ -519,12 +521,12 @@ class LockHandler(BaseHandler):
     @lockretry_delay_increase.setter
     def lockretry_delay_increase(self, value):
         if not isinstance(value, Number):
-            msg = "Value {val!r} for {what} is not a Number.".format(
+            msg = _("Value {val!r} for {what} is not a Number.").format(
                 val=value, what='lockretry_delay_increase')
             raise LockHandlerError(msg)
 
         if value < 0:
-            msg = "The value for {what} must be greater than zero (is {val!r}).".format(
+            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
                 val=value, what='lockretry_delay_increase')
             raise LockHandlerError(msg)
 
@@ -541,12 +543,12 @@ class LockHandler(BaseHandler):
     @lockretry_max_delay.setter
     def lockretry_max_delay(self, value):
         if not isinstance(value, Number):
-            msg = "Value {val!r} for {what} is not a Number.".format(
+            msg = _("Value {val!r} for {what} is not a Number.").format(
                 val=value, what='lockretry_max_delay')
             raise LockHandlerError(msg)
 
         if value <= 0:
-            msg = "The value for {what} must be greater than zero (is {val!r}).".format(
+            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
                 val=value, what='lockretry_max_delay')
             raise LockHandlerError(msg)
 
@@ -564,12 +566,12 @@ class LockHandler(BaseHandler):
     @max_lockfile_age.setter
     def max_lockfile_age(self, value):
         if not isinstance(value, Number):
-            msg = "Value {val!r} for {what} is not a Number.".format(
+            msg = _("Value {val!r} for {what} is not a Number.").format(
                 val=value, what='max_lockfile_age')
             raise LockHandlerError(msg)
 
         if value <= 0:
-            msg = "The value for {what} must be greater than zero (is {val!r}).".format(
+            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
                 val=value, what='max_lockfile_age')
             raise LockHandlerError(msg)
 
@@ -663,17 +665,17 @@ class LockHandler(BaseHandler):
             return default
 
         if not isinstance(value, Number):
-            msg = "Value {val!r} for {what} is not a Number.".format(
+            msg = _("Value {val!r} for {what} is not a Number.").format(
                 val=value, what=what)
             raise LockHandlerError(msg)
 
         if must_gt_zero and value <= 0:
-            msg = "The value for {what} must be greater than zero (is {val!r}).".format(
+            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
                 val=value, what=what)
             raise LockHandlerError(msg)
 
         if must_ge_zero and value < 0:
-            msg = (
+            msg = _(
                 "The value for {what} must be greater than "
                 "or equal to zero (is {val!r}).").format(
                 val=value, what=what)
@@ -759,7 +761,7 @@ class LockHandler(BaseHandler):
         else:
             pid = int(pid)
             if pid <= 0:
-                msg = "Invalid PID {} given on calling create_lockfile().".format(pid)
+                msg = _("Invalid PID {} given on calling create_lockfile().").format(pid)
                 raise LockHandlerError(msg)
 
         if os.path.isabs(lockfile):
@@ -776,7 +778,7 @@ class LockHandler(BaseHandler):
             raise LockdirNotExistsError(lockdir)
 
         if not os.access(lockdir, os.W_OK):
-            msg = "Locking directory {!r} isn't writeable.".format(lockdir)
+            msg = _("Locking directory {!r} isn't writeable.").format(lockdir)
             if self.simulate:
                 LOG.error(msg)
             else:
@@ -834,12 +836,12 @@ class LockHandler(BaseHandler):
                 if not self.check_lockfile(lockfile, max_age, use_pid):
                     # No other process is using this lockfile
                     if os.path.exists(lockfile):
-                        LOG.info("Removing lockfile {!r} ...".format(lockfile))
+                        LOG.info(_("Removing lockfile {!r} ...").format(lockfile))
                     try:
                         if not self.simulate:
                             os.remove(lockfile)
                     except Exception as e:
-                        msg = "Error on removing lockfile {lfile!r): {err}".format(
+                        msg = _("Error on removing lockfile {lfile!r}: {err}").format(
                             lfile=lockfile, err=e)
                         LOG.error(msg)
                         time.sleep(delay)
@@ -867,7 +869,7 @@ class LockHandler(BaseHandler):
                 return None
 
             # or an int for success
-            msg = "Got a lock for lockfile {!r}.".format(lockfile)
+            msg = _("Got a lock for lockfile {!r}.").format(lockfile)
             if self.silent:
                 LOG.debug(msg)
             else:
@@ -924,7 +926,7 @@ class LockHandler(BaseHandler):
             fd = os.open(lockfile, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError as e:
-            msg = "Error on creating lockfile {lfile!r}: {err}".format(
+            msg = _("Error on creating lockfile {lfile!r}: {err}").format(
                 lfile=lockfile, err=e)
             if e.errno == errno.EEXIST:
                 LOG.debug(msg)
@@ -957,7 +959,7 @@ class LockHandler(BaseHandler):
             LOG.debug("Lockfile {!r} to remove doesn't exists.".format(lockfile))
             return True
 
-        LOG.info("Removing lockfile {!r} ...".format(lockfile))
+        LOG.info(_("Removing lockfile {!r} ...").format(lockfile))
         if self.simulate:
             LOG.debug("Simulation mode - lockfile won't removed.")
             return True
@@ -965,7 +967,8 @@ class LockHandler(BaseHandler):
         try:
             os.remove(lockfile)
         except Exception as e:
-            LOG.error("Error on removing lockfile {lfile!r}: {err}".format(lfile=lockfile, err=e))
+            LOG.error(_("Error on removing lockfile {lfile!r}: {err}").format(
+                lfile=lockfile, err=e))
             if self.verbose:
                 tb = traceback.format_exc()
                 LOG.debug("Stacktrace:\n" + tb)
@@ -1009,11 +1012,11 @@ class LockHandler(BaseHandler):
             max_age = self.max_lockfile_age
         else:
             if not isinstance(max_age, Number):
-                msg = "Value {val!r} for {what} is not a Number.".format(
+                msg = _("Value {val!r} for {what} is not a Number.").format(
                     val=max_age, what='max_age')
                 raise LockHandlerError(msg)
             if max_age <= 0:
-                msg = "The value for {what} must be greater than zero (is {val!r}).".format(
+                msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
                     val=max_age, what='max_age')
                 raise LockHandlerError(msg)
 
@@ -1025,20 +1028,20 @@ class LockHandler(BaseHandler):
             return False
 
         if not os.access(lockfile, os.R_OK):
-            LOG.warn("No read access for lockfile {!r}.".format(lockfile))
+            LOG.warn(_("No read access for lockfile {!r}.").format(lockfile))
             return True
 
         if not os.access(lockfile, os.W_OK):
-            LOG.warn("No write access for lockfile {!r}.".format(lockfile))
+            LOG.warn(_("No write access for lockfile {!r}.").format(lockfile))
             return True
 
         if use_pid:
             pid = self.get_pid_from_file(lockfile, True)
             if pid is None:
-                LOG.warn("Unusable lockfile {!r}.".format(lockfile))
+                LOG.warn(_("Unusable lockfile {!r}.").format(lockfile))
             else:
                 if self.dead(pid):
-                    LOG.warn("Process with PID {} is unfortunately dead.".format(pid))
+                    LOG.warn(_("Process with PID {} is unfortunately dead.").format(pid))
                     return False
                 else:
                     LOG.debug("Process with PID {} is still running.".format(pid))
@@ -1049,7 +1052,7 @@ class LockHandler(BaseHandler):
             fstat = os.stat(lockfile)
         except OSError as e:
             if e.errno == errno.ENOENT:
-                LOG.info("Could not stat for file {lfile!r}: {err}".format(
+                LOG.info(_("Could not stat for file {lfile!r}: {err}").format(
                     lfile=lockfile, err=e.strerror))
                 return False
             raise
@@ -1087,8 +1090,8 @@ class LockHandler(BaseHandler):
         try:
             fh = open(pidfile, "rb")
         except Exception as e:
-            msg = "Could not open pidfile {!r} for reading: ".format(pidfile)
-            msg += str(e)
+            msg = _("Could not open pidfile {!r} for reading:").format(pidfile)
+            msg += ' ' + str(e)
             if force:
                 LOG.warn(msg)
                 return None
@@ -1100,7 +1103,7 @@ class LockHandler(BaseHandler):
 
         content = content.strip()
         if content == "":
-            msg = "First line of pidfile {!r} was empty.".format(pidfile)
+            msg = _("First line of pidfile {!r} was empty.").format(pidfile)
             if force:
                 LOG.warn(msg)
                 return None
@@ -1111,7 +1114,7 @@ class LockHandler(BaseHandler):
         try:
             pid = int(content)
         except Exception as e:
-            msg = "Could not interprete {cont!r} as a PID from {file!r}: {err}".format(
+            msg = _("Could not interprete {cont!r} as a PID from {file!r}: {err}").format(
                 cont=content, file=pidfile, err=e)
             if force:
                 LOG.warn(msg)
@@ -1120,7 +1123,7 @@ class LockHandler(BaseHandler):
                 raise LockHandlerError(msg)
 
         if pid <= 0:
-            msg = "Invalid PID {pid} in {file!r} found.".format(pid=pid, file=pidfile)
+            msg = _("Invalid PID {pid} in {file!r} found.").format(pid=pid, file=pidfile)
             if force:
                 LOG.warn(msg)
                 return None
