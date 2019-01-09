@@ -13,7 +13,7 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '1.2.4'
+__version__ = '1.2.5'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -374,7 +374,7 @@ class CouldntOccupyLockfileError(FbError):
     def __str__(self):
 
         return _("Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries.").format(
-            lf=self.lockfile, s=self.duration, tries=self.tries)
+            lf=self.lockfile, d=self.duration, tries=self.tries)
 
 
 # =============================================================================
