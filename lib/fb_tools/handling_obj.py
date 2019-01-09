@@ -12,7 +12,6 @@ from __future__ import absolute_import
 import os
 import logging
 import pipes
-import textwrap
 import pathlib
 import signal
 import errno
@@ -27,7 +26,6 @@ if sys.version_info[0] >= 3:
 else:
     class SubprocessError(Exception):
         pass
-
 
     class TimeoutExpired(SubprocessError):
         pass
@@ -47,7 +45,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.5.1'
+__version__ = '1.5.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -416,7 +414,8 @@ class HandlingObject(FbBaseObject):
             if self.verbose > 0:
                 LOG.debug("PID of process: {}".format(process.pid))
             try:
-                stdout, stderr = self._communicate(process, popenargs, input=input, timeout=timeout)
+                stdout, stderr = self._communicate(
+                    process, popenargs, input=input, timeout=timeout)
             except Exception as e:
                 if self.verbose > 2:
                     LOG.debug("{c} happened, killing process: {e}".format(

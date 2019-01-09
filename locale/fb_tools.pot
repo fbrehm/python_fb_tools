@@ -6,16 +6,16 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.3.8\n"
+"Project-Id-Version: fb_tools 1.3.9\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-01-03 15:10+0100\n"
+"POT-Creation-Date: 2019-01-09 16:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.4.0\n"
 
 #: bin/get-file-to-remove:79
 msgid ""
@@ -394,72 +394,174 @@ msgstr ""
 msgid "Output on {}:"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:64
+#: lib/fb_tools/handler/lock.py:93
+msgid "Locking directory {!r} doesn't exists or is not a directory."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:120 lib/fb_tools/handler/lock.py:805
+msgid "Locking directory {!r} isn't writeable."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:181
+msgid "No lockfile given on init of a LockObject object."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:186
+msgid "Lockfile {!r} doesn't exists."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:189
+msgid "Lockfile {!r} is not a regular file."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:353
+msgid "Automatic removing of {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:385
+msgid "Refreshing atime and mtime of {!r} to the current timestamp."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:522 lib/fb_tools/handler/lock.py:544 lib/fb_tools/handler/lock.py:566
+#: lib/fb_tools/handler/lock.py:589 lib/fb_tools/handler/lock.py:688 lib/fb_tools/handler/lock.py:1035
+msgid "Value {val!r} for {what} is not a Number."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:527 lib/fb_tools/handler/lock.py:549 lib/fb_tools/handler/lock.py:571
+#: lib/fb_tools/handler/lock.py:594 lib/fb_tools/handler/lock.py:693 lib/fb_tools/handler/lock.py:1039
+msgid "The value for {what} must be greater than zero (is {val!r})."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:698
+msgid "The value for {what} must be greater than or equal to zero (is {val!r})."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:784
+msgid "Invalid PID {} given on calling create_lockfile()."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:859 lib/fb_tools/handler/lock.py:980
+msgid "Removing lockfile {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:864 lib/fb_tools/handler/lock.py:988
+msgid "Error on removing lockfile {lfile!r}: {err}"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:892
+msgid "Got a lock for lockfile {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:947
+msgid "Error on creating lockfile {lfile!r}: {err}"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1050
+msgid "No read access for lockfile {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1054
+msgid "No write access for lockfile {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1060
+msgid "Unusable lockfile {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1063
+msgid "Process with PID {} is unfortunately dead."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1066
+msgid "Process with PID {} is still running."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1074
+msgid "Could not stat for file {lfile!r}: {err}"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1115
+msgid "Could not open pidfile {!r} for reading:"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1128
+msgid "First line of pidfile {!r} was empty."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1139
+msgid "Could not interprete {cont!r} as a PID from {file!r}: {err}"
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:1148
+msgid "Invalid PID {pid} in {file!r} found."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:63
 msgid "Timeout on communicating with process."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:89
+#: lib/fb_tools/handling_obj.py:88
 msgid "Command {c!r} returned non-zero exit status {rc}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:126
+#: lib/fb_tools/handling_obj.py:125
 msgid "Command {c!r} timed out after {s} second."
 msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/handling_obj.py:290
+#: lib/fb_tools/handling_obj.py:291
 msgid "Command {!r} doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:293
+#: lib/fb_tools/handling_obj.py:294
 msgid "Command {!r} is not executable."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:322
+#: lib/fb_tools/handling_obj.py:325
 msgid "Command {!r} not found."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:390
+#: lib/fb_tools/handling_obj.py:393
 msgid "STDIN and input arguments may not both be used."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:404
+#: lib/fb_tools/handling_obj.py:407
 msgid "Simulation mode, not executing: {}"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:517
+#: lib/fb_tools/handling_obj.py:521
 msgid "Nothing to do on signal."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:571 lib/fb_tools/handling_obj.py:659
+#: lib/fb_tools/handling_obj.py:575 lib/fb_tools/handling_obj.py:663
 msgid "File doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:574
+#: lib/fb_tools/handling_obj.py:578
 msgid "Read permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:577
+#: lib/fb_tools/handling_obj.py:581
 msgid "Reading file content of {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:664 lib/fb_tools/handling_obj.py:671
+#: lib/fb_tools/handling_obj.py:668 lib/fb_tools/handling_obj.py:675
 msgid "Write permission to {!r} denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:666 lib/fb_tools/handling_obj.py:673
+#: lib/fb_tools/handling_obj.py:670 lib/fb_tools/handling_obj.py:677
 msgid "Write permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:744 lib/fb_tools/handling_obj.py:750
+#: lib/fb_tools/handling_obj.py:748 lib/fb_tools/handling_obj.py:754
 #: lib/fb_tools/vsphere/cluster.py:260 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
 #: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
 #: lib/fb_tools/vsphere/network.py:120 lib/fb_tools/vsphere/server.py:524
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:811
+#: lib/fb_tools/handling_obj.py:815
 msgid "Completed process"
 msgstr ""
 
