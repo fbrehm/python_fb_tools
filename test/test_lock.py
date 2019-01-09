@@ -21,7 +21,7 @@ except ImportError:
 libdir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), '..', 'lib'))
 sys.path.insert(0, libdir)
 
-from fb_tools.common import to_utf8
+from fb_tools.common import pp, to_utf8
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
@@ -180,14 +180,16 @@ class TestLockHandler(FbToolsTestcase):
             lock = locker.create_lockfile(self.lock_basename)
             LOG.debug("Current ctime: %s" % (lock.ctime.isoformat(' ')))
             LOG.debug("Current mtime: %s" % (lock.mtime.isoformat(' ')))
-            fstat1 = os.stat(lock.lockfile)
-            mtime1 = fstat1.st_mtime
+            if self.verbose > 2:
+                LOG.debug("Current lock object before refreshing:\n{}".format(pp(lock.as_dict())))
+            mtime1 = lock.stat().st_mtime
             LOG.debug("Sleeping two seconds ...")
             time.sleep(2)
             lock.refresh()
             LOG.debug("New mtime: %s" % (lock.mtime.isoformat(' ')))
-            fstat2 = os.stat(lock.lockfile)
-            mtime2 = fstat2.st_mtime
+            if self.verbose > 2:
+                LOG.debug("Current lock object after refreshing:\n{}".format(pp(lock.as_dict())))
+            mtime2 = lock.stat().st_mtime
             tdiff = mtime2 - mtime1
             LOG.debug("Got a time difference between mtimes of %0.3f seconds." % (tdiff))
             self.assertGreater(mtime2, mtime1)

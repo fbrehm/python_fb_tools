@@ -19,6 +19,8 @@ import traceback
 import datetime
 import fcntl
 
+from pathlib import Path
+
 from numbers import Number
 
 # Third party modules
@@ -31,7 +33,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.6.1'
+__version__ = '0.7.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -89,7 +91,7 @@ class LockdirNotExistsError(LockHandlerError):
         """Typecasting into a string for error output."""
 
         return _("Locking directory {!r} doesn't exists or is not a directory.").format(
-            self.lockdir)
+            str(self.lockdir))
 
 
 # =============================================================================
@@ -115,7 +117,8 @@ class LockdirNotWriteableError(LockHandlerError):
     def __str__(self):
         """Typecasting into a string for error output."""
 
-        return _("Locking directory {!r} isn't writeable.").format(self.lockdir)
+        return _("Locking directory {!r} isn't writeable.").format(
+            str(self.lockdir))
 
 
 # =============================================================================
@@ -177,16 +180,18 @@ class LockObject(FbBaseObject):
         if not lockfile:
             raise LockObjectError(_("No lockfile given on init of a LockObject object."))
 
-        if not os.path.exists(lockfile):
-            raise LockObjectError(_("Lockfile {!r} doesn't exists.").format(lockfile))
+        lfile = Path(lockfile)
 
-        if not os.path.isfile(lockfile):
-            raise LockObjectError(_("Lockfile {!r} is not a regular file.").format(lockfile))
+        if not lfile.exists():
+            raise LockObjectError(_("Lockfile {!r} doesn't exists.").format(str(lockfile)))
+
+        if not lfile.is_file():
+            raise LockObjectError(_("Lockfile {!r} is not a regular file.").format(str(lockfile)))
 
         if fd is not None:
             self._fd = fd
 
-        self._lockfile = os.path.realpath(lockfile)
+        self._lockfile = lfile.resolve()
 
         self._fcontent = None
         if fcontent is not None:
@@ -200,7 +205,7 @@ class LockObject(FbBaseObject):
 
         # Detecting self._ctime and self._mtime from filestat of the lockfile
         if not self._ctime or not self._mtime:
-            fstat = os.stat(lockfile)
+            fstat = self.stat()
             if not self._ctime:
                 self._ctime = datetime.datetime.utcfromtimestamp(fstat.st_ctime)
             if not self._mtime:
@@ -213,6 +218,12 @@ class LockObject(FbBaseObject):
     def lockfile(self):
         """The file, which represents the lock."""
         return self._lockfile
+
+    # -----------------------------------------------------------
+    @property
+    def lockdir(self):
+        """The parent directory of the lockfile."""
+        return self.lockfile.parent
 
     # -----------------------------------------------------------
     @property
@@ -282,6 +293,7 @@ class LockObject(FbBaseObject):
 
         res = super(LockObject, self).as_dict(short=short)
         res['lockfile'] = self.lockfile
+        res['lockdir'] = self.lockdir
         res['ctime'] = self.ctime
         res['mtime'] = self.mtime
         res['fcontent'] = self.fcontent
@@ -346,7 +358,7 @@ class LockObject(FbBaseObject):
                 LOG.info(msg)
 
             if not self.simulate:
-                os.remove(self.lockfile)
+                self.lockfile.unlink()
 
     # -------------------------------------------------------------------------
     def exists(self):
@@ -355,7 +367,14 @@ class LockObject(FbBaseObject):
         if self.simulate:
             return True
 
-        return os.path.exists(self.lockfile)
+        return self.lockfile.exists()
+
+    # -------------------------------------------------------------------------
+    def stat(self):
+        """The path information of the lockfile (like os.stat())."""
+        if not self.exists():
+            return None
+        return self.lockfile.stat()
 
     # -------------------------------------------------------------------------
     def refresh(self):
@@ -364,13 +383,13 @@ class LockObject(FbBaseObject):
         """
 
         msg = _("Refreshing atime and mtime of {!r} to the current timestamp.").format(
-            self.lockfile)
+            str(self.lockfile))
         LOG.debug(msg)
 
         if not self.simulate:
-            os.utime(self.lockfile, None)
+            os.utime(str(self.lockfile), None)
 
-        self._mtime = datetime.datetime.utcnow()
+        self._mtime = datetime.datetime.utcfromtimestamp(self.stat().st_mtime)
 
 
 # =============================================================================
