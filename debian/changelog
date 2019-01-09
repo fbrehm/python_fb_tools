@@ -1,4 +1,4 @@
-fb-tools (1.4.1) UNRELEASED; urgency=medium
+fb-tools (1.4.1) all; urgency=medium
 
   * Adding module lib/fb_tools/handler/lock.py for classes LockObject
     and LockHandler and some appropiate exception classes
