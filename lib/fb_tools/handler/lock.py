@@ -33,7 +33,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -502,10 +502,11 @@ class LockHandler(BaseHandler):
             self._lockdir = None
             return
 
-        if os.path.isabs(value):
-            self._lockdir = os.path.normpath(value)
-        else:
-            self._lockdir = os.path.normpath(os.path.join(self.base_dir, value))
+        ldir = Path(value)
+        if not ldir.is_absolute():
+            ldir = self.base_dir / ldir
+
+        self._lockdir = ldir.resolve()
 
     # -----------------------------------------------------------
     @property
@@ -783,21 +784,21 @@ class LockHandler(BaseHandler):
                 msg = _("Invalid PID {} given on calling create_lockfile().").format(pid)
                 raise LockHandlerError(msg)
 
-        if os.path.isabs(lockfile):
-            lockfile = os.path.normpath(lockfile)
-        else:
-            lockfile = os.path.normpath(os.path.join(self.lockdir, lockfile))
+        lfile = Path(lockfile)
+        if not lfile.is_absolute():
+            lfile = self.lockdir / lfile
+        lfile = lfile.resolve()
 
-        lockdir = os.path.dirname(lockfile)
-        LOG.debug("Trying to lock lockfile {!r} ...".format(lockfile))
+        lockdir = lfile.parent
+        LOG.debug("Trying to lock lockfile {!r} ...".format(str(lockfile)))
         if self.verbose > 1:
-            LOG.debug("Using lock directory {!r} ...".format(lockdir))
+            LOG.debug("Using lock directory {!r} ...".format(str(lockdir)))
 
-        if not os.path.isdir(lockdir):
+        if not lockdir.is_dir():
             raise LockdirNotExistsError(lockdir)
 
-        if not os.access(lockdir, os.W_OK):
-            msg = _("Locking directory {!r} isn't writeable.").format(lockdir)
+        if not os.access(str(lockdir), os.W_OK):
+            msg = _("Locking directory {!r} isn't writeable.").format(str(lockdir))
             if self.simulate:
                 LOG.error(msg)
             else:
@@ -809,7 +810,7 @@ class LockHandler(BaseHandler):
             stay_opened = bool(stay_opened)
 
         return self._do_create_lockfile(
-            lockfile=lockfile, delay_start=delay_start, max_delay=max_delay, max_age=max_age,
+            lockfile=lfile, delay_start=delay_start, max_delay=max_delay, max_age=max_age,
             delay_increase=delay_increase, pid=pid, use_pid=use_pid, raise_on_fail=raise_on_fail,
             stay_opened=stay_opened)
 
@@ -824,9 +825,6 @@ class LockHandler(BaseHandler):
         fd = None
         time_diff = 0
         start_time = time.time()
-
-        ctime = None
-        mtime = None
 
         # Big try block to ensure closing open file descriptor
         try:
@@ -844,8 +842,7 @@ class LockHandler(BaseHandler):
 
                 # Try creating lockfile exclusive
                 LOG.debug("Try {try_nr} on creating lockfile {lfile!r} ...".format(
-                    try_nr=counter, lfile=lockfile))
-                ctime = datetime.datetime.utcnow()
+                    try_nr=counter, lfile=str(lockfile)))
                 fd = self._create_lockfile(lockfile)
                 if fd is not None:
                     # success, then exit
@@ -854,14 +851,14 @@ class LockHandler(BaseHandler):
                 # Check for other process, using this lockfile
                 if not self.check_lockfile(lockfile, max_age, use_pid):
                     # No other process is using this lockfile
-                    if os.path.exists(lockfile):
-                        LOG.info(_("Removing lockfile {!r} ...").format(lockfile))
+                    if lockfile.exists():
+                        LOG.info(_("Removing lockfile {!r} ...").format(str(lockfile)))
                     try:
                         if not self.simulate:
-                            os.remove(lockfile)
+                            lockfile.unlink()
                     except Exception as e:
                         msg = _("Error on removing lockfile {lfile!r}: {err}").format(
-                            lfile=lockfile, err=e)
+                            lfile=str(lockfile), err=e)
                         LOG.error(msg)
                         time.sleep(delay)
                         delay += delay_increase
@@ -888,14 +885,14 @@ class LockHandler(BaseHandler):
                 return None
 
             # or an int for success
-            msg = _("Got a lock for lockfile {!r}.").format(lockfile)
+            msg = _("Got a lock for lockfile {!r}.").format(str(lockfile))
             if self.silent:
                 LOG.debug(msg)
             else:
                 LOG.info(msg)
             out = to_utf8("{}\n".format(pid))
             LOG.debug("Write {what!r} in lockfile {lfile!r} ...".format(
-                what=out, lfile=lockfile))
+                what=out, lfile=str(lockfile)))
 
         finally:
 
@@ -903,22 +900,20 @@ class LockHandler(BaseHandler):
                 os.write(fd, out)
 
                 if stay_opened:
-                    LOG.debug("Seeking and syncing {!r} ...".format(lockfile))
+                    LOG.debug("Seeking and syncing {!r} ...".format(str(lockfile)))
                     os.lseek(fd, 0, 0)
                     os.fsync(fd)
                 else:
-                    LOG.debug("Closing {!r} ...".format(lockfile))
+                    LOG.debug("Closing {!r} ...".format(str(lockfile)))
                     os.close(fd)
                     fd = None
 
         if fd is not None and self.simulate:
             fd = None
 
-        mtime = datetime.datetime.utcnow()
-
         lock_object = LockObject(
-            lockfile, ctime=ctime, mtime=mtime, fcontent=out, fd=fd, simulate=self.simulate,
-            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir, silent=self.silent,
+            lockfile, fcontent=out, fd=fd, simulate=self.simulate, appname=self.appname,
+            verbose=self.verbose, base_dir=self.base_dir, silent=self.silent,
         )
 
         return lock_object
@@ -935,18 +930,18 @@ class LockHandler(BaseHandler):
         """
 
         if self.verbose > 1:
-            LOG.debug("Trying to open {!r} exclusive ...".format(lockfile))
+            LOG.debug("Trying to open {!r} exclusive ...".format(str(lockfile)))
         if self.simulate:
             LOG.debug("Simulation mode, no real creation of a lockfile.")
             return -1
 
         fd = None
         try:
-            fd = os.open(lockfile, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+            fd = os.open(str(lockfile), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError as e:
             msg = _("Error on creating lockfile {lfile!r}: {err}").format(
-                lfile=lockfile, err=e)
+                lfile=str(lockfile), err=e)
             if e.errno == errno.EEXIST:
                 LOG.debug(msg)
                 return None
@@ -962,32 +957,32 @@ class LockHandler(BaseHandler):
         Removing lockfile.
 
         @param lockfile: the lockfile to remove.
-        @type lockfile: str
+        @type lockfile: str or pathlib.Path
 
         @return: the lockfile was removed (or not)
         @rtype: bool
 
         """
 
-        if os.path.isabs(lockfile):
-            lockfile = os.path.normpath(lockfile)
-        else:
-            lockfile = os.path.normpath(os.path.join(self.lockdir, lockfile))
+        lfile = Path(lockfile)
+        if not lfile.is_absolute():
+            lfile = self.lockdir / lfile
+        lfile = lfile.resolve()
 
-        if not os.path.exists(lockfile):
-            LOG.debug("Lockfile {!r} to remove doesn't exists.".format(lockfile))
+        if not lfile.exists():
+            LOG.debug("Lockfile {!r} to remove doesn't exists.".format(str(lfile)))
             return True
 
-        LOG.info(_("Removing lockfile {!r} ...").format(lockfile))
+        LOG.info(_("Removing lockfile {!r} ...").format(str(lfile)))
         if self.simulate:
             LOG.debug("Simulation mode - lockfile won't removed.")
             return True
 
         try:
-            os.remove(lockfile)
+            lfile.unlink()
         except Exception as e:
             LOG.error(_("Error on removing lockfile {lfile!r}: {err}").format(
-                lfile=lockfile, err=e))
+                lfile=str(lockfile), err=e))
             if self.verbose:
                 tb = traceback.format_exc()
                 LOG.debug("Stacktrace:\n" + tb)
@@ -1006,7 +1001,7 @@ class LockHandler(BaseHandler):
         against the parameter max_age.
 
         @param lockfile: the lockfile to check
-        @type lockfile: str
+        @type lockfile: str or pathlib.Path
         @param max_age: the maximum age of the lockfile (in seconds), for
                         this lockfile is valid (if use_pid is False).
         @type max_age: int
@@ -1021,6 +1016,8 @@ class LockHandler(BaseHandler):
         @rtype: bool
 
         """
+
+        lfile = Path(lockfile)
 
         if use_pid is None:
             use_pid = self.locking_use_pid
@@ -1039,50 +1036,49 @@ class LockHandler(BaseHandler):
                     val=max_age, what='max_age')
                 raise LockHandlerError(msg)
 
-        LOG.debug("Checking lockfile {!r} ...".format(lockfile))
+        LOG.debug("Checking lockfile {!r} ...".format(str(lfile)))
 
-        if not os.path.exists(lockfile):
-            if self.verbose > 2:
-                LOG.debug("Lockfile {!r} doesn't exists.".format(lockfile))
+        if not lfile.exists():
+            LOG.debug("Lockfile {!r} doesn't exists.".format(str(lfile)))
             return False
 
-        if not os.access(lockfile, os.R_OK):
-            LOG.warn(_("No read access for lockfile {!r}.").format(lockfile))
+        if not os.access(str(lfile), os.R_OK):
+            LOG.warn(_("No read access for lockfile {!r}.").format(str(lfile)))
             return True
 
-        if not os.access(lockfile, os.W_OK):
-            LOG.warn(_("No write access for lockfile {!r}.").format(lockfile))
+        if not os.access(str(lfile), os.W_OK):
+            LOG.warn(_("No write access for lockfile {!r}.").format(str(lfile)))
             return True
 
         if use_pid:
-            pid = self.get_pid_from_file(lockfile, True)
+            pid = self.get_pid_from_file(lfile, True)
             if pid is None:
-                LOG.warn(_("Unusable lockfile {!r}.").format(lockfile))
+                LOG.warn(_("Unusable lockfile {!r}.").format(str(lfile)))
             else:
                 if self.dead(pid):
                     LOG.warn(_("Process with PID {} is unfortunately dead.").format(pid))
                     return False
                 else:
-                    LOG.debug("Process with PID {} is still running.".format(pid))
+                    LOG.debug(_("Process with PID {} is still running.").format(pid))
                     return True
 
         fstat = None
         try:
-            fstat = os.stat(lockfile)
+            fstat = lfile.stat()
         except OSError as e:
             if e.errno == errno.ENOENT:
                 LOG.info(_("Could not stat for file {lfile!r}: {err}").format(
-                    lfile=lockfile, err=e.strerror))
+                    lfile=str(lfile), err=e.strerror))
                 return False
             raise
 
         age = time.time() - fstat.st_mtime
         if age >= max_age:
             LOG.debug("Lockfile {lfile!r} is older than {max} seconds ({age} seconds).".format(
-                lfile=lockfile, max=max_age, age=age))
+                lfile=str(lfile), max=max_age, age=age))
             return False
         msg = "Lockfile {lfile!r} is {age} seconds old, but not old enough ({max}seconds).".format(
-            lfile=lockfile, max=max_age, age=age)
+            lfile=str(lfile), max=max_age, age=age)
         LOG.debug(msg)
         return True
 
@@ -1104,12 +1100,15 @@ class LockHandler(BaseHandler):
 
         """
 
+        pfile = Path(pidfile)
+        fh = None
+
         if self.verbose > 1:
-            LOG.debug("Trying to open pidfile {!r} ...".format(pidfile))
+            LOG.debug("Trying to open pidfile {!r} ...".format(str(pfile)))
         try:
-            fh = open(pidfile, "rb")
+            fh = pfile.open("rb")
         except Exception as e:
-            msg = _("Could not open pidfile {!r} for reading:").format(pidfile)
+            msg = _("Could not open pidfile {!r} for reading:").format(str(pfile))
             msg += ' ' + str(e)
             if force:
                 LOG.warn(msg)
@@ -1122,7 +1121,7 @@ class LockHandler(BaseHandler):
 
         content = content.strip()
         if content == "":
-            msg = _("First line of pidfile {!r} was empty.").format(pidfile)
+            msg = _("First line of pidfile {!r} was empty.").format(str(pfile))
             if force:
                 LOG.warn(msg)
                 return None
@@ -1134,7 +1133,7 @@ class LockHandler(BaseHandler):
             pid = int(content)
         except Exception as e:
             msg = _("Could not interprete {cont!r} as a PID from {file!r}: {err}").format(
-                cont=content, file=pidfile, err=e)
+                cont=content, file=str(pfile), err=e)
             if force:
                 LOG.warn(msg)
                 return None
@@ -1142,7 +1141,7 @@ class LockHandler(BaseHandler):
                 raise LockHandlerError(msg)
 
         if pid <= 0:
-            msg = _("Invalid PID {pid} in {file!r} found.").format(pid=pid, file=pidfile)
+            msg = _("Invalid PID {pid} in {file!r} found.").format(pid=pid, file=str(pfile))
             if force:
                 LOG.warn(msg)
                 return None
