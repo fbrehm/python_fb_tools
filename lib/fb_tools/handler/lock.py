@@ -33,7 +33,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.7.2'
+__version__ = '0.7.3'
 
 LOG = logging.getLogger(__name__)
 
@@ -787,15 +787,19 @@ class LockHandler(BaseHandler):
         lfile = Path(lockfile)
         if not lfile.is_absolute():
             lfile = self.lockdir / lfile
-        lfile = lfile.resolve()
 
         lockdir = lfile.parent
-        LOG.debug("Trying to lock lockfile {!r} ...".format(str(lockfile)))
         if self.verbose > 1:
             LOG.debug("Using lock directory {!r} ...".format(str(lockdir)))
-
         if not lockdir.is_dir():
             raise LockdirNotExistsError(lockdir)
+
+        lfile = lockdir.resolve() / lfile.name
+        if lfile.exists():
+            lfile = lfile.resolve()
+
+        LOG.debug("Trying to lock lockfile {!r} ...".format(str(lockfile)))
+
 
         if not os.access(str(lockdir), os.W_OK):
             msg = _("Locking directory {!r} isn't writeable.").format(str(lockdir))
