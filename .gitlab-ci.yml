@@ -10,9 +10,9 @@ variables:
 before_script:
   - locale -a
   - apt update && apt install --yes sudo locales
-  - if test -f /etc/locale.gen; then echo "/etc/locale.gen:"; grep -P -v '^\s*(#.*)$' /etc/locale.gen; fi
-  - if grep 'en_US.UTF-8' /etc/locale.gen; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; else; echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; fi
-  - if grep 'de_DE.UTF-8' /etc/locale.gen; then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen ; else; echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen; fi
+  - if test -f /etc/locale.gen; then echo "/etc/locale.gen:"; grep -P -v '^\s*(#.*)$' /etc/locale.gen; echo "<-- EOF"; fi
+  - if grep 'en_US.UTF-8' /etc/locale.gen; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; fi
+  - if grep 'de_DE.UTF-8' /etc/locale.gen; then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen; fi
   - locale-gen
   - locale -a
   - pip install --upgrade pip
