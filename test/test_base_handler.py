@@ -93,10 +93,7 @@ class TestFbBaseHandler(FbToolsTestcase):
         self.assertIsNotNone(hdlr.echo_cmd)
         has_sudo = True
         if hdlr.sudo_cmd is None:
-            LOG.warning("Command 'sudo' was not found")
             has_sudo = False
-
-        self.assertIsNotNone(hdlr.sudo_cmd)
 
         # from HandlingObject
         hdlr.simulate = True
