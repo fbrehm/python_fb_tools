@@ -6,12 +6,16 @@ variables:
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
 
+before_script:
+  - apt install sudo
+  - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
+  - pip install --upgrade pip
+  - pip install -r requirements.txt --upgrade --upgrade-strategy eager
+
 test Python 3.5:
   stage: test
   image: python:3.5
   script:
-    - pip install --upgrade pip
-    - pip install -r requirements.txt --upgrade --upgrade-strategy eager
     - pip install --upgrade --upgrade-strategy eager flake8 pylint pytest
     - pytest --verbose
     - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY bin lib
@@ -22,8 +26,6 @@ build Python 3.5:
   stage: build
   image: python:3.5
   script:
-    - pip install --upgrade pip
-    - pip install -r requirements.txt --upgrade --upgrade-strategy eager
     - python setup.py bdist
   tags:
     - docker
