@@ -91,6 +91,11 @@ class TestFbBaseHandler(FbToolsTestcase):
         self.assertFalse(hdlr.sudo)
         self.assertIsNotNone(hdlr.chown_cmd)
         self.assertIsNotNone(hdlr.echo_cmd)
+        has_sudo = True
+        if hdlr.sudo_cmd is None:
+            LOG.warning("Command 'sudo' was not found")
+            has_sudo = False
+
         self.assertIsNotNone(hdlr.sudo_cmd)
 
         # from HandlingObject
@@ -104,8 +109,9 @@ class TestFbBaseHandler(FbToolsTestcase):
         self.assertTrue(hdlr.quiet)
 
         # from BaseHandler
-        hdlr.sudo = True
-        self.assertTrue(hdlr.sudo)
+        if has_sudo:
+            hdlr.sudo = True
+            self.assertTrue(hdlr.sudo)
 
         LOG.debug("Setting timezone to {!r}".format('America/Los_Angeles'))
         hdlr.set_tz('America/Los_Angeles')
