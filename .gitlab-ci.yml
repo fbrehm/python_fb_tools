@@ -2,14 +2,19 @@ stages:
   - test
   - build
 
+variables:
+  FLAKE8_MAX_LINE_LENGTH: 99
+  FLAKE8_MAX_COMPLEXITY: 20
+
 test Python 3.5:
   stage: test
   image: python:3.5
   script:
     - pip install --upgrade pip
     - pip install -r requirements.txt --upgrade --upgrade-strategy eager
-    - for f in test/test*.py; do $f --verbose; done
-    - flake8 lib
+    - pip install --upgrade --upgrade-strategy eager flake8 pylint pytest
+    - pytest --verbose
+    - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY bin lib
   tags:
     - docker
 
