@@ -25,7 +25,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -72,7 +72,7 @@ class VsphereNetwork(VsphereObject):
                 LOG.error(_("Could not get IP network from network name {!r}.").format(self.name))
 
         if not self.network:
-            LOG.warn(_("Network {!r} has no IP network assigned.").format(self.name))
+            LOG.warning(_("Network {!r} has no IP network assigned.").format(self.name))
 
         if initialized is not None:
             self.initialized = initialized

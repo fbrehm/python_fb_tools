@@ -40,7 +40,7 @@ from .pdns import DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .pdns.server import PowerDNSServer
 
-__version__ = '0.6.3'
+__version__ = '0.6.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -396,7 +396,7 @@ class PdnsBulkRmApp(BaseApplication):
 
             fqdn = self.pdns.name2fqdn(addr)
             if not fqdn:
-                LOG.warn(_("Address {!r} could not interpreted as a FQDN.").format(addr))
+                LOG.warning(_("Address {!r} could not interpreted as a FQDN.").format(addr))
                 continue
             if fqdn not in all_fqdns:
                 all_fqdns.append(fqdn)
@@ -416,7 +416,7 @@ class PdnsBulkRmApp(BaseApplication):
 
             zones = self.pdns.get_all_zones_for_item(fqdn)
             if not zones:
-                LOG.warn(_("Did not found an appropriate zone for address {!r}.").format(fqdn))
+                LOG.warning(_("Did not found an appropriate zone for address {!r}.").format(fqdn))
                 continue
 
             for zone_name in zones:
@@ -492,7 +492,7 @@ class PdnsBulkRmApp(BaseApplication):
                         if self.verbose > 1:
                             LOG.debug("Expexted PTR: {p!r} => {a!r}.".format(p=ptr, a=exp))
                         if record.content != self.expected_ptr[fqdn_puny]:
-                            LOG.warn(_(
+                            LOG.warning(_(
                                 "PTR {p!r} does not pointing to expected {e!r}, "
                                 "but to {c!r} instead, ignoring for deletion.").format(
                                 p=ptr, e=exp, c=addr))
@@ -539,7 +539,7 @@ class PdnsBulkRmApp(BaseApplication):
             msg = _("The following addresses (FQDNs) are not found:")
             for fqdn in fqdns_not_found:
                 msg += '\n  * {!r}'.format(fqdn)
-            LOG.warn(msg)
+            LOG.warning(msg)
 
         if not self.records2remove:
             return 1

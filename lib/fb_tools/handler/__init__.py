@@ -38,7 +38,7 @@ from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.4.5'
+__version__ = '1.4.6'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -321,7 +321,7 @@ class BaseHandler(HandlingObject):
                 msg = _("Output on {}:").format('proc.stderr')
                 msg += '\n' + proc.stderr
                 if proc.returncode:
-                    LOG.warn(msg)
+                    LOG.warning(msg)
                 elif log_output:
                     LOG.info(msg)
                 else:

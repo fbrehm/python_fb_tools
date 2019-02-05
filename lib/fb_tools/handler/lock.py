@@ -33,7 +33,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.7.3'
+__version__ = '0.7.4'
 
 LOG = logging.getLogger(__name__)
 
@@ -1047,20 +1047,20 @@ class LockHandler(BaseHandler):
             return False
 
         if not os.access(str(lfile), os.R_OK):
-            LOG.warn(_("No read access for lockfile {!r}.").format(str(lfile)))
+            LOG.warning(_("No read access for lockfile {!r}.").format(str(lfile)))
             return True
 
         if not os.access(str(lfile), os.W_OK):
-            LOG.warn(_("No write access for lockfile {!r}.").format(str(lfile)))
+            LOG.warning(_("No write access for lockfile {!r}.").format(str(lfile)))
             return True
 
         if use_pid:
             pid = self.get_pid_from_file(lfile, True)
             if pid is None:
-                LOG.warn(_("Unusable lockfile {!r}.").format(str(lfile)))
+                LOG.warning(_("Unusable lockfile {!r}.").format(str(lfile)))
             else:
                 if self.dead(pid):
-                    LOG.warn(_("Process with PID {} is unfortunately dead.").format(pid))
+                    LOG.warning(_("Process with PID {} is unfortunately dead.").format(pid))
                     return False
                 else:
                     LOG.debug(_("Process with PID {} is still running.").format(pid))
@@ -1115,7 +1115,7 @@ class LockHandler(BaseHandler):
             msg = _("Could not open pidfile {!r} for reading:").format(str(pfile))
             msg += ' ' + str(e)
             if force:
-                LOG.warn(msg)
+                LOG.warning(msg)
                 return None
             else:
                 raise LockHandlerError(str(e))
@@ -1127,7 +1127,7 @@ class LockHandler(BaseHandler):
         if content == "":
             msg = _("First line of pidfile {!r} was empty.").format(str(pfile))
             if force:
-                LOG.warn(msg)
+                LOG.warning(msg)
                 return None
             else:
                 raise LockHandlerError(msg)
@@ -1139,7 +1139,7 @@ class LockHandler(BaseHandler):
             msg = _("Could not interprete {cont!r} as a PID from {file!r}: {err}").format(
                 cont=content, file=str(pfile), err=e)
             if force:
-                LOG.warn(msg)
+                LOG.warning(msg)
                 return None
             else:
                 raise LockHandlerError(msg)
@@ -1147,7 +1147,7 @@ class LockHandler(BaseHandler):
         if pid <= 0:
             msg = _("Invalid PID {pid} in {file!r} found.").format(pid=pid, file=str(pfile))
             if force:
-                LOG.warn(msg)
+                LOG.warning(msg)
                 return None
             else:
                 raise LockHandlerError(msg)

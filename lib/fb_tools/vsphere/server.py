@@ -50,7 +50,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -354,7 +354,7 @@ class VsphereServer(BaseVsphereHandler):
                     LOG.debug(
                         "Found datastores clusters:\n{}".format(pp(list(self.ds_clusters.keys()))))
         else:
-            LOG.warn(_("No VSphere datastore clusters found."))
+            LOG.warning(_("No VSphere datastore clusters found."))
 
         for (dsc_name, dsc) in self.ds_clusters.items():
             self.ds_cluster_mapping[dsc_name] = dsc.tf_name

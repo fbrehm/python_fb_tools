@@ -34,7 +34,7 @@ from .errors import PowerDNSZoneError
 from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.8.4'
+__version__ = '0.8.5'
 
 LOG = logging.getLogger(__name__)
 
@@ -651,7 +651,7 @@ class PowerDNSZone(BasePowerDNSHandler):
                 soa = rrset.get_soa_data()
                 return soa
 
-        LOG.warn(_("Did not get SOA for zone {!r}.").format(self.name))
+        LOG.warning(_("Did not get SOA for zone {!r}.").format(self.name))
         return None
 
     # -------------------------------------------------------------------------
@@ -889,7 +889,7 @@ class PowerDNSZone(BasePowerDNSHandler):
             if not found:
                 msg = _("DNS {t!r}-record {n!r} is already deleted.").format(
                     t=rrset["type"], n=rrset["name"])
-                LOG.warn(msg)
+                LOG.warning(msg)
                 continue
             rrsets_rm.append(rrset)
         if not rrsets_rm:
