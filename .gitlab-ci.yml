@@ -7,7 +7,6 @@ variables:
   FLAKE8_MAX_COMPLEXITY: 20
 
 before_script:
-  - apt install sudo
   - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
   - pip install --upgrade pip
   - pip install -r requirements.txt --upgrade --upgrade-strategy eager
