@@ -29,7 +29,7 @@ from ..handling_obj import HandlingObject
 
 from .errors import VSphereCannotConnectError
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -211,7 +211,7 @@ class BaseVsphereHandler(HandlingObject):
     def disconnect(self):
 
         if self.service_instance:
-            LOG.debug("Disconnecting from vSphere host {}.".format(self.host))
+            LOG.debug(_("Disconnecting from vSphere host {}.").format(self.host))
             Disconnect(self.service_instance)
 
         self.service_instance = None

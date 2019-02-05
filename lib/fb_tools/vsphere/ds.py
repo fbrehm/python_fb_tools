@@ -24,7 +24,7 @@ from ..common import pp, to_bool
 
 from .object import VsphereObject
 
-__version__ = '1.3.3'
+__version__ = '1.3.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -318,7 +318,7 @@ class VsphereDatastore(VsphereObject):
     def __eq__(self, other):
 
         if self.verbose > 4:
-            LOG.debug("Comparing {}-objects ...".format(self.__class__.__name__))
+            LOG.debug(_("Comparing {} objects ...").format(self.__class__.__name__))
 
         if not isinstance(other, VsphereDatastore):
             return False
@@ -338,10 +338,10 @@ class VsphereDatastoreDict(collections.MutableMapping):
 
     msg_invalid_ds_type = _("Invalid item type {{!r}} to set, only {} allowed.").format(
         'VsphereDatastore')
-    msg_key_not_name = "The key {k!r} must be equal to the datastore name {n!r}."
-    msg_none_type_error = "None type as key is not allowed."
-    msg_empty_key_error = "Empty key {!r} is not allowed."
-    msg_no_ds_dict = "Object {!r} is not a VsphereDatastoreDict object."
+    msg_key_not_name = _("The key {k!r} must be equal to the datastore name {n!r}.")
+    msg_none_type_error = _("None type as key is not allowed.")
+    msg_empty_key_error = _("Empty key {!r} is not allowed.")
+    msg_no_ds_dict = _("Object {{!r}} is not a {} object.").format('VsphereDatastoreDict')
 
     # -------------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
@@ -573,21 +573,21 @@ class VsphereDatastoreDict(collections.MutableMapping):
         }
 
         if ds_type not in search_chains:
-            raise ValueError("Could not handle datastore type {!r}.".format(ds_type))
+            raise ValueError(_("Could not handle datastore type {!r}.").format(ds_type))
         for dstp in search_chains[ds_type]:
             ds_name = self._find_ds(
                 needed_gb, dstp, reserve_space, use_ds=use_ds, no_k8s=no_k8s)
             if ds_name:
                 return ds_name
 
-        LOG.error("Could not found a datastore for {c:0.1f} GiB of type {t!r}.".format(
+        LOG.error(_("Could not found a datastore for {c:0.1f} GiB of type {t!r}.").format(
             c=needed_gb, t=ds_type))
         return None
 
     # -------------------------------------------------------------------------
     def _find_ds(self, needed_gb, ds_type, reserve_space=True, use_ds=None, no_k8s=False):
 
-        LOG.debug("Searching datastore for {c:0.1f} GiB of type {t!r}.".format(
+        LOG.debug(_("Searching datastore for {c:0.1f} GiB of type {t!r}.").format(
             c=needed_gb, t=ds_type))
 
         avail_ds_names = []

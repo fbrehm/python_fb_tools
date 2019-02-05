@@ -25,7 +25,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -62,7 +62,7 @@ class VsphereNetwork(VsphereObject):
         if match:
             ip = "{a}/{m}".format(a=match.group(1), m=match.group(2))
             if self.verbose > 3:
-                LOG.debug("Trying to get IPv4 network {n!r} -> {i!r}.".format(
+                LOG.debug(_("Trying to get IPv4 network {n!r} -> {i!r}.").format(
                     n=self.name, i=ip))
 
             try:
@@ -78,7 +78,7 @@ class VsphereNetwork(VsphereObject):
             self.initialized = initialized
 
         if self.verbose > 3:
-            LOG.debug("Initialized network object:\n{}".format(pp(self.as_dict())))
+            LOG.debug(_("Initialized network object:") + '\n' + pp(self.as_dict()))
 
     # -----------------------------------------------------------
     @property
@@ -141,8 +141,7 @@ class VsphereNetwork(VsphereObject):
             params['ip_pool_name'] = data.summary.ipPoolName
 
         if verbose > 3:
-            LOG.debug("Creating {c} object from:\n{p}".format(
-                c=cls.__name__, p=pp(params)))
+            LOG.debug("Creating {} object from:".format(cls.__name__) + '\n' + pp(params))
 
         net = cls(**params)
         return net
@@ -181,7 +180,7 @@ class VsphereNetwork(VsphereObject):
     def __eq__(self, other):
 
         if self.verbose > 4:
-            LOG.debug("Comparing {}-objects ...".format(self.__class__.__name__))
+            LOG.debug(_("Comparing {} objects ...").format(self.__class__.__name__))
 
         if not isinstance(other, VsphereNetwork):
             return False
@@ -204,7 +203,7 @@ class VsphereNetworkDict(collections.MutableMapping):
     msg_key_not_name = _("The key {k!r} must be equal to the network name {n!r}.")
     msg_none_type_error = _("None type as key is not allowed.")
     msg_empty_key_error = _("Empty key {!r} is not allowed.")
-    msg_no_net_dict = _("Object {!r} is not a VsphereNetworkDict object.")
+    msg_no_net_dict = _("Object {{!r}} is not a {} object.").format('VsphereNetworkDict')
 
     # -------------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
@@ -449,17 +448,17 @@ class VsphereNetworkDict(collections.MutableMapping):
         for ip in ips:
             if not ip:
                 continue
-            LOG.debug("Searching VSphere network for address {} ...".format(ip))
+            LOG.debug(_("Searching VSphere network for address {} ...").format(ip))
             ipa = ipaddress.ip_address(ip)
 
             for net_name in self.keys():
                 net = self[net_name]
                 if net.network and ipa in net.network:
-                    LOG.debug("Found network {n!r} for IP {i}.".format(
+                    LOG.debug(_("Found network {n!r} for IP {i}.").format(
                         n=net_name, i=ip))
                     return net_name
 
-            LOG.debug("Could not find VSphere network for IP {}.".format(ip))
+            LOG.debug(_("Could not find VSphere network for IP {}.").format(ip))
 
         ips_str = ', '.join(map(lambda x: str(x), list(filter(bool, ips))))
         LOG.error(_("Could not find VSphere network for IP addresses {}.").format(ips_str))
