@@ -11,7 +11,7 @@ variables:
 before_script:
   - locale -a
   - apt update && apt install --yes sudo locales gettext
-  - if test -f /etc/locale.gen; then echo "/etc/locale.gen:"; grep -P -v '^\s*(#.*)?$' /etc/locale.gen; echo "<-- EOF"; fi
+  - if test -f /etc/locale.gen; then echo "/etc/locale.gen:"; grep -P -v '^\s*(#.*)?$' /etc/locale.gen; echo "<-- EOF"; true; fi
   - if grep 'en_US.UTF-8' /etc/locale.gen; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; fi
   - if grep 'de_DE.UTF-8' /etc/locale.gen; then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen; fi
   - locale-gen
@@ -65,9 +65,33 @@ Linter:
   tags:
     - docker
 
+build Python 2.7:
+  stage: build
+  image: python:2.7
+  script:
+    - python setup.py bdist
+  tags:
+    - docker
+
 build Python 3.5:
   stage: build
   image: python:3.5
+  script:
+    - python setup.py bdist
+  tags:
+    - docker
+
+build Python 3.6:
+  stage: build
+  image: python:3.6
+  script:
+    - python setup.py bdist
+  tags:
+    - docker
+
+build Python 3.7:
+  stage: build
+  image: python:3.7
   script:
     - python setup.py bdist
   tags:
