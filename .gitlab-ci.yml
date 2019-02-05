@@ -1,6 +1,6 @@
-stages:
-  - test
-  - build
+#stages:
+#  - test
+#  - build
 
 variables:
   FLAKE8_MAX_LINE_LENGTH: 99
@@ -12,6 +12,16 @@ before_script:
   - pip install --upgrade pip
   - pip install -r requirements.txt --upgrade --upgrade-strategy eager
 
+test Python 2.7:
+  stage: test
+  image: python:2.7
+  script:
+    - pip install --upgrade --upgrade-strategy eager flake8 pylint pytest
+    - pytest --verbose
+    - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
+  tags:
+    - docker
+
 test Python 3.5:
   stage: test
   image: python:3.5
@@ -22,11 +32,31 @@ test Python 3.5:
   tags:
     - docker
 
-build Python 3.5:
-  stage: build
-  image: python:3.5
+test Python 3.6:
+  stage: test
+  image: python:3.6
   script:
-    - python setup.py bdist
+    - pip install --upgrade --upgrade-strategy eager flake8 pylint pytest
+    - pytest --verbose
+    - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
   tags:
     - docker
+
+test Python 3.7:
+  stage: test
+  image: python:3.7
+  script:
+    - pip install --upgrade --upgrade-strategy eager flake8 pylint pytest
+    - pytest --verbose
+    - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
+  tags:
+    - docker
+
+#build Python 3.5:
+#  stage: build
+#  image: python:3.5
+#  script:
+#    - python setup.py bdist
+#  tags:
+#    - docker
 
