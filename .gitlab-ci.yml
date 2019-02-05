@@ -7,7 +7,11 @@ variables:
   FLAKE8_MAX_COMPLEXITY: 20
 
 before_script:
-  - sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
+  - cat /etc/locale.gen
+  - if grep 'en_US.UTF-8' /etc/locale.gen; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; else; echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; fi
+  - if grep 'de_DE.UTF-8' /etc/locale.gen; then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen ; else; echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen; fi
+  - cat /etc/locale.gen
+  - locale-gen
   - pip install --upgrade pip
   - pip install -r requirements.txt --upgrade --upgrade-strategy eager
 
