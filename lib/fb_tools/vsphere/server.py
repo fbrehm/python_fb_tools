@@ -50,7 +50,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -615,7 +615,8 @@ class VsphereServer(BaseVsphereHandler):
                 p='re_name', r=re_name)
             raise TypeError(msg)
 
-        LOG.debug(_("Trying to get list of VMs with name pattern {!r}.").format(re_name.pattern))
+        LOG.debug(_("Trying to get list of VMs with name pattern {!r} ...").format(
+            re_name.pattern))
         vm_list = []
 
         try:
@@ -678,14 +679,13 @@ class VsphereServer(BaseVsphereHandler):
             vm_name = vm_config.name
 
             if self.verbose > 2:
-                LOG.debug(_("Checking VM {!r}...").format(vm_name))
+                LOG.debug(_("Checking VM {!r} ...").format(vm_name))
             if is_template is not None:
                 if self.verbose > 2:
-                    not_tpl = ''
+                    msg = _("Checking VM {!r} for being a template ...")
                     if not is_template:
-                        not_tpl = 'not '
-                    LOG.debug(_("Checking VM {name!r} for being {no}a template ...").format(
-                        name=vm_name, no=not_tpl))
+                        msg = _("Checking VM {!r} for being not a template ...")
+                    LOG.debug(msg.format(vm_name))
                 if is_template and not vm_config.template:
                     return []
                 if not is_template and vm_config.template:
