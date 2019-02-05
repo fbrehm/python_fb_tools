@@ -29,7 +29,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '1.4.3'
+__version__ = '1.4.4'
 
 _ = XLATOR.gettext
 
@@ -300,6 +300,7 @@ def is_sequence(arg):
 
     return True
 
+
 # =============================================================================
 def caller_search_path(*additional_paths):
     """
@@ -448,6 +449,7 @@ def compare_fqdn_tokens(xs, ys):
         return -1
 
     return 0
+
 
 # =============================================================================
 def human2mbytes(value, si_conform=False, as_float=False):
@@ -694,6 +696,7 @@ def bytes2human(
         return value_str
 
     return format_str.format(value=value_str, unit=unit)
+
 
 # =============================================================================
 def generate_password(length=12):

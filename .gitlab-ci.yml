@@ -5,6 +5,7 @@ stages:
 variables:
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
+  FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
 
 before_script:
   - locale -a
@@ -17,7 +18,7 @@ test Python 3.5:
   script:
     - pip install --upgrade --upgrade-strategy eager flake8 pylint pytest
     - pytest --verbose
-    - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY bin lib
+    - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
   tags:
     - docker
 

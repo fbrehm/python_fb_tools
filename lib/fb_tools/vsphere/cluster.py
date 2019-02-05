@@ -27,6 +27,7 @@ LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
 
+
 # =============================================================================
 class VsphereCluster(VsphereObject):
 

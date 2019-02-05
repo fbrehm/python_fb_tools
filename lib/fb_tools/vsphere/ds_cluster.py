@@ -170,6 +170,7 @@ class VsphereDsCluster(VsphereObject):
 
         return True
 
+
 # =============================================================================
 class VsphereDsClusterDict(collections.MutableMapping):
     """

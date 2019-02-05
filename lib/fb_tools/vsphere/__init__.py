@@ -41,6 +41,7 @@ DEFAULT_DC = 'vmcc'
 DEFAULT_CLUSTER = 'vmcc-l105-01'
 DEFAULT_TZ_NAME = 'Europe/Berlin'
 
+
 # =============================================================================
 @add_metaclass(ABCMeta)
 class BaseVsphereHandler(HandlingObject):

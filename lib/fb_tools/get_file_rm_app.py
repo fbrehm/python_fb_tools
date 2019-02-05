@@ -87,6 +87,7 @@ def check_date_pattern(pattern):
 
     return True
 
+
 # =============================================================================
 class WrongDatePattern(GetFileRmError):
 
@@ -104,6 +105,7 @@ class WrongDatePattern(GetFileRmError):
         else:
             msg += _(". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'.")
         return msg
+
 
 # =============================================================================
 class GetFileRmApplication(BaseApplication):

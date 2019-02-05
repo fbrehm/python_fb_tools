@@ -13,10 +13,11 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '1.2.5'
+__version__ = '1.2.6'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
+
 
 # =============================================================================
 class FbError(Exception):
@@ -25,6 +26,7 @@ class FbError(Exception):
     """
 
     pass
+
 
 # =============================================================================
 class InvalidMailAddressError(FbError):
@@ -106,6 +108,7 @@ class InterruptError(ExpectedHandlerError):
             pid=os.getpid(), signal=signame)
 
         return msg
+
 
 # =============================================================================
 class TerraformObjectError(FbHandlerError):

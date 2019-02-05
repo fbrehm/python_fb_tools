@@ -29,11 +29,12 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
 _ = XLATOR.gettext
+
 
 # =============================================================================
 class ConfigError(FbError):

@@ -800,7 +800,6 @@ class LockHandler(BaseHandler):
 
         LOG.debug("Trying to lock lockfile {!r} ...".format(str(lockfile)))
 
-
         if not os.access(str(lockdir), os.W_OK):
             msg = _("Locking directory {!r} isn't writeable.").format(str(lockdir))
             if self.simulate:

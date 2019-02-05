@@ -39,6 +39,7 @@ class VSphereNoDatastoresFoundError(FbHandlerError):
 
         return self.msg
 
+
 # =============================================================================
 class VSphereExpectedError(VSphereHandlerError):
     """Base class for all errors, which could be expected in application object
@@ -66,6 +67,7 @@ class VSphereNameError(VSphereExpectedError):
             msg = _("Invalid name {!r} for a VSphere object.").format(self.name)
 
         return msg
+
 
 # =============================================================================
 class VSphereDatacenterNotFoundError(VSphereExpectedError):
@@ -156,6 +158,7 @@ class VSphereCannotConnectError(VSphereExpectedError):
         msg = _("Could not connect to the vSphere host {h}:{p} as user {u!r}.").format(
             h=self.host, p=self.port, u=self.user)
         return msg
+
 
 # =============================================================================
 class TimeoutCreateVmError(VSphereExpectedError):
