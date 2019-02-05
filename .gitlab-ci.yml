@@ -1,6 +1,7 @@
 stages:
   - test
   - linter
+  - build
 
 variables:
   FLAKE8_MAX_LINE_LENGTH: 99
@@ -9,8 +10,8 @@ variables:
 
 before_script:
   - locale -a
-  - apt update && apt install --yes sudo locales
-  - if test -f /etc/locale.gen; then echo "/etc/locale.gen:"; grep -P -v '^\s*(#.*)$' /etc/locale.gen; echo "<-- EOF"; fi
+  - apt update && apt install --yes sudo locales gettext
+  - if test -f /etc/locale.gen; then echo "/etc/locale.gen:"; grep -P -v '^\s*(#.*)?$' /etc/locale.gen; echo "<-- EOF"; fi
   - if grep 'en_US.UTF-8' /etc/locale.gen; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; fi
   - if grep 'de_DE.UTF-8' /etc/locale.gen; then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen; fi
   - locale-gen
@@ -18,33 +19,33 @@ before_script:
   - pip install --upgrade pip
   - pip install -r requirements.txt --upgrade --upgrade-strategy eager
 
-#test Python 2.7:
-#  stage: test
-#  image: python:2.7
-#  script:
-#    - pip install --upgrade --upgrade-strategy eager ipaddress
-#    - pip install --upgrade --upgrade-strategy eager pytest
-#    - pytest --verbose
-#  tags:
-#    - docker
+test Python 2.7:
+  stage: test
+  image: python:2.7
+  script:
+    - pip install --upgrade --upgrade-strategy eager ipaddress
+    - pip install --upgrade --upgrade-strategy eager pytest
+    - pytest --verbose
+  tags:
+    - docker
 
-#test Python 3.5:
-#  stage: test
-#  image: python:3.5
-#  script:
-#    - pip install --upgrade --upgrade-strategy eager pytest
-#    - pytest --verbose
-#  tags:
-#    - docker
+test Python 3.5:
+  stage: test
+  image: python:3.5
+  script:
+    - pip install --upgrade --upgrade-strategy eager pytest
+    - pytest --verbose
+  tags:
+    - docker
 
-#test Python 3.6:
-#  stage: test
-#  image: python:3.6
-#  script:
-#    - pip install --upgrade --upgrade-strategy eager pytest
-#    - pytest --verbose
-#  tags:
-#    - docker
+test Python 3.6:
+  stage: test
+  image: python:3.6
+  script:
+    - pip install --upgrade --upgrade-strategy eager pytest
+    - pytest --verbose
+  tags:
+    - docker
 
 test Python 3.7:
   stage: test
@@ -64,11 +65,11 @@ Linter:
   tags:
     - docker
 
-#build Python 3.5:
-#  stage: build
-#  image: python:3.5
-#  script:
-#    - python setup.py bdist
-#  tags:
-#    - docker
+build Python 3.5:
+  stage: build
+  image: python:3.5
+  script:
+    - python setup.py bdist
+  tags:
+    - docker
 
