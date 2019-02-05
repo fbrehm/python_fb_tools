@@ -1,0 +1,25 @@
+stages:
+  - test
+  - build
+
+test Python 3.5:
+  stage: test
+  image: python:3.5
+  script:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt --upgrade --upgrade-strategy eager
+    - for f in test/test*.py; do $f --verbose; done
+    - flake8 lib
+  tags:
+    - docker
+
+build Python 3.5:
+  stage: build
+  image: python:3.5
+  script:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt --upgrade --upgrade-strategy eager
+    - python setup.py bdist
+  tags:
+    - docker
+

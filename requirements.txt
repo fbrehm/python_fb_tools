@@ -3,6 +3,7 @@ requests
 six
 pytz
 flake8
+pylint
 pathlib
 setuptools
 wheel
