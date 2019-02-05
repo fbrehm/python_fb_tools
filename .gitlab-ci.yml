@@ -11,6 +11,7 @@ before_script:
 #  - if grep 'en_US.UTF-8' /etc/locale.gen; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; else; echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; fi
 #  - if grep 'de_DE.UTF-8' /etc/locale.gen; then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen ; else; echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen; fi
 #  - cat /etc/locale.gen
+  - locale -a
   - locale-gen en_US.UTF-8 de_DE.UTF-8
   - pip install --upgrade pip
   - pip install -r requirements.txt --upgrade --upgrade-strategy eager
