@@ -16,6 +16,7 @@ test Python 2.7:
   stage: test
   image: python:2.7
   script:
+    - pip install --upgrade --upgrade-strategy eager ipaddress
     - pip install --upgrade --upgrade-strategy eager flake8 pylint pytest
     - pytest --verbose
     - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
