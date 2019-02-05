@@ -23,7 +23,7 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.1.2'
+__version__ = '1.1.3'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
@@ -40,7 +40,7 @@ if __mo_file__:
     try:
         with open(__mo_file__, 'rb') as F:
             XLATOR = Translations(F, DOMAIN)
-    except FileNotFoundError:
+    except (FileNotFoundError, IOError):
         XLATOR = gettext.NullTranslations()
 else:
     XLATOR = gettext.NullTranslations()
