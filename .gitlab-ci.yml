@@ -171,7 +171,7 @@ RPM package OEL7:
     - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version=$PKG_VERSION" specs/fb_tools.spec'
     - tree -aQpugs rpmdir/*RPMS || true
     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
-    - 'scp -p rpmdir/RPMS/*/*.rpm -o YUM_REPO_DIR=no ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
+    - 'scp -p rpmdir/RPMS/*/*.rpm -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
   after_script:
     - rm -r rpmdir
   environment:
