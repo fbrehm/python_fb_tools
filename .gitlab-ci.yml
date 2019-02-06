@@ -2,24 +2,27 @@ stages:
   - test
   - linter
   - build
+  - deploy
 
 variables:
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
 
-before_script:
-  - locale -a
-  - apt update && apt install --yes sudo locales gettext
-  - if test -f /etc/locale.gen; then echo "/etc/locale.gen:"; grep -P -v '^\s*(#.*)?$' /etc/locale.gen || true; echo "<-- EOF"; fi
-  - if grep 'en_US.UTF-8' /etc/locale.gen; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; fi
-  - if grep 'de_DE.UTF-8' /etc/locale.gen; then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen; fi
-  - locale-gen
-  - locale -a
-  - pip install --upgrade pip
-  - pip install -r requirements.txt --upgrade --upgrade-strategy eager
+.template_docker_job: &docker_job_definition
+  before_script:
+    - locale -a
+    - apt update && apt install --yes sudo locales gettext
+    - if test -f /etc/locale.gen; then echo "/etc/locale.gen:"; grep -P -v '^\s*(#.*)?$' /etc/locale.gen || true; echo "<-- EOF"; fi
+    - if grep 'en_US.UTF-8' /etc/locale.gen; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; fi
+    - if grep 'de_DE.UTF-8' /etc/locale.gen; then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen; fi
+    - locale-gen
+    - locale -a
+    - pip install --upgrade pip
+    - pip install -r requirements.txt --upgrade --upgrade-strategy eager
 
 test Python 2.7:
+  <<: *docker_job_definition
   stage: test
   image: python:2.7
   script:
@@ -28,8 +31,13 @@ test Python 2.7:
     - pytest --verbose
   tags:
     - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
 
 test Python 3.5:
+  <<: *docker_job_definition
   stage: test
   image: python:3.5
   script:
@@ -37,8 +45,13 @@ test Python 3.5:
     - pytest --verbose
   tags:
     - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
 
 test Python 3.6:
+  <<: *docker_job_definition
   stage: test
   image: python:3.6
   script:
@@ -46,8 +59,13 @@ test Python 3.6:
     - pytest --verbose
   tags:
     - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
 
 test Python 3.7:
+  <<: *docker_job_definition
   stage: test
   image: python:3.7
   script:
@@ -55,8 +73,13 @@ test Python 3.7:
     - pytest --verbose
   tags:
     - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
 
 Linter:
+  <<: *docker_job_definition
   stage: linter
   image: python:3.7
   script:
@@ -64,36 +87,76 @@ Linter:
     - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
   tags:
     - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
 
 build Python 2.7:
+  <<: *docker_job_definition
   stage: build
   image: python:2.7
   script:
     - python setup.py bdist
   tags:
     - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
 
 build Python 3.5:
+  <<: *docker_job_definition
   stage: build
   image: python:3.5
   script:
     - python setup.py bdist
   tags:
     - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
 
 build Python 3.6:
+  <<: *docker_job_definition
   stage: build
   image: python:3.6
   script:
     - python setup.py bdist
   tags:
     - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
 
 build Python 3.7:
+  <<: *docker_job_definition
   stage: build
   image: python:3.7
   script:
     - python setup.py bdist
   tags:
     - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+
+RPM package OEL7:
+  stage: deploy
+  tags:
+    - deploy
+  script:
+    - hostname -f
+    - whoami
+    - who am i
+    - echo "$HOME"
+    - ls -lA "$HOME"
+    - pwd
+    - ls -lA
+  environment:
+    name: production
+  when: manual
 
