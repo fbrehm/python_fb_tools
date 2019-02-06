@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.1\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-02-05 18:15+0100\n"
+"POT-Creation-Date: 2019-02-06 14:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1118,7 +1118,7 @@ msgid "No VSphere datastore clusters found."
 msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:365
-msgid "Datastore cluster mappings:\n"
+msgid "Datastore cluster mappings:"
 msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:371 lib/fb_tools/vsphere/server.py:431

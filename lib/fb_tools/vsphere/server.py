@@ -362,7 +362,7 @@ class VsphereServer(BaseVsphereHandler):
             self.ds_cluster_mapping[dsc_name] = dsc.tf_name
 
         if self.verbose > 2:
-            LOG.debug(_("Datastore cluster mappings:" + '\n' + pp(self.ds_cluster_mapping)))
+            LOG.debug(_("Datastore cluster mappings:") + '\n' + pp(self.ds_cluster_mapping))
 
     # -------------------------------------------------------------------------
     def _get_ds_clusters(self, child, depth=1):

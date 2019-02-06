@@ -1,3 +1,5 @@
+---
+
 stages:
   - test
   - linter
@@ -8,6 +10,11 @@ variables:
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
+  YUM_REPO_GPG_PASSWD: 'secret'
+  YUM_REPO_HOST: 'rpm-repo.pixelpark.com'
+  YUM_REPO_USER: 'rpm-repo'
+  YUM_REPO_DIR: '/www/sites/rpm-repo.pixelpark.com/docs/x86_64'
+  YUM_REPO_ADDSIGN_SCRIPT: '/home/rpm-repo/rpm-addsign-wrapper.expect'
 
 .template_docker_job: &docker_job_definition
   before_script:
@@ -26,8 +33,7 @@ test Python 2.7:
   stage: test
   image: python:2.7
   script:
-    - pip install --upgrade --upgrade-strategy eager ipaddress
-    - pip install --upgrade --upgrade-strategy eager pytest
+    - pip install -r requirements-2.7.txt --upgrade --upgrade-strategy eager
     - pytest --verbose
   tags:
     - docker
@@ -151,12 +157,28 @@ RPM package OEL7:
   script:
     - hostname -f
     - whoami
-    - who am i
-    - echo "$HOME"
-    - ls -lA "$HOME"
     - pwd
-    - ls -lA
+    - mkdir -pv rpmdir
+    - mkdir -pv rpmdir/SOURCES
+    - 'export ODIR=$(pwd)'
+    - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )'
+    - 'export PKG_VERSION=$( cat debian/changelog | head -n 1 | sed -e "s/^[^(]*(//" -e "s/).*//" )'
+    - 'echo "Version to build: $PKG_VERSION"'
+    - 'mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION'
+    - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
+    - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
+    - 'cat specs/fb_tools.spec.template | sed -e "s/@@@Version@@@/$PKG_VERSION/gi" > specs/fb_tools.spec'
+    - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version=$PKG_VERSION" specs/fb_tools.spec'
+    - tree -aQpugs rpmdir/*RPMS || true
+    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    - 'for f in rpmdir/RPMS/*/*.rpm; do b=$( basename $f ); echo "Checking $b ..."; ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/; if test -f $b; then echo \"Package $b is already existing.\"; exit 5; fi"; done'
+    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
+    - 'for f in rpmdir/RPMS/*/*.rpm; do b=$( basename $f ); echo "Signing $b ..."; echo "${YUM_REPO_GPG_PASSWD}" | ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && ${YUM_REPO_ADDSIGN_SCRIPT} $b"; done'
+    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && createrepo --update ."'
+  after_script:
+    - rm -r rpmdir
   environment:
     name: production
-  when: manual
+  only:
+    - master
 
