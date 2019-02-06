@@ -155,10 +155,13 @@ RPM package OEL7:
     - whoami
     - pwd
     - mkdir -pv rpmdir
-    - rpmbuild -ba --nocheck --verbose --define "_rpmdir $(pwd)/rpmdir" specs/fb_tools.spec || true
+    - mkdir -pv rpmdir/SOURCES
+    - export PKG_VERSION=$( cat debian/changelog | head -n 1 | sed -e 's/^[^(]*(//' -e 's/).*//' )
+    - echo "Version to build: $PKG_VERSION"
+    - rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" specs/fb_tools.spec || true
     - tree -aQpugsA rpmdir || true
   after_script:
-    - rm -r rpmdir
+    - rm -rv rpmdir
   environment:
     name: production
   when: manual
