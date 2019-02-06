@@ -12,6 +12,8 @@ variables:
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
   YUM_REPO_GPG_PASSWD: 'secret'
   YUM_REPO_HOST: 'rpm-repo.pixelpark.com'
+  YUM_REPO_USER: 'rpm-repo'
+  YUM_REPO_DIR: '/www/sites/rpm-repo.pixelpark.com/docs/x86_64'
 
 .template_docker_job: &docker_job_definition
   before_script:
@@ -166,7 +168,9 @@ RPM package OEL7:
     - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
     - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
     - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version=$PKG_VERSION" specs/fb_tools.spec || true'
-    - tree -aQpugs rpmdir || true
+    - tree -aQpugs rpmdir/*RPMS || true
+    - ls -lA rpmdir/*RPMS
+    - 'scp -p rpmdir/RPMS/*.rpm -o YUM_REPO_DIR=no ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
   after_script:
     - rm -rv rpmdir
   environment:
