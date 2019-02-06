@@ -166,7 +166,7 @@ RPM package OEL7:
     - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
     - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
     - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version=$PKG_VERSION" specs/fb_tools.spec || true'
-    - tree -aQpugsA rpmdir || true
+    - tree -aQpugs rpmdir || true
   after_script:
     - rm -rv rpmdir
   environment:
