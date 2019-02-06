@@ -14,7 +14,7 @@ variables:
   YUM_REPO_HOST: 'rpm-repo.pixelpark.com'
   YUM_REPO_USER: 'rpm-repo'
   YUM_REPO_DIR: '/www/sites/rpm-repo.pixelpark.com/docs/x86_64'
-  YUM_REPO_ADDSIGN_SCRIPT: '/home/gitlab-runner/rpm-addsign-wrapper.expect'
+  YUM_REPO_ADDSIGN_SCRIPT: '/home/rpm-repo/rpm-addsign-wrapper.expect'
 
 .template_docker_job: &docker_job_definition
   before_script:
