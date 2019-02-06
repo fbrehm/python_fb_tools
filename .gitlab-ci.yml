@@ -170,8 +170,8 @@ RPM package OEL7:
     - 'cat specs/fb_tools.spec.template | sed -e "s/@@@Version@@@/$PKG_VERSION/gi" > specs/fb_tools.spec'
     - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version=$PKG_VERSION" specs/fb_tools.spec'
     - tree -aQpugs rpmdir/*RPMS || true
-    - ls -lA rpmdir/*RPMS
-    - 'scp -p rpmdir/RPMS/*.rpm -o YUM_REPO_DIR=no ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
+    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    - 'scp -p rpmdir/RPMS/*/*.rpm -o YUM_REPO_DIR=no ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
   after_script:
     - rm -r rpmdir
   environment:
