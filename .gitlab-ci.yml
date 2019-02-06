@@ -154,11 +154,11 @@ RPM package OEL7:
     - hostname -f
     - whoami
     - pwd
-    - mkdir -pv build
-    - rpmbuild --buildroot ./build -ba --nocheck --verbose specs/fb_tools.spec || true
-    - tree -aQpugsA build || true
+    - mkdir -pv rpmdir
+    - rpmbuild -ba --nocheck --verbose --define "_rpmdir $(pwd)/rpmdir" specs/fb_tools.spec || true
+    - tree -aQpugsA rpmdir || true
   after_script:
-    - rm -r build
+    - rm -r rpmdir
   environment:
     name: production
   when: manual
