@@ -180,5 +180,6 @@ RPM package OEL7:
     - rm -r rpmdir
   environment:
     name: production
-  when: manual
+  only:
+    - master
 
