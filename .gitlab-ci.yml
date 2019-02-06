@@ -172,6 +172,7 @@ RPM package OEL7:
     - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version=$PKG_VERSION" specs/fb_tools.spec'
     - tree -aQpugs rpmdir/*RPMS || true
     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    - 'for f in rpmdir/RPMS/*/*.rpm; do b=$( basename $f ); echo "Checking $b ..."; ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/; if test -f $b; then echo \"Package $b is already existing.\"; exit 5; fi"; done'
     - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
     - 'for f in rpmdir/RPMS/*/*.rpm; do b=$( basename $f ); echo "Signing $b ..."; echo "${YUM_REPO_GPG_PASSWD}" | ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && ${YUM_REPO_ADDSIGN_SCRIPT} $b"; done'
     - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && createrepo --update ."'
