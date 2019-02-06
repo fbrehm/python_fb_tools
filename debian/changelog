@@ -1,4 +1,4 @@
-fb-tools (1.4.2) UNRELEASED; urgency=medium
+fb-tools (1.4.2) all; urgency=medium
 
   * Adding .gitlab-ci.yml for Continous Integration via Gitlab
   * Adding some more translations into German
