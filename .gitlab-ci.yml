@@ -8,6 +8,8 @@ variables:
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
+  YUM_REPO_GPG_PASSWD: 'secret'
+  YUM_REPO_HOST: 'rpm-repo.pixelpark.com'
 
 .template_docker_job: &docker_job_definition
   before_script:
@@ -151,11 +153,12 @@ RPM package OEL7:
   script:
     - hostname -f
     - whoami
-    - who am i
-    - echo "$HOME"
-    - ls -lA "$HOME"
     - pwd
-    - ls -lA
+    - mkdir -pv build
+    - rpmbuild --buildroot ./build -ba --nocheck --verbose specs/fb_tools.spec || true
+    - tree -aQpugsA build || true
+  after_script:
+    - rm -r build
   environment:
     name: production
   when: manual
