@@ -22,7 +22,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -120,8 +120,7 @@ class VsphereDsCluster(VsphereObject):
         }
 
         if verbose > 2:
-            LOG.debug("Creating {c} object from:\n{p}".format(
-                c=cls.__name__, p=pp(params)))
+            LOG.debug(_("Creating {} object from:").format(cls.__name__) + '\n' + pp(params))
 
         cluster = cls(**params)
         return cluster
@@ -160,7 +159,7 @@ class VsphereDsCluster(VsphereObject):
     def __eq__(self, other):
 
         if self.verbose > 4:
-            LOG.debug("Comparing {}-objects ...".format(self.__class__.__name__))
+            LOG.debug(_("Comparing {} objects ...").format(self.__class__.__name__))
 
         if not isinstance(other, VsphereDsCluster):
             return False
@@ -169,6 +168,7 @@ class VsphereDsCluster(VsphereObject):
             return False
 
         return True
+
 
 # =============================================================================
 class VsphereDsClusterDict(collections.MutableMapping):
@@ -182,7 +182,7 @@ class VsphereDsClusterDict(collections.MutableMapping):
     msg_key_not_name = _("The key {k!r} must be equal to the datastore cluster name {n!r}.")
     msg_none_type_error = _("None type as key is not allowed.")
     msg_empty_key_error = _("Empty key {!r} is not allowed.")
-    msg_no_cluster_dict = _("Object {o!r} is not a {e} object.")
+    msg_no_cluster_dict = _("Object {{!r}} is not a {} object.").format('VsphereDsClusterDict.')
 
     # -------------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
@@ -317,8 +317,7 @@ class VsphereDsClusterDict(collections.MutableMapping):
     def __eq__(self, other):
 
         if not isinstance(other, VsphereDsClusterDict):
-            raise TypeError(self.msg_no_cluster_dict.format(
-                o=other, e='VsphereDsClusterDict-Objekt.'))
+            raise TypeError(self.msg_no_cluster_dict.format(other))
 
         return self._map == other._map
 
@@ -326,8 +325,7 @@ class VsphereDsClusterDict(collections.MutableMapping):
     def __ne__(self, other):
 
         if not isinstance(other, VsphereDsClusterDict):
-            raise TypeError(self.msg_no_cluster_dict.format(
-                o=other, e='VsphereDsClusterDict-Objekt.'))
+            raise TypeError(self.msg_no_cluster_dict.format(other))
 
         return self._map != other._map
 

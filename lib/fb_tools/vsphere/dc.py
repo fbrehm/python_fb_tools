@@ -21,7 +21,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -117,7 +117,7 @@ class VsphereDatacenter(VsphereObject):
     def __eq__(self, other):
 
         if self.verbose > 4:
-            LOG.debug("Comparing {}-objects ...".format(self.__class__.__name__))
+            LOG.debug(_("Comparing {} objects ...").format(self.__class__.__name__))
 
         if not isinstance(other, VsphereDatacenter):
             return False
@@ -151,8 +151,7 @@ class VsphereDatacenter(VsphereObject):
         }
 
         if verbose > 2:
-            LOG.debug("Creating {c} object from:\n{p}".format(
-                c=cls.__name__, p=pp(params)))
+            LOG.debug(_("Creating {} object from:").format(cls.__name__) + '\n' + pp(params))
 
         dc = cls(**params)
 

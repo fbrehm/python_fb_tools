@@ -28,7 +28,7 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '1.1.2'
+__version__ = '1.1.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -87,6 +87,7 @@ def check_date_pattern(pattern):
 
     return True
 
+
 # =============================================================================
 class WrongDatePattern(GetFileRmError):
 
@@ -104,6 +105,7 @@ class WrongDatePattern(GetFileRmError):
         else:
             msg += _(". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'.")
         return msg
+
 
 # =============================================================================
 class GetFileRmApplication(BaseApplication):
@@ -382,15 +384,15 @@ class GetFileRmApplication(BaseApplication):
                 if self.verbose > 2:
                     LOG.debug("Checking {!r} ...".format(fpath))
                 if not fpath.exists():
-                    LOG.warn(_("File {!r} does not exists.").format(str(fpath)))
+                    LOG.warning(_("File {!r} does not exists.").format(str(fpath)))
                     continue
                 if not fpath.is_file():
-                    LOG.warn(_("File {!r} is not a regular file.").format(str(fpath)))
+                    LOG.warning(_("File {!r} is not a regular file.").format(str(fpath)))
                     continue
 
                 match = self.re_date.search(str(fpath))
                 if not match:
-                    LOG.warn(_("File {fi!r} does not match pattern {pa!r}.").format(
+                    LOG.warning(_("File {fi!r} does not match pattern {pa!r}.").format(
                         fi=str(fpath), pa=self.date_pattern))
                     continue
 
@@ -402,7 +404,7 @@ class GetFileRmApplication(BaseApplication):
                 except ValueError as e:
                     msg = _("Date in file {fi!r} is not a valid date: {e}.").format(
                         fi=str(fpath), e=e)
-                    LOG.warn(msg)
+                    LOG.warning(msg)
                     continue
 
                 fpath_abs = fpath.resolve()

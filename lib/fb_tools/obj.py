@@ -24,7 +24,7 @@ from .errors import FbError
 
 from .xlate import XLATOR
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -154,7 +154,7 @@ class FbBaseObject(object):
         if v >= 0:
             self._verbose = v
         else:
-            LOG.warn(_("Wrong verbose level {!r}, must be >= 0").format(value))
+            LOG.warning(_("Wrong verbose level {!r}, must be >= 0").format(value))
 
     # -----------------------------------------------------------
     @property

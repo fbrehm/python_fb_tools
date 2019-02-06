@@ -21,11 +21,12 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 
 
 _ = XLATOR.gettext
+
 
 # =============================================================================
 class VsphereCluster(VsphereObject):
@@ -242,7 +243,7 @@ class VsphereCluster(VsphereObject):
     def __eq__(self, other):
 
         if self.verbose > 4:
-            LOG.debug("Comparing {}-objects ...".format(self.__class__.__name__))
+            LOG.debug(_("Comparing {} objects ...").format(self.__class__.__name__))
 
         if not isinstance(other, VsphereCluster):
             return False
@@ -278,8 +279,7 @@ class VsphereCluster(VsphereObject):
         }
 
         if verbose > 2:
-            LOG.debug("Creating {c} object from:\n{p}".format(
-                c=cls.__name__, p=pp(params)))
+            LOG.debug(_("Creating {} object from:").format(cls.__name__) + '\n' + pp(params))
 
         cluster = cls(**params)
 
@@ -287,14 +287,14 @@ class VsphereCluster(VsphereObject):
             nname = network.name
             if nname not in cluster.networks:
                 if verbose > 2:
-                    LOG.debug("Cluster {c!r} has network {n!r}.".format(
+                    LOG.debug(_("Cluster {c!r} has network {n!r}.").format(
                         c=cluster.name, n=nname))
                 cluster.networks.append(nname)
 
         for ds in data.datastore:
             if ds.name not in cluster.datastores:
                 if verbose > 2:
-                    LOG.debug("Cluster {c!r} has datastore {d!r}.".format(
+                    LOG.debug(_("Cluster {c!r} has datastore {d!r}.").format(
                         c=cluster.name, d=ds.name))
                 cluster.datastores.append(ds.name)
 

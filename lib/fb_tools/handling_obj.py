@@ -45,7 +45,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.5.2'
+__version__ = '1.5.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -288,11 +288,11 @@ class HandlingObject(FbBaseObject):
         # Checking an absolute path
         if cmd.is_absolute():
             if not cmd.exists():
-                LOG.warn(_("Command {!r} doesn't exists.").format(str(cmd)))
+                LOG.warning(_("Command {!r} doesn't exists.").format(str(cmd)))
                 return None
             if not os.access(str(cmd), os.X_OK):
                 msg = _("Command {!r} is not executable.").format(str(cmd))
-                LOG.warn(msg)
+                LOG.warning(msg)
                 return None
             if resolve:
                 return cmd.resolve()
@@ -322,7 +322,7 @@ class HandlingObject(FbBaseObject):
             if self.verbose > 2:
                 LOG.debug("Command {!r} not found.".format(str(cmd)))
         else:
-            LOG.warn(_("Command {!r} not found.").format(str(cmd)))
+            LOG.warning(_("Command {!r} not found.").format(str(cmd)))
 
         return None
 

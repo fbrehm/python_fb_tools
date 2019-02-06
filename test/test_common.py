@@ -173,9 +173,17 @@ class TestFbCommon(FbToolsTestcase):
         LOG.debug("Current locale is %r.", loc)
         german = ('de_DE', encoding)                                    # noqa
 
-        LOG.debug("Setting to locale 'C' to be secure.")
-        locale.setlocale(locale.LC_ALL, 'C')
-        LOG.debug("Current locale is now %r.", locale.getlocale())
+        do_switch_locales = True
+        try:
+            locale.setlocale(locale.LC_ALL, german)
+        except Exception as e:
+            LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
+            do_switch_locales = False
+
+        if do_switch_locales:
+            LOG.debug("Setting to locale 'C' to be secure.")
+            locale.setlocale(locale.LC_ALL, 'C')
+            LOG.debug("Current locale is now %r.", locale.getlocale())
 
         test_pairs_int_si = (
             ('1048576', 1),
@@ -227,9 +235,10 @@ class TestFbCommon(FbToolsTestcase):
             self.assertIsInstance(result, int)
             self.assertEqual(expected, result)
 
-        # Switch back to saved locales
-        LOG.debug("Switching back to saved locales %r.", loc)
-        locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
+        if do_switch_locales:
+            # Switch back to saved locales
+            LOG.debug("Switching back to saved locales %r.", loc)
+            locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
 
     # -------------------------------------------------------------------------
     def test_human2mbytes_l10n(self):
@@ -240,6 +249,12 @@ class TestFbCommon(FbToolsTestcase):
         encoding = loc[1]
         LOG.debug("Current locale is %r.", loc)
         german = ('de_DE', encoding)
+
+        try:
+            locale.setlocale(locale.LC_ALL, german)
+        except Exception as e:
+            LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
+            return True
 
         LOG.debug("Setting to locale 'C' to be secure.")
         locale.setlocale(locale.LC_ALL, 'C')
@@ -320,9 +335,17 @@ class TestFbCommon(FbToolsTestcase):
         LOG.debug("Current locale is %r.", loc)
         german = ('de_DE', encoding)                                    # noqa
 
-        LOG.debug("Setting to locale 'C' to be secure.")
-        locale.setlocale(locale.LC_ALL, 'C')
-        LOG.debug("Current locale is now %r.", locale.getlocale())
+        do_switch_locales = True
+        try:
+            locale.setlocale(locale.LC_ALL, german)
+        except Exception as e:
+            LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
+            do_switch_locales = False
+
+        if do_switch_locales:
+            LOG.debug("Setting to locale 'C' to be secure.")
+            locale.setlocale(locale.LC_ALL, 'C')
+            LOG.debug("Current locale is now %r.", locale.getlocale())
 
         test_pairs_no_si = (
             (0, '0 Bytes'),
@@ -370,9 +393,10 @@ class TestFbCommon(FbToolsTestcase):
             self.assertIsInstance(result, str)
             self.assertEqual(expected, result)
 
-        # Switch back to saved locales
-        LOG.debug("Switching back to saved locales %r.", loc)
-        locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
+        if do_switch_locales:
+            # Switch back to saved locales
+            LOG.debug("Switching back to saved locales %r.", loc)
+            locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
 
     # -------------------------------------------------------------------------
     def test_to_bool(self):
@@ -470,6 +494,12 @@ class TestFbCommon(FbToolsTestcase):
         encoding = loc[1]
         LOG.debug("Current locale is %r.", loc)
         german = ('de_DE', encoding)
+        try:
+            locale.setlocale(locale.LC_ALL, german)
+        except Exception as e:
+            LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
+            return True
+
         # use German locale; name might vary with platform
         LOG.debug("Switching to german locale %r.", german)
         locale.setlocale(locale.LC_ALL, german)

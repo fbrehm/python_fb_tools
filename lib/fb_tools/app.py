@@ -38,7 +38,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -183,7 +183,7 @@ class BaseApplication(HandlingObject):
         if v >= 0:
             self._exit_value = v
         else:
-            LOG.warn(_("Wrong exit_value {!r}, must be >= 0.").format(value))
+            LOG.warning(_("Wrong exit_value {!r}, must be >= 0.").format(value))
 
     # -----------------------------------------------------------
     @property
@@ -798,7 +798,7 @@ class BaseApplication(HandlingObject):
                 sys.stdout.flush()
         except KeyboardInterrupt:
             sys.stderr.write("\n")
-            LOG.warn(_("Aborted by user interrupt."))
+            LOG.warning(_("Aborted by user interrupt."))
             sys.exit(99)
 
         go = self.colored('Go go go ...', 'GREEN')
