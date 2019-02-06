@@ -173,9 +173,8 @@ RPM package OEL7:
     - tree -aQpugs rpmdir/*RPMS || true
     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
     - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
-    - 'echo YUM_REPO_GPG_PASSWD=${YUM_REPO_GPG_PASSWD}'
-    - 'for f in ls -l1 rpmdir/RPMS/*/*.rpm; do b=$( basename $f ); echo "${YUM_REPO_GPG_PASSWD}" | ssh -o StrictHostKeyChecking=no  ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && ${YUM_REPO_ADDSIGN_SCRIPT} $b"; done'
-    - 'ssh -o StrictHostKeyChecking=no  ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && createrepo --update ."'
+    - 'for f in ls -1 rpmdir/RPMS/*/*.rpm; do b=$( basename $f ); echo "Signing $b ..."; echo "${YUM_REPO_GPG_PASSWD}" | ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && ${YUM_REPO_ADDSIGN_SCRIPT} $b"; done'
+    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && createrepo --update ."'
   after_script:
     - rm -r rpmdir
   environment:
