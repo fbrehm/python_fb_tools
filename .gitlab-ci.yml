@@ -159,12 +159,12 @@ RPM package OEL7:
     - mkdir -pv rpmdir
     - mkdir -pv rpmdir/SOURCES
     - 'export ODIR=$(pwd)'
-    - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )"
+    - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )'
     - 'export PKG_VERSION=$( cat debian/changelog | head -n 1 | sed -e "s/^[^(]*(//" -e "s/).*//" )'
     - 'echo "Version to build: $PKG_VERSION"'
-    - "mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION"
-    - "tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)"
-    - "cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR"
+    - 'mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION'
+    - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
+    - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
     - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version=$PKG_VERSION" specs/fb_tools.spec || true'
     - tree -aQpugsA rpmdir || true
   after_script:
