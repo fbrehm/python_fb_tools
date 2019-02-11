@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-02-11 15:38+0100\n"
+"POT-Creation-Date: 2019-02-11 16:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -650,58 +650,106 @@ msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] ""
 msgstr[1] ""
 
+#: lib/fb_tools/handling_obj.py:286
+msgid "Searching for command {!r} ..."
+msgstr ""
+
 #: lib/fb_tools/handling_obj.py:291
 msgid "Command {!r} doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:294
+#: lib/fb_tools/handling_obj.py:294 lib/fb_tools/handling_obj.py:318
 msgid "Command {!r} is not executable."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:325
+#: lib/fb_tools/handling_obj.py:308
+msgid "Searching command in {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:321
 msgid "Command {!r} not found."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:393
+#: lib/fb_tools/handling_obj.py:394
 msgid "STDIN and input arguments may not both be used."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:407
+#: lib/fb_tools/handling_obj.py:397
+msgid "Executing command args:"
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:400
+msgid "Performing argument {!r}."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:405
+msgid "Executing: {}"
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:408
 msgid "Simulation mode, not executing: {}"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:521
+#: lib/fb_tools/handling_obj.py:416
+msgid "PID of process: {}"
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:422
+msgid "{c} happened, killing process: {e}"
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:522
 msgid "Nothing to do on signal."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:575 lib/fb_tools/handling_obj.py:663
+#: lib/fb_tools/handling_obj.py:576 lib/fb_tools/handling_obj.py:664
 msgid "File doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:578
+#: lib/fb_tools/handling_obj.py:579
 msgid "Read permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:581
+#: lib/fb_tools/handling_obj.py:582
 msgid "Reading file content of {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:668 lib/fb_tools/handling_obj.py:675
+#: lib/fb_tools/handling_obj.py:669 lib/fb_tools/handling_obj.py:676
 msgid "Write permission to {!r} denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:670 lib/fb_tools/handling_obj.py:677
+#: lib/fb_tools/handling_obj.py:671 lib/fb_tools/handling_obj.py:678
 msgid "Write permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:748 lib/fb_tools/handling_obj.py:754
+#: lib/fb_tools/handling_obj.py:682
+msgid "Write {what!r} into {to!r}."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:684
+msgid "Writing {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:696
+msgid "Simulating write into {!r}."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:704
+msgid "Opening {!r} for write unbuffered ..."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:708
+msgid "Closing {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/handling_obj.py:749 lib/fb_tools/handling_obj.py:755
 #: lib/fb_tools/vsphere/cluster.py:261 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
 #: lib/fb_tools/vsphere/ds_cluster.py:106 lib/fb_tools/vsphere/iface.py:58
 #: lib/fb_tools/vsphere/network.py:120 lib/fb_tools/vsphere/server.py:527
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:815
+#: lib/fb_tools/handling_obj.py:816
 msgid "Completed process"
 msgstr ""
 
