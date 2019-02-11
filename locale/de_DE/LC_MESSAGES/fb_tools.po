@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-11 12:32+0100\n"
+"POT-Creation-Date: 2019-02-11 15:38+0100\n"
 "PO-Revision-Date: 2019-02-11 12:35+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -382,9 +382,29 @@ msgstr "DATEI"
 msgid "File pattern to generate list of files to remove."
 msgstr "Dateimuster, um die Liste der zu löschenden Dateien zu generieren."
 
+#: lib/fb_tools/get_file_rm_app.py:340
+msgid "Resolving date pattern {!r}."
+msgstr "Löse Datumsmuster {!r} auf."
+
+#: lib/fb_tools/get_file_rm_app.py:364
+msgid "Checking given files..."
+msgstr "Überprüfe übergebene Dateien …"
+
+#: lib/fb_tools/get_file_rm_app.py:369
+msgid "Checking given file {!r} ..."
+msgstr "Überprüfe übergebene Datei {!r} …"
+
+#: lib/fb_tools/get_file_rm_app.py:378
+msgid "Resolved paths:"
+msgstr "Aufgelöste Pfade:"
+
 #: lib/fb_tools/get_file_rm_app.py:380
 msgid "File pattern {!r} does not match any files."
 msgstr "Das Dateimuster {!r} passt auf keine Dateien."
+
+#: lib/fb_tools/get_file_rm_app.py:385
+msgid "Checking {!r} ..."
+msgstr "Überprüfe {!r} …"
 
 #: lib/fb_tools/get_file_rm_app.py:395
 msgid "File {fi!r} does not match pattern {pa!r}."
@@ -397,6 +417,60 @@ msgstr "Das Datum in der Datei {fi!r} ist kein gültiges Datum: {e}."
 #: lib/fb_tools/get_file_rm_app.py:457
 msgid "Did not found any files to evaluate."
 msgstr "Fand keine Dateien zur Auswertung"
+
+#: lib/fb_tools/get_file_rm_app.py:490
+msgid "Keeping last file ..."
+msgid_plural "Keeping last {} files ..."
+msgstr[0] "Behalte die letzte Datei …"
+msgstr[1] "Behalte die letzten {} Dateien …"
+
+#: lib/fb_tools/get_file_rm_app.py:496
+msgid "Keep last file {!r}."
+msgstr "Behalte die letzte Datei {!r}."
+
+#: lib/fb_tools/get_file_rm_app.py:501
+msgid "Files to keep:"
+msgstr "Zu behaltende Dateien:"
+
+#: lib/fb_tools/get_file_rm_app.py:522
+msgid "Files to keep for year:"
+msgstr "Dateien, die für Jahr zu behalten sind:"
+
+#: lib/fb_tools/get_file_rm_app.py:544
+msgid "Got last month: {!r}"
+msgstr "Ermittelter letzter Monat: {!r}"
+
+#: lib/fb_tools/get_file_rm_app.py:558
+msgid "Files to keep for month:"
+msgstr "Dateien, die für Monat zu behalten sind:"
+
+#: lib/fb_tools/get_file_rm_app.py:572
+msgid "Got last Monday: {!r}"
+msgstr "Ermittelter letzter Montag: {!r}"
+
+#: lib/fb_tools/get_file_rm_app.py:585
+msgid "Files to keep for week:"
+msgstr "Dateien, die für Woche zu behalten sind:"
+
+#: lib/fb_tools/get_file_rm_app.py:598
+msgid "Got last day: {!r}"
+msgstr "Ermittelter letzter Tag: {!r}"
+
+#: lib/fb_tools/get_file_rm_app.py:609
+msgid "Keeping all files from today."
+msgstr "Aufheben aller Dateien von heute."
+
+#: lib/fb_tools/get_file_rm_app.py:616
+msgid "Files to keep for day:"
+msgstr "Dateien, die für Tag zu behalten sind:"
+
+#: lib/fb_tools/get_file_rm_app.py:633
+msgid "Trying to get date of file {!r}."
+msgstr "Versuche das Datum aus der Datei {!r} zu entnehmen."
+
+#: lib/fb_tools/get_file_rm_app.py:672
+msgid "Explored and assigned files:"
+msgstr "Ermittelte und zugewiesene Dateien:"
 
 #: lib/fb_tools/get_vm_app.py:58
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
