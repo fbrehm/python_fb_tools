@@ -37,7 +37,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.6.3'
+__version__ = '0.6.4'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -96,7 +96,8 @@ class BasePowerDNSHandler(HandlingObject):
         global LOGLEVEL_REQUESTS_SET
 
         if not LOGLEVEL_REQUESTS_SET:
-            msg = _("Setting Loglevel of the {m} module to {l}.").format(m='requests', l='WARNING')
+            msg = _("Setting Loglevel of the {m} module to {ll}.").format(
+                m='requests', ll='WARNING')
             LOG.debug(msg)
             logging.getLogger("requests").setLevel(logging.WARNING)
             LOGLEVEL_REQUESTS_SET = True

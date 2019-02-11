@@ -33,7 +33,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.7.5'
+__version__ = '0.7.6'
 
 LOG = logging.getLogger(__name__)
 
@@ -1081,8 +1081,9 @@ class LockHandler(BaseHandler):
             LOG.debug(_("Lockfile {lfile!r} is older than {max} seconds ({age} seconds).").format(
                 lfile=str(lfile), max=max_age, age=age))
             return False
-        msg = _("Lockfile {lfile!r} is {age} seconds old, but not old enough ({max} seconds).").format(
-            lfile=str(lfile), max=max_age, age=age)
+        msg = _(
+            "Lockfile {lfile!r} is {age} seconds old, but not old enough "
+            "({max} seconds).").format(lfile=str(lfile), max=max_age, age=age)
         LOG.debug(msg)
         return True
 
