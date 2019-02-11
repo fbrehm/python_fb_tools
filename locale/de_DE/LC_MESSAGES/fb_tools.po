@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-11 17:03+0100\n"
+"POT-Creation-Date: 2019-02-11 17:18+0100\n"
 "PO-Revision-Date: 2019-02-11 12:35+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -745,23 +745,23 @@ msgstr "Die Lockdatei {lfile!r} ist älter als {max} Sekunden ({age} Sekunden)."
 msgid "Lockfile {lfile!r} is {age} seconds old, but not old enough ({max} seconds)."
 msgstr "Die Lockdatei {lfile!r} ist {age} Sekunden alt, aber nicht alte genug ({max} Sekunden)."
 
-#: lib/fb_tools/handler/lock.py:1111
+#: lib/fb_tools/handler/lock.py:1112
 msgid "Trying to open pidfile {!r} ..."
 msgstr "Versuche PID-Datei {!r} zu öffnen …"
 
-#: lib/fb_tools/handler/lock.py:1115
+#: lib/fb_tools/handler/lock.py:1116
 msgid "Could not open pidfile {!r} for reading:"
 msgstr "Konnte PID-Datei {!r} nicht zum Lesen öffnen:"
 
-#: lib/fb_tools/handler/lock.py:1128
+#: lib/fb_tools/handler/lock.py:1129
 msgid "First line of pidfile {!r} was empty."
 msgstr "Die erste Zeile der PID-Datei {!r} war leer."
 
-#: lib/fb_tools/handler/lock.py:1139
+#: lib/fb_tools/handler/lock.py:1140
 msgid "Could not interprete {cont!r} as a PID from {file!r}: {err}"
 msgstr "Konnte {cont!r} nicht als PID (in {file!r}) interpretieren: {err}"
 
-#: lib/fb_tools/handler/lock.py:1148
+#: lib/fb_tools/handler/lock.py:1149
 msgid "Invalid PID {pid} in {file!r} found."
 msgstr "Ungültige PID {pid} in Datei {file!r} gefunden."
 
@@ -907,66 +907,66 @@ msgid "Exception happened"
 msgstr "Aufgetretene Ausnahme"
 
 #: lib/fb_tools/pdns/__init__.py:99
-msgid "Setting Loglevel of the {m} module to {l}."
-msgstr "Setze den Loglevel des {m}-Moduls auf {l}."
+msgid "Setting Loglevel of the {m} module to {ll}."
+msgstr "Setze Loglevel des {m}-Moduls auf {ll}."
 
-#: lib/fb_tools/pdns/__init__.py:136
+#: lib/fb_tools/pdns/__init__.py:137
 msgid "Invalid port number {!r} for the PowerDNS API, must be 0 < PORT < 65536."
 msgstr "Ungültige Portnummer {!r} für die PowerDNS-API, muss 0 < PORT < 65536 sein."
 
-#: lib/fb_tools/pdns/__init__.py:189
+#: lib/fb_tools/pdns/__init__.py:190
 msgid "The path prefix {!r} must be an absolute path."
 msgstr "Der Pfad-Prefix muss ein absoluter Pfad sein."
 
-#: lib/fb_tools/pdns/__init__.py:205
+#: lib/fb_tools/pdns/__init__.py:206
 msgid "Invalid timeout {!r} for requesting the PowerDNS API, must be 0 < SECONDS < 3600."
 msgstr "Ungültiger Timeout zur Abfrage der PowerDNS-API, muss 0 < SEKUNDEN < 3600 sein."
 
-#: lib/fb_tools/pdns/__init__.py:222
+#: lib/fb_tools/pdns/__init__.py:223
 msgid "Invalid user agent {!r} given."
 msgstr "Ungültiger User-Agent {!r} übergeben."
 
-#: lib/fb_tools/pdns/__init__.py:234
+#: lib/fb_tools/pdns/__init__.py:235
 msgid "Invalid API server name {!r} given."
 msgstr "Ungültiger API-Servername {!r} übergeben."
 
-#: lib/fb_tools/pdns/__init__.py:281
+#: lib/fb_tools/pdns/__init__.py:282
 msgid "Failed to extract request ID from response header 'location': {!r}"
 msgstr "Konnte Request-ID nicht aus dem Rückgabe-Header 'location' ermitteln: {!r}"
 
-#: lib/fb_tools/pdns/__init__.py:289
+#: lib/fb_tools/pdns/__init__.py:290
 msgid "The path {!r} must be an absolute path."
 msgstr "Der Pfad muss ein absoluter Pfad sein."
 
-#: lib/fb_tools/pdns/__init__.py:307
+#: lib/fb_tools/pdns/__init__.py:308
 msgid "Used URL: {!r}"
 msgstr "Verwendete URL: {!r}"
 
-#: lib/fb_tools/pdns/__init__.py:323
+#: lib/fb_tools/pdns/__init__.py:324
 msgid "Request method: {!r}"
 msgstr "Request-Methode: {!r}"
 
-#: lib/fb_tools/pdns/__init__.py:345
+#: lib/fb_tools/pdns/__init__.py:346
 msgid "Simulation mode, Request will not be sent."
 msgstr "Simulationsmodus, der Request wird nicht gesendet."
 
-#: lib/fb_tools/pdns/__init__.py:358 lib/fb_tools/vsphere/server.py:158
+#: lib/fb_tools/pdns/__init__.py:359 lib/fb_tools/vsphere/server.py:158
 msgid "Got a {c} on connecting to {h!r}: {e}."
 msgstr "Bekam ein {c} bei der Verbindung zu {h!r}: {e}."
 
-#: lib/fb_tools/pdns/__init__.py:366
+#: lib/fb_tools/pdns/__init__.py:367
 msgid "Failed to parse the response"
 msgstr "Konnte Rückgabe nicht auswerten"
 
-#: lib/fb_tools/pdns/__init__.py:391
+#: lib/fb_tools/pdns/__init__.py:392
 msgid "Got an error response code {code}: {msg}"
 msgstr "Erhaltener Fehler-Antortcode {code}: {msg}"
 
-#: lib/fb_tools/pdns/__init__.py:421
+#: lib/fb_tools/pdns/__init__.py:422
 msgid "Name {!r} is not a valid IP address."
 msgstr "Der Name {!r} ist keine gültige IP-Adresse."
 
-#: lib/fb_tools/pdns/__init__.py:426
+#: lib/fb_tools/pdns/__init__.py:427
 msgid "Invalid FQDN {!r}."
 msgstr "Ungültiger FQDN {!r}."
 
@@ -1028,17 +1028,55 @@ msgstr "Erhielt SOA:"
 msgid "RecordSet {n!r} ({n}) is not in RecordSet list."
 msgstr "Der RecordSet {n!r} ({n}) befindet sich nicht in der RecordSet-Liste."
 
-#: lib/fb_tools/pdns/server.py:105
+#: lib/fb_tools/pdns/server.py:75
+msgid "Setting simulate of all subsequent objects to {!r} ..."
+msgstr "Setze Simulationsmodus für alle untergeordneten Objekte auf {!r} …"
+
+#: lib/fb_tools/pdns/server.py:106
 msgid "Could not found server info."
 msgstr "Konnte Serverinformationen nicht finden."
 
-#: lib/fb_tools/pdns/server.py:112
+#: lib/fb_tools/pdns/server.py:109 lib/fb_tools/pdns/server.py:126
+msgid "Got a response:"
+msgstr "Erhaltene Antwort:"
+
+#: lib/fb_tools/pdns/server.py:113
 msgid "PowerDNS server version {!r}."
 msgstr "Version des PowerDNS-Servers {!r}."
 
-#: lib/fb_tools/pdns/server.py:114
+#: lib/fb_tools/pdns/server.py:115
 msgid "Did not found version info in server info:"
 msgstr "Keine Version in den Serverinformationen gefunden:"
+
+#: lib/fb_tools/pdns/server.py:121
+msgid "Trying to get all zones from PDNS API ..."
+msgstr "Versuche alle Zonen der PDNS-API zu erhalten …"
+
+#: lib/fb_tools/pdns/server.py:141
+msgid "Found a zone."
+msgid_plural "Found {n} zones."
+msgstr[0] "Fand eine Zone."
+msgstr[1] "Fand {n} Zonen."
+
+#: lib/fb_tools/pdns/server.py:146 lib/fb_tools/pdns/server.py:148
+msgid "Zones:"
+msgstr "Zonen:"
+
+#: lib/fb_tools/pdns/server.py:163
+msgid "Searching an appropriate zone for item {i!r} - FQDN {f!r} ..."
+msgstr "Suche eine entsprechende Zone für Eintrag {i!r} - FQDN {f!r} …"
+
+#: lib/fb_tools/pdns/server.py:169 lib/fb_tools/pdns/server.py:200
+msgid "Search pattern: {}"
+msgstr "Suchmuster: {}"
+
+#: lib/fb_tools/pdns/server.py:176 lib/fb_tools/pdns/server.py:208
+msgid "Search pattern Unicode: {}"
+msgstr "Suchmuster Unicode: {}"
+
+#: lib/fb_tools/pdns/server.py:193
+msgid "Searching all appropriate zones for item {i!r} - FQDN {f!r} ..."
+msgstr "Suche alle entsprechenden Zonen für Eintrag {i!r} - FQDN {f!r} …"
 
 #: lib/fb_tools/pdns/zone.py:55
 msgid "No Resource Record Sets found to remove from zone {!r}."
