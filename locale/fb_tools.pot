@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.4.1\n"
+"Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-02-06 14:31+0100\n"
+"POT-Creation-Date: 2019-02-11 12:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,8 +45,28 @@ msgstr ""
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr ""
 
+#: lib/fb_tools/app.py:416
+msgid "Trying to get {} via console ..."
+msgstr ""
+
+#: lib/fb_tools/app.py:431
+msgid "Got a signal {}."
+msgstr ""
+
+#: lib/fb_tools/app.py:434
+msgid "Got a signal {n!r} ({s})."
+msgstr ""
+
 #: lib/fb_tools/app.py:441
 msgid "Exit on signal {n!r} ({s})."
+msgstr ""
+
+#: lib/fb_tools/app.py:449
+msgid "Tweaking signal handlers."
+msgstr ""
+
+#: lib/fb_tools/app.py:455
+msgid "Setting signal handler for {n!r} ({s})."
 msgstr ""
 
 #: lib/fb_tools/app.py:466
@@ -59,6 +79,14 @@ msgstr ""
 
 #: lib/fb_tools/app.py:483
 msgid "{n} and repeated {n} did not match."
+msgstr ""
+
+#: lib/fb_tools/app.py:487
+msgid "Restoring original signal handlers."
+msgstr ""
+
+#: lib/fb_tools/app.py:492
+msgid "Got {n!r}: {s!r}"
 msgstr ""
 
 #: lib/fb_tools/app.py:542

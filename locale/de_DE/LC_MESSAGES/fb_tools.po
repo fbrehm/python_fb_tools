@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.4.1\n"
+"Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-06 14:31+0100\n"
-"PO-Revision-Date: 2019-02-05 18:15+0100\n"
+"POT-Creation-Date: 2019-02-11 12:15+0100\n"
+"PO-Revision-Date: 2019-02-11 12:20+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -50,9 +50,29 @@ msgstr "Unbekannte und nicht beschriebene Anwendung."
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr "Falscher Wert für exit_value {!r}, muss größer als oder gleich Null sein."
 
+#: lib/fb_tools/app.py:416
+msgid "Trying to get {} via console ..."
+msgstr "Versuche {} über die Konsole zu bekommen …"
+
+#: lib/fb_tools/app.py:431
+msgid "Got a signal {}."
+msgstr "Erhielt ein Signal {}."
+
+#: lib/fb_tools/app.py:434
+msgid "Got a signal {n!r} ({s})."
+msgstr "Erhielt ein Signal {n!r} ({s})."
+
 #: lib/fb_tools/app.py:441
 msgid "Exit on signal {n!r} ({s})."
 msgstr "Beendigung auf Signal {n!r} ({s})."
+
+#: lib/fb_tools/app.py:449
+msgid "Tweaking signal handlers."
+msgstr "Schraube an den Signalhandlern."
+
+#: lib/fb_tools/app.py:455
+msgid "Setting signal handler for {n!r} ({s})."
+msgstr "Setze Signalhandler für {n!r} ({s})."
 
 #: lib/fb_tools/app.py:466
 msgid "Enter "
@@ -65,6 +85,14 @@ msgstr "Wiederholen der Eingabe von "
 #: lib/fb_tools/app.py:483
 msgid "{n} and repeated {n} did not match."
 msgstr "{n} und das wiederholte {n} stimmen nicht überein."
+
+#: lib/fb_tools/app.py:487
+msgid "Restoring original signal handlers."
+msgstr "Stelle original Signalhandler wieder her."
+
+#: lib/fb_tools/app.py:492
+msgid "Got {n!r}: {s!r}"
+msgstr "Erhielt {n!r}: {s!r}"
 
 #: lib/fb_tools/app.py:542
 msgid "The application is not completely initialized."
