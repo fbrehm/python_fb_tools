@@ -38,7 +38,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.3.2'
+__version__ = '1.3.3'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -413,7 +413,7 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def get_secret(self, prompt, item_name):
 
-        LOG.debug("Trying to get {} via console ...".format(item_name))
+        LOG.debug(_("Trying to get {} via console ...").format(item_name))
 
         # ------------------------
         def signal_handler(signum, frame):
@@ -428,10 +428,10 @@ class BaseApplication(HandlingObject):
             """
 
             signame = "{}".format(signum)
-            msg = "Got a signal {}.".format(signum)
+            msg = _("Got a signal {}.").format(signum)
             if signum in SIGNAL_NAMES:
                 signame = SIGNAL_NAMES[signum]
-                msg = "Got a signal {n!r} ({s}).".format(
+                msg = _("Got a signal {n!r} ({s}).").format(
                     n=signame, s=signum)
             LOG.debug(msg)
 
@@ -446,13 +446,13 @@ class BaseApplication(HandlingObject):
         old_handlers = {}
 
         if self.verbose > 2:
-            LOG.debug("Tweaking signal handlers.")
+            LOG.debug(_("Tweaking signal handlers."))
         for signum in (
                 signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
                 signal.SIGTERM, signal.SIGQUIT):
             if self.verbose > 3:
                 signame = SIGNAL_NAMES[signum]
-                LOG.debug("Setting signal handler for {n!r} ({s}).".format(
+                LOG.debug(_("Setting signal handler for {n!r} ({s}).").format(
                     n=signame, s=signum))
             old_handlers[signum] = signal.signal(signum, signal_handler)
 
@@ -484,12 +484,12 @@ class BaseApplication(HandlingObject):
 
         finally:
             if self.verbose > 2:
-                LOG.debug("Restoring original signal handlers.")
+                LOG.debug(_("Restoring original signal handlers."))
             for signum in old_handlers.keys():
                 signal.signal(signum, old_handlers[signum])
 
         if self.force:
-            LOG.debug("Got {n!r}: {s!r}".format(n=item_name, s=secret))
+            LOG.debug(_("Got {n!r}: {s!r}").format(n=item_name, s=secret))
 
         return secret
 

@@ -45,7 +45,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.5.3'
+__version__ = '1.5.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -283,7 +283,7 @@ class HandlingObject(FbBaseObject):
         cmd = pathlib.Path(cmd)
 
         if self.verbose > 2:
-            LOG.debug("Searching for command {!r} ...".format(str(cmd)))
+            LOG.debug(_("Searching for command {!r} ...").format(str(cmd)))
 
         # Checking an absolute path
         if cmd.is_absolute():
@@ -305,7 +305,7 @@ class HandlingObject(FbBaseObject):
         # Checking a relative path
         for d in caller_search_path(*additional_paths):
             if self.verbose > 3:
-                LOG.debug("Searching command in {!r} ...".format(str(d)))
+                LOG.debug(_("Searching command in {!r} ...").format(str(d)))
             p = d / cmd
             if p.exists():
                 if self.verbose > 2:
@@ -315,14 +315,15 @@ class HandlingObject(FbBaseObject):
                         return p.resolve()
                     return p
                 else:
-                    LOG.debug("Command {!r} is not executable.".format(str(p)))
+                    LOG.debug(_("Command {!r} is not executable.").format(str(p)))
 
         # command not found, sorry
+        msg = _("Command {!r} not found.").format(str(cmd))
         if quiet:
             if self.verbose > 2:
-                LOG.debug("Command {!r} not found.".format(str(cmd)))
+                LOG.debug(msg)
         else:
-            LOG.warning(_("Command {!r} not found.").format(str(cmd)))
+            LOG.warning(msg)
 
         return None
 
@@ -393,15 +394,15 @@ class HandlingObject(FbBaseObject):
                 raise ValueError(_('STDIN and input arguments may not both be used.'))
             kwargs['stdin'] = PIPE
 
-        LOG.debug("Executing command args:\n{}".format(pp(popenargs)))
+        LOG.debug(_("Executing command args:") + '\n' + pp(popenargs))
         cmd_args = []
         for arg in popenargs[0]:
-            LOG.debug("Performing argument {!r}.".format(arg))
+            LOG.debug(_("Performing argument {!r}.").format(arg))
             cmd_args.append(pipes.quote(arg))
         cmd_str = ' '.join(cmd_args)
 
         cmd_str = ' '.join(map(lambda x: pipes.quote(x), popenargs[0]))
-        LOG.debug("Executing: {}".format(cmd_str))
+        LOG.debug(_("Executing: {}").format(cmd_str))
 
         if may_simulate and self.simulate:
             LOG.info(_("Simulation mode, not executing: {}").format(cmd_str))
@@ -412,13 +413,13 @@ class HandlingObject(FbBaseObject):
             start_dt = datetime.datetime.now()
             process = Popen(*popenargs, **kwargs)
             if self.verbose > 0:
-                LOG.debug("PID of process: {}".format(process.pid))
+                LOG.debug(_("PID of process: {}").format(process.pid))
             try:
                 stdout, stderr = self._communicate(
                     process, popenargs, input=input, timeout=timeout)
             except Exception as e:
                 if self.verbose > 2:
-                    LOG.debug("{c} happened, killing process: {e}".format(
+                    LOG.debug(_("{c} happened, killing process: {e}").format(
                         c=e.__class__.__name__, e=e))
                 process.poll()
                 if process.returncode is None:
@@ -678,9 +679,9 @@ class HandlingObject(FbBaseObject):
 
         if self.verbose > verb_level1:
             if self.verbose > verb_level2:
-                LOG.debug("Write {what!r} into {to!r}.".format(what=content, to=ofile))
+                LOG.debug(_("Write {what!r} into {to!r}.").format(what=content, to=ofile))
             else:
-                LOG.debug("Writing {!r} ...".format(ofile))
+                LOG.debug(_("Writing {!r} ...").format(ofile))
 
         if isinstance(content, six.binary_type):
             content_bin = content
@@ -692,7 +693,7 @@ class HandlingObject(FbBaseObject):
 
         if self.simulate:
             if self.verbose > verb_level2:
-                LOG.debug("Simulating write into {!r}.".format(ofile))
+                LOG.debug(_("Simulating write into {!r}.").format(ofile))
             return
 
         signal.signal(signal.SIGALRM, write_alarm_caller)
@@ -700,11 +701,11 @@ class HandlingObject(FbBaseObject):
 
         # Open filename for writing unbuffered
         if self.verbose > verb_level3:
-            LOG.debug("Opening {!r} for write unbuffered ...".format(ofile))
+            LOG.debug(_("Opening {!r} for write unbuffered ...").format(ofile))
         with open(ofile, 'wb', 0) as fh:
             fh.write(content_bin)
             if self.verbose > verb_level3:
-                LOG.debug("Closing {!r} ...".format(ofile))
+                LOG.debug(_("Closing {!r} ...").format(ofile))
 
         signal.alarm(0)
 

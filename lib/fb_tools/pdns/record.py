@@ -28,7 +28,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 
 LOG = logging.getLogger(__name__)
 
@@ -52,12 +52,12 @@ _ = XLATOR.gettext
 def compare_rrsets(x, y):
 
     if not isinstance(x, PowerDNSRecordSet):
-        raise TypeError("Argument {a} {v!r} must be a PowerDNSRecordSet object.".format(
-            a='x', v=x))
+        raise TypeError(_("Argument {a} {v!r} must be a {o} object.").format(
+            a='x', v=x, o='PowerDNSRecordSet'))
 
     if not isinstance(y, PowerDNSRecordSet):
-        raise TypeError("Argument {a} {v!r} must be a PowerDNSRecordSet object.".format(
-            a='y', v=y))
+        raise TypeError(_("Argument {a} {v!r} must be a {o} object.").format(
+            a='y', v=x, o='PowerDNSRecordSet'))
 
     ret = compare_fqdn(x.name, y.name)
     if ret:
@@ -168,7 +168,7 @@ class PowerDNSRecord(FbBaseObject):
     def __eq__(self, other):
 
         if self.verbose > 4:
-            LOG.debug("Comparing {}-objects ...".format(self.__class__.__name__))
+            LOG.debug(_("Comparing {}-objects ...").format(self.__class__.__name__))
 
         if not isinstance(other, PowerDNSRecord):
             return False
@@ -365,7 +365,7 @@ class PowerDnsSOAData(FbBaseObject):
     def __copy__(self):
 
         if self.verbose > 4:
-            LOG.debug("Copying current {}-object in a new one.".format(self.__class__.__name__))
+            LOG.debug(_("Copying current {}-object in a new one.").format(self.__class__.__name__))
 
         soa = PowerDnsSOAData(
             primary=self.primary, email=self.email, serial=self.serial, refresh=self.refresh,
@@ -377,7 +377,7 @@ class PowerDnsSOAData(FbBaseObject):
     def __eq__(self, other):
 
         if self.verbose > 4:
-            LOG.debug("Comparing {}-objects ...".format(self.__class__.__name__))
+            LOG.debug(_("Comparing {}-objects ...").format(self.__class__.__name__))
 
         if not isinstance(other, PowerDnsSOAData):
             return False
@@ -659,8 +659,7 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
             raise PowerDNSRecordSetError(_("Given data {!r} is not a dict object.").format(data))
 
         if verbose > 3:
-            LOG.debug("Creating {c}-object from data:\n{d}".format(
-                c=cls.__name__, d=pp(data)))
+            LOG.debug(_("Creating {}-object from data:").format(cls.__name__) + '\n' + pp(data))
 
         params = {
             'appname': appname,
@@ -779,7 +778,7 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
     def __eq__(self, other):
 
         if self.verbose > 4:
-            LOG.debug("Comparing {}-objects ...".format(self.__class__.__name__))
+            LOG.debug(_("Comparing {}-objects ...").format(self.__class__.__name__))
 
         if not isinstance(other, PowerDNSRecordSet):
             return False
