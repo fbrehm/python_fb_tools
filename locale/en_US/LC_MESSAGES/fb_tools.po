@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-11 12:15+0100\n"
+"POT-Creation-Date: 2019-02-11 12:28+0100\n"
 "PO-Revision-Date: 2018-12-12 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -151,19 +151,31 @@ msgstr ""
 msgid "Aborted by user interrupt."
 msgstr ""
 
-#: lib/fb_tools/common.py:486
+#: lib/fb_tools/common.py:147
+msgid "{} is a tty."
+msgstr ""
+
+#: lib/fb_tools/common.py:151
+msgid "Platform is Windows and not ansi_term."
+msgstr ""
+
+#: lib/fb_tools/common.py:155
+msgid "{} is not a tty."
+msgstr ""
+
+#: lib/fb_tools/common.py:485
 msgid "Given value is {!r}."
 msgstr ""
 
-#: lib/fb_tools/common.py:525
+#: lib/fb_tools/common.py:524
 msgid "Could not determine bytes in {!r}."
 msgstr ""
 
-#: lib/fb_tools/common.py:610
+#: lib/fb_tools/common.py:609
 msgid "Couldn't detect unit {!r}."
 msgstr ""
 
-#: lib/fb_tools/common.py:713
+#: lib/fb_tools/common.py:712
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr ""
 

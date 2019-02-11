@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-11 12:15+0100\n"
-"PO-Revision-Date: 2019-02-11 12:20+0100\n"
+"POT-Creation-Date: 2019-02-11 12:28+0100\n"
+"PO-Revision-Date: 2019-02-11 12:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -155,19 +155,31 @@ msgstr "Start in:"
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
 
-#: lib/fb_tools/common.py:486
+#: lib/fb_tools/common.py:147
+msgid "{} is a tty."
+msgstr "{} ist ein tty."
+
+#: lib/fb_tools/common.py:151
+msgid "Platform is Windows and not ansi_term."
+msgstr "Die Plattform ist Windows und nicht ansi_term."
+
+#: lib/fb_tools/common.py:155
+msgid "{} is not a tty."
+msgstr "{} ist kein tty."
+
+#: lib/fb_tools/common.py:485
 msgid "Given value is {!r}."
 msgstr "Der übergebene Wert ist {!r}."
 
-#: lib/fb_tools/common.py:525
+#: lib/fb_tools/common.py:524
 msgid "Could not determine bytes in {!r}."
 msgstr "Konnte die Bytes nicht in {!r} ermitteln."
 
-#: lib/fb_tools/common.py:610
+#: lib/fb_tools/common.py:609
 msgid "Couldn't detect unit {!r}."
 msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
 
-#: lib/fb_tools/common.py:713
+#: lib/fb_tools/common.py:712
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
 

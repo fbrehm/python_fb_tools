@@ -135,9 +135,8 @@ def terminal_can_colors(debug=False):
         elif re_term.search(cur_term):
             env_term_has_colors = True
     if debug:
-        sys.stderr.write(
-            "ansi_term: %r, env_term_has_colors: %r\n" % (
-                ansi_term, env_term_has_colors))
+        sys.stderr.write("ansi_term: {a!r}, env_term_has_colors: {h!r}\n".format(
+            a=ansi_term, h=env_term_has_colors))
 
     has_colors = False
     if env_term_has_colors:
@@ -145,15 +144,15 @@ def terminal_can_colors(debug=False):
     for handle in [sys.stdout, sys.stderr]:
         if (hasattr(handle, "isatty") and handle.isatty()):
             if debug:
-                msg = "{} is a tty.".format(handle.name)
+                msg = _("{} is a tty.").format(handle.name)
                 sys.stderr.write(msg + '\n')
             if (platform.system() == 'Windows' and not ansi_term):
                 if debug:
-                    sys.stderr.write("platform is Windows and not ansi_term.\n")
+                    sys.stderr.write(_("Platform is Windows and not ansi_term.") + "\n")
                 has_colors = False
         else:
             if debug:
-                msg = "{} is not a tty.".format(handle.name)
+                msg = _("{} is not a tty.").format(handle.name)
                 sys.stderr.write(msg + '\n')
             if ansi_term:
                 pass
