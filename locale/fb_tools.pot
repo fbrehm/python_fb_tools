@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-02-11 17:18+0100\n"
+"POT-Creation-Date: 2019-02-11 17:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1059,12 +1059,28 @@ msgstr ""
 msgid "No Resource Record Sets found to remove from zone {!r}."
 msgstr ""
 
+#: lib/fb_tools/pdns/zone.py:187
+msgid "Params initialisation:"
+msgstr ""
+
 #: lib/fb_tools/pdns/zone.py:459
 msgid "Invalid source tuples for detecting IPv4-network: {!r}."
 msgstr ""
 
+#: lib/fb_tools/pdns/zone.py:526
+msgid "Copying current {}-object into a new one."
+msgstr ""
+
 #: lib/fb_tools/pdns/zone.py:547
 msgid "Cannot update zone {!r}, no API URL defined."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:550
+msgid "Updating data of zone {n!r} from API path {u!r} ..."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:637
+msgid "Patching zone {!r} ..."
 msgstr ""
 
 #: lib/fb_tools/pdns/zone.py:654
@@ -1079,8 +1095,24 @@ msgstr ""
 msgid "Got no SOA for zone {!r}."
 msgstr ""
 
+#: lib/fb_tools/pdns/zone.py:708
+msgid "Setting new SOA {s!r} for zone {z!r}, TTL {t} ..."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:722
+msgid "Increasing serial of zone {z!r} from {o} => {n}."
+msgstr ""
+
 #: lib/fb_tools/pdns/zone.py:730
 msgid "Parameter address {a!r} is not an IPv4Address or IPv6Address object, but a {c} object instead."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:738
+msgid "Trying to create {t}-record {f!r} => {a!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:745 lib/fb_tools/pdns/zone.py:803 lib/fb_tools/pdns/zone.py:879
+msgid "Current zone:"
 msgstr ""
 
 #: lib/fb_tools/pdns/zone.py:789 lib/fb_tools/pdns/zone.py:848
@@ -1096,6 +1128,10 @@ msgid "Removing one resource record set from zone {z!r}."
 msgid_plural "Removing {c} resource record sets from zone {z!r}."
 msgstr[0] ""
 msgstr[1] ""
+
+#: lib/fb_tools/pdns/zone.py:906
+msgid "Resorce record sets:"
+msgstr ""
 
 #: lib/fb_tools/pdns/zone.py:909
 msgid "Done."

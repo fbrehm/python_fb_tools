@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-11 17:18+0100\n"
-"PO-Revision-Date: 2019-02-11 12:35+0100\n"
+"POT-Creation-Date: 2019-02-11 17:29+0100\n"
+"PO-Revision-Date: 2019-02-11 17:55+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -1082,13 +1082,29 @@ msgstr "Suche alle entsprechenden Zonen für Eintrag {i!r} - FQDN {f!r} …"
 msgid "No Resource Record Sets found to remove from zone {!r}."
 msgstr "Keine ResourceRecord-Sets gefunden, die man von der Zone {!r} löschen kann."
 
+#: lib/fb_tools/pdns/zone.py:187
+msgid "Params initialisation:"
+msgstr "Initialisierung der Parameter:"
+
 #: lib/fb_tools/pdns/zone.py:459
 msgid "Invalid source tuples for detecting IPv4-network: {!r}."
 msgstr "Ungültige Source-Tupel zur Ermittlung des IPv4-Netzwerkes: {!r}."
 
+#: lib/fb_tools/pdns/zone.py:526
+msgid "Copying current {}-object into a new one."
+msgstr "Kopiere das aktuelle {}-Objekt in ein neues."
+
 #: lib/fb_tools/pdns/zone.py:547
 msgid "Cannot update zone {!r}, no API URL defined."
 msgstr "Konnte Zone {!r} nicht aktualisieren, keine API-URL definiert."
+
+#: lib/fb_tools/pdns/zone.py:550
+msgid "Updating data of zone {n!r} from API path {u!r} ..."
+msgstr "Aktualisiere Daten der Zone {n!r} vom API-Pfad {u!r} …"
+
+#: lib/fb_tools/pdns/zone.py:637
+msgid "Patching zone {!r} ..."
+msgstr "Patche Zone {!r} …"
 
 #: lib/fb_tools/pdns/zone.py:654
 msgid "Did not get SOA for zone {!r}."
@@ -1102,11 +1118,27 @@ msgstr "Neuer SOA muss vom Typ {e}, übergeben {t}: {s!r}"
 msgid "Got no SOA for zone {!r}."
 msgstr "Keinen SOA für Zone {!r} erhalten."
 
+#: lib/fb_tools/pdns/zone.py:708
+msgid "Setting new SOA {s!r} for zone {z!r}, TTL {t} ..."
+msgstr "Setze neuen SOA {s!r} für Zone {z!r}, TTL {t} …"
+
+#: lib/fb_tools/pdns/zone.py:722
+msgid "Increasing serial of zone {z!r} from {o} => {n}."
+msgstr "Erhöhe die Seriennummer der Zone {z!r} von {o} => {n}."
+
 #: lib/fb_tools/pdns/zone.py:730
 msgid "Parameter address {a!r} is not an IPv4Address or IPv6Address object, but a {c} object instead."
 msgstr ""
 "Der Parameter Adresse {a!r} ist kein IPv4Address- oder IPv6Address-Objekt, ist statt dessen ein "
 "{c}-Objekt."
+
+#: lib/fb_tools/pdns/zone.py:738
+msgid "Trying to create {t}-record {f!r} => {a!r}."
+msgstr "Versuche einen {t}-Eintrag {f!r} => {a!r} zu erstellen."
+
+#: lib/fb_tools/pdns/zone.py:745 lib/fb_tools/pdns/zone.py:803 lib/fb_tools/pdns/zone.py:879
+msgid "Current zone:"
+msgstr "Aktuelle Zone:"
 
 #: lib/fb_tools/pdns/zone.py:789 lib/fb_tools/pdns/zone.py:848
 msgid "Creating {t}-record {f!r} => {a!r}."
@@ -1121,6 +1153,10 @@ msgid "Removing one resource record set from zone {z!r}."
 msgid_plural "Removing {c} resource record sets from zone {z!r}."
 msgstr[0] "Lösche einen ResourceRecord-Set von Zone {z!r}."
 msgstr[1] "Lösche {c} ResourceRecord-Sets von Zone {z!r}."
+
+#: lib/fb_tools/pdns/zone.py:906
+msgid "Resorce record sets:"
+msgstr "Ressourcen-RecordSet:"
 
 #: lib/fb_tools/pdns/zone.py:909
 msgid "Done."
