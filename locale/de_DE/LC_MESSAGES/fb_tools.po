@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-11 16:43+0100\n"
+"POT-Creation-Date: 2019-02-11 16:51+0100\n"
 "PO-Revision-Date: 2019-02-11 12:35+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -906,43 +906,67 @@ msgstr "unbestimmter Fehler."
 msgid "Exception happened"
 msgstr "Aufgetretene Ausnahme"
 
-#: lib/fb_tools/pdns/__init__.py:135
+#: lib/fb_tools/pdns/__init__.py:99
+msgid "Setting Loglevel of the {m} module to {l}."
+msgstr "Setze den Loglevel des {m}-Moduls auf {l}."
+
+#: lib/fb_tools/pdns/__init__.py:136
 msgid "Invalid port number {!r} for the PowerDNS API, must be 0 < PORT < 65536."
 msgstr "Ungültige Portnummer {!r} für die PowerDNS-API, muss 0 < PORT < 65536 sein."
 
-#: lib/fb_tools/pdns/__init__.py:188
+#: lib/fb_tools/pdns/__init__.py:189
 msgid "The path prefix {!r} must be an absolute path."
 msgstr "Der Pfad-Prefix muss ein absoluter Pfad sein."
 
-#: lib/fb_tools/pdns/__init__.py:204
+#: lib/fb_tools/pdns/__init__.py:205
 msgid "Invalid timeout {!r} for requesting the PowerDNS API, must be 0 < SECONDS < 3600."
 msgstr "Ungültiger Timeout zur Abfrage der PowerDNS-API, muss 0 < SEKUNDEN < 3600 sein."
 
-#: lib/fb_tools/pdns/__init__.py:221
+#: lib/fb_tools/pdns/__init__.py:222
 msgid "Invalid user agent {!r} given."
 msgstr "Ungültiger User-Agent {!r} übergeben."
 
-#: lib/fb_tools/pdns/__init__.py:233
+#: lib/fb_tools/pdns/__init__.py:234
 msgid "Invalid API server name {!r} given."
 msgstr "Ungültiger API-Servername {!r} übergeben."
 
-#: lib/fb_tools/pdns/__init__.py:280
+#: lib/fb_tools/pdns/__init__.py:281
 msgid "Failed to extract request ID from response header 'location': {!r}"
 msgstr "Konnte Request-ID nicht aus dem Rückgabe-Header 'location' ermitteln: {!r}"
 
-#: lib/fb_tools/pdns/__init__.py:288
+#: lib/fb_tools/pdns/__init__.py:289
 msgid "The path {!r} must be an absolute path."
 msgstr "Der Pfad muss ein absoluter Pfad sein."
 
-#: lib/fb_tools/pdns/__init__.py:357 lib/fb_tools/vsphere/server.py:158
+#: lib/fb_tools/pdns/__init__.py:307
+msgid "Used URL: {!r}"
+msgstr "Verwendete URL: {!r}"
+
+#: lib/fb_tools/pdns/__init__.py:323
+msgid "Request method: {!r}"
+msgstr "Request-Methode: {!r}"
+
+#: lib/fb_tools/pdns/__init__.py:345
+msgid "Simulation mode, Request will not be sent."
+msgstr "Simulationsmodus, der Request wird nicht gesendet."
+
+#: lib/fb_tools/pdns/__init__.py:358 lib/fb_tools/vsphere/server.py:158
 msgid "Got a {c} on connecting to {h!r}: {e}."
 msgstr "Bekam ein {c} bei der Verbindung zu {h!r}: {e}."
 
-#: lib/fb_tools/pdns/__init__.py:365
+#: lib/fb_tools/pdns/__init__.py:366
 msgid "Failed to parse the response"
 msgstr "Konnte Rückgabe nicht auswerten"
 
-#: lib/fb_tools/pdns/__init__.py:425
+#: lib/fb_tools/pdns/__init__.py:391
+msgid "Got an error response code {code}: {msg}"
+msgstr "Erhaltener Fehler-Antortcode {code}: {msg}"
+
+#: lib/fb_tools/pdns/__init__.py:421
+msgid "Name {!r} is not a valid IP address."
+msgstr "Der Name {!r} ist keine gültige IP-Adresse."
+
+#: lib/fb_tools/pdns/__init__.py:426
 msgid "Invalid FQDN {!r}."
 msgstr "Ungültiger FQDN {!r}."
 

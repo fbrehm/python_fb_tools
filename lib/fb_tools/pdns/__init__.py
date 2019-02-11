@@ -37,7 +37,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -96,7 +96,8 @@ class BasePowerDNSHandler(HandlingObject):
         global LOGLEVEL_REQUESTS_SET
 
         if not LOGLEVEL_REQUESTS_SET:
-            LOG.debug("Setting Loglevel of the requests module to WARNING")
+            msg = _("Setting Loglevel of the {m} module to {l}.").format(m='requests', l='WARNING')
+            LOG.debug(msg)
             logging.getLogger("requests").setLevel(logging.WARNING)
             LOGLEVEL_REQUESTS_SET = True
 
@@ -303,7 +304,7 @@ class BasePowerDNSHandler(HandlingObject):
         url += path
 
         if self.verbose > 1:
-            LOG.debug("Used URL: {!r}".format(url))
+            LOG.debug(_("Used URL: {!r}").format(url))
         return url
 
     # -------------------------------------------------------------------------
@@ -319,7 +320,7 @@ class BasePowerDNSHandler(HandlingObject):
 
         url = self._build_url(path, no_prefix=no_prefix)
         if self.verbose > 1:
-            LOG.debug("Request method: {!r}".format(method))
+            LOG.debug(_("Request method: {!r}").format(method))
         if data and self.verbose > 2:
             data_out = "{!r}".format(data)
             try:
@@ -341,7 +342,7 @@ class BasePowerDNSHandler(HandlingObject):
             LOG.debug("Headers:\n{}".format(pp(head_out)))
 
         if may_simulate and self.simulate:
-            LOG.debug("Simulation mode, Request will not be sent.")
+            LOG.debug(_("Simulation mode, Request will not be sent."))
             return ''
 
         try:
@@ -387,7 +388,7 @@ class BasePowerDNSHandler(HandlingObject):
         err = response.json()
         code = response.status_code
         msg = err['error']
-        LOG.debug("Got an error response code {code}: {msg}".format(code=code, msg=msg))
+        LOG.debug(_("Got an error response code {code}: {msg}").format(code=code, msg=msg))
         if response.status_code == 401:
             raise PDNSApiNotAuthorizedError(code, msg, url)
         if response.status_code == 404:
@@ -417,7 +418,7 @@ class BasePowerDNSHandler(HandlingObject):
                 is_fqdn = False
             except ValueError:
                 if self.verbose > 3:
-                    LOG.debug("Name {!r} is not a valid IP address.".format(name))
+                    LOG.debug(_("Name {!r} is not a valid IP address.").format(name))
                 is_fqdn = True
                 fqdn = name
 
