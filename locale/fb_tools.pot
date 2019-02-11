@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-02-11 17:29+0100\n"
+"POT-Creation-Date: 2019-02-11 18:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1071,96 +1071,96 @@ msgstr ""
 msgid "Copying current {}-object into a new one."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:547
+#: lib/fb_tools/pdns/zone.py:548
 msgid "Cannot update zone {!r}, no API URL defined."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:550
+#: lib/fb_tools/pdns/zone.py:551
 msgid "Updating data of zone {n!r} from API path {u!r} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:637
+#: lib/fb_tools/pdns/zone.py:638
 msgid "Patching zone {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:654
+#: lib/fb_tools/pdns/zone.py:655
 msgid "Did not get SOA for zone {!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:661
+#: lib/fb_tools/pdns/zone.py:662
 msgid "New SOA must be of type {e}, given {t}: {s!r}"
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:672
+#: lib/fb_tools/pdns/zone.py:673
 msgid "Got no SOA for zone {!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:708
+#: lib/fb_tools/pdns/zone.py:709
 msgid "Setting new SOA {s!r} for zone {z!r}, TTL {t} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:722
+#: lib/fb_tools/pdns/zone.py:723
 msgid "Increasing serial of zone {z!r} from {o} => {n}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:730
+#: lib/fb_tools/pdns/zone.py:731
 msgid "Parameter address {a!r} is not an IPv4Address or IPv6Address object, but a {c} object instead."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:738
+#: lib/fb_tools/pdns/zone.py:739
 msgid "Trying to create {t}-record {f!r} => {a!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:745 lib/fb_tools/pdns/zone.py:803 lib/fb_tools/pdns/zone.py:879
+#: lib/fb_tools/pdns/zone.py:746 lib/fb_tools/pdns/zone.py:804 lib/fb_tools/pdns/zone.py:880
 msgid "Current zone:"
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:789 lib/fb_tools/pdns/zone.py:848
+#: lib/fb_tools/pdns/zone.py:790 lib/fb_tools/pdns/zone.py:849
 msgid "Creating {t}-record {f!r} => {a!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:890
+#: lib/fb_tools/pdns/zone.py:891
 msgid "DNS {t!r}-record {n!r} is already deleted."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:900
+#: lib/fb_tools/pdns/zone.py:901
 msgid "Removing one resource record set from zone {z!r}."
 msgid_plural "Removing {c} resource record sets from zone {z!r}."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/pdns/zone.py:906
+#: lib/fb_tools/pdns/zone.py:907
 msgid "Resorce record sets:"
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:909
+#: lib/fb_tools/pdns/zone.py:910
 msgid "Done."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:916
+#: lib/fb_tools/pdns/zone.py:917
 msgid "Notifying slave servers of zone {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:932 lib/fb_tools/vsphere/ds.py:339 lib/fb_tools/vsphere/ds_cluster.py:180
+#: lib/fb_tools/pdns/zone.py:933 lib/fb_tools/vsphere/ds.py:339 lib/fb_tools/vsphere/ds_cluster.py:180
 #: lib/fb_tools/vsphere/network.py:201
 msgid "Invalid item type {{!r}} to set, only {} allowed."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:934
+#: lib/fb_tools/pdns/zone.py:935
 msgid "The key {k!r} must be equal to the zone name {n!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:935 lib/fb_tools/vsphere/ds.py:342 lib/fb_tools/vsphere/ds_cluster.py:183
+#: lib/fb_tools/pdns/zone.py:936 lib/fb_tools/vsphere/ds.py:342 lib/fb_tools/vsphere/ds_cluster.py:183
 #: lib/fb_tools/vsphere/network.py:204
 msgid "None type as key is not allowed."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:936 lib/fb_tools/vsphere/ds.py:343 lib/fb_tools/vsphere/ds_cluster.py:184
+#: lib/fb_tools/pdns/zone.py:937 lib/fb_tools/vsphere/ds.py:343 lib/fb_tools/vsphere/ds_cluster.py:184
 #: lib/fb_tools/vsphere/network.py:205
 msgid "Empty key {!r} is not allowed."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:937
+#: lib/fb_tools/pdns/zone.py:938
 msgid "Object {o!r} is not a {e} object."
 msgstr ""
 

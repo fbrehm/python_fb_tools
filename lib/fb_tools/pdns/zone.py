@@ -523,7 +523,8 @@ class PowerDNSZone(BasePowerDNSHandler):
     def __copy__(self):
 
         if self.verbose > 3:
-            LOG.debug(_("Copying current {}-object into a new one.").format(self.__class__.__name__))
+            LOG.debug(_("Copying current {}-object into a new one.").format(
+                self.__class__.__name__))
 
         zone = self.__class__(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
