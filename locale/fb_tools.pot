@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-02-11 16:06+0100\n"
+"POT-Creation-Date: 2019-02-11 16:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -518,6 +518,14 @@ msgstr ""
 msgid "Invalid time zone name {!r}."
 msgstr ""
 
+#: lib/fb_tools/handler/__init__.py:155
+msgid "Setting time zone to {!r}."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:159
+msgid "Name of the time zone: {!r}."
+msgstr ""
+
 #: lib/fb_tools/handler/__init__.py:166
 msgid "{}-object not initialized."
 msgstr ""
@@ -526,12 +534,48 @@ msgstr ""
 msgid "Method {} must be overridden in descendant classes."
 msgstr ""
 
+#: lib/fb_tools/handler/__init__.py:246
+msgid "Quiet execution."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:294
+msgid "Starting synchronous communication with '{}'."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:298
+msgid "Finished communication with '{}'."
+msgstr ""
+
 #: lib/fb_tools/handler/__init__.py:312
 msgid "Parameter {p!r} is not of type {t!r}."
 msgstr ""
 
+#: lib/fb_tools/handler/__init__.py:317
+msgid "Got completed process:"
+msgstr ""
+
 #: lib/fb_tools/handler/__init__.py:321 lib/fb_tools/handler/__init__.py:332
 msgid "Output on {}:"
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:353
+msgid "Starting asynchronous communication with '{cmd}', heartbeat interval is {interval:0.1f} seconds."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:368
+msgid "Checking for the end of the communication ..."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:378
+msgid "Time to execute the heartbeat handler."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:382
+msgid "Sleeping {:0.2f} seconds ..."
+msgstr ""
+
+#: lib/fb_tools/handler/__init__.py:390 lib/fb_tools/handler/__init__.py:399
+msgid "   {w} is now: {o!r}"
 msgstr ""
 
 #: lib/fb_tools/handler/lock.py:93
@@ -682,7 +726,7 @@ msgstr ""
 msgid "Performing argument {!r}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:405
+#: lib/fb_tools/handler/__init__.py:243 lib/fb_tools/handling_obj.py:405
 msgid "Executing: {}"
 msgstr ""
 

@@ -38,7 +38,7 @@ from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.4.6'
+__version__ = '1.4.7'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -152,11 +152,11 @@ class BaseHandler(HandlingObject):
         if not tz_name.strip():
             raise ValueError(_("Invalid time zone name {!r}.").format(tz_name))
         tz_name = tz_name.strip()
-        LOG.debug("Setting time zone to {!r}.".format(tz_name))
+        LOG.debug(_("Setting time zone to {!r}.").format(tz_name))
         cls.tz = pytz.timezone(tz_name)
         cls.tz_name = babel.dates.get_timezone_name(
             cls.tz, width='long', locale=cls.default_locale)
-        LOG.debug("Name of the time zone: {!r}.".format(cls.tz_name))
+        LOG.debug(_("Name of the time zone: {!r}.").format(cls.tz_name))
 
     # -------------------------------------------------------------------------
     def __call__(self, yaml_file):
@@ -240,10 +240,10 @@ class BaseHandler(HandlingObject):
         cmd_str = ' '.join(map(lambda x: pipes.quote(x), cmd_list))
 
         if not quiet or self.verbose > 1:
-            LOG.debug("Executing: {}".format(cmd_list))
+            LOG.debug(_("Executing: {}").format(cmd_list))
 
         if quiet and self.verbose > 1:
-            LOG.debug("Quiet execution")
+            LOG.debug(_("Quiet execution."))
 
         used_stdout = subprocess.PIPE
         if stdout is not None:
@@ -291,11 +291,11 @@ class BaseHandler(HandlingObject):
         else:
 
             if not quiet or self.verbose > 1:
-                LOG.debug("Starting synchronous communication with '{}'.".format(cmd_str))
+                LOG.debug(_("Starting synchronous communication with '{}'.").format(cmd_str))
             (stdoutdata, stderrdata) = cmd_obj.communicate()
 
         if not quiet or self.verbose > 1:
-            LOG.debug("Finished communication with '{}'.".format(cmd_str))
+            LOG.debug(_("Finished communication with '{}'.").format(cmd_str))
 
         ret = cmd_obj.wait()
 
@@ -314,7 +314,7 @@ class BaseHandler(HandlingObject):
             raise TypeError(msg)
 
         if self.verbose > 2:
-            LOG.debug("Got completed process:\n{}".format(proc))
+            LOG.debug(_("Got completed process:") + "\n{}".format(proc))
 
         if proc.stderr:
             if not quiet:
@@ -350,7 +350,7 @@ class BaseHandler(HandlingObject):
             stderrdata = bytearray()
 
         if not quiet or self.verbose > 1:
-            LOG.debug((
+            LOG.debug(_(
                 "Starting asynchronous communication with '{cmd}', "
                 "heartbeat interval is {interval:0.1f} seconds.").format(
                     cmd=cmd_str, interval=hb_interval))
@@ -365,7 +365,7 @@ class BaseHandler(HandlingObject):
         while True:
 
             if self.verbose > 3:
-                LOG.debug("Checking for the end of the communication ...")
+                LOG.debug(_("Checking for the end of the communication ..."))
             if cmd_obj.poll() is not None:
                 cmd_obj.wait()
                 break
@@ -375,11 +375,11 @@ class BaseHandler(HandlingObject):
             time_diff = cur_time - start_time
             if time_diff >= hb_interval:
                 if not quiet or self.verbose > 1:
-                    LOG.debug("Time to execute the heartbeat handler.")
+                    LOG.debug(_("Time to execute the heartbeat handler."))
                 hb_handler()
                 start_time = cur_time
             if self.verbose > 3:
-                LOG.debug("Sleeping {:0.2f} seconds ...".format(poll_interval))
+                LOG.debug(_("Sleeping {:0.2f} seconds ...").format(poll_interval))
             time.sleep(poll_interval)
 
             # Reading out file descriptors
@@ -387,7 +387,8 @@ class BaseHandler(HandlingObject):
                 try:
                     stdoutdata += os.read(cmd_obj.stdout.fileno(), 1024)
                     if self.verbose > 3:
-                        LOG.debug("  stdout is now: {!r}".format(stdoutdata))
+                        msg = _("   {w} is now: {o!r}").format(w='stdout', o=stdoutdata)
+                        LOG.debug(msg)
                 except OSError:
                     pass
 
@@ -395,7 +396,8 @@ class BaseHandler(HandlingObject):
                 try:
                     stderrdata += os.read(cmd_obj.stderr.fileno(), 1024)
                     if self.verbose > 3:
-                        LOG.debug("  stderr is now: {!r}".format(stderrdata))
+                        msg = _("   {w} is now: {o!r}").format(w='stderr', o=stderrdata)
+                        LOG.debug(msg)
                 except OSError:
                     pass
 

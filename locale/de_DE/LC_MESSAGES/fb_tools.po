@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-11 16:06+0100\n"
+"POT-Creation-Date: 2019-02-11 16:17+0100\n"
 "PO-Revision-Date: 2019-02-11 12:35+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -539,6 +539,14 @@ msgstr "Versuche eine Liste aller Virtueller Maschinen in VMWare VSphere zu ermi
 msgid "Invalid time zone name {!r}."
 msgstr "Ungültiger Zeitzonenname {!r}."
 
+#: lib/fb_tools/handler/__init__.py:155
+msgid "Setting time zone to {!r}."
+msgstr "Setze Zeitzone auf {!r}."
+
+#: lib/fb_tools/handler/__init__.py:159
+msgid "Name of the time zone: {!r}."
+msgstr "Name der Zeitzone: {!r}."
+
 #: lib/fb_tools/handler/__init__.py:166
 msgid "{}-object not initialized."
 msgstr "Das {}-Objekt ist noch nicht initialisiert."
@@ -547,13 +555,49 @@ msgstr "Das {}-Objekt ist noch nicht initialisiert."
 msgid "Method {} must be overridden in descendant classes."
 msgstr "Die Methode {} muss in abgeleiteten Klassen überschrieben werden."
 
+#: lib/fb_tools/handler/__init__.py:246
+msgid "Quiet execution."
+msgstr "Stillschweigende Ausführung."
+
+#: lib/fb_tools/handler/__init__.py:294
+msgid "Starting synchronous communication with '{}'."
+msgstr "Starte synchrone Kommunikation mit '{}'."
+
+#: lib/fb_tools/handler/__init__.py:298
+msgid "Finished communication with '{}'."
+msgstr "Kommunikation mit '{}' beendet."
+
 #: lib/fb_tools/handler/__init__.py:312
 msgid "Parameter {p!r} is not of type {t!r}."
 msgstr "Der Parameter {p!r} ist nicht vom Typ {t!r}."
 
+#: lib/fb_tools/handler/__init__.py:317
+msgid "Got completed process:"
+msgstr "Vollendeten Prozess erhalten:"
+
 #: lib/fb_tools/handler/__init__.py:321 lib/fb_tools/handler/__init__.py:332
 msgid "Output on {}:"
 msgstr "Ausgabe an {}:"
+
+#: lib/fb_tools/handler/__init__.py:353
+msgid "Starting asynchronous communication with '{cmd}', heartbeat interval is {interval:0.1f} seconds."
+msgstr "Starte asynchrone Kommunikation mit '{cmd}', Herzschlag-Intervall ist {interval:0.1f} Sekunden."
+
+#: lib/fb_tools/handler/__init__.py:368
+msgid "Checking for the end of the communication ..."
+msgstr "Überprüfe das Ende der Kummunikation …"
+
+#: lib/fb_tools/handler/__init__.py:378
+msgid "Time to execute the heartbeat handler."
+msgstr "Es ist an der Zeit, den Herzschlag-Handler auszuführen."
+
+#: lib/fb_tools/handler/__init__.py:382
+msgid "Sleeping {:0.2f} seconds ..."
+msgstr "Schlafe für {:0.2f} Sekunden …"
+
+#: lib/fb_tools/handler/__init__.py:390 lib/fb_tools/handler/__init__.py:399
+msgid "   {w} is now: {o!r}"
+msgstr "   {w} ist jetzt: {o!r}"
 
 #: lib/fb_tools/handler/lock.py:93
 msgid "Locking directory {!r} doesn't exists or is not a directory."
@@ -703,7 +747,7 @@ msgstr "Auszuführende Befehlsargumente:"
 msgid "Performing argument {!r}."
 msgstr "Verarbeite Argument {!r}."
 
-#: lib/fb_tools/handling_obj.py:405
+#: lib/fb_tools/handler/__init__.py:243 lib/fb_tools/handling_obj.py:405
 msgid "Executing: {}"
 msgstr "Ausführung: {}"
 
