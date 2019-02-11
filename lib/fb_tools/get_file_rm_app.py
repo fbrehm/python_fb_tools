@@ -28,10 +28,11 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '1.1.4'
+__version__ = '1.1.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
+ngettext = XLATOR.ngettext
 
 
 # =============================================================================
