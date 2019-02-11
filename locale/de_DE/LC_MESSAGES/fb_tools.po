@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-11 16:51+0100\n"
+"POT-Creation-Date: 2019-02-11 17:03+0100\n"
 "PO-Revision-Date: 2019-02-11 12:35+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -974,17 +974,29 @@ msgstr "Ungültiger FQDN {!r}."
 msgid "Could not interprete SOA data: {!r}."
 msgstr "Konnte SOA-Daten nicht interpretieren: {!r}."
 
+#: lib/fb_tools/pdns/record.py:55 lib/fb_tools/pdns/record.py:59
+msgid "Argument {a} {v!r} must be a {o} object."
+msgstr "Das Argument {a} {v!r} muss ein {o}-Objekt sein."
+
+#: lib/fb_tools/pdns/record.py:171 lib/fb_tools/pdns/record.py:380 lib/fb_tools/pdns/record.py:781
+msgid "Comparing {}-objects ..."
+msgstr "Vergleiche {}-Objekte …"
+
+#: lib/fb_tools/pdns/record.py:368
+msgid "Copying current {}-object in a new one."
+msgstr "Kopiere das aktuelle {}-Objekt in ein neues."
+
 #: lib/fb_tools/pdns/record.py:423
 msgid "Serial overflow - old serial {o} is in future, new serial {n} has reached its maximum value."
 msgstr ""
 "Überlauf der Seriennummer - die alte Seriennummer liegt in der Zukunft, die neue Seriennummer "
 "{n} hat seinen Maimalwert erreicht."
 
-#: lib/fb_tools/pdns/record.py:439 lib/fb_tools/pdns/record.py:822
+#: lib/fb_tools/pdns/record.py:439 lib/fb_tools/pdns/record.py:821
 msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
 msgstr "Ungültiger Typ {t!r} als ein Eintrag von {c}, nor {o}-Objekte sind erlaubt."
 
-#: lib/fb_tools/pdns/record.py:457 lib/fb_tools/pdns/record.py:840
+#: lib/fb_tools/pdns/record.py:457 lib/fb_tools/pdns/record.py:839
 msgid "{m} takes at most {max} arguments ({n} given)."
 msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
 
@@ -996,19 +1008,23 @@ msgstr "Der Record {!r} ist nicht in der Recordliste."
 msgid "Given data {!r} is not a dict object."
 msgstr "Die übergebenen Daten {!r} sind kein dict-Objekt."
 
-#: lib/fb_tools/pdns/record.py:799
+#: lib/fb_tools/pdns/record.py:662
+msgid "Creating {}-object from data:"
+msgstr "Erstelle ein {}-Objekt aus Daten:"
+
+#: lib/fb_tools/pdns/record.py:798
 msgid "Cannot create {o} from record set:"
 msgstr "Kann kein {o} aus RecordSet erstellen:"
 
-#: lib/fb_tools/pdns/record.py:804
+#: lib/fb_tools/pdns/record.py:803
 msgid "RecordSet has no records:"
 msgstr "der RecordSet hat keine Records:"
 
-#: lib/fb_tools/pdns/record.py:812
+#: lib/fb_tools/pdns/record.py:811
 msgid "Got SOA:"
 msgstr "Erhielt SOA:"
 
-#: lib/fb_tools/pdns/record.py:877
+#: lib/fb_tools/pdns/record.py:876
 msgid "RecordSet {n!r} ({n}) is not in RecordSet list."
 msgstr "Der RecordSet {n!r} ({n}) befindet sich nicht in der RecordSet-Liste."
 
