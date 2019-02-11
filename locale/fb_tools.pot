@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-02-11 12:28+0100\n"
+"POT-Creation-Date: 2019-02-11 12:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -202,12 +202,32 @@ msgstr ""
 msgid "Configuration file {!r} exists, but is not a regular file."
 msgstr ""
 
+#: lib/fb_tools/config.py:203
+msgid "Searching for {!r} ..."
+msgstr ""
+
 #: lib/fb_tools/config.py:205
 msgid "Configuration file {!r} not found."
 msgstr ""
 
+#: lib/fb_tools/config.py:207
+msgid "Configuration file error"
+msgstr ""
+
+#: lib/fb_tools/config.py:218
+msgid "Reading {!r} ..."
+msgstr ""
+
 #: lib/fb_tools/config.py:229
 msgid "Wrong configuration in {!r} found"
+msgstr ""
+
+#: lib/fb_tools/config.py:231
+msgid "Configuration parse error"
+msgstr ""
+
+#: lib/fb_tools/config.py:254
+msgid "Checking config section {!r} ..."
 msgstr ""
 
 #: lib/fb_tools/errors.py:44

@@ -29,7 +29,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -200,11 +200,11 @@ class BaseConfiguration(FbBaseObject):
         """Reading the configuration file."""
 
         if self.verbose > 2:
-            LOG.debug("Searching for {!r} ...".format(self.config_file))
+            LOG.debug(_("Searching for {!r} ...").format(self.config_file))
         if not self.config_file.exists():
             msg = _("Configuration file {!r} not found.").format(str(self.config_file))
             if error_if_not_exists:
-                self.handle_error(msg, "Configuration file error")
+                self.handle_error(msg, _("Configuration file error"))
             else:
                 LOG.debug(msg)
             return
@@ -215,7 +215,7 @@ class BaseConfiguration(FbBaseObject):
             open_opts['errors'] = 'surrogateescape'
 
         if self.verbose > 1:
-            LOG.debug("Reading {!r} ...".format(self.config_file))
+            LOG.debug(_("Reading {!r} ...").format(self.config_file))
 
         config = configparser.ConfigParser()
         try:
@@ -228,7 +228,7 @@ class BaseConfiguration(FbBaseObject):
         except ConfigParseError as e:
             msg = _("Wrong configuration in {!r} found").format(str(self.config_file))
             msg += ': ' + str(e)
-            self.handle_error(msg, "Configuration parse error")
+            self.handle_error(msg, _("Configuration parse error"))
             return
 
         self.eval_config(config)
@@ -251,7 +251,7 @@ class BaseConfiguration(FbBaseObject):
             May be overridden in descendant classes."""
 
         if self.verbose > 1:
-            LOG.debug("Checking config section {!r} ...".format(section_name))
+            LOG.debug(_("Checking config section {!r} ...").format(section_name))
 
         for (key, value) in config.items(section_name):
             if key.lower() == 'verbose':
