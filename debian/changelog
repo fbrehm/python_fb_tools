@@ -1,3 +1,9 @@
+fb-tools (1.4.3) UNRELEASED; urgency=medium
+
+  * Completion of translating (i18n) of many modules
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 11 Feb 2019 18:25:27 +0100
+
 fb-tools (1.4.2) all; urgency=medium
 
   * Adding .gitlab-ci.yml for Continous Integration via Gitlab
