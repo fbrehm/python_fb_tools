@@ -24,7 +24,7 @@ from ..common import pp, to_bool
 
 from .object import VsphereObject
 
-__version__ = '1.3.4'
+__version__ = '1.3.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -230,8 +230,7 @@ class VsphereDatastore(VsphereObject):
             params['uncommitted'] = data.summary.uncommitted
 
         if verbose > 2:
-            LOG.debug("Creating {c} object from:\n{p}".format(
-                c=cls.__name__, p=pp(params)))
+            LOG.debug(_("Creating {} object from:").format(cls.__name__) + '\n' + pp(params))
 
         ds = cls(**params)
         return ds

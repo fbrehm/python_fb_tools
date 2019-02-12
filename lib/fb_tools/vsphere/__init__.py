@@ -29,7 +29,7 @@ from ..handling_obj import HandlingObject
 
 from .errors import VSphereCannotConnectError
 
-__version__ = '1.1.2'
+__version__ = '1.1.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -193,7 +193,7 @@ class BaseVsphereHandler(HandlingObject):
     # -------------------------------------------------------------------------
     def connect(self):
 
-        LOG.debug("Connecting to vSphere host {h}:{p} as {u!r} ...".format(
+        LOG.debug(_("Connecting to vSphere host {h}:{p} as {u!r} ...").format(
             h=self.host, p=self.port, u=self.user))
 
         ssl_context = None

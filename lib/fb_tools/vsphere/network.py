@@ -25,7 +25,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.4'
+__version__ = '1.2.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -141,7 +141,7 @@ class VsphereNetwork(VsphereObject):
             params['ip_pool_name'] = data.summary.ipPoolName
 
         if verbose > 3:
-            LOG.debug("Creating {} object from:".format(cls.__name__) + '\n' + pp(params))
+            LOG.debug(_("Creating {} object from:").format(cls.__name__) + '\n' + pp(params))
 
         net = cls(**params)
         return net

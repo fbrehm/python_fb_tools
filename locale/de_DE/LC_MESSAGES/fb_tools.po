@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-11 18:23+0100\n"
-"PO-Revision-Date: 2019-02-11 17:55+0100\n"
+"POT-Creation-Date: 2019-02-12 10:20+0100\n"
+"PO-Revision-Date: 2019-02-12 10:22+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -979,7 +979,9 @@ msgid "Argument {a} {v!r} must be a {o} object."
 msgstr "Das Argument {a} {v!r} muss ein {o}-Objekt sein."
 
 #: lib/fb_tools/pdns/record.py:171 lib/fb_tools/pdns/record.py:380 lib/fb_tools/pdns/record.py:781
-msgid "Comparing {}-objects ..."
+#: lib/fb_tools/vsphere/cluster.py:246 lib/fb_tools/vsphere/dc.py:120 lib/fb_tools/vsphere/ds.py:320
+#: lib/fb_tools/vsphere/ds_cluster.py:162 lib/fb_tools/vsphere/network.py:183
+msgid "Comparing {} objects ..."
 msgstr "Vergleiche {}-Objekte …"
 
 #: lib/fb_tools/pdns/record.py:368
@@ -1009,7 +1011,7 @@ msgid "Given data {!r} is not a dict object."
 msgstr "Die übergebenen Daten {!r} sind kein dict-Objekt."
 
 #: lib/fb_tools/pdns/record.py:662
-msgid "Creating {}-object from data:"
+msgid "Creating {} object from data:"
 msgstr "Erstelle ein {}-Objekt aus Daten:"
 
 #: lib/fb_tools/pdns/record.py:798
@@ -1166,7 +1168,7 @@ msgstr "Erledigt."
 msgid "Notifying slave servers of zone {!r} ..."
 msgstr "Benachrichtige Slave-Server der Zone {!r} …"
 
-#: lib/fb_tools/pdns/zone.py:933 lib/fb_tools/vsphere/ds.py:339 lib/fb_tools/vsphere/ds_cluster.py:180
+#: lib/fb_tools/pdns/zone.py:933 lib/fb_tools/vsphere/ds.py:338 lib/fb_tools/vsphere/ds_cluster.py:180
 #: lib/fb_tools/vsphere/network.py:201
 msgid "Invalid item type {{!r}} to set, only {} allowed."
 msgstr "Ungültiger Typ {{!r}} des Eintrags beim Setzen, nur {} ist erlaubt."
@@ -1175,12 +1177,12 @@ msgstr "Ungültiger Typ {{!r}} des Eintrags beim Setzen, nur {} ist erlaubt."
 msgid "The key {k!r} must be equal to the zone name {n!r}."
 msgstr "Der Key {k!r} muss gleich dem Zonennamen {n!r} sein."
 
-#: lib/fb_tools/pdns/zone.py:936 lib/fb_tools/vsphere/ds.py:342 lib/fb_tools/vsphere/ds_cluster.py:183
+#: lib/fb_tools/pdns/zone.py:936 lib/fb_tools/vsphere/ds.py:341 lib/fb_tools/vsphere/ds_cluster.py:183
 #: lib/fb_tools/vsphere/network.py:204
 msgid "None type as key is not allowed."
 msgstr "Ein None-Typ ist als Key nicht erlaubt."
 
-#: lib/fb_tools/pdns/zone.py:937 lib/fb_tools/vsphere/ds.py:343 lib/fb_tools/vsphere/ds_cluster.py:184
+#: lib/fb_tools/pdns/zone.py:937 lib/fb_tools/vsphere/ds.py:342 lib/fb_tools/vsphere/ds_cluster.py:184
 #: lib/fb_tools/vsphere/network.py:205
 msgid "Empty key {!r} is not allowed."
 msgstr "Ein leerer Key {!r} ist als Key nicht erlaubt."
@@ -1360,17 +1362,16 @@ msgstr "Ungültiger Wert für Fazilität."
 msgid "Invalid port number {!r} for the VSphere server, must be 0 < PORT <= 65536."
 msgstr "Ungültige Portnummer {!r} für den vSphere-Server, muss 0 < PORT <= 65536 sein."
 
+#: lib/fb_tools/vsphere/__init__.py:196
+msgid "Connecting to vSphere host {h}:{p} as {u!r} ..."
+msgstr "Verbinde mich mit vSphere-Host {h}:{p} als {u!r} …"
+
 #: lib/fb_tools/vsphere/__init__.py:214
 msgid "Disconnecting from vSphere host {}."
 msgstr "Trenne Verbindung zu vSphere-Host {}."
 
-#: lib/fb_tools/vsphere/cluster.py:246 lib/fb_tools/vsphere/dc.py:120 lib/fb_tools/vsphere/ds.py:321
-#: lib/fb_tools/vsphere/ds_cluster.py:162 lib/fb_tools/vsphere/network.py:183
-msgid "Comparing {} objects ..."
-msgstr "Vergleiche {}-Objekte …"
-
-#: lib/fb_tools/vsphere/cluster.py:282 lib/fb_tools/vsphere/dc.py:154
-#: lib/fb_tools/vsphere/ds_cluster.py:123
+#: lib/fb_tools/vsphere/cluster.py:282 lib/fb_tools/vsphere/dc.py:154 lib/fb_tools/vsphere/ds.py:233
+#: lib/fb_tools/vsphere/ds_cluster.py:123 lib/fb_tools/vsphere/network.py:144
 msgid "Creating {} object from:"
 msgstr "Erstelle {}-Objekt aus:"
 
@@ -1382,24 +1383,24 @@ msgstr "Der Cluster {c!r} hat das Netzwerk {n!r}."
 msgid "Cluster {c!r} has datastore {d!r}."
 msgstr "Der Cluster {c!r} hat den Datastore {d!r}."
 
-#: lib/fb_tools/vsphere/ds.py:341
+#: lib/fb_tools/vsphere/ds.py:340
 msgid "The key {k!r} must be equal to the datastore name {n!r}."
 msgstr "Der Schlüssel {k!r} muss gleich dem Namen des Datastores {n!r} sein."
 
-#: lib/fb_tools/vsphere/ds.py:344 lib/fb_tools/vsphere/ds_cluster.py:185
+#: lib/fb_tools/vsphere/ds.py:343 lib/fb_tools/vsphere/ds_cluster.py:185
 #: lib/fb_tools/vsphere/network.py:206
 msgid "Object {{!r}} is not a {} object."
 msgstr "Das Objekt {{!r}} ist kein {}-Objekt."
 
-#: lib/fb_tools/vsphere/ds.py:576
+#: lib/fb_tools/vsphere/ds.py:575
 msgid "Could not handle datastore type {!r}."
 msgstr "Kann den Datastore-Typ {!r} nicht behandeln."
 
-#: lib/fb_tools/vsphere/ds.py:583
+#: lib/fb_tools/vsphere/ds.py:582
 msgid "Could not found a datastore for {c:0.1f} GiB of type {t!r}."
 msgstr "Konnte keinen Datastore für {c:0.1f} GiB vom Typ {t!r} finden."
 
-#: lib/fb_tools/vsphere/ds.py:590
+#: lib/fb_tools/vsphere/ds.py:589
 msgid "Searching datastore for {c:0.1f} GiB of type {t!r}."
 msgstr "Suche Datastore für {c:0.1f} GiB vom Typ {t!r}."
 
