@@ -33,7 +33,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.7.4'
+__version__ = '0.7.6'
 
 LOG = logging.getLogger(__name__)
 
@@ -45,6 +45,7 @@ DEFAULT_MAX_LOCKFILE_AGE = 300
 DEFAULT_LOCKING_USE_PID = True
 
 _ = XLATOR.gettext
+ngettext = XLATOR.ngettext
 
 
 # =============================================================================
@@ -339,7 +340,7 @@ class LockObject(FbBaseObject):
             return
 
         if self.fd is not None:
-            msg = "Closing file descriptor {} ...".format(self.fd)
+            msg = _("Closing file descriptor {} ...").format(self.fd)
             if self.silent:
                 if self.verbose >= 2:
                     LOG.debug(msg)
@@ -790,7 +791,7 @@ class LockHandler(BaseHandler):
 
         lockdir = lfile.parent
         if self.verbose > 1:
-            LOG.debug("Using lock directory {!r} ...".format(str(lockdir)))
+            LOG.debug(_("Using lock directory {!r} ...").format(str(lockdir)))
         if not lockdir.is_dir():
             raise LockdirNotExistsError(lockdir)
 
@@ -798,7 +799,7 @@ class LockHandler(BaseHandler):
         if lfile.exists():
             lfile = lfile.resolve()
 
-        LOG.debug("Trying to lock lockfile {!r} ...".format(str(lockfile)))
+        LOG.debug(_("Trying to lock lockfile {!r} ...").format(str(lockfile)))
 
         if not os.access(str(lockdir), os.W_OK):
             msg = _("Locking directory {!r} isn't writeable.").format(str(lockdir))
@@ -839,12 +840,12 @@ class LockHandler(BaseHandler):
                 counter += 1
 
                 if self.verbose > 3:
-                    LOG.debug("Current time difference: {:0.3f} seconds.".format(time_diff))
+                    LOG.debug(_("Current time difference: {:0.3f} seconds.").format(time_diff))
                 if time_diff >= max_delay:
                     break
 
                 # Try creating lockfile exclusive
-                LOG.debug("Try {try_nr} on creating lockfile {lfile!r} ...".format(
+                LOG.debug(_("Try {try_nr} on creating lockfile {lfile!r} ...").format(
                     try_nr=counter, lfile=str(lockfile)))
                 fd = self._create_lockfile(lockfile)
                 if fd is not None:
@@ -873,7 +874,7 @@ class LockHandler(BaseHandler):
 
                 # No success, then retry later
                 if self.verbose > 2:
-                    LOG.debug("Sleeping for {:0.1f} seconds.".format(float(delay)))
+                    LOG.debug(_("Sleeping for {:0.1f} seconds.").format(float(delay)))
                 time.sleep(delay)
                 delay += delay_increase
 
@@ -894,7 +895,7 @@ class LockHandler(BaseHandler):
             else:
                 LOG.info(msg)
             out = to_utf8("{}\n".format(pid))
-            LOG.debug("Write {what!r} in lockfile {lfile!r} ...".format(
+            LOG.debug(_("Write {what!r} in lockfile {lfile!r} ...").format(
                 what=out, lfile=str(lockfile)))
 
         finally:
@@ -903,11 +904,11 @@ class LockHandler(BaseHandler):
                 os.write(fd, out)
 
                 if stay_opened:
-                    LOG.debug("Seeking and syncing {!r} ...".format(str(lockfile)))
+                    LOG.debug(_("Seeking and syncing {!r} ...").format(str(lockfile)))
                     os.lseek(fd, 0, 0)
                     os.fsync(fd)
                 else:
-                    LOG.debug("Closing {!r} ...".format(str(lockfile)))
+                    LOG.debug(_("Closing {!r} ...").format(str(lockfile)))
                     os.close(fd)
                     fd = None
 
@@ -933,9 +934,9 @@ class LockHandler(BaseHandler):
         """
 
         if self.verbose > 1:
-            LOG.debug("Trying to open {!r} exclusive ...".format(str(lockfile)))
+            LOG.debug(_("Trying to open {!r} exclusive ...").format(str(lockfile)))
         if self.simulate:
-            LOG.debug("Simulation mode, no real creation of a lockfile.")
+            LOG.debug(_("Simulation mode, no real creation of a lockfile."))
             return -1
 
         fd = None
@@ -973,12 +974,12 @@ class LockHandler(BaseHandler):
         lfile = lfile.resolve()
 
         if not lfile.exists():
-            LOG.debug("Lockfile {!r} to remove doesn't exists.".format(str(lfile)))
+            LOG.debug(_("Lockfile {!r} to remove doesn't exists.").format(str(lfile)))
             return True
 
         LOG.info(_("Removing lockfile {!r} ...").format(str(lfile)))
         if self.simulate:
-            LOG.debug("Simulation mode - lockfile won't removed.")
+            LOG.debug(_("Simulation mode - lockfile won't removed."))
             return True
 
         try:
@@ -1039,10 +1040,10 @@ class LockHandler(BaseHandler):
                     val=max_age, what='max_age')
                 raise LockHandlerError(msg)
 
-        LOG.debug("Checking lockfile {!r} ...".format(str(lfile)))
+        LOG.debug(_("Checking lockfile {!r} ...").format(str(lfile)))
 
         if not lfile.exists():
-            LOG.debug("Lockfile {!r} doesn't exists.".format(str(lfile)))
+            LOG.debug(_("Lockfile {!r} doesn't exists.").format(str(lfile)))
             return False
 
         if not os.access(str(lfile), os.R_OK):
@@ -1077,11 +1078,12 @@ class LockHandler(BaseHandler):
 
         age = time.time() - fstat.st_mtime
         if age >= max_age:
-            LOG.debug("Lockfile {lfile!r} is older than {max} seconds ({age} seconds).".format(
+            LOG.debug(_("Lockfile {lfile!r} is older than {max} seconds ({age} seconds).").format(
                 lfile=str(lfile), max=max_age, age=age))
             return False
-        msg = "Lockfile {lfile!r} is {age} seconds old, but not old enough ({max}seconds).".format(
-            lfile=str(lfile), max=max_age, age=age)
+        msg = _(
+            "Lockfile {lfile!r} is {age} seconds old, but not old enough "
+            "({max} seconds).").format(lfile=str(lfile), max=max_age, age=age)
         LOG.debug(msg)
         return True
 
@@ -1107,7 +1109,7 @@ class LockHandler(BaseHandler):
         fh = None
 
         if self.verbose > 1:
-            LOG.debug("Trying to open pidfile {!r} ...".format(str(pfile)))
+            LOG.debug(_("Trying to open pidfile {!r} ...").format(str(pfile)))
         try:
             fh = pfile.open("rb")
         except Exception as e:

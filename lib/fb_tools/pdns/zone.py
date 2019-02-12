@@ -34,7 +34,7 @@ from .errors import PowerDNSZoneError
 from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.8.5'
+__version__ = '0.8.6'
 
 LOG = logging.getLogger(__name__)
 
@@ -184,7 +184,7 @@ class PowerDNSZone(BasePowerDNSHandler):
             pout['key'] = None
             if key:
                 pout['key'] = '******'
-            LOG.debug("Params initialisation:\n{}".format(pp(pout)))
+            LOG.debug(_("Params initialisation:") + '\n' + pp(pout))
 
         zone = cls(**params)
 
@@ -523,7 +523,8 @@ class PowerDNSZone(BasePowerDNSHandler):
     def __copy__(self):
 
         if self.verbose > 3:
-            LOG.debug("Copying current {}-object into a new one.".format(self.__class__.__name__))
+            LOG.debug(_("Copying current {}-object into a new one.").format(
+                self.__class__.__name__))
 
         zone = self.__class__(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
@@ -547,7 +548,7 @@ class PowerDNSZone(BasePowerDNSHandler):
             msg = _("Cannot update zone {!r}, no API URL defined.").format(self.name)
             raise PowerDNSZoneError(msg)
 
-        LOG.debug("Updating data of zone {n!r} from API path {u!r} ...".format(
+        LOG.debug(_("Updating data of zone {n!r} from API path {u!r} ...").format(
             n=self.name, u=self.url))
         json_response = self.perform_request(self.url)
 
@@ -634,7 +635,7 @@ class PowerDNSZone(BasePowerDNSHandler):
     def patch(self, payload):
 
         if self.verbose > 1:
-            LOG.debug("Patching zone {!r} ...".format(self.name))
+            LOG.debug(_("Patching zone {!r} ...").format(self.name))
 
         return self.perform_request(
             self.url, method='PATCH',
@@ -705,7 +706,7 @@ class PowerDNSZone(BasePowerDNSHandler):
         payload = {"rrsets": [rrset]}
 
         if self.verbose > 1:
-            LOG.debug("Setting new SOA {s!r} for zone {z!r}, TTL {t} ...".format(
+            LOG.debug(_("Setting new SOA {s!r} for zone {z!r}, TTL {t} ...").format(
                 s=new_soa.data, z=self.name, t=ttl))
 
         self.patch(payload)
@@ -719,7 +720,7 @@ class PowerDNSZone(BasePowerDNSHandler):
         old_serial = soa.serial
         new_serial = soa.increase_serial()
 
-        LOG.debug("Increasing serial of zone {z!r} from {o} => {n}.".format(
+        LOG.debug(_("Increasing serial of zone {z!r} from {o} => {n}.").format(
             z=self.name, o=old_serial, n=new_serial))
         self.update_soa(soa)
 
@@ -735,14 +736,14 @@ class PowerDNSZone(BasePowerDNSHandler):
         record_type = 'A'
         if address.version == 6:
             record_type = 'AAAA'
-        LOG.debug("Trying to create {t}-record {f!r} => {a!r}.".format(
+        LOG.debug(_("Trying to create {t}-record {f!r} => {a!r}.").format(
             t=record_type, f=fqdn, a=str(address)))
 
         canon_fqdn = self.canon_name(fqdn)
 
         self.update()
         if self.verbose > 3:
-            LOG.debug("Current zone:\n{}".format(pp(self.as_dict())))
+            LOG.debug(_("Current zone:") + '\n' + pp(self.as_dict()))
 
         soa = self.get_soa()
         rrset = None
@@ -800,7 +801,7 @@ class PowerDNSZone(BasePowerDNSHandler):
 
         self.update()
         if self.verbose > 3:
-            LOG.debug("Current zone:\n{}".format(pp(self.as_dict())))
+            LOG.debug(_("Current zone:") + '\n' + pp(self.as_dict()))
 
         soa = self.get_soa()
 
@@ -876,7 +877,7 @@ class PowerDNSZone(BasePowerDNSHandler):
 
         self.update()
         if self.verbose > 3:
-            LOG.debug("Current zone:\n{}".format(pp(self.as_dict())))
+            LOG.debug(_("Current zone:") + '\n' + pp(self.as_dict()))
 
         rrsets_rm = []
 
@@ -903,7 +904,7 @@ class PowerDNSZone(BasePowerDNSHandler):
             c=count, z=self.name_unicode)
         LOG.info(msg)
         if self.verbose > 1:
-            LOG.debug("Resorce record sets:\n{}".format(pp(payload)))
+            LOG.debug(_("Resorce record sets:") + '\n' + pp(payload))
 
         self.patch(payload)
         LOG.info(_("Done."))

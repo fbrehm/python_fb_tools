@@ -27,10 +27,11 @@ from .errors import PDNSApiNotFoundError, PDNSApiValidationError
 
 from .zone import PowerDNSZone, PowerDNSZoneDict
 
-__version__ = '0.7.3'
+__version__ = '0.7.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
+ngettext = XLATOR.ngettext
 
 
 # =============================================================================
@@ -71,7 +72,7 @@ class PowerDNSServer(BasePowerDNSHandler):
         self._simulate = to_bool(value)
 
         if self.initialized:
-            LOG.debug("Setting simulate of all subsequent objects to {!r} ...".format(
+            LOG.debug(_("Setting simulate of all subsequent objects to {!r} ...").format(
                 self.simulate))
 
         if self.zones:
@@ -105,25 +106,24 @@ class PowerDNSServer(BasePowerDNSHandler):
             LOG.error(_("Could not found server info."))
             return None
         if self.verbose > 2:
-            LOG.debug("Got a response:\n{}".format(pp(json_response)))
+            LOG.debug(_("Got a response:") + '\n' + pp(json_response))
 
         if 'version' in json_response:
             self._api_server_version = json_response['version']
             LOG.info(_("PowerDNS server version {!r}.").format(self.api_server_version))
             return self.api_server_version
-        LOG.error((_("Did not found version info in server info:") + "\n{}").format(pp(
-            json_response)))
+        LOG.error(_("Did not found version info in server info:") + "\n" + pp(json_response))
         return None
 
     # -------------------------------------------------------------------------
     def get_api_zones(self):
 
-        LOG.debug("Trying to get all zones from PDNS API ...")
+        LOG.debug(_("Trying to get all zones from PDNS API ..."))
 
         path = "/servers/{}/zones".format(self.api_servername)
         json_response = self.perform_request(path)
         if self.verbose > 3:
-            LOG.debug("Got a response:\n{}".format(pp(json_response)))
+            LOG.debug(_("Got a response:") + '\n' + pp(json_response))
 
         self.zones = PowerDNSZoneDict()
 
@@ -138,13 +138,14 @@ class PowerDNSServer(BasePowerDNSHandler):
                 print("{!r}".format(zone))
 
         if self.verbose > 1:
-            LOG.debug("Found {} zones.".format(len(self.zones)))
+            msg = ngettext("Found a zone.", "Found {n} zones.", len(self.zones))
+            LOG.debug(msg.format(n=len(self.zones)))
 
         if self.verbose > 2:
             if self.verbose > 3:
-                LOG.debug("Zones:\n{}".format(pp(self.zones.as_list())))
+                LOG.debug(_("Zones:") + '\n' + pp(self.zones.as_list()))
             else:
-                LOG.debug("Zones:\n{}".format(pp(list(self.zones.keys()))))
+                LOG.debug(_("Zones:") + '\n' + pp(list(self.zones.keys())))
 
         return self.zones
 
@@ -159,20 +160,20 @@ class PowerDNSServer(BasePowerDNSHandler):
             return None
 
         if self.verbose > 2:
-            LOG.debug("Searching an appropriate zone for item {i!r} - FQDN {f!r} ...".format(
+            LOG.debug(_("Searching an appropriate zone for item {i!r} - FQDN {f!r} ...").format(
                 i=item, f=fqdn))
 
         for zone_name in reversed(self.zones.keys()):
             pattern = r'\.' + re.escape(zone_name) + '$'
             if self.verbose > 3:
-                LOG.debug("Search pattern: {}".format(pattern))
+                LOG.debug(_("Search pattern: {}").format(pattern))
             if re.search(pattern, fqdn):
                 return zone_name
             zone = self.zones[zone_name]
             if zone_name != zone.name_unicode:
                 pattern = r'\.' + re.escape(zone.name_unicode) + '$'
                 if self.verbose > 3:
-                    LOG.debug("Search pattern Unicode: {}".format(pattern))
+                    LOG.debug(_("Search pattern Unicode: {}").format(pattern))
                 if re.search(pattern, fqdn):
                     return zone_name
 
@@ -189,14 +190,14 @@ class PowerDNSServer(BasePowerDNSHandler):
             return []
 
         if self.verbose > 2:
-            LOG.debug("Searching all appropriate zones for item {i!r} - FQDN {f!r} ...".format(
+            LOG.debug(_("Searching all appropriate zones for item {i!r} - FQDN {f!r} ...").format(
                 i=item, f=fqdn))
         zones = []
 
         for zone_name in self.zones.keys():
             pattern = r'\.' + re.escape(zone_name) + '$'
             if self.verbose > 3:
-                LOG.debug("Search pattern: {}".format(pattern))
+                LOG.debug(_("Search pattern: {}").format(pattern))
             if re.search(pattern, fqdn):
                 zones.append(zone_name)
                 continue
@@ -204,7 +205,7 @@ class PowerDNSServer(BasePowerDNSHandler):
             if zone_name != zone.name_unicode:
                 pattern = r'\.' + re.escape(zone.name_unicode) + '$'
                 if self.verbose > 3:
-                    LOG.debug("Search pattern Unicode: {}".format(pattern))
+                    LOG.debug(_("Search pattern Unicode: {}").format(pattern))
                 if re.search(pattern, fqdn):
                     zones.append(zone_name)
 

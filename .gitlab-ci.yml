@@ -42,6 +42,7 @@ test Python 2.7:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
+    - tags
 
 test Python 3.5:
   <<: *docker_job_definition
@@ -56,6 +57,7 @@ test Python 3.5:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
+    - tags
 
 test Python 3.6:
   <<: *docker_job_definition
@@ -70,6 +72,7 @@ test Python 3.6:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
+    - tags
 
 test Python 3.7:
   <<: *docker_job_definition
@@ -84,6 +87,7 @@ test Python 3.7:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
+    - tags
 
 Linter:
   <<: *docker_job_definition
@@ -98,6 +102,7 @@ Linter:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
+    - tags
 
 build Python 2.7:
   <<: *docker_job_definition
@@ -112,6 +117,7 @@ build Python 2.7:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
+    - tags
 
 build Python 3.5:
   <<: *docker_job_definition
@@ -125,6 +131,7 @@ build Python 3.5:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
+    - tags
 
 build Python 3.6:
   <<: *docker_job_definition
@@ -138,6 +145,7 @@ build Python 3.6:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
+    - tags
 
 build Python 3.7:
   <<: *docker_job_definition
@@ -151,6 +159,7 @@ build Python 3.7:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
+    - tags
 
 RPM package OEL7:
   stage: deploy
