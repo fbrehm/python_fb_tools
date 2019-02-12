@@ -1,4 +1,4 @@
-fb-tools (1.4.3) UNRELEASED; urgency=medium
+fb-tools (1.4.3) all; urgency=medium
 
   * Completion of translating (i18n) of many modules
 
