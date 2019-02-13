@@ -23,7 +23,7 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.1.4'
+__version__ = '1.1.5'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
@@ -44,6 +44,11 @@ if __mo_file__:
         XLATOR = gettext.NullTranslations()
 else:
     XLATOR = gettext.NullTranslations()
+
+SUPPORTED_LANGS = (
+    'de_DE',
+    'en_US'
+)
 
 _ = XLATOR.gettext
 
