@@ -11,6 +11,10 @@ from __future__ import absolute_import, print_function
 # Standard modules
 import logging
 import argparse
+import pathlib
+import errno
+
+from pathlib import Path
 
 # Third party modules
 
@@ -27,7 +31,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -46,6 +50,38 @@ class CfgConvertError(FbAppError):
 class WrongCfgTypeError(CfgConvertError, ValueError):
     """Special exception class for the case of wrong configuration type."""
     pass
+
+
+# =============================================================================
+class InputFileError(CfgConvertError, OSError):
+    """Special exception class for the case of errors with the input file."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, err_no, strerror, filename):
+
+        super(InputFileError, self).__init__(err_no, strerror, str(filename))
+
+
+# =============================================================================
+class InputFileNotExistingError(InputFileError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, filename):
+
+        msg = _("The input file is not existing.")
+        super(InputFileNotExistingError, self).__init__(
+            errno.ENOENT, msg, filename)
+
+
+# =============================================================================
+class InputFileNotReadableError(InputFileError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, filename):
+
+        msg = _("The input file is not readable.")
+        super(InputFileNotReadableError, self).__init__(
+            errno.EACCES, msg, filename)
 
 
 # =============================================================================
@@ -68,12 +104,57 @@ class CfgTypeOptionAction(argparse.Action):
         if cfg_type_clean not in SUPPORTED_CFG_TYPES:
             msg = _(
                 "The configuration file type must be one of {l}, given {g!r}.".format(
-                    l=format_list(SUPPORTED_CFG_TYPES, locale=DEFAULT_LOCALE),
+                    l=format_list(SUPPORTED_CFG_TYPES, do_repr=True, locale=DEFAULT_LOCALE),
                     g=cfg_type))
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, cfg_type_clean)
         return
+
+
+# =============================================================================
+class InputFileOptionAction(argparse.Action):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, *args, **kwargs):
+
+        super(InputFileOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, filename, option_string=None):
+
+        if filename is None or filename == '-' or filename == '':
+            setattr(namespace, self.dest, '-')
+            return
+        path = Path(filename)
+        if not path.exists():
+            err = InputFileNotExistingError(path)
+            raise argparse.ArgumentError(self, str(err))
+        if not os.access(str(path)):
+            err = InputFileNotReadableError(path)
+            raise argparse.ArgumentError(self, str(err))
+        setattr(namespace, self.dest, path)
+
+
+# =============================================================================
+class OutputFileOptionAction(argparse.Action):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, *args, **kwargs):
+
+        super(OutputFileOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, filename, option_string=None):
+
+        if filename is None or filename == '-' or filename == '':
+            setattr(namespace, self.dest, '-')
+            return
+        path = Path(filename)
+        setattr(namespace, self.dest, path)
+
 
 # =============================================================================
 class CfgConvertApplication(BaseApplication):
@@ -100,6 +181,8 @@ class CfgConvertApplication(BaseApplication):
         self.cfg_files = []
         self._from_type = None
         self._to_type = None
+        self._input = '-'
+        self._output = '-'
 
         self.from_type = from_type
         self.to_type = to_type
@@ -146,6 +229,52 @@ class CfgConvertApplication(BaseApplication):
         self._to_type = v
 
     # -------------------------------------------------------------------------
+    @property
+    def input(self):
+        """The file name of the input, the source configuration."""
+        return self._input
+
+    @input.setter
+    def input(self, value):
+        if value is None:
+            self._input = '-'
+            return
+        path = value
+        if not isinstance(value, Path):
+            v = str(value).strip()
+            if v == '':
+                self._input = '-'
+                return
+            path = Path(v)
+
+        if not path.exists():
+            raise InputFileNotExistingError(path)
+        if not os.access(str(path)):
+            raise InputFileNotReadableError(path)
+        self._input = path
+
+    # -------------------------------------------------------------------------
+    @property
+    def output(self):
+        """The file name of the output, the target configuration."""
+        return self._output
+
+    @output.setter
+    def output(self, value):
+        if value is None:
+            self._output = '-'
+            return
+        path = value
+        if not isinstance(value, Path):
+            v = str(value).strip()
+            if v == '':
+                self._output = '-'
+                return
+            path = Path(v)
+
+        self._output = path
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -160,6 +289,8 @@ class CfgConvertApplication(BaseApplication):
         res = super(CfgConvertApplication, self).as_dict(short=short)
         res['from_type'] = self.from_type
         res['to_type'] = self.to_type
+        res['input'] = self.input
+        res['output'] = self.output
         res['supported_cfg_types'] = self.supported_cfg_types
 
         return res
@@ -196,17 +327,40 @@ class CfgConvertApplication(BaseApplication):
         if not self.from_type or not self.to_type:
 
             conv_group = self.arg_parser.add_argument_group(_('Converting options'))
+            type_list = format_list(
+                SUPPORTED_CFG_TYPES, do_repr=True, style='or', locale=DEFAULT_LOCALE)
 
             if not self.from_type:
                 conv_group.add_argument(
                     '-F', '--from-type', metavar=_('CFG_TYPE'), dest='from_type',
-                    #required=True, choices=self.supported_cfg_types, action=CfgTypeOptionAction,
                     required=True, action=CfgTypeOptionAction,
                     help=_(
                         "The configuration type of the source, must be one "
-                        "of {}.").format(
-                            format_list(SUPPORTED_CFG_TYPES, locale=DEFAULT_LOCALE)),
+                        "of {}.").format(type_list),
                 )
+
+            if not self.to_type:
+                conv_group.add_argument(
+                    '-T', '--to-type', metavar=_('CFG_TYPE'), dest='to_type',
+                    required=True, action=CfgTypeOptionAction,
+                    help=_(
+                        "The configuration type of the target, must be one "
+                        "of {}.").format(type_list),
+                )
+
+        self.arg_parser.add_argument(
+            '-i', '--input', metavar=_('FILE'), dest='input',
+            action=InputFileOptionAction, help=_(
+                "The filename of the input file. Use {i!r} to read from {f} "
+                "(which is the default).").format(i='-', f='STDIN'),
+        )
+
+        self.arg_parser.add_argument(
+            '-o', '--output', metavar=_('FILE'), dest='output',
+            action=OutputFileOptionAction, help=_(
+                "The filename of the output file. Use {i!r} to write to {f} "
+                "(which is the default).").format(i='-', f='STDOUT'),
+        )
 
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
@@ -223,6 +377,13 @@ class CfgConvertApplication(BaseApplication):
         from_type = getattr(self.config, 'from_type', None)
         if from_type:
             self.from_type = from_type
+
+        to_type = getattr(self.config, 'to_type', None)
+        if to_type:
+            self.to_type = to_type
+
+        self.input = getattr(self.config, 'input', None)
+        self.output = getattr(self.config, 'output', None)
 
     # -------------------------------------------------------------------------
     def _run(self):
