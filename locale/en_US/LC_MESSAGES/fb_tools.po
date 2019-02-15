@@ -1,13 +1,13 @@
 # English (United States) translations for fb_tools.
 # Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
+# Frank Brehm <frank@brehm-online.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-12 10:20+0100\n"
+"POT-Creation-Date: 2019-02-15 11:22+0100\n"
 "PO-Revision-Date: 2018-12-12 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -149,6 +149,74 @@ msgstr ""
 
 #: lib/fb_tools/app.py:801
 msgid "Aborted by user interrupt."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:72
+msgid "The input file is not existing"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:83
+msgid "The input file is not readable"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:101
+msgid "The configuration file type may not be None."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:106
+msgid "The configuration file type must be one of {l}, given {g!r}."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:177
+msgid ""
+"Converts the given configuration file from the given input format into the given output format "
+"and print it out to {o} or into a given output file."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:211
+msgid "Invalid input configuration type {!r}"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:228
+msgid "Invalid target configuration type {!r}"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:328
+msgid "File options"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:331 lib/fb_tools/cfg_converter.py:338
+#: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
+#: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
+msgid "FILE"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:332
+msgid "The filename of the input file. Use {i!r} to read from {f} (which is the default)."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:339
+msgid "The filename of the output file. Use {i!r} to write to {f} (which is the default)."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:346
+msgid "Converting options"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:352 lib/fb_tools/cfg_converter.py:361
+msgid "CFG_TYPE"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:354
+msgid "The configuration type of the source, must be one of {}."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:363
+msgid "The configuration type of the target, must be one of {}."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:394 lib/fb_tools/get_vm_app.py:220
+msgid "Starting {a!r}, version {v!r} ..."
 msgstr ""
 
 #: lib/fb_tools/common.py:147
@@ -355,12 +423,6 @@ msgstr ""
 msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
-#: lib/fb_tools/get_vm_list_app.py:161 lib/fb_tools/pdns_bulk_rm_app.py:189
-#: lib/fb_tools/pdns_bulk_rm_app.py:236
-msgid "FILE"
-msgstr ""
-
 #: lib/fb_tools/get_file_rm_app.py:313
 msgid "File pattern to generate list of files to remove."
 msgstr ""
@@ -459,40 +521,39 @@ msgstr ""
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:132 lib/fb_tools/get_vm_list_app.py:136
+#: lib/fb_tools/get_vm_app.py:132
 msgid "Enter password for host {h!r} and user {u!r}: "
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/get_vm_list_app.py:163
-#: lib/fb_tools/pdns_bulk_rm_app.py:191
+#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:162 lib/fb_tools/get_vm_list_app.py:166
+#: lib/fb_tools/get_vm_app.py:162
 msgid "VMWare options"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:166 lib/fb_tools/get_vm_list_app.py:170
+#: lib/fb_tools/get_vm_app.py:166
 msgid "Remote vSphere host to connect to (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:172 lib/fb_tools/get_vm_list_app.py:176
+#: lib/fb_tools/get_vm_app.py:172
 msgid "Port on vSphere host to connect on (Default: {})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:177 lib/fb_tools/get_vm_list_app.py:181
+#: lib/fb_tools/get_vm_app.py:177
 msgid "USER"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:178 lib/fb_tools/get_vm_list_app.py:182
+#: lib/fb_tools/get_vm_app.py:178
 msgid "User name to use when connecting to vSphere host (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:183 lib/fb_tools/get_vm_list_app.py:187
+#: lib/fb_tools/get_vm_app.py:183
 msgid "PASSWORD"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:184 lib/fb_tools/get_vm_list_app.py:188
+#: lib/fb_tools/get_vm_app.py:184
 msgid "Password to use when connecting to vSphere host."
 msgstr ""
 
@@ -500,11 +561,7 @@ msgstr ""
 msgid "Names of the VM to get information."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:220 lib/fb_tools/get_vm_list_app.py:216
-msgid "Starting {a!r}, version {v!r} ..."
-msgstr ""
-
-#: lib/fb_tools/get_vm_app.py:228 lib/fb_tools/get_vm_list_app.py:224
+#: lib/fb_tools/get_vm_app.py:228
 msgid "Closing ..."
 msgstr ""
 
@@ -512,71 +569,67 @@ msgstr ""
 msgid "NOT FOUND"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:59
-msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
-msgstr ""
-
-#: lib/fb_tools/handler/__init__.py:153
+#: lib/fb_tools/handler/__init__.py:157
 msgid "Invalid time zone name {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:155
+#: lib/fb_tools/handler/__init__.py:159
 msgid "Setting time zone to {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:159
+#: lib/fb_tools/handler/__init__.py:163
 msgid "Name of the time zone: {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:166
+#: lib/fb_tools/handler/__init__.py:170
 msgid "{}-object not initialized."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:168
+#: lib/fb_tools/handler/__init__.py:172
 msgid "Method {} must be overridden in descendant classes."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:246
+#: lib/fb_tools/handler/__init__.py:250
 msgid "Quiet execution."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:294
+#: lib/fb_tools/handler/__init__.py:298
 msgid "Starting synchronous communication with '{}'."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:298
+#: lib/fb_tools/handler/__init__.py:302
 msgid "Finished communication with '{}'."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:312
+#: lib/fb_tools/handler/__init__.py:316
 msgid "Parameter {p!r} is not of type {t!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:317
+#: lib/fb_tools/handler/__init__.py:321
 msgid "Got completed process:"
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:321 lib/fb_tools/handler/__init__.py:332
+#: lib/fb_tools/handler/__init__.py:325 lib/fb_tools/handler/__init__.py:336
 msgid "Output on {}:"
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:353
+#: lib/fb_tools/handler/__init__.py:357
 msgid "Starting asynchronous communication with '{cmd}', heartbeat interval is {interval:0.1f} seconds."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:368
+#: lib/fb_tools/handler/__init__.py:372
 msgid "Checking for the end of the communication ..."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:378
+#: lib/fb_tools/handler/__init__.py:382
 msgid "Time to execute the heartbeat handler."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:382
+#: lib/fb_tools/handler/__init__.py:386
 msgid "Sleeping {:0.2f} seconds ..."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:390 lib/fb_tools/handler/__init__.py:399
+#: lib/fb_tools/handler/__init__.py:394 lib/fb_tools/handler/__init__.py:403
 msgid "   {w} is now: {o!r}"
 msgstr ""
 
@@ -792,7 +845,7 @@ msgstr ""
 msgid "Performing argument {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:243 lib/fb_tools/handling_obj.py:405
+#: lib/fb_tools/handler/__init__.py:247 lib/fb_tools/handling_obj.py:405
 msgid "Executing: {}"
 msgstr ""
 
@@ -1760,23 +1813,23 @@ msgstr ""
 msgid "Successful changed MAC address of VM {v!r} to {m!r}."
 msgstr ""
 
-#: lib/fb_tools/xlate.py:54
+#: lib/fb_tools/xlate.py:94
 msgid "Module directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:55
+#: lib/fb_tools/xlate.py:95
 msgid "Base directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:56
+#: lib/fb_tools/xlate.py:96
 msgid "Locale directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:57
+#: lib/fb_tools/xlate.py:97
 msgid "Locale domain: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:58
+#: lib/fb_tools/xlate.py:98
 msgid "Found .mo-file: {!r}"
 msgstr ""
 

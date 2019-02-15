@@ -13,6 +13,7 @@ import logging
 import argparse
 import pathlib
 import errno
+import os
 
 from pathlib import Path
 
@@ -31,7 +32,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -68,7 +69,7 @@ class InputFileNotExistingError(InputFileError):
     # -------------------------------------------------------------------------
     def __init__(self, filename):
 
-        msg = _("The input file is not existing.")
+        msg = _("The input file is not existing")
         super(InputFileNotExistingError, self).__init__(
             errno.ENOENT, msg, filename)
 
@@ -79,7 +80,7 @@ class InputFileNotReadableError(InputFileError):
     # -------------------------------------------------------------------------
     def __init__(self, filename):
 
-        msg = _("The input file is not readable.")
+        msg = _("The input file is not readable")
         super(InputFileNotReadableError, self).__init__(
             errno.EACCES, msg, filename)
 
@@ -103,9 +104,9 @@ class CfgTypeOptionAction(argparse.Action):
         cfg_type_clean = cfg_type.strip().lower()
         if cfg_type_clean not in SUPPORTED_CFG_TYPES:
             msg = _(
-                "The configuration file type must be one of {l}, given {g!r}.".format(
+                "The configuration file type must be one of {l}, given {g!r}.").format(
                     l=format_list(SUPPORTED_CFG_TYPES, do_repr=True, locale=DEFAULT_LOCALE),
-                    g=cfg_type))
+                    g=cfg_type)
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, cfg_type_clean)
@@ -131,7 +132,7 @@ class InputFileOptionAction(argparse.Action):
         if not path.exists():
             err = InputFileNotExistingError(path)
             raise argparse.ArgumentError(self, str(err))
-        if not os.access(str(path)):
+        if not os.access(str(path), os.R_OK):
             err = InputFileNotReadableError(path)
             raise argparse.ArgumentError(self, str(err))
         setattr(namespace, self.dest, path)
@@ -174,9 +175,9 @@ class CfgConvertApplication(BaseApplication):
         desc = description
         if not desc:
             desc = _(
-                "Converts the given configuration file(s) from the given input format "
-                "into the given output format and print it out to STDOUT "
-                "or into a given output file.")
+                "Converts the given configuration file from the given input format "
+                "into the given output format and print it out to {o} "
+                "or into a given output file.").format(o='STDOUT')
 
         self.cfg_files = []
         self._from_type = None
@@ -249,7 +250,7 @@ class CfgConvertApplication(BaseApplication):
 
         if not path.exists():
             raise InputFileNotExistingError(path)
-        if not os.access(str(path)):
+        if not os.access(str(path), os.R_OK):
             raise InputFileNotReadableError(path)
         self._input = path
 
@@ -324,6 +325,22 @@ class CfgConvertApplication(BaseApplication):
 
         super(CfgConvertApplication, self).init_arg_parser()
 
+        file_group = self.arg_parser.add_argument_group(_('File options'))
+
+        file_group.add_argument(
+            '-i', '--input', metavar=_('FILE'), dest='input',
+            action=InputFileOptionAction, help=_(
+                "The filename of the input file. Use {i!r} to read from {f} "
+                "(which is the default).").format(i='-', f='STDIN'),
+        )
+
+        file_group.add_argument(
+            '-o', '--output', metavar=_('FILE'), dest='output',
+            action=OutputFileOptionAction, help=_(
+                "The filename of the output file. Use {i!r} to write to {f} "
+                "(which is the default).").format(i='-', f='STDOUT'),
+        )
+
         if not self.from_type or not self.to_type:
 
             conv_group = self.arg_parser.add_argument_group(_('Converting options'))
@@ -348,42 +365,23 @@ class CfgConvertApplication(BaseApplication):
                         "of {}.").format(type_list),
                 )
 
-        self.arg_parser.add_argument(
-            '-i', '--input', metavar=_('FILE'), dest='input',
-            action=InputFileOptionAction, help=_(
-                "The filename of the input file. Use {i!r} to read from {f} "
-                "(which is the default).").format(i='-', f='STDIN'),
-        )
-
-        self.arg_parser.add_argument(
-            '-o', '--output', metavar=_('FILE'), dest='output',
-            action=OutputFileOptionAction, help=_(
-                "The filename of the output file. Use {i!r} to write to {f} "
-                "(which is the default).").format(i='-', f='STDOUT'),
-        )
-
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
-
-        pass
-
-    # -------------------------------------------------------------------------
-    def perform_arg_parser_vmware(self):
         """
         Public available method to execute some actions after parsing
         the command line parameters.
         """
 
-        from_type = getattr(self.config, 'from_type', None)
+        from_type = getattr(self.args, 'from_type', None)
         if from_type:
             self.from_type = from_type
 
-        to_type = getattr(self.config, 'to_type', None)
+        to_type = getattr(self.args, 'to_type', None)
         if to_type:
             self.to_type = to_type
 
-        self.input = getattr(self.config, 'input', None)
-        self.output = getattr(self.config, 'output', None)
+        self.input = getattr(self.args, 'input', None)
+        self.output = getattr(self.args, 'output', None)
 
     # -------------------------------------------------------------------------
     def _run(self):

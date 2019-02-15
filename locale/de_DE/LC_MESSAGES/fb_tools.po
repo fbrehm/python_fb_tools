@@ -1,14 +1,14 @@
 # German (Germany) translations for fb_tools.
 # Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
+# Frank Brehm <frank@brehm-online.com>, 2019.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.4.2\n"
+"Project-Id-Version: fb_tools 1.4.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-12 10:20+0100\n"
-"PO-Revision-Date: 2019-02-12 10:22+0100\n"
+"POT-Creation-Date: 2019-02-15 11:22+0100\n"
+"PO-Revision-Date: 2019-02-15 11:25+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <LL@li.org>\n"
@@ -154,6 +154,76 @@ msgstr "Start in:"
 #: lib/fb_tools/app.py:801
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
+
+#: lib/fb_tools/cfg_converter.py:72
+msgid "The input file is not existing"
+msgstr "Die Input-Datei existiert nicht"
+
+#: lib/fb_tools/cfg_converter.py:83
+msgid "The input file is not readable"
+msgstr "Die Input-Datei ist nicht lesbar"
+
+#: lib/fb_tools/cfg_converter.py:101
+msgid "The configuration file type may not be None."
+msgstr "Der Typ der Konfigurationssdatei darf nicht None sein."
+
+#: lib/fb_tools/cfg_converter.py:106
+msgid "The configuration file type must be one of {l}, given {g!r}."
+msgstr "Der Typ der Konfigurationssdatei muss einer aus {l} sein, gegeben wurde {g!r}."
+
+#: lib/fb_tools/cfg_converter.py:177
+msgid ""
+"Converts the given configuration file from the given input format into the given output format "
+"and print it out to {o} or into a given output file."
+msgstr ""
+"Konvertiert die übergebene Konfigurationsdatei vom gegebenen Eingabeformat in das übergebene "
+"Ausgabeformat und gibt sie auf {o} oder in die gegebene Ausgabedatei aus."
+
+#: lib/fb_tools/cfg_converter.py:211
+msgid "Invalid input configuration type {!r}"
+msgstr "Ungültiger Typ der Eingabedatei."
+
+#: lib/fb_tools/cfg_converter.py:228
+msgid "Invalid target configuration type {!r}"
+msgstr "Ungültiger Typ der Ausgabedatei {!r}"
+
+#: lib/fb_tools/cfg_converter.py:328
+msgid "File options"
+msgstr "Dateioptionen"
+
+#: lib/fb_tools/cfg_converter.py:331 lib/fb_tools/cfg_converter.py:338
+#: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
+#: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
+msgid "FILE"
+msgstr "DATEI"
+
+#: lib/fb_tools/cfg_converter.py:332
+msgid "The filename of the input file. Use {i!r} to read from {f} (which is the default)."
+msgstr "Der Dateiname der Eingabedatei. Verwende {i!r}, um von {f} zu lesen (was die Vorgabe ist)."
+
+#: lib/fb_tools/cfg_converter.py:339
+msgid "The filename of the output file. Use {i!r} to write to {f} (which is the default)."
+msgstr "Der Dateiname der Ausgabedatei. Verwende {i!r}, um auf {f} zu schreiben (was die Vorgabe ist)."
+
+#: lib/fb_tools/cfg_converter.py:346
+msgid "Converting options"
+msgstr "Konvertierungsoptionen"
+
+#: lib/fb_tools/cfg_converter.py:352 lib/fb_tools/cfg_converter.py:361
+msgid "CFG_TYPE"
+msgstr "KONFIG_TYP"
+
+#: lib/fb_tools/cfg_converter.py:354
+msgid "The configuration type of the source, must be one of {}."
+msgstr "Der Konfigurationstyp der Eingabe, muss einer aus {} sein."
+
+#: lib/fb_tools/cfg_converter.py:363
+msgid "The configuration type of the target, must be one of {}."
+msgstr "Der Konfigurationstyp der Ausgabe, muss einer aus {} sein."
+
+#: lib/fb_tools/cfg_converter.py:394 lib/fb_tools/get_vm_app.py:220
+msgid "Starting {a!r}, version {v!r} ..."
+msgstr "Starte {a!r}, Version {v!r} …"
 
 #: lib/fb_tools/common.py:147
 msgid "{} is a tty."
@@ -372,12 +442,6 @@ msgstr ""
 "Wieviele Dateien (eine pro Jahr) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
 "{default}, Minimum {min})?"
 
-#: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
-#: lib/fb_tools/get_vm_list_app.py:161 lib/fb_tools/pdns_bulk_rm_app.py:189
-#: lib/fb_tools/pdns_bulk_rm_app.py:236
-msgid "FILE"
-msgstr "DATEI"
-
 #: lib/fb_tools/get_file_rm_app.py:313
 msgid "File pattern to generate list of files to remove."
 msgstr "Dateimuster, um die Liste der zu löschenden Dateien zu generieren."
@@ -478,40 +542,39 @@ msgstr ""
 "Versucht, Informationen über Virtuelle Maschinen in VMWare VSphere zu ermitteln und gibt diese "
 "aus."
 
-#: lib/fb_tools/get_vm_app.py:132 lib/fb_tools/get_vm_list_app.py:136
+#: lib/fb_tools/get_vm_app.py:132
 msgid "Enter password for host {h!r} and user {u!r}: "
 msgstr "Eingabe des Passwortes für Host {h!r} und Benutzer {u!r}: "
 
-#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/get_vm_list_app.py:163
-#: lib/fb_tools/pdns_bulk_rm_app.py:191
+#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr "Konfigurationsdatei (Vorgabe: {!r})"
 
-#: lib/fb_tools/get_vm_app.py:162 lib/fb_tools/get_vm_list_app.py:166
+#: lib/fb_tools/get_vm_app.py:162
 msgid "VMWare options"
 msgstr "VMWare-Optionen"
 
-#: lib/fb_tools/get_vm_app.py:166 lib/fb_tools/get_vm_list_app.py:170
+#: lib/fb_tools/get_vm_app.py:166
 msgid "Remote vSphere host to connect to (Default: {!r})."
 msgstr "Der vSphere-Server, zu dem sich verbunden werden soll (Vorgabe: {!r})"
 
-#: lib/fb_tools/get_vm_app.py:172 lib/fb_tools/get_vm_list_app.py:176
+#: lib/fb_tools/get_vm_app.py:172
 msgid "Port on vSphere host to connect on (Default: {})."
 msgstr "Der Port des vSphere-Servers, zu dem sich verbunden werden soll (Vorgabe: {!r})"
 
-#: lib/fb_tools/get_vm_app.py:177 lib/fb_tools/get_vm_list_app.py:181
+#: lib/fb_tools/get_vm_app.py:177
 msgid "USER"
 msgstr "NUTZER"
 
-#: lib/fb_tools/get_vm_app.py:178 lib/fb_tools/get_vm_list_app.py:182
+#: lib/fb_tools/get_vm_app.py:178
 msgid "User name to use when connecting to vSphere host (Default: {!r})."
 msgstr "Der Nutzername, der zum Verbinden zum vSphere-Server verwendet werden soll (Vorgabe: {!r})"
 
-#: lib/fb_tools/get_vm_app.py:183 lib/fb_tools/get_vm_list_app.py:187
+#: lib/fb_tools/get_vm_app.py:183
 msgid "PASSWORD"
 msgstr "PASSWORT"
 
-#: lib/fb_tools/get_vm_app.py:184 lib/fb_tools/get_vm_list_app.py:188
+#: lib/fb_tools/get_vm_app.py:184
 msgid "Password to use when connecting to vSphere host."
 msgstr "Passwort, das zum Verbinden zum vSphere-Server verwendet werden soll."
 
@@ -519,11 +582,7 @@ msgstr "Passwort, das zum Verbinden zum vSphere-Server verwendet werden soll."
 msgid "Names of the VM to get information."
 msgstr "Die Namen der VMs, über die Informationen ermittelt werden sollen."
 
-#: lib/fb_tools/get_vm_app.py:220 lib/fb_tools/get_vm_list_app.py:216
-msgid "Starting {a!r}, version {v!r} ..."
-msgstr "Starte {a!r}, Version {v!r} …"
-
-#: lib/fb_tools/get_vm_app.py:228 lib/fb_tools/get_vm_list_app.py:224
+#: lib/fb_tools/get_vm_app.py:228
 msgid "Closing ..."
 msgstr "Schließe …"
 
@@ -531,71 +590,67 @@ msgstr "Schließe …"
 msgid "NOT FOUND"
 msgstr "NICHT GEFUNDEN"
 
-#: lib/fb_tools/get_vm_list_app.py:59
-msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
-msgstr "Versuche eine Liste aller Virtueller Maschinen in VMWare VSphere zu ermitteln und giebe sie aus."
-
-#: lib/fb_tools/handler/__init__.py:153
+#: lib/fb_tools/handler/__init__.py:157
 msgid "Invalid time zone name {!r}."
 msgstr "Ungültiger Zeitzonenname {!r}."
 
-#: lib/fb_tools/handler/__init__.py:155
+#: lib/fb_tools/handler/__init__.py:159
 msgid "Setting time zone to {!r}."
 msgstr "Setze Zeitzone auf {!r}."
 
-#: lib/fb_tools/handler/__init__.py:159
+#: lib/fb_tools/handler/__init__.py:163
 msgid "Name of the time zone: {!r}."
 msgstr "Name der Zeitzone: {!r}."
 
-#: lib/fb_tools/handler/__init__.py:166
+#: lib/fb_tools/handler/__init__.py:170
 msgid "{}-object not initialized."
 msgstr "Das {}-Objekt ist noch nicht initialisiert."
 
-#: lib/fb_tools/handler/__init__.py:168
+#: lib/fb_tools/handler/__init__.py:172
 msgid "Method {} must be overridden in descendant classes."
 msgstr "Die Methode {} muss in abgeleiteten Klassen überschrieben werden."
 
-#: lib/fb_tools/handler/__init__.py:246
+#: lib/fb_tools/handler/__init__.py:250
 msgid "Quiet execution."
 msgstr "Stillschweigende Ausführung."
 
-#: lib/fb_tools/handler/__init__.py:294
+#: lib/fb_tools/handler/__init__.py:298
 msgid "Starting synchronous communication with '{}'."
 msgstr "Starte synchrone Kommunikation mit '{}'."
 
-#: lib/fb_tools/handler/__init__.py:298
+#: lib/fb_tools/handler/__init__.py:302
 msgid "Finished communication with '{}'."
 msgstr "Kommunikation mit '{}' beendet."
 
-#: lib/fb_tools/handler/__init__.py:312
+#: lib/fb_tools/handler/__init__.py:316
 msgid "Parameter {p!r} is not of type {t!r}."
 msgstr "Der Parameter {p!r} ist nicht vom Typ {t!r}."
 
-#: lib/fb_tools/handler/__init__.py:317
+#: lib/fb_tools/handler/__init__.py:321
 msgid "Got completed process:"
 msgstr "Vollendeten Prozess erhalten:"
 
-#: lib/fb_tools/handler/__init__.py:321 lib/fb_tools/handler/__init__.py:332
+#: lib/fb_tools/handler/__init__.py:325 lib/fb_tools/handler/__init__.py:336
 msgid "Output on {}:"
 msgstr "Ausgabe an {}:"
 
-#: lib/fb_tools/handler/__init__.py:353
+#: lib/fb_tools/handler/__init__.py:357
 msgid "Starting asynchronous communication with '{cmd}', heartbeat interval is {interval:0.1f} seconds."
 msgstr "Starte asynchrone Kommunikation mit '{cmd}', Herzschlag-Intervall ist {interval:0.1f} Sekunden."
 
-#: lib/fb_tools/handler/__init__.py:368
+#: lib/fb_tools/handler/__init__.py:372
 msgid "Checking for the end of the communication ..."
 msgstr "Überprüfe das Ende der Kummunikation …"
 
-#: lib/fb_tools/handler/__init__.py:378
+#: lib/fb_tools/handler/__init__.py:382
 msgid "Time to execute the heartbeat handler."
 msgstr "Es ist an der Zeit, den Herzschlag-Handler auszuführen."
 
-#: lib/fb_tools/handler/__init__.py:382
+#: lib/fb_tools/handler/__init__.py:386
 msgid "Sleeping {:0.2f} seconds ..."
 msgstr "Schlafe für {:0.2f} Sekunden …"
 
-#: lib/fb_tools/handler/__init__.py:390 lib/fb_tools/handler/__init__.py:399
+#: lib/fb_tools/handler/__init__.py:394 lib/fb_tools/handler/__init__.py:403
 msgid "   {w} is now: {o!r}"
 msgstr "   {w} ist jetzt: {o!r}"
 
@@ -811,7 +866,7 @@ msgstr "Auszuführende Befehlsargumente:"
 msgid "Performing argument {!r}."
 msgstr "Verarbeite Argument {!r}."
 
-#: lib/fb_tools/handler/__init__.py:243 lib/fb_tools/handling_obj.py:405
+#: lib/fb_tools/handler/__init__.py:247 lib/fb_tools/handling_obj.py:405
 msgid "Executing: {}"
 msgstr "Ausführung: {}"
 
@@ -1805,23 +1860,23 @@ msgstr "Ändern von MAC-Adressen:"
 msgid "Successful changed MAC address of VM {v!r} to {m!r}."
 msgstr "Erfolgreich MAC-Adresse der VM {v!r} auf {m!r} geändert."
 
-#: lib/fb_tools/xlate.py:54
+#: lib/fb_tools/xlate.py:94
 msgid "Module directory: {!r}"
 msgstr "Modul-Verzeichnis: {!r}"
 
-#: lib/fb_tools/xlate.py:55
+#: lib/fb_tools/xlate.py:95
 msgid "Base directory: {!r}"
 msgstr "Basis-Verzeichnis: {!r}"
 
-#: lib/fb_tools/xlate.py:56
+#: lib/fb_tools/xlate.py:96
 msgid "Locale directory: {!r}"
 msgstr "Verzeichnis für Locales: {!r}"
 
-#: lib/fb_tools/xlate.py:57
+#: lib/fb_tools/xlate.py:97
 msgid "Locale domain: {!r}"
 msgstr "Locale-Domäne: {!r}"
 
-#: lib/fb_tools/xlate.py:58
+#: lib/fb_tools/xlate.py:98
 msgid "Found .mo-file: {!r}"
 msgstr "Gefundene .mo-Datei: {!r}"
 
