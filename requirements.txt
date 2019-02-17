@@ -5,4 +5,5 @@ pytz
 setuptools
 wheel
 Babel
+PyYAML
 hjson

@@ -14,6 +14,8 @@ import argparse
 import pathlib
 import errno
 import os
+import importlib
+import sys
 
 from pathlib import Path
 
@@ -32,10 +34,15 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.2.1'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
+CFG_TYPE_MODULE = {
+    'json': 'json',
+    'hjson': 'hjson',
+    'yaml': 'yaml',
+}
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -163,7 +170,24 @@ class CfgConvertApplication(BaseApplication):
     Class for the application objects.
     """
 
-    supported_cfg_types = SUPPORTED_CFG_TYPES
+    supported_cfg_types = []
+    module_name = None
+    mod_spec = None
+
+    loader_methods = {
+        'yaml': 'load_yaml',
+        'json': 'load_json',
+        'hjson': 'load_hjson',
+    }
+
+    for cfg_type in SUPPORTED_CFG_TYPES:
+        module_name = CFG_TYPE_MODULE[cfg_type]
+        mod_spec = importlib.util.find_spec(module_name)
+        if mod_spec:
+            supported_cfg_types.append(cfg_type)
+
+    del module_name
+    del mod_spec
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -184,6 +208,7 @@ class CfgConvertApplication(BaseApplication):
         self._to_type = None
         self._input = '-'
         self._output = '-'
+        self.cfg_content = None
 
         self.from_type = from_type
         self.to_type = to_type
@@ -192,6 +217,8 @@ class CfgConvertApplication(BaseApplication):
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             description=desc, initialized=False,
         )
+
+        self.fileio_timeout = 10
 
         self.initialized = True
 
@@ -315,6 +342,16 @@ class CfgConvertApplication(BaseApplication):
 
         self.perform_arg_parser()
 
+        module_name = CFG_TYPE_MODULE[self.from_type]
+        if module_name not in sys.modules:
+            LOG.debug(_("Loading module {!r} ...").format(module_name))
+            importlib.import_module(module_name)
+
+        module_name = CFG_TYPE_MODULE[self.to_type]
+        if module_name not in sys.modules:
+            LOG.debug(_("Loading module {!r} ...").format(module_name))
+            importlib.import_module(module_name)
+
         self.initialized = True
 
     # -------------------------------------------------------------------------
@@ -322,6 +359,8 @@ class CfgConvertApplication(BaseApplication):
         """
         Public available method to initiate the argument parser.
         """
+
+
 
         super(CfgConvertApplication, self).init_arg_parser()
 
@@ -390,6 +429,8 @@ class CfgConvertApplication(BaseApplication):
             a=self.appname, v=self.version))
         ret = 0
 
+        self.load()
+
 #        ret = 99
 #        try:
 #            ret = self.get_vms()
@@ -400,6 +441,54 @@ class CfgConvertApplication(BaseApplication):
 #            self.vsphere = None
 
         self.exit(ret)
+
+    # -------------------------------------------------------------------------
+    def load(self):
+
+        content = None
+        if self.input == '-':
+            content = sys.stdin.read()
+        else:
+            content = self.read_file(self.input)
+
+        #method = getattr(self, self.loader_methods[self.from_type])()
+        #method(self, content)
+        load_method(self, self.loader_methods[self.from_type], content)
+
+        if self.verbose > 1:
+            LOG.debug(_("Interpreted content of {!r}:").format(self.input) + '\n' + pp(content))
+
+
+    # -------------------------------------------------------------------------
+    def load_yaml(self, content):
+
+        LOG.debug(_("Loading content from {!r} format.").format('YAML'))
+
+        self.cfg_content = 'bla (yaml)'
+
+    # -------------------------------------------------------------------------
+    def load_json(self, content):
+
+        LOG.debug(_("Loading content from {!r} format.").format('JSON'))
+
+        self.cfg_content = 'bla (json)'
+
+    # -------------------------------------------------------------------------
+    def load_hjson(self, content):
+
+        msg = "Method load_hjson() currently not implemented."
+        raise NotImplementedError(msg)
+
+        LOG.debug(_("Loading content from {!r} format.").format('HJSON'))
+
+        self.cfg_content = 'bla (hjson)'
+
+
+# =============================================================================
+def load_method(o, method_name, content):
+
+    method = getattr(o.__class__, method_name)
+    return method(o, content)
 
 
 # =============================================================================
