@@ -34,7 +34,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -505,13 +505,17 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def load_hjson(self, content):
 
-        msg = "Method load_hjson() currently not implemented."
-        raise NotImplementedError(msg)
-
         LOG.debug(_("Loading content from {!r} format.").format('HJSON'))
 
-        self.cfg_content = 'bla (hjson)'
+        mod = self.cfg_modules['hjson']
+        try:
+            doc = mod.loads(content)
+        except Exception as e:
+            if e.__class__.__name__ == 'HjsonDecodeError':
+                raise WrongCfgTypeError('HjsonDecodeError: ' + str(e))
+            raise
 
+        self.cfg_content = doc
 
 # =============================================================================
 if __name__ == "__main__":
