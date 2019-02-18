@@ -34,7 +34,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -478,7 +478,7 @@ class CfgConvertApplication(BaseApplication):
                 docs.append(doc)
         except Exception as e:
             if e.__class__.__name__ == 'ParserError':
-                raise WrongCfgTypeError(str(e))
+                raise WrongCfgTypeError('YAML ParseError: ' + str(e))
             raise
         if not docs:
             self.cfg_content = None
@@ -492,7 +492,15 @@ class CfgConvertApplication(BaseApplication):
 
         LOG.debug(_("Loading content from {!r} format.").format('JSON'))
 
-        self.cfg_content = 'bla (json)'
+        mod = self.cfg_modules['json']
+        try:
+            doc = mod.loads(content)
+        except Exception as e:
+            if e.__class__.__name__ == 'JSONDecodeError':
+                raise WrongCfgTypeError('JSONDecodeError: ' + str(e))
+            raise
+
+        self.cfg_content = doc
 
     # -------------------------------------------------------------------------
     def load_hjson(self, content):
