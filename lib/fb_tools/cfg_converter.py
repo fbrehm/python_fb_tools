@@ -34,7 +34,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -209,6 +209,7 @@ class CfgConvertApplication(BaseApplication):
         self._input = '-'
         self._output = '-'
         self.cfg_content = None
+        self.cfg_modules = {}
 
         self.from_type = from_type
         self.to_type = to_type
@@ -343,14 +344,16 @@ class CfgConvertApplication(BaseApplication):
         self.perform_arg_parser()
 
         module_name = CFG_TYPE_MODULE[self.from_type]
-        if module_name not in sys.modules:
+        if module_name not in self.cfg_modules:
             LOG.debug(_("Loading module {!r} ...").format(module_name))
-            importlib.import_module(module_name)
+            mod = importlib.import_module(module_name)
+            self.cfg_modules[module_name] = mod
 
         module_name = CFG_TYPE_MODULE[self.to_type]
-        if module_name not in sys.modules:
+        if module_name not in self.cfg_modules:
             LOG.debug(_("Loading module {!r} ...").format(module_name))
-            importlib.import_module(module_name)
+            mod = importlib.import_module(module_name)
+            self.cfg_modules[module_name] = mod
 
         self.initialized = True
 
@@ -429,7 +432,12 @@ class CfgConvertApplication(BaseApplication):
             a=self.appname, v=self.version))
         ret = 0
 
-        self.load()
+        try:
+            self.load()
+        except WrongCfgTypeError as e:
+            LOG.error(str(e))
+            self.exit(5)
+            return
 
 #        ret = 99
 #        try:
@@ -451,20 +459,33 @@ class CfgConvertApplication(BaseApplication):
         else:
             content = self.read_file(self.input)
 
-        #method = getattr(self, self.loader_methods[self.from_type])()
-        #method(self, content)
-        load_method(self, self.loader_methods[self.from_type], content)
+        lmethod = getattr(self.__class__, self.loader_methods[self.from_type])
+        lmethod(self, content)
 
         if self.verbose > 1:
-            LOG.debug(_("Interpreted content of {!r}:").format(self.input) + '\n' + pp(content))
-
+            LOG.debug(_("Interpreted content of {!r}:").format(self.input) + '\n' + pp(self.cfg_content))
 
     # -------------------------------------------------------------------------
     def load_yaml(self, content):
 
         LOG.debug(_("Loading content from {!r} format.").format('YAML'))
 
-        self.cfg_content = 'bla (yaml)'
+        mod = self.cfg_modules['yaml']
+
+        docs = []
+        try:
+            for doc in mod.safe_load_all(content):
+                docs.append(doc)
+        except Exception as e:
+            if e.__class__.__name__ == 'ParserError':
+                raise WrongCfgTypeError(str(e))
+            raise
+        if not docs:
+            self.cfg_content = None
+            return
+        if len(docs) == 1:
+            self.cfg_content = docs[0]
+        self.cfg_content = docs
 
     # -------------------------------------------------------------------------
     def load_json(self, content):
@@ -482,13 +503,6 @@ class CfgConvertApplication(BaseApplication):
         LOG.debug(_("Loading content from {!r} format.").format('HJSON'))
 
         self.cfg_content = 'bla (hjson)'
-
-
-# =============================================================================
-def load_method(o, method_name, content):
-
-    method = getattr(o.__class__, method_name)
-    return method(o, content)
 
 
 # =============================================================================
