@@ -35,7 +35,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.3.5'
+__version__ = '0.4.1'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -183,6 +183,12 @@ class CfgConvertApplication(BaseApplication):
         'hjson': 'load_hjson',
     }
 
+    dumper_methods = {
+        'yaml': 'dump_yaml',
+        'json': 'dump_json',
+        'hjson': 'dump_hjson',
+    }
+
     for cfg_type in SUPPORTED_CFG_TYPES:
         module_name = CFG_TYPE_MODULE[cfg_type]
         mod_spec = importlib.util.find_spec(module_name)
@@ -216,6 +222,18 @@ class CfgConvertApplication(BaseApplication):
 
         self.from_type = from_type
         self.to_type = to_type
+
+        self._cfg_encoding = 'utf-8'
+
+        self._yaml_with = 99
+        self._yaml_indent = 2
+        self._yaml_canonical = False
+        self._yaml_default_flow_style = False
+        self._yaml_default_style = None
+        self._yaml_allow_unicode = True
+        self._yaml_line_break = None
+        self._yaml_explicit_start = True
+        self._yaml_explicit_end = False
 
         super(CfgConvertApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -444,6 +462,8 @@ class CfgConvertApplication(BaseApplication):
             self.exit(5)
             return
 
+        self.save()
+
 #        ret = 99
 #        try:
 #            ret = self.get_vms()
@@ -521,6 +541,41 @@ class CfgConvertApplication(BaseApplication):
             raise
 
         self.cfg_content = doc
+
+    # -------------------------------------------------------------------------
+    def save(self):
+
+        dmethod = getattr(self.__class__, self.dumper_methods[self.to_type])
+        content = dmethod(self)
+
+        if self.verbose > 2:
+            LOG.debug(_("Generated output:") + '\n' + content)
+
+        if self.output == '-':
+            print(content)
+        else:
+            self.write_file(self.output, content)
+
+    # -------------------------------------------------------------------------
+    def dump_yaml(self):
+
+        LOG.debug(_("Dumping content to {!r} format.").format('YAML'))
+
+        mod = self.cfg_modules['yaml']
+        content = mod.dump(
+            self.cfg_content,
+            width=self._yaml_with,
+            indent=self._yaml_indent,
+            canonical=self._yaml_canonical,
+            default_flow_style=self._yaml_default_flow_style,
+            default_style=self._yaml_default_style,
+            allow_unicode=self._yaml_allow_unicode,
+            line_break=self._yaml_line_break,
+            explicit_start=self._yaml_explicit_start,
+            explicit_end=self._yaml_explicit_end,
+        )
+
+        return content
 
 # =============================================================================
 if __name__ == "__main__":

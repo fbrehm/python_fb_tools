@@ -2,8 +2,8 @@
 
 uhu: banane
 hallo: |
-    Welt da draußen.
-    Wo auch immer.
+  Welt da draußen.
+  Wo auch immer.
 foo: >
-    Bar
-    Baz
+  Bar
+  Baz
