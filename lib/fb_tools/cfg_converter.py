@@ -35,7 +35,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.4.4'
+__version__ = '0.4.5'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -300,6 +300,10 @@ class CfgConvertApplication(BaseApplication):
         self.json_indent = None
         self._json_sort_keys = False
 
+        self._hjson_ensure_ascii = False
+        self.hjson_indent = None
+        self._hjson_sort_keys = False
+
         super(CfgConvertApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             description=desc, initialized=False,
@@ -537,12 +541,33 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     @property
     def json_sort_keys(self):
-        """Are Unicode characters allowed in YAML output."""
+        """Are Unicode characters allowed in HJSON output."""
         return self._json_sort_keys
 
     @json_sort_keys.setter
     def json_sort_keys(self, value):
         self._json_sort_keys = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def hjson_ensure_ascii(self):
+        """Indicating that the HJSON output is guaranteed to have
+            all incoming non-ASCII characters escaped."""
+        return self._hjson_ensure_ascii
+
+    @hjson_ensure_ascii.setter
+    def hjson_ensure_ascii(self, value):
+        self._hjson_ensure_ascii = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def hjson_sort_keys(self):
+        """Are Unicode characters allowed in HJSON output."""
+        return self._hjson_sort_keys
+
+    @hjson_sort_keys.setter
+    def hjson_sort_keys(self, value):
+        self._hjson_sort_keys = to_bool(value)
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -575,6 +600,8 @@ class CfgConvertApplication(BaseApplication):
         res['yaml_explicit_end'] = self.yaml_explicit_end
         res['json_ensure_ascii'] = self.json_ensure_ascii
         res['json_sort_keys'] = self.json_sort_keys
+        res['hjson_ensure_ascii'] = self.hjson_ensure_ascii
+        res['hjson_sort_keys'] = self.hjson_sort_keys
 
         return res
 
@@ -665,6 +692,7 @@ class CfgConvertApplication(BaseApplication):
 
         self.init_yaml_args()
         self.init_json_args()
+        self.init_hjson_args()
 
     # -------------------------------------------------------------------------
     def init_yaml_args(self):
@@ -720,20 +748,46 @@ class CfgConvertApplication(BaseApplication):
         json_group.add_argument(
             '--json-ensure-ascii', action="store_true", dest="json_ensure_ascii",
             help=_(
-                "The JSON output is guaranteed to have all incoming "
-                "non-ASCII characters escaped. "))
+                "The {} output is guaranteed to have all incoming "
+                "non-ASCII characters escaped. ").format('JSON'))
 
         json_group.add_argument(
             '--json-indent', metavar='INDENT', dest='json_indent', help=_(
-                "The indention of the JSON output. If given an positive integer value, these "
+                "The indention of the {} output. If given an positive integer value, these "
                 "number of characters are indented. I given '0', a negative integer or  an empty "
                 "string (''), only newlines are inserted. If a non empty string is given, this "
                 "will be used as indention. If omitted, the most compact form without newlines "
-                "a.s.o. will be generated."))
+                "a.s.o. will be generated.").format('JSON'))
 
         json_group.add_argument(
             '--json-sort-keys', action="store_true", dest="json_sort_keys",
-            help=_("The keys of dictionaries will be sorted in JSON output."))
+            help=_("The keys of dictionaries will be sorted in {} output.").format('JSON'))
+
+    # -------------------------------------------------------------------------
+    def init_hjson_args(self):
+
+        if self.to_type and self.to_type != 'hjson':
+            return
+
+        hjson_group = self.arg_parser.add_argument_group(_('HJSON output options'))
+
+        hjson_group.add_argument(
+            '--hjson-ensure-ascii', action="store_true", dest="hjson_ensure_ascii",
+            help=_(
+                "The {} output is guaranteed to have all incoming "
+                "non-ASCII characters escaped. ").format('HJSON'))
+
+        hjson_group.add_argument(
+            '--hjson-indent', metavar='INDENT', dest='hjson_indent', help=_(
+                "The indention of the {} output. If given an positive integer value, these "
+                "number of characters are indented. I given '0', a negative integer or  an empty "
+                "string (''), only newlines are inserted. If a non empty string is given, this "
+                "will be used as indention. If omitted, the most compact form without newlines "
+                "a.s.o. will be generated.").format('HJSON'))
+
+        hjson_group.add_argument(
+            '--hjson-sort-keys', action="store_true", dest="hjson_sort_keys",
+            help=_("The keys of dictionaries will be sorted in {} output.").format('HJSON'))
 
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
@@ -786,6 +840,16 @@ class CfgConvertApplication(BaseApplication):
 
         if getattr(self.args, 'json_sort_keys', False):
             self.json_sort_keys = True
+
+        if getattr(self.args, 'hjson_ensure_ascii', False):
+            self.hjson_ensure_ascii = True
+
+        val = getattr(self.args, 'hjson_indent', None)
+        if val is not None:
+            self.hjson_indent = val
+
+        if getattr(self.args, 'hjson_sort_keys', False):
+            self.hjson_sort_keys = True
 
     # -------------------------------------------------------------------------
     def _run(self):
@@ -942,6 +1006,27 @@ class CfgConvertApplication(BaseApplication):
             indent=ind,
             separators=(item_separator, key_separator),
             sort_keys=self.json_sort_keys)
+
+        return content
+
+    # -------------------------------------------------------------------------
+    def dump_hjson(self):
+
+        LOG.debug(_("Dumping content to {!r} format.").format('HJSON'))
+
+        mod = self.cfg_modules['hjson']
+        ind = self.hjson_indent
+        try:
+            ind_int = int(ind)
+            ind = ind_int
+        except Exception:
+            pass
+
+        content = mod.dumps(
+            self.cfg_content,
+            ensure_ascii=self.hjson_ensure_ascii,
+            indent=ind,
+            sort_keys=self.hjson_sort_keys)
 
         return content
 
