@@ -194,6 +194,37 @@ class RangeOptionAction(argparse.Action):
 
         setattr(namespace, self.dest, value)
 
+
+# =============================================================================
+class YamlStyleOptionAction(argparse.Action):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, supported_styles, *args, **kwargs):
+
+        self.supported_styles = copy.copy(supported_styles)
+
+        super(YamlStyleOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, style, option_string=None):
+
+        if style is None:
+            setattr(namespace, self.dest, None)
+            return
+
+        style_clean = style.strip()
+        if style_clean not in self.supported_styles:
+            msg = _(
+                "The YAML style type must be one of {l}, given {g!r}.").format(
+                    l=format_list(self.supported_styles, do_repr=True,
+                    locale=DEFAULT_LOCALE), g=style)
+            raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, style_clean)
+        return
+
+
 # =============================================================================
 class CfgConvertApplication(BaseApplication):
     """
@@ -627,6 +658,29 @@ class CfgConvertApplication(BaseApplication):
             help=_("The indention of generated YAML output (Default: {}).").format(
                 self.yaml_indent))
 
+        yaml_group.add_argument(
+            '--yaml-canonical', action="store_true", dest="yaml_canonical",
+            help=_("Include export tag type in YAML output."))
+
+        yaml_group.add_argument(
+            '--yaml-flow-style', action="store_true", dest="yaml_flow_style",
+            help=_("Print a collection as flow in YAML output."))
+
+        style_list = format_list(self.yaml_avail_styles, do_repr=True, locale=DEFAULT_LOCALE)
+        yaml_group.add_argument(
+            '--yaml-style', dest="yaml_style", nargs='?', metavar=_('STYLE'),
+            supported_styles=self.yaml_avail_styles, action=YamlStyleOptionAction,
+            help=_("The style of the scalars in YAML output, may be be one of {}.").format(
+                style_list))
+
+        yaml_group.add_argument(
+            '--yaml-no-explicit-start', action="store_true", dest="yaml_no_explicit_start",
+            help=_("Don't print an explicit start marker in YAML output."))
+
+        yaml_group.add_argument(
+            '--yaml-explicit-end', action="store_true", dest="yaml_explicit_end",
+            help=_("Print an explicit end marker in YAML output."))
+
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
         """
@@ -652,6 +706,22 @@ class CfgConvertApplication(BaseApplication):
         val = getattr(self.args, 'yaml_indent', None)
         if val is not None:
             self.yaml_indent = val
+
+        if getattr(self.args, 'yaml_canonical', False):
+            self.yaml_canonical = True
+
+        if getattr(self.args, 'yaml_flow_style', False):
+            self.yaml_default_flow_style = True
+
+        val = getattr(self.args, 'yaml_style', None)
+        if val is not None:
+            self.yaml_default_style = val
+
+        if getattr(self.args, 'yaml_no_explicit_start', False):
+            self.yaml_explicit_start = False
+
+        if getattr(self.args, 'yaml_explicit_end', False):
+            self.yaml_explicit_end = True
 
     # -------------------------------------------------------------------------
     def _run(self):
