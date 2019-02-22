@@ -35,7 +35,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.4.3'
+__version__ = '0.4.4'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -296,6 +296,10 @@ class CfgConvertApplication(BaseApplication):
         self._yaml_explicit_start = True
         self._yaml_explicit_end = False
 
+        self._json_ensure_ascii = False
+        self.json_indent = None
+        self._json_sort_keys = False
+
         super(CfgConvertApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             description=desc, initialized=False,
@@ -520,6 +524,27 @@ class CfgConvertApplication(BaseApplication):
         self._yaml_line_break = v
 
     # -------------------------------------------------------------------------
+    @property
+    def json_ensure_ascii(self):
+        """Indicating that the JSON output is guaranteed to have
+            all incoming non-ASCII characters escaped."""
+        return self._json_ensure_ascii
+
+    @json_ensure_ascii.setter
+    def json_ensure_ascii(self, value):
+        self._json_ensure_ascii = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def json_sort_keys(self):
+        """Are Unicode characters allowed in YAML output."""
+        return self._json_sort_keys
+
+    @json_sort_keys.setter
+    def json_sort_keys(self, value):
+        self._json_sort_keys = to_bool(value)
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -548,6 +573,8 @@ class CfgConvertApplication(BaseApplication):
         res['yaml_line_break'] = self.yaml_line_break
         res['yaml_explicit_start'] = self.yaml_explicit_start
         res['yaml_explicit_end'] = self.yaml_explicit_end
+        res['json_ensure_ascii'] = self.json_ensure_ascii
+        res['json_sort_keys'] = self.json_sort_keys
 
         return res
 
@@ -637,6 +664,7 @@ class CfgConvertApplication(BaseApplication):
                 )
 
         self.init_yaml_args()
+        self.init_json_args()
 
     # -------------------------------------------------------------------------
     def init_yaml_args(self):
@@ -682,6 +710,32 @@ class CfgConvertApplication(BaseApplication):
             help=_("Print an explicit end marker in YAML output."))
 
     # -------------------------------------------------------------------------
+    def init_json_args(self):
+
+        if self.to_type and self.to_type != 'json':
+            return
+
+        json_group = self.arg_parser.add_argument_group(_('JSON output options'))
+
+        json_group.add_argument(
+            '--json-ensure-ascii', action="store_true", dest="json_ensure_ascii",
+            help=_(
+                "The JSON output is guaranteed to have all incoming "
+                "non-ASCII characters escaped. "))
+
+        json_group.add_argument(
+            '--json-indent', metavar='INDENT', dest='json_indent', help=_(
+                "The indention of the JSON output. If given an positive integer value, these "
+                "number of characters are indented. I given '0', a negative integer or  an empty "
+                "string (''), only newlines are inserted. If a non empty string is given, this "
+                "will be used as indention. If omitted, the most compact form without newlines "
+                "a.s.o. will be generated."))
+
+        json_group.add_argument(
+            '--json-sort-keys', action="store_true", dest="json_sort_keys",
+            help=_("The keys of dictionaries will be sorted in JSON output."))
+
+    # -------------------------------------------------------------------------
     def perform_arg_parser(self):
         """
         Public available method to execute some actions after parsing
@@ -722,6 +776,16 @@ class CfgConvertApplication(BaseApplication):
 
         if getattr(self.args, 'yaml_explicit_end', False):
             self.yaml_explicit_end = True
+
+        if getattr(self.args, 'json_ensure_ascii', False):
+            self.json_ensure_ascii = True
+
+        val = getattr(self.args, 'json_indent', None)
+        if val is not None:
+            self.json_indent = val
+
+        if getattr(self.args, 'json_sort_keys', False):
+            self.json_sort_keys = True
 
     # -------------------------------------------------------------------------
     def _run(self):
@@ -846,6 +910,41 @@ class CfgConvertApplication(BaseApplication):
         )
 
         return content
+
+    # -------------------------------------------------------------------------
+    def dump_json(self):
+
+        LOG.debug(_("Dumping content to {!r} format.").format('JSON'))
+
+        mod = self.cfg_modules['json']
+        item_separator = ', '
+        key_separator = ': '
+        ind = self.json_indent
+
+        if ind is None:
+            item_separator = ','
+            key_separator = ':'
+        else:
+            if ind == '':
+                item_separator = ','
+            else:
+                try:
+                    ind_int = int(self.json_indent)
+                    if ind_int <= 0:
+                        item_separator = ','
+                    ind = ind_int
+                except Exception:
+                    pass
+
+        content = mod.dumps(
+            self.cfg_content,
+            ensure_ascii=self.json_ensure_ascii,
+            indent=ind,
+            separators=(item_separator, key_separator),
+            sort_keys=self.json_sort_keys)
+
+        return content
+
 
 # =============================================================================
 if __name__ == "__main__":
