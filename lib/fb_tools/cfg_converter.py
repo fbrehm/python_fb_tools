@@ -16,6 +16,7 @@ import errno
 import os
 import importlib
 import sys
+import copy
 
 from pathlib import Path
 
@@ -34,7 +35,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.3.4'
+__version__ = '0.3.5'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -96,7 +97,9 @@ class InputFileNotReadableError(InputFileError):
 class CfgTypeOptionAction(argparse.Action):
 
     # -------------------------------------------------------------------------
-    def __init__(self, option_strings, *args, **kwargs):
+    def __init__(self, option_strings, supported_types, *args, **kwargs):
+
+        self.supported_types = copy.copy(supported_types)
 
         super(CfgTypeOptionAction, self).__init__(
             option_strings=option_strings, *args, **kwargs)
@@ -109,10 +112,10 @@ class CfgTypeOptionAction(argparse.Action):
             raise argparse.ArgumentError(self, msg)
 
         cfg_type_clean = cfg_type.strip().lower()
-        if cfg_type_clean not in SUPPORTED_CFG_TYPES:
+        if cfg_type_clean not in self.supported_types:
             msg = _(
                 "The configuration file type must be one of {l}, given {g!r}.").format(
-                    l=format_list(SUPPORTED_CFG_TYPES, do_repr=True, locale=DEFAULT_LOCALE),
+                    l=format_list(self.supported_types, do_repr=True, locale=DEFAULT_LOCALE),
                     g=cfg_type)
             raise argparse.ArgumentError(self, msg)
 
@@ -387,12 +390,13 @@ class CfgConvertApplication(BaseApplication):
 
             conv_group = self.arg_parser.add_argument_group(_('Converting options'))
             type_list = format_list(
-                SUPPORTED_CFG_TYPES, do_repr=True, style='or', locale=DEFAULT_LOCALE)
+                self.supported_cfg_types, do_repr=True, style='or', locale=DEFAULT_LOCALE)
 
             if not self.from_type:
                 conv_group.add_argument(
                     '-F', '--from-type', metavar=_('CFG_TYPE'), dest='from_type',
                     required=True, action=CfgTypeOptionAction,
+                    supported_types=self.supported_cfg_types,
                     help=_(
                         "The configuration type of the source, must be one "
                         "of {}.").format(type_list),
@@ -402,6 +406,7 @@ class CfgConvertApplication(BaseApplication):
                 conv_group.add_argument(
                     '-T', '--to-type', metavar=_('CFG_TYPE'), dest='to_type',
                     required=True, action=CfgTypeOptionAction,
+                    supported_types=self.supported_cfg_types,
                     help=_(
                         "The configuration type of the target, must be one "
                         "of {}.").format(type_list),
