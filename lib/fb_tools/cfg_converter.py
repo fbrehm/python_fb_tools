@@ -35,7 +35,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -166,6 +166,33 @@ class OutputFileOptionAction(argparse.Action):
         path = Path(filename)
         setattr(namespace, self.dest, path)
 
+
+# =============================================================================
+class RangeOptionAction(argparse.Action):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, min_val, max_val, *args, **kwargs):
+
+        self._min_val = min_val
+        self._max_val = max_val
+
+        super(RangeOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, value, option_string=None):
+
+        if value < self._min_val:
+            msg = _("The value for {l!r} may be at least {m}, {v} were given.").format(
+                l=option_string, m=self._min_val, v=value)
+            raise argparse.ArgumentError(self, msg)
+
+        if value > self._max_val:
+            msg = _("The value for {l!r} may be at most {m}, {v} were given.").format(
+                l=option_string, m=self._max_val, v=value)
+            raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, value)
 
 # =============================================================================
 class CfgConvertApplication(BaseApplication):
@@ -578,6 +605,28 @@ class CfgConvertApplication(BaseApplication):
                         "of {}.").format(type_list),
                 )
 
+        self.init_yaml_args()
+
+    # -------------------------------------------------------------------------
+    def init_yaml_args(self):
+
+        if self.to_type and self.to_type != 'yaml':
+            return
+
+        yaml_group = self.arg_parser.add_argument_group(_('YAML output options'))
+
+        yaml_group.add_argument(
+            '--yaml-with', metavar='INT', dest='yaml_width', type=int,
+            action=RangeOptionAction, min_val=10, max_val=4000,
+            help=_("The maximum width of generated lines on YAML output (Default: {}).").format(
+                self.yaml_width))
+
+        yaml_group.add_argument(
+            '--yaml-indent', metavar='INT', dest='yaml_indent', type=int,
+            action=RangeOptionAction, min_val=2, max_val=9,
+            help=_("The indention of generated YAML output (Default: {}).").format(
+                self.yaml_indent))
+
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
         """
@@ -595,6 +644,14 @@ class CfgConvertApplication(BaseApplication):
 
         self.input = getattr(self.args, 'input', None)
         self.output = getattr(self.args, 'output', None)
+
+        val = getattr(self.args, 'yaml_width', None)
+        if val is not None:
+            self.yaml_width = val
+
+        val = getattr(self.args, 'yaml_indent', None)
+        if val is not None:
+            self.yaml_indent = val
 
     # -------------------------------------------------------------------------
     def _run(self):
@@ -712,15 +769,10 @@ class CfgConvertApplication(BaseApplication):
         mod = self.cfg_modules['yaml']
         content = mod.dump(
             self.cfg_content,
-            width=self._yaml_width,
-            indent=self._yaml_indent,
-            canonical=self._yaml_canonical,
-            default_flow_style=self._yaml_default_flow_style,
-            default_style=self._yaml_default_style,
-            allow_unicode=self._yaml_allow_unicode,
-            line_break=self._yaml_line_break,
-            explicit_start=self._yaml_explicit_start,
-            explicit_end=self._yaml_explicit_end,
+            width=self.yaml_width, indent=self.yaml_indent, canonical=self.yaml_canonical,
+            default_flow_style=self.yaml_default_flow_style, default_style=self.yaml_default_style,
+            allow_unicode=self.yaml_allow_unicode, line_break=self.yaml_line_break,
+            explicit_start=self.yaml_explicit_start, explicit_end=self.yaml_explicit_end,
         )
 
         return content
