@@ -29,13 +29,13 @@ from . import __version__ as GLOBAL_VERSION
 
 from .xlate import XLATOR, DEFAULT_LOCALE, format_list
 
-from .common import pp
+from .common import pp, to_bool
 
 from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -189,6 +189,9 @@ class CfgConvertApplication(BaseApplication):
         'hjson': 'dump_hjson',
     }
 
+    yaml_avail_styles = (None, '', '\'', '"', '|', '>')
+    yaml_avail_linebreaks = (None, '\n', '\r', '\r\n')
+
     for cfg_type in SUPPORTED_CFG_TYPES:
         module_name = CFG_TYPE_MODULE[cfg_type]
         mod_spec = importlib.util.find_spec(module_name)
@@ -225,7 +228,7 @@ class CfgConvertApplication(BaseApplication):
 
         self._cfg_encoding = 'utf-8'
 
-        self._yaml_with = 99
+        self._yaml_width = 99
         self._yaml_indent = 2
         self._yaml_canonical = False
         self._yaml_default_flow_style = False
@@ -325,6 +328,140 @@ class CfgConvertApplication(BaseApplication):
         self._output = path
 
     # -------------------------------------------------------------------------
+    @property
+    def yaml_width(self):
+        """Maximum width of generated lines on YAML output."""
+        return self._yaml_width
+
+    @yaml_width.setter
+    def yaml_width(self, value):
+        v = int(value)
+        if v < 10:
+            msg = _(
+                "The maximum width of generated YAML files must be at least "
+                "{m} characters, {v!r} are given.").format(m=10, v=value)
+            raise ValueError(msg)
+        if v > 4000:
+            msg = _(
+                "The maximum width of generated YAML files must be at most "
+                "{m} characters, {v!r} are given.").format(m=4000, v=value)
+            raise ValueError(msg)
+        self._yaml_width = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def yaml_indent(self):
+        """The indention of generated YAML output."""
+        return self._yaml_indent
+
+    @yaml_indent.setter
+    def yaml_indent(self, value):
+        v = int(value)
+        if v < 2:
+            msg = _(
+                "The indention of generated YAML files must be at least "
+                "{m} characters, {v!r} are given.").format(m=2, v=value)
+            raise ValueError(msg)
+        if v > 40:
+            msg = _(
+                "The indention of generated YAML files must be at most "
+                "{m} characters, {v!r} are given.").format(m=40, v=value)
+            raise ValueError(msg)
+        self._yaml_indent = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def yaml_canonical(self):
+        """Output YAML in canonical style."""
+        return self._yaml_canonical
+
+    @yaml_canonical.setter
+    def yaml_canonical(self, value):
+        self._yaml_canonical = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def yaml_default_flow_style(self):
+        """Output YAML in default flow style."""
+        return self._yaml_default_flow_style
+
+    @yaml_default_flow_style.setter
+    def yaml_default_flow_style(self, value):
+        self._yaml_default_flow_style = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def yaml_default_style(self):
+        """Style for outputting YAML."""
+        return self._yaml_default_style
+
+    @yaml_default_style.setter
+    def yaml_default_style(self, value):
+        if value is None:
+            self._yaml_default_style = None
+            return
+        v = str(value).strip()
+        if v not in self.yaml_avail_styles:
+            style_list = format_list(self.yaml_avail_styles, do_repr=True, locale=DEFAULT_LOCALE)
+            msg = _(
+                "The default style on ouput YAML must be one of {l}, "
+                "but {v!r} was given.").format(l=style_list, v=value)
+            raise ValueError(msg)
+
+        self._yaml_default_style = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def yaml_allow_unicode(self):
+        """Are Unicode characters allowed in YAML output."""
+        return self._yaml_allow_unicode
+
+    @yaml_allow_unicode.setter
+    def yaml_allow_unicode(self, value):
+        self._yaml_allow_unicode = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def yaml_explicit_start(self):
+        """Should be added an explicite start in YAML output."""
+        return self._yaml_explicit_start
+
+    @yaml_explicit_start.setter
+    def yaml_explicit_start(self, value):
+        self._yaml_explicit_start = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def yaml_explicit_end(self):
+        """Should be added an explicite end in YAML output."""
+        return self._yaml_explicit_end
+
+    @yaml_explicit_end.setter
+    def yaml_explicit_end(self, value):
+        self._yaml_explicit_end = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def yaml_line_break(self):
+        """The character(s) used for linebreak in YAML output."""
+        return self._yaml_line_break
+
+    @yaml_line_break.setter
+    def yaml_line_break(self, value):
+        if value is None:
+            self._yaml_line_break = None
+            return
+        v = str(value).strip()
+        if v not in self.yaml_avail_linebreaks:
+            lb_list = format_list(self.yaml_avail_linebreaks, do_repr=True, locale=DEFAULT_LOCALE)
+            msg = _(
+                "The linebrake used in ouput YAML must be one of {l}, "
+                "but {v!r} was given.").format(l=lb_list, v=value)
+            raise ValueError(msg)
+
+        self._yaml_line_break = v
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -342,6 +479,17 @@ class CfgConvertApplication(BaseApplication):
         res['input'] = self.input
         res['output'] = self.output
         res['supported_cfg_types'] = self.supported_cfg_types
+        res['yaml_avail_styles'] = self.yaml_avail_styles
+        res['yaml_width'] = self.yaml_width
+        res['yaml_indent'] = self.yaml_indent
+        res['yaml_canonical'] = self.yaml_canonical
+        res['yaml_default_flow_style'] = self.yaml_default_flow_style
+        res['yaml_default_style'] = self.yaml_default_style
+        res['yaml_allow_unicode'] = self.yaml_allow_unicode
+        res['yaml_avail_linebreaks'] = self.yaml_avail_linebreaks
+        res['yaml_line_break'] = self.yaml_line_break
+        res['yaml_explicit_start'] = self.yaml_explicit_start
+        res['yaml_explicit_end'] = self.yaml_explicit_end
 
         return res
 
@@ -564,7 +712,7 @@ class CfgConvertApplication(BaseApplication):
         mod = self.cfg_modules['yaml']
         content = mod.dump(
             self.cfg_content,
-            width=self._yaml_with,
+            width=self._yaml_width,
             indent=self._yaml_indent,
             canonical=self._yaml_canonical,
             default_flow_style=self._yaml_default_flow_style,

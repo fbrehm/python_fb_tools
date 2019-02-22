@@ -7,3 +7,6 @@ hallo: |
 foo: >
   Bar
   Baz
+zeile: 'Mit mehreren Zeilen.
+  Sehr vielen!'
+
