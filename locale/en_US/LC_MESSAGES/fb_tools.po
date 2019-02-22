@@ -1,13 +1,13 @@
 # English (United States) translations for fb_tools.
 # Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank@brehm-online.com>, 2019.
+# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-15 11:22+0100\n"
+"POT-Creation-Date: 2019-02-22 17:18+0100\n"
 "PO-Revision-Date: 2018-12-12 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -151,72 +151,192 @@ msgstr ""
 msgid "Aborted by user interrupt."
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:72
+#: lib/fb_tools/cfg_converter.py:80
 msgid "The input file is not existing"
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:83
+#: lib/fb_tools/cfg_converter.py:91
 msgid "The input file is not readable"
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:101
+#: lib/fb_tools/cfg_converter.py:111
 msgid "The configuration file type may not be None."
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:106
+#: lib/fb_tools/cfg_converter.py:116
 msgid "The configuration file type must be one of {l}, given {g!r}."
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:177
+#: lib/fb_tools/cfg_converter.py:186
+msgid "The value for {l!r} may be at least {m}, {v} were given."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:191
+msgid "The value for {l!r} may be at most {m}, {v} were given."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:218
+msgid "The YAML style type must be one of {l}, given {g!r}."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:271
 msgid ""
 "Converts the given configuration file from the given input format into the given output format "
 "and print it out to {o} or into a given output file."
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:211
+#: lib/fb_tools/cfg_converter.py:329
 msgid "Invalid input configuration type {!r}"
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:228
+#: lib/fb_tools/cfg_converter.py:346
 msgid "Invalid target configuration type {!r}"
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:328
+#: lib/fb_tools/cfg_converter.py:406
+msgid "The maximum width of generated YAML files must be at least {m} characters, {v!r} are given."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:411
+msgid "The maximum width of generated YAML files must be at most {m} characters, {v!r} are given."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:427
+msgid "The indention of generated YAML files must be at least {m} characters, {v!r} are given."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:432
+msgid "The indention of generated YAML files must be at most {m} characters, {v!r} are given."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:472
+msgid "The default style on ouput YAML must be one of {l}, but {v!r} was given."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:523
+msgid "The linebreak used in ouput YAML must be one of {l}, but {v!r} was given."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:629 lib/fb_tools/cfg_converter.py:635
+msgid "Loading module {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:651
 msgid "File options"
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:331 lib/fb_tools/cfg_converter.py:338
+#: lib/fb_tools/cfg_converter.py:654 lib/fb_tools/cfg_converter.py:661
 #: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
-#: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
+#: lib/fb_tools/get_vm_list_app.py:161 lib/fb_tools/pdns_bulk_rm_app.py:189
+#: lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:332
+#: lib/fb_tools/cfg_converter.py:655
 msgid "The filename of the input file. Use {i!r} to read from {f} (which is the default)."
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:339
+#: lib/fb_tools/cfg_converter.py:662
 msgid "The filename of the output file. Use {i!r} to write to {f} (which is the default)."
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:346
+#: lib/fb_tools/cfg_converter.py:669
 msgid "Converting options"
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:352 lib/fb_tools/cfg_converter.py:361
+#: lib/fb_tools/cfg_converter.py:675 lib/fb_tools/cfg_converter.py:685
 msgid "CFG_TYPE"
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:354
+#: lib/fb_tools/cfg_converter.py:678
 msgid "The configuration type of the source, must be one of {}."
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:363
+#: lib/fb_tools/cfg_converter.py:688
 msgid "The configuration type of the target, must be one of {}."
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:394 lib/fb_tools/get_vm_app.py:220
+#: lib/fb_tools/cfg_converter.py:703
+msgid "YAML output options"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:708
+msgid "The maximum width of generated lines on YAML output (Default: {})."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:714
+msgid "The indention of generated YAML output (Default: {})."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:719
+msgid "Include export tag type in YAML output."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:723
+msgid "Print a collection as flow in YAML output."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:727
+msgid "STYLE"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:729
+msgid "The style of the scalars in YAML output, may be be one of {}."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:734
+msgid "Don't print an explicit start marker in YAML output."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:738
+msgid "Print an explicit end marker in YAML output."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:746
+msgid "JSON output options"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:750 lib/fb_tools/cfg_converter.py:776
+msgid "The {} output is guaranteed to have all incoming non-ASCII characters escaped."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:755 lib/fb_tools/cfg_converter.py:781
+msgid ""
+"The indention of the {} output. If given an positive integer value, these number of characters "
+"are indented. I given '0', a negative integer or  an empty string (''), only newlines are "
+"inserted. If a non empty string is given, this will be used as indention. If omitted, the most "
+"compact form without newlines a.s.o. will be generated."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:764 lib/fb_tools/cfg_converter.py:790
+msgid "The keys of dictionaries will be sorted in {} output."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:772
+msgid "HJSON output options"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:857 lib/fb_tools/get_vm_app.py:220
+#: lib/fb_tools/get_vm_list_app.py:216
 msgid "Starting {a!r}, version {v!r} ..."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:894
+msgid "Interpreted content of {!r}:"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:899 lib/fb_tools/cfg_converter.py:921
+#: lib/fb_tools/cfg_converter.py:936
+msgid "Loading content from {!r} format."
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:955
+msgid "Generated output:"
+msgstr ""
+
+#: lib/fb_tools/cfg_converter.py:965 lib/fb_tools/cfg_converter.py:981
+#: lib/fb_tools/cfg_converter.py:1015
+msgid "Dumping content to {!r} format."
 msgstr ""
 
 #: lib/fb_tools/common.py:147
@@ -521,39 +641,40 @@ msgstr ""
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:132
+#: lib/fb_tools/get_vm_app.py:132 lib/fb_tools/get_vm_list_app.py:136
 msgid "Enter password for host {h!r} and user {u!r}: "
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/pdns_bulk_rm_app.py:191
+#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/get_vm_list_app.py:163
+#: lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:162
+#: lib/fb_tools/get_vm_app.py:162 lib/fb_tools/get_vm_list_app.py:166
 msgid "VMWare options"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:166
+#: lib/fb_tools/get_vm_app.py:166 lib/fb_tools/get_vm_list_app.py:170
 msgid "Remote vSphere host to connect to (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:172
+#: lib/fb_tools/get_vm_app.py:172 lib/fb_tools/get_vm_list_app.py:176
 msgid "Port on vSphere host to connect on (Default: {})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:177
+#: lib/fb_tools/get_vm_app.py:177 lib/fb_tools/get_vm_list_app.py:181
 msgid "USER"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:178
+#: lib/fb_tools/get_vm_app.py:178 lib/fb_tools/get_vm_list_app.py:182
 msgid "User name to use when connecting to vSphere host (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:183
+#: lib/fb_tools/get_vm_app.py:183 lib/fb_tools/get_vm_list_app.py:187
 msgid "PASSWORD"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:184
+#: lib/fb_tools/get_vm_app.py:184 lib/fb_tools/get_vm_list_app.py:188
 msgid "Password to use when connecting to vSphere host."
 msgstr ""
 
@@ -561,12 +682,16 @@ msgstr ""
 msgid "Names of the VM to get information."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:228
+#: lib/fb_tools/get_vm_app.py:228 lib/fb_tools/get_vm_list_app.py:224
 msgid "Closing ..."
 msgstr ""
 
 #: lib/fb_tools/get_vm_app.py:245
 msgid "NOT FOUND"
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:59
+msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
 msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:157

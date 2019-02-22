@@ -35,7 +35,7 @@ from .app import BaseApplication
 
 from .errors import FbAppError
 
-__version__ = '0.4.5'
+__version__ = '0.4.6'
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
@@ -521,7 +521,7 @@ class CfgConvertApplication(BaseApplication):
         if v not in self.yaml_avail_linebreaks:
             lb_list = format_list(self.yaml_avail_linebreaks, do_repr=True, locale=DEFAULT_LOCALE)
             msg = _(
-                "The linebrake used in ouput YAML must be one of {l}, "
+                "The linebreak used in ouput YAML must be one of {l}, "
                 "but {v!r} was given.").format(l=lb_list, v=value)
             raise ValueError(msg)
 
@@ -749,7 +749,7 @@ class CfgConvertApplication(BaseApplication):
             '--json-ensure-ascii', action="store_true", dest="json_ensure_ascii",
             help=_(
                 "The {} output is guaranteed to have all incoming "
-                "non-ASCII characters escaped. ").format('JSON'))
+                "non-ASCII characters escaped.").format('JSON'))
 
         json_group.add_argument(
             '--json-indent', metavar='INDENT', dest='json_indent', help=_(
@@ -775,7 +775,7 @@ class CfgConvertApplication(BaseApplication):
             '--hjson-ensure-ascii', action="store_true", dest="hjson_ensure_ascii",
             help=_(
                 "The {} output is guaranteed to have all incoming "
-                "non-ASCII characters escaped. ").format('HJSON'))
+                "non-ASCII characters escaped.").format('HJSON'))
 
         hjson_group.add_argument(
             '--hjson-indent', metavar='INDENT', dest='hjson_indent', help=_(
