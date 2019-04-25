@@ -7,3 +7,5 @@ wheel
 Babel
 PyYAML
 hjson
+apacheconfig
+iscpy
