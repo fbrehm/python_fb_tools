@@ -36,8 +36,8 @@ test Python 2.7:
     - pip install -r requirements-2.7.txt --upgrade --upgrade-strategy eager
     - pip install --upgrade --upgrade-strategy eager pytest
     - pytest --verbose
-  tags:
-    - docker
+#  tags:
+#    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
@@ -51,8 +51,8 @@ test Python 3.5:
   script:
     - pip install --upgrade --upgrade-strategy eager pytest
     - pytest --verbose
-  tags:
-    - docker
+#  tags:
+#    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
@@ -66,8 +66,8 @@ test Python 3.6:
   script:
     - pip install --upgrade --upgrade-strategy eager pytest
     - pytest --verbose
-  tags:
-    - docker
+#  tags:
+#    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
@@ -81,8 +81,8 @@ test Python 3.7:
   script:
     - pip install --upgrade --upgrade-strategy eager pytest
     - pytest --verbose
-  tags:
-    - docker
+#  tags:
+#    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
@@ -96,8 +96,8 @@ Linter:
   script:
     - pip install --upgrade --upgrade-strategy eager flake8 pylint
     - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
-  tags:
-    - docker
+#  tags:
+#    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
@@ -111,8 +111,8 @@ build Python 2.7:
   script:
     - pip install -r requirements-2.7.txt --upgrade --upgrade-strategy eager
     - python setup.py bdist
-  tags:
-    - docker
+#  tags:
+#    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
@@ -125,8 +125,8 @@ build Python 3.5:
   image: python:3.5
   script:
     - python setup.py bdist
-  tags:
-    - docker
+#  tags:
+#    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
@@ -139,8 +139,8 @@ build Python 3.6:
   image: python:3.6
   script:
     - python setup.py bdist
-  tags:
-    - docker
+#  tags:
+#    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
@@ -153,8 +153,8 @@ build Python 3.7:
   image: python:3.7
   script:
     - python setup.py bdist
-  tags:
-    - docker
+#  tags:
+#    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
