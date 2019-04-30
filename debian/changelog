@@ -1,3 +1,9 @@
+fb-tools (1.4.4) all; urgency=medium
+
+  * Bugfixing in lib/fb_tools/handler/__init__.py
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 30 Apr 2019 15:00:59 +0200
+
 fb-tools (1.4.3) all; urgency=medium
 
   * Completion of translating (i18n) of many modules

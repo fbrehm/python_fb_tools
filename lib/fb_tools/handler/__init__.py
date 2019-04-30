@@ -38,12 +38,14 @@ from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.4.7'
+__version__ = '1.4.8'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
 ECHO_CMD = pathlib.Path('/bin/echo')
 SUDO_CMD = pathlib.Path('/usr/bin/sudo')
+
+DEFAULT_LOCALE = 'en_US'
 
 _ = XLATOR.gettext
 
@@ -63,6 +65,8 @@ class BaseHandler(HandlingObject):
         open_opts['errors'] = 'surrogateescape'
 
     default_locale = babel.core.default_locale()
+    if not default_locale:
+        default_locale = DEFAULT_LOCALE
     tz = LOCALTZ
     tz_name = babel.dates.get_timezone_name(tz, width='long', locale=default_locale)
 
