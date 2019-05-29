@@ -1,17 +1,17 @@
 # English (United States) translations for fb_tools.
 # Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
+# Frank Brehm <frank@brehm-online.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-12 10:20+0100\n"
-"PO-Revision-Date: 2018-12-12 15:30+0100\n"
+"POT-Creation-Date: 2019-05-29 16:34+0200\n"
+"PO-Revision-Date: 2019-05-29 16:35+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
-"Language-Team: en_US <LL@li.org>\n"
+"Language-Team: en_US <frank@brehm-online.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -48,7 +48,7 @@ msgstr ""
 
 #: lib/fb_tools/app.py:416
 msgid "Trying to get {} via console ..."
-msgstr ""
+msgstr "Trying to get {} via console …"
 
 #: lib/fb_tools/app.py:431
 msgid "Got a signal {}."
@@ -104,7 +104,7 @@ msgstr ""
 
 #: lib/fb_tools/app.py:582
 msgid "Executing {} ..."
-msgstr ""
+msgstr "Executing {} …"
 
 #: lib/fb_tools/app.py:604
 msgid "General options"
@@ -205,7 +205,7 @@ msgstr ""
 
 #: lib/fb_tools/config.py:203
 msgid "Searching for {!r} ..."
-msgstr ""
+msgstr "Searching for {!r} …"
 
 #: lib/fb_tools/config.py:205
 msgid "Configuration file {!r} not found."
@@ -217,7 +217,7 @@ msgstr ""
 
 #: lib/fb_tools/config.py:218
 msgid "Reading {!r} ..."
-msgstr ""
+msgstr "Reading {!r} …"
 
 #: lib/fb_tools/config.py:229
 msgid "Wrong configuration in {!r} found"
@@ -229,7 +229,7 @@ msgstr ""
 
 #: lib/fb_tools/config.py:254
 msgid "Checking config section {!r} ..."
-msgstr ""
+msgstr "Checking config section {!r} …"
 
 #: lib/fb_tools/errors.py:44
 msgid "Wrong mail address {a!r} ({c})"
@@ -356,8 +356,7 @@ msgid "How many files one per year from today on should be kept (default: {defau
 msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
-#: lib/fb_tools/get_vm_list_app.py:161 lib/fb_tools/pdns_bulk_rm_app.py:189
-#: lib/fb_tools/pdns_bulk_rm_app.py:236
+#: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
 msgstr ""
 
@@ -371,11 +370,11 @@ msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:365
 msgid "Checking given files..."
-msgstr ""
+msgstr "Checking given files …"
 
 #: lib/fb_tools/get_file_rm_app.py:370
 msgid "Checking given file {!r} ..."
-msgstr ""
+msgstr "Checking given file {!r} …"
 
 #: lib/fb_tools/get_file_rm_app.py:379
 msgid "Resolved paths:"
@@ -387,7 +386,7 @@ msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:386
 msgid "Checking {!r} ..."
-msgstr ""
+msgstr "Checking {!r} …"
 
 #: lib/fb_tools/get_file_rm_app.py:396
 msgid "File {fi!r} does not match pattern {pa!r}."
@@ -404,8 +403,8 @@ msgstr ""
 #: lib/fb_tools/get_file_rm_app.py:491
 msgid "Keeping last file ..."
 msgid_plural "Keeping last {} files ..."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Keeping last file …"
+msgstr[1] "Keeping last {} files …"
 
 #: lib/fb_tools/get_file_rm_app.py:497
 msgid "Keep last file {!r}."
@@ -459,40 +458,39 @@ msgstr ""
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:132 lib/fb_tools/get_vm_list_app.py:136
+#: lib/fb_tools/get_vm_app.py:132
 msgid "Enter password for host {h!r} and user {u!r}: "
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/get_vm_list_app.py:163
-#: lib/fb_tools/pdns_bulk_rm_app.py:191
+#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:162 lib/fb_tools/get_vm_list_app.py:166
+#: lib/fb_tools/get_vm_app.py:162
 msgid "VMWare options"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:166 lib/fb_tools/get_vm_list_app.py:170
+#: lib/fb_tools/get_vm_app.py:166
 msgid "Remote vSphere host to connect to (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:172 lib/fb_tools/get_vm_list_app.py:176
+#: lib/fb_tools/get_vm_app.py:172
 msgid "Port on vSphere host to connect on (Default: {})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:177 lib/fb_tools/get_vm_list_app.py:181
+#: lib/fb_tools/get_vm_app.py:177
 msgid "USER"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:178 lib/fb_tools/get_vm_list_app.py:182
+#: lib/fb_tools/get_vm_app.py:178
 msgid "User name to use when connecting to vSphere host (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:183 lib/fb_tools/get_vm_list_app.py:187
+#: lib/fb_tools/get_vm_app.py:183
 msgid "PASSWORD"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:184 lib/fb_tools/get_vm_list_app.py:188
+#: lib/fb_tools/get_vm_app.py:184
 msgid "Password to use when connecting to vSphere host."
 msgstr ""
 
@@ -500,83 +498,79 @@ msgstr ""
 msgid "Names of the VM to get information."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:220 lib/fb_tools/get_vm_list_app.py:216
+#: lib/fb_tools/get_vm_app.py:220
 msgid "Starting {a!r}, version {v!r} ..."
-msgstr ""
+msgstr "Starting {a!r}, version {v!r} …"
 
-#: lib/fb_tools/get_vm_app.py:228 lib/fb_tools/get_vm_list_app.py:224
+#: lib/fb_tools/get_vm_app.py:228
 msgid "Closing ..."
-msgstr ""
+msgstr "Closing …"
 
 #: lib/fb_tools/get_vm_app.py:245
 msgid "NOT FOUND"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:59
-msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
-msgstr ""
-
-#: lib/fb_tools/handler/__init__.py:153
+#: lib/fb_tools/handler/__init__.py:157
 msgid "Invalid time zone name {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:155
+#: lib/fb_tools/handler/__init__.py:159
 msgid "Setting time zone to {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:159
+#: lib/fb_tools/handler/__init__.py:163
 msgid "Name of the time zone: {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:166
+#: lib/fb_tools/handler/__init__.py:170
 msgid "{}-object not initialized."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:168
+#: lib/fb_tools/handler/__init__.py:172
 msgid "Method {} must be overridden in descendant classes."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:246
+#: lib/fb_tools/handler/__init__.py:250
 msgid "Quiet execution."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:294
+#: lib/fb_tools/handler/__init__.py:298
 msgid "Starting synchronous communication with '{}'."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:298
+#: lib/fb_tools/handler/__init__.py:302
 msgid "Finished communication with '{}'."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:312
+#: lib/fb_tools/handler/__init__.py:316
 msgid "Parameter {p!r} is not of type {t!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:317
+#: lib/fb_tools/handler/__init__.py:321
 msgid "Got completed process:"
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:321 lib/fb_tools/handler/__init__.py:332
+#: lib/fb_tools/handler/__init__.py:325 lib/fb_tools/handler/__init__.py:336
 msgid "Output on {}:"
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:353
+#: lib/fb_tools/handler/__init__.py:357
 msgid "Starting asynchronous communication with '{cmd}', heartbeat interval is {interval:0.1f} seconds."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:368
+#: lib/fb_tools/handler/__init__.py:372
 msgid "Checking for the end of the communication ..."
-msgstr ""
+msgstr "Checking for the end of the communication …"
 
-#: lib/fb_tools/handler/__init__.py:378
+#: lib/fb_tools/handler/__init__.py:382
 msgid "Time to execute the heartbeat handler."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:382
+#: lib/fb_tools/handler/__init__.py:386
 msgid "Sleeping {:0.2f} seconds ..."
-msgstr ""
+msgstr "Sleeping {:0.2f} seconds …"
 
-#: lib/fb_tools/handler/__init__.py:390 lib/fb_tools/handler/__init__.py:399
+#: lib/fb_tools/handler/__init__.py:394 lib/fb_tools/handler/__init__.py:403
 msgid "   {w} is now: {o!r}"
 msgstr ""
 
@@ -584,165 +578,169 @@ msgstr ""
 msgid "Locking directory {!r} doesn't exists or is not a directory."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:121 lib/fb_tools/handler/lock.py:805
+#: lib/fb_tools/handler/lock.py:121 lib/fb_tools/handler/lock.py:818
 msgid "Locking directory {!r} isn't writeable."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:182
+#: lib/fb_tools/handler/lock.py:186
 msgid "No lockfile given on init of a LockObject object."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:187 lib/fb_tools/handler/lock.py:1046
+#: lib/fb_tools/handler/lock.py:192
+msgid "Lockfile {!r} doesn't exists, but don't worry, it's simulation mode."
+msgstr ""
+
+#: lib/fb_tools/handler/lock.py:196 lib/fb_tools/handler/lock.py:1059
 msgid "Lockfile {!r} doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:190
+#: lib/fb_tools/handler/lock.py:199
 msgid "Lockfile {!r} is not a regular file."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:343
+#: lib/fb_tools/handler/lock.py:356
 msgid "Closing file descriptor {} ..."
-msgstr ""
+msgstr "Closing file descriptor {} …"
 
-#: lib/fb_tools/handler/lock.py:354
+#: lib/fb_tools/handler/lock.py:367
 msgid "Automatic removing of {!r} ..."
-msgstr ""
+msgstr "Automatic removing of {!r} …"
 
-#: lib/fb_tools/handler/lock.py:386
+#: lib/fb_tools/handler/lock.py:399
 msgid "Refreshing atime and mtime of {!r} to the current timestamp."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:523 lib/fb_tools/handler/lock.py:545 lib/fb_tools/handler/lock.py:567
-#: lib/fb_tools/handler/lock.py:590 lib/fb_tools/handler/lock.py:689 lib/fb_tools/handler/lock.py:1035
+#: lib/fb_tools/handler/lock.py:536 lib/fb_tools/handler/lock.py:558 lib/fb_tools/handler/lock.py:580
+#: lib/fb_tools/handler/lock.py:603 lib/fb_tools/handler/lock.py:702 lib/fb_tools/handler/lock.py:1048
 msgid "Value {val!r} for {what} is not a Number."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:528 lib/fb_tools/handler/lock.py:550 lib/fb_tools/handler/lock.py:572
-#: lib/fb_tools/handler/lock.py:595 lib/fb_tools/handler/lock.py:694 lib/fb_tools/handler/lock.py:1039
+#: lib/fb_tools/handler/lock.py:541 lib/fb_tools/handler/lock.py:563 lib/fb_tools/handler/lock.py:585
+#: lib/fb_tools/handler/lock.py:608 lib/fb_tools/handler/lock.py:707 lib/fb_tools/handler/lock.py:1052
 msgid "The value for {what} must be greater than zero (is {val!r})."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:699
+#: lib/fb_tools/handler/lock.py:712
 msgid "The value for {what} must be greater than or equal to zero (is {val!r})."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:785
+#: lib/fb_tools/handler/lock.py:798
 msgid "Invalid PID {} given on calling create_lockfile()."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:794
+#: lib/fb_tools/handler/lock.py:807
 msgid "Using lock directory {!r} ..."
-msgstr ""
+msgstr "Using lock directory {!r} …"
 
-#: lib/fb_tools/handler/lock.py:802
+#: lib/fb_tools/handler/lock.py:815
 msgid "Trying to lock lockfile {!r} ..."
-msgstr ""
+msgstr "Trying to lock lockfile {!r} …"
 
-#: lib/fb_tools/handler/lock.py:843
+#: lib/fb_tools/handler/lock.py:856
 msgid "Current time difference: {:0.3f} seconds."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:848
+#: lib/fb_tools/handler/lock.py:861
 msgid "Try {try_nr} on creating lockfile {lfile!r} ..."
-msgstr ""
+msgstr "Try {try_nr} on creating lockfile {lfile!r} …"
 
-#: lib/fb_tools/handler/lock.py:859 lib/fb_tools/handler/lock.py:980
+#: lib/fb_tools/handler/lock.py:872 lib/fb_tools/handler/lock.py:993
 msgid "Removing lockfile {!r} ..."
-msgstr ""
+msgstr "Removing lockfile {!r} …"
 
-#: lib/fb_tools/handler/lock.py:864 lib/fb_tools/handler/lock.py:988
+#: lib/fb_tools/handler/lock.py:877 lib/fb_tools/handler/lock.py:1001
 msgid "Error on removing lockfile {lfile!r}: {err}"
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:877
+#: lib/fb_tools/handler/lock.py:890
 msgid "Sleeping for {:0.1f} seconds."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:892
+#: lib/fb_tools/handler/lock.py:905
 msgid "Got a lock for lockfile {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:898
+#: lib/fb_tools/handler/lock.py:911
 msgid "Write {what!r} in lockfile {lfile!r} ..."
-msgstr ""
+msgstr "Write {what!r} in lockfile {lfile!r} …"
 
-#: lib/fb_tools/handler/lock.py:907
+#: lib/fb_tools/handler/lock.py:920
 msgid "Seeking and syncing {!r} ..."
-msgstr ""
+msgstr "Seeking and syncing {!r} …"
 
-#: lib/fb_tools/handler/lock.py:937
+#: lib/fb_tools/handler/lock.py:950
 msgid "Trying to open {!r} exclusive ..."
-msgstr ""
+msgstr "Trying to open {!r} exclusive …"
 
-#: lib/fb_tools/handler/lock.py:939
+#: lib/fb_tools/handler/lock.py:952
 msgid "Simulation mode, no real creation of a lockfile."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:947
+#: lib/fb_tools/handler/lock.py:960
 msgid "Error on creating lockfile {lfile!r}: {err}"
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:977
+#: lib/fb_tools/handler/lock.py:990
 msgid "Lockfile {!r} to remove doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:982
+#: lib/fb_tools/handler/lock.py:995
 msgid "Simulation mode - lockfile won't removed."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1043
+#: lib/fb_tools/handler/lock.py:1056
 msgid "Checking lockfile {!r} ..."
-msgstr ""
+msgstr "Checking lockfile {!r} …"
 
-#: lib/fb_tools/handler/lock.py:1050
+#: lib/fb_tools/handler/lock.py:1063
 msgid "No read access for lockfile {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1054
+#: lib/fb_tools/handler/lock.py:1067
 msgid "No write access for lockfile {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1060
+#: lib/fb_tools/handler/lock.py:1073
 msgid "Unusable lockfile {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1063
+#: lib/fb_tools/handler/lock.py:1076
 msgid "Process with PID {} is unfortunately dead."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1066
+#: lib/fb_tools/handler/lock.py:1079
 msgid "Process with PID {} is still running."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1074
+#: lib/fb_tools/handler/lock.py:1087
 msgid "Could not stat for file {lfile!r}: {err}"
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1081
+#: lib/fb_tools/handler/lock.py:1094
 msgid "Lockfile {lfile!r} is older than {max} seconds ({age} seconds)."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1084
+#: lib/fb_tools/handler/lock.py:1097
 msgid "Lockfile {lfile!r} is {age} seconds old, but not old enough ({max} seconds)."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1112
+#: lib/fb_tools/handler/lock.py:1125
 msgid "Trying to open pidfile {!r} ..."
-msgstr ""
+msgstr "Trying to open pidfile {!r} …"
 
-#: lib/fb_tools/handler/lock.py:1116
+#: lib/fb_tools/handler/lock.py:1129
 msgid "Could not open pidfile {!r} for reading:"
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1129
+#: lib/fb_tools/handler/lock.py:1142
 msgid "First line of pidfile {!r} was empty."
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1140
+#: lib/fb_tools/handler/lock.py:1153
 msgid "Could not interprete {cont!r} as a PID from {file!r}: {err}"
 msgstr ""
 
-#: lib/fb_tools/handler/lock.py:1149
+#: lib/fb_tools/handler/lock.py:1162
 msgid "Invalid PID {pid} in {file!r} found."
 msgstr ""
 
@@ -762,7 +760,7 @@ msgstr[1] ""
 
 #: lib/fb_tools/handling_obj.py:286
 msgid "Searching for command {!r} ..."
-msgstr ""
+msgstr "Searching for command {!r} …"
 
 #: lib/fb_tools/handling_obj.py:291
 msgid "Command {!r} doesn't exists."
@@ -774,7 +772,7 @@ msgstr ""
 
 #: lib/fb_tools/handling_obj.py:308
 msgid "Searching command in {!r} ..."
-msgstr ""
+msgstr "Searching command in {!r} …"
 
 #: lib/fb_tools/handling_obj.py:321
 msgid "Command {!r} not found."
@@ -792,7 +790,7 @@ msgstr ""
 msgid "Performing argument {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:243 lib/fb_tools/handling_obj.py:405
+#: lib/fb_tools/handler/__init__.py:247 lib/fb_tools/handling_obj.py:405
 msgid "Executing: {}"
 msgstr ""
 
@@ -822,7 +820,7 @@ msgstr ""
 
 #: lib/fb_tools/handling_obj.py:582
 msgid "Reading file content of {!r} ..."
-msgstr ""
+msgstr "Reading file content of {!r} …"
 
 #: lib/fb_tools/handling_obj.py:669 lib/fb_tools/handling_obj.py:676
 msgid "Write permission to {!r} denied."
@@ -846,11 +844,11 @@ msgstr ""
 
 #: lib/fb_tools/handling_obj.py:704
 msgid "Opening {!r} for write unbuffered ..."
-msgstr ""
+msgstr "Opening {!r} for write unbuffered …"
 
-#: lib/fb_tools/handler/lock.py:911 lib/fb_tools/handling_obj.py:708
+#: lib/fb_tools/handler/lock.py:924 lib/fb_tools/handling_obj.py:708
 msgid "Closing {!r} ..."
-msgstr ""
+msgstr "Closing {!r} …"
 
 #: lib/fb_tools/handling_obj.py:749 lib/fb_tools/handling_obj.py:755
 #: lib/fb_tools/vsphere/cluster.py:261 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:202
@@ -963,7 +961,7 @@ msgstr ""
 #: lib/fb_tools/vsphere/cluster.py:246 lib/fb_tools/vsphere/dc.py:120 lib/fb_tools/vsphere/ds.py:320
 #: lib/fb_tools/vsphere/ds_cluster.py:162 lib/fb_tools/vsphere/network.py:183
 msgid "Comparing {} objects ..."
-msgstr ""
+msgstr "Comparing {} objects …"
 
 #: lib/fb_tools/pdns/record.py:368
 msgid "Copying current {}-object in a new one."
@@ -1011,7 +1009,7 @@ msgstr ""
 
 #: lib/fb_tools/pdns/server.py:75
 msgid "Setting simulate of all subsequent objects to {!r} ..."
-msgstr ""
+msgstr "Setting simulate of all subsequent objects to {!r} …"
 
 #: lib/fb_tools/pdns/server.py:106
 msgid "Could not found server info."
@@ -1031,7 +1029,7 @@ msgstr ""
 
 #: lib/fb_tools/pdns/server.py:121
 msgid "Trying to get all zones from PDNS API ..."
-msgstr ""
+msgstr "rying to get all zones from PDNS API …"
 
 #: lib/fb_tools/pdns/server.py:141
 msgid "Found a zone."
@@ -1045,7 +1043,7 @@ msgstr ""
 
 #: lib/fb_tools/pdns/server.py:163
 msgid "Searching an appropriate zone for item {i!r} - FQDN {f!r} ..."
-msgstr ""
+msgstr "Searching an appropriate zone for item {i!r} - FQDN {f!r} …"
 
 #: lib/fb_tools/pdns/server.py:169 lib/fb_tools/pdns/server.py:200
 msgid "Search pattern: {}"
@@ -1057,7 +1055,7 @@ msgstr ""
 
 #: lib/fb_tools/pdns/server.py:193
 msgid "Searching all appropriate zones for item {i!r} - FQDN {f!r} ..."
-msgstr ""
+msgstr "Searching all appropriate zones for item {i!r} - FQDN {f!r} …"
 
 #: lib/fb_tools/pdns/zone.py:55
 msgid "No Resource Record Sets found to remove from zone {!r}."
@@ -1081,11 +1079,11 @@ msgstr ""
 
 #: lib/fb_tools/pdns/zone.py:551
 msgid "Updating data of zone {n!r} from API path {u!r} ..."
-msgstr ""
+msgstr "Updating data of zone {n!r} from API path {u!r} …"
 
 #: lib/fb_tools/pdns/zone.py:638
 msgid "Patching zone {!r} ..."
-msgstr ""
+msgstr "Patching zone {!r} …"
 
 #: lib/fb_tools/pdns/zone.py:655
 msgid "Did not get SOA for zone {!r}."
@@ -1101,7 +1099,7 @@ msgstr ""
 
 #: lib/fb_tools/pdns/zone.py:709
 msgid "Setting new SOA {s!r} for zone {z!r}, TTL {t} ..."
-msgstr ""
+msgstr "Setting new SOA {s!r} for zone {z!r}, TTL {t} …"
 
 #: lib/fb_tools/pdns/zone.py:723
 msgid "Increasing serial of zone {z!r} from {o} => {n}."
@@ -1143,7 +1141,7 @@ msgstr ""
 
 #: lib/fb_tools/pdns/zone.py:917
 msgid "Notifying slave servers of zone {!r} ..."
-msgstr ""
+msgstr "Notifying slave servers of zone {!r} …"
 
 #: lib/fb_tools/pdns/zone.py:933 lib/fb_tools/vsphere/ds.py:338 lib/fb_tools/vsphere/ds_cluster.py:180
 #: lib/fb_tools/vsphere/network.py:201
@@ -1325,7 +1323,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/__init__.py:196
 msgid "Connecting to vSphere host {h}:{p} as {u!r} ..."
-msgstr ""
+msgstr "Connecting to vSphere host {h}:{p} as {u!r} …"
 
 #: lib/fb_tools/vsphere/__init__.py:214
 msgid "Disconnecting from vSphere host {}."
@@ -1423,7 +1421,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/network.py:451
 msgid "Searching VSphere network for address {} ..."
-msgstr ""
+msgstr "Searching VSphere network for address {} …"
 
 #: lib/fb_tools/vsphere/network.py:457
 msgid "Found network {n!r} for IP {i}."
@@ -1468,7 +1466,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:173
 msgid "Trying to get datacenter from VSphere ..."
-msgstr ""
+msgstr "Trying to get datacenter from VSphere …"
 
 #: lib/fb_tools/vsphere/server.py:187
 msgid "Found VSphere datacenter {!r}."
@@ -1480,7 +1478,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:200
 msgid "Trying to get all clusters from VSphere ..."
-msgstr ""
+msgstr "Trying to get all clusters from VSphere …"
 
 #: lib/fb_tools/vsphere/server.py:224 lib/fb_tools/vsphere/server.py:229
 msgid "Found clusters:"
@@ -1494,7 +1492,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:267
 msgid "Trying to get all datastores from VSphere ..."
-msgstr ""
+msgstr "Trying to get all datastores from VSphere …"
 
 #: lib/fb_tools/vsphere/server.py:290 lib/fb_tools/vsphere/server.py:292
 msgid "Found datastores:"
@@ -1514,7 +1512,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:330
 msgid "Trying to get all datastore clusters from VSphere ..."
-msgstr ""
+msgstr "Trying to get all datastore clusters from VSphere …"
 
 #: lib/fb_tools/vsphere/server.py:354 lib/fb_tools/vsphere/server.py:357
 msgid "Found datastore clusters:"
@@ -1535,7 +1533,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:389
 msgid "Trying to get all networks from VSphere ..."
-msgstr ""
+msgstr "Trying to get all networks from VSphere …"
 
 #: lib/fb_tools/vsphere/server.py:411
 msgid "Found one VSphere network."
@@ -1557,12 +1555,12 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:449
 msgid "Trying to get VM {!r} from VSphere ..."
-msgstr ""
+msgstr "Trying to get VM {!r} from VSphere …"
 
 #: lib/fb_tools/vsphere/server.py:465 lib/fb_tools/vsphere/server.py:489
 #: lib/fb_tools/vsphere/server.py:634 lib/fb_tools/vsphere/server.py:655
 msgid "Searching in path {!r} ..."
-msgstr ""
+msgstr "Searching in path {!r} …"
 
 #: lib/fb_tools/vsphere/server.py:475
 msgid "VSphere VM {!r} not found."
@@ -1582,7 +1580,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:618
 msgid "Trying to get list of VMs with name pattern {!r} ..."
-msgstr ""
+msgstr "Trying to get list of VMs with name pattern {!r} …"
 
 #: lib/fb_tools/vsphere/server.py:644
 msgid "Found one VM with pattern {p!r}."
@@ -1592,15 +1590,15 @@ msgstr[1] ""
 
 #: lib/fb_tools/vsphere/server.py:682
 msgid "Checking VM {!r} ..."
-msgstr ""
+msgstr "Checking VM {!r} …"
 
 #: lib/fb_tools/vsphere/server.py:685
 msgid "Checking VM {!r} for being a template ..."
-msgstr ""
+msgstr "Checking VM {!r} for being a template …"
 
 #: lib/fb_tools/vsphere/server.py:687
 msgid "Checking VM {!r} for being not a template ..."
-msgstr ""
+msgstr "Checking VM {!r} for being not a template …"
 
 #: lib/fb_tools/vsphere/server.py:695
 msgid "Checking VM {!r} for pattern."
@@ -1616,7 +1614,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:728
 msgid "Powering on VM {!r} ..."
-msgstr ""
+msgstr "Powering on VM {!r} …"
 
 #: lib/fb_tools/vsphere/server.py:732
 msgid "VM {!r} successful powered on."
@@ -1628,7 +1626,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:759
 msgid "Powering off VM {!r} ..."
-msgstr ""
+msgstr "Powering off VM {!r} …"
 
 #: lib/fb_tools/vsphere/server.py:763
 msgid "VM {!r} successful powered off."
@@ -1660,7 +1658,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:869
 msgid "Creating VM folder {!r} ..."
-msgstr ""
+msgstr "Creating VM folder {!r} …"
 
 #: lib/fb_tools/vsphere/server.py:871
 msgid "Simulation mode, don't creating it."
@@ -1668,23 +1666,23 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:887
 msgid "Waiting for tasks to finish ..."
-msgstr ""
+msgstr "Waiting for tasks to finish …"
 
 #: lib/fb_tools/vsphere/server.py:899
 msgid "Waiting at most {m} seconds for tasks {t} to finish ..."
-msgstr ""
+msgstr "Waiting at most {m} seconds for tasks {t} to finish …"
 
 #: lib/fb_tools/vsphere/server.py:902
 msgid "Waiting for tasks {} to finish ..."
-msgstr ""
+msgstr "Waiting for tasks {} to finish …"
 
 #: lib/fb_tools/vsphere/server.py:922
 msgid "Waiting ..."
-msgstr ""
+msgstr "Waiting …"
 
 #: lib/fb_tools/vsphere/server.py:956
 msgid "Creating VM {!r} ..."
-msgstr ""
+msgstr "Creating VM {!r} …"
 
 #: lib/fb_tools/vsphere/server.py:959
 msgid "Simulation mode - VM {!r} will not be created."
@@ -1692,7 +1690,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:977
 msgid "Generating create spec for VM {!r} ..."
-msgstr ""
+msgstr "Generating create spec for VM {!r} …"
 
 #: lib/fb_tools/vsphere/server.py:985
 msgid "Datastore path: {!r}"
@@ -1742,7 +1740,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/server.py:1204
 msgid "Purging VM {!r} ..."
-msgstr ""
+msgstr "Purging VM {!r} …"
 
 #: lib/fb_tools/vsphere/server.py:1208
 msgid "VM {!r} successful removed."
@@ -1760,23 +1758,23 @@ msgstr ""
 msgid "Successful changed MAC address of VM {v!r} to {m!r}."
 msgstr ""
 
-#: lib/fb_tools/xlate.py:54
+#: lib/fb_tools/xlate.py:59
 msgid "Module directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:55
+#: lib/fb_tools/xlate.py:60
 msgid "Base directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:56
+#: lib/fb_tools/xlate.py:61
 msgid "Locale directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:57
+#: lib/fb_tools/xlate.py:62
 msgid "Locale domain: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:58
+#: lib/fb_tools/xlate.py:63
 msgid "Found .mo-file: {!r}"
 msgstr ""
 

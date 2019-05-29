@@ -1,17 +1,17 @@
 # German (Germany) translations for fb_tools.
 # Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
+# Frank Brehm <frank@brehm-online.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.4.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-02-12 10:20+0100\n"
-"PO-Revision-Date: 2019-02-12 10:22+0100\n"
+"POT-Creation-Date: 2019-05-29 16:34+0200\n"
+"PO-Revision-Date: 2019-05-29 16:35+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
-"Language-Team: de_DE <LL@li.org>\n"
+"Language-Team: de_DE <frank@brehm-online.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -373,8 +373,7 @@ msgstr ""
 "{default}, Minimum {min})?"
 
 #: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
-#: lib/fb_tools/get_vm_list_app.py:161 lib/fb_tools/pdns_bulk_rm_app.py:189
-#: lib/fb_tools/pdns_bulk_rm_app.py:236
+#: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
 msgstr "DATEI"
 
@@ -478,40 +477,39 @@ msgstr ""
 "Versucht, Informationen über Virtuelle Maschinen in VMWare VSphere zu ermitteln und gibt diese "
 "aus."
 
-#: lib/fb_tools/get_vm_app.py:132 lib/fb_tools/get_vm_list_app.py:136
+#: lib/fb_tools/get_vm_app.py:132
 msgid "Enter password for host {h!r} and user {u!r}: "
 msgstr "Eingabe des Passwortes für Host {h!r} und Benutzer {u!r}: "
 
-#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/get_vm_list_app.py:163
-#: lib/fb_tools/pdns_bulk_rm_app.py:191
+#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr "Konfigurationsdatei (Vorgabe: {!r})"
 
-#: lib/fb_tools/get_vm_app.py:162 lib/fb_tools/get_vm_list_app.py:166
+#: lib/fb_tools/get_vm_app.py:162
 msgid "VMWare options"
 msgstr "VMWare-Optionen"
 
-#: lib/fb_tools/get_vm_app.py:166 lib/fb_tools/get_vm_list_app.py:170
+#: lib/fb_tools/get_vm_app.py:166
 msgid "Remote vSphere host to connect to (Default: {!r})."
 msgstr "Der vSphere-Server, zu dem sich verbunden werden soll (Vorgabe: {!r})"
 
-#: lib/fb_tools/get_vm_app.py:172 lib/fb_tools/get_vm_list_app.py:176
+#: lib/fb_tools/get_vm_app.py:172
 msgid "Port on vSphere host to connect on (Default: {})."
 msgstr "Der Port des vSphere-Servers, zu dem sich verbunden werden soll (Vorgabe: {!r})"
 
-#: lib/fb_tools/get_vm_app.py:177 lib/fb_tools/get_vm_list_app.py:181
+#: lib/fb_tools/get_vm_app.py:177
 msgid "USER"
 msgstr "NUTZER"
 
-#: lib/fb_tools/get_vm_app.py:178 lib/fb_tools/get_vm_list_app.py:182
+#: lib/fb_tools/get_vm_app.py:178
 msgid "User name to use when connecting to vSphere host (Default: {!r})."
 msgstr "Der Nutzername, der zum Verbinden zum vSphere-Server verwendet werden soll (Vorgabe: {!r})"
 
-#: lib/fb_tools/get_vm_app.py:183 lib/fb_tools/get_vm_list_app.py:187
+#: lib/fb_tools/get_vm_app.py:183
 msgid "PASSWORD"
 msgstr "PASSWORT"
 
-#: lib/fb_tools/get_vm_app.py:184 lib/fb_tools/get_vm_list_app.py:188
+#: lib/fb_tools/get_vm_app.py:184
 msgid "Password to use when connecting to vSphere host."
 msgstr "Passwort, das zum Verbinden zum vSphere-Server verwendet werden soll."
 
@@ -519,11 +517,11 @@ msgstr "Passwort, das zum Verbinden zum vSphere-Server verwendet werden soll."
 msgid "Names of the VM to get information."
 msgstr "Die Namen der VMs, über die Informationen ermittelt werden sollen."
 
-#: lib/fb_tools/get_vm_app.py:220 lib/fb_tools/get_vm_list_app.py:216
+#: lib/fb_tools/get_vm_app.py:220
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr "Starte {a!r}, Version {v!r} …"
 
-#: lib/fb_tools/get_vm_app.py:228 lib/fb_tools/get_vm_list_app.py:224
+#: lib/fb_tools/get_vm_app.py:228
 msgid "Closing ..."
 msgstr "Schließe …"
 
@@ -531,71 +529,67 @@ msgstr "Schließe …"
 msgid "NOT FOUND"
 msgstr "NICHT GEFUNDEN"
 
-#: lib/fb_tools/get_vm_list_app.py:59
-msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
-msgstr "Versuche eine Liste aller Virtueller Maschinen in VMWare VSphere zu ermitteln und giebe sie aus."
-
-#: lib/fb_tools/handler/__init__.py:153
+#: lib/fb_tools/handler/__init__.py:157
 msgid "Invalid time zone name {!r}."
 msgstr "Ungültiger Zeitzonenname {!r}."
 
-#: lib/fb_tools/handler/__init__.py:155
+#: lib/fb_tools/handler/__init__.py:159
 msgid "Setting time zone to {!r}."
 msgstr "Setze Zeitzone auf {!r}."
 
-#: lib/fb_tools/handler/__init__.py:159
+#: lib/fb_tools/handler/__init__.py:163
 msgid "Name of the time zone: {!r}."
 msgstr "Name der Zeitzone: {!r}."
 
-#: lib/fb_tools/handler/__init__.py:166
+#: lib/fb_tools/handler/__init__.py:170
 msgid "{}-object not initialized."
 msgstr "Das {}-Objekt ist noch nicht initialisiert."
 
-#: lib/fb_tools/handler/__init__.py:168
+#: lib/fb_tools/handler/__init__.py:172
 msgid "Method {} must be overridden in descendant classes."
 msgstr "Die Methode {} muss in abgeleiteten Klassen überschrieben werden."
 
-#: lib/fb_tools/handler/__init__.py:246
+#: lib/fb_tools/handler/__init__.py:250
 msgid "Quiet execution."
 msgstr "Stillschweigende Ausführung."
 
-#: lib/fb_tools/handler/__init__.py:294
+#: lib/fb_tools/handler/__init__.py:298
 msgid "Starting synchronous communication with '{}'."
 msgstr "Starte synchrone Kommunikation mit '{}'."
 
-#: lib/fb_tools/handler/__init__.py:298
+#: lib/fb_tools/handler/__init__.py:302
 msgid "Finished communication with '{}'."
 msgstr "Kommunikation mit '{}' beendet."
 
-#: lib/fb_tools/handler/__init__.py:312
+#: lib/fb_tools/handler/__init__.py:316
 msgid "Parameter {p!r} is not of type {t!r}."
 msgstr "Der Parameter {p!r} ist nicht vom Typ {t!r}."
 
-#: lib/fb_tools/handler/__init__.py:317
+#: lib/fb_tools/handler/__init__.py:321
 msgid "Got completed process:"
 msgstr "Vollendeten Prozess erhalten:"
 
-#: lib/fb_tools/handler/__init__.py:321 lib/fb_tools/handler/__init__.py:332
+#: lib/fb_tools/handler/__init__.py:325 lib/fb_tools/handler/__init__.py:336
 msgid "Output on {}:"
 msgstr "Ausgabe an {}:"
 
-#: lib/fb_tools/handler/__init__.py:353
+#: lib/fb_tools/handler/__init__.py:357
 msgid "Starting asynchronous communication with '{cmd}', heartbeat interval is {interval:0.1f} seconds."
 msgstr "Starte asynchrone Kommunikation mit '{cmd}', Herzschlag-Intervall ist {interval:0.1f} Sekunden."
 
-#: lib/fb_tools/handler/__init__.py:368
+#: lib/fb_tools/handler/__init__.py:372
 msgid "Checking for the end of the communication ..."
 msgstr "Überprüfe das Ende der Kummunikation …"
 
-#: lib/fb_tools/handler/__init__.py:378
+#: lib/fb_tools/handler/__init__.py:382
 msgid "Time to execute the heartbeat handler."
 msgstr "Es ist an der Zeit, den Herzschlag-Handler auszuführen."
 
-#: lib/fb_tools/handler/__init__.py:382
+#: lib/fb_tools/handler/__init__.py:386
 msgid "Sleeping {:0.2f} seconds ..."
 msgstr "Schlafe für {:0.2f} Sekunden …"
 
-#: lib/fb_tools/handler/__init__.py:390 lib/fb_tools/handler/__init__.py:399
+#: lib/fb_tools/handler/__init__.py:394 lib/fb_tools/handler/__init__.py:403
 msgid "   {w} is now: {o!r}"
 msgstr "   {w} ist jetzt: {o!r}"
 
@@ -603,165 +597,169 @@ msgstr "   {w} ist jetzt: {o!r}"
 msgid "Locking directory {!r} doesn't exists or is not a directory."
 msgstr "Das Lockverzeichnis {!r} existiert entweder nicht oder ist kein Verzeichnis."
 
-#: lib/fb_tools/handler/lock.py:121 lib/fb_tools/handler/lock.py:805
+#: lib/fb_tools/handler/lock.py:121 lib/fb_tools/handler/lock.py:818
 msgid "Locking directory {!r} isn't writeable."
 msgstr "Kein Schreibzugriff auf das Lockverzeichnis {!r}."
 
-#: lib/fb_tools/handler/lock.py:182
+#: lib/fb_tools/handler/lock.py:186
 msgid "No lockfile given on init of a LockObject object."
 msgstr "Keine Lockdatei bei der Initialisierung des LockObject-Ojektes angegeben."
 
-#: lib/fb_tools/handler/lock.py:187 lib/fb_tools/handler/lock.py:1046
+#: lib/fb_tools/handler/lock.py:192
+msgid "Lockfile {!r} doesn't exists, but don't worry, it's simulation mode."
+msgstr "Die Lockdatei {!r} existiert nicht, aber keine Sorge, wir sind im Simulationsmodus."
+
+#: lib/fb_tools/handler/lock.py:196 lib/fb_tools/handler/lock.py:1059
 msgid "Lockfile {!r} doesn't exists."
 msgstr "Die Lockdatei {!r} existiert nicht."
 
-#: lib/fb_tools/handler/lock.py:190
+#: lib/fb_tools/handler/lock.py:199
 msgid "Lockfile {!r} is not a regular file."
 msgstr "Die Lockdatei {!r} ist keine reguläre Datei."
 
-#: lib/fb_tools/handler/lock.py:343
+#: lib/fb_tools/handler/lock.py:356
 msgid "Closing file descriptor {} ..."
 msgstr "Schließe Datei-Deskriptor {} …"
 
-#: lib/fb_tools/handler/lock.py:354
+#: lib/fb_tools/handler/lock.py:367
 msgid "Automatic removing of {!r} ..."
 msgstr "Automatisches Löschen von {!r} …"
 
-#: lib/fb_tools/handler/lock.py:386
+#: lib/fb_tools/handler/lock.py:399
 msgid "Refreshing atime and mtime of {!r} to the current timestamp."
 msgstr "Setze atime und mtime von {!r} auf den aktuellen Zeitstempel."
 
-#: lib/fb_tools/handler/lock.py:523 lib/fb_tools/handler/lock.py:545 lib/fb_tools/handler/lock.py:567
-#: lib/fb_tools/handler/lock.py:590 lib/fb_tools/handler/lock.py:689 lib/fb_tools/handler/lock.py:1035
+#: lib/fb_tools/handler/lock.py:536 lib/fb_tools/handler/lock.py:558 lib/fb_tools/handler/lock.py:580
+#: lib/fb_tools/handler/lock.py:603 lib/fb_tools/handler/lock.py:702 lib/fb_tools/handler/lock.py:1048
 msgid "Value {val!r} for {what} is not a Number."
 msgstr "Der Wert {val!r} für {what} ist keine Zahl."
 
-#: lib/fb_tools/handler/lock.py:528 lib/fb_tools/handler/lock.py:550 lib/fb_tools/handler/lock.py:572
-#: lib/fb_tools/handler/lock.py:595 lib/fb_tools/handler/lock.py:694 lib/fb_tools/handler/lock.py:1039
+#: lib/fb_tools/handler/lock.py:541 lib/fb_tools/handler/lock.py:563 lib/fb_tools/handler/lock.py:585
+#: lib/fb_tools/handler/lock.py:608 lib/fb_tools/handler/lock.py:707 lib/fb_tools/handler/lock.py:1052
 msgid "The value for {what} must be greater than zero (is {val!r})."
 msgstr "Der Wert für {what} muss größer als Null sein (ist {val!r})."
 
-#: lib/fb_tools/handler/lock.py:699
+#: lib/fb_tools/handler/lock.py:712
 msgid "The value for {what} must be greater than or equal to zero (is {val!r})."
 msgstr "Der Wert für {what} muss größer als oder gleich Null sein (ist {val!r})."
 
-#: lib/fb_tools/handler/lock.py:785
+#: lib/fb_tools/handler/lock.py:798
 msgid "Invalid PID {} given on calling create_lockfile()."
 msgstr "Ungültige PID {} beim Aufruf von create_lockfile() übergeben."
 
-#: lib/fb_tools/handler/lock.py:794
+#: lib/fb_tools/handler/lock.py:807
 msgid "Using lock directory {!r} ..."
 msgstr "Verwende Lock-Verzeichnis {!r} …"
 
-#: lib/fb_tools/handler/lock.py:802
+#: lib/fb_tools/handler/lock.py:815
 msgid "Trying to lock lockfile {!r} ..."
 msgstr "Versuche Lockdatei {!r} zu okkupieren …"
 
-#: lib/fb_tools/handler/lock.py:843
+#: lib/fb_tools/handler/lock.py:856
 msgid "Current time difference: {:0.3f} seconds."
 msgstr "Aktuelle Zeitdifferenz: {:0.3f} Sekunden."
 
-#: lib/fb_tools/handler/lock.py:848
+#: lib/fb_tools/handler/lock.py:861
 msgid "Try {try_nr} on creating lockfile {lfile!r} ..."
 msgstr "Versuch Nummer {try_nr} zum Erstellen der Lockdatei {lfile!r} …"
 
-#: lib/fb_tools/handler/lock.py:859 lib/fb_tools/handler/lock.py:980
+#: lib/fb_tools/handler/lock.py:872 lib/fb_tools/handler/lock.py:993
 msgid "Removing lockfile {!r} ..."
 msgstr "Lösche Lockdatei {!r} …"
 
-#: lib/fb_tools/handler/lock.py:864 lib/fb_tools/handler/lock.py:988
+#: lib/fb_tools/handler/lock.py:877 lib/fb_tools/handler/lock.py:1001
 msgid "Error on removing lockfile {lfile!r}: {err}"
 msgstr "Fehler beim Löschen der Lockdatei {lfile!r): {err}"
 
-#: lib/fb_tools/handler/lock.py:877
+#: lib/fb_tools/handler/lock.py:890
 msgid "Sleeping for {:0.1f} seconds."
 msgstr "Schlafe für {:0.1f} Sekunden."
 
-#: lib/fb_tools/handler/lock.py:892
+#: lib/fb_tools/handler/lock.py:905
 msgid "Got a lock for lockfile {!r}."
 msgstr "Habe einen Lock für die Lockdatei {!r} erhalten."
 
-#: lib/fb_tools/handler/lock.py:898
+#: lib/fb_tools/handler/lock.py:911
 msgid "Write {what!r} in lockfile {lfile!r} ..."
 msgstr "Schreibe {what!r} in Lockdatei {lfile!r} …"
 
-#: lib/fb_tools/handler/lock.py:907
+#: lib/fb_tools/handler/lock.py:920
 msgid "Seeking and syncing {!r} ..."
 msgstr "Seeken und synchronisieren von {!r} …"
 
-#: lib/fb_tools/handler/lock.py:937
+#: lib/fb_tools/handler/lock.py:950
 msgid "Trying to open {!r} exclusive ..."
 msgstr "Versuche {!r} exklusiv zu öffnen …"
 
-#: lib/fb_tools/handler/lock.py:939
+#: lib/fb_tools/handler/lock.py:952
 msgid "Simulation mode, no real creation of a lockfile."
 msgstr "Simulationsmodus, Lockdatei wird in Wirklichkeit nicht erstellt."
 
-#: lib/fb_tools/handler/lock.py:947
+#: lib/fb_tools/handler/lock.py:960
 msgid "Error on creating lockfile {lfile!r}: {err}"
 msgstr "Fehler beim Erstellen der Lockdatei {lfile!r}: {err}"
 
-#: lib/fb_tools/handler/lock.py:977
+#: lib/fb_tools/handler/lock.py:990
 msgid "Lockfile {!r} to remove doesn't exists."
 msgstr "Die zu löschende Lockdatei {!r} existiert nicht."
 
-#: lib/fb_tools/handler/lock.py:982
+#: lib/fb_tools/handler/lock.py:995
 msgid "Simulation mode - lockfile won't removed."
 msgstr "Simulationsmodus - die Lockdatei wird nicht gelöscht."
 
-#: lib/fb_tools/handler/lock.py:1043
+#: lib/fb_tools/handler/lock.py:1056
 msgid "Checking lockfile {!r} ..."
 msgstr "Überprüfe Lockdatei {!r} …"
 
-#: lib/fb_tools/handler/lock.py:1050
+#: lib/fb_tools/handler/lock.py:1063
 msgid "No read access for lockfile {!r}."
 msgstr "Kein Lesezugriff auf Lockdatei {!r}."
 
-#: lib/fb_tools/handler/lock.py:1054
+#: lib/fb_tools/handler/lock.py:1067
 msgid "No write access for lockfile {!r}."
 msgstr "Kein Schreibzugriff auf Lockdatei {!r}."
 
-#: lib/fb_tools/handler/lock.py:1060
+#: lib/fb_tools/handler/lock.py:1073
 msgid "Unusable lockfile {!r}."
 msgstr "Nicht verwendungsfähige Lockdatei {!r}."
 
-#: lib/fb_tools/handler/lock.py:1063
+#: lib/fb_tools/handler/lock.py:1076
 msgid "Process with PID {} is unfortunately dead."
 msgstr "Der Prozess mit der PID {} ist unglücklicherweise verstorben."
 
-#: lib/fb_tools/handler/lock.py:1066
+#: lib/fb_tools/handler/lock.py:1079
 msgid "Process with PID {} is still running."
 msgstr "Der Prozess mit der PID {} läuft aktuell noch."
 
-#: lib/fb_tools/handler/lock.py:1074
+#: lib/fb_tools/handler/lock.py:1087
 msgid "Could not stat for file {lfile!r}: {err}"
 msgstr "Konnte Stat-Daten für Datei {lfile!r} nicht ermitteln: {err}"
 
-#: lib/fb_tools/handler/lock.py:1081
+#: lib/fb_tools/handler/lock.py:1094
 msgid "Lockfile {lfile!r} is older than {max} seconds ({age} seconds)."
 msgstr "Die Lockdatei {lfile!r} ist älter als {max} Sekunden ({age} Sekunden)."
 
-#: lib/fb_tools/handler/lock.py:1084
+#: lib/fb_tools/handler/lock.py:1097
 msgid "Lockfile {lfile!r} is {age} seconds old, but not old enough ({max} seconds)."
 msgstr "Die Lockdatei {lfile!r} ist {age} Sekunden alt, aber nicht alte genug ({max} Sekunden)."
 
-#: lib/fb_tools/handler/lock.py:1112
+#: lib/fb_tools/handler/lock.py:1125
 msgid "Trying to open pidfile {!r} ..."
 msgstr "Versuche PID-Datei {!r} zu öffnen …"
 
-#: lib/fb_tools/handler/lock.py:1116
+#: lib/fb_tools/handler/lock.py:1129
 msgid "Could not open pidfile {!r} for reading:"
 msgstr "Konnte PID-Datei {!r} nicht zum Lesen öffnen:"
 
-#: lib/fb_tools/handler/lock.py:1129
+#: lib/fb_tools/handler/lock.py:1142
 msgid "First line of pidfile {!r} was empty."
 msgstr "Die erste Zeile der PID-Datei {!r} war leer."
 
-#: lib/fb_tools/handler/lock.py:1140
+#: lib/fb_tools/handler/lock.py:1153
 msgid "Could not interprete {cont!r} as a PID from {file!r}: {err}"
 msgstr "Konnte {cont!r} nicht als PID (in {file!r}) interpretieren: {err}"
 
-#: lib/fb_tools/handler/lock.py:1149
+#: lib/fb_tools/handler/lock.py:1162
 msgid "Invalid PID {pid} in {file!r} found."
 msgstr "Ungültige PID {pid} in Datei {file!r} gefunden."
 
@@ -811,7 +809,7 @@ msgstr "Auszuführende Befehlsargumente:"
 msgid "Performing argument {!r}."
 msgstr "Verarbeite Argument {!r}."
 
-#: lib/fb_tools/handler/__init__.py:243 lib/fb_tools/handling_obj.py:405
+#: lib/fb_tools/handler/__init__.py:247 lib/fb_tools/handling_obj.py:405
 msgid "Executing: {}"
 msgstr "Ausführung: {}"
 
@@ -867,7 +865,7 @@ msgstr "Simuliere das Schreiben nach {!r}."
 msgid "Opening {!r} for write unbuffered ..."
 msgstr "Öffne {!r} zum ungepufferten Schreiben …"
 
-#: lib/fb_tools/handler/lock.py:911 lib/fb_tools/handling_obj.py:708
+#: lib/fb_tools/handler/lock.py:924 lib/fb_tools/handling_obj.py:708
 msgid "Closing {!r} ..."
 msgstr "Schließe {!r} …"
 
@@ -1805,23 +1803,23 @@ msgstr "Ändern von MAC-Adressen:"
 msgid "Successful changed MAC address of VM {v!r} to {m!r}."
 msgstr "Erfolgreich MAC-Adresse der VM {v!r} auf {m!r} geändert."
 
-#: lib/fb_tools/xlate.py:54
+#: lib/fb_tools/xlate.py:59
 msgid "Module directory: {!r}"
 msgstr "Modul-Verzeichnis: {!r}"
 
-#: lib/fb_tools/xlate.py:55
+#: lib/fb_tools/xlate.py:60
 msgid "Base directory: {!r}"
 msgstr "Basis-Verzeichnis: {!r}"
 
-#: lib/fb_tools/xlate.py:56
+#: lib/fb_tools/xlate.py:61
 msgid "Locale directory: {!r}"
 msgstr "Verzeichnis für Locales: {!r}"
 
-#: lib/fb_tools/xlate.py:57
+#: lib/fb_tools/xlate.py:62
 msgid "Locale domain: {!r}"
 msgstr "Locale-Domäne: {!r}"
 
-#: lib/fb_tools/xlate.py:58
+#: lib/fb_tools/xlate.py:63
 msgid "Found .mo-file: {!r}"
 msgstr "Gefundene .mo-Datei: {!r}"
 
