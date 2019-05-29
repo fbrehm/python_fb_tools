@@ -33,7 +33,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.7.6'
+__version__ = '0.7.7'
 
 LOG = logging.getLogger(__name__)
 
@@ -178,16 +178,26 @@ class LockObject(FbBaseObject):
             base_dir=base_dir, initialized=False,
         )
 
+        self._simulate = bool(simulate)
+        self._autoremove = bool(autoremove)
+        self._silent = bool(silent)
+
         if not lockfile:
             raise LockObjectError(_("No lockfile given on init of a LockObject object."))
 
         lfile = Path(lockfile)
 
         if not lfile.exists():
-            raise LockObjectError(_("Lockfile {!r} doesn't exists.").format(str(lockfile)))
-
-        if not lfile.is_file():
-            raise LockObjectError(_("Lockfile {!r} is not a regular file.").format(str(lockfile)))
+            if self.simulate:
+                LOG.info(_(
+                    "Lockfile {!r} doesn't exists, but don't worry, "
+                    "it's simulation mode.").format(str(lockfile)))
+            else:
+                raise LockObjectError(_("Lockfile {!r} doesn't exists.").format(str(lockfile)))
+        else:
+            if not lfile.is_file():
+                raise LockObjectError(_(
+                    "Lockfile {!r} is not a regular file.").format(str(lockfile)))
 
         if fd is not None:
             self._fd = fd
@@ -197,20 +207,23 @@ class LockObject(FbBaseObject):
         self._fcontent = None
         if fcontent is not None:
             self._fcontent = str(fcontent)
-        self._simulate = bool(simulate)
-        self._autoremove = bool(autoremove)
-        self._silent = bool(silent)
 
         self._ctime = ctime
         self._mtime = mtime
 
         # Detecting self._ctime and self._mtime from filestat of the lockfile
-        if not self._ctime or not self._mtime:
-            fstat = self.stat()
-            if not self._ctime:
-                self._ctime = datetime.datetime.utcfromtimestamp(fstat.st_ctime)
-            if not self._mtime:
-                self._mtime = datetime.datetime.utcfromtimestamp(fstat.st_mtime)
+        if not self.ctime or not self.mtime:
+            if lfile.exists():
+                fstat = self.stat()
+                if not self.ctime:
+                    self._ctime = datetime.datetime.utcfromtimestamp(fstat.st_ctime)
+                if not self.mtime:
+                    self._mtime = datetime.datetime.utcfromtimestamp(fstat.st_mtime)
+            else:
+                if not self.ctime:
+                    self._ctime = datetime.datetime.utcnow()
+                if not self.mtime:
+                    self._mtime = datetime.datetime.utcnow()
 
         self.initialized = True
 

@@ -1,3 +1,9 @@
+fb-tools (1.4.5) all; urgency=medium
+
+  * Bugfixing lib/fb_tools/handler/lock.py because of simulation mode.
+
+ -- Frank Brehm <frank@brehm-online.com>  Wed, 29 May 2019 17:00:56 +0200
+
 fb-tools (1.4.4) all; urgency=medium
 
   * Bugfixing in lib/fb_tools/handler/__init__.py
