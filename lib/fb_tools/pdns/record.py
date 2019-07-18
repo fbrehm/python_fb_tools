@@ -663,14 +663,14 @@ class PowerDNSRecordSetComment(FbBaseObject):
         return True
 
     # -------------------------------------------------------------------------
-    def as_dict(self, minimal=False, short=True):
+    def as_dict(self, short=True, minimal=False):
         """
         Transforms the elements of the object into a dict
 
-        @param minimal: Generate a minimal dict, which can be used for the PDNS API
-        @type minimal: bool
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param minimal: Generate a minimal dict, which can be used for the PDNS API
+        @type minimal: bool
 
         @return: structure as dict
         @rtype:  dict
@@ -851,8 +851,22 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
         rrset = cls(**params)
 
         if 'comments' in data and data['comments']:
-            for comment in data['comments']:
-                rrset.comments.append(str(comment))
+            for comment_dict in data['comments']:
+                acc = None
+                cont = ''
+                modified_at = None
+                if 'account' in comment_dict:
+                    acc = comment_dict['account']
+                if 'content' in comment_dict:
+                    cont = comment_dict['content']
+                if 'modified_at' in comment_dict:
+                    modified_at = comment_dict['modified_at']
+                comment = PowerDNSRecordSetComment(
+                    appname=appname, verbose=verbose, base_dir=base_dir,
+                    account=acc, content=cont, modified_at=modified_at)
+                if comment.valid:
+                    comment.initialized = True
+                rrset.comments.append(comment)
 
         rrset._name = str(data['name'])
         rrset._type = str(data['type']).upper()
@@ -904,11 +918,14 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
         res['type'] = self.type
         res['ttl'] = self.ttl
         res['name_unicode'] = self.name_unicode
-        res['comments'] = copy.copy(self.comments)
+        res['comments'] = []
         res['records'] = []
 
         for record in self.records:
             res['records'].append(record.as_dict(short))
+
+        for comment in self.comments:
+            res['comments'].append(comment.as_dict(short=short))
 
         return res
 
