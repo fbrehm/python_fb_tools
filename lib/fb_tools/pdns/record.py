@@ -14,6 +14,7 @@ import copy
 import re
 import datetime
 import collections
+import time
 
 # Third party modules
 
@@ -28,7 +29,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.4.4'
+__version__ = '0.5.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -578,6 +579,174 @@ class PowerDNSRecordList(collections.MutableSequence):
         for record in self._list:
             new_list.append(copy.copy(record))
         return new_list
+
+
+# =============================================================================
+class PowerDNSRecordSetComment(FbBaseObject):
+
+    # -------------------------------------------------------------------------
+    def __init__(
+        self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
+            account=None, content='', modified_at=None):
+
+        self._account = None
+        self._content = ''
+        self._modified_at = int(time.time() + 0.5)
+
+        super(PowerDNSRecordSetComment, self).__init__(
+            appname=appname, verbose=verbose, version=version, base_dir=base_dir)
+
+        self.account = account
+        self.content = content
+        self.modified_at = modified_at
+
+        if initialized is not None:
+            self.initialized = initialized
+
+    # -------------------------------------------------------------------------
+    @property
+    def account(self):
+        "The name of the account, who has created this comment"
+        return self._account
+
+    @account.setter
+    def account(self, value):
+        if value is None:
+            self._account = None
+            return
+        v = str(value).strip()
+        if v == '':
+            self._account = None
+            return
+        self._account = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def content(self):
+        "The underlying content of this comment"
+        return self._content
+
+    @content.setter
+    def content(self, value):
+        if value is None:
+            self._content = ''
+            return
+        v = str(value).strip()
+        self._content = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def modified_at(self):
+        "The UNIX time stamp of the last modification of this comment."
+        return self._modified_at
+
+    @modified_at.setter
+    def modified_at(self, value):
+        if value is None:
+            self._modified_at = int(time.time() + 0.5)
+            return
+        v = int(value)
+        if v < 0:
+            msg = _(
+                "Invalid value for {w} {v!r} of a {c} object - "
+                "must be greater than or equal to zero.").format(
+                w='modified_at', c=self.__class_.__name__, v=value)
+            raise ValueError(msg)
+        self._modified_at = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def valid(self):
+        "Is this a valid comment or not."
+        if self.account is None or self.modified_at is None:
+            return False
+        return True
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, minimal=False, short=True):
+        """
+        Transforms the elements of the object into a dict
+
+        @param minimal: Generate a minimal dict, which can be used for the PDNS API
+        @type minimal: bool
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+
+        @return: structure as dict
+        @rtype:  dict
+        """
+
+        if minimal:
+            return {
+                'account': self.account,
+                'content': self.content,
+                'modified_at': self.modified_at,
+            }
+
+        res = super(PowerDNSRecordSetComment, self).as_dict(short=short)
+        res['account'] = self.account
+        res['content'] = self.content
+        res['modified_at'] = self.modified_at
+        res['valid'] = self.valid
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def __copy__(self):
+
+        return PowerDNSRecordSetComment(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            initialized=self.initialized,
+            account=self.account, content=self.content, modified_at=self.modified_at)
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """
+        Typecasting function for translating object structure
+        into a string
+
+        @return: structure as string
+        @rtype:  str
+        """
+
+        return pp(self.as_dict(minimal=True))
+
+    # -------------------------------------------------------------------------
+    def __repr__(self):
+        """Typecasting into a string for reproduction."""
+
+        out = "<%s(" % (self.__class__.__name__)
+
+        fields = []
+        fields.append("account={!r}".format(self.account))
+        fields.append("content={!r}".format(self.content))
+        fields.append("modified_at={!r}".format(self.modified_at))
+        fields.append("appname={!r}".format(self.appname))
+        fields.append("verbose={!r}".format(self.verbose))
+        fields.append("version={!r}".format(self.version))
+
+        out += ", ".join(fields) + ")>"
+        return out
+
+    # -------------------------------------------------------------------------
+    def __eq__(self, other):
+
+        if self.verbose > 4:
+            LOG.debug(_("Comparing {} objects ...").format(self.__class__.__name__))
+
+        if not isinstance(other, PowerDNSRecordSetComment):
+            return False
+
+        if self.account != other.account:
+            return False
+
+        if self.content != other.content:
+            return False
+
+        if self.modified_at != other.modified_at:
+            return False
+
+        return True
 
 
 # =============================================================================
