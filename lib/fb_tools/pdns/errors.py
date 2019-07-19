@@ -17,6 +17,8 @@ from ..errors import FbHandlerError
 
 _ = XLATOR.gettext
 
+__version__ = '0.2.0'
+
 
 # =============================================================================
 class PowerDNSHandlerError(FbHandlerError):
