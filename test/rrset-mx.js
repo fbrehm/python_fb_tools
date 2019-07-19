@@ -1,13 +1,13 @@
 {
   "comments": [],
-  "name": "pixelpark.ag.",
+  "name": "testing.com.",
   "records": [
     {
-      "content": "10 mx01.pixelpark.com.",
+      "content": "10 mx01.example.com.",
       "disabled": false
     },
     {
-      "content": "10 mx02.pixelpark.com.",
+      "content": "10 mx02.example.com.",
       "disabled": false
     }
   ],

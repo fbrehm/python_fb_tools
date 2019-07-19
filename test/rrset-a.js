@@ -1,15 +1,9 @@
 {
-  "comments": [
-    {
-      "account": "frank.brehm",
-      "content": "",
-      "modified_at": 1520325479
-    }
-  ],
-  "name": "web02.pixelpark.ag.",
+  "comments": [],
+  "name": "web02.testing.com.",
   "records": [
     {
-      "content": "217.66.55.28",
+      "content": "115.66.77.28",
       "disabled": true
     }
   ],

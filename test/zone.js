@@ -2,18 +2,18 @@
   "account": "DNS:NET",
   "api_rectify": false,
   "dnssec": false,
-  "id": "pixelpark.ag.",
+  "id": "testing.com.",
   "kind": "Master",
   "last_check": 0,
   "masters": [],
-  "name": "pixelpark.ag.",
+  "name": "testing.com.",
   "notified_serial": 2018061201,
   "nsec3narrow": false,
   "nsec3param": "",
   "rrsets": [
     {
       "comments": [],
-      "name": "www.pixelpark.ag.",
+      "name": "www.testing.com.",
       "records": [
         {
           "content": "217.66.55.28",
@@ -31,18 +31,18 @@
           "modified_at": 1518186464
         }
       ],
-      "name": "local.pixelpark.ag.",
+      "name": "local.testing.com.",
       "records": [
         {
-          "content": "ns1-local.pixelpark.com.",
+          "content": "ns1-local.example.com.",
           "disabled": false
         },
         {
-          "content": "ns2-local.pixelpark.com.",
+          "content": "ns2-local.example.com.",
           "disabled": false
         },
         {
-          "content": "ns3-local.pixelpark.com.",
+          "content": "ns3-local.example.com.",
           "disabled": false
         }
       ],
@@ -51,10 +51,10 @@
     },
     {
       "comments": [],
-      "name": "live.pixelpark.ag.",
+      "name": "live.testing.com.",
       "records": [
         {
-          "content": "www.pixelpark.ag.",
+          "content": "www.testing.com.",
           "disabled": false
         }
       ],
@@ -69,7 +69,7 @@
           "modified_at": 1520325479
         }
       ],
-      "name": "web02.pixelpark.ag.",
+      "name": "web02.testing.com.",
       "records": [
         {
           "content": "217.66.55.28",
@@ -81,14 +81,14 @@
     },
     {
       "comments": [],
-      "name": "pixelpark.ag.",
+      "name": "testing.com.",
       "records": [
         {
-          "content": "10 mx01.pixelpark.com.",
+          "content": "10 mx01.example.com.",
           "disabled": false
         },
         {
-          "content": "10 mx02.pixelpark.com.",
+          "content": "10 mx02.example.com.",
           "disabled": false
         }
       ],
@@ -97,10 +97,10 @@
     },
     {
       "comments": [],
-      "name": "pixelpark.ag.",
+      "name": "testing.com.",
       "records": [
         {
-          "content": "ns1.pp-dns.com. hostmaster.pixelpark.net. 2018061201 10800 3600 604800 3600",
+          "content": "ns1.example.com. hostmaster.example.com. 2018061201 10800 3600 604800 3600",
           "disabled": false
         }
       ],
@@ -109,7 +109,7 @@
     },
     {
       "comments": [],
-      "name": "pixelpark.ag.",
+      "name": "testing.com.",
       "records": [
         {
           "content": "ns3.pp-dns.com.",
@@ -135,5 +135,5 @@
   "serial": 2018061201,
   "soa_edit": "",
   "soa_edit_api": "INCEPTION-INCREMENT",
-  "url": "/api/v1/servers/localhost/zones/pixelpark.ag."
+  "url": "/api/v1/servers/localhost/zones/testing.com."
 }

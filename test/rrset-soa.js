@@ -1,9 +1,9 @@
 {
   "comments": [],
-  "name": "pixelpark.ag.",
+  "name": "testing.com.",
   "records": [
     {
-      "content": "ns1.pp-dns.com. hostmaster.pixelpark.net. 2018061201 10800 3600 604800 3600",
+      "content": "ns1.example.com. hostmaster.example.com. 2018061201 10800 3600 604800 3600",
       "disabled": false
     }
   ],

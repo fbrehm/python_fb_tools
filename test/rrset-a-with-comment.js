@@ -6,10 +6,10 @@
       "modified_at": 1520325479
     }
   ],
-  "name": "web02.pixelpark.ag.",
+  "name": "web01.testing.com.",
   "records": [
     {
-      "content": "217.66.55.28",
+      "content": "115.66.77.27",
       "disabled": true
     }
   ],
