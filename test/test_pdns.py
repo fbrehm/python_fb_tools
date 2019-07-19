@@ -12,7 +12,7 @@ import os
 import sys
 import logging
 # import tempfile
-# import datetime
+import datetime
 
 # from pathlib import Path
 
@@ -147,6 +147,7 @@ class TestFbPdns(FbToolsTestcase):
 
         test_account = 'tester'
         test_content = "Test comment"
+        test_modified_at = 1000 * 24 * 60 * 60
 
         from fb_tools.pdns.record import PowerDNSRecordSetComment
 
@@ -160,8 +161,11 @@ class TestFbPdns(FbToolsTestcase):
             pp(empty_comment.as_dict(minimal=True))))
         self.assertIsNone(empty_comment.account)
         self.assertEqual(empty_comment.content, '')
-        self.assertIsNotNone(empty_comment.modified_at)
+        self.assertIsInstance(empty_comment.modified_at, int)
+        self.assertGreaterEqual(empty_comment.modified_at, 0)
+        self.assertIsInstance(empty_comment.modified_date, datetime.datetime)
         self.assertFalse(empty_comment.valid)
+        del empty_comment
 
         LOG.debug("Creating an non empty, valid comment.")
         comment = PowerDNSRecordSetComment(
@@ -173,8 +177,39 @@ class TestFbPdns(FbToolsTestcase):
             pp(comment.as_dict(minimal=True))))
         self.assertEqual(comment.account, test_account)
         self.assertEqual(comment.content, test_content)
-        self.assertIsNotNone(comment.modified_at)
+        self.assertIsInstance(comment.modified_at, int)
+        self.assertGreaterEqual(comment.modified_at, 0)
+        self.assertIsInstance(comment.modified_date, datetime.datetime)
         self.assertTrue(comment.valid)
+
+        LOG.debug("Creating a comment with a defined modified_at property.")
+        comment = PowerDNSRecordSetComment(
+            appname=self.appname, verbose=self.verbose,
+            account=test_account, content=test_content, modified_at=test_modified_at)
+        LOG.debug("Comment: %%s: {}".format(comment))
+        if self.verbose > 1:
+            LOG.debug("Comment: %%r: {!r}".format(comment))
+        if self.verbose > 2:
+            LOG.debug("Ccomment.as_dict():\n{}".format(pp(comment.as_dict())))
+        self.assertIsInstance(comment.modified_at, int)
+        self.assertEqual(comment.modified_at, test_modified_at)
+        self.assertIsInstance(comment.modified_date, datetime.datetime)
+
+        LOG.debug("Testing raising errors on wrong (String) modified_at property.")
+        with self.assertRaises(ValueError) as cm:
+            comment = PowerDNSRecordSetComment(
+                appname=self.appname, verbose=self.verbose,
+                account=test_account, content=test_content, modified_at='bla')
+        e = cm.exception
+        LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
+
+        LOG.debug("Testing raising errors on wrong (negative) modified_at property.")
+        with self.assertRaises(ValueError) as cm:
+            comment = PowerDNSRecordSetComment(
+                appname=self.appname, verbose=self.verbose,
+                account=test_account, content=test_content, modified_at=-100)
+        e = cm.exception
+        LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
 
 
 # =============================================================================
