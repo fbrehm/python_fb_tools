@@ -32,9 +32,10 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 from .errors import PowerDNSZoneError
 
 from .record import PowerDnsSOAData
+from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.8.6'
+__version__ = '0.9.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -656,7 +657,35 @@ class PowerDNSZone(BasePowerDNSHandler):
         return None
 
     # -------------------------------------------------------------------------
-    def update_soa(self, new_soa, comment=None, ttl=None):
+    def _generate_comments_list(self, comments=None):
+
+        comment_list_raw = []
+        comment_list = []
+        if comments:
+            if isinstance(comments, list):
+                for cmt in comments:
+                    comment_list_raw.append(copy.copy(cmt))
+            else:
+                comment_list_raw.append(copy.copy(comments))
+        for cmt in comment_list_raw:
+            if not cmt:
+                continue
+            if isinstance(cmt, PowerDNSRecordSetComment):
+                if cmt.valid:
+                    comment_list.append(copy.copy(cmt))
+                else:
+                    LOG.warn(_("Found invalid comment {!r}.").format(str(cmt)))
+            else:
+                cmt = str(cmt).strip()
+                comment = PowerDNSRecordSetComment(
+                    appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+                    account='unknown', content=cmt, initialized=True)
+                comment_list.append(comment)
+
+        return comment_list
+
+    # -------------------------------------------------------------------------
+    def update_soa(self, new_soa, comments=None, ttl=None):
 
         if not isinstance(new_soa, PowerDnsSOAData):
             msg = _("New SOA must be of type {e}, given {t}: {s!r}").format(
@@ -673,10 +702,7 @@ class PowerDNSZone(BasePowerDNSHandler):
                 raise RuntimeError(_("Got no SOA for zone {!r}.").format(self.name))
             ttl = cur_soa_rrset.ttl
 
-        if comment is not None:
-            comment = str(comment).strip()
-            if comment == '':
-                comment = None
+        comment_list = self._generate_comments_list(comments)
 
         rrset = {
             'name': self.name,
@@ -684,16 +710,8 @@ class PowerDNSZone(BasePowerDNSHandler):
             'ttl': ttl,
             'changetype': 'REPLACE',
             'records': [],
-            'comments': [],
+            'comments': comment_list,
         }
-
-#        if comment:
-#            comment_rec = {
-#                'content': comment,
-#                'account': getpass.getuser(),
-#                'modified_at': int(time.time() + 0.5),
-#            }
-#            rrset['comments'] = [comment_rec]
 
         record = {
             'content': new_soa.data,
@@ -725,7 +743,7 @@ class PowerDNSZone(BasePowerDNSHandler):
         self.update_soa(soa)
 
     # -------------------------------------------------------------------------
-    def add_address_record(self, fqdn, address, ttl=None):
+    def add_address_record(self, fqdn, address, ttl=None, comments=None, append_comments=False):
 
         if not isinstance(address, (ipaddress.IPv4Address, ipaddress.IPv6Address)):
             msg = _(
@@ -740,6 +758,9 @@ class PowerDNSZone(BasePowerDNSHandler):
             t=record_type, f=fqdn, a=str(address)))
 
         canon_fqdn = self.canon_name(fqdn)
+
+        given_comment_list = self._generate_comments_list(comments)
+        comment_list = []
 
         self.update()
         if self.verbose > 3:
@@ -768,6 +789,17 @@ class PowerDNSZone(BasePowerDNSHandler):
                     "set-ptr": False,
                 }
                 records.append(record)
+            if append_comments and rrset.comments:
+                comment_list = copy.copy(rrset.comments)
+                for comment in given_comment_list:
+                    comment_list.append(comment)
+            else:
+                comment_list = given_comment_list
+        else:
+            comment_list = given_comment_list
+        comment_list_plain = []
+        for comment in comment_list:
+            comment_list_plain.append(comment.as_dict(minimal=True))
 
         record = {
             "name": canon_fqdn,
@@ -783,6 +815,7 @@ class PowerDNSZone(BasePowerDNSHandler):
             "type": record_type,
             "ttl": ttl,
             "changetype": "REPLACE",
+            'comments': comment_list_plain,
             "records": records,
         }
 
@@ -795,7 +828,7 @@ class PowerDNSZone(BasePowerDNSHandler):
         return True
 
     # -------------------------------------------------------------------------
-    def add_ptr_record(self, pointer, fqdn, ttl=None):
+    def add_ptr_record(self, pointer, fqdn, ttl=None, comments=None, append_comments=False):
 
         canon_fqdn = self.canon_name(fqdn)
 
@@ -816,6 +849,9 @@ class PowerDNSZone(BasePowerDNSHandler):
             if rrset:
                 ttl = rrset.ttl
 
+        given_comment_list = self._generate_comments_list(comments)
+        comment_list = []
+
         records = []
         if rrset:
             for r in rrset.records:
@@ -827,6 +863,17 @@ class PowerDNSZone(BasePowerDNSHandler):
                     "set-ptr": False,
                 }
                 records.append(record)
+            if append_comments and rrset.comments:
+                comment_list = copy.copy(rrset.comments)
+                for comment in given_comment_list:
+                    comment_list.append(comment)
+            else:
+                comment_list = given_comment_list
+        else:
+            comment_list = given_comment_list
+        comment_list_plain = []
+        for comment in comment_list:
+            comment_list_plain.append(comment.as_dict(minimal=True))
 
         record = {
             "name": pointer,
@@ -837,11 +884,13 @@ class PowerDNSZone(BasePowerDNSHandler):
         }
         records.append(record)
 
+
         new_rrset = {
             "name": pointer,
             "type": 'PTR',
             "ttl": ttl,
             "changetype": "REPLACE",
+            'comments': comment_list_plain,
             "records": records,
         }
 
