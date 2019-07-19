@@ -28,7 +28,7 @@ sys.path.insert(0, libdir)
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
-# from fb_tools.common import to_bool
+from fb_tools.common import pp
 
 LOG = logging.getLogger('test_pdns')
 
@@ -140,6 +140,42 @@ class TestFbPdns(FbToolsTestcase):
         LOG.info("Testing import of PowerDNSServer from fb_tools.pdns.server ...")
         from fb_tools.pdns.server import PowerDNSServer                    # noqa
 
+    # -------------------------------------------------------------------------
+    def test_pdns_recordset_comment(self):
+
+        LOG.info("Testing class PowerDNSRecordSetComment ...")
+
+        test_account = 'tester'
+        test_content = "Test comment"
+
+        from fb_tools.pdns.record import PowerDNSRecordSetComment
+
+        LOG.debug("Creating an empty, invalid comment.")
+        empty_comment = PowerDNSRecordSetComment(
+            appname=self.appname, verbose=self.verbose)
+        LOG.debug("Empty comment: %%r: {!r}".format(empty_comment))
+        LOG.debug("Empty comment: %%s: {}".format(empty_comment))
+        LOG.debug("Empty comment.as_dict():\n{}".format(pp(empty_comment.as_dict())))
+        LOG.debug("Empty comment.as_dict(minimal=True): {}".format(
+            pp(empty_comment.as_dict(minimal=True))))
+        self.assertIsNone(empty_comment.account)
+        self.assertEqual(empty_comment.content, '')
+        self.assertIsNotNone(empty_comment.modified_at)
+        self.assertFalse(empty_comment.valid)
+
+        LOG.debug("Creating an non empty, valid comment.")
+        comment = PowerDNSRecordSetComment(
+            appname=self.appname, verbose=self.verbose, account=test_account, content=test_content)
+        LOG.debug("Comment: %%r: {!r}".format(comment))
+        LOG.debug("Comment: %%s: {}".format(comment))
+        LOG.debug("Comment.as_dict():\n{}".format(pp(comment.as_dict())))
+        LOG.debug("Comment.as_dict(minimal=True): {}".format(
+            pp(comment.as_dict(minimal=True))))
+        self.assertEqual(comment.account, test_account)
+        self.assertEqual(comment.content, test_content)
+        self.assertIsNotNone(comment.modified_at)
+        self.assertTrue(comment.valid)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -154,6 +190,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     suite.addTest(TestFbPdns('test_import', verbose))
+    suite.addTest(TestFbPdns('test_pdns_recordset_comment', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
