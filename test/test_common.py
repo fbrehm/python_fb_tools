@@ -28,6 +28,7 @@ from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
 LOG = logging.getLogger('test_common')
 
+
 # =============================================================================
 class TestFbCommon(FbToolsTestcase):
 
@@ -571,10 +572,12 @@ class TestFbCommon(FbToolsTestcase):
             self.assertEqual(expected, result)
 
         LOG.debug("Testing indent() with a predicate function.")
+
         def test_predicate(line):
             if line.strip().startswith('b'):
                 return False
             return line.strip()
+
         test_pairs = (
             ('', ''),
             ('a', ind + 'a'),
