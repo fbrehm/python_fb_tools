@@ -29,7 +29,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -645,14 +645,27 @@ class PowerDNSRecordSetComment(FbBaseObject):
         if value is None:
             self._modified_at = int(time.time() + 0.5)
             return
-        v = int(value)
+        try:
+            v = int(value)
+        except ValueError as e:
+            msg = (_(
+                "Invalid value for {w} of a {c} object - ").format(
+                w='modified_at', c=self.__class__.__name__) + str(e))
+            raise ValueError(msg)
         if v < 0:
             msg = _(
                 "Invalid value for {w} {v!r} of a {c} object - "
                 "must be greater than or equal to zero.").format(
-                w='modified_at', c=self.__class_.__name__, v=value)
+                w='modified_at', c=self.__class__.__name__, v=value)
             raise ValueError(msg)
         self._modified_at = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def modified_date(self):
+        "The modification of this comment as a datetime object."
+
+        return datetime.datetime.utcfromtimestamp(self.modified_at)
 
     # -------------------------------------------------------------------------
     @property
@@ -687,6 +700,7 @@ class PowerDNSRecordSetComment(FbBaseObject):
         res['account'] = self.account
         res['content'] = self.content
         res['modified_at'] = self.modified_at
+        res['modified_date'] = self.modified_date
         res['valid'] = self.valid
 
         return res
