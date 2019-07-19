@@ -29,7 +29,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.5.2'
+__version__ = '0.5.3'
 
 LOG = logging.getLogger(__name__)
 
@@ -113,16 +113,24 @@ class PowerDNSRecord(FbBaseObject):
         self._disabled = bool(value)
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, minimal=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param minimal: Generate a minimal dict, which can be used for the PDNS API
+        @type minimal: bool
 
         @return: structure as dict
         @rtype:  dict
         """
+
+        if minimal:
+            return {
+                'content': self.content,
+                'disabled': self.disabled,
+            }
 
         res = super(PowerDNSRecord, self).as_dict(short=short)
         res['content'] = self.content
@@ -916,16 +924,32 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
         return rel_name
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, minimal=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param minimal: Generate a minimal dict, which can be used for the PDNS API
+        @type minimal: bool
 
         @return: structure as dict
         @rtype:  dict
         """
+
+        if minimal:
+            ret = {
+                "comments": [],
+                "name": self.name,
+                "records": [],
+                "ttl": self.ttl,
+                "type": self.type,
+            }
+            for comment in self.comments:
+                ret['comments'].append(comment.as_dict(minimal=True))
+            for record in self.records:
+                ret['records'].append(record.as_dict(minimal=True))
+            return ret
 
         res = super(PowerDNSRecordSet, self).as_dict(short=short)
         res['name'] = self.name

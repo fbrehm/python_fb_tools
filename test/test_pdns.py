@@ -13,8 +13,9 @@ import sys
 import logging
 # import tempfile
 import datetime
+import json
 
-# from pathlib import Path
+from pathlib import Path
 
 try:
     import unittest2 as unittest
@@ -22,6 +23,7 @@ except ImportError:
     import unittest
 
 # from babel.dates import LOCALTZ
+import six
 
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 sys.path.insert(0, libdir)
@@ -43,12 +45,63 @@ class TestFbPdns(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def setUp(self):
 
-        pass
+        self.curdir = Path(os.path.dirname(os.path.abspath(__file__)))
+        self.zone_file = self.curdir / 'zone.js'
+        self.a_rrset_file = self.curdir / 'rrset-a.js'
+        self.a_rrset_file_comment = self.curdir / 'rrset-a-with-comment.js'
+        self.mx_rrset_file = self.curdir / 'rrset-mx.js'
+        self.soa_rrset_file = self.curdir / 'rrset-soa.js'
+
+        self.open_args = {}
+        if six.PY3:
+            self.open_args['encoding'] = 'utf-8'
+            self.open_args['errors'] = 'surrogateescape'
+
 
     # -------------------------------------------------------------------------
     def tearDown(self):
 
         pass
+
+    # -------------------------------------------------------------------------
+    def get_js_a_rrset(self):
+
+        ret = None
+        with self.a_rrset_file.open('r', **self.open_args) as fh:
+            ret = json.load(fh)
+        return ret
+
+    # -------------------------------------------------------------------------
+    def get_js_a_rrset_comment(self):
+
+        ret = None
+        with self.a_rrset_file_comment.open('r', **self.open_args) as fh:
+            ret = json.load(fh)
+        return ret
+
+    # -------------------------------------------------------------------------
+    def get_js_mx_rrset(self):
+
+        ret = None
+        with self.mx_rrset_file.open('r', **self.open_args) as fh:
+            ret = json.load(fh)
+        return ret
+
+    # -------------------------------------------------------------------------
+    def get_js_soa_rrset(self):
+
+        ret = None
+        with self.soa_rrset_file.open('r', **self.open_args) as fh:
+            ret = json.load(fh)
+        return ret
+
+    # -------------------------------------------------------------------------
+    def get_js_zone(self):
+
+        ret = None
+        with self.zone_file.open('r', **self.open_args) as fh:
+            ret = json.load(fh)
+        return ret
 
     # -------------------------------------------------------------------------
     def test_import(self):
@@ -156,7 +209,8 @@ class TestFbPdns(FbToolsTestcase):
             appname=self.appname, verbose=self.verbose)
         LOG.debug("Empty comment: %%r: {!r}".format(empty_comment))
         LOG.debug("Empty comment: %%s: {}".format(empty_comment))
-        LOG.debug("Empty comment.as_dict():\n{}".format(pp(empty_comment.as_dict())))
+        if self.verbose > 1:
+            LOG.debug("Empty comment.as_dict():\n{}".format(pp(empty_comment.as_dict())))
         LOG.debug("Empty comment.as_dict(minimal=True): {}".format(
             pp(empty_comment.as_dict(minimal=True))))
         self.assertIsNone(empty_comment.account)
@@ -172,7 +226,8 @@ class TestFbPdns(FbToolsTestcase):
             appname=self.appname, verbose=self.verbose, account=test_account, content=test_content)
         LOG.debug("Comment: %%r: {!r}".format(comment))
         LOG.debug("Comment: %%s: {}".format(comment))
-        LOG.debug("Comment.as_dict():\n{}".format(pp(comment.as_dict())))
+        if self.verbose > 1:
+            LOG.debug("Comment.as_dict():\n{}".format(pp(comment.as_dict())))
         LOG.debug("Comment.as_dict(minimal=True): {}".format(
             pp(comment.as_dict(minimal=True))))
         self.assertEqual(comment.account, test_account)
@@ -211,6 +266,73 @@ class TestFbPdns(FbToolsTestcase):
         e = cm.exception
         LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
 
+    # -------------------------------------------------------------------------
+    def test_pdns_record(self):
+
+        LOG.info("Testing class PowerDNSRecord ...")
+
+        test_content = "www.testing.com."
+
+        from fb_tools.pdns.record import PowerDNSRecord
+
+        LOG.debug("Creating an enabled record.")
+        record = PowerDNSRecord(
+            appname=self.appname, verbose=self.verbose, content=test_content)
+        LOG.debug("Record: %%r: {!r}".format(record))
+        if self.verbose > 1:
+            LOG.debug("Record: %%s: {}".format(record))
+            LOG.debug("record.as_dict():\n{}".format(pp(record.as_dict())))
+        self.assertEqual(record.content, test_content)
+        self.assertIsInstance(record.disabled, bool)
+        self.assertFalse(record.disabled)
+
+        LOG.debug("Creating a disabled record.")
+        record = PowerDNSRecord(
+            appname=self.appname, verbose=self.verbose, content=test_content, disabled=True)
+        LOG.debug("Record: %%r: {!r}".format(record))
+        LOG.debug("Record: %%s: {}".format(record))
+        if self.verbose > 1:
+            LOG.debug("record.as_dict():\n{}".format(pp(record.as_dict())))
+        self.assertEqual(record.content, test_content)
+        self.assertIsInstance(record.disabled, bool)
+        self.assertTrue(record.disabled)
+
+    # -------------------------------------------------------------------------
+    def test_pdns_recordset_simple(self):
+
+        LOG.info("Testing class PowerDNSRecordSet ...")
+
+        from fb_tools.pdns.record import PowerDNSRecordSet
+
+        js_rrset = self.get_js_a_rrset()
+
+        rrset = PowerDNSRecordSet.init_from_dict(
+            js_rrset, appname=self.appname, verbose=self.verbose)
+        LOG.debug("RecordSet: %%r: {!r}".format(rrset))
+        if self.verbose > 1:
+            LOG.debug("RecordSet: %%s: {}".format(rrset))
+            LOG.debug("rrset.as_dict():\n{}".format(pp(rrset.as_dict())))
+        LOG.debug("RecordSet.as_dict(minimal=True): {}".format(
+            pp(rrset.as_dict(minimal=True))))
+
+    # -------------------------------------------------------------------------
+    def test_pdns_recordset_comment(self):
+
+        LOG.info("Testing class PowerDNSRecordSet with comments ...")
+
+        from fb_tools.pdns.record import PowerDNSRecordSet
+
+        js_rrset = self.get_js_a_rrset_comment()
+
+        rrset = PowerDNSRecordSet.init_from_dict(
+            js_rrset, appname=self.appname, verbose=self.verbose)
+        LOG.debug("RecordSet: %%r: {!r}".format(rrset))
+        if self.verbose > 1:
+            LOG.debug("RecordSet: %%s: {}".format(rrset))
+            LOG.debug("rrset.as_dict():\n{}".format(pp(rrset.as_dict())))
+        LOG.debug("RecordSet.as_dict(minimal=True): {}".format(
+            pp(rrset.as_dict(minimal=True))))
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -225,6 +347,9 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     suite.addTest(TestFbPdns('test_import', verbose))
+    suite.addTest(TestFbPdns('test_pdns_recordset_comment', verbose))
+    suite.addTest(TestFbPdns('test_pdns_record', verbose))
+    suite.addTest(TestFbPdns('test_pdns_recordset_simple', verbose))
     suite.addTest(TestFbPdns('test_pdns_recordset_comment', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)

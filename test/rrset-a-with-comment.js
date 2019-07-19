@@ -10,7 +10,7 @@
   "records": [
     {
       "content": "115.66.77.27",
-      "disabled": true
+      "disabled": false
     }
   ],
   "ttl": 3600,
