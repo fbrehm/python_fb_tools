@@ -17,6 +17,7 @@ import collections
 import time
 
 # Third party modules
+import six
 
 # Own modules
 from ..xlate import XLATOR
@@ -29,7 +30,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.5.4'
+__version__ = '0.5.5'
 
 LOG = logging.getLogger(__name__)
 
@@ -817,6 +818,19 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
         "The name of this record set."
         return self._name
 
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, six.string_types):
+            msg = _("A {w} must be a string type, but is {v!r} instead.").format(
+                w='PowerDNSRecordSet.name', v=value)
+            raise TypeError(msg)
+        v = to_str(value).strip().lower()
+        if v == '':
+            msg = _("A {w} may not be empty: {v!r}.").format(
+                w='PowerDNSRecordSet.name', v=value)
+            raise ValueError(msg)
+        self._name = v
+
     # -----------------------------------------------------------
     @property
     def name_unicode(self):
@@ -833,6 +847,20 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
     def type(self):
         "The type of this record set."
         return self._type
+
+    @type.setter
+    def type(self, value):
+        if not isinstance(value, six.string_types):
+            msg = _("A {w} must be a string type, but is {v!r} instead.").format(
+                w='PowerDNSRecordSet.type', v=value)
+            raise TypeError(msg)
+        v = to_str(value).strip().upper()
+        if v == '':
+            msg = _("A {w} may not be empty: {v!r}.").format(
+                w='PowerDNSRecordSet.type', v=value)
+            raise ValueError(msg)
+        v = self.verify_rrset_type(v)
+        self._name = v
 
     # -----------------------------------------------------------
     @property
