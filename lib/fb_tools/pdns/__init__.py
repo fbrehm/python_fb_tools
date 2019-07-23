@@ -23,12 +23,13 @@ from abc import ABCMeta
 import requests
 import urllib3
 
+import six
 from six import add_metaclass
 
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import pp, to_bool, RE_DOT_AT_END, reverse_pointer
+from ..common import pp, to_bool, RE_DOT_AT_END, reverse_pointer, to_str
 
 from ..handling_obj import HandlingObject
 
@@ -37,7 +38,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.6.5'
+__version__ = '0.6.6'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -49,6 +50,14 @@ DEFAULT_API_PREFIX = '/api/v1'
 DEFAULT_USE_HTTPS = False
 
 FQDN_REGEX = re.compile(r'^((?!-)[-A-Z\d]{1,62}(?<!-)\.)+[A-Z]{1,62}\.?$', re.IGNORECASE)
+
+VALID_RRSET_TYPES = [
+    'SOA', 'A', 'AAAA', 'AFSDB', 'APL', 'CAA', 'CDNSKEY', 'CDS', 'CERT', 'CNAME', 'DHCID',
+    'DLV', 'DNAME', 'DNSKEY', 'DS', 'HIP', 'HINFO', 'IPSECKEY', 'ISDN', 'KEY', 'KX', 'LOC',
+    'MB', 'MINFO', 'MX', 'NAPTR', 'NS', 'NSAP', 'NSEC', 'NSEC3', 'NSEC3PARAM', 'OPT', 'PTR',
+    'RP', 'RRSIG', 'SIG', 'SPF', 'SRV', 'SSHFP', 'TA', 'TKEY', 'TLSA', 'TSIG', 'TXT', 'URI',
+    'WKS', 'X25'
+]
 
 _ = XLATOR.gettext
 
@@ -436,6 +445,33 @@ class BasePowerDNSHandler(HandlingObject):
 
         ret = RE_DOT_AT_END.sub('', name)
         return ret
+
+    # -------------------------------------------------------------------------
+    def verify_rrset_type(self, rtype, raise_on_error=True):
+
+        if not isinstance(rtype, six.string_types):
+            msg = _("A rrset type must be a string type, but is {!r} instead.").format(rtype)
+            if raise_on_error:
+                raise TypeError(msg)
+            LOG.error(msg)
+            return None
+
+        type_used = to_str(rtype).strip().upper()
+        if not type_used:
+            msg = _("Invalid, empty rrset type {!r} given.").format(rtype)
+            if raise_on_error:
+                raise ValueError(msg)
+            LOG.error(msg)
+            return None
+
+        if type_used not in VALID_RRSET_TYPES:
+            msg = _("Invalid rrset type {!r} given.").format(rtype)
+            if raise_on_error:
+                raise ValueError(msg)
+            LOG.error(msg)
+            return None
+
+        return type_used
 
 
 # =============================================================================
