@@ -36,7 +36,7 @@ from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.2'
+__version__ = '0.9.3'
 
 LOG = logging.getLogger(__name__)
 
@@ -646,16 +646,10 @@ class PowerDNSZone(BasePowerDNSHandler):
     # -------------------------------------------------------------------------
     def get_soa(self):
 
-        if not len(self.rrsets):
-            self.update()
-
-        for rrset in self.rrsets:
-            if rrset.type == 'SOA':
-                soa = rrset.get_soa_data()
-                return soa
-
-        LOG.warning(_("Did not get SOA for zone {!r}.").format(self.name))
-        return None
+        rrset = self.get_soa_rrset()
+        if not rrset:
+            return None
+        return rrset.get_soa_data()
 
     # -------------------------------------------------------------------------
     def _generate_comments_list(self, comments=None):
@@ -1014,6 +1008,41 @@ class PowerDNSZone(BasePowerDNSHandler):
             return None
 
         return fqdn_used
+
+    # -------------------------------------------------------------------------
+    def get_rrset(self, fqdn, rrset_type, raise_on_error=True):
+
+        fqdn_used = self.verify_fqdn(fqdn, raise_on_error=raise_on_error)
+        if not fqdn_used:
+            return None
+        rtype = self.verify_rrset_type(rrset_type, raise_on_error=raise_on_error)
+        if not rtype:
+            return None
+
+        LOG.debug(_("Searching for RecordSet {f!r} of type {t!r} in zone {z!r}.").format(
+            f=fqdn_used, t=rtype, z=self.name))
+
+        if not len(self.rrsets):
+            self.update()
+
+        for rrset in self.rrsets:
+            if rrset.name == fqdn_used and rrset.type == rtype:
+                if self.verbose > 2:
+                    LOG.debug(_("Found {t} RecordSet:\n{r}").format(
+                        t=rtype, r=pp(rrset.as_dict(minimal=True))))
+                return rrset
+
+        LOG.debug(_("Did not found RecordSet {f!r} of type {t!r}.".format(
+            f=fqdn_used, t=rtype)))
+        return None
+
+    # -------------------------------------------------------------------------
+    def get_soa_rrset(self, raise_on_error=True):
+
+        rrset = self.get_rrset(fqdn=self.name, rrset_type='SOA', raise_on_error=raise_on_error)
+        if not rrset:
+            LOG.warning(_("Did not get SOA for zone {!r}.").format(self.name))
+        return rrset
 
 
 # =============================================================================

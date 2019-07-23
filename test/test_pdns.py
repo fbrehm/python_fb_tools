@@ -350,6 +350,32 @@ class TestFbPdns(FbToolsTestcase):
             LOG.debug("zone.as_dict():\n{}".format(pp(zone.as_dict())))
 
     # -------------------------------------------------------------------------
+    def test_zone_get_soa(self):
+
+        LOG.info("Testing class PowerDNSZone.get_soa() ...")
+
+        from fb_tools.pdns.zone import PowerDNSZone
+
+        js_zone = self.get_js_zone()
+
+        zone = PowerDNSZone.init_from_dict(
+            js_zone, appname=self.appname, verbose=self.verbose)
+        if self.verbose > 1:
+            LOG.debug("Zone: %%r: {!r}".format(zone))
+
+        soa = zone.get_soa()
+        if self.verbose > 2:
+            LOG.debug("Got SOA object:\n{}".format(pp(soa.as_dict())))
+        self.assertIsNotNone(soa)
+        self.assertEqual(soa.primary, 'ns1.example.com.')
+        self.assertEqual(soa.email, 'hostmaster.example.com.')
+        self.assertEqual(soa.serial, 2018061201)
+        self.assertEqual(soa.refresh, 10800)
+        self.assertEqual(soa.retry, 1800)
+        self.assertEqual(soa.expire, 604800)
+        self.assertEqual(soa.ttl, 3600)
+
+    # -------------------------------------------------------------------------
     def test_verify_fqdn(self):
 
         LOG.info("Testing PowerDNSZone.verify_fqdn() ...")
@@ -425,6 +451,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbPdns('test_pdns_recordset_comment', verbose))
     suite.addTest(TestFbPdns('test_zone_simple', verbose))
     suite.addTest(TestFbPdns('test_verify_fqdn', verbose))
+    suite.addTest(TestFbPdns('test_zone_get_soa', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
