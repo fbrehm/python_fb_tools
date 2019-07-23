@@ -36,7 +36,7 @@ from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.3'
+__version__ = '0.9.4'
 
 LOG = logging.getLogger(__name__)
 
@@ -722,16 +722,100 @@ class PowerDNSZone(BasePowerDNSHandler):
 
     # -------------------------------------------------------------------------
     def increase_serial(self):
+        "Increasing the serial number of current zone."
 
         self.update()
 
-        soa = self.get_soa()
+        soa_rrset = self.get_soa_rrset()
+        soa = soa_rrset.get_soa_data()
+
         old_serial = soa.serial
         new_serial = soa.increase_serial()
 
         LOG.debug(_("Increasing serial of zone {z!r} from {o} => {n}.").format(
             z=self.name, o=old_serial, n=new_serial))
-        self.update_soa(soa)
+
+        new_soa_record = PowerDNSRecord(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            content=soa.data, disabled=False, initialized=True)
+
+        soa_rrset.records.clear()
+        soa_rrset.records.append(new_soa_record)
+        self.replace_rrset(soa_rrset)
+
+        # self.update_soa(soa)
+
+    # -------------------------------------------------------------------------
+    def generate_new_comment_list(self, rrset, comment=None, account=None, append_comments=True):
+
+        if not isinstance(rrset, PowerDNSRecordSet):
+            msg = _("Parameter {w!r} {a!r} is not a {e} object, but a {c} object instead.").format(
+                w='rrset', a=rrset, e='PowerDNSRecordSet', c=rrset.__class__.__name__)
+            raise TypeError(msg)
+
+        comment_list = []
+        if append_comments:
+            for cmt in rrset.comments:
+                if cmt.valid and cmt.content:
+                    comment_list.append(cmt)
+        if comment:
+            comment = str(comment).strip()
+        if comment:
+            used_account = ''
+            if account:
+                used_account = str(account).strip()
+            if not used_account:
+                used_account = 'unknown'
+            cmt = PowerDNSRecordSetComment(
+                appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+                account=used_account, content=comment)
+            comment_list.append(cmt)
+
+        return comment_list
+
+    # -------------------------------------------------------------------------
+    def replace_rrset(
+            self, rrset, set_ptr=False, comment=None, account=None, append_comments=True):
+
+        if not isinstance(rrset, PowerDNSRecordSet):
+            msg = _("Parameter {w!r} {a!r} is not a {e} object, but a {c} object instead.").format(
+                w='rrset', a=rrset, e='PowerDNSRecordSet', c=rrset.__class__.__name__)
+            raise TypeError(msg)
+
+        comment_list = self.generate_new_comment_list(
+            rrset, comment=comment, account=account, append_comments=append_comments)
+        rrset.comments = comment_list
+
+        rrset_dict = rrset.as_dict(minimal=True)
+        rrset_dict["changetype"] = 'REPLACE'
+        for record in rrset_dict"records"]:
+            record["set-ptr"] = bool(set_ptr)
+
+        payload = {"rrsets": [rrset_dict]}
+        LOG.debug(_("Replacing record set in zone {!r}.").format(self.name))
+
+        self.patch(payload)
+
+    # -------------------------------------------------------------------------
+    def delete_rrset(self, rrset):
+
+        if not isinstance(rrset, PowerDNSRecordSet):
+            msg = _("Parameter {w!r} {a!r} is not a {e} object, but a {c} object instead.").format(
+                w='rrset', a=rrset, e='PowerDNSRecordSet', c=rrset.__class__.__name__)
+            raise TypeError(msg)
+
+        rrset_dict = {
+            'name': rrset.name,
+            "type": rrset.type,
+            "changetype": 'DELETE',
+            "records": [],
+            "comments": [],
+        }
+
+        payload = {"rrsets": [rrset_dict]}
+        LOG.debug(_("Deleting record set in zone {!r}.").format(self.name))
+
+        self.patch(payload)
 
     # -------------------------------------------------------------------------
     def add_address_record(self, fqdn, address, ttl=None, comments=None, append_comments=False):
