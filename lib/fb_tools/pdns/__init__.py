@@ -37,7 +37,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.6.4'
+__version__ = '0.6.5'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -47,6 +47,8 @@ DEFAULT_PORT = 8081
 DEFAULT_TIMEOUT = 20
 DEFAULT_API_PREFIX = '/api/v1'
 DEFAULT_USE_HTTPS = False
+
+FQDN_REGEX = re.compile(r'^((?!-)[-A-Z\d]{1,62}(?<!-)\.)+[A-Z]{1,62}\.?$', re.IGNORECASE)
 
 _ = XLATOR.gettext
 

@@ -333,6 +333,78 @@ class TestFbPdns(FbToolsTestcase):
         LOG.debug("RecordSet.as_dict(minimal=True): {}".format(
             pp(rrset.as_dict(minimal=True))))
 
+    # -------------------------------------------------------------------------
+    def test_zone_simple(self):
+
+        LOG.info("Testing class PowerDNSZone ...")
+
+        from fb_tools.pdns.zone import PowerDNSZone
+
+        js_zone = self.get_js_zone()
+
+        zone = PowerDNSZone.init_from_dict(
+            js_zone, appname=self.appname, verbose=self.verbose)
+        LOG.debug("Zone: %%r: {!r}".format(zone))
+        if self.verbose > 1:
+            LOG.debug("Zone: %%s: {}".format(zone))
+            LOG.debug("zone.as_dict():\n{}".format(pp(zone.as_dict())))
+
+    # -------------------------------------------------------------------------
+    def test_verify_fqdn(self):
+
+        LOG.info("Testing PowerDNSZone.verify_fqdn() ...")
+
+        valid_fqdns = [
+            '@', 'testing.com.', 'uhu.testing.com.', ' uhu.testing.com.',
+            'uhu.banane.testing.com.', 'UHU.TESTING.COM.']
+        invalid_fqdns_type = [None, 33, True]
+        invalid_fqdns_value = [
+            '', '.', 'bla.@', 'testing.com', 'test.com.', '.testing.com', '.testing.com.',
+            '4+5.testing.com.', '.uhu.testing.com.', 'uhu.testing.net.']
+
+        from fb_tools.pdns.zone import PowerDNSZone
+
+        js_zone = self.get_js_zone()
+
+        zone = PowerDNSZone.init_from_dict(
+            js_zone, appname=self.appname, verbose=self.verbose)
+        if self.verbose > 1:
+            LOG.debug("Zone: %%r: {!r}".format(zone))
+        if self.verbose > 2:
+            LOG.debug("zone.as_dict():\n{}".format(pp(zone.as_dict())))
+
+        for fqdn in valid_fqdns:
+            LOG.debug("Testing FQDN {f!r} for zone {z!r} ...".format(f=fqdn, z=zone.name))
+            got_fqdn = zone.verify_fqdn(fqdn)
+            LOG.debug("Got verified FQDN {!r}.".format(got_fqdn))
+            self.assertIsNotNone(got_fqdn)
+
+        for fqdn in invalid_fqdns_type:
+            LOG.debug("Testing raise on FQDN {f!r} for zone {z!r} ...".format(f=fqdn, z=zone.name))
+            with self.assertRaises(TypeError) as cm:
+                got_fqdn = zone.verify_fqdn(fqdn)                                       # noqa
+            e = cm.exception
+            LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
+
+            LOG.debug("Testing returning None on FQDN {f!r} for zone {z!r} ...".format(
+                f=fqdn, z=zone.name))
+            got_fqdn = zone.verify_fqdn(fqdn, raise_on_error=False)
+            LOG.debug("Got back {!r}.".format(got_fqdn))
+            self.assertIsNone(got_fqdn)
+
+        for fqdn in invalid_fqdns_value:
+            LOG.debug("Testing raise on FQDN {f!r} for zone {z!r} ...".format(f=fqdn, z=zone.name))
+            with self.assertRaises(ValueError) as cm:
+                got_fqdn = zone.verify_fqdn(fqdn)                                       # noqa
+            e = cm.exception
+            LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
+
+            LOG.debug("Testing returning None on FQDN {f!r} for zone {z!r} ...".format(
+                f=fqdn, z=zone.name))
+            got_fqdn = zone.verify_fqdn(fqdn, raise_on_error=False)
+            LOG.debug("Got back {!r}.".format(got_fqdn))
+            self.assertIsNone(got_fqdn)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -351,6 +423,8 @@ if __name__ == '__main__':
     suite.addTest(TestFbPdns('test_pdns_record', verbose))
     suite.addTest(TestFbPdns('test_pdns_recordset_simple', verbose))
     suite.addTest(TestFbPdns('test_pdns_recordset_comment', verbose))
+    suite.addTest(TestFbPdns('test_zone_simple', verbose))
+    suite.addTest(TestFbPdns('test_verify_fqdn', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

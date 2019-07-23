@@ -19,15 +19,16 @@ import json
 from functools import cmp_to_key
 
 # Third party modules
+import six
 
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import pp, to_utf8, to_bool, compare_fqdn, RE_DOT
+from ..common import pp, to_utf8, to_bool, compare_fqdn, RE_DOT, to_str
 
 from ..obj import FbBaseObject
 
-from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
+from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX, FQDN_REGEX
 
 from .errors import PowerDNSZoneError
 
@@ -35,7 +36,7 @@ from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.1'
+__version__ = '0.9.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -702,25 +703,21 @@ class PowerDNSZone(BasePowerDNSHandler):
                 raise RuntimeError(_("Got no SOA for zone {!r}.").format(self.name))
             ttl = cur_soa_rrset.ttl
 
-        comment_list = self._generate_comments_list(comments)
+        comment_list = []
+        for comment in new_soa.comments:
+            if comment.content:
+                comment_list.append(comment)
 
-        rrset = {
-            'name': self.name,
-            'type': 'SOA',
-            'ttl': ttl,
-            'changetype': 'REPLACE',
-            'records': [],
-            'comments': comment_list,
-        }
+        for comment in self._generate_comments_list(comments):
+            if comment.content:
+                comment_list.append(comment)
 
-        record = {
-            'content': new_soa.data,
-            'disabled': False,
-            'name': self.name,
-            'set-ptr': False,
-            'type': 'SOA',
-        }
-        rrset['records'].append(record)
+        rrset = new_soa.as_dict(minimal=True)
+        rrset["comments"] = comment_list
+        rrset["changetype"] = 'REPLACE'
+        for record in rrset["records"]:
+            record["set-ptr"] = False
+
         payload = {"rrsets": [rrset]}
 
         if self.verbose > 1:
@@ -959,13 +956,64 @@ class PowerDNSZone(BasePowerDNSHandler):
         LOG.info(_("Done."))
 
         return True
-    # -------------------------------------------------------------------------
 
+    # -------------------------------------------------------------------------
     def notify(self):
 
         LOG.info(_("Notifying slave servers of zone {!r} ...").format(self.name))
         path = self.url + '/notify'
         return self.perform_request(path, method='PUT', may_simulate=True)
+
+    # -------------------------------------------------------------------------
+    def verify_fqdn(self, fqdn, raise_on_error=True):
+
+        if not isinstance(fqdn, six.string_types):
+            msg = _("A FQDN must be a string type, but is {!r} instead.").format(fqdn)
+            if raise_on_error:
+                raise TypeError(msg)
+            LOG.error(msg)
+            return None
+
+        fqdn_used = to_str(fqdn).strip().lower()
+        if not fqdn_used:
+            msg = _("Invalid, empty FQDN {!r} given.").format(fqdn)
+            if raise_on_error:
+                raise ValueError(msg)
+            LOG.error(msg)
+            return None
+
+        if fqdn_used == '@':
+            return self.name
+
+        if fqdn_used == self.name:
+            return self.name
+
+        tail = '.' + self.name
+        if self.verbose > 2:
+            LOG.debug(_("Checking FQDN {f!r} for ending on {t!r}.").format(
+                f=fqdn_used, t=tail))
+        if not fqdn_used.endswith(tail):
+            msg = _("Invalid FQDN {f!r}, it must ends with {t!r}.").format(
+                f=fqdn, t=tail)
+            if raise_on_error:
+                raise ValueError(msg)
+            LOG.error(msg)
+            return None
+
+        idx = fqdn_used.rfind(tail)
+        head = fqdn_used[:idx]
+        if self.verbose > 2:
+            LOG.debug(_("Basename of FQDN {f!r} is {h!r}.").format(
+                f=fqdn_used, h=head))
+
+        if not FQDN_REGEX.match(fqdn_used):
+            msg = _("Invalid FQDN {!r}.").format(fqdn)
+            if raise_on_error:
+                raise ValueError(msg)
+            LOG.error(msg)
+            return None
+
+        return fqdn_used
 
 
 # =============================================================================
