@@ -36,7 +36,7 @@ from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.4'
+__version__ = '0.9.5'
 
 LOG = logging.getLogger(__name__)
 
@@ -818,7 +818,96 @@ class PowerDNSZone(BasePowerDNSHandler):
         self.patch(payload)
 
     # -------------------------------------------------------------------------
-    def add_address_record(self, fqdn, address, ttl=None, comments=None, append_comments=False):
+    def add_record_to_recordset(
+        self, fqdn, rrset_type, content, ttl=None, disabled=False, set_ptr=False,
+            comment=None, account=None, append_comments=True):
+
+        fqdn_used = self.verify_fqdn(fqdn)
+        if not fqdn_used:
+            return None
+        rtype = self.verify_rrset_type(rrset_type)
+        if not rtype:
+            return None
+
+        if ttl:
+            ttl = int(ttl)
+
+        rrset = self.get_rrset(fqdn, rrset_type)
+        if rrset:
+            if ttl:
+                rrset.ttl = ttl
+        else:
+            rrset = PowerDNSRecordSet(
+                appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+                initialized=False)
+            rrset.name = fqdn_used
+            rrset.type = rrset_type
+            if ttl:
+                rrset.ttl = ttl
+            else:
+                soa = self.get_soa()
+                rrset.ttl = soa.ttl
+
+        record = PowerDNSRecord(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            content=None, disabled=bool(disabled), initialized=True)
+        if record in rrset.records:
+            msg = _("Record {c!r} already contained in record set {f!r} type {t}.").format(
+                c=content, f=rrset.name, t=rrset.type)
+            LOG.warn(msg)
+            return
+        rrset.records.append(record)
+
+        self.replace_rrset(
+            rrset, set_ptr=set_ptr, comment=comment, account=account,
+            append_comments=bool(append_comments))
+
+    # -------------------------------------------------------------------------
+    def replace_record_in_recordset(
+        self, fqdn, rrset_type, content, ttl=None, disabled=False, set_ptr=False,
+            comment=None, account=None, append_comments=True):
+
+        fqdn_used = self.verify_fqdn(fqdn)
+        if not fqdn_used:
+            return None
+        rtype = self.verify_rrset_type(rrset_type)
+        if not rtype:
+            return None
+
+        if ttl:
+            ttl = int(ttl)
+
+        rrset = self.get_rrset(fqdn, rrset_type)
+        if rrset:
+            rrset.records.clean()
+            if ttl:
+                rrset.ttl = ttl
+        else:
+            rrset = PowerDNSRecordSet(
+                appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+                initialized=False)
+            rrset.name = fqdn_used
+            rrset.type = rrset_type
+            if ttl:
+                rrset.ttl = ttl
+            else:
+                soa = self.get_soa()
+                rrset.ttl = soa.ttl
+
+        record = PowerDNSRecord(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            content=None, disabled=bool(disabled), initialized=True)
+
+        rrset.records.append(record)
+
+        self.replace_rrset(
+            rrset, set_ptr=set_ptr, comment=comment, account=account,
+            append_comments=bool(append_comments))
+
+    # -------------------------------------------------------------------------
+    def add_address_record(
+        self, fqdn, address, ttl=None, disabled=False, set_ptr=True,
+            comment=None, account=None, append_comments=False):
 
         if not isinstance(address, (ipaddress.IPv4Address, ipaddress.IPv6Address)):
             msg = _(
@@ -834,146 +923,49 @@ class PowerDNSZone(BasePowerDNSHandler):
 
         canon_fqdn = self.canon_name(fqdn)
 
-        given_comment_list = self._generate_comments_list(comments)
-        comment_list = []
-
-        self.update()
-        if self.verbose > 3:
-            LOG.debug(_("Current zone:") + '\n' + pp(self.as_dict()))
-
-        soa = self.get_soa()
-        rrset = None
-        for item in self.rrsets:
-            if item.name == canon_fqdn and item.type == record_type:
-                rrset = item
-                break
-
-        if ttl is None:
-            ttl = soa.ttl
-            if rrset:
-                ttl = rrset.ttl
-
-        records = []
-        if rrset:
-            for r in rrset.records:
-                record = {
-                    "name": canon_fqdn,
-                    "type": record_type,
-                    "content": r.content,
-                    "disabled": r.disabled,
-                    "set-ptr": False,
-                }
-                records.append(record)
-            if append_comments and rrset.comments:
-                comment_list = copy.copy(rrset.comments)
-                for comment in given_comment_list:
-                    comment_list.append(comment)
-            else:
-                comment_list = given_comment_list
-        else:
-            comment_list = given_comment_list
-        comment_list_plain = []
-        for comment in comment_list:
-            comment_list_plain.append(comment.as_dict(minimal=True))
-
-        record = {
-            "name": canon_fqdn,
-            "type": record_type,
-            "content": str(address),
-            "disabled": False,
-            "set-ptr": False,
-        }
-        records.append(record)
-
-        new_rrset = {
-            "name": canon_fqdn,
-            "type": record_type,
-            "ttl": ttl,
-            "changetype": "REPLACE",
-            'comments': comment_list_plain,
-            "records": records,
-        }
-
-        payload = {"rrsets": [new_rrset]}
-        LOG.info(_("Creating {t}-record {f!r} => {a!r}.").format(
-            t=record_type, f=fqdn, a=str(address)))
-
-        self.patch(payload)
+        self.add_record_to_recordset(
+            fqdn=canon_fqdn, rrset_type=record_type, content=str(address),
+            ttl=ttl, disabled=disabled, set_ptr=set_ptr,
+            comment=comment, account=account, append_comments=append_comments)
 
         return True
 
     # -------------------------------------------------------------------------
-    def add_ptr_record(self, pointer, fqdn, ttl=None, comments=None, append_comments=False):
+    def set_address_record(
+        self, fqdn, address, ttl=None, disabled=False, set_ptr=True,
+            comment=None, account=None, append_comments=False):
+
+        if not isinstance(address, (ipaddress.IPv4Address, ipaddress.IPv6Address)):
+            msg = _(
+                "Parameter address {a!r} is not an IPv4Address or IPv6Address object, "
+                "but a {c} object instead.").format(a=address, c=address.__class__.__name__)
+            raise TypeError(msg)
+
+        record_type = 'A'
+        if address.version == 6:
+            record_type = 'AAAA'
+        LOG.debug(_("Trying to create {t}-record {f!r} => {a!r}.").format(
+            t=record_type, f=fqdn, a=str(address)))
 
         canon_fqdn = self.canon_name(fqdn)
 
-        self.update()
-        if self.verbose > 3:
-            LOG.debug(_("Current zone:") + '\n' + pp(self.as_dict()))
+        self.replace_record_in_recordset(
+            fqdn=canon_fqdn, rrset_type=record_type, content=str(address),
+            ttl=ttl, disabled=disabled, set_ptr=set_ptr,
+            comment=comment, account=account, append_comments=append_comments)
 
-        soa = self.get_soa()
+        return True
 
-        rrset = None
-        for item in self.rrsets:
-            if item.name == pointer and item.type == 'PTR':
-                rrset = item
-                break
+    # -------------------------------------------------------------------------
+    def add_ptr_record(
+        self, pointer, fqdn, ttl=None, disabled=False,
+            comment=None, account=None, append_comments=False):
 
-        if ttl is None:
-            ttl = soa.ttl
-            if rrset:
-                ttl = rrset.ttl
+        canon_fqdn = self.canon_name(fqdn)
 
-        given_comment_list = self._generate_comments_list(comments)
-        comment_list = []
-
-        records = []
-        if rrset:
-            for r in rrset.records:
-                record = {
-                    "name": pointer,
-                    "type": 'PTR',
-                    "content": r.content,
-                    "disabled": r.disabled,
-                    "set-ptr": False,
-                }
-                records.append(record)
-            if append_comments and rrset.comments:
-                comment_list = copy.copy(rrset.comments)
-                for comment in given_comment_list:
-                    comment_list.append(comment)
-            else:
-                comment_list = given_comment_list
-        else:
-            comment_list = given_comment_list
-        comment_list_plain = []
-        for comment in comment_list:
-            comment_list_plain.append(comment.as_dict(minimal=True))
-
-        record = {
-            "name": pointer,
-            "type": 'PTR',
-            "content": canon_fqdn,
-            "disabled": False,
-            "set-ptr": False,
-        }
-        records.append(record)
-
-
-        new_rrset = {
-            "name": pointer,
-            "type": 'PTR',
-            "ttl": ttl,
-            "changetype": "REPLACE",
-            'comments': comment_list_plain,
-            "records": records,
-        }
-
-        payload = {"rrsets": [new_rrset]}
-        LOG.info(_("Creating {t}-record {f!r} => {a!r}.").format(
-            t='PTR', f=pointer, a=str(fqdn)))
-
-        self.patch(payload)
+        self.replace_record_in_recordset(
+            fqdn=pointer, rrset_type='PTR', content=canon_fqdn, ttl=ttl, disabled=disabled,
+            set_ptr=False, comment=comment, account=account, append_comments=append_comments)
 
         return True
 
@@ -1046,7 +1038,8 @@ class PowerDNSZone(BasePowerDNSHandler):
     def verify_fqdn(self, fqdn, raise_on_error=True):
 
         if not isinstance(fqdn, six.string_types):
-            msg = _("A FQDN must be a string type, but is {!r} instead.").format(fqdn)
+            msg = _("A {w} must be a string type, but is {v!r} instead.").format(
+                w='FQDN', v=fqdn)
             if raise_on_error:
                 raise TypeError(msg)
             LOG.error(msg)
