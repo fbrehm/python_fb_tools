@@ -25,6 +25,9 @@ except ImportError:
 # from babel.dates import LOCALTZ
 import six
 
+import requests
+import requests_mock
+
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 sys.path.insert(0, libdir)
 
@@ -52,11 +55,27 @@ class TestFbPdns(FbToolsTestcase):
         self.mx_rrset_file = self.curdir / 'rrset-mx.js'
         self.soa_rrset_file = self.curdir / 'rrset-soa.js'
 
+        self.server_name = 'pdns-master.testing.net'
+        self.api_key = 'test123'
+
         self.open_args = {}
         if six.PY3:
             self.open_args['encoding'] = 'utf-8'
             self.open_args['errors'] = 'surrogateescape'
 
+        self.server_version = '4.1.10-mocked'
+
+        self.server_list_data = [
+            {
+                "config_url": "/api/v1/servers/localhost/config{/config_setting}",
+                "daemon_type": "authoritative",
+                "id": "localhost",
+                "type": "Server",
+                "url": "/api/v1/servers/localhost",
+                "version": "{}".format(self.server_version),
+                "zones_url": "/api/v1/servers/localhost/zones{/zone}"
+            }
+        ]
 
     # -------------------------------------------------------------------------
     def tearDown(self):
@@ -102,6 +121,18 @@ class TestFbPdns(FbToolsTestcase):
         with self.zone_file.open('r', **self.open_args) as fh:
             ret = json.load(fh)
         return ret
+
+    # -------------------------------------------------------------------------
+    def get_js_serverlist(self, index=None):
+
+        import json
+
+        if index is None:
+            data = self.server_list_data
+        else:
+            data = self.server_list_data[index]
+
+        return json.dumps(data)
 
     # -------------------------------------------------------------------------
     def test_import(self):
@@ -431,6 +462,38 @@ class TestFbPdns(FbToolsTestcase):
             LOG.debug("Got back {!r}.".format(got_fqdn))
             self.assertIsNone(got_fqdn)
 
+    # -------------------------------------------------------------------------
+    def test_get_zone(self):
+
+        LOG.info("Testing getting a zone from a mocked PDNS API ...")
+
+        adapter = requests_mock.Adapter()
+        session = requests.Session()
+        session.mount('mock', adapter)
+
+        js_zone = self.get_js_zone()
+
+        from fb_tools.pdns.server import PowerDNSServer
+        from fb_tools.pdns.zone import PowerDNSZone
+
+        pdns = PowerDNSServer(
+            appname=self.appname, verbose=self.verbose, master_server=self.server_name,
+            key=self.api_key, use_https=False)
+        pdns.mocked = True
+        slist = self.get_js_serverlist()
+        pdns.mocking_paths.append({
+            'method': 'GET', 'url': '/api/v1/servers', 'text': slist})
+        s_localhost = self.get_js_serverlist(0)
+        pdns.mocking_paths.append({
+            'method': 'GET', 'url': '/api/v1/servers/localhost', 'text': s_localhost})
+
+        LOG.debug("PowerDNSServer  %%r: {!r}".format(pdns))
+        if self.verbose > 1:
+            LOG.debug("PowerDNSServer: %%s: {}".format(pdns))
+        if self.verbose > 2:
+            LOG.debug("pdns.as_dict():\n{}".format(pp(pdns.as_dict())))
+
+        api_version = pdns.get_api_server_version()
 
 # =============================================================================
 if __name__ == '__main__':
@@ -452,6 +515,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbPdns('test_zone_simple', verbose))
     suite.addTest(TestFbPdns('test_verify_fqdn', verbose))
     suite.addTest(TestFbPdns('test_zone_get_soa', verbose))
+    suite.addTest(TestFbPdns('test_get_zone', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
