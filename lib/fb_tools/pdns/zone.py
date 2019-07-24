@@ -24,7 +24,7 @@ import six
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import pp, to_utf8, to_bool, compare_fqdn, RE_DOT, to_str
+from ..common import pp, to_utf8, to_bool, compare_fqdn, RE_DOT, to_str, to_unicode
 
 from ..obj import FbBaseObject
 
@@ -36,7 +36,7 @@ from .record import PowerDnsSOAData, PowerDNSRecord
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.7'
+__version__ = '0.9.8'
 
 LOG = logging.getLogger(__name__)
 
@@ -179,7 +179,16 @@ class PowerDNSZone(BasePowerDNSHandler):
                 rrsets = data['rrsets']
             del data['rrsets']
 
-        params.update(data)
+        new_data = {}
+        for key in data:
+            val = data[key]
+            if isinstance(key, six.string_types):
+                key = to_str(key)
+            if isinstance(val, six.string_types):
+                val = to_str(val)
+            new_data[key] = val
+
+        params.update(new_data)
 
         if verbose > 3:
             pout = copy.copy(params)
@@ -213,7 +222,7 @@ class PowerDNSZone(BasePowerDNSHandler):
     @account.setter
     def account(self, value):
         if value:
-            v = str(value).strip()
+            v = to_str(str(value).strip())
             if v:
                 self._account = v
             else:
@@ -240,7 +249,7 @@ class PowerDNSZone(BasePowerDNSHandler):
     @id.setter
     def id(self, value):
         if value:
-            v = str(value).strip()
+            v = to_str(str(value).strip())
             if v:
                 self._id = v
             else:
@@ -257,7 +266,7 @@ class PowerDNSZone(BasePowerDNSHandler):
     @kind.setter
     def kind(self, value):
         if value:
-            v = str(value).strip()
+            v = to_str(str(value).strip())
             if v:
                 self._kind = v
             else:
@@ -280,7 +289,7 @@ class PowerDNSZone(BasePowerDNSHandler):
     @name.setter
     def name(self, value):
         if value:
-            v = str(value).strip()
+            v = to_str(str(value).strip())
             if v:
                 self._name = v
                 match = self.re_rev_ipv4.search(v)
@@ -461,7 +470,8 @@ class PowerDNSZone(BasePowerDNSHandler):
             msg = _("Invalid source tuples for detecting IPv4-network: {!r}.").format(tuples)
             raise ValueError(msg)
 
-        ip_str = '.'.join(tokens) + '/{}'.format(bitmask)
+        ip_str = to_unicode('.'.join(tokens) + '/{}'.format(bitmask))
+        LOG.debug("IPv4 address string:\n{!r}".format(ip_str))
         net = ipaddress.ip_network(ip_str)
 
         return net
@@ -494,7 +504,8 @@ class PowerDNSZone(BasePowerDNSHandler):
             if len(tokens) < 7:
                 ip_str += ':'
 
-        ip_str += '/{}'.format(bitmask)
+        ip_str += to_unicode('/{}'.format(bitmask))
+        LOG.debug("IPv6 address string:\n{!r}".format(ip_str))
         net = ipaddress.ip_network(ip_str)
 
         return net

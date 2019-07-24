@@ -30,7 +30,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.5.5'
+__version__ = '0.5.6'
 
 LOG = logging.getLogger(__name__)
 
@@ -924,8 +924,8 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
                     comment.initialized = True
                 rrset.comments.append(comment)
 
-        rrset._name = str(data['name'])
-        rrset._type = str(data['type']).upper()
+        rrset._name = to_str(str(data['name']))
+        rrset._type = to_str(str(data['type']).upper())
         if 'ttl' in data:
             rrset._ttl = int(data['ttl'])
 
@@ -933,7 +933,8 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
             for single_record in data['records']:
                 record = PowerDNSRecord(
                     appname=appname, verbose=verbose, base_dir=base_dir,
-                    content=single_record['content'], disabled=single_record['disabled'],
+                    content=to_str(single_record['content']),
+                    disabled=single_record['disabled'],
                 )
                 record.initialized = True
                 rrset.records.append(record)
