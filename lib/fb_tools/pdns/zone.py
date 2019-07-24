@@ -32,11 +32,11 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX, FQDN_REGEX
 
 from .errors import PowerDNSZoneError
 
-from .record import PowerDnsSOAData
+from .record import PowerDnsSOAData, PowerDNSRecord
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.6'
+__version__ = '0.9.7'
 
 LOG = logging.getLogger(__name__)
 

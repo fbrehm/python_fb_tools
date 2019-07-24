@@ -365,7 +365,7 @@ class TestFbPdns(FbToolsTestcase):
             pp(rrset.as_dict(minimal=True))))
 
     # -------------------------------------------------------------------------
-    def test_pdns_recordset_comment(self):
+    def test_pdns_recordset_with_comment(self):
 
         LOG.info("Testing class PowerDNSRecordSet with comments ...")
 
@@ -554,9 +554,9 @@ class TestFbPdns(FbToolsTestcase):
         zone.update()
         LOG.debug("Zone: %%r: {!r}".format(zone))
         if self.verbose > 1:
-             LOG.debug("Zone: %%s: {}".format(zone))
+            LOG.debug("Zone: %%s: {}".format(zone))
         if self.verbose > 2:
-             LOG.debug("zone.as_dict: {}".format(pp(zone.as_dict())))
+            LOG.debug("zone.as_dict: {}".format(pp(zone.as_dict())))
 
 
 # =============================================================================
@@ -575,7 +575,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbPdns('test_pdns_recordset_comment', verbose))
     suite.addTest(TestFbPdns('test_pdns_record', verbose))
     suite.addTest(TestFbPdns('test_pdns_recordset_simple', verbose))
-    suite.addTest(TestFbPdns('test_pdns_recordset_comment', verbose))
+    suite.addTest(TestFbPdns('test_pdns_recordset_with_comment', verbose))
     suite.addTest(TestFbPdns('test_zone_simple', verbose))
     suite.addTest(TestFbPdns('test_verify_fqdn', verbose))
     suite.addTest(TestFbPdns('test_zone_get_soa', verbose))
