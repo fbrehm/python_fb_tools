@@ -39,7 +39,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.6.7'
+__version__ = '0.6.8'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -520,7 +520,7 @@ class BasePowerDNSHandler(HandlingObject):
                         k=key, p=pp(path))
                     raise PowerDNSHandlerError(msg)
 
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug(_("Adding mocking path:\n{}").format(pp(path)))
             adapter.register_uri(**path)
 
