@@ -1105,8 +1105,9 @@ class PowerDNSZone(BasePowerDNSHandler):
         for rrset in self.rrsets:
             if rrset.name == fqdn_used and rrset.type == rtype:
                 if self.verbose > 2:
-                    LOG.debug(_("Found {t} RecordSet:\n{r}").format(
-                        t=rtype, r=pp(rrset.as_dict(minimal=True))))
+                    LOG.debug(
+                        _("Found {} RecordSet:").format(rtype) +
+                        '\n' + pp(rrset.as_dict(minimal=True)))
                 return rrset
 
         LOG.debug(_("Did not found RecordSet {f!r} of type {t!r}.".format(

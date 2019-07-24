@@ -516,12 +516,12 @@ class BasePowerDNSHandler(HandlingObject):
 
             for key in ('method', 'url'):
                 if key not in path:
-                    msg = _("Mocking path has no {k!r} key defined:\n{p}").format(
-                        k=key, p=pp(path))
+                    msg = _("Mocking path has no {!r} key defined:").format(key)
+                    msg += '\n' + pp(path)
                     raise PowerDNSHandlerError(msg)
 
             if self.verbose > 2:
-                LOG.debug(_("Adding mocking path:\n{}").format(pp(path)))
+                LOG.debug(_("Adding mocking path:") + '\n' + pp(path))
             adapter.register_uri(**path)
 
 # =============================================================================
