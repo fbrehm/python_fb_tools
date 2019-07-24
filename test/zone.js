@@ -1,5 +1,5 @@
 {
-  "account": "DNS:NET",
+  "account": "Verisign",
   "api_rectify": false,
   "dnssec": false,
   "id": "testing.com.",
@@ -112,19 +112,15 @@
       "name": "testing.com.",
       "records": [
         {
-          "content": "ns3.pp-dns.com.",
+          "content": "ns3.example.com.",
           "disabled": false
         },
         {
-          "content": "ns1.pp-dns.com.",
+          "content": "ns1.example.com.",
           "disabled": false
         },
         {
-          "content": "ns2.pp-dns.com.",
-          "disabled": false
-        },
-        {
-          "content": "ns4.pp-dns.com.",
+          "content": "ns2.example.com.",
           "disabled": false
         }
       ],

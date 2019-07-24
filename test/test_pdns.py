@@ -50,6 +50,8 @@ class TestFbPdns(FbToolsTestcase):
 
         self.curdir = Path(os.path.dirname(os.path.abspath(__file__)))
         self.zone_file = self.curdir / 'zone.js'
+        self.zone_rev_file = self.curdir / 'zone-rev.js'
+        self.zones_file = self.curdir / 'zones.js'
         self.a_rrset_file = self.curdir / 'rrset-a.js'
         self.a_rrset_file_comment = self.curdir / 'rrset-a-with-comment.js'
         self.mx_rrset_file = self.curdir / 'rrset-mx.js'
@@ -119,6 +121,22 @@ class TestFbPdns(FbToolsTestcase):
 
         ret = None
         with self.zone_file.open('r', **self.open_args) as fh:
+            ret = json.load(fh)
+        return ret
+
+    # -------------------------------------------------------------------------
+    def get_js_zone_rev(self):
+
+        ret = None
+        with self.zone_rev_file.open('r', **self.open_args) as fh:
+            ret = json.load(fh)
+        return ret
+
+    # -------------------------------------------------------------------------
+    def get_js_zones(self):
+
+        ret = None
+        with self.zones_file.open('r', **self.open_args) as fh:
             ret = json.load(fh)
         return ret
 
@@ -463,6 +481,41 @@ class TestFbPdns(FbToolsTestcase):
             self.assertIsNone(got_fqdn)
 
     # -------------------------------------------------------------------------
+    def set_mocking(self, obj):
+
+        from fb_tools.pdns import BasePowerDNSHandler
+
+        if not isinstance(obj, BasePowerDNSHandler):
+            msg = "Given object is not a BasePowerDNSHandler object, but a {} instead.".format(
+                obj.__class__.__name__)
+            raise TypeError(msg)
+
+        obj.mocked = True
+
+        slist = self.get_js_serverlist()
+        obj.mocking_paths.append({
+            'method': 'GET', 'url': '/api/v1/servers', 'text': slist})
+
+        s_localhost = self.get_js_serverlist(0)
+        obj.mocking_paths.append({
+            'method': 'GET', 'url': '/api/v1/servers/localhost', 'text': s_localhost})
+
+        js_zones = self.get_js_zones()
+        obj.mocking_paths.append({
+            'method': 'GET', 'url': '/api/v1/servers/localhost/zones',
+            'text': json.dumps(js_zones)})
+
+        js_zone = self.get_js_zone()
+        obj.mocking_paths.append({
+            'method': 'GET', 'url': '/api/v1/servers/localhost/zones/testing.com.',
+            'text': json.dumps(js_zone)})
+
+        js_zone_rev = self.get_js_zone_rev()
+        obj.mocking_paths.append({
+            'method': 'GET', 'url': '/api/v1/servers/localhost/zones/222.40.10.in-addr.arpa.',
+            'text': json.dumps(js_zone_rev)})
+
+    # -------------------------------------------------------------------------
     def test_get_zone(self):
 
         LOG.info("Testing getting a zone from a mocked PDNS API ...")
@@ -471,21 +524,13 @@ class TestFbPdns(FbToolsTestcase):
         session = requests.Session()
         session.mount('mock', adapter)
 
-        js_zone = self.get_js_zone()
-
         from fb_tools.pdns.server import PowerDNSServer
-        from fb_tools.pdns.zone import PowerDNSZone
+        from fb_tools.pdns.zone import PowerDNSZone, PowerDNSZoneDict
 
         pdns = PowerDNSServer(
             appname=self.appname, verbose=self.verbose, master_server=self.server_name,
             key=self.api_key, use_https=False)
-        pdns.mocked = True
-        slist = self.get_js_serverlist()
-        pdns.mocking_paths.append({
-            'method': 'GET', 'url': '/api/v1/servers', 'text': slist})
-        s_localhost = self.get_js_serverlist(0)
-        pdns.mocking_paths.append({
-            'method': 'GET', 'url': '/api/v1/servers/localhost', 'text': s_localhost})
+        self.set_mocking(pdns)
 
         LOG.debug("PowerDNSServer  %%r: {!r}".format(pdns))
         if self.verbose > 1:
@@ -494,6 +539,25 @@ class TestFbPdns(FbToolsTestcase):
             LOG.debug("pdns.as_dict():\n{}".format(pp(pdns.as_dict())))
 
         api_version = pdns.get_api_server_version()
+        self.assertEqual(api_version, self.server_version)
+
+        LOG.debug("Retreiving all zones ...")
+        zones = pdns.get_api_zones()
+        self.assertIsInstance(zones, PowerDNSZoneDict)
+        self.assertIn("testing.com.", zones)
+
+        LOG.debug("Retreiving zone {!r} ...".format("testing.com."))
+        zone = zones["testing.com."]
+        self.assertIsInstance(zone, PowerDNSZone)
+        self.set_mocking(zone)
+        LOG.debug("Updating zone {!r} ...".format("testing.com."))
+        zone.update()
+        LOG.debug("Zone: %%r: {!r}".format(zone))
+        if self.verbose > 1:
+             LOG.debug("Zone: %%s: {}".format(zone))
+        if self.verbose > 2:
+             LOG.debug("zone.as_dict: {}".format(pp(zone.as_dict())))
+
 
 # =============================================================================
 if __name__ == '__main__':
