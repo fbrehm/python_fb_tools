@@ -36,7 +36,7 @@ from .record import PowerDnsSOAData
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.5'
+__version__ = '0.9.6'
 
 LOG = logging.getLogger(__name__)
 
@@ -788,7 +788,7 @@ class PowerDNSZone(BasePowerDNSHandler):
 
         rrset_dict = rrset.as_dict(minimal=True)
         rrset_dict["changetype"] = 'REPLACE'
-        for record in rrset_dict"records"]:
+        for record in rrset_dict["records"]:
             record["set-ptr"] = bool(set_ptr)
 
         payload = {"rrsets": [rrset_dict]}
