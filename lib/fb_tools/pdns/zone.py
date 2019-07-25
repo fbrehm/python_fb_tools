@@ -40,7 +40,7 @@ from .record import PowerDnsSOAData, PowerDNSRecord
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.10'
+__version__ = '0.9.11'
 
 LOG = logging.getLogger(__name__)
 
@@ -475,7 +475,6 @@ class PowerDNSZone(BasePowerDNSHandler):
             raise ValueError(msg)
 
         ip_str = to_unicode('.'.join(tokens) + '/{}'.format(bitmask))
-        LOG.debug("IPv4 address string:\n{!r}".format(ip_str))
         net = ipaddress.ip_network(ip_str)
 
         return net
@@ -509,7 +508,6 @@ class PowerDNSZone(BasePowerDNSHandler):
                 ip_str += ':'
 
         ip_str += to_unicode('/{}'.format(bitmask))
-        LOG.debug("IPv6 address string:\n{!r}".format(ip_str))
         net = ipaddress.ip_network(ip_str)
 
         return net
