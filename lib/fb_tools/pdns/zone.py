@@ -40,7 +40,7 @@ from .record import PowerDnsSOAData, PowerDNSRecord
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.11'
+__version__ = '0.9.12'
 
 LOG = logging.getLogger(__name__)
 
@@ -841,15 +841,27 @@ class PowerDNSZone(BasePowerDNSHandler):
         rtype = self.verify_rrset_type(rrset_type)
         if not rtype:
             return None
+        if self.verbose > 2:
+            msg = _("Adding FQDN: {f!r}, type {t!r}, content: {c!r}.").format(
+                f=fqdn_used, t=rtype, c=content)
+            LOG.debug(msg)
 
         if ttl:
             ttl = int(ttl)
 
         rrset = self.get_rrset(fqdn, rrset_type)
         if rrset:
+            if self.verbose > 1:
+                msg = _("Got an existing rrset for FQDN {f!r}, type {t!r}.").format(
+                    f=fqdn_used, t=rtype)
+                LOG.debug(msg)
             if ttl:
                 rrset.ttl = ttl
         else:
+            if self.verbose > 1:
+                msg = _("Got no existing rrset for FQDN {f!r}, type {t!r}.").format(
+                    f=fqdn_used, t=rtype)
+                LOG.debug(msg)
             rrset = PowerDNSRecordSet(
                 appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
                 initialized=False)
@@ -863,7 +875,7 @@ class PowerDNSZone(BasePowerDNSHandler):
 
         record = PowerDNSRecord(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            content=None, disabled=bool(disabled), initialized=True)
+            content=content, disabled=bool(disabled), initialized=True)
         if record in rrset.records:
             msg = _("Record {c!r} already contained in record set {f!r} type {t}.").format(
                 c=content, f=rrset.name, t=rrset.type)
@@ -886,16 +898,28 @@ class PowerDNSZone(BasePowerDNSHandler):
         rtype = self.verify_rrset_type(rrset_type)
         if not rtype:
             return None
+        if self.verbose > 2:
+            msg = _("Replacing FQDN: {f!r}, type {t!r} by content: {c!r}.").format(
+                f=fqdn_used, t=rtype, c=content)
+            LOG.debug(msg)
 
         if ttl:
             ttl = int(ttl)
 
         rrset = self.get_rrset(fqdn, rrset_type)
         if rrset:
+            if self.verbose > 1:
+                msg = _("Got an existing rrset for FQDN {f!r}, type {t!r}.").format(
+                    f=fqdn_used, t=rtype)
+                LOG.debug(msg)
             rrset.records.clean()
             if ttl:
                 rrset.ttl = ttl
         else:
+            if self.verbose > 1:
+                msg = _("Got no existing rrset for FQDN {f!r}, type {t!r}.").format(
+                    f=fqdn_used, t=rtype)
+                LOG.debug(msg)
             rrset = PowerDNSRecordSet(
                 appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
                 initialized=False)
@@ -909,7 +933,7 @@ class PowerDNSZone(BasePowerDNSHandler):
 
         record = PowerDNSRecord(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            content=None, disabled=bool(disabled), initialized=True)
+            content=content, disabled=bool(disabled), initialized=True)
 
         rrset.records.append(record)
 
@@ -975,6 +999,8 @@ class PowerDNSZone(BasePowerDNSHandler):
             comment=None, account=None, append_comments=False):
 
         canon_fqdn = self.canon_name(fqdn)
+        LOG.debug(_("Trying to create {t}-record {f!r} => {a!r}.").format(
+            t='PTR', f=pointer, a=canon_fqdn))
 
         self.replace_record_in_recordset(
             fqdn=pointer, rrset_type='PTR', content=canon_fqdn, ttl=ttl, disabled=disabled,
