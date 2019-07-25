@@ -36,7 +36,7 @@ from .record import PowerDnsSOAData, PowerDNSRecord
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.8'
+__version__ = '0.9.9'
 
 LOG = logging.getLogger(__name__)
 
@@ -1116,9 +1116,9 @@ class PowerDNSZone(BasePowerDNSHandler):
         for rrset in self.rrsets:
             if rrset.name == fqdn_used and rrset.type == rtype:
                 if self.verbose > 2:
-                    LOG.debug(
-                        _("Found {} RecordSet:").format(rtype) +
-                        '\n' + pp(rrset.as_dict(minimal=True)))
+                    msg = _("Found {} RecordSet:").format(rtype)
+                    msg += '\n' + pp(rrset.as_dict(minimal=True))
+                    LOG.debug(msg)
                 return rrset
 
         LOG.debug(_("Did not found RecordSet {f!r} of type {t!r}.".format(
