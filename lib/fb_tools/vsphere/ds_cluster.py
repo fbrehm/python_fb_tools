@@ -16,8 +16,6 @@ try:
 except ImportError:
     from collections import MutableMapping
 
-
-
 # Third party modules
 from pyVmomi import vim
 
