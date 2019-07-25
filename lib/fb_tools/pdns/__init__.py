@@ -43,7 +43,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.6.10'
+__version__ = '0.6.11'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -355,7 +355,7 @@ class BasePowerDNSHandler(HandlingObject):
         url = self._build_url(path, no_prefix=no_prefix)
         if self.verbose > 1:
             LOG.debug(_("Request method: {!r}").format(method))
-        if data and self.verbose > 2:
+        if data and self.verbose > 1:
             data_out = "{!r}".format(data)
             try:
                 data_out = json.loads(data)
@@ -363,8 +363,8 @@ class BasePowerDNSHandler(HandlingObject):
                 pass
             else:
                 data_out = pp(data_out)
-            if self.verbose > 1:
-                LOG.debug("Data:\n{}".format(data_out))
+            LOG.debug("Data:\n{}".format(data_out))
+            if self.verbose > 2:
                 LOG.debug("RAW data:\n{}".format(data))
 
         headers.update({'User-Agent': self.user_agent})
