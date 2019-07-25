@@ -34,7 +34,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.5.7'
+__version__ = '0.5.8'
 
 LOG = logging.getLogger(__name__)
 
@@ -91,7 +91,9 @@ class PowerDNSRecord(FbBaseObject):
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
             content=None, disabled=False):
 
-        self._content = content.lower()
+        self._content = None
+        if content:
+            self._content = to_str(str(content).lower())
         self._disabled = False
         self.disabled = disabled
 
@@ -864,7 +866,7 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
                 w='PowerDNSRecordSet.type', v=value)
             raise ValueError(msg)
         v = self.verify_rrset_type(v)
-        self._name = v
+        self._type = v
 
     # -----------------------------------------------------------
     @property
