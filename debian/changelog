@@ -1,3 +1,16 @@
+fb-tools (1.5.1) all; urgency=medium
+
+  * Improving all PowerDNS-API objects
+  * Adding script bin/get-vmware-vm-list and its module
+    lib/fb_tools/get_vm_list_app.py
+  * Adding test script test/test_pdns.py for PowerDNS-API modules
+  * Updating translations
+  * Updating specs/fb_tools.spec.template for generating RPM packages
+  * Changing import behaviour of collections to use collections.abc in
+    Python3
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 25 Jul 2019 11:29:03 +0200
+
 fb-tools (1.4.5) all; urgency=medium
 
   * Bugfixing lib/fb_tools/handler/lock.py because of simulation mode.

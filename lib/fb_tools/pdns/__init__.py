@@ -19,16 +19,22 @@ import ipaddress
 
 from abc import ABCMeta
 
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
+
 # Third party modules
 import requests
 import urllib3
 
+import six
 from six import add_metaclass
 
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import pp, to_bool, RE_DOT_AT_END, reverse_pointer
+from ..common import pp, to_bool, RE_DOT_AT_END, reverse_pointer, to_str
 
 from ..handling_obj import HandlingObject
 
@@ -37,7 +43,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.6.4'
+__version__ = '0.6.10'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -47,6 +53,16 @@ DEFAULT_PORT = 8081
 DEFAULT_TIMEOUT = 20
 DEFAULT_API_PREFIX = '/api/v1'
 DEFAULT_USE_HTTPS = False
+
+FQDN_REGEX = re.compile(r'^((?!-)[-A-Z\d]{1,62}(?<!-)\.)+[A-Z]{1,62}\.?$', re.IGNORECASE)
+
+VALID_RRSET_TYPES = [
+    'SOA', 'A', 'AAAA', 'AFSDB', 'APL', 'CAA', 'CDNSKEY', 'CDS', 'CERT', 'CNAME', 'DHCID',
+    'DLV', 'DNAME', 'DNSKEY', 'DS', 'HIP', 'HINFO', 'IPSECKEY', 'ISDN', 'KEY', 'KX', 'LOC',
+    'MB', 'MINFO', 'MX', 'NAPTR', 'NS', 'NSAP', 'NSEC', 'NSEC3', 'NSEC3PARAM', 'OPT', 'PTR',
+    'RP', 'RRSIG', 'SIG', 'SPF', 'SRV', 'SSHFP', 'TA', 'TKEY', 'TLSA', 'TSIG', 'TXT', 'URI',
+    'WKS', 'X25'
+]
 
 _ = XLATOR.gettext
 
@@ -82,6 +98,8 @@ class BasePowerDNSHandler(HandlingObject):
         self._timeout = self.default_timeout
         self._user_agent = '{}/{}'.format(_LIBRARY_NAME, __global_version__)
         self._api_servername = self.default_api_servername
+        self._mocked = False
+        self.mocking_paths = []
 
         super(BasePowerDNSHandler, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -164,11 +182,23 @@ class BasePowerDNSHandler(HandlingObject):
     @property
     def use_https(self):
         """Should be HTTPS used to communicate with the API?"""
+        if self.mocked:
+            return False
         return self._use_https
 
     @use_https.setter
     def use_https(self, value):
         self._use_https = to_bool(value)
+
+    # -----------------------------------------------------------
+    @property
+    def mocked(self):
+        """Flag, that a mocked URI should be used."""
+        return self._mocked
+
+    @mocked.setter
+    def mocked(self, value):
+        self._mocked = to_bool(value)
 
     # -----------------------------------------------------------
     @property
@@ -253,6 +283,7 @@ class BasePowerDNSHandler(HandlingObject):
         res['default_api_servername'] = self.default_api_servername
         res['master_server'] = self.master_server
         res['port'] = self.port
+        res['mocked'] = self.mocked
         res['use_https'] = self.use_https
         res['path_prefix'] = self.path_prefix
         res['timeout'] = self.timeout
@@ -291,7 +322,9 @@ class BasePowerDNSHandler(HandlingObject):
             raise ValueError(msg)
 
         url = 'http://{}'.format(self.master_server)
-        if self.use_https:
+        if self.mocked:
+            url = 'mock://{}'.format(self.master_server)
+        elif self.use_https:
             url = 'https://{}'.format(self.master_server)
             if self.port != 443:
                 url += ':{}'.format(self.port)
@@ -349,6 +382,8 @@ class BasePowerDNSHandler(HandlingObject):
         try:
 
             session = requests.Session()
+            if self.mocked:
+                self.start_mocking(session)
             response = session.request(
                 method, url, data=data, headers=headers, timeout=self.timeout)
 
@@ -435,9 +470,66 @@ class BasePowerDNSHandler(HandlingObject):
         ret = RE_DOT_AT_END.sub('', name)
         return ret
 
+    # -------------------------------------------------------------------------
+    def verify_rrset_type(self, rtype, raise_on_error=True):
+
+        if not isinstance(rtype, six.string_types):
+            msg = _("A rrset type must be a string type, but is {!r} instead.").format(rtype)
+            if raise_on_error:
+                raise TypeError(msg)
+            LOG.error(msg)
+            return None
+
+        type_used = to_str(rtype).strip().upper()
+        if not type_used:
+            msg = _("Invalid, empty rrset type {!r} given.").format(rtype)
+            if raise_on_error:
+                raise ValueError(msg)
+            LOG.error(msg)
+            return None
+
+        if type_used not in VALID_RRSET_TYPES:
+            msg = _("Invalid rrset type {!r} given.").format(rtype)
+            if raise_on_error:
+                raise ValueError(msg)
+            LOG.error(msg)
+            return None
+
+        return type_used
+
+    # -------------------------------------------------------------------------
+    def start_mocking(self, session):
+
+        if not self.mocked:
+            return
+
+        LOG.debug(_("Preparing mocking ..."))
+
+        import requests_mock
+
+        adapter = requests_mock.Adapter()
+        session.mount('mock', adapter)
+
+        for path in self.mocking_paths:
+
+            if not isinstance(path, MutableMapping):
+                msg = _(
+                    "Mocking path {p!r} is not a dictionary object, but a "
+                    "{c} object instead.").format(p=path, c=path.__class__.__name__)
+                raise PowerDNSHandlerError(msg)
+
+            for key in ('method', 'url'):
+                if key not in path:
+                    msg = _("Mocking path has no {!r} key defined:").format(key)
+                    msg += '\n' + pp(path)
+                    raise PowerDNSHandlerError(msg)
+
+            if self.verbose > 2:
+                LOG.debug(_("Adding mocking path:") + '\n' + pp(path))
+            adapter.register_uri(**path)
+
 
 # =============================================================================
-
 if __name__ == "__main__":
 
     pass

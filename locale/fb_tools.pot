@@ -1,21 +1,21 @@
 # Translations template for fb_tools.
 # Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank@brehm-online.com>, 2019.
+# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.4.4\n"
-"Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-05-29 16:34+0200\n"
+"Project-Id-Version: fb_tools 1.4.5\n"
+"Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
+"POT-Creation-Date: 2019-07-24 15:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <frank@brehm-online.com>\n"
+"Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.7.0\n"
 
 #: bin/get-file-to-remove:79
 msgid ""
@@ -354,7 +354,8 @@ msgid "How many files one per year from today on should be kept (default: {defau
 msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
-#: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
+#: lib/fb_tools/get_vm_list_app.py:161 lib/fb_tools/pdns_bulk_rm_app.py:189
+#: lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
 msgstr ""
 
@@ -456,39 +457,40 @@ msgstr ""
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:132
+#: lib/fb_tools/get_vm_app.py:132 lib/fb_tools/get_vm_list_app.py:136
 msgid "Enter password for host {h!r} and user {u!r}: "
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/pdns_bulk_rm_app.py:191
+#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/get_vm_list_app.py:163
+#: lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:162
+#: lib/fb_tools/get_vm_app.py:162 lib/fb_tools/get_vm_list_app.py:166
 msgid "VMWare options"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:166
+#: lib/fb_tools/get_vm_app.py:166 lib/fb_tools/get_vm_list_app.py:170
 msgid "Remote vSphere host to connect to (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:172
+#: lib/fb_tools/get_vm_app.py:172 lib/fb_tools/get_vm_list_app.py:176
 msgid "Port on vSphere host to connect on (Default: {})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:177
+#: lib/fb_tools/get_vm_app.py:177 lib/fb_tools/get_vm_list_app.py:181
 msgid "USER"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:178
+#: lib/fb_tools/get_vm_app.py:178 lib/fb_tools/get_vm_list_app.py:182
 msgid "User name to use when connecting to vSphere host (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:183
+#: lib/fb_tools/get_vm_app.py:183 lib/fb_tools/get_vm_list_app.py:187
 msgid "PASSWORD"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:184
+#: lib/fb_tools/get_vm_app.py:184 lib/fb_tools/get_vm_list_app.py:188
 msgid "Password to use when connecting to vSphere host."
 msgstr ""
 
@@ -496,16 +498,20 @@ msgstr ""
 msgid "Names of the VM to get information."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:220
+#: lib/fb_tools/get_vm_app.py:220 lib/fb_tools/get_vm_list_app.py:216
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:228
+#: lib/fb_tools/get_vm_app.py:228 lib/fb_tools/get_vm_list_app.py:224
 msgid "Closing ..."
 msgstr ""
 
 #: lib/fb_tools/get_vm_app.py:245
 msgid "NOT FOUND"
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:59
+msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
 msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:157
@@ -883,125 +889,170 @@ msgstr ""
 msgid "Exception happened"
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:99
+#: lib/fb_tools/pdns/__init__.py:113
 msgid "Setting Loglevel of the {m} module to {ll}."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:137
+#: lib/fb_tools/pdns/__init__.py:151
 msgid "Invalid port number {!r} for the PowerDNS API, must be 0 < PORT < 65536."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:190
+#: lib/fb_tools/pdns/__init__.py:216
 msgid "The path prefix {!r} must be an absolute path."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:206
+#: lib/fb_tools/pdns/__init__.py:232
 msgid "Invalid timeout {!r} for requesting the PowerDNS API, must be 0 < SECONDS < 3600."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:223
+#: lib/fb_tools/pdns/__init__.py:249
 msgid "Invalid user agent {!r} given."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:235
+#: lib/fb_tools/pdns/__init__.py:261
 msgid "Invalid API server name {!r} given."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:282
+#: lib/fb_tools/pdns/__init__.py:309
 msgid "Failed to extract request ID from response header 'location': {!r}"
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:290
+#: lib/fb_tools/pdns/__init__.py:317
 msgid "The path {!r} must be an absolute path."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:308
+#: lib/fb_tools/pdns/__init__.py:337
 msgid "Used URL: {!r}"
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:324
+#: lib/fb_tools/pdns/__init__.py:353
 msgid "Request method: {!r}"
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:346
+#: lib/fb_tools/pdns/__init__.py:375
 msgid "Simulation mode, Request will not be sent."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:359 lib/fb_tools/vsphere/server.py:158
+#: lib/fb_tools/pdns/__init__.py:390 lib/fb_tools/vsphere/server.py:158
 msgid "Got a {c} on connecting to {h!r}: {e}."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:367
+#: lib/fb_tools/pdns/__init__.py:398
 msgid "Failed to parse the response"
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:392
+#: lib/fb_tools/pdns/__init__.py:423
 msgid "Got an error response code {code}: {msg}"
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:422
+#: lib/fb_tools/pdns/__init__.py:453
 msgid "Name {!r} is not a valid IP address."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:427
+#: lib/fb_tools/pdns/__init__.py:458 lib/fb_tools/pdns/zone.py:1081
 msgid "Invalid FQDN {!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/errors.py:52
+#: lib/fb_tools/pdns/__init__.py:473
+msgid "A rrset type must be a string type, but is {!r} instead."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:481
+msgid "Invalid, empty rrset type {!r} given."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:488
+msgid "Invalid rrset type {!r} given."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:502
+msgid "Preparing mocking ..."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:512
+msgid "Mocking path {p!r} is not a dictionary object, but a {c} object instead."
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:519
+msgid "Mocking path has no {!r} key defined:"
+msgstr ""
+
+#: lib/fb_tools/pdns/__init__.py:524
+msgid "Adding mocking path:"
+msgstr ""
+
+#: lib/fb_tools/pdns/errors.py:54
 msgid "Could not interprete SOA data: {!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:55 lib/fb_tools/pdns/record.py:59
+#: lib/fb_tools/pdns/record.py:57 lib/fb_tools/pdns/record.py:61
 msgid "Argument {a} {v!r} must be a {o} object."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:171 lib/fb_tools/pdns/record.py:380 lib/fb_tools/pdns/record.py:781
-#: lib/fb_tools/vsphere/cluster.py:246 lib/fb_tools/vsphere/dc.py:120 lib/fb_tools/vsphere/ds.py:320
-#: lib/fb_tools/vsphere/ds_cluster.py:162 lib/fb_tools/vsphere/network.py:183
+#: lib/fb_tools/pdns/record.py:181 lib/fb_tools/pdns/record.py:390 lib/fb_tools/pdns/record.py:764
+#: lib/fb_tools/pdns/record.py:1039 lib/fb_tools/vsphere/cluster.py:246 lib/fb_tools/vsphere/dc.py:120
+#: lib/fb_tools/vsphere/ds.py:320 lib/fb_tools/vsphere/ds_cluster.py:162
+#: lib/fb_tools/vsphere/network.py:183
 msgid "Comparing {} objects ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:368
+#: lib/fb_tools/pdns/record.py:378
 msgid "Copying current {}-object in a new one."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:423
+#: lib/fb_tools/pdns/record.py:433
 msgid "Serial overflow - old serial {o} is in future, new serial {n} has reached its maximum value."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:439 lib/fb_tools/pdns/record.py:821
+#: lib/fb_tools/pdns/record.py:449 lib/fb_tools/pdns/record.py:1079
 msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:457 lib/fb_tools/pdns/record.py:839
+#: lib/fb_tools/pdns/record.py:467 lib/fb_tools/pdns/record.py:1097
 msgid "{m} takes at most {max} arguments ({n} given)."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:494
+#: lib/fb_tools/pdns/record.py:504
 msgid "Record {!r} is not in Record list."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:659 lib/fb_tools/pdns/zone.py:131
+#: lib/fb_tools/pdns/record.py:666
+msgid "Invalid value for {w} of a {c} object - "
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:671
+msgid "Invalid value for {w} {v!r} of a {c} object - must be greater than or equal to zero."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:824 lib/fb_tools/pdns/record.py:854 lib/fb_tools/pdns/zone.py:1041
+msgid "A {w} must be a string type, but is {v!r} instead."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:829 lib/fb_tools/pdns/record.py:859
+msgid "A {w} may not be empty: {v!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/record.py:884 lib/fb_tools/pdns/zone.py:133
 msgid "Given data {!r} is not a dict object."
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:662
+#: lib/fb_tools/pdns/record.py:887
 msgid "Creating {} object from data:"
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:798
+#: lib/fb_tools/pdns/record.py:1056
 msgid "Cannot create {o} from record set:"
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:803
+#: lib/fb_tools/pdns/record.py:1061
 msgid "RecordSet has no records:"
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:811
+#: lib/fb_tools/pdns/record.py:1069
 msgid "Got SOA:"
 msgstr ""
 
-#: lib/fb_tools/pdns/record.py:876
+#: lib/fb_tools/pdns/record.py:1134
 msgid "RecordSet {n!r} ({n}) is not in RecordSet list."
 msgstr ""
 
@@ -1055,112 +1106,156 @@ msgstr ""
 msgid "Searching all appropriate zones for item {i!r} - FQDN {f!r} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:55
+#: lib/fb_tools/pdns/zone.py:57
 msgid "No Resource Record Sets found to remove from zone {!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:187
+#: lib/fb_tools/pdns/zone.py:189
 msgid "Params initialisation:"
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:459
+#: lib/fb_tools/pdns/zone.py:461
 msgid "Invalid source tuples for detecting IPv4-network: {!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:526
+#: lib/fb_tools/pdns/zone.py:528
 msgid "Copying current {}-object into a new one."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:548
+#: lib/fb_tools/pdns/zone.py:550
 msgid "Cannot update zone {!r}, no API URL defined."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:551
+#: lib/fb_tools/pdns/zone.py:553
 msgid "Updating data of zone {n!r} from API path {u!r} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:638
+#: lib/fb_tools/pdns/zone.py:640
 msgid "Patching zone {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:655
-msgid "Did not get SOA for zone {!r}."
+#: lib/fb_tools/pdns/zone.py:672
+msgid "Found invalid comment {!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:662
+#: lib/fb_tools/pdns/zone.py:686
 msgid "New SOA must be of type {e}, given {t}: {s!r}"
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:673
+#: lib/fb_tools/pdns/zone.py:697
 msgid "Got no SOA for zone {!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:709
+#: lib/fb_tools/pdns/zone.py:718
 msgid "Setting new SOA {s!r} for zone {z!r}, TTL {t} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:723
+#: lib/fb_tools/pdns/zone.py:735
 msgid "Increasing serial of zone {z!r} from {o} => {n}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:731
+#: lib/fb_tools/pdns/zone.py:752 lib/fb_tools/pdns/zone.py:781 lib/fb_tools/pdns/zone.py:803
+msgid "Parameter {w!r} {a!r} is not a {e} object, but a {c} object instead."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:795
+msgid "Replacing record set in zone {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:816
+msgid "Deleting record set in zone {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:855
+msgid "Record {c!r} already contained in record set {f!r} type {t}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:913 lib/fb_tools/pdns/zone.py:939
 msgid "Parameter address {a!r} is not an IPv4Address or IPv6Address object, but a {c} object instead."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:739
+#: lib/fb_tools/pdns/zone.py:921 lib/fb_tools/pdns/zone.py:947
 msgid "Trying to create {t}-record {f!r} => {a!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:746 lib/fb_tools/pdns/zone.py:804 lib/fb_tools/pdns/zone.py:880
+#: lib/fb_tools/pdns/zone.py:996
 msgid "Current zone:"
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:790 lib/fb_tools/pdns/zone.py:849
-msgid "Creating {t}-record {f!r} => {a!r}."
-msgstr ""
-
-#: lib/fb_tools/pdns/zone.py:891
+#: lib/fb_tools/pdns/zone.py:1007
 msgid "DNS {t!r}-record {n!r} is already deleted."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:901
+#: lib/fb_tools/pdns/zone.py:1017
 msgid "Removing one resource record set from zone {z!r}."
 msgid_plural "Removing {c} resource record sets from zone {z!r}."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/pdns/zone.py:907
+#: lib/fb_tools/pdns/zone.py:1023
 msgid "Resorce record sets:"
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:910
+#: lib/fb_tools/pdns/zone.py:1026
 msgid "Done."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:917
+#: lib/fb_tools/pdns/zone.py:1033
 msgid "Notifying slave servers of zone {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:933 lib/fb_tools/vsphere/ds.py:338 lib/fb_tools/vsphere/ds_cluster.py:180
-#: lib/fb_tools/vsphere/network.py:201
+#: lib/fb_tools/pdns/zone.py:1050
+msgid "Invalid, empty FQDN {!r} given."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:1064
+msgid "Checking FQDN {f!r} for ending on {t!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:1067
+msgid "Invalid FQDN {f!r}, it must ends with {t!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:1077
+msgid "Basename of FQDN {f!r} is {h!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:1099
+msgid "Searching for RecordSet {f!r} of type {t!r} in zone {z!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:1109
+msgid "Found {} RecordSet:"
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:1113
+msgid "Did not found RecordSet {f!r} of type {t!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:1122
+msgid "Did not get SOA for zone {!r}."
+msgstr ""
+
+#: lib/fb_tools/pdns/zone.py:1137 lib/fb_tools/vsphere/ds.py:338
+#: lib/fb_tools/vsphere/ds_cluster.py:180 lib/fb_tools/vsphere/network.py:201
 msgid "Invalid item type {{!r}} to set, only {} allowed."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:935
+#: lib/fb_tools/pdns/zone.py:1139
 msgid "The key {k!r} must be equal to the zone name {n!r}."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:936 lib/fb_tools/vsphere/ds.py:341 lib/fb_tools/vsphere/ds_cluster.py:183
-#: lib/fb_tools/vsphere/network.py:204
+#: lib/fb_tools/pdns/zone.py:1140 lib/fb_tools/vsphere/ds.py:341
+#: lib/fb_tools/vsphere/ds_cluster.py:183 lib/fb_tools/vsphere/network.py:204
 msgid "None type as key is not allowed."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:937 lib/fb_tools/vsphere/ds.py:342 lib/fb_tools/vsphere/ds_cluster.py:184
-#: lib/fb_tools/vsphere/network.py:205
+#: lib/fb_tools/pdns/zone.py:1141 lib/fb_tools/vsphere/ds.py:342
+#: lib/fb_tools/vsphere/ds_cluster.py:184 lib/fb_tools/vsphere/network.py:205
 msgid "Empty key {!r} is not allowed."
 msgstr ""
 
-#: lib/fb_tools/pdns/zone.py:938
+#: lib/fb_tools/pdns/zone.py:1142
 msgid "Object {o!r} is not a {e} object."
 msgstr ""
 

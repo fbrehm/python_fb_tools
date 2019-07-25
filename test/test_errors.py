@@ -102,8 +102,8 @@ class TestFbErrors(FbToolsTestcase):
         e = cm.exception
         LOG.debug("%s raised: %s", e.__class__.__name__, e)
 
-# =============================================================================
 
+# =============================================================================
 if __name__ == '__main__':
 
     verbose = get_arg_verbose()
