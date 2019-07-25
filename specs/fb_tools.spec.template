@@ -99,10 +99,13 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %doc README.md requirements.txt debian/changelog
 %{_bindir}/get-file-to-remove
 %{_bindir}/get-vmware-vm-info
+%{_bindir}/get-vmware-vm-list
 %{_bindir}/pdns-bulk-remove
 %{python3_sitelib}/*
 
 %changelog
+*   Mon Jul 25 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.5.2-2
+-   Version bump to 1.5.2
 *   Mon Jun 17 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.4.5-2
 -   Version bump to 1.4.5
 *   Thu Jan 09 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.4.1-1
