@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.4.6\n"
+"Project-Id-Version: fb_tools 1.5.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
 "POT-Creation-Date: 2019-07-24 15:39+0200\n"
-"PO-Revision-Date: 2019-07-24 14:00+0100\n"
+"PO-Revision-Date: 2019-07-25 11:40+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <frank@brehm-online.com>\n"
