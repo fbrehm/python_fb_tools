@@ -13,10 +13,14 @@ import logging
 import copy
 import re
 import ipaddress
-import collections
 import json
 
 from functools import cmp_to_key
+
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
 
 # Third party modules
 import six
@@ -36,7 +40,7 @@ from .record import PowerDnsSOAData, PowerDNSRecord
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.9'
+__version__ = '0.9.10'
 
 LOG = logging.getLogger(__name__)
 
@@ -1135,7 +1139,7 @@ class PowerDNSZone(BasePowerDNSHandler):
 
 
 # =============================================================================
-class PowerDNSZoneDict(collections.MutableMapping):
+class PowerDNSZoneDict(MutableMapping):
     """
     A dictionary containing PDNS Zone objects.
     It works like a dict.

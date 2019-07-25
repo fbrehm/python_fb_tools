@@ -16,9 +16,13 @@ import json
 import copy
 import socket
 import ipaddress
-import collections
 
 from abc import ABCMeta
+
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
 
 # Third party modules
 import requests
@@ -39,7 +43,7 @@ from .. import __version__ as __global_version__
 from .errors import PowerDNSHandlerError, PDNSApiError, PDNSApiNotAuthorizedError
 from .errors import PDNSApiNotFoundError, PDNSApiValidationError, PDNSApiRateLimitExceededError
 
-__version__ = '0.6.9'
+__version__ = '0.6.10'
 LOG = logging.getLogger(__name__)
 _LIBRARY_NAME = "pp-pdns-api-client"
 
@@ -508,7 +512,7 @@ class BasePowerDNSHandler(HandlingObject):
 
         for path in self.mocking_paths:
 
-            if not isinstance(path, collections.MutableMapping):
+            if not isinstance(path, MutableMapping):
                 msg = _(
                     "Mocking path {p!r} is not a dictionary object, but a "
                     "{c} object instead.").format(p=path, c=path.__class__.__name__)

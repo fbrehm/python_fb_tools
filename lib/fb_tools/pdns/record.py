@@ -13,8 +13,12 @@ import logging
 import copy
 import re
 import datetime
-import collections
 import time
+
+try:
+    from collections.abc import MutableSequence
+except ImportError:
+    from collections import MutableSequence
 
 # Third party modules
 import six
@@ -30,7 +34,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.5.6'
+__version__ = '0.5.7'
 
 LOG = logging.getLogger(__name__)
 
@@ -441,7 +445,7 @@ class PowerDnsSOAData(FbBaseObject):
 
 
 # =============================================================================
-class PowerDNSRecordList(collections.MutableSequence):
+class PowerDNSRecordList(MutableSequence):
     """
     A list containing Power DNS Records (as parts of a Record Set).
     """
@@ -1072,7 +1076,7 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
 
 
 # =============================================================================
-class PowerDNSRecordSetList(collections.MutableSequence):
+class PowerDNSRecordSetList(MutableSequence):
     """
     A list containing Power DNS Record Sets (of a zone).
     """
