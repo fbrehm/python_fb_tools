@@ -19,8 +19,8 @@ echo "Sleeping ${MY_SLEEP} seconds."
 
 i="${MY_SLEEP}"
 while [[ "$i" -gt "0" ]] ; do
-    printf "$i "
-    i=$(( $i - 1 ))
+    printf "%s " "$i"
+    i=$(( i - 1 ))
     sleep 1
 done
 
