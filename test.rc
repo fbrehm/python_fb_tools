@@ -11,7 +11,9 @@ prepare_env() {
     if [[ ! -d "${VENV}" ]] ; then
         virtualenv --python "${PYTHON}" "${VENV}" || exit 6
     fi
+    # shellcheck disable=SC2034
     VIRTUAL_ENV_DISABLE_PROMPT=yes
+    # shellcheck source=/dev/null
     . "${VENV}/bin/activate"
     echo
     echo "Installing and/or updating modules"
