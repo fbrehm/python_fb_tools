@@ -98,9 +98,11 @@ Linter:
   stage: linter
   image: python:3.7
   script:
+    - apt install --yes shellcheck
     - pip install --upgrade --upgrade-strategy eager flake8 pylint
     - pip list --format columns
     - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
+    - shellcheck compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
 #  tags:
 #    - docker
   except:

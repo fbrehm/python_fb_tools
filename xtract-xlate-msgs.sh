@@ -3,16 +3,16 @@
 set -e
 set -u
 
-base_dir=$( dirname $0 )
-cd ${base_dir}
+base_dir=$( dirname "$0" )
+cd "${base_dir}" || exit 99
 
-locale_dir=locale
+locale_dir="locale"
 locale_domain="fb_tools"
 pot_file="${locale_dir}/${locale_domain}.pot"
-po_with=99
+po_with="99"
 my_address="${DEBEMAIL:-frank@brehm-online.com}"
 
-pkg_version=$( cat debian/changelog | head -n 1 | sed -e 's/^[^(]*(//' -e 's/).*//' )
+pkg_version=$( head -n 1 debian/changelog | sed -e 's/^[^(]*(//' -e 's/).*//' )
 
 pybabel extract bin/* lib \
     -o "${pot_file}" \
