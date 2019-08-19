@@ -11,10 +11,10 @@ variables:
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
   YUM_REPO_GPG_PASSWD: 'secret'
-  YUM_REPO_HOST: 'rpm-repo.pixelpark.com'
+  YUM_REPO_HOST: 'repo01.pixelpark.com'
   YUM_REPO_USER: 'rpm-repo'
-  YUM_REPO_DIR: '/www/sites/rpm-repo.pixelpark.com/docs/x86_64'
-  YUM_REPO_ADDSIGN_SCRIPT: '/home/rpm-repo/rpm-addsign-wrapper.expect'
+  YUM_REPO_DIR: '/srv/www/repo/Linux/yum/pixelpark'
+  YUM_REPO_ADDSIGN_SCRIPT: '/home/rpm-repo/bin/rpm-addsign-wrapper.expect'
 
 .template_docker_job: &docker_job_definition
   before_script:
