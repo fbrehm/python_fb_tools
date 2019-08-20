@@ -122,10 +122,11 @@ build CentOS 7 with Python 3.6:
     - locale -a
     - yum clean all && yum makecache
     - yum --assumeyes reinstall glibc-common
+    - localedef --list-archive | grep -P '^(de|en)_' | grep -i utf8 | xargs --no-run-if-empty localedef -c -f UTF-8  -i
     - locale -a
-    - yum --assumeyes epel-release
+    - yum --assumeyes install epel-release
     - yum makecache
-    - yum --assumeyes python36 python36-pip
+    - yum --assumeyes install python36 python36-pip
   script:
     - ls -l --color=always $(which python)*
     - pip install --upgrade pip
