@@ -122,14 +122,15 @@ build CentOS 7 with Python 3.6:
     - locale -a
     - yum clean all && yum makecache
     - ls -l /usr/share/i18n/locales
-    - 'for l in de_AT de_CH de_DE en_AU en_CA en_GB en_IE en_IN en_NZ en_US en_ZA ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
+    - 'for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
     - locale -a
     - yum --assumeyes install epel-release
     - yum makecache
     - yum --assumeyes install python36 python36-pip
   script:
-    - ls -l --color=always /bin/python* /bin/pip*
-    - pip3.6 install --upgrade setuptools
+    - PATH='/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin'; export PATH
+    - ls -l --color=always /bin/python* /bin/pip* || true
+    - pip3.6 install --upgrade pip setuptools
     - ls -l --color=always /bin/python* /bin/pip* /usr/local/bin/pip* || true
     - pip3.6 install -r requirements.txt --upgrade --upgrade-strategy eager
   tags:
