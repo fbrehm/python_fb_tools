@@ -111,7 +111,7 @@ Linter:
     - /^hf.*$/
     - tags
 
-build CentOS 7 with Python 3.6
+build CentOS 7 with Python 3.6:
   stage: build
   image: centos/python-36-centos7
   before_script:
@@ -217,3 +217,4 @@ RPM package OEL7:
   only:
     - master
 
+# vim: ts=2 et
