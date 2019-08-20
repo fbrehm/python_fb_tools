@@ -132,7 +132,7 @@ build CentOS 7 with Python 3.6:
     - ls -l --color=always /bin/python* /bin/pip* || true
     - pip3.6 install --upgrade pip setuptools
     - ls -l --color=always /bin/python* /bin/pip* /usr/local/bin/pip* || true
-    - pip3.6 install -r requirements.txt --upgrade --upgrade-strategy eager
+    - /usr/local/bin/pip3.6 install -r requirements.txt --upgrade --upgrade-strategy eager
   tags:
     - docker
   except:
