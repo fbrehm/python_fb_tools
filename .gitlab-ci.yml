@@ -121,7 +121,8 @@ build CentOS 7 with Python 3.6:
     - pwd
     - locale -a
     - yum clean all && yum makecache
-    - yum --assumeyes reinstall glibc-common
+#    - yum --assumeyes reinstall glibc-common
+    - ls -l /usr/share/i18n/locales
     - 'for l in $(localedef --list-archive | grep -P "^(de|en)_" | grep -i utf8 | sed -e "s/\\.utf8//i"); do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
     - locale -a
     - yum --assumeyes install epel-release
@@ -130,7 +131,7 @@ build CentOS 7 with Python 3.6:
   script:
     - ls -l --color=always /bin/python* /bin/pip*
     - pip3.6 install --upgrade pip setuptools
-    - ls -l --color=always /bin/python* /bin/pip* /usr/local/bin/pip*
+    - ls -l --color=always /bin/python* /bin/pip* /usr/local/bin/pip* || true
     - pip3.6 install -r requirements.txt --upgrade --upgrade-strategy eager
   tags:
     - docker
