@@ -114,19 +114,22 @@ Linter:
 
 build CentOS 7 with Python 3.6:
   stage: build
-  image: centos/python-36-centos7
+  image: centos:7
   before_script:
     - hostname -f
     - whoami
     - pwd
     - locale -a
-    - sudo yum clean all && yum makecache
-    - sudo yum reinstall glibc-common
+    - yum clean all && yum makecache
+    - yum reinstall glibc-common
+    - yum --assumeyes epel-release
+    - yum makecache
+    - yum --assumeyes python36 python36-pip
     - locale -a
   script:
     - ls -l --color=always $(which python)*
-    - sudo pip install --upgrade pip
-    - sudo pip install -r requirements.txt --upgrade --upgrade-strategy eager
+    - pip install --upgrade pip
+    - pip install -r requirements.txt --upgrade --upgrade-strategy eager
   tags:
     - docker
   except:
