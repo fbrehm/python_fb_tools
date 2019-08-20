@@ -103,70 +103,87 @@ Linter:
     - pip list --format columns
     - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
     - shellcheck compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
-#  tags:
-#    - docker
+  tags:
+    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
     - tags
 
-build Python 2.7:
-  <<: *docker_job_definition
+build CentOS 7 with Python 3.6
   stage: build
-  image: python:2.7
+  image: centos/python-36-centos7
+  before_script:
+    - locale -a
+    - yum clean all && yum makecache
   script:
-    - pip install -r requirements-2.7.txt --upgrade --upgrade-strategy eager
-    - python setup.py bdist
-#  tags:
-#    - docker
+    - pip install --upgrade pip
+    - pip install -r requirements.txt --upgrade --upgrade-strategy eager
+  tags:
+    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
     - tags
 
-build Python 3.5:
-  <<: *docker_job_definition
-  stage: build
-  image: python:3.5
-  script:
-    - python setup.py bdist
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
-    - tags
-
-build Python 3.6:
-  <<: *docker_job_definition
-  stage: build
-  image: python:3.6
-  script:
-    - python setup.py bdist
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
-    - tags
-
-build Python 3.7:
-  <<: *docker_job_definition
-  stage: build
-  image: python:3.7
-  script:
-    - python setup.py bdist
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
-    - tags
+#build Python 2.7:
+#  <<: *docker_job_definition
+#  stage: build
+#  image: python:2.7
+#  script:
+#    - pip install -r requirements-2.7.txt --upgrade --upgrade-strategy eager
+#    - python setup.py bdist
+##  tags:
+##    - docker
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
+#
+#build Python 3.5:
+#  <<: *docker_job_definition
+#  stage: build
+#  image: python:3.5
+#  script:
+#    - python setup.py bdist
+##  tags:
+##    - docker
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
+#
+#build Python 3.6:
+#  <<: *docker_job_definition
+#  stage: build
+#  image: python:3.6
+#  script:
+#    - python setup.py bdist
+##  tags:
+##    - docker
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
+#
+#build Python 3.7:
+#  <<: *docker_job_definition
+#  stage: build
+#  image: python:3.7
+#  script:
+#    - python setup.py bdist
+##  tags:
+##    - docker
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
 
 RPM package OEL7:
   stage: deploy
