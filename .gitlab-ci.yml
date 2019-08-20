@@ -121,7 +121,6 @@ build CentOS 7 with Python 3.6:
     - pwd
     - locale -a
     - yum clean all && yum makecache
-    - localedef --list-archive | grep -P '^(de|en)_' | grep -i utf8 | xargs --no-run-if-empty localedef -c -f UTF-8  -i
     - 'for l in $(localedef --list-archive | grep -P "^(de|en)_" | grep -i utf8 | sed -e "s/\\.utf8//i"); do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
     - locale -a
     - yum --assumeyes install epel-release
