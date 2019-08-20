@@ -116,14 +116,17 @@ build CentOS 7 with Python 3.6:
   stage: build
   image: centos/python-36-centos7
   before_script:
+    - hostname -f
+    - whoami
+    - pwd
     - locale -a
-    - yum clean all && yum makecache
-    - yum reinstall glibc-common
+    - sudo yum clean all && yum makecache
+    - sudo yum reinstall glibc-common
     - locale -a
   script:
     - ls -l --color=always $(which python)*
-    - pip install --upgrade pip
-    - pip install -r requirements.txt --upgrade --upgrade-strategy eager
+    - sudo pip install --upgrade pip
+    - sudo pip install -r requirements.txt --upgrade --upgrade-strategy eager
   tags:
     - docker
   except:
