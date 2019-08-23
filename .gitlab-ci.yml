@@ -129,7 +129,7 @@ build CentOS 7 with Python 3.6:
     - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://repo01.pixelpark.com/Linux/yum/pixelpark/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
     - yum makecache
     - yum --assumeyes upgrade
-    - yum --assumeyes install python36 python36-pip python36-devel python36-pytz python36-babel gnupg2 rpm-build tree expect gettext python-devel python-setuptools python-pathlib python-babel python-ipaddress pytz
+    - yum --assumeyes install python36 python36-pip python36-devel python36-pytz python36-babel gnupg2 rpm-build tree expect gettext python-devel python2-pip python-setuptools python-pathlib python-babel python-ipaddress pytz
     - ls -l --color=always /bin/python* /bin/pip* || true
     # - pip3.6 install --upgrade pip setuptools
     # - ls -l --color=always /bin/python* /bin/pip* /usr/local/bin/pip* || true
