@@ -131,11 +131,13 @@ build CentOS 7 with Python 3.6:
     - yum --assumeyes upgrade
     - yum --assumeyes install python36 python36-pip python36-devel python36-pytz python36-babel gnupg2 rpm-build tree expect gettext python-devel python-setuptools python-pathlib python-babel python-ipaddress pytz
     - ls -l --color=always /bin/python* /bin/pip* || true
-    - pip3.6 install --upgrade pip setuptools
-    - ls -l --color=always /bin/python* /bin/pip* /usr/local/bin/pip* || true
-    - if test -e /bin/pip3.6 ; then echo "/bin/pip3.6 exists"; else ln -sv /usr/local/bin/pip3.6 /bin/; fi
-    - if test -e /bin/pip3 ; then echo "/bin/pip3 exists"; else ln -sv /usr/local/bin/pip3 /bin/; fi
-    - pip3.6 install -r requirements.txt --upgrade --upgrade-strategy eager
+    # - pip3.6 install --upgrade pip setuptools
+    # - ls -l --color=always /bin/python* /bin/pip* /usr/local/bin/pip* || true
+    # - if test -e /bin/pip3.6 ; then echo "/bin/pip3.6 exists"; else ln -sv /usr/local/bin/pip3.6 /bin/; fi
+    # - if test -e /bin/pip3 ; then echo "/bin/pip3 exists"; else ln -sv /usr/local/bin/pip3 /bin/; fi
+    # - pip3.6 install -r requirements.txt --upgrade --upgrade-strategy eager
+    - pip2 list
+    - pip3 list
   script:
     - mkdir -pv rpmdir
     - mkdir -pv rpmdir/SOURCES
@@ -148,7 +150,7 @@ build CentOS 7 with Python 3.6:
     - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
     - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
     - 'cat specs/fb_tools.spec.template | sed -e "s/@@@Version@@@/$PKG_VERSION/gi" -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec'
-    - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version=$PKG_VERSION" --define "python3_version_nodots 36" specs/fb_tools.spec'
+    - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version $PKG_VERSION" --define "python3_version_nodots 36" specs/fb_tools.spec'
     - tree -aQpugs rpmdir/*RPMS || true
     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
