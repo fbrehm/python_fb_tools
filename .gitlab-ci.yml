@@ -148,7 +148,7 @@ build CentOS 7 with Python 3.6:
     - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version $PKG_VERSION" --define "python3_version_nodots 36" specs/fb_tools.spec'
     - tree -aQpugs rpmdir/*RPMS || true
     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
-    - 'echo -e "%_signature gpg\n%_gpg_name Pixelpark AG (Pixelpark RPM Repo Key) <betrieb@pixelpark.com>" >$HOME/.rpmmacros"
+    - 'echo -e "%_signature gpg\n%_gpg_name Pixelpark AG (Pixelpark RPM Repo Key) <betrieb@pixelpark.com>" >$HOME/.rpmmacros'
     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
     - gpg --list-public-keys
     - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
