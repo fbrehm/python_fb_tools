@@ -125,14 +125,25 @@ build CentOS 7 with Python 3.6:
     - locale -a
     - yum --assumeyes install epel-release
     - yum makecache
-    - yum --assumeyes install python36 python36-pip
-  script:
+    - yum --assumeyes upgrade
+    - yum --assumeyes install python36 python36-pip gnupg2 rpm-build tree
     - ls -l --color=always /bin/python* /bin/pip* || true
     - pip3.6 install --upgrade pip setuptools
     - ls -l --color=always /bin/python* /bin/pip* /usr/local/bin/pip* || true
     - if test -e /bin/pip3.6 ; then echo "/bin/pip3.6 exists"; else ln -sv /usr/local/bin/pip3.6 /bin/; fi
     - if test -e /bin/pip3 ; then echo "/bin/pip3 exists"; else ln -sv /usr/local/bin/pip3 /bin/; fi
     - pip3.6 install -r requirements.txt --upgrade --upgrade-strategy eager
+  script:
+    - mkdir -pv rpmdir
+    - mkdir -pv rpmdir/SOURCES
+    - 'export ODIR=$(pwd)'
+    - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )'
+    - 'export PKG_VERSION=$( ./get-rpm-version 3.6 )'
+    - 'echo "Version to build: $PKG_VERSION"'
+    - 'mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION'
+    - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
+    - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
+    - 'echo "${PKG_VERSION}" > .rpm-version-3.6'
   tags:
     - docker
   except:
