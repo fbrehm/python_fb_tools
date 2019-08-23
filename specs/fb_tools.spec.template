@@ -9,7 +9,7 @@
 
 Name:		python-fb-tools
 Version:	%{version}
-Release:	2%{?dist}
+Release:	@@@Release@@@%{?dist}
 Summary:	Python modules for common used objects, error classes and functions
 
 Group:		Development/Languages/Python
