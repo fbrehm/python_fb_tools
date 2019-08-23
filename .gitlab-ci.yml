@@ -157,9 +157,9 @@ build CentOS 7 with Python 3.6:
     - 'for f in rpmdir/RPMS/*/*.rpm; do echo "${YUM_REPO_GPG_PASSWD}" | ./rpm-addsign-wrapper.expect "${f}"; done'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
   cache:
-    - key: ${CI_JOB_NAME}
-    - paths:
-        - .rpm-version
+    key: ${CI_JOB_NAME}
+    paths:
+      - .rpm-version
   tags:
     - docker
   except:
