@@ -257,7 +257,7 @@ class VsphereCluster(VsphereObject):
     @classmethod
     def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
-        if not isinstance(data, vim.ClusterComputeResource):
+        if not isinstance(data, (vim.ClusterComputeResource, vim.ComputeResource)):
             msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
                 t='data', e='vim.ClusterComputeResource', v=data)
             raise TypeError(msg)

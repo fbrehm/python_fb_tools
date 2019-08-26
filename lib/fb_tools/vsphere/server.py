@@ -241,16 +241,25 @@ class VsphereServer(BaseVsphereHandler):
                 self._get_clusters(sub_child, depth + 1)
             return
 
-        if isinstance(child, vim.ClusterComputeResource):
+        if isinstance(child, (vim.ClusterComputeResource, vim.ComputeResource)):
             cluster = VsphereCluster.from_summary(
                 child, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
             if self.verbose > 1:
+                obj_name = _('Found standalone host')
+                if isinstance(child, vim.ClusterComputeResource):
+                    obj_name = _('Found cluster')
+                host_label = ngettext('host', 'hosts', cluster.hosts_total)
+                cpus_label = ngettext('CPU', 'CPUs', cluster.cpu_cores)
+                thr_label = ngettext('thread', 'threads', cluster.cpu_threads)
+                nw_label = ngettext('network', 'networks', len(cluster.networks))
+                ds_label = ngettext('datastore', 'datastores', len(cluster.datastores))
                 LOG.debug(_(
-                    "Found cluster {cl!r}, {h} hosts, {cpu} CPUs, {thr} threads, "
-                    "{mem:0.1f} GiB Memory, {net} networks and {ds} datastores.").format(
-                    cl=cluster.name, h=cluster.hosts_total, cpu=cluster.cpu_cores,
-                    thr=cluster.cpu_threads, mem=cluster.mem_gb_total,
-                    net=len(cluster.networks), ds=len(cluster.datastores)))
+                    "{on} {cl!r}, {h} {h_l}, {cpu} {cpu_l}, {thr} {t_l}, "
+                    "{mem:0.1f} GiB Memory, {net} {nw_l} and {ds} {ds_l}.").format(
+                    on=obj_name, cl=cluster.name, h=cluster.hosts_total, h_l=host_label,
+                    cpu=cluster.cpu_cores, cpu_l=cpus_label, thr=cluster.cpu_threads,
+                    t_l=thr_label, mem=cluster.mem_gb_total, net=len(cluster.networks),
+                    nw_l = nw_label, ds=len(cluster.datastores), ds_l=ds_label))
             self.clusters.append(cluster)
 
         return
