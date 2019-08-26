@@ -1,3 +1,9 @@
+fb-tools (1.5.4) UNRELEASED; urgency=medium
+
+  * Rewrite .gitlab-ci.yml to build Enterprise Linux packages
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 26 Aug 2019 15:07:00 +0200
+
 fb-tools (1.5.3) all; urgency=medium
 
   * Bugfixing in PowerDNS-API modules
