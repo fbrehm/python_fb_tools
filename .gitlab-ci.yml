@@ -10,6 +10,7 @@ variables:
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
+  YUM_REPO_GPG_ID: 'C0E73F70'
   YUM_REPO_GPG_PASSWD: 'secret'
   YUM_REPO_HOST: 'repo01.pixelpark.com'
   YUM_REPO_USER: 'rpm-repo'
@@ -125,6 +126,9 @@ build CentOS 7 with Python 3.6:
     - yum clean all && yum makecache
     - 'for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
     - locale -a
+    - locale
+    - 'export LC_ALL=en_US.utf8'
+    - locale
     - yum --assumeyes install epel-release
     - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://repo01.pixelpark.com/Linux/yum/pixelpark/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
     - yum makecache
@@ -148,13 +152,12 @@ build CentOS 7 with Python 3.6:
     - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version $PKG_VERSION" --define "python3_version_nodots 36" specs/fb_tools.spec'
     - tree -aQpugs rpmdir/*RPMS || true
     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
-    - 'echo -e "%_signature gpg\n%_gpg_name Pixelpark AG (Pixelpark RPM Repo Key) <betrieb@pixelpark.com>" >$HOME/.rpmmacros'
+    - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
     - gpg --list-public-keys
     - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
     - gpg --list-secret-keys
-    # - 'for f in rpmdir/*RPMS/*/*.rpm; do echo "${YUM_REPO_GPG_PASSWD}" | ./rpm-addsign-wrapper.expect "${f}"; done'
-    - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; echo "${YUM_REPO_GPG_PASSWD}" | ./rpm-addsign-wrapper.expect "${f}"; done'
+    - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
   cache:
     key: ${CI_JOB_NAME}
