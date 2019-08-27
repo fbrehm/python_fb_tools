@@ -12,6 +12,7 @@ from __future__ import absolute_import
 import logging
 import datetime
 import uuid
+import ipaddress
 
 # Third party modules
 from pyVmomi import vim
@@ -25,7 +26,7 @@ from ..obj import FbBaseObject
 
 from .object import VsphereObject
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -278,6 +279,8 @@ class VsphereHost(VsphereObject):
         self.connection_state = None
         self.power_state = None
         self.standby = None
+        self._reboot_required = False
+        self._mgmt_ip = None
 
         super(VsphereHost, self).__init__(
             name=name, obj_type='vsphere_host', name_prefix="host", status=status,
@@ -302,6 +305,27 @@ class VsphereHost(VsphereObject):
             self._cluster_name = None
         else:
             self._cluster_name = v
+
+    # -----------------------------------------------------------
+    @property
+    def mgmt_ip(self):
+        """The management IP address of the host."""
+        return self._mgmt_ip
+
+    @mgmt_ip.setter
+    def mgmt_ip(self, value):
+        if value is None:
+            self._mgmt_ip = None
+            return
+        v = str(value).strip().lower()
+        if v == '':
+            self._mgmt_ip = None
+        else:
+            try:
+                v = ipaddress.ip_address(v)
+            except Exception:
+                pass
+            self._mgmt_ip = v
 
     # -----------------------------------------------------------
     @property
@@ -338,6 +362,16 @@ class VsphereHost(VsphereObject):
     @quarantaine.setter
     def quarantaine(self, value):
         self._quarantaine = to_bool(value)
+
+    # -----------------------------------------------------------
+    @property
+    def reboot_required(self):
+        "Does the host needs a reboot."
+        return self._reboot_required
+
+    @reboot_required.setter
+    def reboot_required(self, value):
+        self._reboot_required = to_bool(value)
 
     # -----------------------------------------------------------
     @property
@@ -378,6 +412,8 @@ class VsphereHost(VsphereObject):
         res['boot_time'] = self.boot_time
         res['maintenance'] = self.maintenance
         res['quarantaine'] = self.quarantaine
+        res['reboot_required'] = self.reboot_required
+        res['mgmt_ip'] = self.mgmt_ip
         if self.bios is not None:
             res['bios'] = self.bios.as_dict(short=short)
 
@@ -407,6 +443,8 @@ class VsphereHost(VsphereObject):
         host.connection_state = self.connection_state
         host.power_state = self.power_state
         host.standby = self.standby
+        host.reboot_required = self.reboot_required
+        host.mgmt_ip = self.mgmt_ip
 
         return host
 
@@ -471,6 +509,9 @@ class VsphereHost(VsphereObject):
         host.standby = data.runtime.standbyMode
         host.maintenance = data.runtime.inMaintenanceMode
         host.quarantaine = data.runtime.inQuarantineMode
+
+        host.mgmt_ip = data.summary.managementServerIp
+        host.reboot_required = data.summary.rebootRequired
 
         return host
 
