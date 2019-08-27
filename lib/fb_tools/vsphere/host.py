@@ -24,7 +24,7 @@ from ..obj import FbBaseObject
 
 from .object import VsphereObject
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -263,6 +263,11 @@ class VsphereHost(VsphereObject):
         self.repr_fields = ('name', )
         self._cluster_name = None
         self.bios = None
+        self.cpu_speed = None
+        self.cpu_cores = None
+        self.cpu_pkgs = None
+        self.cpu_threads = None
+        self.memory = None
 
         super(VsphereHost, self).__init__(
             name=name, obj_type='vsphere_host', name_prefix="host", status=status,
@@ -288,6 +293,22 @@ class VsphereHost(VsphereObject):
         else:
             self._cluster_name = v
 
+    # -----------------------------------------------------------
+    @property
+    def memory_mb(self):
+        "The RAM of the host in MiByte."
+        if self.memory is None:
+            return None
+        return int(self.memory / 1024 / 1024)
+
+    # -----------------------------------------------------------
+    @property
+    def memory_gb(self):
+        "The RAM of the host in GiByte."
+        if self.memory is None:
+            return None
+        return float(self.memory) / 1024.0 / 1024.0 / 1024.0
+
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
@@ -302,6 +323,8 @@ class VsphereHost(VsphereObject):
 
         res = super(VsphereHost, self).as_dict(short=short)
         res['cluster_name'] = self.cluster_name
+        res['memory_mb'] = self.memory_mb
+        res['memory_gb'] = self.memory_gb
         if self.bios is not None:
             res['bios'] = self.bios.as_dict(short=short)
 
@@ -317,6 +340,11 @@ class VsphereHost(VsphereObject):
 
         if self.bios:
             host.bios = copy.copy(self.bios)
+        host.cpu_speed = self.cpu_speed
+        host.cpu_cores = self.cpu_cores
+        host.cpu_pkgs = self.cpu_pkgs
+        host.cpu_threads = self.cpu_threads
+        host.memory = self.memory
 
         return host
 
@@ -361,6 +389,12 @@ class VsphereHost(VsphereObject):
 
         host.bios = VsphereHostBiosInfo.from_summary(
             data.hardware.biosInfo, appname=appname, verbose=verbose, base_dir=base_dir)
+
+        host.cpu_speed = data.hardware.cpuInfo.hz
+        host.cpu_cores = data.hardware.cpuInfo.numCpuCores
+        host.cpu_pkgs = data.hardware.cpuInfo.numCpuPackages
+        host.cpu_threads = data.hardware.cpuInfo.numCpuThreads
+        host.memory = data.hardware.memorySize
 
         return host
 
