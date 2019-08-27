@@ -50,10 +50,12 @@ from .network import VsphereNetwork, VsphereNetworkDict
 
 from .iface import VsphereVmInterface
 
+from .host import VsphereHost
+
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -483,13 +485,14 @@ class VsphereServer(BaseVsphereHandler):
 
         if self.verbose > 2:
             out = []
-            for host in self.hosts:
+            for host_name in self.hosts.keys():
+                host = self.hosts[host_name]
                 out.append(host.as_dict())
-            LOG.debug(_("Found host:") + '\n' + pp(out))
+            LOG.debug(_("Found hosts:") + '\n' + pp(out))
         elif self.verbose:
             out = []
-            for host in self.hosts:
-                out.append(host.name)
+            for host_name in self.hosts.keys():
+                out.append(host_name)
             LOG.debug(_("Found hosts:") + '\n' + pp(out))
 
     # -------------------------------------------------------------------------
@@ -525,6 +528,10 @@ class VsphereServer(BaseVsphereHandler):
             for host_def in child.host:
                 LOG.debug(_("Found host {h!r} in cluster {c!r}.").format(
                     h=host_def.summary.config.name, c=cluster_name))
+                host = VsphereHost.from_summary(
+                    host_def, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+                    cluster_name=cluster_name)
+                self.hosts[host.name] = host
 
         return
 
