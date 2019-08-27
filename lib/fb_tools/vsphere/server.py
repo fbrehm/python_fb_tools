@@ -53,7 +53,7 @@ from .iface import VsphereVmInterface
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.2.5'
+__version__ = '1.3.1'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -97,6 +97,7 @@ class VsphereServer(BaseVsphereHandler):
         self.network_mapping = {}
 
         self.clusters = []
+        self.hosts = {}
 
         super(VsphereServer, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -452,6 +453,78 @@ class VsphereServer(BaseVsphereHandler):
             ds = VsphereNetwork.from_summary(
                 child, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
             self.networks.append(ds)
+
+        return
+
+    # -------------------------------------------------------------------------
+    def get_hosts(self, disconnect=False):
+
+        LOG.debug(_("Trying to get all host systems from VSphere ..."))
+
+        self.clusters = []
+        self.hosts = {}
+
+        try:
+
+            if not self.service_instance:
+                self.connect()
+
+            content = self.service_instance.RetrieveContent()
+            dc = self.get_obj(content, [vim.Datacenter], self.dc)
+            if not dc:
+                raise VSphereDatacenterNotFoundError(self.dc)
+
+            for child in dc.hostFolder.childEntity:
+                self._get_hosts(child)
+
+        finally:
+            if disconnect:
+                self.disconnect()
+
+        if self.verbose > 2:
+            out = []
+            for host in self.hosts:
+                out.append(host.as_dict())
+            LOG.debug(_("Found host:") + '\n' + pp(out))
+        elif self.verbose:
+            out = []
+            for host in self.hosts:
+                out.append(host.name)
+            LOG.debug(_("Found hosts:") + '\n' + pp(out))
+
+    # -------------------------------------------------------------------------
+    def _get_hosts(self, child, depth=1, cluster_name=None):
+
+        if self.verbose > 3:
+            LOG.debug(_("Checking {o}-object in cluster {c!r} ...").format(
+                o=child.__class__.__name__, c=cluster_name))
+
+        if isinstance(child, (vim.ClusterComputeResource, vim.ComputeResource)):
+            cluster = VsphereCluster.from_summary(
+                child, appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
+            cluster_name = cluster.name
+            if self.verbose > 1:
+                obj_name = _('Found standalone host')
+                if isinstance(child, vim.ClusterComputeResource):
+                    obj_name = _('Found cluster')
+                host_label = ngettext('host', 'hosts', cluster.hosts_total)
+                cpus_label = ngettext('CPU', 'CPUs', cluster.cpu_cores)
+                thr_label = ngettext('thread', 'threads', cluster.cpu_threads)
+                nw_label = ngettext('network', 'networks', len(cluster.networks))
+                ds_label = ngettext('datastore', 'datastores', len(cluster.datastores))
+                LOG.debug(_(
+                    "{on} {cl!r}, {h} {h_l}, {cpu} {cpu_l}, {thr} {t_l}, "
+                    "{mem:0.1f} GiB Memory, {net} {nw_l} and {ds} {ds_l}.").format(
+                    on=obj_name, cl=cluster.name, h=cluster.hosts_total, h_l=host_label,
+                    cpu=cluster.cpu_cores, cpu_l=cpus_label, thr=cluster.cpu_threads,
+                    t_l=thr_label, mem=cluster.mem_gb_total, net=len(cluster.networks),
+                    nw_l = nw_label, ds=len(cluster.datastores), ds_l=ds_label))
+
+            self.clusters.append(cluster)
+
+            for host_def in child.host:
+                LOG.debug(_("Found host {h!r} in cluster {c!r}.").format(
+                    h=host_def.summary.config.name, c=cluster_name))
 
         return
 
