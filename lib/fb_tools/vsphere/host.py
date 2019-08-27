@@ -11,6 +11,7 @@ from __future__ import absolute_import
 # Standard modules
 import logging
 import datetime
+import uuid
 
 # Third party modules
 from pyVmomi import vim
@@ -24,7 +25,7 @@ from ..obj import FbBaseObject
 
 from .object import VsphereObject
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -268,6 +269,15 @@ class VsphereHost(VsphereObject):
         self.cpu_pkgs = None
         self.cpu_threads = None
         self.memory = None
+        self.model = None
+        self.uuid = None
+        self.vendor = None
+        self._boot_time = None
+        self._maintenance = False
+        self._quarantaine = False
+        self.connection_state = None
+        self.power_state = None
+        self.standby = None
 
         super(VsphereHost, self).__init__(
             name=name, obj_type='vsphere_host', name_prefix="host", status=status,
@@ -309,6 +319,46 @@ class VsphereHost(VsphereObject):
             return None
         return float(self.memory) / 1024.0 / 1024.0 / 1024.0
 
+    # -----------------------------------------------------------
+    @property
+    def maintenance(self):
+        "Is the host in maintenance mode."
+        return self._maintenance
+
+    @maintenance.setter
+    def maintenance(self, value):
+        self._maintenance = to_bool(value)
+
+    # -----------------------------------------------------------
+    @property
+    def quarantaine(self):
+        "Is the host in quarantaine mode."
+        return self._quarantaine
+
+    @quarantaine.setter
+    def quarantaine(self, value):
+        self._quarantaine = to_bool(value)
+
+    # -----------------------------------------------------------
+    @property
+    def boot_time(self):
+        """The time of the last reboot of the host."""
+        return self._boot_time
+
+    @boot_time.setter
+    def boot_time(self, value):
+        if value is None:
+            self._boot_time = None
+            return
+        if isinstance(value, (datetime.datetime, datetime.date)):
+            self._boot_time = value
+            return
+        v = str(value).strip()
+        if v == '':
+            self._boot_time = None
+        else:
+            self._boot_time = v
+
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
@@ -325,6 +375,9 @@ class VsphereHost(VsphereObject):
         res['cluster_name'] = self.cluster_name
         res['memory_mb'] = self.memory_mb
         res['memory_gb'] = self.memory_gb
+        res['boot_time'] = self.boot_time
+        res['maintenance'] = self.maintenance
+        res['quarantaine'] = self.quarantaine
         if self.bios is not None:
             res['bios'] = self.bios.as_dict(short=short)
 
@@ -345,6 +398,15 @@ class VsphereHost(VsphereObject):
         host.cpu_pkgs = self.cpu_pkgs
         host.cpu_threads = self.cpu_threads
         host.memory = self.memory
+        host.model = self.model
+        host.uuid = self.uuid
+        host.vendor = self.vendor
+        host.boot_time = self.boot_time
+        host.maintenance = self.maintenance
+        host.quarantaine = self.quarantaine
+        host.connection_state = self.connection_state
+        host.power_state = self.power_state
+        host.standby = self.standby
 
         return host
 
@@ -395,6 +457,20 @@ class VsphereHost(VsphereObject):
         host.cpu_pkgs = data.hardware.cpuInfo.numCpuPackages
         host.cpu_threads = data.hardware.cpuInfo.numCpuThreads
         host.memory = data.hardware.memorySize
+
+        host.model = data.hardware.systemInfo.model
+        try:
+            host.uuid = uuid.UUID(data.hardware.systemInfo.uuid)
+        except Exception:
+            host.uuid = data.hardware.systemInfo.uuid
+        host.vendor = data.hardware.systemInfo.vendor
+
+        host.boot_time = data.runtime.bootTime
+        host.connection_state = data.runtime.connectionState
+        host.power_state = data.runtime.powerState
+        host.standby = data.runtime.standbyMode
+        host.maintenance = data.runtime.inMaintenanceMode
+        host.quarantaine = data.runtime.inQuarantineMode
 
         return host
 
