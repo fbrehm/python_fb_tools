@@ -26,7 +26,7 @@ from ..obj import FbBaseObject
 
 from .object import VsphereObject
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -54,6 +54,7 @@ class VsphereVm(VsphereObject):
         self._uuid = None
         self._instance_uuid = None
         self._host = None
+        self.power_state = None
 
         self.vm_tools = None
 
@@ -257,10 +258,10 @@ class VsphereVm(VsphereObject):
         """Is this VM generally online or not."""
         if self.template:
             return False
-#        if self.power_state is None:
-#            return False
-#        if self.power_state.lower() in ('poweredoff', 'unknown'):
-#            return False
+        if self.power_state is None:
+            return False
+        if self.power_state.lower() in ('poweredoff', 'suspended'):
+            return False
         return True
 
     # -------------------------------------------------------------------------
@@ -313,6 +314,7 @@ class VsphereVm(VsphereObject):
         vm.guest_id = self.guest_id
         vm.uuid = self.uuid
         vm.instance_uuid = self.instance_uuid
+        vm.power_state = self.power_state
 
         return vm
 
@@ -372,6 +374,7 @@ class VsphereVm(VsphereObject):
         vm.guest_id = data.summary.config.guestId
         vm.uuid = data.summary.config.uuid
         vm.instance_uuid = data.summary.config.instanceUuid
+        vm.power_state = data.runtime.powerState
 
         if data.guest:
 
