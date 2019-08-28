@@ -26,7 +26,9 @@ from ..obj import FbBaseObject
 
 from .object import VsphereObject
 
-__version__ = '0.3.4'
+from .about import VsphereAboutInfo
+
+__version__ = '0.4.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -212,11 +214,13 @@ class VsphereHostBiosInfo(FbBaseObject):
     # -------------------------------------------------------------------------
     def __copy__(self):
 
-        return VsphereHostBiosInfo(
+        info = VsphereHostBiosInfo(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             initialized=self.initialized, bios_version=self.bios_version,
             fw_major=self.fw_major, fw_minor=self.fw_minor, major=self.major, minor=self.minor,
             release_date=self.release_date, vendor=self.vendor)
+
+        return info
 
     # -------------------------------------------------------------------------
     @classmethod
@@ -281,6 +285,8 @@ class VsphereHost(VsphereObject):
         self.standby = None
         self._reboot_required = False
         self._mgmt_ip = None
+
+        self.product = None
 
         super(VsphereHost, self).__init__(
             name=name, obj_type='vsphere_host', name_prefix="host", status=status,
@@ -456,6 +462,7 @@ class VsphereHost(VsphereObject):
         host.standby = self.standby
         host.reboot_required = self.reboot_required
         host.mgmt_ip = self.mgmt_ip
+        host.product = copy.copy(self.product)
 
         return host
 
@@ -523,6 +530,9 @@ class VsphereHost(VsphereObject):
 
         host.mgmt_ip = data.summary.managementServerIp
         host.reboot_required = data.summary.rebootRequired
+
+        host.product = VsphereAboutInfo.from_summary(
+            data.config.product, appname=appname, verbose=verbose, base_dir=base_dir)
 
         return host
 
