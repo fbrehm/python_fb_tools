@@ -26,7 +26,7 @@ from ..obj import FbBaseObject
 
 from .object import VsphereObject
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -43,6 +43,8 @@ class VsphereVm(VsphereObject):
 
         self.repr_fields = ('name', )
         self._cluster_name = None
+        self._path = None
+        self._template = False
 
         super(VsphereVm, self).__init__(
             name=name, obj_type='vsphere_vm', name_prefix="vm", status=status,
@@ -66,6 +68,33 @@ class VsphereVm(VsphereObject):
         else:
             self._cluster_name = v
 
+    # -----------------------------------------------------------
+    @property
+    def path(self):
+        """The path of the VM in the iVM folder structure."""
+        return self._path
+
+    @path.setter
+    def path(self, value):
+        if value is None:
+            self._path = None
+            return
+        v = str(value).strip()
+        if v == '':
+            self._path = None
+        else:
+            self._path = v
+
+    # -----------------------------------------------------------
+    @property
+    def template(self):
+        "Is this a VMWare template instead of a VM."
+        return self._template
+
+    @template.setter
+    def template(self, value):
+        self._template = to_bool(value)
+
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
@@ -80,6 +109,8 @@ class VsphereVm(VsphereObject):
 
         res = super(VsphereVm, self).as_dict(short=short)
         res['cluster_name'] = self.cluster_name
+        res['path'] = self.path
+        res['template'] = self.template
 
         return res
 
@@ -92,6 +123,8 @@ class VsphereVm(VsphereObject):
             config_status=self.config_status)
 
         vm.cluster_name = self.cluster_name
+        vm.path = self.path
+        vm.template = self.template
 
         return vm
 
@@ -136,6 +169,9 @@ class VsphereVm(VsphereObject):
         vm.cluster_name = None
         if data.resourcePool:
             vm.cluster_name = data.resourcePool.owner.name
+
+        vm.path = cur_path
+        vm.template = data.summary.config.template
 
         if verbose > 2:
             LOG.debug(_("Created {} object:").format(cls.__name__) + '\n' + pp(vm.as_dict()))
