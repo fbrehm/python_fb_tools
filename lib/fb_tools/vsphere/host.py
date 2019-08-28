@@ -26,7 +26,7 @@ from ..obj import FbBaseObject
 
 from .object import VsphereObject
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -375,6 +375,16 @@ class VsphereHost(VsphereObject):
 
     # -----------------------------------------------------------
     @property
+    def online(self):
+        """Is this host generally online or not."""
+        if self.power_state is None:
+            return False
+        if self.power_state.lower() in ('poweredoff', 'unknown'):
+            return False
+        return True
+
+    # -----------------------------------------------------------
+    @property
     def boot_time(self):
         """The time of the last reboot of the host."""
         return self._boot_time
@@ -414,6 +424,7 @@ class VsphereHost(VsphereObject):
         res['quarantaine'] = self.quarantaine
         res['reboot_required'] = self.reboot_required
         res['mgmt_ip'] = self.mgmt_ip
+        res['online'] = self.online
         if self.bios is not None:
             res['bios'] = self.bios.as_dict(short=short)
 
