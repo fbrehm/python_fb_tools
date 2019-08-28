@@ -26,7 +26,7 @@ from ..obj import FbBaseObject
 
 from .object import VsphereObject
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -42,11 +42,29 @@ class VsphereVm(VsphereObject):
             name=None, status='gray', config_status='gray'): 
 
         self.repr_fields = ('name', )
+        self._cluster_name = None
 
         super(VsphereVm, self).__init__(
             name=name, obj_type='vsphere_vm', name_prefix="vm", status=status,
             config_status=config_status, appname=appname, verbose=verbose,
             version=version, base_dir=base_dir)
+
+    # -----------------------------------------------------------
+    @property
+    def cluster_name(self):
+        """The name of the compute resource, where this host is a member."""
+        return self._cluster_name
+
+    @cluster_name.setter
+    def cluster_name(self, value):
+        if value is None:
+            self._cluster_name = None
+            return
+        v = str(value).strip().lower()
+        if v == '':
+            self._cluster_name = None
+        else:
+            self._cluster_name = v
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -61,7 +79,7 @@ class VsphereVm(VsphereObject):
         """
 
         res = super(VsphereVm, self).as_dict(short=short)
-        # res['cluster_name'] = self.cluster_name
+        res['cluster_name'] = self.cluster_name
 
         return res
 
@@ -72,6 +90,8 @@ class VsphereVm(VsphereObject):
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             initialized=self.initialized, name=self.name, status=self.status,
             config_status=self.config_status)
+
+        vm.cluster_name = self.cluster_name
 
         return vm
 
@@ -91,7 +111,7 @@ class VsphereVm(VsphereObject):
 
     # -------------------------------------------------------------------------
     @classmethod
-    def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
+    def from_summary(cls, data, cur_path, appname=None, verbose=0, base_dir=None):
 
         if not isinstance(data, vim.VirtualMachine):
             msg = _("Parameter {t!r} must be a {e}, {v!r} ({vt}) was given.").format(
@@ -112,6 +132,13 @@ class VsphereVm(VsphereObject):
             LOG.debug(_("Creating {} object from:").format(cls.__name__) + '\n' + pp(params))
 
         vm = cls(**params)
+
+        vm.cluster_name = None
+        if data.resourcePool:
+            vm.cluster_name = data.resourcePool.owner.name
+
+        if verbose > 2:
+            LOG.debug(_("Created {} object:").format(cls.__name__) + '\n' + pp(vm.as_dict()))
 
         return vm
 

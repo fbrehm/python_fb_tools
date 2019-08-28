@@ -52,10 +52,12 @@ from .iface import VsphereVmInterface
 
 from .host import VsphereHost
 
+from .vm import VsphereVm
+
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.3.2'
+__version__ = '1.4.0'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -700,12 +702,18 @@ class VsphereServer(BaseVsphereHandler):
         return vm_info
 
     # -------------------------------------------------------------------------
-    def get_vms(self, re_name, is_template=None, disconnect=False, as_vmw_obj=False):
+    def get_vms(
+            self, re_name, is_template=None, disconnect=False, as_vmw_obj=False,
+            as_obj=False):
 
         if not hasattr(re_name, 'match'):
             msg = _("Parameter {p!r} => {r!r} seems not to be a regex object.").format(
                 p='re_name', r=re_name)
             raise TypeError(msg)
+        if as_vmw_obj and as_obj:
+            msg = _("Parameter {p1!r} and {p2!r} may not be {w!r} at the same time.").format(
+                p1='as_vmw_obj', p2='as_obj', w=True)
+            raise ValueError(msg)
 
         LOG.debug(_("Trying to get list of VMs with name pattern {!r} ...").format(
             re_name.pattern))
@@ -724,7 +732,8 @@ class VsphereServer(BaseVsphereHandler):
                 path = child.name
                 if self.verbose > 1:
                     LOG.debug(_("Searching in path {!r} ...").format(path))
-                vms = self._get_vms(child, re_name, is_template=is_template, as_vmw_obj=as_vmw_obj)
+                vms = self._get_vms(
+                    child, re_name, is_template=is_template, as_vmw_obj=as_vmw_obj, as_obj=as_obj)
                 if vms:
                     vm_list += vms
 
@@ -739,7 +748,9 @@ class VsphereServer(BaseVsphereHandler):
         return vm_list
 
     # -------------------------------------------------------------------------
-    def _get_vms(self, child, re_name, cur_path='', is_template=None, depth=1, as_vmw_obj=False):
+    def _get_vms(
+            self, child, re_name, cur_path='', is_template=None, depth=1, as_vmw_obj=False,
+            as_obj=False):
 
         vm_list = []
 
@@ -759,7 +770,7 @@ class VsphereServer(BaseVsphereHandler):
                     child_path = child.name
                 vms = self._get_vms(
                     sub_child, re_name, child_path, is_template,
-                    depth + 1, as_vmw_obj=as_vmw_obj)
+                    depth + 1, as_vmw_obj=as_vmw_obj, as_obj=as_obj)
                 if vms:
                     vm_list += vms
             return vm_list
@@ -788,7 +799,12 @@ class VsphereServer(BaseVsphereHandler):
             if re_name.search(vm_name):
                 if self.verbose > 2:
                     LOG.debug(_("Found VM {!r}.").format(vm_name))
-                if as_vmw_obj:
+                if as_obj:
+                    vm = VsphereVm.from_summary(
+                        child, cur_path,
+                        appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
+                    vm_list.append(vm)
+                elif as_vmw_obj:
                     vm_list.append(child)
                 else:
                     vm_data = self._dict_from_vim_obj(child, cur_path)
