@@ -26,7 +26,7 @@ from ..obj import FbBaseObject
 
 from .object import VsphereObject
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -53,6 +53,9 @@ class VsphereVm(VsphereObject):
         self._guest_id = None
         self._uuid = None
         self._instance_uuid = None
+        self._host = None
+
+        self.vm_tools = None
 
         super(VsphereVm, self).__init__(
             name=name, obj_type='vsphere_vm', name_prefix="vm", status=status,
@@ -75,6 +78,23 @@ class VsphereVm(VsphereObject):
             self._cluster_name = None
         else:
             self._cluster_name = v
+
+    # -----------------------------------------------------------
+    @property
+    def host(self):
+        """The host name, where the VM is configured."""
+        return self._host
+
+    @host.setter
+    def host(self, value):
+        if value is None:
+            self._host = None
+            return
+        v = str(value).strip()
+        if v == '':
+            self._host = None
+        else:
+            self._host = v
 
     # -----------------------------------------------------------
     @property
@@ -235,6 +255,8 @@ class VsphereVm(VsphereObject):
     @property
     def online(self):
         """Is this VM generally online or not."""
+        if self.template:
+            return False
 #        if self.power_state is None:
 #            return False
 #        if self.power_state.lower() in ('poweredoff', 'unknown'):
@@ -255,6 +277,7 @@ class VsphereVm(VsphereObject):
 
         res = super(VsphereVm, self).as_dict(short=short)
         res['cluster_name'] = self.cluster_name
+        res['host'] = self.cluster_name
         res['path'] = self.path
         res['template'] = self.template
         res['online'] = self.online
@@ -279,6 +302,7 @@ class VsphereVm(VsphereObject):
             config_status=self.config_status)
 
         vm.cluster_name = self.cluster_name
+        vm.host = self.host
         vm.path = self.path
         vm.template = self.template
         vm.memory_mb = self.memory_mb
@@ -334,6 +358,10 @@ class VsphereVm(VsphereObject):
         if data.resourcePool:
             vm.cluster_name = data.resourcePool.owner.name
 
+        vm.host = None
+        if data.runtime.host:
+            vm.host = data.runtime.host
+
         vm.path = cur_path
         vm.template = data.summary.config.template
         vm.memory_mb = data.summary.config.memorySizeMB
@@ -344,6 +372,28 @@ class VsphereVm(VsphereObject):
         vm.guest_id = data.summary.config.guestId
         vm.uuid = data.summary.config.uuid
         vm.instance_uuid = data.summary.config.instanceUuid
+
+        if data.guest:
+
+            vm.vm_tools = {}
+
+            vm.vm_tools['install_type'] = None
+            vm.vm_tools['state'] = None
+            vm.vm_tools['version'] = data.guest.toolsVersion
+            vm.vm_tools['version_state'] = None
+
+            if hasattr(data.guest, 'toolsInstallType'):
+                vm.vm_tools['install_type'] = data.guest.toolsInstallType
+
+            if hasattr(data.guest, 'toolsRunningStatus'):
+                vm.vm_tools['state'] = data.guest.toolsRunningStatus
+            else:
+                vm.vm_tools['state'] = data.guest.toolsStatus
+
+            if hasattr(data.guest, 'toolsVersionStatus2'):
+                vm.vm_tools['version_state'] = data.guest.toolsVersionStatus2
+            else:
+                vm.vm_tools['version_state'] = data.guest.toolsVersionStatus
 
         if verbose > 2:
             LOG.debug(_("Created {} object:").format(cls.__name__) + '\n' + pp(vm.as_dict()))
