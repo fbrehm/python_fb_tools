@@ -59,7 +59,7 @@ from .vm import VsphereVm
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -124,26 +124,10 @@ class VsphereServer(BaseVsphereHandler):
             if not self.service_instance:
                 self.connect()
 
-#             about = self.service_instance.content.about
             self.about = VsphereAboutInfo.from_summary(
                 self.service_instance.content.about,
                 appname=self.appname, verbose=self.verbose, base_dir=self.base_dir)
 
-#            for attr in (
-#                    'dynamicType', 'dynamicProperty', 'name', 'fullName', 'vendor', 'version',
-#                    'build', 'localeVersion', 'localeBuild', 'osType', 'productLineId', 'apiType',
-#                    'apiVersion', 'instanceUuid', 'licenseProductName', 'licenseProductVersion'):
-#                if hasattr(about, attr):
-#                    value = getattr(about, attr)
-#                    if attr == 'instanceUuid':
-#                        value = uuid.UUID(value)
-#                    self.about[attr] = value
-#            self.about['max_hw_version'] = None
-#            if 'apiVersion' in self.about:
-#                api_version = self.about['apiVersion']
-#                if api_version in self.vmw_api_version_to_hw_version:
-#                    hw_version = self.vmw_api_version_to_hw_version[api_version]
-#                    self.about['max_hw_version'] = 'vmx-{}'.format(hw_version)
         except (
                 socket.timeout, urllib3.exceptions.ConnectTimeoutError,
                 urllib3.exceptions.MaxRetryError,
@@ -156,8 +140,8 @@ class VsphereServer(BaseVsphereHandler):
             if disconnect:
                 self.disconnect()
 
-        # if self.verbose:
-        #     LOG.debug(_("VSphere server version: {!r}").format(self.about['version']))
+        if self.verbose:
+            LOG.info(_("VSphere server version: {!r}").format(self.about.os_version))
         if self.verbose > 1:
             LOG.debug(_("Found VSphere about-information:") + '\n' + pp(self.about.as_dict()))
 
