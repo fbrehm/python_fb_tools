@@ -36,6 +36,7 @@ EXEC_LONG_TESTS = True
 if 'EXEC_LONG_TESTS' in os.environ and os.environ['EXEC_LONG_TESTS'] != '':
     EXEC_LONG_TESTS = to_bool(os.environ['EXEC_LONG_TESTS'])
 
+
 # =============================================================================
 class TestFbHandlingObject(FbToolsTestcase):
 
@@ -208,7 +209,7 @@ class TestFbHandlingObject(FbToolsTestcase):
         from fb_tools.handling_obj import CompletedProcess
         from fb_tools.handling_obj import CalledProcessError
 
-        args = ['/bin/some.command', '--option', '1', 'arg2',]
+        args = ['/bin/some.command', '--option', '1', 'arg2']
         retval = 5
         stdout = "Message on STDOUT\n * Second line on STDOUT\n"
         stderr = "Message on STDERR\n"
@@ -275,8 +276,7 @@ class TestFbHandlingObject(FbToolsTestcase):
 
         LOG.info("Testing timing out the run() method.")
 
-        from fb_tools.common import pp
-        from fb_tools.handling_obj import HandlingObject, CompletedProcess
+        from fb_tools.handling_obj import HandlingObject
         from fb_tools.handling_obj import TimeoutExpiredError
         from fb_tools.errors import CommandNotFoundError
 
@@ -299,7 +299,7 @@ class TestFbHandlingObject(FbToolsTestcase):
         cmd = [call_script, str(sleep)]
 
         with self.assertRaises(TimeoutExpiredError) as cm:
-            proc = hdlr.run(cmd, timeout=timeout)
+            proc = hdlr.run(cmd, timeout=timeout)                                   # noqa
         e = cm.exception
         LOG.debug("{} raised: {}".format(e.__class__.__name__, e))
 
@@ -377,7 +377,7 @@ class TestFbHandlingObject(FbToolsTestcase):
 
         LOG.info("Testing method write_file() of class HandlingObject.")
 
-        from fb_tools.common import to_unicode, to_str, encode_or_bust
+        from fb_tools.common import to_unicode, encode_or_bust
 
         from fb_tools.handling_obj import HandlingObject
 

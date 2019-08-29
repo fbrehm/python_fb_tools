@@ -9,3 +9,4 @@ PyYAML
 hjson
 apacheconfig
 iscpy
+requests_mock

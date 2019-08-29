@@ -20,7 +20,11 @@ import random
 import datetime
 import pathlib
 import ipaddress
-import collections
+
+try:
+    from collections.abc import Sequence
+except ImportError:
+    from collections import Sequence
 
 # Third party modules
 import six
@@ -29,7 +33,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '1.4.5'
+__version__ = '1.4.6'
 
 _ = XLATOR.gettext
 
@@ -291,7 +295,7 @@ def to_str(obj, encoding='utf-8'):
 # =============================================================================
 def is_sequence(arg):
 
-    if not isinstance(arg, collections.Sequence):
+    if not isinstance(arg, Sequence):
         return False
 
     if hasattr(arg, "strip"):

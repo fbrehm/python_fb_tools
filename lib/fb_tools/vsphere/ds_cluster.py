@@ -10,7 +10,11 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import collections
+
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
 
 # Third party modules
 from pyVmomi import vim
@@ -22,7 +26,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.4'
+__version__ = '1.2.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -171,7 +175,7 @@ class VsphereDsCluster(VsphereObject):
 
 
 # =============================================================================
-class VsphereDsClusterDict(collections.MutableMapping):
+class VsphereDsClusterDict(MutableMapping):
     """
     A dictionary containing VsphereDsCluster objects.
     It works like a dict.

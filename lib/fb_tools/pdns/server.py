@@ -17,7 +17,7 @@ import re
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import pp, to_bool
+from ..common import pp, to_bool, to_str
 
 from ..handling_obj import HandlingObject
 
@@ -27,7 +27,7 @@ from .errors import PDNSApiNotFoundError, PDNSApiValidationError
 
 from .zone import PowerDNSZone, PowerDNSZoneDict
 
-__version__ = '0.7.4'
+__version__ = '0.7.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -109,7 +109,7 @@ class PowerDNSServer(BasePowerDNSHandler):
             LOG.debug(_("Got a response:") + '\n' + pp(json_response))
 
         if 'version' in json_response:
-            self._api_server_version = json_response['version']
+            self._api_server_version = to_str(json_response['version'])
             LOG.info(_("PowerDNS server version {!r}.").format(self.api_server_version))
             return self.api_server_version
         LOG.error(_("Did not found version info in server info:") + "\n" + pp(json_response))

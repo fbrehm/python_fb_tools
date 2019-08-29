@@ -10,11 +10,14 @@ variables:
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
+  YUM_REPO_GPG_ID: 'C0E73F70'
   YUM_REPO_GPG_PASSWD: 'secret'
-  YUM_REPO_HOST: 'rpm-repo.pixelpark.com'
+  YUM_REPO_HOST: 'repo01.pixelpark.com'
   YUM_REPO_USER: 'rpm-repo'
-  YUM_REPO_DIR: '/www/sites/rpm-repo.pixelpark.com/docs/x86_64'
-  YUM_REPO_ADDSIGN_SCRIPT: '/home/rpm-repo/rpm-addsign-wrapper.expect'
+  YUM_REPO_DIR: '/srv/www/repo/Linux/yum/pixelpark'
+  YUM_REPO_ADDSIGN_SCRIPT: '/home/rpm-repo/bin/rpm-addsign-wrapper.expect'
+  YUM_REPO_GPG_KEY_PUB: 'nada'
+  YUM_REPO_GPG_KEY_SEC: 'nada'
 
 .template_docker_job: &docker_job_definition
   before_script:
@@ -35,6 +38,7 @@ test Python 2.7:
   script:
     - pip install -r requirements-2.7.txt --upgrade --upgrade-strategy eager
     - pip install --upgrade --upgrade-strategy eager pytest
+    - pip list --format columns
     - pytest --verbose
 #  tags:
 #    - docker
@@ -50,6 +54,7 @@ test Python 3.5:
   image: python:3.5
   script:
     - pip install --upgrade --upgrade-strategy eager pytest
+    - pip list --format columns
     - pytest --verbose
 #  tags:
 #    - docker
@@ -65,6 +70,7 @@ test Python 3.6:
   image: python:3.6
   script:
     - pip install --upgrade --upgrade-strategy eager pytest
+    - pip list --format columns
     - pytest --verbose
 #  tags:
 #    - docker
@@ -80,6 +86,7 @@ test Python 3.7:
   image: python:3.7
   script:
     - pip install --upgrade --upgrade-strategy eager pytest
+    - pip list --format columns
     - pytest --verbose
 #  tags:
 #    - docker
@@ -94,72 +101,138 @@ Linter:
   stage: linter
   image: python:3.7
   script:
+    - apt install --yes shellcheck yamllint
     - pip install --upgrade --upgrade-strategy eager flake8 pylint
+    - pip list --format columns
     - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
-#  tags:
-#    - docker
+    - shellcheck compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
+    - yamllint -c yamllint.yaml .gitlab-ci.yml
+  tags:
+    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
     - tags
 
-build Python 2.7:
-  <<: *docker_job_definition
+build CentOS 7 with Python 3.6:
   stage: build
-  image: python:2.7
+  image: centos:7
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - yum clean all && yum makecache
+    - 'for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
+    - locale -a
+    - locale
+    - 'export LC_ALL=en_US.utf8'
+    - locale
+    - yum --assumeyes install epel-release
+    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://repo01.pixelpark.com/Linux/yum/pixelpark/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+    - yum makecache
+    - yum --assumeyes upgrade
+    - yum --assumeyes install python36 python36-pip python36-devel python36-pytz python36-babel gnupg2 rpm-build tree expect gettext python-devel python2-pip python-setuptools python-pathlib python-babel python-ipaddress pytz rpm-sign
+    - ls -l --color=always /bin/python* /bin/pip* || true
+    - pip2 list
+    - pip3 list
   script:
-    - pip install -r requirements-2.7.txt --upgrade --upgrade-strategy eager
-    - python setup.py bdist
-#  tags:
-#    - docker
+    - mkdir -pv rpmdir
+    - mkdir -pv rpmdir/SOURCES
+    - 'export ODIR=$(pwd)'
+    - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )'
+    - 'export PKG_VERSION=$( ./get-rpm-version )'
+    - 'export PKG_RELEASE=$( ./get-rpm-release )'
+    - 'echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"'
+    - 'mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION'
+    - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
+    - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
+    - 'cat specs/fb_tools.spec.template | sed -e "s/@@@Version@@@/$PKG_VERSION/gi" -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec'
+    - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version $PKG_VERSION" --define "python3_version_nodots 36" specs/fb_tools.spec'
+    - tree -aQpugs rpmdir/*RPMS || true
+    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
+    - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+    - gpg --list-public-keys
+    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
+    - gpg --list-secret-keys
+    - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .rpm-version
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - rpmdir/RPMS/*/*.rpm
+      - rpmdir/SRPMS/*.src.rpm
+    expire_in: '3 mos'
+  tags:
+    - docker
   except:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
     - tags
 
-build Python 3.5:
-  <<: *docker_job_definition
-  stage: build
-  image: python:3.5
-  script:
-    - python setup.py bdist
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
-    - tags
-
-build Python 3.6:
-  <<: *docker_job_definition
-  stage: build
-  image: python:3.6
-  script:
-    - python setup.py bdist
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
-    - tags
-
-build Python 3.7:
-  <<: *docker_job_definition
-  stage: build
-  image: python:3.7
-  script:
-    - python setup.py bdist
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
-    - tags
+#build Python 2.7:
+#  <<: *docker_job_definition
+#  stage: build
+#  image: python:2.7
+#  script:
+#    - pip install -r requirements-2.7.txt --upgrade --upgrade-strategy eager
+#    - python setup.py bdist
+##  tags:
+##    - docker
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
+#
+#build Python 3.5:
+#  <<: *docker_job_definition
+#  stage: build
+#  image: python:3.5
+#  script:
+#    - python setup.py bdist
+##  tags:
+##    - docker
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
+#
+#build Python 3.6:
+#  <<: *docker_job_definition
+#  stage: build
+#  image: python:3.6
+#  script:
+#    - python setup.py bdist
+##  tags:
+##    - docker
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
+#
+#build Python 3.7:
+#  <<: *docker_job_definition
+#  stage: build
+#  image: python:3.7
+#  script:
+#    - python setup.py bdist
+##  tags:
+##    - docker
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
 
 RPM package OEL7:
   stage: deploy
@@ -193,3 +266,4 @@ RPM package OEL7:
   only:
     - master
 
+# vim: ts=2 et

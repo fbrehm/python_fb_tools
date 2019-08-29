@@ -24,7 +24,7 @@ from ..obj import FbBaseObject
 
 from .errors import VSphereNameError
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -78,7 +78,7 @@ class VsphereObject(FbBaseObject):
 
         val = self.re_ws.sub('', str(value))
         if val == '':
-            msg = _("Invalid {c}.{p} {v!r}.").format(
+            msg = _("Invalid {w}.{p} {v!r}.").format(
                 w='VsphereObject', p='type', v=value)
             raise ValueError(msg)
 
@@ -101,7 +101,7 @@ class VsphereObject(FbBaseObject):
             self._status = 'gray'
             return
         if val not in self.available_status_color:
-            msg = _("Invalid {c}.{p} {v!r}.").format(
+            msg = _("Invalid {w}.{p} {v!r}.").format(
                 w='VsphereObject', p='status', v=value)
             raise ValueError(msg)
 
@@ -124,7 +124,7 @@ class VsphereObject(FbBaseObject):
             self._config_status = 'gray'
             return
         if val not in self.available_status_color:
-            msg = _("Invalid {c}.{p} {v!r}.").format(
+            msg = _("Invalid {w}.{p} {v!r}.").format(
                 w='VsphereObject', p='config_status', v=value)
             raise ValueError(msg)
 

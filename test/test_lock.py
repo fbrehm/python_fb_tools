@@ -30,6 +30,7 @@ APPNAME = 'test_lock'
 
 LOG = logging.getLogger(APPNAME)
 
+
 # =============================================================================
 class TestLockHandler(FbToolsTestcase):
 
@@ -43,7 +44,7 @@ class TestLockHandler(FbToolsTestcase):
     def tearDown(self):
 
         if os.path.exists(self.lock_file):
-            log.debug("Removing %r ...", self.lock_file)
+            LOG.debug("Removing %r ...", self.lock_file)
             os.remove(self.lock_file)
 
     # -------------------------------------------------------------------------
@@ -138,7 +139,7 @@ class TestLockHandler(FbToolsTestcase):
         LOG.debug("Creating lockfile %r ...", self.lock_file)
         lock = locker.create_lockfile(self.lock_basename)
         LOG.debug("Removing lockfile %r ...", self.lock_file)
-        lock = None
+        del lock
         locker.remove_lockfile(self.lock_basename)
 
     # -------------------------------------------------------------------------
@@ -230,8 +231,8 @@ class TestLockHandler(FbToolsTestcase):
                 lockdir=ldir,
             )
             with self.assertRaises(LockdirNotWriteableError) as cm:
-                lock = locker.create_lockfile(self.lock_basename)
-                lock = None
+                lock = locker.create_lockfile(self.lock_basename)               # noqa
+                del lock
             e = cm.exception
             LOG.debug(
                 "%s raised as expected on lockdir = %r: %s.",
@@ -305,7 +306,7 @@ class TestLockHandler(FbToolsTestcase):
             LOG.debug(
                 "%s raised as expected on an invalid lockfile (empty lines): %s",
                 e.__class__.__name__, e)
-            result = None
+            del result
 
         finally:
             self.remove_lockfile(lockfile)
@@ -381,10 +382,7 @@ class TestLockHandler(FbToolsTestcase):
             self.remove_lockfile(lockfile)
 
 
-
 # =============================================================================
-
-
 if __name__ == '__main__':
 
     verbose = get_arg_verbose()
