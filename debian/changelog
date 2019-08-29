@@ -1,8 +1,9 @@
-fb-tools (1.5.4) UNRELEASED; urgency=medium
+fb-tools (1.5.5) all; urgency=medium
 
-  * Rewrite .gitlab-ci.yml to build Enterprise Linux packages
+  * Rewrite .gitlab-ci.yml to build Enterprise Linux RPM packages
+  * Applying flake8 rules
 
- -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 26 Aug 2019 15:07:00 +0200
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 29 Aug 2019 17:58:52 +0200
 
 fb-tools (1.5.3) all; urgency=medium
 
