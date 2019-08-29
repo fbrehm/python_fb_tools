@@ -13,6 +13,7 @@ import logging
 import datetime
 import uuid
 import ipaddress
+import copy
 
 # Third party modules
 from pyVmomi import vim
@@ -28,7 +29,7 @@ from .object import VsphereObject
 
 from .about import VsphereAboutInfo
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -264,7 +265,7 @@ class VsphereHost(VsphereObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
-            name=None, cluster_name=None, status='gray', config_status='gray'): 
+            name=None, cluster_name=None, status='gray', config_status='gray'):
 
         self.repr_fields = ('name', )
         self._cluster_name = None

@@ -59,7 +59,7 @@ from .vm import VsphereVm
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.4.2'
+__version__ = '1.4.3'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -234,7 +234,7 @@ class VsphereServer(BaseVsphereHandler):
                     on=obj_name, cl=cluster.name, h=cluster.hosts_total, h_l=host_label,
                     cpu=cluster.cpu_cores, cpu_l=cpus_label, thr=cluster.cpu_threads,
                     t_l=thr_label, mem=cluster.mem_gb_total, net=len(cluster.networks),
-                    nw_l = nw_label, ds=len(cluster.datastores), ds_l=ds_label))
+                    nw_l=nw_label, ds=len(cluster.datastores), ds_l=ds_label))
             self.clusters.append(cluster)
 
         return
@@ -493,7 +493,7 @@ class VsphereServer(BaseVsphereHandler):
                     on=obj_name, cl=cluster.name, h=cluster.hosts_total, h_l=host_label,
                     cpu=cluster.cpu_cores, cpu_l=cpus_label, thr=cluster.cpu_threads,
                     t_l=thr_label, mem=cluster.mem_gb_total, net=len(cluster.networks),
-                    nw_l = nw_label, ds=len(cluster.datastores), ds_l=ds_label))
+                    nw_l=nw_label, ds=len(cluster.datastores), ds_l=ds_label))
 
             self.clusters.append(cluster)
 

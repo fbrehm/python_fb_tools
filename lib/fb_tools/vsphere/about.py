@@ -10,8 +10,6 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import random
-import re
 import uuid
 
 
@@ -21,11 +19,11 @@ from pyVmomi import vim
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import pp, to_bool
+from ..common import pp
 
 from ..obj import FbBaseObject
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -341,8 +339,8 @@ class VsphereAboutInfo(FbBaseObject):
 
         return info
 
-# =============================================================================
 
+# =============================================================================
 if __name__ == "__main__":
 
     pass

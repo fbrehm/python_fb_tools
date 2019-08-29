@@ -10,9 +10,7 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import datetime
 import uuid
-import ipaddress
 
 # Third party modules
 from pyVmomi import vim
@@ -22,11 +20,9 @@ from ..xlate import XLATOR
 
 from ..common import pp, to_bool
 
-from ..obj import FbBaseObject
-
 from .object import VsphereObject
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -39,7 +35,7 @@ class VsphereVm(VsphereObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
-            name=None, status='gray', config_status='gray'): 
+            name=None, status='gray', config_status='gray'):
 
         self.repr_fields = ('name', )
         self._cluster_name = None
