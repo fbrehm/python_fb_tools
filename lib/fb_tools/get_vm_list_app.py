@@ -37,7 +37,7 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -72,6 +72,7 @@ class GetVmListApplication(BaseApplication):
         self._cfg_dir = None
         self.config = None
         self._vm_pattern = self.default_vm_pattern
+        self.req_vspheres = None
 
         # Hash with all VSphere handler objects
         self.vsphere = {}
@@ -121,6 +122,13 @@ class GetVmListApplication(BaseApplication):
         res['vm_pattern'] = self.vm_pattern
         res['default_vm_pattern'] = self.default_vm_pattern
 
+        res['vsphere'] = {}
+        for vsphere_name in self.vsphere:
+            res['vsphere'][vsphere_name] = {}
+            vsphere = self.vsphere[vsphere_name]
+            if vsphere:
+                res['vsphere'][vsphere_name] = vsphere.as_dict(short=short)
+
         return res
 
     # -------------------------------------------------------------------------
@@ -166,6 +174,32 @@ class GetVmListApplication(BaseApplication):
         if self.verbose > 3:
             LOG.debug("Read configuration:\n{}".format(pp(self.config.as_dict())))
 
+        if self.args.req_vsphere:
+            self.req_vspheres = []
+            all_found = True
+            for vs_name in self.args.req_vsphere:
+                LOG.debug(_("Checking for configured VSPhere instance {!r} ...").format(vs_name))
+                vs = vs_name.strip().lower()
+                if vs not in self.config.vsphere.keys():
+                    all_found = False
+                    msg = _(
+                        "VSPhere {!r} not found in list of configured VSPhere instances.").format(
+                            vs_name)
+                    LOG.error(msg)
+                else:
+                    if vs not in self.req_vspheres:
+                        self.req_vspheres.append(vs)
+            if not all_found:
+                self.exit(1)
+
+        if self.req_vspheres:
+            vs2remove = []
+            for vsphere_name in self.config.vsphere.keys():
+                if vsphere_name not in self.req_vspheres:
+                    vs2remove.append(vsphere_name)
+            for vsphere_name in vs2remove:
+                del self.config.vsphere[vsphere_name]
+
         if not self.config.vsphere.keys():
             msg = (_(
                 'Did not found any valid VSphere definition in {!r}.').format(self.cfg_file))
@@ -209,15 +243,22 @@ class GetVmListApplication(BaseApplication):
         )
 
         self.arg_parser.add_argument(
+            '--vs', '--vsphere', dest='req_vsphere', nargs='*',
+            help=_(
+                "The VSPhere names from configuration, in which the VMs should be searched.")
+        )
+
+        self.arg_parser.add_argument(
             '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
             action=CfgFileOptionAction,
             help=_("Configuration file (default: {!r})").format(str(default_cfg_file))
         )
 
-        vmware_group = self.arg_parser.add_argument_group(_('VMWare options'))
-
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
+
+        if self.verbose > 1:
+            LOG.debug(_("Got command line arguments:") + '\n' + pp(self.args))
 
         if self.args.cfg_file:
             self._cfg_file = self.args.cfg_file
@@ -231,7 +272,6 @@ class GetVmListApplication(BaseApplication):
                 msg = _("Got a {c} for pattern {p!r}: {e}").format(
                     c=e.__class__.__name__, p=self.args.vm_pattern, e=e)
                 LOG.error(msg)
-
 
     # -------------------------------------------------------------------------
     def init_vsphere_handlers(self):
