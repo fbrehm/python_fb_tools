@@ -23,7 +23,7 @@ from . import VMWARE_CFGFILE_BASENAME
 
 from .xlate import XLATOR
 
-from .common import pp
+from .common import pp, to_bool
 
 from .app import BaseApplication, RegexOptionAction
 
@@ -37,7 +37,7 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.1.1'
+__version__ = '1.2.0'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -73,6 +73,7 @@ class GetVmListApplication(BaseApplication):
         self.config = None
         self._vm_pattern = self.default_vm_pattern
         self.req_vspheres = None
+        self._details = False
 
         # Hash with all VSphere handler objects
         self.vsphere = {}
@@ -105,6 +106,16 @@ class GetVmListApplication(BaseApplication):
         return self._vm_pattern
 
     # -------------------------------------------------------------------------
+    @property
+    def details(self):
+        """Should the list be diisplyed with all details."""
+        return self._details
+
+    @details.setter
+    def details(self, value):
+        self._details = to_bool(value)
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -120,6 +131,7 @@ class GetVmListApplication(BaseApplication):
         res['cfg_dir'] = self.cfg_dir
         res['cfg_file'] = self.cfg_file
         res['vm_pattern'] = self.vm_pattern
+        res['details'] = self.details
         res['default_vm_pattern'] = self.default_vm_pattern
 
         res['vsphere'] = {}
@@ -243,6 +255,11 @@ class GetVmListApplication(BaseApplication):
         )
 
         self.arg_parser.add_argument(
+            '-D', '--details', dest='details', action="store_true",
+            help=_("Detailed output list (quering data needs some time longer).")
+        )
+
+        self.arg_parser.add_argument(
             '--vs', '--vsphere', dest='req_vsphere', nargs='*',
             help=_(
                 "The VSPhere names from configuration, in which the VMs should be searched.")
@@ -262,6 +279,9 @@ class GetVmListApplication(BaseApplication):
 
         if self.args.cfg_file:
             self._cfg_file = self.args.cfg_file
+
+        if self.args.details:
+            self.details = self.args.details
 
         if self.args.vm_pattern:
             try:
@@ -335,6 +355,28 @@ class GetVmListApplication(BaseApplication):
             for vm_name in vms.keys():
                 all_vms[vm_name] = vms[vm_name]
 
+        if self.details:
+            self.print_vms_detailed(all_vms)
+        else:
+            self.print_vms(all_vms)
+
+        return ret
+
+    # -------------------------------------------------------------------------
+    def print_vms(self, all_vms):
+
+        label_list = ('name', 'vsphere', 'path')
+        labels = {
+            'name': 'Host',
+            'vsphere': 'VSphere',
+            'path': 'Path',
+        }
+
+        self._print_vms(all_vms, label_list, labels)
+
+    # -------------------------------------------------------------------------
+    def print_vms_detailed(self, all_vms):
+
         label_list = ('name', 'vsphere', 'cluster', 'path', 'type', 'onl_str', 'os')
         labels = {
             'name': 'Host',
@@ -345,6 +387,12 @@ class GetVmListApplication(BaseApplication):
             'onl_str': 'Online Status',
             'os': 'Operating System',
         }
+
+        self._print_vms(all_vms, label_list, labels)
+
+    # -------------------------------------------------------------------------
+    def _print_vms(self, all_vms, label_list, labels):
+
         str_lengths = {}
         for label in labels.keys():
             str_lengths[label] = len(labels[label])
@@ -354,7 +402,7 @@ class GetVmListApplication(BaseApplication):
         for host_name in all_vms.keys():
             cdata = all_vms[host_name]
             for field in ('cluster', 'path', 'type', 'os'):
-                if cdata[field] is None:
+                if field in labels and cdata[field] is None:
                     cdata[field] = '-'
             for label in labels.keys():
                 val = cdata[label]
@@ -399,8 +447,6 @@ class GetVmListApplication(BaseApplication):
             print(msg)
             print()
 
-        return ret
-
     # -------------------------------------------------------------------------
     def get_vms(self, vsphere_name, re_name=None):
 
@@ -410,7 +456,41 @@ class GetVmListApplication(BaseApplication):
         if re_name is None:
             re_name = re.compile(self.vm_pattern, re.IGNORECASE)
 
-        vm_list = vsphere.get_vms(re_name, as_obj=True)
+        if self.details:
+            vm_list = vsphere.get_vms(re_name, as_obj=True)
+            vms = self.mangle_vmlist_details(vm_list, vsphere_name)
+        else:
+            vm_list = vsphere.get_vms(re_name, name_only=True)
+            vms = self.mangle_vmlist_no_details(vm_list, vsphere_name)
+
+        return vms
+
+    # -------------------------------------------------------------------------
+    def mangle_vmlist_no_details(self, vm_list, vsphere_name):
+
+        if self.verbose > 3:
+            LOG.debug("Mangling VM list:\n" + pp(vm_list))
+
+        vms = {}
+
+        for vm in vm_list:
+            cdata = {
+                'vsphere': vsphere_name,
+                'name': vm[0],
+                'path': vm[1],
+            }
+            vms[vm[0]] = cdata
+
+            if cdata['path']:
+                cdata['path'] = '/' + cdata['path']
+            else:
+                cdata['path'] = '/'
+
+        return vms
+
+    # -------------------------------------------------------------------------
+    def mangle_vmlist_details(self, vm_list, vsphere_name):
+
         vms = {}
 
         for vm in vm_list:
