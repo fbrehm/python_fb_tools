@@ -22,7 +22,9 @@ from ..common import pp, to_bool
 
 from .object import VsphereObject
 
-__version__ = '0.2.4'
+from .disk import VsphereDisk, VsphereDiskList
+
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -51,6 +53,7 @@ class VsphereVm(VsphereObject):
         self._instance_uuid = None
         self._host = None
         self.power_state = None
+        self.disks = []
 
         self.vm_tools = None
 
@@ -58,6 +61,9 @@ class VsphereVm(VsphereObject):
             name=name, obj_type='vsphere_vm', name_prefix="vm", status=status,
             config_status=config_status, appname=appname, verbose=verbose,
             version=version, base_dir=base_dir)
+
+        self.disks = VsphereDiskList(
+            appname=appname, verbose=verbose, base_dir=base_dir, initialized=True)
 
     # -----------------------------------------------------------
     @property
@@ -311,6 +317,7 @@ class VsphereVm(VsphereObject):
         vm.uuid = self.uuid
         vm.instance_uuid = self.instance_uuid
         vm.power_state = self.power_state
+        vm.disks = copy.copy(self.disks)
 
         return vm
 
@@ -393,6 +400,12 @@ class VsphereVm(VsphereObject):
                 vm.vm_tools['version_state'] = data.guest.toolsVersionStatus2
             else:
                 vm.vm_tools['version_state'] = data.guest.toolsVersionStatus
+
+        for device in data.config.hardware.device:
+            if isinstance(device, vim.vm.device.VirtualDisk):
+                disk = VsphereDisk.from_summary(
+                    device, appname=appname, verbose=verbose, base_dir=base_dir)
+                vm.disks.append(disk)
 
         if verbose > 2:
             LOG.debug(_("Created {} object:").format(cls.__name__) + '\n' + pp(vm.as_dict()))
