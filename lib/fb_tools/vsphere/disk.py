@@ -30,7 +30,7 @@ from ..obj import FbBaseObject
 from .errors import VSphereNameError
 
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -272,7 +272,7 @@ class VsphereDisk(FbBaseObject):
 
         return True
 
-# -------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -524,7 +524,7 @@ class VsphereDiskList(FbBaseObject, MutableSequence):
     def insert(self, index, disk):
 
         if not isinstance(disk, VsphereDisk):
-            raise TypeError(self.msg_no_pdns_disk.format(
+            raise TypeError(self.msg_no_disk.format(
                 t=disk.__class__.__name__, c=self.__class__.__name__, o='VsphereDisk'))
 
         self._list.insert(index, disk)

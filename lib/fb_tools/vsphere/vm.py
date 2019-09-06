@@ -23,8 +23,9 @@ from ..common import pp, to_bool
 from .object import VsphereObject
 
 from .disk import VsphereDisk, VsphereDiskList
+from .ether import VsphereEthernetcard, VsphereEthernetcardList
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -54,6 +55,7 @@ class VsphereVm(VsphereObject):
         self._host = None
         self.power_state = None
         self.disks = []
+        self.interfaces = []
 
         self.vm_tools = None
 
@@ -63,6 +65,8 @@ class VsphereVm(VsphereObject):
             version=version, base_dir=base_dir)
 
         self.disks = VsphereDiskList(
+            appname=appname, verbose=verbose, base_dir=base_dir, initialized=True)
+        self.interfaces = VsphereEthernetcardList(
             appname=appname, verbose=verbose, base_dir=base_dir, initialized=True)
 
     # -----------------------------------------------------------
@@ -318,6 +322,7 @@ class VsphereVm(VsphereObject):
         vm.instance_uuid = self.instance_uuid
         vm.power_state = self.power_state
         vm.disks = copy.copy(self.disks)
+        vm.interfaces = copy.copy(self.interfaces)
 
         return vm
 
@@ -406,6 +411,10 @@ class VsphereVm(VsphereObject):
                 disk = VsphereDisk.from_summary(
                     device, appname=appname, verbose=verbose, base_dir=base_dir)
                 vm.disks.append(disk)
+            elif isinstance(device, vim.vm.device.VirtualEthernetCard):
+                iface = VsphereEthernetcard.from_summary(
+                    device, appname=appname, verbose=verbose, base_dir=base_dir)
+                vm.interfaces.append(iface)
 
         if verbose > 2:
             LOG.debug(_("Created {} object:").format(cls.__name__) + '\n' + pp(vm.as_dict()))
