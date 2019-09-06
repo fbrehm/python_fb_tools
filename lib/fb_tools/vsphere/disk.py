@@ -30,7 +30,7 @@ from ..obj import FbBaseObject
 from .errors import VSphereNameError
 
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -273,16 +273,35 @@ class VsphereDisk(FbBaseObject):
         return True
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, bare=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param bare: don't include generic fields in returning dict
+        @type bare: bool
 
         @return: structure as dict
         @rtype:  dict
         """
+
+        if bare:
+            res = {
+                'uuid': self.uuid
+                'file_name': self.file_name
+                'unit_nr': self.unit_nr
+                'label': self.label
+                'summary': self.summary
+                'key': self.key
+                'size': self.size
+                'size_kb': self.size_kb
+                'size_mb': self.size_mb
+                'size_gb': self.size_gb
+                'controller_key': self.controller_key
+                'disk_id': self.disk_id
+            }
+            return res
 
         res = super(VsphereDisk, self).as_dict(short=short)
         res['uuid'] = self.uuid
@@ -372,16 +391,24 @@ class VsphereDiskList(FbBaseObject, MutableSequence):
             self.initialized = initialized
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, bare=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param bare: don't include generic fields in returning dict
+        @type bare: bool
 
-        @return: structure as dict
-        @rtype:  dict
+        @return: structure as dict or list
+        @rtype:  dict or list
         """
+
+        if bare:
+            res = []
+            for disk in self:
+                res.append(disk.as_dict(bare=True))
+            return res
 
         res = super(VsphereDiskList, self).as_dict(short=short)
         res['_list'] = []

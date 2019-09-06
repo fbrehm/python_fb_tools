@@ -30,7 +30,7 @@ from ..obj import FbBaseObject
 from .errors import VSphereNameError
 
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -330,16 +330,37 @@ class VsphereEthernetcard(FbBaseObject):
         return True
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, bare=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param bare: don't include generic fields in returning dict
+        @type bare: bool
 
         @return: structure as dict
         @rtype:  dict
         """
+
+        if bare:
+            res = {
+                'unit_nr': self.unit_nr
+                'key': self.key
+                'address_type': self.address_type
+                'external_id': self.external_id
+                'mac_address': self.mac_address
+                'wake_on_lan': self.wake_on_lan
+                'backing_device': self.backing_device
+                'backing_type': self.backing_type
+                'connected': self.connected
+                'connect_status': self.connect_status
+                'connect_on_start': self.connect_on_start
+                'allow_guest_control': self.allow_guest_control
+                'ether_type': self.ether_type
+                'label': self.label
+            }
+            return res
 
         res = super(VsphereEthernetcard, self).as_dict(short=short)
         res['unit_nr'] = self.unit_nr
@@ -465,16 +486,24 @@ class VsphereEthernetcardList(FbBaseObject, MutableSequence):
             self.initialized = initialized
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, bare=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param bare: don't include generic fields in returning dict
+        @type bare: bool
 
-        @return: structure as dict
-        @rtype:  dict
+        @return: structure as dict or list
+        @rtype:  dict or list
         """
+
+        if bare:
+            res = []
+            for card in self:
+                res.append(card.as_dict(bare=True))
+            return res
 
         res = super(VsphereEthernetcardList, self).as_dict(short=short)
         res['_list'] = []

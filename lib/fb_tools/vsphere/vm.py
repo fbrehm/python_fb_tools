@@ -25,7 +25,7 @@ from .object import VsphereObject
 from .disk import VsphereDisk, VsphereDiskList
 from .ether import VsphereEthernetcard, VsphereEthernetcardList
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -271,16 +271,40 @@ class VsphereVm(VsphereObject):
         return True
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, bare=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param bare: don't include generic fields in returning dict
+        @type bare: bool
 
         @return: structure as dict
         @rtype:  dict
         """
+
+        if bare:
+            res = {
+                'cluster_name': self.cluster_name,
+                'host': self.host,
+                'path': self.path,
+                'template': self.template,
+                'online': self.online,
+                'memory_mb': self.memory_mb,
+                'memory_gb': self.memory_gb,
+                'num_cpu': self.num_cpu,
+                'num_ethernet': self.num_ethernet,
+                'num_vdisk': self.num_vdisk,
+                'guest_fullname': self.guest_fullname,
+                'guest_id': self.guest_id,
+                'uuid': self.uuid,
+                'instance_uuid': self.instance_uuid,
+                'power_state': self.power_state,
+                'disks': self.disks.as_dict(bare=True)
+                'interfaces': self.interfaces.as_dict(bare=True)
+            }
+            return res
 
         res = super(VsphereVm, self).as_dict(short=short)
         res['cluster_name'] = self.cluster_name
