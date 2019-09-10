@@ -29,8 +29,7 @@ from ..obj import FbBaseObject
 
 from .errors import VSphereNameError
 
-
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -288,18 +287,18 @@ class VsphereDisk(FbBaseObject):
 
         if bare:
             res = {
-                'uuid': self.uuid
-                'file_name': self.file_name
-                'unit_nr': self.unit_nr
-                'label': self.label
-                'summary': self.summary
-                'key': self.key
-                'size': self.size
-                'size_kb': self.size_kb
-                'size_mb': self.size_mb
-                'size_gb': self.size_gb
-                'controller_key': self.controller_key
-                'disk_id': self.disk_id
+                'uuid': self.uuid,
+                'file_name': self.file_name,
+                'unit_nr': self.unit_nr,
+                'label': self.label,
+                'summary': self.summary,
+                'key': self.key,
+                'size': self.size,
+                'size_kb': self.size_kb,
+                'size_mb': self.size_mb,
+                'size_gb': self.size_gb,
+                'controller_key': self.controller_key,
+                'disk_id': self.disk_id,
             }
             return res
 

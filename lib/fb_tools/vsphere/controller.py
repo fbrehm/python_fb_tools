@@ -30,7 +30,7 @@ from ..obj import FbBaseObject
 
 from .errors import VSphereNameError
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -218,11 +218,11 @@ class VsphereDiskController(FbBaseObject):
             'base_dir': base_dir,
             'initialized': True,
             'bus_nr': data.busNumber,
-            'devices' = [],
+            'devices': [],
             'ctrl_type': 'unknown',
         }
         for disk_id in data.device:
-            params['devices'].apprend(disk_id)
+            params['devices'].append(disk_id)
         if isinstance(data, vim.vm.device.VirtualSCSIController):
           params['hot_add_remove'] = data.hotAddRemove
           params['scsi_ctrl_nr'] = data.scsiCtlrUnitNumber
@@ -358,7 +358,7 @@ class VsphereDiskControllerList(FbBaseObject, MutableSequence):
         index = 0
         if i is not None:
             start = i
-            if i < 0:
+            if i < 2:
                 start = len(self._list) + i
 
         wrap = False
