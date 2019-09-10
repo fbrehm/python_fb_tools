@@ -274,7 +274,7 @@ class GetVmListApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
 
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug(_("Got command line arguments:") + '\n' + pp(self.args))
 
         if self.args.cfg_file:
