@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.5.4\n"
+"Project-Id-Version: fb_tools 1.5.5\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-08-26 19:00+0200\n"
+"POT-Creation-Date: 2019-09-10 16:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,130 +23,134 @@ msgid ""
 "{a}"
 msgstr ""
 
-#: lib/fb_tools/app.py:67
+#: lib/fb_tools/app.py:81 lib/fb_tools/get_vm_list_app.py:292
+msgid "Got a {c} for pattern {p!r}: {e}"
+msgstr ""
+
+#: lib/fb_tools/app.py:97
 msgid "Forced execution - whatever it means."
 msgstr ""
 
-#: lib/fb_tools/app.py:146
+#: lib/fb_tools/app.py:176
 msgid "Invalid env_prefix {!r} given - it may not be empty."
 msgstr ""
 
-#: lib/fb_tools/app.py:150
+#: lib/fb_tools/app.py:180
 msgid ""
 "Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
 "underscore (this not as the first character) are allowed."
 msgstr ""
 
-#: lib/fb_tools/app.py:161
+#: lib/fb_tools/app.py:191
 msgid "Unknown and undescriped application."
 msgstr ""
 
-#: lib/fb_tools/app.py:186
+#: lib/fb_tools/app.py:216
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr ""
 
-#: lib/fb_tools/app.py:416
+#: lib/fb_tools/app.py:446
 msgid "Trying to get {} via console ..."
 msgstr ""
 
-#: lib/fb_tools/app.py:431
+#: lib/fb_tools/app.py:461
 msgid "Got a signal {}."
 msgstr ""
 
-#: lib/fb_tools/app.py:434
+#: lib/fb_tools/app.py:464
 msgid "Got a signal {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:441
+#: lib/fb_tools/app.py:471
 msgid "Exit on signal {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:449
+#: lib/fb_tools/app.py:479
 msgid "Tweaking signal handlers."
 msgstr ""
 
-#: lib/fb_tools/app.py:455
+#: lib/fb_tools/app.py:485
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:466
+#: lib/fb_tools/app.py:496
 msgid "Enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:473
+#: lib/fb_tools/app.py:503
 msgid "Repeat enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:483
+#: lib/fb_tools/app.py:513
 msgid "{n} and repeated {n} did not match."
 msgstr ""
 
-#: lib/fb_tools/app.py:487
+#: lib/fb_tools/app.py:517
 msgid "Restoring original signal handlers."
 msgstr ""
 
-#: lib/fb_tools/app.py:492
+#: lib/fb_tools/app.py:522
 msgid "Got {n!r}: {s!r}"
 msgstr ""
 
-#: lib/fb_tools/app.py:542
+#: lib/fb_tools/app.py:572
 msgid "The application is not completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:553
+#: lib/fb_tools/app.py:583
 msgid "Object {!r} seems not to be completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:563
+#: lib/fb_tools/app.py:593
 msgid "Ending."
 msgstr ""
 
-#: lib/fb_tools/app.py:582
+#: lib/fb_tools/app.py:612
 msgid "Executing {} ..."
 msgstr ""
 
-#: lib/fb_tools/app.py:604
+#: lib/fb_tools/app.py:634
 msgid "General options"
 msgstr ""
 
-#: lib/fb_tools/app.py:608
+#: lib/fb_tools/app.py:638
 msgid "Simulation mode, nothing is really done."
 msgstr ""
 
-#: lib/fb_tools/app.py:619
+#: lib/fb_tools/app.py:649
 msgid "Use colored output for messages."
 msgstr ""
 
-#: lib/fb_tools/app.py:626
+#: lib/fb_tools/app.py:656
 msgid "Increase the verbosity level"
 msgstr ""
 
-#: lib/fb_tools/app.py:631
+#: lib/fb_tools/app.py:661
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr ""
 
-#: lib/fb_tools/app.py:636
+#: lib/fb_tools/app.py:666
 msgid "Show this help message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:640
+#: lib/fb_tools/app.py:670
 msgid "Display brief usage message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:642
+#: lib/fb_tools/app.py:672
 #, python-format
 msgid "Version of %(prog)s: {}"
 msgstr ""
 
-#: lib/fb_tools/app.py:645
+#: lib/fb_tools/app.py:675
 msgid "Show program's version number and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:779
+#: lib/fb_tools/app.py:809
 msgid "Starting in:"
 msgstr ""
 
-#: lib/fb_tools/app.py:801
+#: lib/fb_tools/app.py:831
 msgid "Aborted by user interrupt."
 msgstr ""
 
@@ -354,7 +358,7 @@ msgid "How many files one per year from today on should be kept (default: {defau
 msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
-#: lib/fb_tools/get_vm_list_app.py:161 lib/fb_tools/pdns_bulk_rm_app.py:189
+#: lib/fb_tools/get_vm_list_app.py:269 lib/fb_tools/pdns_bulk_rm_app.py:189
 #: lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
 msgstr ""
@@ -457,40 +461,40 @@ msgstr ""
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:132 lib/fb_tools/get_vm_list_app.py:136
+#: lib/fb_tools/get_vm_app.py:132
 msgid "Enter password for host {h!r} and user {u!r}: "
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/get_vm_list_app.py:163
+#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/get_vm_list_app.py:271
 #: lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:162 lib/fb_tools/get_vm_list_app.py:166
+#: lib/fb_tools/get_vm_app.py:162
 msgid "VMWare options"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:166 lib/fb_tools/get_vm_list_app.py:170
+#: lib/fb_tools/get_vm_app.py:166
 msgid "Remote vSphere host to connect to (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:172 lib/fb_tools/get_vm_list_app.py:176
+#: lib/fb_tools/get_vm_app.py:172
 msgid "Port on vSphere host to connect on (Default: {})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:177 lib/fb_tools/get_vm_list_app.py:181
+#: lib/fb_tools/get_vm_app.py:177
 msgid "USER"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:178 lib/fb_tools/get_vm_list_app.py:182
+#: lib/fb_tools/get_vm_app.py:178
 msgid "User name to use when connecting to vSphere host (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:183 lib/fb_tools/get_vm_list_app.py:187
+#: lib/fb_tools/get_vm_app.py:183
 msgid "PASSWORD"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:184 lib/fb_tools/get_vm_list_app.py:188
+#: lib/fb_tools/get_vm_app.py:184
 msgid "Password to use when connecting to vSphere host."
 msgstr ""
 
@@ -498,11 +502,11 @@ msgstr ""
 msgid "Names of the VM to get information."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:220 lib/fb_tools/get_vm_list_app.py:216
+#: lib/fb_tools/get_vm_app.py:220 lib/fb_tools/get_vm_list_app.py:330
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:228 lib/fb_tools/get_vm_list_app.py:224
+#: lib/fb_tools/get_vm_app.py:228
 msgid "Closing ..."
 msgstr ""
 
@@ -510,8 +514,62 @@ msgstr ""
 msgid "NOT FOUND"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:59
+#: lib/fb_tools/get_vm_list_app.py:67
 msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:170
+msgid ""
+"Configuration file {f!r} does not exists. Please copy {d!r} to {f!r} and fill out all necessary "
+"entries, e.g. the passwords."
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:193
+msgid "Checking for configured VSPhere instance {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:197
+msgid "VSPhere {!r} not found in list of configured VSPhere instances."
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:216
+msgid "Did not found any valid VSphere definition in {!r}."
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:228
+msgid "Enter password for {n} VSPhere user {u!r} on host {h!r}:"
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:251
+msgid "for names of VMs"
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:252
+msgid "A regular expression to filter the output list of VMs by their name (Default: {!r})."
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:259
+msgid "Detailed output list (quering data needs some time longer)."
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:264
+msgid "The VSPhere names from configuration, in which the VMs should be searched."
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:278
+msgid "Got command line arguments:"
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:289
+msgid "Regular expression for filtering: {!r}"
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:323
+msgid "Could not initialize {} object from:"
+msgstr ""
+
+#: lib/fb_tools/get_vm_list_app.py:339
+msgid "Closing VSPhere object {!r} ..."
 msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:157
@@ -854,10 +912,10 @@ msgstr ""
 msgid "Closing {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:749 lib/fb_tools/handling_obj.py:755
-#: lib/fb_tools/vsphere/cluster.py:261 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:206
+#: lib/fb_tools/handling_obj.py:749 lib/fb_tools/handling_obj.py:755 lib/fb_tools/vsphere/about.py:271
+#: lib/fb_tools/vsphere/cluster.py:276 lib/fb_tools/vsphere/dc.py:135 lib/fb_tools/vsphere/ds.py:206
 #: lib/fb_tools/vsphere/ds_cluster.py:110 lib/fb_tools/vsphere/iface.py:58
-#: lib/fb_tools/vsphere/network.py:124 lib/fb_tools/vsphere/server.py:539
+#: lib/fb_tools/vsphere/network.py:124 lib/fb_tools/vsphere/server.py:591
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr ""
 
@@ -933,7 +991,7 @@ msgstr ""
 msgid "Simulation mode, Request will not be sent."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:394 lib/fb_tools/vsphere/server.py:161
+#: lib/fb_tools/pdns/__init__.py:394 lib/fb_tools/vsphere/server.py:135
 msgid "Got a {c} on connecting to {h!r}: {e}."
 msgstr ""
 
@@ -990,9 +1048,11 @@ msgid "Argument {a} {v!r} must be a {o} object."
 msgstr ""
 
 #: lib/fb_tools/pdns/record.py:187 lib/fb_tools/pdns/record.py:396 lib/fb_tools/pdns/record.py:770
-#: lib/fb_tools/pdns/record.py:1046 lib/fb_tools/vsphere/cluster.py:246 lib/fb_tools/vsphere/dc.py:120
-#: lib/fb_tools/vsphere/ds.py:324 lib/fb_tools/vsphere/ds_cluster.py:166
-#: lib/fb_tools/vsphere/network.py:187
+#: lib/fb_tools/pdns/record.py:1046 lib/fb_tools/vsphere/cluster.py:261
+#: lib/fb_tools/vsphere/controller.py:144 lib/fb_tools/vsphere/dc.py:120
+#: lib/fb_tools/vsphere/disk.py:248 lib/fb_tools/vsphere/ds.py:324
+#: lib/fb_tools/vsphere/ds_cluster.py:166 lib/fb_tools/vsphere/ether.py:296
+#: lib/fb_tools/vsphere/host.py:474 lib/fb_tools/vsphere/network.py:187 lib/fb_tools/vsphere/vm.py:363
 msgid "Comparing {} objects ..."
 msgstr ""
 
@@ -1005,10 +1065,14 @@ msgid "Serial overflow - old serial {o} is in future, new serial {n} has reached
 msgstr ""
 
 #: lib/fb_tools/pdns/record.py:455 lib/fb_tools/pdns/record.py:1086
+#: lib/fb_tools/vsphere/controller.py:285 lib/fb_tools/vsphere/disk.py:373
+#: lib/fb_tools/vsphere/ether.py:469
 msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
 msgstr ""
 
 #: lib/fb_tools/pdns/record.py:473 lib/fb_tools/pdns/record.py:1104
+#: lib/fb_tools/vsphere/controller.py:352 lib/fb_tools/vsphere/disk.py:440
+#: lib/fb_tools/vsphere/ether.py:536
 msgid "{m} takes at most {max} arguments ({n} given)."
 msgstr ""
 
@@ -1426,6 +1490,18 @@ msgstr ""
 msgid "Invalid value {!r} for facility."
 msgstr ""
 
+#: lib/fb_tools/vmware_config.py:108
+msgid "Empty VSpehre name found."
+msgstr ""
+
+#: lib/fb_tools/vmware_config.py:135
+msgid "Unknown key {k!r} with value {v!r} for VSphere {vs!r} found."
+msgstr ""
+
+#: lib/fb_tools/vmware_config.py:139
+msgid "There must be a Host definition for VSphere {!r}."
+msgstr ""
+
 #: lib/fb_tools/vsphere/__init__.py:104
 msgid "Invalid port number {!r} for the VSphere server, must be 0 < PORT <= 65536."
 msgstr ""
@@ -1438,17 +1514,44 @@ msgstr ""
 msgid "Disconnecting from vSphere host {}."
 msgstr ""
 
-#: lib/fb_tools/vsphere/cluster.py:282 lib/fb_tools/vsphere/dc.py:154 lib/fb_tools/vsphere/ds.py:237
-#: lib/fb_tools/vsphere/ds_cluster.py:127 lib/fb_tools/vsphere/network.py:148
+#: lib/fb_tools/vsphere/about.py:283 lib/fb_tools/vsphere/cluster.py:300
+#: lib/fb_tools/vsphere/controller.py:269 lib/fb_tools/vsphere/dc.py:154
+#: lib/fb_tools/vsphere/disk.py:357 lib/fb_tools/vsphere/ds.py:237
+#: lib/fb_tools/vsphere/ds_cluster.py:127 lib/fb_tools/vsphere/ether.py:453
+#: lib/fb_tools/vsphere/host.py:255 lib/fb_tools/vsphere/host.py:505
+#: lib/fb_tools/vsphere/network.py:148 lib/fb_tools/vsphere/vm.py:393
 msgid "Creating {} object from:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/cluster.py:290
+#: lib/fb_tools/vsphere/cluster.py:308
 msgid "Cluster {c!r} has network {n!r}."
 msgstr ""
 
-#: lib/fb_tools/vsphere/cluster.py:297
+#: lib/fb_tools/vsphere/cluster.py:315
 msgid "Cluster {c!r} has datastore {d!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/controller.py:211 lib/fb_tools/vsphere/disk.py:337
+#: lib/fb_tools/vsphere/ether.py:403 lib/fb_tools/vsphere/host.py:231 lib/fb_tools/vsphere/host.py:489
+#: lib/fb_tools/vsphere/vm.py:378
+msgid "Parameter {t!r} must be a {e}, {v!r} ({vt}) was given."
+msgstr ""
+
+#: lib/fb_tools/vsphere/controller.py:232
+msgid "Checking class of controller: {!r}"
+msgstr ""
+
+#: lib/fb_tools/vsphere/controller.py:274 lib/fb_tools/vsphere/disk.py:362
+#: lib/fb_tools/vsphere/ether.py:458 lib/fb_tools/vsphere/vm.py:457
+msgid "Created {} object:"
+msgstr ""
+
+#: lib/fb_tools/vsphere/controller.py:390
+msgid "Controller is not in controller list."
+msgstr ""
+
+#: lib/fb_tools/vsphere/disk.py:478
+msgid "Disk is not in disk list."
 msgstr ""
 
 #: lib/fb_tools/vsphere/ds.py:344
@@ -1504,6 +1607,14 @@ msgstr ""
 msgid "Timeout on creating VM {vm!r} after {to:0.1f} seconds."
 msgstr ""
 
+#: lib/fb_tools/vsphere/ether.py:430
+msgid "Checking class of ethernet card: {!r}"
+msgstr ""
+
+#: lib/fb_tools/vsphere/ether.py:574
+msgid "card is not in card list."
+msgstr ""
+
 #: lib/fb_tools/vsphere/iface.py:122
 msgid "Invalid MAC address {!r} for interface given."
 msgstr ""
@@ -1550,7 +1661,7 @@ msgstr ""
 
 #: lib/fb_tools/vsphere/object.py:81 lib/fb_tools/vsphere/object.py:104
 #: lib/fb_tools/vsphere/object.py:127
-msgid "Invalid {c}.{p} {v!r}."
+msgid "Invalid {w}.{p} {v!r}."
 msgstr ""
 
 #: lib/fb_tools/vsphere/object.py:143
@@ -1561,348 +1672,372 @@ msgstr ""
 msgid "Invalid name prefix {p!r} for a {o}."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:113
+#: lib/fb_tools/vsphere/server.py:120
 msgid "Trying to get some 'about' information from VSphere."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:169
+#: lib/fb_tools/vsphere/server.py:144
 msgid "VSphere server version: {!r}"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:171
+#: lib/fb_tools/vsphere/server.py:146
 msgid "Found VSphere about-information:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:176
+#: lib/fb_tools/vsphere/server.py:151
 msgid "Trying to get datacenter from VSphere ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:190
+#: lib/fb_tools/vsphere/server.py:165
 msgid "Found VSphere datacenter {!r}."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:192
+#: lib/fb_tools/vsphere/server.py:167
 msgid "Info about datacenter:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:203
+#: lib/fb_tools/vsphere/server.py:178
 msgid "Trying to get all clusters from VSphere ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:227 lib/fb_tools/vsphere/server.py:232
+#: lib/fb_tools/vsphere/server.py:202 lib/fb_tools/vsphere/server.py:207
 msgid "Found clusters:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:248
+#: lib/fb_tools/vsphere/server.py:223 lib/fb_tools/vsphere/server.py:482
 msgid "Found standalone host"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:250
+#: lib/fb_tools/vsphere/server.py:225 lib/fb_tools/vsphere/server.py:484
 msgid "Found cluster"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:251
+#: lib/fb_tools/vsphere/server.py:226 lib/fb_tools/vsphere/server.py:485
 msgid "host"
 msgid_plural "hosts"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/vsphere/server.py:252
+#: lib/fb_tools/vsphere/server.py:227 lib/fb_tools/vsphere/server.py:486
 msgid "CPU"
 msgid_plural "CPUs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/vsphere/server.py:253
+#: lib/fb_tools/vsphere/server.py:228 lib/fb_tools/vsphere/server.py:487
 msgid "thread"
 msgid_plural "threads"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/vsphere/server.py:254
+#: lib/fb_tools/vsphere/server.py:229 lib/fb_tools/vsphere/server.py:488
 msgid "network"
 msgid_plural "networks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/vsphere/server.py:255
+#: lib/fb_tools/vsphere/server.py:230 lib/fb_tools/vsphere/server.py:489
 msgid "datastore"
 msgid_plural "datastores"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/vsphere/server.py:256
+#: lib/fb_tools/vsphere/server.py:231 lib/fb_tools/vsphere/server.py:490
 msgid ""
 "{on} {cl!r}, {h} {h_l}, {cpu} {cpu_l}, {thr} {t_l}, {mem:0.1f} GiB Memory, {net} {nw_l} and {ds}"
 " {ds_l}."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:279
+#: lib/fb_tools/vsphere/server.py:254
 msgid "Trying to get all datastores from VSphere ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:302 lib/fb_tools/vsphere/server.py:304
+#: lib/fb_tools/vsphere/server.py:277 lib/fb_tools/vsphere/server.py:279
 msgid "Found datastores:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:312
+#: lib/fb_tools/vsphere/server.py:287
 msgid "Datastore mappings:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:327
+#: lib/fb_tools/vsphere/server.py:302
 msgid "Datastore {!r} seems to be local."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:333
+#: lib/fb_tools/vsphere/server.py:308
 msgid "Found datastore {ds!r} of type {t!r}, capacity {c:0.1f} GByte."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:342
+#: lib/fb_tools/vsphere/server.py:317
 msgid "Trying to get all datastore clusters from VSphere ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:366 lib/fb_tools/vsphere/server.py:369
+#: lib/fb_tools/vsphere/server.py:341 lib/fb_tools/vsphere/server.py:344
 msgid "Found datastore clusters:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:371
+#: lib/fb_tools/vsphere/server.py:346
 msgid "No VSphere datastore clusters found."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:377
+#: lib/fb_tools/vsphere/server.py:352
 msgid "Datastore cluster mappings:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:383 lib/fb_tools/vsphere/server.py:443
-#: lib/fb_tools/vsphere/server.py:503 lib/fb_tools/vsphere/server.py:669
+#: lib/fb_tools/vsphere/server.py:358 lib/fb_tools/vsphere/server.py:418
+#: lib/fb_tools/vsphere/server.py:555 lib/fb_tools/vsphere/server.py:731
 msgid "Found a {} child."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:401
+#: lib/fb_tools/vsphere/server.py:376
 msgid "Trying to get all networks from VSphere ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:423
+#: lib/fb_tools/vsphere/server.py:398
 msgid "Found one VSphere network."
 msgid_plural "Found {n} VSphere networks."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/vsphere/server.py:427 lib/fb_tools/vsphere/server.py:429
+#: lib/fb_tools/vsphere/server.py:402 lib/fb_tools/vsphere/server.py:404
 msgid "Found VSphere networks:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:431
+#: lib/fb_tools/vsphere/server.py:406
 msgid "No VSphere networks found."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:437
+#: lib/fb_tools/vsphere/server.py:412
 msgid "Network mappings:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:461
+#: lib/fb_tools/vsphere/server.py:436
+msgid "Trying to get all host systems from VSphere ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:463 lib/fb_tools/vsphere/server.py:468
+msgid "Found hosts:"
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:474
+msgid "Checking {o}-object in cluster {c!r} ..."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:501
+msgid "Found host {h!r} in cluster {c!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:513
 msgid "Trying to get VM {!r} from VSphere ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:477 lib/fb_tools/vsphere/server.py:501
-#: lib/fb_tools/vsphere/server.py:646 lib/fb_tools/vsphere/server.py:667
+#: lib/fb_tools/vsphere/server.py:529 lib/fb_tools/vsphere/server.py:553
+#: lib/fb_tools/vsphere/server.py:704 lib/fb_tools/vsphere/server.py:729
 msgid "Searching in path {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:487
+#: lib/fb_tools/vsphere/server.py:539
 msgid "VSphere VM {!r} not found."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:525
+#: lib/fb_tools/vsphere/server.py:577
 msgid "Found VM {r} summary:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:527
+#: lib/fb_tools/vsphere/server.py:579
 msgid "Found VM {!r} config:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:626
+#: lib/fb_tools/vsphere/server.py:680
 msgid "Parameter {p!r} => {r!r} seems not to be a regex object."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:630
+#: lib/fb_tools/vsphere/server.py:684
+msgid "Parameter {p1!r} and {p2!r} may not be {w!r} at the same time."
+msgstr ""
+
+#: lib/fb_tools/vsphere/server.py:688
 msgid "Trying to get list of VMs with name pattern {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:656
+#: lib/fb_tools/vsphere/server.py:716
 msgid "Found one VM with pattern {p!r}."
 msgid_plural "Found {no} VMs with pattern {p!r}."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/vsphere/server.py:694
+#: lib/fb_tools/vsphere/server.py:759
 msgid "Checking VM {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:697
+#: lib/fb_tools/vsphere/server.py:762
 msgid "Checking VM {!r} for being a template ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:699
+#: lib/fb_tools/vsphere/server.py:764
 msgid "Checking VM {!r} for being not a template ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:707
+#: lib/fb_tools/vsphere/server.py:772
 msgid "Checking VM {!r} for pattern."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:710
+#: lib/fb_tools/vsphere/server.py:775
 msgid "Found VM {!r}."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:737
+#: lib/fb_tools/vsphere/server.py:809
 msgid "VM {!r} is already powered on."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:740
+#: lib/fb_tools/vsphere/server.py:812
 msgid "Powering on VM {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:744
+#: lib/fb_tools/vsphere/server.py:816
 msgid "VM {!r} successful powered on."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:768
+#: lib/fb_tools/vsphere/server.py:840
 msgid "VM {!r} is already powered off."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:771
+#: lib/fb_tools/vsphere/server.py:843
 msgid "Powering off VM {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:775
+#: lib/fb_tools/vsphere/server.py:847
 msgid "VM {!r} successful powered off."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:783
+#: lib/fb_tools/vsphere/server.py:855
 msgid "Ensuring existence of VSphere VM folders:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:800
+#: lib/fb_tools/vsphere/server.py:872
 msgid "Trying to get VM folder object for path {!r}."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:825
+#: lib/fb_tools/vsphere/server.py:897
 msgid "Checking single VM folder {i}: {f!r}."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:836
+#: lib/fb_tools/vsphere/server.py:908
 msgid "Found VM folder {n}, parent: {p}"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:854
+#: lib/fb_tools/vsphere/server.py:926
 msgid "Ensuring existence of VSphere VM folder {!r}."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:879
+#: lib/fb_tools/vsphere/server.py:951
 msgid "VM Folder {!r} already exists."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:881
+#: lib/fb_tools/vsphere/server.py:953
 msgid "Creating VM folder {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:883
+#: lib/fb_tools/vsphere/server.py:955
 msgid "Simulation mode, don't creating it."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:899
+#: lib/fb_tools/vsphere/server.py:971
 msgid "Waiting for tasks to finish ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:911
+#: lib/fb_tools/vsphere/server.py:983
 msgid "Waiting at most {m} seconds for tasks {t} to finish ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:914
+#: lib/fb_tools/vsphere/server.py:986
 msgid "Waiting for tasks {} to finish ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:934
+#: lib/fb_tools/vsphere/server.py:1006
 msgid "Waiting ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:968
+#: lib/fb_tools/vsphere/server.py:1040
 msgid "Creating VM {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:971
+#: lib/fb_tools/vsphere/server.py:1043
 msgid "Simulation mode - VM {!r} will not be created."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:989
+#: lib/fb_tools/vsphere/server.py:1061
 msgid "Generating create spec for VM {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:997
+#: lib/fb_tools/vsphere/server.py:1069
 msgid "Datastore path: {!r}"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1000
+#: lib/fb_tools/vsphere/server.py:1072
 msgid "VM path name: {!r}"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1050
+#: lib/fb_tools/vsphere/server.py:1122
 msgid "Generated VM config:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1059
+#: lib/fb_tools/vsphere/server.py:1131
 msgid "Given disksize {!r} must be greater than zero."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1072
+#: lib/fb_tools/vsphere/server.py:1144
 msgid "There may be created at most 6 disks, but {} were given."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1086
+#: lib/fb_tools/vsphere/server.py:1158
 msgid "Generating spec for SCSI controller and one disk: {d}"
 msgid_plural "Generating spec for SCSI controller and {n} disks: {d}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/vsphere/server.py:1089
+#: lib/fb_tools/vsphere/server.py:1161
 msgid "Generating spec for SCSI controller without disks."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1114
+#: lib/fb_tools/vsphere/server.py:1186
 msgid "Adding spec for disk {n!r} with {gb} GiB => {kb} KiByte."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1149
+#: lib/fb_tools/vsphere/server.py:1221
 msgid "Invalid Interface description {!r} given."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1160
+#: lib/fb_tools/vsphere/server.py:1232
 msgid "Defined interface:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1164
+#: lib/fb_tools/vsphere/server.py:1236
 msgid "Adding spec for network interface {d!r} (Network {n!r}, MAC: {m!r}, summary: {s!r})."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1216
+#: lib/fb_tools/vsphere/server.py:1288
 msgid "Purging VM {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1220
+#: lib/fb_tools/vsphere/server.py:1292
 msgid "VM {!r} successful removed."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1251
+#: lib/fb_tools/vsphere/server.py:1323
 msgid "Did not found virtual ethernet device No. {no} (found {count} devices)."
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1270
+#: lib/fb_tools/vsphere/server.py:1342
 msgid "Changes of MAC address:"
 msgstr ""
 
-#: lib/fb_tools/vsphere/server.py:1274
+#: lib/fb_tools/vsphere/server.py:1346
 msgid "Successful changed MAC address of VM {v!r} to {m!r}."
+msgstr ""
+
+#: lib/fb_tools/vsphere/vm.py:453
+msgid "Unknown hardware device of type {}."
 msgstr ""
 
 #: lib/fb_tools/xlate.py:59
