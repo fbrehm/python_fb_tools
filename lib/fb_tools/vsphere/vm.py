@@ -24,8 +24,9 @@ from .object import VsphereObject
 
 from .disk import VsphereDisk, VsphereDiskList
 from .ether import VsphereEthernetcard, VsphereEthernetcardList
+from .controller import VsphereDiskController, VsphereDiskControllerList
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -56,6 +57,7 @@ class VsphereVm(VsphereObject):
         self.power_state = None
         self.disks = []
         self.interfaces = []
+        self.controllers = []
 
         self.vm_tools = None
 
@@ -67,6 +69,8 @@ class VsphereVm(VsphereObject):
         self.disks = VsphereDiskList(
             appname=appname, verbose=verbose, base_dir=base_dir, initialized=True)
         self.interfaces = VsphereEthernetcardList(
+            appname=appname, verbose=verbose, base_dir=base_dir, initialized=True)
+        self.controllers = VsphereDiskControllerList(
             appname=appname, verbose=verbose, base_dir=base_dir, initialized=True)
 
     # -----------------------------------------------------------
@@ -301,8 +305,9 @@ class VsphereVm(VsphereObject):
                 'uuid': self.uuid,
                 'instance_uuid': self.instance_uuid,
                 'power_state': self.power_state,
-                'disks': self.disks.as_dict(bare=True)
-                'interfaces': self.interfaces.as_dict(bare=True)
+                'disks': self.disks.as_dict(bare=True),
+                'interfaces': self.interfaces.as_dict(bare=True),
+                'controllers': self.controllers.as_dict(bare=True),
             }
             return res
 
@@ -347,6 +352,7 @@ class VsphereVm(VsphereObject):
         vm.power_state = self.power_state
         vm.disks = copy.copy(self.disks)
         vm.interfaces = copy.copy(self.interfaces)
+        vm.controllers = copy.copy(self.controllers)
 
         return vm
 
@@ -439,6 +445,13 @@ class VsphereVm(VsphereObject):
                 iface = VsphereEthernetcard.from_summary(
                     device, appname=appname, verbose=verbose, base_dir=base_dir)
                 vm.interfaces.append(iface)
+            elif isinstance(device, vim.vm.device.VirtualController):
+                ctrl = VsphereDiskController.from_summary(
+                    device, appname=appname, verbose=verbose, base_dir=base_dir)
+                vm.controllers.append(ctrl)
+            elif verbose > 2:
+                LOG.debug(_("Unknown hardware device of type {}.").format(
+                    device.__class__.__name__))
 
         if verbose > 2:
             LOG.debug(_("Created {} object:").format(cls.__name__) + '\n' + pp(vm.as_dict()))
