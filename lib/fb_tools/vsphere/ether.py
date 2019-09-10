@@ -30,7 +30,7 @@ from ..obj import FbBaseObject
 from .errors import VSphereNameError
 
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -345,20 +345,20 @@ class VsphereEthernetcard(FbBaseObject):
 
         if bare:
             res = {
-                'unit_nr': self.unit_nr
-                'key': self.key
-                'address_type': self.address_type
-                'external_id': self.external_id
-                'mac_address': self.mac_address
-                'wake_on_lan': self.wake_on_lan
-                'backing_device': self.backing_device
-                'backing_type': self.backing_type
-                'connected': self.connected
-                'connect_status': self.connect_status
-                'connect_on_start': self.connect_on_start
-                'allow_guest_control': self.allow_guest_control
-                'ether_type': self.ether_type
-                'label': self.label
+                'unit_nr': self.unit_nr,
+                'key': self.key,
+                'address_type': self.address_type,
+                'external_id': self.external_id,
+                'mac_address': self.mac_address,
+                'wake_on_lan': self.wake_on_lan,
+                'backing_device': self.backing_device,
+                'backing_type': self.backing_type,
+                'connected': self.connected,
+                'connect_status': self.connect_status,
+                'connect_on_start': self.connect_on_start,
+                'allow_guest_control': self.allow_guest_control,
+                'ether_type': self.ether_type,
+                'label': self.label,
             }
             return res
 
@@ -432,7 +432,7 @@ class VsphereEthernetcard(FbBaseObject):
         try:
             if isinstance(data, vim.vm.device.VirtualE1000e):
                 params['ether_type'] = 'e1000e'
-            if isinstance(data, vim.vm.device.VirtualE1000):
+            elif isinstance(data, vim.vm.device.VirtualE1000):
                 params['ether_type'] = 'e1000'
             elif isinstance(data, vim.vm.device.VirtualPCNet32):
                 params['ether_type'] = 'pcnet32'
