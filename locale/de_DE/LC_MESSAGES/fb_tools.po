@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.6.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-09-10 16:31+0200\n"
-"PO-Revision-Date: 2019-09-10 16:40+0100\n"
+"POT-Creation-Date: 2019-09-11 16:03+0200\n"
+"PO-Revision-Date: 2019-09-11 16:10+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <frank@brehm-online.com>\n"
@@ -376,7 +376,7 @@ msgstr ""
 "Wieviele Dateien (eine pro Jahr) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
 "{default}, Minimum {min})?"
 
-#: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:157
+#: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:196
 #: lib/fb_tools/get_vm_list_app.py:269 lib/fb_tools/pdns_bulk_rm_app.py:189
 #: lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
@@ -476,76 +476,64 @@ msgstr "Versuche das Datum aus der Datei {!r} zu entnehmen."
 msgid "Explored and assigned files:"
 msgstr "Ermittelte und zugewiesene Dateien:"
 
-#: lib/fb_tools/get_vm_app.py:58
+#: lib/fb_tools/get_vm_app.py:62
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
 msgstr ""
 "Versucht, Informationen über Virtuelle Maschinen in VMWare VSphere zu ermitteln und gibt diese "
 "aus."
 
-#: lib/fb_tools/get_vm_app.py:132
-msgid "Enter password for host {h!r} and user {u!r}: "
-msgstr "Eingabe des Passwortes für Host {h!r} und Benutzer {u!r}: "
-
-#: lib/fb_tools/get_vm_app.py:159 lib/fb_tools/get_vm_list_app.py:271
-#: lib/fb_tools/pdns_bulk_rm_app.py:191
-msgid "Configuration file (default: {!r})"
-msgstr "Konfigurationsdatei (Vorgabe: {!r})"
-
-#: lib/fb_tools/get_vm_app.py:162
-msgid "VMWare options"
-msgstr "VMWare-Optionen"
-
-#: lib/fb_tools/get_vm_app.py:166
-msgid "Remote vSphere host to connect to (Default: {!r})."
-msgstr "Der vSphere-Server, zu dem sich verbunden werden soll (Vorgabe: {!r})"
-
-#: lib/fb_tools/get_vm_app.py:172
-msgid "Port on vSphere host to connect on (Default: {})."
-msgstr "Der Port des vSphere-Servers, zu dem sich verbunden werden soll (Vorgabe: {!r})"
-
-#: lib/fb_tools/get_vm_app.py:177
-msgid "USER"
-msgstr "NUTZER"
-
-#: lib/fb_tools/get_vm_app.py:178
-msgid "User name to use when connecting to vSphere host (Default: {!r})."
-msgstr "Der Nutzername, der zum Verbinden zum vSphere-Server verwendet werden soll (Vorgabe: {!r})"
-
-#: lib/fb_tools/get_vm_app.py:183
-msgid "PASSWORD"
-msgstr "PASSWORT"
-
-#: lib/fb_tools/get_vm_app.py:184
-msgid "Password to use when connecting to vSphere host."
-msgstr "Passwort, das zum Verbinden zum vSphere-Server verwendet werden soll."
-
-#: lib/fb_tools/get_vm_app.py:189
-msgid "Names of the VM to get information."
-msgstr "Die Namen der VMs, über die Informationen ermittelt werden sollen."
-
-#: lib/fb_tools/get_vm_app.py:220 lib/fb_tools/get_vm_list_app.py:330
-msgid "Starting {a!r}, version {v!r} ..."
-msgstr "Starte {a!r}, Version {v!r} …"
-
-#: lib/fb_tools/get_vm_app.py:228
-msgid "Closing ..."
-msgstr "Schließe …"
-
-#: lib/fb_tools/get_vm_app.py:245
-msgid "NOT FOUND"
-msgstr "NICHT GEFUNDEN"
-
-#: lib/fb_tools/get_vm_list_app.py:67
-msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
-msgstr "Versucht eine Liste aller virtuellen Maschinen in VMWare VSphere zu erhalten und gibt diese aus."
-
-#: lib/fb_tools/get_vm_list_app.py:170
+#: lib/fb_tools/get_vm_app.py:143 lib/fb_tools/get_vm_list_app.py:170
 msgid ""
 "Configuration file {f!r} does not exists. Please copy {d!r} to {f!r} and fill out all necessary "
 "entries, e.g. the passwords."
 msgstr ""
 "Die Konfigurationsdatei {f!r} existiert nicht. Bitte kopiere {d!r} nach {f!r} und fülle alle "
 "notwendigen Einträge, z.Bsp. die Passwörter, aus."
+
+#: lib/fb_tools/get_vm_app.py:163 lib/fb_tools/get_vm_list_app.py:216
+msgid "Did not found any valid VSphere definition in {!r}."
+msgstr "Keine gültige VSPhere Definition in {!r} gefunden."
+
+#: lib/fb_tools/get_vm_app.py:175 lib/fb_tools/get_vm_list_app.py:228
+msgid "Enter password for {n} VSPhere user {u!r} on host {h!r}:"
+msgstr "Geben Sie das Passwort für den {n}-VSPhere-Nutzer {u!r} auf Host {h!r} ein:"
+
+#: lib/fb_tools/get_vm_app.py:198 lib/fb_tools/get_vm_list_app.py:271
+#: lib/fb_tools/pdns_bulk_rm_app.py:191
+msgid "Configuration file (default: {!r})"
+msgstr "Konfigurationsdatei (Vorgabe: {!r})"
+
+#: lib/fb_tools/get_vm_app.py:203
+msgid "Names of the VM to get information."
+msgstr "Die Namen der VMs, über die Informationen ermittelt werden sollen."
+
+#: lib/fb_tools/get_vm_app.py:210 lib/fb_tools/get_vm_list_app.py:278
+msgid "Got command line arguments:"
+msgstr "Erhaltene Kommandozeilen-Argumente:"
+
+#: lib/fb_tools/get_vm_app.py:245 lib/fb_tools/get_vm_list_app.py:323
+msgid "Could not initialize {} object from:"
+msgstr "Konnte kein {}-Objekt initialisieren aus:"
+
+#: lib/fb_tools/get_vm_app.py:252 lib/fb_tools/get_vm_list_app.py:330
+msgid "Starting {a!r}, version {v!r} ..."
+msgstr "Starte {a!r}, Version {v!r} …"
+
+#: lib/fb_tools/get_vm_app.py:263 lib/fb_tools/get_vm_list_app.py:339
+msgid "Closing VSPhere object {!r} ..."
+msgstr "Schließe VSPhere-Objekt {!r} …"
+
+#: lib/fb_tools/get_vm_app.py:274
+msgid "Search pattern: {!r}."
+msgstr "Suchmuster: {!r}."
+
+#: lib/fb_tools/get_vm_app.py:289
+msgid "NOT FOUND"
+msgstr "NICHT GEFUNDEN"
+
+#: lib/fb_tools/get_vm_list_app.py:67
+msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
+msgstr "Versucht eine Liste aller virtuellen Maschinen in VMWare VSphere zu erhalten und gibt diese aus."
 
 #: lib/fb_tools/get_vm_list_app.py:193
 msgid "Checking for configured VSPhere instance {!r} ..."
@@ -554,14 +542,6 @@ msgstr "Überprüfe die konfigurierte VSPhere-Instanz {!r} …"
 #: lib/fb_tools/get_vm_list_app.py:197
 msgid "VSPhere {!r} not found in list of configured VSPhere instances."
 msgstr "VSPhere {!r} wurde nicht in der Liste der konfigurierten VSPhere-Instanzen gefunden."
-
-#: lib/fb_tools/get_vm_list_app.py:216
-msgid "Did not found any valid VSphere definition in {!r}."
-msgstr "Keine gültige VSPhere Definition in {!r} gefunden."
-
-#: lib/fb_tools/get_vm_list_app.py:228
-msgid "Enter password for {n} VSPhere user {u!r} on host {h!r}:"
-msgstr "Geben Sie das Passwort für den {n}-VSPhere-Nutzer {u!r} auf Host {h!r} ein:"
 
 #: lib/fb_tools/get_vm_list_app.py:251
 msgid "for names of VMs"
@@ -579,21 +559,9 @@ msgstr "Detaillierte Ausgabeliste (die Abfrage der Daten benötigt signifikant m
 msgid "The VSPhere names from configuration, in which the VMs should be searched."
 msgstr "Die Namen der VSPheres aus der Konfiguration, in denen die VMs gesucht werden sollen."
 
-#: lib/fb_tools/get_vm_list_app.py:278
-msgid "Got command line arguments:"
-msgstr "Erhaltene Kommandozeilen-Argumente:"
-
 #: lib/fb_tools/get_vm_list_app.py:289
 msgid "Regular expression for filtering: {!r}"
 msgstr "Regulärer Ausdruck als Filter: {!r}"
-
-#: lib/fb_tools/get_vm_list_app.py:323
-msgid "Could not initialize {} object from:"
-msgstr "Konnte kein {}-Objekt initialisieren aus:"
-
-#: lib/fb_tools/get_vm_list_app.py:339
-msgid "Closing VSPhere object {!r} ..."
-msgstr "Schließe VSPhere-Objekt {!r} …"
 
 #: lib/fb_tools/handler/__init__.py:157
 msgid "Invalid time zone name {!r}."
@@ -1075,7 +1043,7 @@ msgstr "Das Argument {a} {v!r} muss ein {o}-Objekt sein."
 #: lib/fb_tools/vsphere/controller.py:144 lib/fb_tools/vsphere/dc.py:120
 #: lib/fb_tools/vsphere/disk.py:248 lib/fb_tools/vsphere/ds.py:324
 #: lib/fb_tools/vsphere/ds_cluster.py:166 lib/fb_tools/vsphere/ether.py:296
-#: lib/fb_tools/vsphere/host.py:474 lib/fb_tools/vsphere/network.py:187 lib/fb_tools/vsphere/vm.py:363
+#: lib/fb_tools/vsphere/host.py:490 lib/fb_tools/vsphere/network.py:187 lib/fb_tools/vsphere/vm.py:363
 msgid "Comparing {} objects ..."
 msgstr "Vergleiche {}-Objekte …"
 
@@ -1561,10 +1529,15 @@ msgstr "Trenne Verbindung zu vSphere-Host {}."
 #: lib/fb_tools/vsphere/controller.py:269 lib/fb_tools/vsphere/dc.py:154
 #: lib/fb_tools/vsphere/disk.py:357 lib/fb_tools/vsphere/ds.py:237
 #: lib/fb_tools/vsphere/ds_cluster.py:127 lib/fb_tools/vsphere/ether.py:453
-#: lib/fb_tools/vsphere/host.py:255 lib/fb_tools/vsphere/host.py:505
+#: lib/fb_tools/vsphere/host.py:255 lib/fb_tools/vsphere/host.py:524
 #: lib/fb_tools/vsphere/network.py:148 lib/fb_tools/vsphere/vm.py:393
 msgid "Creating {} object from:"
 msgstr "Erstelle {}-Objekt aus:"
+
+#: lib/fb_tools/vsphere/about.py:319 lib/fb_tools/vsphere/controller.py:274
+#: lib/fb_tools/vsphere/disk.py:362 lib/fb_tools/vsphere/ether.py:458 lib/fb_tools/vsphere/vm.py:462
+msgid "Created {} object:"
+msgstr "Erstelltes {}-Objekt:"
 
 #: lib/fb_tools/vsphere/cluster.py:308
 msgid "Cluster {c!r} has network {n!r}."
@@ -1575,7 +1548,7 @@ msgid "Cluster {c!r} has datastore {d!r}."
 msgstr "Der Cluster {c!r} hat den Datastore {d!r}."
 
 #: lib/fb_tools/vsphere/controller.py:211 lib/fb_tools/vsphere/disk.py:337
-#: lib/fb_tools/vsphere/ether.py:403 lib/fb_tools/vsphere/host.py:231 lib/fb_tools/vsphere/host.py:489
+#: lib/fb_tools/vsphere/ether.py:403 lib/fb_tools/vsphere/host.py:231 lib/fb_tools/vsphere/host.py:505
 #: lib/fb_tools/vsphere/vm.py:378
 msgid "Parameter {t!r} must be a {e}, {v!r} ({vt}) was given."
 msgstr "Der Parameter {t!r} muss ein {e} sein, v!r} ({vt}) wurde gegeben."
@@ -1583,11 +1556,6 @@ msgstr "Der Parameter {t!r} muss ein {e} sein, v!r} ({vt}) wurde gegeben."
 #: lib/fb_tools/vsphere/controller.py:232
 msgid "Checking class of controller: {!r}"
 msgstr "Überprüfe Klasse für Controller: {!r}"
-
-#: lib/fb_tools/vsphere/controller.py:274 lib/fb_tools/vsphere/disk.py:362
-#: lib/fb_tools/vsphere/ether.py:458 lib/fb_tools/vsphere/vm.py:457
-msgid "Created {} object:"
-msgstr "Erstelltes {}-Objekt:"
 
 #: lib/fb_tools/vsphere/controller.py:390
 msgid "Controller is not in controller list."
@@ -1659,6 +1627,10 @@ msgstr "Überprüfe die Klasse der Ethernet-Karte: {!r}"
 #: lib/fb_tools/vsphere/ether.py:574
 msgid "card is not in card list."
 msgstr "Die Karte ist nicht in der Liste der Ethernet-Karten."
+
+#: lib/fb_tools/vsphere/host.py:510
+msgid "Host {!r} seems to be offline!"
+msgstr "Der Host {!r} scheint offline zu sein!"
 
 #: lib/fb_tools/vsphere/iface.py:122
 msgid "Invalid MAC address {!r} for interface given."
@@ -2085,9 +2057,13 @@ msgstr "Ändern von MAC-Adressen:"
 msgid "Successful changed MAC address of VM {v!r} to {m!r}."
 msgstr "Erfolgreich MAC-Adresse der VM {v!r} auf {m!r} geändert."
 
-#: lib/fb_tools/vsphere/vm.py:453
+#: lib/fb_tools/vsphere/vm.py:454
 msgid "Unknown hardware device of type {}."
 msgstr "Unbekanntes Hardware-Gerät vom Typ {}."
+
+#: lib/fb_tools/vsphere/vm.py:457
+msgid "There is something wrong wit VM {n!r} in cluster {c!r} and path {p!r} ..."
+msgstr "Irgendetwas stimmt mit der VM {n!r} in Cluster {c!r}  im Pfad {p!r} nicht …"
 
 #: lib/fb_tools/xlate.py:59
 msgid "Module directory: {!r}"
