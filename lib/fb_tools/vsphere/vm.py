@@ -26,7 +26,7 @@ from .disk import VsphereDisk, VsphereDiskList
 from .ether import VsphereEthernetcard, VsphereEthernetcardList
 from .controller import VsphereDiskController, VsphereDiskControllerList
 
-__version__ = '0.3.4'
+__version__ = '0.3.5'
 LOG = logging.getLogger(__name__)
 
 
@@ -436,22 +436,27 @@ class VsphereVm(VsphereObject):
             else:
                 vm.vm_tools['version_state'] = data.guest.toolsVersionStatus
 
-        for device in data.config.hardware.device:
-            if isinstance(device, vim.vm.device.VirtualDisk):
-                disk = VsphereDisk.from_summary(
-                    device, appname=appname, verbose=verbose, base_dir=base_dir)
-                vm.disks.append(disk)
-            elif isinstance(device, vim.vm.device.VirtualEthernetCard):
-                iface = VsphereEthernetcard.from_summary(
-                    device, appname=appname, verbose=verbose, base_dir=base_dir)
-                vm.interfaces.append(iface)
-            elif isinstance(device, vim.vm.device.VirtualController):
-                ctrl = VsphereDiskController.from_summary(
-                    device, appname=appname, verbose=verbose, base_dir=base_dir)
-                vm.controllers.append(ctrl)
-            elif verbose > 2:
-                LOG.debug(_("Unknown hardware device of type {}.").format(
-                    device.__class__.__name__))
+        if data.config and data.config.hardware:
+            for device in data.config.hardware.device:
+                if isinstance(device, vim.vm.device.VirtualDisk):
+                    disk = VsphereDisk.from_summary(
+                        device, appname=appname, verbose=verbose, base_dir=base_dir)
+                    vm.disks.append(disk)
+                elif isinstance(device, vim.vm.device.VirtualEthernetCard):
+                    iface = VsphereEthernetcard.from_summary(
+                        device, appname=appname, verbose=verbose, base_dir=base_dir)
+                    vm.interfaces.append(iface)
+                elif isinstance(device, vim.vm.device.VirtualController):
+                    ctrl = VsphereDiskController.from_summary(
+                        device, appname=appname, verbose=verbose, base_dir=base_dir)
+                    vm.controllers.append(ctrl)
+                elif verbose > 2:
+                    LOG.debug(_("Unknown hardware device of type {}.").format(
+                        device.__class__.__name__))
+        else:
+            LOG.error(_(
+                "There is something wrong wit VM {n!r} in cluster {c!r} and "
+                "path {p!r} ...").format(n=vm.name, c=vm.cluster_name, p=vm.path))
 
         if verbose > 2:
             LOG.debug(_("Created {} object:").format(cls.__name__) + '\n' + pp(vm.as_dict()))

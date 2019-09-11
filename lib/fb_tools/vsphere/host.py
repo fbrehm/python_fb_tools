@@ -29,7 +29,7 @@ from .object import VsphereObject
 
 from .about import VsphereAboutInfo
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -438,6 +438,22 @@ class VsphereHost(VsphereObject):
         return res
 
     # -------------------------------------------------------------------------
+    def __repr__(self):
+        """Typecasting into a string for reproduction."""
+
+        out = "<%s(" % (self.__class__.__name__)
+
+        fields = []
+        fields.append("appname={!r}".format(self.appname))
+        fields.append("verbose={!r}".format(self.verbose))
+        fields.append("name={!r}".format(self.name))
+        fields.append("cluster_name={!r}".format(self.cluster_name))
+        fields.append("initialized={!r}".format(self.initialized))
+
+        out += ", ".join(fields) + ")>"
+        return out
+
+    # -------------------------------------------------------------------------
     def __copy__(self):
 
         host = VsphereHost(
@@ -490,6 +506,9 @@ class VsphereHost(VsphereObject):
                 t='data', e='vim.HostSystem', v=data, vt=data.__class__.__name__)
             raise TypeError(msg)
 
+        if not data.config:
+            LOG.error(_("Host {!r} seems to be offline!").format(data.summary.config.name))
+
         params = {
             'appname': appname,
             'verbose': verbose,
@@ -532,8 +551,10 @@ class VsphereHost(VsphereObject):
         host.mgmt_ip = data.summary.managementServerIp
         host.reboot_required = data.summary.rebootRequired
 
-        host.product = VsphereAboutInfo.from_summary(
-            data.config.product, appname=appname, verbose=verbose, base_dir=base_dir)
+        host.product = None
+        if data.config:
+            host.product = VsphereAboutInfo.from_summary(
+                data.config.product, appname=appname, verbose=verbose, base_dir=base_dir)
 
         return host
 
