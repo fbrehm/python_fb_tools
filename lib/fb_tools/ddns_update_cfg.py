@@ -17,7 +17,10 @@ from pathlib import Path
 
 # Own modules
 from .common import to_bool
+
 from .config import ConfigError, BaseConfiguration
+
+from .xlate import XLATOR, format_list
 
 __version__ = '0.1.0'
 LOG = logging.getLogger(__name__)
@@ -131,6 +134,7 @@ class DdnsUpdateConfiguration(BaseConfiguration):
         re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
         re_with_mx = re.compile(r'^with[_-]?mx$', re.IGNORECASE)
         re_get_url = re.compile(r'^\s*get[_-]ipv([46])[_-]url\s*$', re.IGNORECASE)
+        re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]ipv([46])[_-]url\s*$', re.IGNORECASE)
 
         for (key, value) in config.items(section_name):
 
@@ -151,6 +155,21 @@ class DdnsUpdateConfiguration(BaseConfiguration):
             elif re_with_mx.match(key) and value.strip():
                 self.with_mx = to_bool(value.strip())
                 continue
+            match = re_get_url.match(key)
+            if match and value.strip():
+                setattr(self, 'get_ipv{}_url'.format(match.group(1)), value.strip())
+                return
+            match = re_upd_url.match(key)
+            if match and value.strip():
+                setattr(self, 'upd_ipv{}_url'.format(match.group(1)), value.strip())
+                return
+            if key.lower() == 'protocol' and value.strip():
+                p = value.strip().lower()
+                if p not in self.valid_protocols:
+                    LOG.error(_("Invalid value {v!r} for protocols to update, "
+
+            LOG.warning(_("Unknown configuration option {o!r} with value {v!r}.").format(
+                o=key, v=value))
 
         return
 
