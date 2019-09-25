@@ -22,7 +22,7 @@ from .config import ConfigError, BaseConfiguration
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -135,9 +135,9 @@ class DdnsUpdateConfiguration(BaseConfiguration):
 
         re_domains = re.compile(r'(\s+)|\s*([,;]\s*)+')
         re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
-        re_with_mx = re.compile(r'^with[_-]?mx$', re.IGNORECASE)
-        re_get_url = re.compile(r'^\s*get[_-]ipv([46])[_-]url\s*$', re.IGNORECASE)
-        re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]ipv([46])[_-]url\s*$', re.IGNORECASE)
+        re_with_mx = re.compile(r'^\s*with[_-]?mx\s*$', re.IGNORECASE)
+        re_get_url = re.compile(r'^\s*get[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
+        re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
 
         for (key, value) in config.items(section_name):
 
@@ -161,11 +161,11 @@ class DdnsUpdateConfiguration(BaseConfiguration):
             match = re_get_url.match(key)
             if match and value.strip():
                 setattr(self, 'get_ipv{}_url'.format(match.group(1)), value.strip())
-                return
+                continue
             match = re_upd_url.match(key)
             if match and value.strip():
                 setattr(self, 'upd_ipv{}_url'.format(match.group(1)), value.strip())
-                return
+                continue
             if key.lower() == 'protocol' and value.strip():
                 p = value.strip().lower()
                 if p not in self.valid_protocols:
@@ -174,9 +174,48 @@ class DdnsUpdateConfiguration(BaseConfiguration):
                         "are: ").format(value) + format_list(self.valid_protocols, do_repr=True))
                 else:
                     self.protocol = p
+                continue
 
-            LOG.warning(_("Unknown configuration option {o!r} with value {v!r}.").format(
-                o=key, v=value))
+            LOG.warning(_(
+                "Unknown configuration option {o!r} with value {v!r} in "
+                "section {s!r}.").format(o=key, v=value, s=section_name))
+
+        return
+
+    # -------------------------------------------------------------------------
+    def _eval_config_files(self, config, section_name):
+
+        if self.verbose > 1:
+            LOG.debug("Checking config section {!r} ...".format(section_name))
+
+        re_work_dir = re.compile(r'^\s*work(ing)?[_-]?dir(ectory)?\ſ*', re.IGNORECASE)
+        re_logfile = re.compile(r'^\s*log[_-]?file\s*$', re.IGNORECASE)
+
+        for (key, value) in config.items(section_name):
+
+            if re_work_dir.match(key) and value.strip():
+                p = Path(value.strip())
+                if p.is_absolute():
+                    self.working_dir = p
+                else:
+                    LOG.error(_(
+                        "The path to the working directory must be an absolute path "
+                        "(given: {!r}).").format(value))
+                continue
+
+            if re_logfile.match(key) and value.strip():
+                p = Path(value.strip())
+                if p.is_absolute():
+                    self.logfile = p
+                else:
+                    LOG.error(_(
+                        "The path to the logfile must be an absolute path "
+                        "(given: {!r}).").format(value))
+                continue
+
+            LOG.warning(_(
+                "Unknown configuration option {o!r} with value {v!r} in "
+                "section {s!r}.").format(o=key, v=value, s=section_name))
 
         return
 
