@@ -22,8 +22,11 @@ from .config import ConfigError, BaseConfiguration
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.1.0'
+__version__ = '0.2.1'
+
 LOG = logging.getLogger(__name__)
+
+_ = XLATOR.gettext
 
 
 # =============================================================================
@@ -111,7 +114,7 @@ class DdnsUpdateConfiguration(BaseConfiguration):
     # -------------------------------------------------------------------------
     def eval_config_section(self, config, section_name):
 
-        super(GetVmConfiguration, self).eval_config_section(config, section_name)
+        super(DdnsUpdateConfiguration, self).eval_config_section(config, section_name)
 
         if section_name.lower() == 'ddns':
             self._eval_config_ddns(config, section_name)
@@ -166,7 +169,11 @@ class DdnsUpdateConfiguration(BaseConfiguration):
             if key.lower() == 'protocol' and value.strip():
                 p = value.strip().lower()
                 if p not in self.valid_protocols:
-                    LOG.error(_("Invalid value {v!r} for protocols to update, "
+                    LOG.error(_(
+                        "Invalid value {ur} for protocols to update, valid protocols "
+                        "are: ").format(value) + format_list(self.valid_protocols, do_repr=True))
+                else:
+                    self.protocol = p
 
             LOG.warning(_("Unknown configuration option {o!r} with value {v!r}.").format(
                 o=key, v=value))
