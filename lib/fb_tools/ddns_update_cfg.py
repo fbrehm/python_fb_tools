@@ -22,7 +22,7 @@ from .config import ConfigError, BaseConfiguration
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 
 LOG = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ class DdnsUpdateConfiguration(BaseConfiguration):
     default_upd_ipv4_url = 'http://ip4.ddnss.de/upd.php'
     default_upd_ipv6_url = 'http://ip6.ddnss.de/upd.php'
 
-    valid_protocols = ('any', 'ipv4', 'ipv6')
+    valid_protocols = ('any', 'both', 'ipv4', 'ipv6')
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -173,6 +173,8 @@ class DdnsUpdateConfiguration(BaseConfiguration):
                         "Invalid value {ur} for protocols to update, valid protocols "
                         "are: ").format(value) + format_list(self.valid_protocols, do_repr=True))
                 else:
+                    if p == 'both':
+                        p = 'any'
                     self.protocol = p
                 continue
 
