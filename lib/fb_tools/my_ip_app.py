@@ -28,7 +28,7 @@ from .errors import FbAppError
 
 from .ddns_update_cfg import DdnsUpdateConfigError, DdnsUpdateConfiguration
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -112,7 +112,19 @@ class MyIpApplication(BaseApplication):
         default_cfg_file = copy.copy(self.cfg_file)
         valid_list = copy.copy(DdnsUpdateConfiguration.valid_protocols)
 
-        self.arg_parser.add_argument(
+        protocol_group = self.arg_parser.add_mutually_exclusive_group()
+
+        protocol_group.add_argument(
+            '-4', '--ipv4', dest='ipv4', action="store_true",
+            help=_("Use only {} to retreive the public IP address.").format('IPv4'),
+        )
+
+        protocol_group.add_argument(
+            '-6', '--ipv6', dest='ipv6', action="store_true",
+            help=_("Use only {} to retreive the public IP address.").format('IPv6'),
+        )
+
+        protocol_group.add_argument(
             '-p', '--protocol', dest='protocol', metavar=_('PROTOCOL'),
             choices=valid_list, help=_(
                 "The IP protocol, for which the public IP should be retrieved "
@@ -161,7 +173,11 @@ class MyIpApplication(BaseApplication):
         if self.verbose > 3:
             LOG.debug("Read configuration:\n{}".format(pp(self.config.as_dict())))
 
-        if self.args.protocol:
+        if self.args.ipv4:
+            self.config.protocol = 'ipv4'
+        elif self.args.ipv6:
+            self.config.protocol = 'ipv6'
+        elif self.args.protocol:
             if self.args.protocol == 'both':
                 self.config.protocol = 'any'
             else:
