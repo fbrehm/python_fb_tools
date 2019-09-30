@@ -22,7 +22,7 @@ from .config import ConfigError, BaseConfiguration
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.2.3'
+__version__ = '0.3.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -52,6 +52,8 @@ class DdnsUpdateConfiguration(BaseConfiguration):
     default_upd_ipv4_url = 'http://ip4.ddnss.de/upd.php'
     default_upd_ipv6_url = 'http://ip6.ddnss.de/upd.php'
 
+    default_timeout = 20
+
     valid_protocols = ('any', 'both', 'ipv4', 'ipv6')
 
     # -------------------------------------------------------------------------
@@ -70,6 +72,7 @@ class DdnsUpdateConfiguration(BaseConfiguration):
         self.get_ipv6_url = self.default_get_ipv6_url
         self.upd_ipv4_url = self.default_upd_ipv4_url
         self.upd_ipv6_url = self.default_upd_ipv6_url
+        self._timeout = self.default_timeout
         self.protocol = 'any'
 
         super(DdnsUpdateConfiguration, self).__init__(
@@ -79,6 +82,25 @@ class DdnsUpdateConfiguration(BaseConfiguration):
 
         if initialized:
             self.initialized = True
+
+    # -------------------------------------------------------------------------
+    @property
+    def timeout(self):
+        """The timeout in seconds for Web requests."""
+        return self._timeout
+
+    @timeout.setter
+    def timeout(self, value):
+        if value is None:
+            self._timeout = self.default_timeout
+            return
+        val = int(value)
+        err_msg = _(
+            "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600.")
+        if val <= 0 or val > 3600:
+            msg = err_msg.format(value)
+            raise ValueError(msg)
+        self._timeout = val
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -107,6 +129,8 @@ class DdnsUpdateConfiguration(BaseConfiguration):
         res['default_get_ipv6_url'] = self.default_get_ipv6_url
         res['default_upd_ipv4_url'] = self.default_upd_ipv4_url
         res['default_upd_ipv6_url'] = self.default_upd_ipv6_url
+        res['default_timeout'] = self.default_timeout
+        res['timeout'] = self.timeout
         res['valid_protocols'] = self.valid_protocols
 
         return res
@@ -157,6 +181,13 @@ class DdnsUpdateConfiguration(BaseConfiguration):
                 continue
             elif re_with_mx.match(key) and value.strip():
                 self.with_mx = to_bool(value.strip())
+                continue
+            elif key.lower() == 'timeout':
+                try:
+                    self.timeout = value
+                except (ValueError, KeyError) as e:
+                    msg = _("Invalid value {!r} as timeout:").format(value) + ' ' + str(e)
+                    LOG.error(msg)
                 continue
             match = re_get_url.match(key)
             if match and value.strip():

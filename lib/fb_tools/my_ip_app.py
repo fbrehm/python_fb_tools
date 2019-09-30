@@ -11,6 +11,10 @@ from __future__ import absolute_import, print_function
 # Standard modules
 import logging
 import copy
+import sys
+
+# Third party modules
+import requests
 
 # Own modules
 from . import __version__ as GLOBAL_VERSION
@@ -28,7 +32,7 @@ from .errors import FbAppError
 
 from .ddns_update_cfg import DdnsUpdateConfigError, DdnsUpdateConfiguration
 
-__version__ = '0.1.1'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -45,6 +49,9 @@ class MyIpApplication(BaseApplication):
     Class for the application objects.
     """
 
+    library_name = "ddns-client"
+    loglevel_requests_set = False
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
@@ -58,7 +65,7 @@ class MyIpApplication(BaseApplication):
         self._cfg_dir = None
         self._cfg_file = None
         self.config = None
-        self.vsphere = None
+        self._user_agent = '{}/{}'.format(self.library_name, GLOBAL_VERSION)
 
         self.vms = []
 
@@ -81,6 +88,18 @@ class MyIpApplication(BaseApplication):
         """Configuration file."""
         return self._cfg_file
 
+    # -----------------------------------------------------------
+    @property
+    def user_agent(self):
+        "The name of the user agent used in API calls."
+        return self._user_agent
+
+    @user_agent.setter
+    def user_agent(self, value):
+        if value is None or str(value).strip() == '':
+            raise MyIpAppError(_("Invalid user agent {!r} given.").format(value))
+        self._user_agent = str(value).strip()
+
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
@@ -96,6 +115,7 @@ class MyIpApplication(BaseApplication):
         res = super(MyIpApplication, self).as_dict(short=short)
         res['cfg_dir'] = self.cfg_dir
         res['cfg_file'] = self.cfg_file
+        res['user_agent'] = self.user_agent
 
         return res
 
@@ -130,6 +150,12 @@ class MyIpApplication(BaseApplication):
                 "The IP protocol, for which the public IP should be retrieved "
                 "(one of {c}, default {d!r}).").format(
                 c=format_list(valid_list, do_repr=True, style='or'), d='any')
+        )
+
+        self.arg_parser.add_argument(
+            '-T', '--timeout', dest='timeout', type=int, metavar=_('SECONDS'),
+            help=_("The timeout in seconds for Web requests (default: {}).").format(
+                DdnsUpdateConfiguration.default_timeout),
         )
 
         self.arg_parser.add_argument(
@@ -182,6 +208,23 @@ class MyIpApplication(BaseApplication):
                 self.config.protocol = 'any'
             else:
                 self.config.protocol = self.args.protocol
+
+        if self.args.timeout:
+            try:
+                self.config.timeout = self.args.timeout
+            except (ValueError, KeyError) as e:
+                msg = _("Invalid value {!r} as timeout:").format(self.args.timeout) + ' ' + str(e)
+                LOG.error(msg)
+                print()
+                self.arg_parser.print_usage(sys.stdout)
+                self.exit(1)
+
+        if not self.loglevel_requests_set:
+            msg = _("Setting Loglevel of the {m} module to {ll}.").format(
+                m='requests', ll='WARNING')
+            LOG.debug(msg)
+            logging.getLogger("requests").setLevel(logging.WARNING)
+            self.loglevel_requests_set = True
 
         self.initialized = True
 
