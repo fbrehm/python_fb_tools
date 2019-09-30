@@ -12,6 +12,7 @@ from __future__ import absolute_import, print_function
 import logging
 import copy
 import sys
+import socket
 
 # Third party modules
 import requests
@@ -33,7 +34,7 @@ from .errors import FbAppError
 
 from .ddns_update_cfg import DdnsUpdateConfigError, DdnsUpdateConfiguration
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -253,7 +254,38 @@ class MyIpApplication(BaseApplication):
         LOG.debug(_("Starting {a!r}, version {v!r} ...").format(
             a=self.appname, v=self.version))
 
+        if self.config.protocol in ('any', 'both', 'ipv4'):
+            self.print_my_ipv(4)
+        if self.config.protocol in ('any', 'both', 'ipv6'):
+            self.print_my_ipv(6)
+
         self.exit(0)
+
+    # -------------------------------------------------------------------------
+    def print_my_ipv(self, protocol):
+
+        my_ip = self.get_my_ipv(protocol)
+        if my_ip:
+            print('IPv{p}: {i}'.format(p=protocol, i=my_ip))
+
+    # -------------------------------------------------------------------------
+    def get_my_ipv(self, protocol):
+
+        LOG.debug(_("Trying to get my public IPv{} address.").format(protocol))
+
+        url = self.config.get_ipv4_url
+        if protocol == 6:
+            url = self.config.get_ipv6_url
+
+        try:
+            json_response = self.perform_request(url)
+        except MyIpAppError as e:
+            LOG.error(str(e))
+            return None
+        if self.verbose > 0:
+            LOG.debug(_("Got a response:") + '\n' + pp(json_response))
+
+        return json_response['IP']
 
     # -------------------------------------------------------------------------
     def perform_request(self, url, method='GET', data=None, headers=None, may_simulate=False):
@@ -280,7 +312,7 @@ class MyIpApplication(BaseApplication):
         headers.update({'User-Agent': self.user_agent})
         headers.update({'Content-Type': 'application/json'})
         if self.verbose > 1:
-            LOG.debug("Headers:\n{}".format(pp(head_out)))
+            LOG.debug("Headers:\n{}".format(pp(headers)))
 
         if may_simulate and self.simulate:
             LOG.debug(_("Simulation mode, Request will not be sent."))
@@ -290,14 +322,14 @@ class MyIpApplication(BaseApplication):
 
             session = requests.Session()
             response = session.request(
-                method, url, data=data, headers=headers, timeout=self.timeout)
+                method, url, data=data, headers=headers, timeout=self.config.timeout)
 
         except (
                 socket.timeout, urllib3.exceptions.ConnectTimeoutError,
-                urllib3.exceptions.MaxRetryError,
+                urllib3.exceptions.MaxRetryError, requests.exceptions.ConnectionError,
                 requests.exceptions.ConnectTimeout) as e:
-            msg = _("Got a {c} on connecting to {h!r}: {e}.").format(
-                c=e.__class__.__name__, h=self.master_server, e=e)
+            msg = _("Got a {c} on requesting {u!r}: {e}.").format(
+                c=e.__class__.__name__, u=url, e=e)
             raise MyIpAppError(msg)
 
         try:
