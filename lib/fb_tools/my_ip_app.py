@@ -15,6 +15,7 @@ import sys
 
 # Third party modules
 import requests
+import urllib3
 
 # Own modules
 from . import __version__ as GLOBAL_VERSION
@@ -32,7 +33,7 @@ from .errors import FbAppError
 
 from .ddns_update_cfg import DdnsUpdateConfigError, DdnsUpdateConfiguration
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -42,6 +43,24 @@ _ = XLATOR.gettext
 class MyIpAppError(FbAppError):
     """ Base exception class for all exceptions in this application."""
     pass
+
+
+# =============================================================================
+class DdnsRequestError(MyIpAppError):
+    """Base class for more complex exceptions"""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, code, content, url=None):
+        self.code = code
+        self.content = content
+        self.url = url
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = _("Got an error {c} on requesting {u!r}: {m}").format(
+            c=self.code, u=self.url, m=self.content)
+        return msg
 
 # =============================================================================
 class MyIpApplication(BaseApplication):
@@ -235,6 +254,78 @@ class MyIpApplication(BaseApplication):
             a=self.appname, v=self.version))
 
         self.exit(0)
+
+    # -------------------------------------------------------------------------
+    def perform_request(self, url, method='GET', data=None, headers=None, may_simulate=False):
+        """Performing the underlying Web request."""
+
+        if headers is None:
+            headers = dict()
+
+        if self.verbose > 1:
+            LOG.debug(_("Request method: {!r}").format(method))
+
+        if data and self.verbose > 1:
+            data_out = "{!r}".format(data)
+            try:
+                data_out = json.loads(data)
+            except ValueError:
+                pass
+            else:
+                data_out = pp(data_out)
+            LOG.debug("Data:\n{}".format(data_out))
+            if self.verbose > 2:
+                LOG.debug("RAW data:\n{}".format(data))
+
+        headers.update({'User-Agent': self.user_agent})
+        headers.update({'Content-Type': 'application/json'})
+        if self.verbose > 1:
+            LOG.debug("Headers:\n{}".format(pp(head_out)))
+
+        if may_simulate and self.simulate:
+            LOG.debug(_("Simulation mode, Request will not be sent."))
+            return ''
+
+        try:
+
+            session = requests.Session()
+            response = session.request(
+                method, url, data=data, headers=headers, timeout=self.timeout)
+
+        except (
+                socket.timeout, urllib3.exceptions.ConnectTimeoutError,
+                urllib3.exceptions.MaxRetryError,
+                requests.exceptions.ConnectTimeout) as e:
+            msg = _("Got a {c} on connecting to {h!r}: {e}.").format(
+                c=e.__class__.__name__, h=self.master_server, e=e)
+            raise MyIpAppError(msg)
+
+        try:
+            self._eval_response(url, response)
+        except ValueError:
+            raise MyIpAppError(_('Failed to parse the response'), response.text)
+
+        if self.verbose > 3:
+            LOG.debug("RAW response: {!r}.".format(response.text))
+        if not response.text:
+            return ''
+
+        json_response = response.json()
+        if self.verbose > 3:
+            LOG.debug("JSON response:\n{}".format(pp(json_response)))
+
+        return json_response
+
+    # -------------------------------------------------------------------------
+    def _eval_response(self, url, response):
+
+        if response.ok:
+            return
+
+        err = response.json()
+        code = response.status_code
+        msg = err['error']
+        raise DdnsRequestError(code, msg, url)
 
 
 # =============================================================================
