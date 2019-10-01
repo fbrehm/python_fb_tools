@@ -10,7 +10,6 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import uuid
 import copy
 
 try:
@@ -28,9 +27,7 @@ from ..common import pp, to_bool
 
 from ..obj import FbBaseObject
 
-from .errors import VSphereNameError
-
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -38,6 +35,23 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class VsphereDiskController(FbBaseObject):
+
+    ctrl_types = (
+        (vim.vm.device.VirtualIDEController, 'ide'),
+        (vim.vm.device.VirtualNVMEController, 'nvme'),
+        (vim.vm.device.VirtualPCIController, 'pci'),
+        (vim.vm.device.VirtualPS2Controller, 'ps2'),
+        (vim.vm.device.VirtualAHCIController, 'ahci'),
+        (vim.vm.device.VirtualSATAController, 'sata'),
+        (vim.vm.device.ParaVirtualSCSIController, 'para_virt_scsi'),
+        (vim.vm.device.VirtualBusLogicController, 'bus_logic'),
+        (vim.vm.device.VirtualLsiLogicController, 'lsi_logic'),
+        (vim.vm.device.VirtualLsiLogicSASController, 'lsi_logic_sas'),
+        (vim.vm.device.VirtualSCSIController, 'scsi'),
+        (vim.vm.device.VirtualSIOController, 'sio'),
+        (vim.vm.device.VirtualUSBController, 'usb'),
+        (vim.vm.device.VirtualUSBXHCIController, 'usb_xhci'),
+    )
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -53,7 +67,8 @@ class VsphereDiskController(FbBaseObject):
         self._sharing = None
 
         super(VsphereDiskController, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir, initialized=False)
+            appname=appname, verbose=verbose, version=version,
+            base_dir=base_dir, initialized=False)
 
         self.ctrl_type = ctrl_type
         self.bus_nr = bus_nr
@@ -224,44 +239,18 @@ class VsphereDiskController(FbBaseObject):
         for disk_id in data.device:
             params['devices'].append(disk_id)
         if isinstance(data, vim.vm.device.VirtualSCSIController):
-          params['hot_add_remove'] = data.hotAddRemove
-          params['scsi_ctrl_nr'] = data.scsiCtlrUnitNumber
-          params['sharing'] = data.sharedBus
+            params['hot_add_remove'] = data.hotAddRemove
+            params['scsi_ctrl_nr'] = data.scsiCtlrUnitNumber
+            params['sharing'] = data.sharedBus
 
         if verbose > 2:
             LOG.debug(_("Checking class of controller: {!r}").format(data.__class__.__name__))
 
         try:
-            if isinstance(data, vim.vm.device.VirtualIDEController):
-                params['ctrl_type'] = 'ide'
-            elif isinstance(data, vim.vm.device.VirtualNVMEController):
-                params['ctrl_type'] = 'nvme'
-            elif isinstance(data, vim.vm.device.VirtualPCIController):
-                params['ctrl_type'] = 'pci'
-            elif isinstance(data, vim.vm.device.VirtualPS2Controller):
-                params['ctrl_type'] = 'ps2'
-            elif isinstance(data, vim.vm.device.VirtualAHCIController):
-                params['ctrl_type'] = 'ahci'
-            elif isinstance(data, vim.vm.device.VirtualSATAController):
-                params['ctrl_type'] = 'sata'
-            elif isinstance(data, vim.vm.device.VirtualSATAController):
-                params['ctrl_type'] = 'sata'
-            elif isinstance(data, vim.vm.device.ParaVirtualSCSIController):
-                params['ctrl_type'] = 'para_virt_scsi'
-            elif isinstance(data, vim.vm.device.VirtualBusLogicController):
-                params['ctrl_type'] = 'bus_logic'
-            elif isinstance(data, vim.vm.device.VirtualLsiLogicController):
-                params['ctrl_type'] = 'lsi_logic'
-            elif isinstance(data, vim.vm.device.VirtualLsiLogicSASController):
-                params['ctrl_type'] = 'lsi_logic_sas'
-            elif isinstance(data, vim.vm.device.VirtualSCSIController):
-                params['ctrl_type'] = 'scsi'
-            elif isinstance(data, vim.vm.device.VirtualSIOController):
-                params['ctrl_type'] = 'sio'
-            elif isinstance(data, vim.vm.device.VirtualUSBController):
-                params['ctrl_type'] = 'usb'
-            elif isinstance(data, vim.vm.device.VirtualUSBXHCIController):
-                params['ctrl_type'] = 'usb_xhci'
+            for pair in cls.ctrl_types:
+                if isinstance(data, pair[0]):
+                    params['ctrl_type'] = pair[1]
+                    break
         except Exception:
             pass
 
@@ -333,7 +322,8 @@ class VsphereDiskControllerList(FbBaseObject, MutableSequence):
     def __copy__(self):
 
         new_list = VsphereDiskControllerList(
-            appname=appname, verbose=verbose, base_dir=base_dir, initialized=False)
+            appname=self.appname, verbose=self.verbose,
+            base_dir=self.base_dir, initialized=False)
 
         for ctrl in self:
             new_list.append(ctrl)
@@ -466,14 +456,6 @@ class VsphereDiskControllerList(FbBaseObject, MutableSequence):
                 t=ctrl.__class__.__name__, c=self.__class__.__name__, o='VsphereDiskController'))
 
         self._list.insert(index, ctrl)
-
-    # -------------------------------------------------------------------------
-    def __copy__(self):
-
-        new_list = self.__class__()
-        for ctrl in self._list:
-            new_list.append(copy.copy(ctrl))
-        return new_list
 
     # -------------------------------------------------------------------------
     def clear(self):

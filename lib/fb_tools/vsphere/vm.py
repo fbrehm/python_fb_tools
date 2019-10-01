@@ -12,6 +12,7 @@ from __future__ import absolute_import
 import logging
 import uuid
 import re
+import copy
 
 # Third party modules
 from pyVmomi import vim
@@ -27,7 +28,7 @@ from .disk import VsphereDisk, VsphereDiskList
 from .ether import VsphereEthernetcard, VsphereEthernetcardList
 from .controller import VsphereDiskController, VsphereDiskControllerList
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -297,7 +298,7 @@ class VsphereVm(VsphereObject):
         else:
             self._config_path = v
 
-   # -----------------------------------------------------------
+    # -----------------------------------------------------------
     @property
     def config_path_storage(self):
         """The name of the storage of the path of the configuration file."""
@@ -308,7 +309,7 @@ class VsphereVm(VsphereObject):
             return match.group(1)
         return None
 
-   # -----------------------------------------------------------
+    # -----------------------------------------------------------
     @property
     def config_path_relative(self):
         """The relative path of the configuration file on storage."""
@@ -319,7 +320,7 @@ class VsphereVm(VsphereObject):
             return match.group(1)
         return None
 
-     # -----------------------------------------------------------
+    # -----------------------------------------------------------
     @property
     def config_version(self):
         """The version string for this virtual machine."""

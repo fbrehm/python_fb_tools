@@ -38,7 +38,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -74,9 +74,9 @@ class RegexOptionAction(argparse.Action):
 
         try:
             if self._re_options is None:
-                re_test = re.compile(pattern)
+                re_test = re.compile(pattern)                               # noqa
             else:
-                re_test = re.compile(pattern, self._re_options)
+                re_test = re.compile(pattern, self._re_options)             # noqa
         except Exception as e:
             msg = _("Got a {c} for pattern {p!r}: {e}").format(
                 c=e.__class__.__name__, p=pattern, e=e)

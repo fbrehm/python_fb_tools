@@ -45,7 +45,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.6.1'
+__version__ = '1.6.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -221,8 +221,9 @@ class HandlingObject(FbBaseObject):
         """Flag showing, that the current application is running
             inside a virtual environment."""
 
-        return (hasattr(sys, 'real_prefix') or
-            (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix))
+        if hasattr(sys, 'real_prefix'):
+            return True
+        return (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
 
     # -----------------------------------------------------------
     @property

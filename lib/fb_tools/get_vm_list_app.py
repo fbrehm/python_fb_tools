@@ -11,7 +11,6 @@ from __future__ import absolute_import, print_function
 # Standard modules
 import logging
 import getpass
-import argparse
 import re
 
 # Third party modules
@@ -37,7 +36,7 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -319,9 +318,8 @@ class GetVmListApplication(BaseApplication):
             self.vsphere[vsphere_name] = vsphere
             vsphere.initialized = True
         else:
-            msg = (
-                _("Could not initialize {} object from:").format('VsphereServer') + \
-                '\n' + pp(vsphere_data))
+            msg = _("Could not initialize {} object from:").format('VsphereServer')
+            msg += '\n' + pp(vsphere_data)
             LOG.error(msg)
 
     # -------------------------------------------------------------------------
@@ -530,6 +528,7 @@ class GetVmListApplication(BaseApplication):
             vms[vm.name] = cdata
 
         return vms
+
 
 # =============================================================================
 if __name__ == "__main__":

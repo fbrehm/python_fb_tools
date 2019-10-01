@@ -59,7 +59,7 @@ from .vm import VsphereVm
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.4.4'
+__version__ = '1.4.5'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -725,10 +725,9 @@ class VsphereServer(BaseVsphereHandler):
 
         vm_list = []
 
-        if self.verbose > 3:
-            LOG.debug(_("Searching in path {!r} ...").format(cur_path))
-        if self.verbose > 3:
-            LOG.debug(_("Found a {} child.").format(child.__class__.__name__))
+        # if self.verbose > 3:
+        #     LOG.debug(_("Searching in path {!r} ...").format(cur_path))
+        #     LOG.debug(_("Found a {} child.").format(child.__class__.__name__))
 
         if hasattr(child, 'childEntity'):
             if depth > self.max_search_depth:

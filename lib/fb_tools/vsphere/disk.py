@@ -27,9 +27,7 @@ from ..common import pp
 
 from ..obj import FbBaseObject
 
-from .errors import VSphereNameError
-
-__version__ = '0.2.4'
+__version__ = '0.2.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -59,7 +57,8 @@ class VsphereDisk(FbBaseObject):
         self._disk_id = None
 
         super(VsphereDisk, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir, initialized=False)
+            appname=appname, verbose=verbose, version=version,
+            base_dir=base_dir, initialized=False)
 
         self.uuid = uuid
         self.file_name = file_name
@@ -420,8 +419,9 @@ class VsphereDiskList(FbBaseObject, MutableSequence):
     # -------------------------------------------------------------------------
     def __copy__(self):
 
-        new_list = VsphereDiskList(
-            appname=appname, verbose=verbose, base_dir=base_dir, initialized=False)
+        new_list = self.__class__(
+            appname=self.appname, verbose=self.verbose,
+            base_dir=self.base_dir, initialized=False)
 
         for disk in self:
             new_list.append(disk)
@@ -554,14 +554,6 @@ class VsphereDiskList(FbBaseObject, MutableSequence):
                 t=disk.__class__.__name__, c=self.__class__.__name__, o='VsphereDisk'))
 
         self._list.insert(index, disk)
-
-    # -------------------------------------------------------------------------
-    def __copy__(self):
-
-        new_list = self.__class__()
-        for disk in self._list:
-            new_list.append(copy.copy(disk))
-        return new_list
 
     # -------------------------------------------------------------------------
     def clear(self):

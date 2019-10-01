@@ -22,7 +22,7 @@ from . import VMWARE_CFGFILE_BASENAME
 
 from .xlate import XLATOR
 
-from .common import pp, to_bool
+from .common import pp
 
 from .app import BaseApplication
 
@@ -34,7 +34,7 @@ from .vmware_config import VmwareConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -241,9 +241,8 @@ class GetVmApplication(BaseApplication):
             self.vsphere[vsphere_name] = vsphere
             vsphere.initialized = True
         else:
-            msg = (
-                _("Could not initialize {} object from:").format('VsphereServer') + \
-                '\n' + pp(vsphere_data))
+            msg = _("Could not initialize {} object from:").format('VsphereServer')
+            msg += '\n' + pp(vsphere_data)
             LOG.error(msg)
 
     # -------------------------------------------------------------------------

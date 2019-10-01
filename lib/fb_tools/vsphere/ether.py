@@ -10,7 +10,6 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import uuid
 
 try:
     from collections.abc import MutableSequence
@@ -27,10 +26,7 @@ from ..common import pp, to_bool
 
 from ..obj import FbBaseObject
 
-from .errors import VSphereNameError
-
-
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -63,7 +59,8 @@ class VsphereEthernetcard(FbBaseObject):
         self._label = None
 
         super(VsphereEthernetcard, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir, initialized=False)
+            appname=appname, verbose=verbose, version=version,
+            base_dir=base_dir, initialized=False)
 
         self.unit_nr = unit_nr
         self.key = key
@@ -401,7 +398,8 @@ class VsphereEthernetcard(FbBaseObject):
 
         if not isinstance(data, vim.vm.device.VirtualEthernetCard):
             msg = _("Parameter {t!r} must be a {e}, {v!r} ({vt}) was given.").format(
-                t='data', e='vim.vm.device.VirtualEthernetCard', v=data, vt=data.__class__.__name__)
+                t='data', e='vim.vm.device.VirtualEthernetCard',
+                v=data, vt=data.__class__.__name__)
             raise TypeError(msg)
 
         params = {
@@ -516,8 +514,9 @@ class VsphereEthernetcardList(FbBaseObject, MutableSequence):
     # -------------------------------------------------------------------------
     def __copy__(self):
 
-        new_list = VsphereEthernetcardList(
-            appname=appname, verbose=verbose, base_dir=base_dir, initialized=False)
+        new_list = self.__class__(
+            appname=self.appname, verbose=self.verbose,
+            base_dir=self.base_dir, initialized=False)
 
         for card in self:
             new_list.append(card)
@@ -650,14 +649,6 @@ class VsphereEthernetcardList(FbBaseObject, MutableSequence):
                 t=card.__class__.__name__, c=self.__class__.__name__, o='VsphereEthernetcard'))
 
         self._list.insert(index, card)
-
-    # -------------------------------------------------------------------------
-    def __copy__(self):
-
-        new_list = self.__class__()
-        for card in self._list:
-            new_list.append(copy.copy(card))
-        return new_list
 
     # -------------------------------------------------------------------------
     def clear(self):

@@ -10,7 +10,6 @@ from __future__ import absolute_import
 
 # Standard module
 import logging
-import re
 
 # Third party modules
 
@@ -19,7 +18,7 @@ from .config import ConfigError, BaseConfiguration
 
 from .xlate import XLATOR
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
