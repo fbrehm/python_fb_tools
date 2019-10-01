@@ -11,6 +11,7 @@ from __future__ import absolute_import
 # Standard modules
 import logging
 import uuid
+import re
 
 # Third party modules
 from pyVmomi import vim
@@ -26,7 +27,7 @@ from .disk import VsphereDisk, VsphereDiskList
 from .ether import VsphereEthernetcard, VsphereEthernetcardList
 from .controller import VsphereDiskController, VsphereDiskControllerList
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -35,6 +36,9 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class VsphereVm(VsphereObject):
+
+    re_vm_path_storage = re.compile(r'^\s*\[\s*([^\s\]]+)')
+    re_vm_path_rel = re.compile(r'^\s*\[[^\]]*]\s*(\S.*)\s*$')
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -293,7 +297,29 @@ class VsphereVm(VsphereObject):
         else:
             self._config_path = v
 
-    # -----------------------------------------------------------
+   # -----------------------------------------------------------
+    @property
+    def config_path_storage(self):
+        """The name of the storage of the path of the configuration file."""
+        if self.config_path is None:
+            return None
+        match = self.re_vm_path_storage.match(self.config_path)
+        if match:
+            return match.group(1)
+        return None
+
+   # -----------------------------------------------------------
+    @property
+    def config_path_relative(self):
+        """The relative path of the configuration file on storage."""
+        if self.config_path is None:
+            return None
+        match = self.re_vm_path_rel.match(self.config_path)
+        if match:
+            return match.group(1)
+        return None
+
+     # -----------------------------------------------------------
     @property
     def config_version(self):
         """The version string for this virtual machine."""
@@ -328,6 +354,8 @@ class VsphereVm(VsphereObject):
             res = {
                 'cluster_name': self.cluster_name,
                 'config_path': self.config_path,
+                'config_path_relative': self.config_path_relative,
+                'config_path_storage': self.config_path_storage,
                 'config_version': self.config_version,
                 'host': self.host,
                 'path': self.path,
@@ -352,6 +380,8 @@ class VsphereVm(VsphereObject):
         res = super(VsphereVm, self).as_dict(short=short)
         res['cluster_name'] = self.cluster_name
         res['config_path'] = self.config_path
+        res['config_path_relative'] = self.config_path_relative
+        res['config_path_storage'] = self.config_path_storage
         res['config_version'] = self.config_version
         res['host'] = self.cluster_name
         res['path'] = self.path
