@@ -26,7 +26,7 @@ from .disk import VsphereDisk, VsphereDiskList
 from .ether import VsphereEthernetcard, VsphereEthernetcardList
 from .controller import VsphereDiskController, VsphereDiskControllerList
 
-__version__ = '0.3.5'
+__version__ = '0.4.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -54,6 +54,8 @@ class VsphereVm(VsphereObject):
         self._uuid = None
         self._instance_uuid = None
         self._host = None
+        self._config_path = None
+        self._config_version = None
         self.power_state = None
         self.disks = []
         self.interfaces = []
@@ -274,6 +276,40 @@ class VsphereVm(VsphereObject):
             return False
         return True
 
+    # -----------------------------------------------------------
+    @property
+    def config_path(self):
+        """Path name to the configuration file for the virtual machine (on storage)."""
+        return self._config_path
+
+    @config_path.setter
+    def config_path(self, value):
+        if value is None:
+            self._config_path = None
+            return
+        v = str(value).strip()
+        if v == '':
+            self._config_path = None
+        else:
+            self._config_path = v
+
+    # -----------------------------------------------------------
+    @property
+    def config_version(self):
+        """The version string for this virtual machine."""
+        return self._config_version
+
+    @config_version.setter
+    def config_version(self, value):
+        if value is None:
+            self._config_version = None
+            return
+        v = str(value).strip()
+        if v == '':
+            self._config_version = None
+        else:
+            self._config_version = v
+
     # -------------------------------------------------------------------------
     def as_dict(self, short=True, bare=False):
         """
@@ -291,6 +327,8 @@ class VsphereVm(VsphereObject):
         if bare:
             res = {
                 'cluster_name': self.cluster_name,
+                'config_path': self.config_path,
+                'config_version': self.config_version,
                 'host': self.host,
                 'path': self.path,
                 'template': self.template,
@@ -313,6 +351,8 @@ class VsphereVm(VsphereObject):
 
         res = super(VsphereVm, self).as_dict(short=short)
         res['cluster_name'] = self.cluster_name
+        res['config_path'] = self.config_path
+        res['config_version'] = self.config_version
         res['host'] = self.cluster_name
         res['path'] = self.path
         res['template'] = self.template
@@ -338,6 +378,8 @@ class VsphereVm(VsphereObject):
             config_status=self.config_status)
 
         vm.cluster_name = self.cluster_name
+        vm.config_path = self.config_path
+        vm.config_version = self.config_version
         vm.host = self.host
         vm.path = self.path
         vm.template = self.template
@@ -366,6 +408,8 @@ class VsphereVm(VsphereObject):
             return False
 
         if self.name != other.name:
+            return False
+        if self.path != other.path:
             return False
 
         return True
@@ -413,6 +457,8 @@ class VsphereVm(VsphereObject):
         vm.uuid = data.summary.config.uuid
         vm.instance_uuid = data.summary.config.instanceUuid
         vm.power_state = data.runtime.powerState
+        vm.config_path = data.summary.config.vmPathName
+        vm.config_version = data.config.version
 
         if data.guest:
 
