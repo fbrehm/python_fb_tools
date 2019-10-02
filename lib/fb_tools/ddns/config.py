@@ -16,13 +16,13 @@ from pathlib import Path
 # Third party modules
 
 # Own modules
-from .common import to_bool
+from ..common import to_bool
 
-from .config import ConfigError, BaseConfiguration
+from ..config import ConfigError, BaseConfiguration
 
-from .xlate import XLATOR, format_list
+from ..xlate import XLATOR, format_list
 
-__version__ = '0.3.1'
+__version__ = '0.4.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ _ = XLATOR.gettext
 
 
 # =============================================================================
-class DdnsUpdateConfigError(ConfigError):
+class DdnsConfigError(ConfigError):
     """Base error class for all exceptions happened during
     execution this configured application"""
 
@@ -38,7 +38,7 @@ class DdnsUpdateConfigError(ConfigError):
 
 
 # =============================================================================
-class DdnsUpdateConfiguration(BaseConfiguration):
+class DdnsConfiguration(BaseConfiguration):
     """
     A class for providing a configuration for the GetVmApplication class
     and methods to read it from configuration files.
@@ -75,7 +75,7 @@ class DdnsUpdateConfiguration(BaseConfiguration):
         self._timeout = self.default_timeout
         self.protocol = 'any'
 
-        super(DdnsUpdateConfiguration, self).__init__(
+        super(DdnsConfiguration, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             encoding=encoding, config_dir=config_dir, config_file=config_file, initialized=False,
         )
@@ -114,7 +114,7 @@ class DdnsUpdateConfiguration(BaseConfiguration):
         @rtype:  dict
         """
 
-        res = super(DdnsUpdateConfiguration, self).as_dict(short=short)
+        res = super(DdnsConfiguration, self).as_dict(short=short)
 
         res['ddns_pwd'] = None
         if self.ddns_pwd:
@@ -138,7 +138,7 @@ class DdnsUpdateConfiguration(BaseConfiguration):
     # -------------------------------------------------------------------------
     def eval_config_section(self, config, section_name):
 
-        super(DdnsUpdateConfiguration, self).eval_config_section(config, section_name)
+        super(DdnsConfiguration, self).eval_config_section(config, section_name)
 
         if section_name.lower() == 'ddns':
             self._eval_config_ddns(config, section_name)
