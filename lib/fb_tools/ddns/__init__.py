@@ -4,7 +4,7 @@
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2019 by Frank Brehm, Berlin
-@summary: The module for the 'myip' application object.
+@summary: The base module for all DDNS related classes.
 """
 from __future__ import absolute_import, print_function
 
@@ -19,35 +19,37 @@ import requests
 import urllib3
 
 # Own modules
-from . import __version__ as GLOBAL_VERSION
-from . import DDNS_CFG_BASENAME
+from .. import __version__ as GLOBAL_VERSION
+from .. import DDNS_CFG_BASENAME
 
-from .xlate import XLATOR, format_list
+from ..errors import FunctionNotImplementedError
 
-from .common import pp
+from ..xlate import XLATOR, format_list
 
-from .app import BaseApplication
+from ..common import pp
 
-from .config import CfgFileOptionAction
+from ..app import BaseApplication
 
-from .errors import FbAppError
+from ..config import CfgFileOptionAction
 
-from .ddns_update_cfg import DdnsUpdateConfigError, DdnsUpdateConfiguration
+from ..errors import FbAppError
 
-__version__ = '0.2.3'
+from .config import DdnsConfiguration
+
+__version__ = '0.3.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
 
 
 # =============================================================================
-class MyIpAppError(FbAppError):
+class DdnsAppError(FbAppError):
     """ Base exception class for all exceptions in this application."""
     pass
 
 
 # =============================================================================
-class DdnsRequestError(MyIpAppError):
+class DdnsRequestError(DdnsAppError):
     """Base class for more complex exceptions"""
 
     # -------------------------------------------------------------------------
@@ -64,7 +66,7 @@ class DdnsRequestError(MyIpAppError):
         return msg
 
 # =============================================================================
-class MyIpApplication(BaseApplication):
+class BaseDdnsApplication(BaseApplication):
     """
     Class for the application objects.
     """
@@ -78,23 +80,21 @@ class MyIpApplication(BaseApplication):
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
-        desc = _(
-            "Tries to detect the public NAT IPv4 address and/or the automatic assigned "
-            "IPv6 addess in a local network and print it out.")
+        if description is None:
+            description = _("This is a base DDNS related application.")
 
         self._cfg_dir = None
         self._cfg_file = None
         self.config = None
         self._user_agent = '{}/{}'.format(self.library_name, GLOBAL_VERSION)
 
-        self.vms = []
-
-        super(MyIpApplication, self).__init__(
+        super(BaseDdnsApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            description=desc, initialized=False,
+            description=description, initialized=False,
         )
 
-        self.initialized = True
+        if initialized:
+            self.initialized = True
 
     # -------------------------------------------------------------------------
     @property
@@ -117,7 +117,7 @@ class MyIpApplication(BaseApplication):
     @user_agent.setter
     def user_agent(self, value):
         if value is None or str(value).strip() == '':
-            raise MyIpAppError(_("Invalid user agent {!r} given.").format(value))
+            raise DdnsAppError(_("Invalid user agent {!r} given.").format(value))
         self._user_agent = str(value).strip()
 
     # -------------------------------------------------------------------------
@@ -132,7 +132,7 @@ class MyIpApplication(BaseApplication):
         @rtype:  dict
         """
 
-        res = super(MyIpApplication, self).as_dict(short=short)
+        res = super(BaseDdnsApplication, self).as_dict(short=short)
         res['cfg_dir'] = self.cfg_dir
         res['cfg_file'] = self.cfg_file
         res['user_agent'] = self.user_agent
@@ -145,37 +145,48 @@ class MyIpApplication(BaseApplication):
         Public available method to initiate the argument parser.
         """
 
-        super(MyIpApplication, self).init_arg_parser()
+        super(BaseDdnsApplication, self).init_arg_parser()
 
         self._cfg_dir = self.base_dir.joinpath('etc')
         self._cfg_file = self.cfg_dir.joinpath(DDNS_CFG_BASENAME)
         default_cfg_file = copy.copy(self.cfg_file)
-        valid_list = copy.copy(DdnsUpdateConfiguration.valid_protocols)
+        valid_list = copy.copy(DdnsConfiguration.valid_protocols)
 
         protocol_group = self.arg_parser.add_mutually_exclusive_group()
 
+        ipv4_help = getattr(self, '_ipv4_help', None)
+        ipv6_help = getattr(self, '_ipv6_help', None)
+        proto_help = getattr(self, '_proto_help', None)
+
+        if ipv4_help is None:
+            ipv4_help = _("Perform action only for {}.").format('IPv4')
+
+        if ipv6_help is None:
+            ipv6_help = _("Perform action only for {}.").format('IPv6')
+
+        if proto_help is None:
+            proto_help = _(
+                "The IP protocol, for which the action should be performed "
+                "(one of {c}, default {d!r}).").format(
+                 c=format_list(valid_list, do_repr=True, style='or'), d='any')
+
         protocol_group.add_argument(
-            '-4', '--ipv4', dest='ipv4', action="store_true",
-            help=_("Use only {} to retreive the public IP address.").format('IPv4'),
+            '-4', '--ipv4', dest='ipv4', action="store_true", help=ipv4_help,
         )
 
         protocol_group.add_argument(
-            '-6', '--ipv6', dest='ipv6', action="store_true",
-            help=_("Use only {} to retreive the public IP address.").format('IPv6'),
+            '-6', '--ipv6', dest='ipv6', action="store_true", help=ipv6_help,
         )
 
         protocol_group.add_argument(
             '-p', '--protocol', dest='protocol', metavar=_('PROTOCOL'),
-            choices=valid_list, help=_(
-                "The IP protocol, for which the public IP should be retrieved "
-                "(one of {c}, default {d!r}).").format(
-                c=format_list(valid_list, do_repr=True, style='or'), d='any')
+            choices=valid_list, help=proto_help,
         )
 
         self.arg_parser.add_argument(
             '-T', '--timeout', dest='timeout', type=int, metavar=_('SECONDS'),
             help=_("The timeout in seconds for Web requests (default: {}).").format(
-                DdnsUpdateConfiguration.default_timeout),
+                DdnsConfiguration.default_timeout),
         )
 
         self.arg_parser.add_argument(
@@ -207,7 +218,7 @@ class MyIpApplication(BaseApplication):
             self._cfg_file = self.args.cfg_file
             self._cfg_dir = self.cfg_file.parent
 
-        self.config = DdnsUpdateConfiguration(
+        self.config = DdnsConfiguration(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             config_file=self.cfg_file)
 
@@ -249,26 +260,6 @@ class MyIpApplication(BaseApplication):
         self.initialized = True
 
     # -------------------------------------------------------------------------
-    def _run(self):
-
-        LOG.debug(_("Starting {a!r}, version {v!r} ...").format(
-            a=self.appname, v=self.version))
-
-        if self.config.protocol in ('any', 'both', 'ipv4'):
-            self.print_my_ipv(4)
-        if self.config.protocol in ('any', 'both', 'ipv6'):
-            self.print_my_ipv(6)
-
-        self.exit(0)
-
-    # -------------------------------------------------------------------------
-    def print_my_ipv(self, protocol):
-
-        my_ip = self.get_my_ipv(protocol)
-        if my_ip:
-            print('IPv{p}: {i}'.format(p=protocol, i=my_ip))
-
-    # -------------------------------------------------------------------------
     def get_my_ipv(self, protocol):
 
         LOG.debug(_("Trying to get my public IPv{} address.").format(protocol))
@@ -279,7 +270,7 @@ class MyIpApplication(BaseApplication):
 
         try:
             json_response = self.perform_request(url)
-        except MyIpAppError as e:
+        except DdnsAppError as e:
             LOG.error(str(e))
             return None
         if self.verbose > 0:
@@ -330,12 +321,12 @@ class MyIpApplication(BaseApplication):
                 requests.exceptions.ConnectTimeout) as e:
             msg = _("Got a {c} on requesting {u!r}: {e}.").format(
                 c=e.__class__.__name__, u=url, e=e)
-            raise MyIpAppError(msg)
+            raise DdnsAppError(msg)
 
         try:
             self._eval_response(url, response)
         except ValueError:
-            raise MyIpAppError(_('Failed to parse the response'), response.text)
+            raise DdnsAppError(_('Failed to parse the response'), response.text)
 
         if self.verbose > 3:
             LOG.debug("RAW response: {!r}.".format(response.text))

@@ -35,7 +35,7 @@ module_dir = os.path.join(lib_dir, 'fb_tools')
 if os.path.exists(module_dir):
     sys.path.insert(0, lib_dir)
 
-from fb_tools.my_ip_app import MyIpApplication
+from fb_tools.ddns.myip_app import MyIpApplication
 
 log = logging.getLogger(__name__)
 
