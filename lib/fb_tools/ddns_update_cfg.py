@@ -19,7 +19,7 @@ from pathlib import Path
 from .common import to_bool
 from .config import ConfigError, BaseConfiguration
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -108,7 +108,7 @@ class DdnsUpdateConfiguration(BaseConfiguration):
     # -------------------------------------------------------------------------
     def eval_config_section(self, config, section_name):
 
-        super(GetVmConfiguration, self).eval_config_section(config, section_name)
+        super(DdnsUpdateConfiguration, self).eval_config_section(config, section_name)
 
         if section_name.lower() == 'ddns':
             self._eval_config_ddns(config, section_name)
@@ -130,7 +130,7 @@ class DdnsUpdateConfiguration(BaseConfiguration):
         re_domains = re.compile(r'(\s+)|\s*([,;]\s*)+')
         re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
         re_with_mx = re.compile(r'^with[_-]?mx$', re.IGNORECASE)
-        re_get_url = re.compile(r'^\s*get[_-]ipv([46])[_-]url\s*$', re.IGNORECASE)
+        # re_get_url = re.compile(r'^\s*get[_-]ipv([46])[_-]url\s*$', re.IGNORECASE)
 
         for (key, value) in config.items(section_name):
 
