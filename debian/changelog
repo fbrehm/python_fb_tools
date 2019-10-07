@@ -1,3 +1,9 @@
+fb-tools (1.6.2) UNRELEASED; urgency=medium
+
+  * Fixing .gitlab-ci.yml
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 07 Oct 2019 22:49:47 +0200
+
 fb-tools (1.6.1) all; urgency=medium
 
   * Improve .gitlab-ci.yml for building RPM packages
