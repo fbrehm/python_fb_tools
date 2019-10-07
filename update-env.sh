@@ -1,7 +1,7 @@
 #!/bin/bash
 
-base_dir=$( dirname $0 )
-cd ${base_dir}
+base_dir=$( dirname "$0" )
+cd "${base_dir}" || exit 99
 base_dir=$( readlink -f . )
 
 declare -a VALID_PY_VERSIONS=("3.8" "3.7" "3.6" "3.5")
@@ -12,12 +12,12 @@ if [[ ! -f venv/bin/activate ]] ; then
     found="n"
     for py_version in "${VALID_PY_VERSIONS[@]}" ; do
         PYTHON="python${py_version}"
-        if type -t ${PYTHON} >/dev/null ; then
+        if type -t "${PYTHON}" >/dev/null ; then
             found="y"
             echo
             echo "Found ${PYTHON}."
             echo
-            virtualenv --python=${PYTHON} venv
+            virtualenv --python="${PYTHON}" venv
             break
         fi
     done
@@ -30,6 +30,7 @@ if [[ ! -f venv/bin/activate ]] ; then
     fi
 fi
 
+# shellcheck source=/dev/null
 . venv/bin/activate || exit 5
 
 echo "---------------------------------------------------"
