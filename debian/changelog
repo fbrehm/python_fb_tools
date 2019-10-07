@@ -1,3 +1,13 @@
+fb-tools (1.6.1) all; urgency=medium
+
+  * Improve .gitlab-ci.yml for building RPM packages
+  * Adding function format_list() to lib/fb_tools/xlate.py
+  * Bigger improvements and completions on VSphere classes
+  * Adding yamllint.yaml
+  * Improving Shell scripts
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 07 Oct 2019 22:36:20 +0200
+
 fb-tools (1.5.5) all; urgency=medium
 
   * Rewrite .gitlab-ci.yml to build Enterprise Linux RPM packages
