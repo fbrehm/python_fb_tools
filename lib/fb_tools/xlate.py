@@ -21,6 +21,7 @@ from distutils.version import LooseVersion
 
 # Third party modules
 import babel
+from babel.core import default_locale
 import babel.lists
 from babel.support import Translations
 
