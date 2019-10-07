@@ -14,7 +14,8 @@ variables:
   YUM_REPO_GPG_PASSWD: 'secret'
   YUM_REPO_HOST: 'repo01.pixelpark.com'
   YUM_REPO_USER: 'rpm-repo'
-  YUM_REPO_DIR: '/srv/www/repo/Linux/yum/pixelpark'
+  YUM_REPO_DIR_HTTP: '/Linux/yum/pixelpark'
+  YUM_REPO_DIR: "/srv/www/repo${YUM_REPO_DIR_HTTP}"
   YUM_REPO_ADDSIGN_SCRIPT: '/home/rpm-repo/bin/rpm-addsign-wrapper.expect'
   YUM_REPO_GPG_KEY_PUB: 'nada'
   YUM_REPO_GPG_KEY_SEC: 'nada'
@@ -130,7 +131,9 @@ build CentOS 7 with Python 3.6:
     - 'export LC_ALL=en_US.utf8'
     - locale
     - yum --assumeyes install epel-release
-    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://repo01.pixelpark.com/Linux/yum/pixelpark/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
+    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
     - yum makecache
     - yum --assumeyes upgrade
     - yum --assumeyes install python36 python36-pip python36-devel python36-pytz python36-babel gnupg2 rpm-build tree expect gettext python-devel python2-pip python-setuptools python-pathlib python-babel python-ipaddress pytz rpm-sign
@@ -177,38 +180,6 @@ build CentOS 7 with Python 3.6:
     - /^hf.*$/
     - tags
 
-#RPM package OEL7:
-#  stage: deploy
-#  tags:
-#    - deploy
-#  script:
-#    - hostname -f
-#    - whoami
-#    - pwd
-#    - mkdir -pv rpmdir
-#    - mkdir -pv rpmdir/SOURCES
-#    - 'export ODIR=$(pwd)'
-#    - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )'
-#    - 'export PKG_VERSION=$( cat debian/changelog | head -n 1 | sed -e "s/^[^(]*(//" -e "s/).*//" )'
-#    - 'echo "Version to build: $PKG_VERSION"'
-#    - 'mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION'
-#    - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
-#    - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
-#    - 'cat specs/fb_tools.spec.template | sed -e "s/@@@Version@@@/$PKG_VERSION/gi" > specs/fb_tools.spec'
-#    - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version=$PKG_VERSION" specs/fb_tools.spec'
-#    - tree -aQpugs rpmdir/*RPMS || true
-#    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
-#    - 'for f in rpmdir/RPMS/*/*.rpm; do b=$( basename $f ); echo "Checking $b ..."; ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/; if test -f $b; then echo \"Package $b is already existing.\"; exit 5; fi"; done'
-#    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
-#    - 'for f in rpmdir/RPMS/*/*.rpm; do b=$( basename $f ); echo "Signing $b ..."; echo "${YUM_REPO_GPG_PASSWD}" | ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && ${YUM_REPO_ADDSIGN_SCRIPT} $b"; done'
-#    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && createrepo --update ."'
-#  after_script:
-#    - rm -r rpmdir
-#  environment:
-#    name: production
-#  only:
-#    - master
-
 Deploy packages EL7:
   stage: deploy
   tags:
@@ -219,8 +190,8 @@ Deploy packages EL7:
     - pwd
     - ls -lA --color=always
     - if test -d rpmdir ; then ls -lA --color=always rpmdir/RPMS/*/* rpmdir/SRPMS/*; fi
-    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/'
-    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/ && createrepo --update . && chmod -v a+x repodata && chmod -Rv a+r repodata"'
+    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/7/'
+    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/7/ && createrepo --update . && chmod -v a+x repodata && chmod -Rv a+r repodata"'
   after_script:
     - rm -rf rpmdir
   environment:
