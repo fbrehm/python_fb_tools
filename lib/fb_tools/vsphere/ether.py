@@ -10,6 +10,7 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
+import copy
 
 try:
     from collections.abc import MutableSequence
@@ -26,7 +27,7 @@ from ..common import pp, to_bool
 
 from ..obj import FbBaseObject
 
-__version__ = '0.1.4'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -519,7 +520,7 @@ class VsphereEthernetcardList(FbBaseObject, MutableSequence):
             base_dir=self.base_dir, initialized=False)
 
         for card in self:
-            new_list.append(card)
+            new_list.append(copy.copy(card))
 
         new_list.initialized = self.initialized
         return new_list
@@ -616,7 +617,15 @@ class VsphereEthernetcardList(FbBaseObject, MutableSequence):
     # -------------------------------------------------------------------------
     def __reversed__(self):
 
-        return reversed(self._list)
+        new_list = self.__class__(
+            appname=self.appname, verbose=self.verbose,
+            base_dir=self.base_dir, initialized=False)
+
+        for card in reversed(self._list):
+            new_list.append(copy.copy(card))
+
+        new_list.initialized = self.initialized
+        return new_list
 
     # -------------------------------------------------------------------------
     def __setitem__(self, key, card):
