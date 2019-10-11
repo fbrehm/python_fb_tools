@@ -13,6 +13,8 @@ import logging
 import getpass
 import re
 
+from operator import itemgetter, attrgetter
+
 # Third party modules
 import pytz
 
@@ -36,7 +38,7 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -344,14 +346,12 @@ class GetVmListApplication(BaseApplication):
     def get_all_vms(self):
 
         ret = 0
-        all_vms = {}
+        all_vms = []
 
         re_name = re.compile(self.vm_pattern, re.IGNORECASE)
 
         for vsphere_name in self.vsphere:
-            vms = self.get_vms(vsphere_name, re_name)
-            for vm_name in vms.keys():
-                all_vms[vm_name] = vms[vm_name]
+            all_vms += self.get_vms(vsphere_name, re_name)
 
         if self.details:
             self.print_vms_detailed(all_vms)
@@ -397,8 +397,7 @@ class GetVmListApplication(BaseApplication):
 
         max_len = 0
         count = 0
-        for host_name in all_vms.keys():
-            cdata = all_vms[host_name]
+        for cdata in all_vms:
             for field in ('cluster', 'path', 'type', 'os'):
                 if field in labels and cdata[field] is None:
                     cdata[field] = '-'
@@ -429,8 +428,7 @@ class GetVmListApplication(BaseApplication):
             print(tpl.format(**labels))
             print('-' * max_len)
 
-        for host_name in sorted(all_vms.keys(), key=str.lower):
-            cdata = all_vms[host_name]
+        for cdata in all_vms:
             count += 1
 
             print(tpl.format(**cdata))
@@ -455,10 +453,10 @@ class GetVmListApplication(BaseApplication):
             re_name = re.compile(self.vm_pattern, re.IGNORECASE)
 
         if self.details:
-            vm_list = vsphere.get_vms(re_name, as_obj=True)
+            vm_list = vsphere.get_vms(re_name, vsphere_name=vsphere_name, as_obj=True)
             vms = self.mangle_vmlist_details(vm_list, vsphere_name)
         else:
-            vm_list = vsphere.get_vms(re_name, name_only=True)
+            vm_list = vsphere.get_vms(re_name, vsphere_name=vsphere_name, name_only=True)
             vms = self.mangle_vmlist_no_details(vm_list, vsphere_name)
 
         return vms
@@ -469,29 +467,30 @@ class GetVmListApplication(BaseApplication):
         if self.verbose > 3:
             LOG.debug("Mangling VM list:\n" + pp(vm_list))
 
-        vms = {}
+        vms = []
 
-        for vm in vm_list:
+        for vm in sorted(vm_list, key=itemgetter(0, 1)):
             cdata = {
                 'vsphere': vsphere_name,
                 'name': vm[0],
                 'path': vm[1],
             }
-            vms[vm[0]] = cdata
 
             if cdata['path']:
                 cdata['path'] = '/' + cdata['path']
             else:
                 cdata['path'] = '/'
 
+            vms.append(cdata)
+
         return vms
 
     # -------------------------------------------------------------------------
     def mangle_vmlist_details(self, vm_list, vsphere_name):
 
-        vms = {}
+        vms = []
 
-        for vm in vm_list:
+        for vm in sorted(vm_list, key=attrgetter('name', 'path')):
             if not isinstance(vm, VsphereVm):
                 LOG.error("Found a {} object:\n".format(vm.__class__.__name__) + pp(vm))
                 continue
@@ -525,7 +524,7 @@ class GetVmListApplication(BaseApplication):
             if vm.template:
                 cdata['type'] = 'VMWare Template'
 
-            vms[vm.name] = cdata
+            vms.append(cdata)
 
         return vms
 
