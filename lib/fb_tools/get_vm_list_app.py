@@ -38,11 +38,12 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
 _ = XLATOR.gettext
+ngettext = XLATOR.ngettext
 
 
 # =============================================================================
@@ -435,11 +436,12 @@ class GetVmListApplication(BaseApplication):
 
         if not self.quiet:
             print()
-            msg = "Found {} VMWare hosts and VMs.".format(count)
-            if count == 1:
-                msg = "Found one VMWare host or VM."
-            elif count == 0:
-                msg = "Found no VMWare hosts or VMs."
+            if count == 0:
+                msg = _("Found no VMWare VMs.")
+            else:
+                msg = ngettext(
+                    "Found one VMWare VM.",
+                    "Found {} VMWare VMs.", count).format(count)
             print(msg)
             print()
 
@@ -490,10 +492,16 @@ class GetVmListApplication(BaseApplication):
 
         vms = []
 
+        first = True
         for vm in sorted(vm_list, key=attrgetter('name', 'path')):
             if not isinstance(vm, VsphereVm):
-                LOG.error("Found a {} object:\n".format(vm.__class__.__name__) + pp(vm))
+                msg = _("Found a {} object:").format(vm.__class__.__name__)
+                msg += '\n' + pp(vm)
+                LOG.error(msg)
                 continue
+            if self.verbose > 2 and first:
+                LOG.debug("VM:\n" + pp(vm.as_dict()))
+            first = False
             cdata = {
                 'vsphere': vsphere_name,
                 'cluster': vm.cluster_name,
