@@ -14,6 +14,11 @@ import uuid
 import re
 import copy
 
+try:
+    from collections.abc import MutableSequence
+except ImportError:
+    from collections import MutableSequence
+
 # Third party modules
 from pyVmomi import vim
 
@@ -22,13 +27,15 @@ from ..xlate import XLATOR
 
 from ..common import pp, to_bool
 
+from .errors import VSphereHandlerError
+
 from .object import VsphereObject
 
 from .disk import VsphereDisk, VsphereDiskList
 from .ether import VsphereEthernetcard, VsphereEthernetcardList
 from .controller import VsphereDiskController, VsphereDiskControllerList
 
-__version__ = '0.4.3'
+__version__ = '0.5.0'
 LOG = logging.getLogger(__name__)
 
 
@@ -44,9 +51,10 @@ class VsphereVm(VsphereObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
-            name=None, status='gray', config_status='gray'):
+            vsphere=None, name=None, status='gray', config_status='gray'):
 
         self.repr_fields = ('name', )
+        self._vsphere = None
         self._cluster_name = None
         self._path = None
         self._template = False
@@ -73,12 +81,35 @@ class VsphereVm(VsphereObject):
             config_status=config_status, appname=appname, verbose=verbose,
             version=version, base_dir=base_dir)
 
+        if vsphere is not None:
+            self.vsphere = vsphere
+
         self.disks = VsphereDiskList(
             appname=appname, verbose=verbose, base_dir=base_dir, initialized=True)
         self.interfaces = VsphereEthernetcardList(
             appname=appname, verbose=verbose, base_dir=base_dir, initialized=True)
         self.controllers = VsphereDiskControllerList(
             appname=appname, verbose=verbose, base_dir=base_dir, initialized=True)
+
+    # -----------------------------------------------------------
+    @property
+    def vsphere(self):
+        """The name of the VSPhere from configuration, in which
+            the VM should be existing."""
+        return self._vsphere
+
+    @vsphere.setter
+    def vsphere(self, value):
+        if value is None:
+            self._vsphere = None
+            return
+
+        val = str(value).strip()
+        if val == '':
+            msg = _("The name of the vsphere may not be empty.")
+            raise VSphereHandlerError(msg)
+
+        self._vsphere = val
 
     # -----------------------------------------------------------
     @property
@@ -353,6 +384,7 @@ class VsphereVm(VsphereObject):
 
         if bare:
             res = {
+                'vsphere': self.vsphere,
                 'cluster_name': self.cluster_name,
                 'config_path': self.config_path,
                 'config_path_relative': self.config_path_relative,
@@ -379,6 +411,7 @@ class VsphereVm(VsphereObject):
             return res
 
         res = super(VsphereVm, self).as_dict(short=short)
+        res['vsphere'] = self.vsphere
         res['cluster_name'] = self.cluster_name
         res['config_path'] = self.config_path
         res['config_path_relative'] = self.config_path_relative
@@ -406,7 +439,7 @@ class VsphereVm(VsphereObject):
         vm = VsphereVm(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             initialized=self.initialized, name=self.name, status=self.status,
-            config_status=self.config_status)
+            vsphere=self.vsphere, config_status=self.config_status)
 
         vm.cluster_name = self.cluster_name
         vm.config_path = self.config_path
@@ -438,6 +471,8 @@ class VsphereVm(VsphereObject):
         if not isinstance(other, VsphereVm):
             return False
 
+        if self.vsphere != other.vsphere:
+            return False
         if self.name != other.name:
             return False
         if self.path != other.path:
@@ -447,7 +482,7 @@ class VsphereVm(VsphereObject):
 
     # -------------------------------------------------------------------------
     @classmethod
-    def from_summary(cls, data, cur_path, appname=None, verbose=0, base_dir=None):
+    def from_summary(cls, data, cur_path, vsphere=None, appname=None, verbose=0, base_dir=None):
 
         if not isinstance(data, vim.VirtualMachine):
             msg = _("Parameter {t!r} must be a {e}, {v!r} ({vt}) was given.").format(
@@ -455,6 +490,7 @@ class VsphereVm(VsphereObject):
             raise TypeError(msg)
 
         params = {
+            'vsphere': vsphere,
             'appname': appname,
             'verbose': verbose,
             'base_dir': base_dir,
