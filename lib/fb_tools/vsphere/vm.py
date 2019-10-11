@@ -27,6 +27,8 @@ from ..xlate import XLATOR
 
 from ..common import pp, to_bool
 
+from ..obj import FbBaseObject
+
 from .errors import VSphereHandlerError
 
 from .object import VsphereObject
@@ -35,7 +37,7 @@ from .disk import VsphereDisk, VsphereDiskList
 from .ether import VsphereEthernetcard, VsphereEthernetcardList
 from .controller import VsphereDiskController, VsphereDiskControllerList
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -575,6 +577,214 @@ class VsphereVm(VsphereObject):
             LOG.debug(_("Created {} object:").format(cls.__name__) + '\n' + pp(vm.as_dict()))
 
         return vm
+
+# =============================================================================
+class VsphereVmList(FbBaseObject, MutableSequence):
+    """
+    A list containing VsphereVm objects.
+    """
+
+    msg_no_vm = _("Invalid type {t!r} as an item of a {c}, only {o} objects are allowed.")
+
+    # -------------------------------------------------------------------------
+    def __init__(
+        self, appname=None, verbose=0, version=__version__, base_dir=None,
+            initialized=None, *vms):
+
+        self._list = []
+
+        super(VsphereVmList, self).__init__(
+            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
+            initialized=False)
+
+        for vm in vms:
+            self.append(vm)
+
+        if initialized is not None:
+            self.initialized = initialized
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True, bare=False):
+        """
+        Transforms the elements of the object into a dict
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+        @param bare: don't include generic fields in returning dict
+        @type bare: bool
+
+        @return: structure as dict or list
+        @rtype:  dict or list
+        """
+
+        if bare:
+            res = []
+            for vm in self:
+                res.append(vm.as_dict(bare=True))
+            return res
+
+        res = super(VsphereVmList, self).as_dict(short=short)
+        res['_list'] = []
+
+        for vm in self:
+            res['_list'].append(vm.as_dict(short=short))
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def __copy__(self):
+
+        new_list = self.__class__(
+            appname=self.appname, verbose=self.verbose,
+            base_dir=self.base_dir, initialized=False)
+
+        for vm in self:
+            new_list.append(copy.copy(vm))
+
+        new_list.initialized = self.initialized
+        return new_list
+
+    # -------------------------------------------------------------------------
+    def index(self, vm, *args):
+
+        i = None
+        j = None
+
+        if len(args) > 0:
+            if len(args) > 2:
+                raise TypeError(_("{m} takes at most {max} arguments ({n} given).").format(
+                    m='index()', max=3, n=len(args) + 1))
+            i = int(args[0])
+            if len(args) > 1:
+                j = int(args[1])
+
+        index = 0
+        if i is not None:
+            start = i
+            if i < 0:
+                start = len(self._list) + i
+
+        wrap = False
+        end = len(self._list)
+        if j is not None:
+            if j < 0:
+                end = len(self._list) + j
+                if end < index:
+                    wrap = True
+            else:
+                end = j
+        for index in list(range(len(self._list))):
+            item = self._list[index]
+            if index < start:
+                continue
+            if index >= end and not wrap:
+                break
+            if item == vm:
+                return index
+
+        if wrap:
+            for index in list(range(len(self._list))):
+                item = self._list[index]
+                if index >= end:
+                    break
+            if item == vm:
+                return index
+
+        msg = _("VM is not in VM list.")
+        raise ValueError(msg)
+
+    # -------------------------------------------------------------------------
+    def __contains__(self, vm):
+
+        if not isinstance(vm, VsphereVm):
+            raise TypeError(self.msg_no_vm.format(
+                t=vm.__class__.__name__, c=self.__class__.__name__, o='VsphereVm'))
+
+        if not self._list:
+            return False
+
+        for item in self._list:
+            if item == vm:
+                return True
+
+        return False
+
+    # -------------------------------------------------------------------------
+    def count(self, vm):
+
+        if not isinstance(vm, VsphereVm):
+            raise TypeError(self.msg_no_vm.format(
+                t=vm.__class__.__name__, c=self.__class__.__name__, o='VsphereVm'))
+
+        if not self._list:
+            return 0
+
+        num = 0
+        for item in self._list:
+            if item == vm:
+                num += 1
+        return num
+
+    # -------------------------------------------------------------------------
+    def __len__(self):
+        return len(self._list)
+
+    # -------------------------------------------------------------------------
+    def __getitem__(self, key):
+        return self._list.__getitem__(key)
+
+    # -------------------------------------------------------------------------
+    def __reversed__(self):
+
+        new_list = self.__class__(
+            appname=self.appname, verbose=self.verbose,
+            base_dir=self.base_dir, initialized=False)
+
+        for vm in reversed(self._list):
+            new_list.append(copy.copy(vm))
+
+        new_list.initialized = self.initialized
+        return new_list
+
+    # -------------------------------------------------------------------------
+    def __setitem__(self, key, vm):
+
+        if not isinstance(vm, VsphereVm):
+            raise TypeError(self.msg_no_vm.format(
+                t=vm.__class__.__name__, c=self.__class__.__name__, o='VsphereVm'))
+
+        self._list.__setitem__(key, vm)
+
+    # -------------------------------------------------------------------------
+    def __delitem__(self, key):
+
+        del self._list[key]
+
+    # -------------------------------------------------------------------------
+    def append(self, vm):
+
+        if not isinstance(vm, VsphereVm):
+            raise TypeError(self.msg_no_vm.format(
+                t=vm.__class__.__name__, c=self.__class__.__name__, o='VsphereVm'))
+
+        self._list.append(vm)
+
+    # -------------------------------------------------------------------------
+    def insert(self, index, vm):
+
+        if not isinstance(vm, VsphereVm):
+            raise TypeError(self.msg_no_vm.format(
+                t=vm.__class__.__name__, c=self.__class__.__name__, o='VsphereVm'))
+
+        self._list.insert(index, vm)
+
+    # -------------------------------------------------------------------------
+    def clear(self):
+        "Remove all items from the VsphereEthernetcardList."
+
+        self._list = []
+
+
 
 
 # =============================================================================
