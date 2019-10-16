@@ -7,19 +7,17 @@ VERBOSE="n"
 DEBUG="n"
 QUIET='n'
 
-VERSION="2.1"
+VERSION="2.3"
 
 # console colors:
 RED=""
 YELLOW=""
 GREEN=""
-BLUE=""
+# BLUE=""
 CYAN=""
 NORMAL=""
 
-HAS_TTY='y'
-
-BASENAME="$(basename ${0})"
+BASENAME=$(basename "${0}")
 BASE_DIR=$( dirname "$0" )
 cd "${BASE_DIR}" || exit 99
 BASE_DIR=$( readlink -f . )
@@ -41,16 +39,17 @@ detect_color() {
     local term=
 
     if [[ -f ~/.dir_colors   ]] ; then
-        match_lhs="${match_lhs}$( cat ~/.dir_colors | grep '^TERM ' | sed -e 's/^TERM  *//' -e 's/ .*//')"
+        match_lhs="${match_lhs}$( grep '^TERM ' ~/.dir_colors | sed -e 's/^TERM  *//' -e 's/ .*//')"
     fi
     if [[ -f /etc/DIR_COLORS   ]] ; then
-        match_lhs="${match_lhs}$( cat /etc/DIR_COLORS | grep '^TERM ' | sed -e 's/^TERM  *//' -e 's/ .*//')"
+        match_lhs="${match_lhs}$( grep '^TERM ' /etc/DIR_COLORS | sed -e 's/^TERM  *//' -e 's/ .*//')"
     fi
     if [[ -z ${match_lhs} ]] ; then
         type -P dircolors >/dev/null && \
         match_lhs=$(dircolors --print-database | grep '^TERM ' | sed -e 's/^TERM  *//' -e 's/ .*//')
     fi
     for term in ${match_lhs} ; do
+        # shellcheck disable=SC2053
         if [[ "${safe_term}" == ${term} || "${TERM}" == ${term} ]] ; then
             use_color="true"
             break
@@ -59,29 +58,27 @@ detect_color() {
 
     # console colors:
     if [ "${use_color}" = "true" ] ; then
-        RED="\033[38;5;196m"
-        YELLOW="\033[38;5;226m"
-        GREEN="\033[38;5;46m"
-        BLUE="\033[38;5;27m"
-        CYAN="\033[38;5;36m"
-        NORMAL="\033[39m"
-        HAS_COLORS="y"
+        RED="\\033[38;5;196m"
+        YELLOW="\\033[38;5;226m"
+        GREEN="\\033[38;5;46m"
+        # BLUE="\\033[38;5;27m"
+        CYAN="\\033[38;5;36m"
+        NORMAL="\\033[39m"
+        # HAS_COLORS="y"
     else
         RED=""
         YELLOW=""
         GREEN=""
-        BLUE=""
+        # BLUE=""
         CYAN=""
         NORMAL=""
     fi
 
-    local my_tty=$(tty)
+    local my_tty
+
+    my_tty=$(tty)
     if [[ "${my_tty}" =~ 'not a tty' ]] ; then
         my_tty='-'
-    fi
-
-    if [[ "${my_tty}" = '-' || "${safe_term}" = "dump" ]] ; then
-        HAS_TTY='n'
     fi
 
 }
@@ -96,7 +93,7 @@ debug() {
     if [[ "${VERBOSE}" != "y" ]] ; then
         return 0
     fi
-    echo -e " * [$(my_date)] [${BASENAME}:${CYAN}DEBUG${NORMAL}]: $@" >&2
+    echo -e " * [$(my_date)] [${BASENAME}:${CYAN}DEBUG${NORMAL}]: $*" >&2
 }
 
 #------------------------------------------------------------------------------
@@ -105,27 +102,27 @@ info() {
         return 0
     fi
     if [[ "${VERBOSE}" == "y" ]] ; then
-        echo -e " ${GREEN}*${NORMAL} [$(my_date)] [${BASENAME}:${GREEN}INFO${NORMAL}] : $@"
+        echo -e " ${GREEN}*${NORMAL} [$(my_date)] [${BASENAME}:${GREEN}INFO${NORMAL}] : $*"
     else
-        echo -e " ${GREEN}*${NORMAL} $@"
+        echo -e " ${GREEN}*${NORMAL} $*"
     fi
 }
 
 #------------------------------------------------------------------------------
 warn() {
     if [[ "${VERBOSE}" == "y" ]] ; then
-        echo -e " ${YELLOW}*${NORMAL} [$(my_date)] [${BASENAME}:${YELLOW}WARN${NORMAL}] : $@" >&2
+        echo -e " ${YELLOW}*${NORMAL} [$(my_date)] [${BASENAME}:${YELLOW}WARN${NORMAL}] : $*" >&2
     else
-        echo -e " ${YELLOW}*${NORMAL} [${BASENAME}:${YELLOW}WARN${NORMAL}] : $@" >&2
+        echo -e " ${YELLOW}*${NORMAL} [${BASENAME}:${YELLOW}WARN${NORMAL}] : $*" >&2
     fi
 }
 
 #------------------------------------------------------------------------------
 error() {
     if [[ "${VERBOSE}" == "y" ]] ; then
-        echo -e " ${RED}*${NORMAL} [$(my_date)] [${BASENAME}:${RED}ERROR${NORMAL}]: $@" >&2
+        echo -e " ${RED}*${NORMAL} [$(my_date)] [${BASENAME}:${RED}ERROR${NORMAL}]: $*" >&2
     else
-        echo -e " ${RED}*${NORMAL} [${BASENAME}:${RED}ERROR${NORMAL}]: $@" >&2
+        echo -e " ${RED}*${NORMAL} [${BASENAME}:${RED}ERROR${NORMAL}]: $*" >&2
     fi
 }
 
@@ -180,13 +177,14 @@ get_options() {
     local tmp=
     local short_options="dvqhV"
     local long_options="debug,verbose,quiet,help,version"
-    local venv_found="n"
     local py_version=
     local py_found="n"
+    local ret=
 
     set +e
     tmp=$( getopt -o "${short_options}" --long "${long_options}" -n "${BASENAME}" -- "$@" )
-    if [[ $? != 0 ]] ; then
+    ret="$?"
+    if [[ "${ret}" != 0 ]] ; then
         echo "" >&2
         usage >&2
         exit 1
@@ -211,20 +209,20 @@ get_options() {
                 RED=""
                 YELLOW=""
                 GREEN=""
-                BLUE=""
+                # BLUE=""
                 CYAN=""
                 NORMAL=""
-                HAS_COLORS="n"
+                # HAS_COLORS="n"
                 shift
                 ;;
             --nocolor)
                 RED=""
                 YELLOW=""
                 GREEN=""
-                BLUE=""
+                # BLUE=""
                 CYAN=""
                 NORMAL=""
-                HAS_COLORS="n"
+                # HAS_COLORS="n"
                 shift
                 ;;
             -h|--help)
@@ -262,7 +260,7 @@ get_options() {
     for py_version in "${VALID_PY_VERSIONS[@]}" ; do
         PYTHON="python${py_version}"
         debug "Testing Python binary '${CYAN}${PYTHON}${NORMAL}' …"
-        if type -t ${PYTHON} >/dev/null ; then
+        if type -t "${PYTHON}" >/dev/null ; then
             py_found="y"
             PY_VERSION_FINAL="${py_version}"
             empty_line
@@ -274,22 +272,21 @@ get_options() {
     if [[ "${py_found}" == "n" ]] ; then
         empty_line >&2
         error "Did not found a usable Python version." >&2
-        error "Usable Python versions are: ${YELOW}${VALID_PY_VERSIONS[*]}${NORMAL}." >&2
+        error "Usable Python versions are: ${YELLOW}${VALID_PY_VERSIONS[*]}${NORMAL}." >&2
         empty_line >&2
         exit 5
     fi
 
-    venv_found="n"
     info "Searching for valid virtualenv …"
     VENV_BIN="virtualenv-${PY_VERSION_FINAL}"
     debug "Testing '${VENV_BIN}' …"
-    if type -t ${VENV_BIN} >/dev/null ; then
-        venv_found="y"
+    if type -t "${VENV_BIN}" >/dev/null ; then
+        :
     else
         VENV_BIN="virtualenv"
         debug "Testing '${VENV_BIN}' …"
-        if type -t ${VENV_BIN} >/dev/null ; then
-            venv_found="y"
+        if type -t "${VENV_BIN}" >/dev/null ; then
+            :
         else
             empty_line >&2
             error "Did not found a usable virtualenv." >&2
@@ -328,16 +325,17 @@ init_venv() {
 
         empty_line
         if [[ "${VENV_BIN}" == 'virtualenv' ]] ; then
-            virtualenv --python=${PYTHON} venv
+            virtualenv --python="${PYTHON}" venv
         else
             ${VENV_BIN} venv
         fi
 
     fi
 
+    # shellcheck disable=SC1091
     . venv/bin/activate || exit 5
-    debug "Which pip:    $(which pip)"
-    debug "Which python: $(which python)"
+    debug "Which pip:    $(command -v pip)"
+    debug "Which python: $(command -v python)"
 
 }
 

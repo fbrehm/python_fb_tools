@@ -59,7 +59,7 @@ from .vm import VsphereVm, VsphereVmList
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.5.1'
+__version__ = '1.5.2'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -741,21 +741,10 @@ class VsphereServer(BaseVsphereHandler):
         if hasattr(child, 'childEntity'):
             if depth > self.max_search_depth:
                 return vm_list
-            for sub_child in child.childEntity:
-                child_path = ''
-                if cur_path:
-                    child_path = cur_path + '/' + child.name
-                else:
-                    child_path = child.name
-                vms = self._get_vms(
-                    sub_child, re_name, cur_path=child_path, vsphere_name=vsphere_name,
-                    is_template=is_template, depth=(depth + 1), as_vmw_obj=as_vmw_obj,
-                    as_obj=as_obj, name_only=name_only, stop_at_found=stop_at_found)
-                if vms:
-                    vm_list += vms
-                if stop_at_found and vm_list:
-                    break
-            return vm_list
+            return self._get_vm_childs(
+                child, re_name, cur_path=cur_path, vsphere_name=vsphere_name,
+                is_template=is_template, depth=depth, as_vmw_obj=as_vmw_obj,
+                as_obj=as_obj, name_only=name_only, stop_at_found=stop_at_found)
 
         if isinstance(child, vim.VirtualMachine):
 
@@ -793,6 +782,36 @@ class VsphereServer(BaseVsphereHandler):
                 else:
                     vm_data = self._dict_from_vim_obj(child, cur_path)
                     vm_list.append(vm_data)
+
+        return vm_list
+
+    # -------------------------------------------------------------------------
+    def _get_vm_childs(
+            self, child, re_name, cur_path='', vsphere_name=None, is_template=None, depth=1,
+            as_vmw_obj=False, as_obj=False, name_only=False, stop_at_found=False):
+
+        vm_list = []
+        if as_obj:
+            vm_list = VsphereVmList(
+                appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+                initialized=True)
+
+        for sub_child in child.childEntity:
+
+            child_path = ''
+            if cur_path:
+                child_path = cur_path + '/' + child.name
+            else:
+                child_path = child.name
+
+            vms = self._get_vms(
+                sub_child, re_name, cur_path=child_path, vsphere_name=vsphere_name,
+                is_template=is_template, depth=(depth + 1), as_vmw_obj=as_vmw_obj,
+                as_obj=as_obj, name_only=name_only, stop_at_found=stop_at_found)
+            if vms:
+                vm_list += vms
+            if stop_at_found and vm_list:
+                break
 
         return vm_list
 
