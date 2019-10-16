@@ -23,7 +23,7 @@ from ..common import pp
 
 from ..obj import FbBaseObject
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -314,6 +314,9 @@ class VsphereAboutInfo(FbBaseObject):
         info.lic_prodversion = data.licenseProductVersion
 
         info.initialized = True
+
+        if verbose > 2:
+            LOG.debug(_("Created {} object:").format(cls.__name__) + '\n' + pp(info.as_dict()))
 
         return info
 

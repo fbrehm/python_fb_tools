@@ -13,29 +13,37 @@ import logging
 import getpass
 import re
 
+from operator import itemgetter, attrgetter
+
 # Third party modules
+import pytz
 
 # Own modules
 from . import __version__ as GLOBAL_VERSION
+from . import VMWARE_CFGFILE_BASENAME
 
 from .xlate import XLATOR
 
-from .common import pp
+from .common import pp, to_bool
 
-from .app import BaseApplication
+from .app import BaseApplication, RegexOptionAction
 
 from .config import CfgFileOptionAction
 
 from .errors import FbAppError
 
-from .get_vm_cfg import GetVmConfiguration
+from .vmware_config import VmwareConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '1.0.1'
+from .vsphere.vm import VsphereVm
+
+__version__ = '1.2.3'
 LOG = logging.getLogger(__name__)
+TZ = pytz.timezone('Europe/Berlin')
 
 _ = XLATOR.gettext
+ngettext = XLATOR.ngettext
 
 
 # =============================================================================
@@ -50,6 +58,8 @@ class GetVmListApplication(BaseApplication):
     Class for the application objects.
     """
 
+    default_vm_pattern = r'.*'
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
@@ -61,8 +71,14 @@ class GetVmListApplication(BaseApplication):
             "VMWare VSphere and print it out.")
 
         self._cfg_file = None
+        self._cfg_dir = None
         self.config = None
-        self.vsphere = None
+        self._vm_pattern = self.default_vm_pattern
+        self.req_vspheres = None
+        self._details = False
+
+        # Hash with all VSphere handler objects
+        self.vsphere = {}
 
         self.vms = []
 
@@ -75,9 +91,31 @@ class GetVmListApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     @property
+    def cfg_dir(self):
+        """Directory of the configuration file."""
+        return self._cfg_dir
+
+    # -------------------------------------------------------------------------
+    @property
     def cfg_file(self):
         """Configuration file."""
         return self._cfg_file
+
+    # -------------------------------------------------------------------------
+    @property
+    def vm_pattern(self):
+        """The regex search pattern for filtering the VM list."""
+        return self._vm_pattern
+
+    # -------------------------------------------------------------------------
+    @property
+    def details(self):
+        """Should the list be diisplyed with all details."""
+        return self._details
+
+    @details.setter
+    def details(self, value):
+        self._details = to_bool(value)
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -92,7 +130,18 @@ class GetVmListApplication(BaseApplication):
         """
 
         res = super(GetVmListApplication, self).as_dict(short=short)
+        res['cfg_dir'] = self.cfg_dir
         res['cfg_file'] = self.cfg_file
+        res['vm_pattern'] = self.vm_pattern
+        res['details'] = self.details
+        res['default_vm_pattern'] = self.default_vm_pattern
+
+        res['vsphere'] = {}
+        for vsphere_name in self.vsphere:
+            res['vsphere'][vsphere_name] = {}
+            vsphere = self.vsphere[vsphere_name]
+            if vsphere:
+                res['vsphere'][vsphere_name] = vsphere.as_dict(short=short)
 
         return res
 
@@ -113,12 +162,21 @@ class GetVmListApplication(BaseApplication):
 
         self.init_logging()
 
+        self._cfg_dir = self.base_dir.joinpath('etc')
+        self._cfg_file = self.cfg_dir.joinpath(VMWARE_CFGFILE_BASENAME)
+
         self.perform_arg_parser()
 
-        if not self.cfg_file:
-            self._cfg_file = self.base_dir.joinpath('etc').joinpath('get-vmware-vm-info.ini')
+        if not self.cfg_file.exists():
+            default_conf_file = self.cfg_dir.joinpath(VMWARE_CFGFILE_BASENAME + '.default')
+            msg = (_(
+                "Configuration file {f!r} does not exists. Please copy {d!r} to {f!r} and "
+                "fill out all necessary entries, e.g. the passwords.").format(
+                    f=str(self.cfg_file), d=str(default_conf_file)))
+            LOG.error(msg)
+            self.exit(1)
 
-        self.config = GetVmConfiguration(
+        self.config = VmwareConfiguration(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             config_file=self.cfg_file)
 
@@ -130,21 +188,51 @@ class GetVmListApplication(BaseApplication):
         if self.verbose > 3:
             LOG.debug("Read configuration:\n{}".format(pp(self.config.as_dict())))
 
-        self.perform_arg_parser_vmware()
+        if self.args.req_vsphere:
+            self.req_vspheres = []
+            all_found = True
+            for vs_name in self.args.req_vsphere:
+                LOG.debug(_("Checking for configured VSPhere instance {!r} ...").format(vs_name))
+                vs = vs_name.strip().lower()
+                if vs not in self.config.vsphere.keys():
+                    all_found = False
+                    msg = _(
+                        "VSPhere {!r} not found in list of configured VSPhere instances.").format(
+                            vs_name)
+                    LOG.error(msg)
+                else:
+                    if vs not in self.req_vspheres:
+                        self.req_vspheres.append(vs)
+            if not all_found:
+                self.exit(1)
 
-        if not self.config.password:
-            prompt = _('Enter password for host {h!r} and user {u!r}: ').format(
-                h=self.config.vsphere_host, u=self.config.vsphere_user)
-            self.config.password = getpass.getpass(prompt=prompt)
+        if self.req_vspheres:
+            vs2remove = []
+            for vsphere_name in self.config.vsphere.keys():
+                if vsphere_name not in self.req_vspheres:
+                    vs2remove.append(vsphere_name)
+            for vsphere_name in vs2remove:
+                del self.config.vsphere[vsphere_name]
 
-        self.vsphere = VsphereServer(
-            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            host=self.config.vsphere_host, port=self.config.vsphere_port,
-            user=self.config.vsphere_user, password=self.config.password,
-            dc=self.config.dc, auto_close=True, simulate=self.simulate, force=self.force,
-            terminal_has_colors=self.terminal_has_colors, initialized=False)
+        if not self.config.vsphere.keys():
+            msg = (_(
+                'Did not found any valid VSphere definition in {!r}.').format(self.cfg_file))
+            LOG.error(msg)
+            self.exit(1)
 
-        self.vsphere.initialized = True
+        for vsphere_name in self.config.vsphere.keys():
+            vsphere_data = self.config.vsphere[vsphere_name]
+            pw = None
+            if 'password' in vsphere_data:
+                pw = vsphere_data['password']
+                if pw is None or pw == '':
+                    prompt = (
+                        _('Enter password for {n} VSPhere user {u!r} on host {h!r}:').format(
+                            n=vsphere_name, u=vsphere_data['user'], h=vsphere_data['host'])) + ' '
+                    vsphere_data['password'] = getpass.getpass(prompt=prompt)
+
+        self.init_vsphere_handlers()
+
         self.initialized = True
 
     # -------------------------------------------------------------------------
@@ -155,7 +243,29 @@ class GetVmListApplication(BaseApplication):
 
         super(GetVmListApplication, self).init_arg_parser()
 
-        default_cfg_file = self.base_dir.joinpath('etc').joinpath(self.appname + '.ini')
+        self._cfg_dir = self.base_dir.joinpath('etc')
+        self._cfg_file = self.cfg_dir.joinpath(VMWARE_CFGFILE_BASENAME)
+        default_cfg_file = self.cfg_file
+
+        self.arg_parser.add_argument(
+            '-p', '--pattern', '--search-pattern',
+            dest='vm_pattern', metavar='REGEX', action=RegexOptionAction,
+            topic=_('for names of VMs'), re_options=re.IGNORECASE,
+            help=_(
+                "A regular expression to filter the output list of VMs by their name "
+                "(Default: {!r}).").format(self.default_vm_pattern)
+        )
+
+        self.arg_parser.add_argument(
+            '-D', '--details', dest='details', action="store_true",
+            help=_("Detailed output list (quering data needs some time longer).")
+        )
+
+        self.arg_parser.add_argument(
+            '--vs', '--vsphere', dest='req_vsphere', nargs='*',
+            help=_(
+                "The VSPhere names from configuration, in which the VMs should be searched.")
+        )
 
         self.arg_parser.add_argument(
             '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
@@ -163,52 +273,57 @@ class GetVmListApplication(BaseApplication):
             help=_("Configuration file (default: {!r})").format(str(default_cfg_file))
         )
 
-        vmware_group = self.arg_parser.add_argument_group(_('VMWare options'))
-
-        vmware_group.add_argument(
-            '-H', '--host', dest='host',
-            help=_("Remote vSphere host to connect to (Default: {!r}).").format(
-                GetVmConfiguration.default_vsphere_host)
-        )
-
-        vmware_group.add_argument(
-            '-p', '--port', dest='port', type=int,
-            help=_("Port on vSphere host to connect on (Default: {}).").format(
-                GetVmConfiguration.default_vsphere_port)
-        )
-
-        vmware_group.add_argument(
-            '-U', '--user', dest='user', metavar=_('USER'),
-            help=_("User name to use when connecting to vSphere host (Default: {!r}).").format(
-                GetVmConfiguration.default_vsphere_user)
-        )
-
-        vmware_group.add_argument(
-            '-P', '--password', dest='password', metavar=_('PASSWORD'),
-            help=_("Password to use when connecting to vSphere host."),
-        )
-
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
+
+        if self.verbose > 2:
+            LOG.debug(_("Got command line arguments:") + '\n' + pp(self.args))
 
         if self.args.cfg_file:
             self._cfg_file = self.args.cfg_file
 
-    # -------------------------------------------------------------------------
-    def perform_arg_parser_vmware(self):
-        """
-        Public available method to execute some actions after parsing
-        the command line parameters.
-        """
+        if self.args.details:
+            self.details = self.args.details
 
-        if self.args.host:
-            self.config.vsphere_host = self.args.host
-        if self.args.port:
-            self.config.vsphere_port = self.args.port
-        if self.args.user:
-            self.config.vsphere_user = self.args.user
-        if self.args.password:
-            self.config.password = self.args.password
+        if self.args.vm_pattern:
+            try:
+                re_name = re.compile(self.args.vm_pattern, re.IGNORECASE)
+                LOG.debug(_("Regular expression for filtering: {!r}").format(re_name.pattern))
+                self._vm_pattern = self.args.vm_pattern
+            except Exception as e:
+                msg = _("Got a {c} for pattern {p!r}: {e}").format(
+                    c=e.__class__.__name__, p=self.args.vm_pattern, e=e)
+                LOG.error(msg)
+
+    # -------------------------------------------------------------------------
+    def init_vsphere_handlers(self):
+
+        for vsphere_name in self.config.vsphere.keys():
+            self.init_vsphere_handler(vsphere_name)
+
+    # -------------------------------------------------------------------------
+    def init_vsphere_handler(self, vsphere_name):
+
+        vsphere_data = self.config.vsphere[vsphere_name]
+
+        pwd = None
+        if 'password' in vsphere_data:
+            pwd = vsphere_data['password']
+
+        vsphere = VsphereServer(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            host=vsphere_data['host'], port=vsphere_data['port'], dc=vsphere_data['dc'],
+            user=vsphere_data['user'], password=pwd,
+            auto_close=True, simulate=self.simulate, force=self.force,
+            terminal_has_colors=self.terminal_has_colors, initialized=False)
+
+        if vsphere:
+            self.vsphere[vsphere_name] = vsphere
+            vsphere.initialized = True
+        else:
+            msg = _("Could not initialize {} object from:").format('VsphereServer')
+            msg += '\n' + pp(vsphere_data)
+            LOG.error(msg)
 
     # -------------------------------------------------------------------------
     def _run(self):
@@ -216,34 +331,210 @@ class GetVmListApplication(BaseApplication):
         LOG.debug(_("Starting {a!r}, version {v!r} ...").format(
             a=self.appname, v=self.version))
 
-        ret = 99
+        ret = 0
         try:
-            ret = self.get_vms()
+            ret = self.get_all_vms()
         finally:
             # Aufräumen ...
-            LOG.debug(_("Closing ..."))
-            self.vsphere.disconnect()
-            self.vsphere = None
+            for vsphere_name in self.config.vsphere.keys():
+                LOG.debug(_("Closing VSPhere object {!r} ...").format(vsphere_name))
+                self.vsphere[vsphere_name].disconnect()
+                del self.vsphere[vsphere_name]
 
         self.exit(ret)
 
     # -------------------------------------------------------------------------
-    def get_vms(self):
+    def get_all_vms(self):
 
         ret = 0
-        vms = []
+        all_vms = []
 
-        re_all = re.compile(r'.*')
-        vms = self.vsphere.get_vms(re_all, disconnect=True)
+        re_name = re.compile(self.vm_pattern, re.IGNORECASE)
 
-        i = 0
-        for vm in vms:
-            i += 1
-            print("\n{n}:\n{vm}".format(n=vm['name'], vm=pp(vm)))
-            if i >= 3:
-                break
+        for vsphere_name in self.vsphere:
+            all_vms += self.get_vms(vsphere_name, re_name)
+
+        if self.details:
+            self.print_vms_detailed(all_vms)
+        else:
+            self.print_vms(all_vms)
 
         return ret
+
+    # -------------------------------------------------------------------------
+    def print_vms(self, all_vms):
+
+        label_list = ('name', 'vsphere', 'path')
+        labels = {
+            'name': 'Host',
+            'vsphere': 'VSphere',
+            'path': 'Path',
+        }
+
+        self._print_vms(all_vms, label_list, labels)
+
+    # -------------------------------------------------------------------------
+    def print_vms_detailed(self, all_vms):
+
+        label_list = ('name', 'vsphere', 'cluster', 'path', 'type', 'onl_str', 'os')
+        labels = {
+            'name': 'Host',
+            'vsphere': 'VSphere',
+            'cluster': 'Cluster',
+            'path': 'Path',
+            'type': 'Type',
+            'onl_str': 'Online Status',
+            'os': 'Operating System',
+        }
+
+        self._print_vms(all_vms, label_list, labels)
+
+    # -------------------------------------------------------------------------
+    def _print_vms(self, all_vms, label_list, labels):
+
+        str_lengths = {}
+        for label in labels.keys():
+            str_lengths[label] = len(labels[label])
+
+        max_len = 0
+        count = 0
+        for cdata in all_vms:
+            for field in ('cluster', 'path', 'type', 'os'):
+                if field in labels and cdata[field] is None:
+                    cdata[field] = '-'
+            for label in labels.keys():
+                val = cdata[label]
+                if len(val) > str_lengths[label]:
+                    str_lengths[label] = len(val)
+
+        for label in labels.keys():
+            if max_len:
+                max_len += 2
+            max_len += str_lengths[label]
+
+        if self.verbose > 1:
+            LOG.debug("Label length:\n" + pp(str_lengths))
+            LOG.debug("Max line length: {} chars".format(max_len))
+
+        tpl = ''
+        for label in label_list:
+            if tpl != '':
+                tpl += '  '
+            tpl += '{{{la}:<{le}}}'.format(la=label, le=str_lengths[label])
+        if self.verbose > 1:
+            LOG.debug("Line template: {}".format(tpl))
+
+        if not self.quiet:
+            print()
+            print(tpl.format(**labels))
+            print('-' * max_len)
+
+        for cdata in all_vms:
+            count += 1
+
+            print(tpl.format(**cdata))
+
+        if not self.quiet:
+            print()
+            if count == 0:
+                msg = _("Found no VMWare VMs.")
+            else:
+                msg = ngettext(
+                    "Found one VMWare VM.",
+                    "Found {} VMWare VMs.", count).format(count)
+            print(msg)
+            print()
+
+    # -------------------------------------------------------------------------
+    def get_vms(self, vsphere_name, re_name=None):
+
+        vsphere = self.vsphere[vsphere_name]
+        vsphere.get_datacenter()
+
+        if re_name is None:
+            re_name = re.compile(self.vm_pattern, re.IGNORECASE)
+
+        if self.details:
+            vm_list = vsphere.get_vms(re_name, vsphere_name=vsphere_name, as_obj=True)
+            vms = self.mangle_vmlist_details(vm_list, vsphere_name)
+        else:
+            vm_list = vsphere.get_vms(re_name, vsphere_name=vsphere_name, name_only=True)
+            vms = self.mangle_vmlist_no_details(vm_list, vsphere_name)
+
+        return vms
+
+    # -------------------------------------------------------------------------
+    def mangle_vmlist_no_details(self, vm_list, vsphere_name):
+
+        if self.verbose > 3:
+            LOG.debug("Mangling VM list:\n" + pp(vm_list))
+
+        vms = []
+
+        for vm in sorted(vm_list, key=itemgetter(0, 1)):
+            cdata = {
+                'vsphere': vsphere_name,
+                'name': vm[0],
+                'path': vm[1],
+            }
+
+            if cdata['path']:
+                cdata['path'] = '/' + cdata['path']
+            else:
+                cdata['path'] = '/'
+
+            vms.append(cdata)
+
+        return vms
+
+    # -------------------------------------------------------------------------
+    def mangle_vmlist_details(self, vm_list, vsphere_name):
+
+        vms = []
+
+        first = True
+        for vm in sorted(vm_list, key=attrgetter('name', 'path')):
+            if not isinstance(vm, VsphereVm):
+                msg = _("Found a {} object:").format(vm.__class__.__name__)
+                msg += '\n' + pp(vm)
+                LOG.error(msg)
+                continue
+            if self.verbose > 2 and first:
+                LOG.debug("VM:\n" + pp(vm.as_dict()))
+            first = False
+            cdata = {
+                'vsphere': vsphere_name,
+                'cluster': vm.cluster_name,
+                'name': vm.name,
+                'path': vm.path,
+                'type': 'Virtual Machine',
+                'online': vm.online,
+                'onl_str': 'Online',
+                'os': vm.guest_id,
+            }
+            if vm.template:
+                continue
+
+            if cdata['path']:
+                cdata['path'] = '/' + cdata['path']
+            else:
+                cdata['path'] = '/'
+
+            if not cdata['cluster']:
+                cdata['cluster'] = None
+
+            if not cdata['os']:
+                cdata['os'] = None
+
+            if not vm.online:
+                cdata['onl_str'] = 'Offline'
+
+            if vm.template:
+                cdata['type'] = 'VMWare Template'
+
+            vms.append(cdata)
+
+        return vms
 
 
 # =============================================================================
