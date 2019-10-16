@@ -7,7 +7,7 @@ VERBOSE="n"
 DEBUG="n"
 QUIET='n'
 
-VERSION="2.2"
+VERSION="2.3"
 
 # console colors:
 RED=""
@@ -49,7 +49,8 @@ detect_color() {
         match_lhs=$(dircolors --print-database | grep '^TERM ' | sed -e 's/^TERM  *//' -e 's/ .*//')
     fi
     for term in ${match_lhs} ; do
-        if [[ "${safe_term}" == "${term}" || "${TERM}" == "${term}" ]] ; then
+        # shellcheck disable=SC2053
+        if [[ "${safe_term}" == ${term} || "${TERM}" == ${term} ]] ; then
             use_color="true"
             break
         fi
