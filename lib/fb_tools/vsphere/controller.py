@@ -27,7 +27,7 @@ from ..common import pp, to_bool
 
 from ..obj import FbBaseObject
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -346,9 +346,10 @@ class VsphereDiskControllerList(FbBaseObject, MutableSequence):
                 j = int(args[1])
 
         index = 0
+        start = 0
         if i is not None:
             start = i
-            if i < 2:
+            if i < 0:
                 start = len(self._list) + i
 
         wrap = False

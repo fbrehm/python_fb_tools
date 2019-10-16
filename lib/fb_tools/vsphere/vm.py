@@ -37,7 +37,7 @@ from .disk import VsphereDisk, VsphereDiskList
 from .ether import VsphereEthernetcard, VsphereEthernetcardList
 from .controller import VsphereDiskController, VsphereDiskControllerList
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -659,6 +659,7 @@ class VsphereVmList(FbBaseObject, MutableSequence):
                 j = int(args[1])
 
         index = 0
+        start = 0
         if i is not None:
             start = i
             if i < 0:

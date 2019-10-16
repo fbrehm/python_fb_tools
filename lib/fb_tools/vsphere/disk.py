@@ -27,7 +27,7 @@ from ..common import pp
 
 from ..obj import FbBaseObject
 
-__version__ = '0.2.5'
+__version__ = '0.2.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -444,6 +444,7 @@ class VsphereDiskList(FbBaseObject, MutableSequence):
                 j = int(args[1])
 
         index = 0
+        start = 0
         if i is not None:
             start = i
             if i < 0:
