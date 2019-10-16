@@ -785,8 +785,6 @@ class VsphereVmList(FbBaseObject, MutableSequence):
         self._list = []
 
 
-
-
 # =============================================================================
 if __name__ == "__main__":
 
