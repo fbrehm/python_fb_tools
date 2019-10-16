@@ -58,12 +58,12 @@ detect_color() {
 
     # console colors:
     if [ "${use_color}" = "true" ] ; then
-        RED="\033[38;5;196m"
-        YELLOW="\033[38;5;226m"
-        GREEN="\033[38;5;46m"
-        # BLUE="\033[38;5;27m"
-        CYAN="\033[38;5;36m"
-        NORMAL="\033[39m"
+        RED="\\033[38;5;196m"
+        YELLOW="\\033[38;5;226m"
+        GREEN="\\033[38;5;46m"
+        # BLUE="\\033[38;5;27m"
+        CYAN="\\033[38;5;36m"
+        NORMAL="\\033[39m"
         # HAS_COLORS="y"
     else
         RED=""
@@ -332,9 +332,10 @@ init_venv() {
 
     fi
 
+    # shellcheck disable=SC1091
     . venv/bin/activate || exit 5
-    debug "Which pip:    $(which pip)"
-    debug "Which python: $(which python)"
+    debug "Which pip:    $(command -v pip)"
+    debug "Which python: $(command -v python)"
 
 }
 
