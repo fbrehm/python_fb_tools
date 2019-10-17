@@ -11,9 +11,8 @@ from __future__ import absolute_import, print_function
 # Standard modules
 import logging
 import getpass
-import re
 
-from operator import itemgetter, attrgetter
+from operator import attrgetter
 
 # Third party modules
 import pytz
@@ -40,7 +39,7 @@ from .vsphere.controller import VsphereDiskController
 
 from .vsphere.ether import VsphereEthernetcard
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -307,9 +306,11 @@ class GetVmApplication(BaseApplication):
         print("    State:    {s:<13} Config version: {v}".format(
             s=vm.power_state, v=vm.config_version))
         msg = "    VSPhere:  {vs:<10}    Cluster: {cl:<20}    Path: {p}".format(
-                vs=vm.vsphere, cl=vm.cluster_name, p=vm.path)
+            vs=vm.vsphere, cl=vm.cluster_name, p=vm.path)
         print(msg)
-        msg = "    No. CPUs: {cp:4d}          RAM: {m:5.1f} GiB                   Cfg-Path: {p}".format(
+        msg = (
+            "    No. CPUs: {cp:4d}          RAM: {m:5.1f} GiB"
+            "                   Cfg-Path: {p}").format(
                 cp=vm.num_cpu, m=vm.memory_gb, p=vm.config_path)
         print(msg)
         print("    OS:       {id:<43}    {os}".format(id=vm.guest_id, os=vm.guest_fullname))
@@ -327,9 +328,9 @@ class GetVmApplication(BaseApplication):
             if ctrlr.ctrl_type in VsphereDiskController.type_names.keys():
                 ctype = VsphereDiskController.type_names[ctrlr.ctrl_type]
             no_disk = ngettext(" 1 disk ", "{>2} disks", len(ctrlr.devices)).format(
-                    len(ctrlr.devices))
-            msg = "    {l:<15}  {nr:>2} - {di} - {ty}".format(
-                    l=label, nr=ctrlr.bus_nr, di=no_disk, ty=ctype)
+                len(ctrlr.devices))
+            msg = "    {la:<15}  {nr:>2} - {di} - {ty}".format(
+                la=label, nr=ctrlr.bus_nr, di=no_disk, ty=ctype)
             print(msg)
 
         if vm.disks:
@@ -344,8 +345,8 @@ class GetVmApplication(BaseApplication):
                     if disk.key in ctrlr.devices:
                         ctrlr_nr = ctrlr.bus_nr
                         break
-                msg = "    {l}  {n:<15} - {s:5.1f} GiB - Controller {c:>2} - File {f}".format(
-                        l=label, n=disk.label, s=disk.size_gb, c=ctrlr_nr, f=disk.file_name)
+                msg = "    {la}  {n:<15} - {s:5.1f} GiB - Controller {c:>2} - File {f}".format(
+                    la=label, n=disk.label, s=disk.size_gb, c=ctrlr_nr, f=disk.file_name)
                 print(msg)
         else:
             print("    Disks:       {}".format(_('None')))
@@ -360,9 +361,8 @@ class GetVmApplication(BaseApplication):
                 etype = _('Unknown')
                 if dev.ether_type in VsphereEthernetcard.ether_types.keys():
                     etype = VsphereEthernetcard.ether_types[dev.ether_type]
-                msg = "    {l}  {n:<15} - Network {nw:<20} - Connection: {c:<4} - {t}".format(
-                        l=label, n=dev.label, nw=dev.backing_device,
-                        c=dev.connect_status, t=etype)
+                msg = "    {la}  {n:<15} - Network {nw:<20} - Connection: {c:<4} - {t}".format(
+                    la=label, n=dev.label, nw=dev.backing_device, c=dev.connect_status, t=etype)
                 print(msg)
         else:
             print("    Ethernet:    {}".format(_('None')))
