@@ -34,7 +34,7 @@ from .vmware_config import VmwareConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '1.3.2'
+__version__ = '1.4.0'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -70,7 +70,6 @@ class GetVmApplication(BaseApplication):
         self.vsphere = {}
 
         self.vms = []
-        self.found_vms = {}
 
         super(GetVmApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -251,8 +250,6 @@ class GetVmApplication(BaseApplication):
         LOG.debug(_("Starting {a!r}, version {v!r} ...").format(
             a=self.appname, v=self.version))
 
-        self.found_vms = {}
-
         ret = 99
         try:
             ret = self.show_vms()
@@ -269,29 +266,36 @@ class GetVmApplication(BaseApplication):
     def show_vms(self):
 
         ret = 0
-        pattern = r'^(' + '|'.join(map(lambda x: re.escape(x), self.vms)) + r')$'
-        LOG.debug(_("Search pattern: {!r}.").format(pattern))
-        re_name = re.compile(pattern, re.IGNORECASE)
 
         for vsphere_name in self.vsphere:
             vsphere = self.vsphere[vsphere_name]
             vsphere.get_datacenter()
-            vm_list = vsphere.get_vms(re_name, as_obj=True)
-            for vm in vm_list:
-                self.found_vms[vm.name] = vm.as_dict(bare=True)
-                self.found_vms[vm.name]['vsphere'] = vsphere_name
 
         for vm_name in sorted(self.vms, key=str.lower):
-            print('\n{}: '.format(vm_name), end='')
-            if vm_name not in self.found_vms:
+            if not self.show_vm(vm_name):
                 ret = 1
-                print(self.colored(_("NOT FOUND"), 'RED'))
-                continue
-            print("{ok}\n{vm}".format(
-                ok=self.colored("OK", 'GREEN'),
-                vm=pp(self.found_vms[vm_name])))
 
         return ret
+
+    # -------------------------------------------------------------------------
+    def show_vm(self, vm_name):
+
+        print('\n{}: '.format(vm_name), end='')
+        if self.verbose:
+            print()
+        vm = None
+        for vsphere_name in self.vsphere:
+            vsphere = self.vsphere[vsphere_name]
+            vm = vsphere.get_vm(vm_name, vsphere_name=vsphere_name, no_error=True, as_obj=True)
+            if vm:
+                break
+
+        if not vm:
+            print(self.colored(_("NOT FOUND"), 'RED'))
+            return False
+
+        print("{ok}\n{vm}".format(ok=self.colored("OK", 'GREEN'), vm=pp(vm.as_dict(bare=True))))
+        return True
 
 
 # =============================================================================
