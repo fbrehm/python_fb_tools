@@ -11,6 +11,7 @@ from __future__ import absolute_import
 # Standard modules
 import logging
 import uuid
+import re
 
 try:
     from collections.abc import MutableSequence
@@ -27,7 +28,7 @@ from ..common import pp
 
 from ..obj import FbBaseObject
 
-__version__ = '0.2.6'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -35,6 +36,9 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class VsphereDisk(FbBaseObject):
+
+    re_file_storage = re.compile(r'^\s*\[\s*([^\s\]]+)')
+    re_file_rel = re.compile(r'^\s*\[[^\]]*]\s*(\S.*)\s*$')
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -109,6 +113,28 @@ class VsphereDisk(FbBaseObject):
             self._file_name = None
             return
         self._file_name = v
+
+    # -----------------------------------------------------------
+    @property
+    def file_storage(self):
+        """The name of the storage of the backing device on the host system."""
+        if self.file_name is None:
+            return None
+        match = self.re_file_storage.match(self.file_name)
+        if match:
+            return match.group(1)
+        return None
+
+    # -----------------------------------------------------------
+    @property
+    def file_rel(self):
+        """The relative path of the backing device on the host system."""
+        if self.file_name is None:
+            return None
+        match = self.re_file_rel.match(self.file_name)
+        if match:
+            return match.group(1)
+        return None
 
     # -----------------------------------------------------------
     @property
@@ -288,6 +314,8 @@ class VsphereDisk(FbBaseObject):
             res = {
                 'uuid': self.uuid,
                 'file_name': self.file_name,
+                'file_rel': self.file_rel,
+                'file_storage': self.file_storage,
                 'unit_nr': self.unit_nr,
                 'label': self.label,
                 'summary': self.summary,
@@ -304,6 +332,8 @@ class VsphereDisk(FbBaseObject):
         res = super(VsphereDisk, self).as_dict(short=short)
         res['uuid'] = self.uuid
         res['file_name'] = self.file_name
+        res['file_rel'] = self.file_rel
+        res['file_storage'] = self.file_storage
         res['unit_nr'] = self.unit_nr
         res['label'] = self.label
         res['summary'] = self.summary

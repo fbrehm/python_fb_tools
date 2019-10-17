@@ -27,7 +27,7 @@ from ..common import pp, to_bool
 
 from ..obj import FbBaseObject
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -52,6 +52,22 @@ class VsphereDiskController(FbBaseObject):
         (vim.vm.device.VirtualUSBController, 'usb'),
         (vim.vm.device.VirtualUSBXHCIController, 'usb_xhci'),
     )
+    type_names = {
+        'ide': 'Virtual IDE controller',
+        'nvme': 'Virtual VNME controller',
+        'pci': 'Virtual PCI controller',
+        'ps2': 'Virtual controller for keyboards and mice',
+        'ahci': 'Virtual AHCI SATA controller',
+        'sata': 'Virtual SATA controller',
+        'para_virt_scsi': 'Virtual paravirtualized SCSI controller',
+        'bus_logic': 'Virtual BusLogic SCSI controller',
+        'lsi_logic': 'Virtual LSI SCSI controller',
+        'lsi_logic_sas': 'Virtual LSI Logic SAS SCSI controller',
+        'scsi': 'Virtual SCSI controller',
+        'sio': 'Virtual Super IO Controller for floppy drives, parallel ports, and serial ports',
+        'usb': 'Virtual USB controller (USB 1.1 and 2.0)',
+        'usb_xhci': 'Virtual USB Extensible Host Controller Interface (USB 3.0)',
+    }
 
     # -------------------------------------------------------------------------
     def __init__(

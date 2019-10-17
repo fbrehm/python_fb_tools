@@ -27,7 +27,7 @@ from ..common import pp, to_bool
 
 from ..obj import FbBaseObject
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -35,6 +35,17 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class VsphereEthernetcard(FbBaseObject):
+
+    ether_types = {
+        'e1000e': 'Virtual E1000e Ethernet adapter',
+        'e1000': 'Virtual E1000 Ethernet adapter',
+        'pcnet32': 'Virtual AMD Lance PCNet32 Ethernet adapter',
+        'sriov': 'Virtual SR-IOV enabled Ethernet adapter',
+        'vmxnet2': 'Virtual Vmxnet2 Ethernet adapter',
+        'vmxnet3_rdma': 'Virtual VRDMA Remote Direct Memory Access adapter',
+        'vmxnet3': 'Virtual Vmxnet3 Ethernet adapter',
+        'vmxnet': 'Virtual Vmxnet Ethernet adapter',
+    }
 
     # -------------------------------------------------------------------------
     def __init__(

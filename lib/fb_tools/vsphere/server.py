@@ -59,11 +59,11 @@ from .vm import VsphereVm, VsphereVmList
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.5.2'
+__version__ = '1.6.0'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
-DEFAULT_VM_CFG_VERSION = 'vmx-13'
+DEFAULT_VM_CFG_VERSION = 'vmx-14'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -508,81 +508,27 @@ class VsphereServer(BaseVsphereHandler):
         return
 
     # -------------------------------------------------------------------------
-    def get_vm(self, vm_name, no_error=False, disconnect=False, as_vmw_obj=False):
+    def get_vm(
+            self, vm_name, vsphere_name=None, no_error=False, disconnect=False, as_vmw_obj=False,
+            as_obj=False, name_only=False):
 
-        LOG.debug(_("Trying to get VM {!r} from VSphere ...").format(vm_name))
+        pattern_name = r'^\s*' + re.escape(vm_name) + r'\s*$'
+        LOG.debug(_("Searching for VM {n!r} (pattern: {p!r}) in VSPhere {v!r} ...").format(
+            n=vm_name, p=pattern_name, v=vsphere_name))
+        re_name = re.compile(pattern_name, re.IGNORECASE)
+        vmlist = self.get_vms(
+            re_name, vsphere_name=vsphere_name, disconnect=disconnect, as_vmw_obj=as_vmw_obj,
+            as_obj=as_obj, name_only=name_only, stop_at_found=True)
 
-        vm = None
-
-        try:
-
-            if not self.service_instance:
-                self.connect()
-
-            content = self.service_instance.RetrieveContent()
-            dc = self.get_obj(content, [vim.Datacenter], self.dc)
-            if not dc:
-                raise VSphereDatacenterNotFoundError(self.dc)
-            for child in dc.vmFolder.childEntity:
-                path = child.name
-                if self.verbose > 2:
-                    LOG.debug(_("Searching in path {!r} ...").format(path))
-                vm = self._get_vm(child, vm_name, as_vmw_obj=as_vmw_obj)
-                if vm:
-                    break
-
-        finally:
-            if disconnect:
-                self.disconnect()
-
-        if not vm:
+        if not vmlist:
             msg = _("VSphere VM {!r} not found.").format(vm_name)
             if no_error:
                 LOG.debug(msg)
             else:
                 LOG.error(msg)
-
-        return vm
-
-    # -------------------------------------------------------------------------
-    def _get_vm(self, child, vm_name, cur_path='', depth=1, as_vmw_obj=False):
-
-        vm = None
-
-        if self.verbose > 3:
-            LOG.debug(_("Searching in path {!r} ...").format(cur_path))
-        if self.verbose > 4:
-            LOG.debug(_("Found a {} child.").format(child.__class__.__name__))
-
-        if hasattr(child, 'childEntity'):
-            if depth > self.max_search_depth:
-                return None
-            for sub_child in child.childEntity:
-                child_path = ''
-                if cur_path:
-                    child_path = cur_path + '/' + child.name
-                else:
-                    child_path = child.name
-                vm = self._get_vm(sub_child, vm_name, child_path, depth + 1, as_vmw_obj=as_vmw_obj)
-                if vm:
-                    return vm
             return None
 
-        if isinstance(child, vim.VirtualMachine):
-            summary = child.summary
-            vm_config = summary.config
-            if vm_name.lower() == vm_config.name.lower():
-                if self.verbose > 2:
-                    LOG.debug(
-                        _("Found VM {r} summary:").format(vm_name) + "\n" + pp(summary))
-                if self.verbose > 3:
-                    LOG.debug(_("Found VM {!r} config:").format(vm_name) + "\n" + pp(child.config))
-                if as_vmw_obj:
-                    return child
-
-                return self._dict_from_vim_obj(child, cur_path)
-
-        return None
+        return vmlist[0]
 
     # -------------------------------------------------------------------------
     def _dict_from_vim_obj(self, vm, cur_path):
