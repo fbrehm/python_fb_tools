@@ -59,7 +59,7 @@ from .vm import VsphereVm, VsphereVmList
 from .errors import VSphereExpectedError, TimeoutCreateVmError, VSphereVmNotFoundError
 from .errors import VSphereDatacenterNotFoundError, VSphereNoDatastoresFoundError
 
-__version__ = '1.6.0'
+__version__ = '1.6.1'
 LOG = logging.getLogger(__name__)
 
 DEFAULT_OS_VERSION = 'oracleLinux7_64Guest'
@@ -698,10 +698,10 @@ class VsphereServer(BaseVsphereHandler):
             vm_config = summary.config
             vm_name = vm_config.name
 
-            if self.verbose > 2:
+            if self.verbose > 3:
                 LOG.debug(_("Checking VM {!r} ...").format(vm_name))
             if is_template is not None:
-                if self.verbose > 2:
+                if self.verbose > 3:
                     msg = _("Checking VM {!r} for being a template ...")
                     if not is_template:
                         msg = _("Checking VM {!r} for being not a template ...")
@@ -711,7 +711,7 @@ class VsphereServer(BaseVsphereHandler):
                 if not is_template and vm_config.template:
                     return []
 
-            if self.verbose > 2:
+            if self.verbose > 3:
                 LOG.debug(_("Checking VM {!r} for pattern.").format(vm_name))
             if re_name.search(vm_name):
                 if self.verbose > 2:
