@@ -11,14 +11,12 @@
 import os
 import sys
 import logging
-import tempfile
 
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 
-import babel
 from babel.dates import LOCALTZ
 
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
@@ -26,11 +24,14 @@ sys.path.insert(0, libdir)
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
+from fb_tools.common import to_bool
+
 LOG = logging.getLogger('test_base_handler')
 
 EXEC_LONG_TESTS = True
 if 'EXEC_LONG_TESTS' in os.environ and os.environ['EXEC_LONG_TESTS'] != '':
     EXEC_LONG_TESTS = to_bool(os.environ['EXEC_LONG_TESTS'])
+
 
 # =============================================================================
 class TestFbBaseHandler(FbToolsTestcase):
@@ -125,7 +126,7 @@ class TestFbBaseHandler(FbToolsTestcase):
         from fb_tools.common import pp
         from fb_tools.errors import CommandNotFoundError
         from fb_tools.handling_obj import CompletedProcess
-        import fb_tools.handler
+        import fb_tools.handler                                                 # noqa
         from fb_tools.handler import BaseHandler
 
         curdir = os.path.dirname(os.path.abspath(__file__))
@@ -163,7 +164,7 @@ class TestFbBaseHandler(FbToolsTestcase):
         from fb_tools.common import pp
         from fb_tools.errors import CommandNotFoundError
         from fb_tools.handling_obj import CompletedProcess
-        import fb_tools.handler
+        import fb_tools.handler                                                 # noqa
         from fb_tools.handler import BaseHandler
 
         curdir = os.path.dirname(os.path.abspath(__file__))

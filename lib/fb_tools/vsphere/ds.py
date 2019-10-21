@@ -10,9 +10,13 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
-import collections
 import random
 import re
+
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
 
 # Third party modules
 from pyVmomi import vim
@@ -24,7 +28,7 @@ from ..common import pp, to_bool
 
 from .object import VsphereObject
 
-__version__ = '1.3.5'
+__version__ = '1.3.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -329,7 +333,7 @@ class VsphereDatastore(VsphereObject):
 
 
 # =============================================================================
-class VsphereDatastoreDict(collections.MutableMapping):
+class VsphereDatastoreDict(MutableMapping):
     """
     A dictionary containing VsphereDatastore objects.
     It works like a dict.

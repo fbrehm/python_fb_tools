@@ -13,9 +13,15 @@ import logging
 import copy
 import re
 import datetime
-import collections
+import time
+
+try:
+    from collections.abc import MutableSequence
+except ImportError:
+    from collections import MutableSequence
 
 # Third party modules
+import six
 
 # Own modules
 from ..xlate import XLATOR
@@ -28,7 +34,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.4.4'
+__version__ = '0.5.9'
 
 LOG = logging.getLogger(__name__)
 
@@ -85,7 +91,9 @@ class PowerDNSRecord(FbBaseObject):
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
             content=None, disabled=False):
 
-        self._content = content.lower()
+        self._content = None
+        if content:
+            self._content = to_str(str(content).lower())
         self._disabled = False
         self.disabled = disabled
 
@@ -112,16 +120,24 @@ class PowerDNSRecord(FbBaseObject):
         self._disabled = bool(value)
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, minimal=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param minimal: Generate a minimal dict, which can be used for the PDNS API
+        @type minimal: bool
 
         @return: structure as dict
         @rtype:  dict
         """
+
+        if minimal:
+            return {
+                'content': self.content,
+                'disabled': self.disabled,
+            }
 
         res = super(PowerDNSRecord, self).as_dict(short=short)
         res['content'] = self.content
@@ -431,7 +447,7 @@ class PowerDnsSOAData(FbBaseObject):
 
 
 # =============================================================================
-class PowerDNSRecordList(collections.MutableSequence):
+class PowerDNSRecordList(MutableSequence):
     """
     A list containing Power DNS Records (as parts of a Record Set).
     """
@@ -461,6 +477,7 @@ class PowerDNSRecordList(collections.MutableSequence):
                 j = int(args[1])
 
         index = 0
+        start = 0
         if i is not None:
             start = i
             if i < 0:
@@ -579,6 +596,194 @@ class PowerDNSRecordList(collections.MutableSequence):
             new_list.append(copy.copy(record))
         return new_list
 
+    # -------------------------------------------------------------------------
+    def clear(self):
+        "Remove all items from the PowerDNSRecordList."
+
+        self._list = []
+
+
+# =============================================================================
+class PowerDNSRecordSetComment(FbBaseObject):
+
+    # -------------------------------------------------------------------------
+    def __init__(
+        self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
+            account=None, content='', modified_at=None):
+
+        self._account = None
+        self._content = ''
+        self._modified_at = int(time.time() + 0.5)
+
+        super(PowerDNSRecordSetComment, self).__init__(
+            appname=appname, verbose=verbose, version=version, base_dir=base_dir)
+
+        self.account = account
+        self.content = content
+        self.modified_at = modified_at
+
+        if initialized is not None:
+            self.initialized = initialized
+
+    # -------------------------------------------------------------------------
+    @property
+    def account(self):
+        "The name of the account, who has created this comment"
+        return self._account
+
+    @account.setter
+    def account(self, value):
+        if value is None:
+            self._account = None
+            return
+        v = str(value).strip()
+        if v == '':
+            self._account = None
+            return
+        self._account = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def content(self):
+        "The underlying content of this comment"
+        return self._content
+
+    @content.setter
+    def content(self, value):
+        if value is None:
+            self._content = ''
+            return
+        v = str(value).strip()
+        self._content = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def modified_at(self):
+        "The UNIX time stamp of the last modification of this comment."
+        return self._modified_at
+
+    @modified_at.setter
+    def modified_at(self, value):
+        if value is None:
+            self._modified_at = int(time.time() + 0.5)
+            return
+        try:
+            v = int(value)
+        except ValueError as e:
+            msg = (_(
+                "Invalid value for {w} of a {c} object - ").format(
+                w='modified_at', c=self.__class__.__name__) + str(e))
+            raise ValueError(msg)
+        if v < 0:
+            msg = _(
+                "Invalid value for {w} {v!r} of a {c} object - "
+                "must be greater than or equal to zero.").format(
+                w='modified_at', c=self.__class__.__name__, v=value)
+            raise ValueError(msg)
+        self._modified_at = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def modified_date(self):
+        "The modification of this comment as a datetime object."
+
+        return datetime.datetime.utcfromtimestamp(self.modified_at)
+
+    # -------------------------------------------------------------------------
+    @property
+    def valid(self):
+        "Is this a valid comment or not."
+        if self.account is None or self.modified_at is None:
+            return False
+        return True
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True, minimal=False):
+        """
+        Transforms the elements of the object into a dict
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+        @param minimal: Generate a minimal dict, which can be used for the PDNS API
+        @type minimal: bool
+
+        @return: structure as dict
+        @rtype:  dict
+        """
+
+        if minimal:
+            return {
+                'account': self.account,
+                'content': self.content,
+                'modified_at': self.modified_at,
+            }
+
+        res = super(PowerDNSRecordSetComment, self).as_dict(short=short)
+        res['account'] = self.account
+        res['content'] = self.content
+        res['modified_at'] = self.modified_at
+        res['modified_date'] = self.modified_date
+        res['valid'] = self.valid
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def __copy__(self):
+
+        return PowerDNSRecordSetComment(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            initialized=self.initialized,
+            account=self.account, content=self.content, modified_at=self.modified_at)
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """
+        Typecasting function for translating object structure
+        into a string
+
+        @return: structure as string
+        @rtype:  str
+        """
+
+        return pp(self.as_dict(minimal=True))
+
+    # -------------------------------------------------------------------------
+    def __repr__(self):
+        """Typecasting into a string for reproduction."""
+
+        out = "<%s(" % (self.__class__.__name__)
+
+        fields = []
+        fields.append("account={!r}".format(self.account))
+        fields.append("content={!r}".format(self.content))
+        fields.append("modified_at={!r}".format(self.modified_at))
+        fields.append("appname={!r}".format(self.appname))
+        fields.append("verbose={!r}".format(self.verbose))
+        fields.append("version={!r}".format(self.version))
+
+        out += ", ".join(fields) + ")>"
+        return out
+
+    # -------------------------------------------------------------------------
+    def __eq__(self, other):
+
+        if self.verbose > 4:
+            LOG.debug(_("Comparing {} objects ...").format(self.__class__.__name__))
+
+        if not isinstance(other, PowerDNSRecordSetComment):
+            return False
+
+        if self.account != other.account:
+            return False
+
+        if self.content != other.content:
+            return False
+
+        if self.modified_at != other.modified_at:
+            return False
+
+        return True
+
 
 # =============================================================================
 class PowerDNSRecordSet(BasePowerDNSHandler):
@@ -620,6 +825,19 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
         "The name of this record set."
         return self._name
 
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, six.string_types):
+            msg = _("A {w} must be a string type, but is {v!r} instead.").format(
+                w='PowerDNSRecordSet.name', v=value)
+            raise TypeError(msg)
+        v = to_str(value).strip().lower()
+        if v == '':
+            msg = _("A {w} may not be empty: {v!r}.").format(
+                w='PowerDNSRecordSet.name', v=value)
+            raise ValueError(msg)
+        self._name = v
+
     # -----------------------------------------------------------
     @property
     def name_unicode(self):
@@ -636,6 +854,20 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
     def type(self):
         "The type of this record set."
         return self._type
+
+    @type.setter
+    def type(self, value):
+        if not isinstance(value, six.string_types):
+            msg = _("A {w} must be a string type, but is {v!r} instead.").format(
+                w='PowerDNSRecordSet.type', v=value)
+            raise TypeError(msg)
+        v = to_str(value).strip().upper()
+        if v == '':
+            msg = _("A {w} may not be empty: {v!r}.").format(
+                w='PowerDNSRecordSet.type', v=value)
+            raise ValueError(msg)
+        v = self.verify_rrset_type(v)
+        self._type = v
 
     # -----------------------------------------------------------
     @property
@@ -682,11 +914,25 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
         rrset = cls(**params)
 
         if 'comments' in data and data['comments']:
-            for comment in data['comments']:
-                rrset.comments.append(str(comment))
+            for comment_dict in data['comments']:
+                acc = None
+                cont = ''
+                modified_at = None
+                if 'account' in comment_dict:
+                    acc = comment_dict['account']
+                if 'content' in comment_dict:
+                    cont = comment_dict['content']
+                if 'modified_at' in comment_dict:
+                    modified_at = comment_dict['modified_at']
+                comment = PowerDNSRecordSetComment(
+                    appname=appname, verbose=verbose, base_dir=base_dir,
+                    account=acc, content=cont, modified_at=modified_at)
+                if comment.valid:
+                    comment.initialized = True
+                rrset.comments.append(comment)
 
-        rrset._name = str(data['name'])
-        rrset._type = str(data['type']).upper()
+        rrset._name = to_str(str(data['name']))
+        rrset._type = to_str(str(data['type']).upper())
         if 'ttl' in data:
             rrset._ttl = int(data['ttl'])
 
@@ -694,7 +940,8 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
             for single_record in data['records']:
                 record = PowerDNSRecord(
                     appname=appname, verbose=verbose, base_dir=base_dir,
-                    content=single_record['content'], disabled=single_record['disabled'],
+                    content=to_str(single_record['content']),
+                    disabled=single_record['disabled'],
                 )
                 record.initialized = True
                 rrset.records.append(record)
@@ -719,27 +966,46 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
         return rel_name
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, minimal=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param minimal: Generate a minimal dict, which can be used for the PDNS API
+        @type minimal: bool
 
         @return: structure as dict
         @rtype:  dict
         """
+
+        if minimal:
+            ret = {
+                "comments": [],
+                "name": self.name,
+                "records": [],
+                "ttl": self.ttl,
+                "type": self.type,
+            }
+            for comment in self.comments:
+                ret['comments'].append(comment.as_dict(minimal=True))
+            for record in self.records:
+                ret['records'].append(record.as_dict(minimal=True))
+            return ret
 
         res = super(PowerDNSRecordSet, self).as_dict(short=short)
         res['name'] = self.name
         res['type'] = self.type
         res['ttl'] = self.ttl
         res['name_unicode'] = self.name_unicode
-        res['comments'] = copy.copy(self.comments)
+        res['comments'] = []
         res['records'] = []
 
         for record in self.records:
             res['records'].append(record.as_dict(short))
+
+        for comment in self.comments:
+            res['comments'].append(comment.as_dict(short=short))
 
         return res
 
@@ -813,7 +1079,7 @@ class PowerDNSRecordSet(BasePowerDNSHandler):
 
 
 # =============================================================================
-class PowerDNSRecordSetList(collections.MutableSequence):
+class PowerDNSRecordSetList(MutableSequence):
     """
     A list containing Power DNS Record Sets (of a zone).
     """
@@ -843,6 +1109,7 @@ class PowerDNSRecordSetList(collections.MutableSequence):
                 j = int(args[1])
 
         index = 0
+        start = 0
         if i is not None:
             start = i
             if i < 0:
@@ -961,6 +1228,12 @@ class PowerDNSRecordSetList(collections.MutableSequence):
         for rrset in self._list:
             new_list.append(copy.copy(rrset))
         return new_list
+
+    # -------------------------------------------------------------------------
+    def clear(self):
+        "Remove all items from the PowerDNSRecordSetList."
+
+        self._list = []
 
 
 # =============================================================================

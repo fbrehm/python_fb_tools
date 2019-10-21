@@ -17,3 +17,5 @@ tmp/*
 venv*/*
 etc/*.ini
 lib/fb_tools/local_version.py
+rpmdir/*
+.rpm-version*

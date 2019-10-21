@@ -21,15 +21,15 @@ from distutils.version import LooseVersion
 
 # Third party modules
 import babel
+from babel.core import default_locale
 import babel.lists
-#from babel.core import Locale
 from babel.support import Translations
 
 DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.1.6'
+__version__ = '1.2.3'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
@@ -42,7 +42,7 @@ if not LOCALE_DIR.is_dir():
         LOCALE_DIR = None
 
 DEFAULT_LOCALE_DEF = 'en_US'
-DEFAULT_LOCALE = babel.core.default_locale()
+DEFAULT_LOCALE = default_locale()
 if not DEFAULT_LOCALE:
     DEFAULT_LOCALE = DEFAULT_LOCALE_DEF
 
@@ -89,12 +89,34 @@ def format_list(lst, do_repr=False, style='standard', locale=DEFAULT_LOCALE):
 
 
 # =============================================================================
+def format_list(lst, do_repr=False, style='standard', locale=DEFAULT_LOCALE):
+    """
+    Format the items in `lst` as a list.
+    :param lst: a sequence of items to format in to a list
+    :param locale: the locale
+    """
+    if not lst:
+        return ''
+
+    my_list = copy.copy(lst)
+    if do_repr:
+        my_list = []
+        for item in lst:
+            my_list.append('{!r}'.format(item))
+
+    if CUR_BABEL_VERSION < NEWER_BABEL_VERSION:
+        return babel.lists.format_list(my_list, locale=locale)
+    return babel.lists.format_list(my_list, style=style, locale=locale)
+
+
+# =============================================================================
 if __name__ == "__main__":
 
     print(_("Module directory: {!r}").format(__module_dir__))
     print(_("Base directory: {!r}").format(__base_dir__))
     print(_("Locale directory: {!r}").format(LOCALE_DIR))
     print(_("Locale domain: {!r}").format(DOMAIN))
+    print(_("Default Locale: {!r}").format(DEFAULT_LOCALE))
     print(_("Found .mo-file: {!r}").format(__mo_file__))
 
 # =============================================================================

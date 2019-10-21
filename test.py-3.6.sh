@@ -4,9 +4,10 @@ set -e
 set -u
 
 PYTHON="python3.6"
+# shellcheck disable=SC2034
 VENV="venv-3.6"
 
-cd $( dirname $0 )
+cd "$( dirname "$0" )"
 
 if [[ -z $(type -p "${PYTHON}") ]] ; then
     echo "Could not found executable '${PYTHON}'." >&2
@@ -20,6 +21,7 @@ if [[ ! -f "${RC_FILE}" ]] ; then
     exit 5
 fi
 
+# shellcheck source=/dev/null
 . "${RC_FILE}"
 exec_tests
 

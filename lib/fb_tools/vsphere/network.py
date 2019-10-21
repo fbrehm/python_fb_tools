@@ -11,9 +11,13 @@ from __future__ import absolute_import
 # Standard modules
 import logging
 import re
-import collections
 import ipaddress
 import functools
+
+try:
+    from collections.abc import MutableMapping
+except ImportError:
+    from collections import MutableMapping
 
 # Third party modules
 from pyVmomi import vim
@@ -25,7 +29,7 @@ from ..common import pp
 
 from .object import VsphereObject
 
-__version__ = '1.2.5'
+__version__ = '1.2.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -192,7 +196,7 @@ class VsphereNetwork(VsphereObject):
 
 
 # =============================================================================
-class VsphereNetworkDict(collections.MutableMapping):
+class VsphereNetworkDict(MutableMapping):
     """
     A dictionary containing VsphereNetwork objects.
     It works like a dict.

@@ -24,6 +24,7 @@ from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
 LOG = logging.getLogger('test_common')
 
+
 # =============================================================================
 class TestColoredFormatter(FbToolsTestcase):
 

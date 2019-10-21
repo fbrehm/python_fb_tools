@@ -17,11 +17,11 @@ from pyVmomi import vim
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import pp
+from ..common import pp, to_bool
 
 from .object import VsphereObject
 
-__version__ = '1.2.2'
+__version__ = '1.3.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -35,7 +35,7 @@ class VsphereCluster(VsphereObject):
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=None,
             name=None, status='gray', cpu_cores=0, cpu_threads=0, config_status='gray',
-            hosts_effective=0, hosts_total=0, mem_mb_effective=0, mem_total=0):
+            hosts_effective=0, hosts_total=0, mem_mb_effective=0, mem_total=0, standalone=False):
 
         self.repr_fields = (
             'name', 'status', 'config_status', 'cpu_cores', 'cpu_threads', 'hosts_effective',
@@ -48,6 +48,7 @@ class VsphereCluster(VsphereObject):
         self._hosts_total = None
         self._mem_mb_effective = None
         self._mem_total = None
+        self._standalone = False
         self.networks = []
         self.datastores = []
         self.resource_pool = None
@@ -63,6 +64,7 @@ class VsphereCluster(VsphereObject):
         self.hosts_total = hosts_total
         self.mem_mb_effective = mem_mb_effective
         self.mem_total = mem_total
+        self.standalone = standalone
 
         if initialized is not None:
             self.initialized = initialized
@@ -195,6 +197,18 @@ class VsphereCluster(VsphereObject):
             return None
         return float(self.mem_mb_effective) / 1024.0
 
+    # -----------------------------------------------------------
+    @property
+    def standalone(self):
+        "Is this a standalone host and not a computing cluster?"
+
+        return self._standalone
+
+    @standalone.setter
+    def standalone(self, value):
+
+        self._standalone = to_bool(value)
+
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
@@ -219,6 +233,7 @@ class VsphereCluster(VsphereObject):
         res['mem_total'] = self.mem_total
         res['mem_mb_total'] = self.mem_mb_total
         res['mem_gb_total'] = self.mem_gb_total
+        res['standalone'] = self.standalone
         res['resource_pool.summary'] = None
         if self.resource_pool:
             if self.verbose > 3:
@@ -234,7 +249,7 @@ class VsphereCluster(VsphereObject):
 
         return VsphereCluster(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            initialized=self.initialized, name=self.name,
+            initialized=self.initialized, name=self.name, standalone=self.standalone,
             status=self.status, cpu_cores=self.cpu_cores, cpu_threads=self.cpu_threads,
             hosts_effective=self.hosts_effective, hosts_total=self.hosts_total,
             mem_mb_effective=self.mem_mb_effective, mem_total=self.mem_total)
@@ -257,9 +272,9 @@ class VsphereCluster(VsphereObject):
     @classmethod
     def from_summary(cls, data, appname=None, verbose=0, base_dir=None):
 
-        if not isinstance(data, vim.ClusterComputeResource):
+        if not isinstance(data, (vim.ClusterComputeResource, vim.ComputeResource)):
             msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
-                t='data', e='vim.ClusterComputeResource', v=data)
+                t='data', e='vim.[Cluster]ComputeResource', v=data)
             raise TypeError(msg)
 
         params = {
@@ -276,7 +291,10 @@ class VsphereCluster(VsphereObject):
             'hosts_total': data.summary.numHosts,
             'mem_mb_effective': data.summary.effectiveMemory,
             'mem_total': data.summary.totalMemory,
+            'standalone': False,
         }
+        if isinstance(data, vim.ComputeResource):
+            params['standalone'] = True
 
         if verbose > 2:
             LOG.debug(_("Creating {} object from:").format(cls.__name__) + '\n' + pp(params))

@@ -1,16 +1,15 @@
-# Single python3 version in Fedora, python3_pkgversion macro not available
-%{!?python3_pkgversion:%global python3_pkgversion 3}
+%{!?python3_version_nodots:%global python3_version_nodots 3}
 
 # For consistency and completeness
 %global python2_pkgversion 2
 
 %define version @@@Version@@@
 %define builddir2 python_fb_tools-%{version}
-%define builddir3 python%{python3_pkgversion}_fb_tools-%{version}
+%define builddir3 python%{python3_version_nodots}_fb_tools-%{version}
 
 Name:		python-fb-tools
 Version:	%{version}
-Release:	1%{?dist}
+Release:	@@@Release@@@%{?dist}
 Summary:	Python modules for common used objects, error classes and functions
 
 Group:		Development/Languages/Python
@@ -28,12 +27,12 @@ BuildRequires:	python-pathlib
 BuildRequires:	python-babel
 BuildRequires:	python-ipaddress
 BuildRequires:	pytz
-BuildRequires:	python%{python3_pkgversion}
-BuildRequires:	python%{python3_pkgversion}-libs
-BuildRequires:	python%{python3_pkgversion}-devel
-BuildRequires:	python%{python3_pkgversion}-pytz
-BuildRequires:	python%{python3_pkgversion}-setuptools
-BuildRequires:	python%{python3_pkgversion}-babel
+BuildRequires:	python%{python3_version_nodots}
+BuildRequires:	python%{python3_version_nodots}-libs
+BuildRequires:	python%{python3_version_nodots}-devel
+BuildRequires:	python%{python3_version_nodots}-pytz
+BuildRequires:	python%{python3_version_nodots}-setuptools
+BuildRequires:	python%{python3_version_nodots}-babel
 Requires:	python
 Requires:	python-libs
 Requires:	python-babel
@@ -46,16 +45,16 @@ Python modules for common used objects, error classes and functions.
 
 This is the Python2 version.
 
-%package -n     python%{python3_pkgversion}-fb-tools
+%package -n     python%{python3_version_nodots}-fb-tools
 Summary:	Python modules for common used objects, error classes and functions
-Requires:	python%{python3_pkgversion}
-Requires:	python%{python3_pkgversion}-libs
-Requires:	python%{python3_pkgversion}-babel
+Requires:	python%{python3_version_nodots}
+Requires:	python%{python3_version_nodots}-libs
+Requires:	python%{python3_version_nodots}-babel
 
-%description -n     python%{python3_pkgversion}-fb-tools
+%description -n     python%{python3_version_nodots}-fb-tools
 Python modules for common used objects, error classes and functions.
 
-This is the Python%{python3_pkgversion} version.
+This is the Python%{python3_version_nodots} version.
 
 In this package are contained the following scripts:
  * get-file-to-remove
@@ -94,16 +93,21 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %doc README.md requirements.txt debian/changelog
 %{python2_sitelib}/*
 
-%files -n python%{python3_pkgversion}-fb-tools
+%files -n python%{python3_version_nodots}-fb-tools
 %defattr(-,root,root,-)
 %license debian/copyright
 %doc README.md requirements.txt debian/changelog
 %{_bindir}/get-file-to-remove
 %{_bindir}/get-vmware-vm-info
+%{_bindir}/get-vmware-vm-list
 %{_bindir}/pdns-bulk-remove
 %{python3_sitelib}/*
 
 %changelog
+*   Mon Jul 25 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.5.2-2
+-   Version bump to 1.5.2
+*   Mon Jun 17 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.4.5-2
+-   Version bump to 1.4.5
 *   Thu Jan 09 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.4.1-1
 -   Version bump to 1.4.1
 *   Thu Jan 03 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.9-1
