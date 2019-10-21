@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.6.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-10-21 15:23+0200\n"
+"POT-Creation-Date: 2019-10-21 15:34+0200\n"
 "PO-Revision-Date: 2019-10-21 15:30+0200\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -223,7 +223,7 @@ msgstr ""
 
 #: lib/fb_tools/cfg_converter.py:629 lib/fb_tools/cfg_converter.py:635
 msgid "Loading module {!r} ..."
-msgstr ""
+msgstr "Loading module {!r} …"
 
 #: lib/fb_tools/cfg_converter.py:651
 msgid "File options"
@@ -323,7 +323,7 @@ msgstr ""
 #: lib/fb_tools/cfg_converter.py:857 lib/fb_tools/get_vm_app.py:256
 #: lib/fb_tools/get_vm_list_app.py:331
 msgid "Starting {a!r}, version {v!r} ..."
-msgstr ""
+msgstr "Starting {a!r}, version {v!r} …"
 
 #: lib/fb_tools/cfg_converter.py:894
 msgid "Interpreted content of {!r}:"
