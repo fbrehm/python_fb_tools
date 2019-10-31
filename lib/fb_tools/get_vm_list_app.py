@@ -38,7 +38,7 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -376,7 +376,7 @@ class GetVmListApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def print_vms_detailed(self, all_vms):
 
-        label_list = ('name', 'vsphere', 'cluster', 'path', 'type', 'onl_str', 'os')
+        label_list = ('name', 'vsphere', 'cluster', 'path', 'type', 'onl_str', 'cfg_ver', 'os')
         labels = {
             'name': 'Host',
             'vsphere': 'VSphere',
@@ -384,6 +384,7 @@ class GetVmListApplication(BaseApplication):
             'path': 'Path',
             'type': 'Type',
             'onl_str': 'Online Status',
+            'cfg_ver': 'Config Version',
             'os': 'Operating System',
         }
 
@@ -399,7 +400,7 @@ class GetVmListApplication(BaseApplication):
         max_len = 0
         count = 0
         for cdata in all_vms:
-            for field in ('cluster', 'path', 'type', 'os'):
+            for field in ('cluster', 'path', 'type', 'cfg_ver', 'os'):
                 if field in labels and cdata[field] is None:
                     cdata[field] = '-'
             for label in labels.keys():
@@ -510,6 +511,7 @@ class GetVmListApplication(BaseApplication):
                 'type': 'Virtual Machine',
                 'online': vm.online,
                 'onl_str': 'Online',
+                'cfg_ver': vm.config_version,
                 'os': vm.guest_id,
             }
             if vm.template:
