@@ -190,6 +190,9 @@ Deploy packages EL7:
     - pwd
     - ls -lA --color=always
     - if test -d rpmdir ; then ls -lA --color=always rpmdir/RPMS/*/* rpmdir/SRPMS/*; fi
+    - 'echo -e "YUM_REPO_USER: ${YUM_REPO_USER}"'
+    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    - 'echo -e "YUM_REPO_DIR: ${YUM_REPO_DIR}"'
     - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/7/'
     - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/7/ && createrepo --update . && chmod -v a+x repodata && chmod -Rv a+r repodata"'
   after_script:
