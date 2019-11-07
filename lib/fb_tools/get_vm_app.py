@@ -12,10 +12,14 @@ from __future__ import absolute_import, print_function
 import logging
 import getpass
 
+from operator import attrgetter
+
 # Third party modules
+import pytz
 
 # Own modules
 from . import __version__ as GLOBAL_VERSION
+from . import VMWARE_CFGFILE_BASENAME
 
 from .xlate import XLATOR
 
@@ -27,14 +31,20 @@ from .config import CfgFileOptionAction
 
 from .errors import FbAppError
 
-from .get_vm_cfg import GetVmConfiguration
+from .vmware_config import VmwareConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '1.2.3'
+from .vsphere.controller import VsphereDiskController
+
+from .vsphere.ether import VsphereEthernetcard
+
+__version__ = '1.4.2'
 LOG = logging.getLogger(__name__)
+TZ = pytz.timezone('Europe/Berlin')
 
 _ = XLATOR.gettext
+ngettext = XLATOR.ngettext
 
 
 # =============================================================================
@@ -60,8 +70,10 @@ class GetVmApplication(BaseApplication):
             "VMWare VSphere and print it out.")
 
         self._cfg_file = None
+        self._cfg_dir = None
         self.config = None
-        self.vsphere = None
+
+        self.vsphere = {}
 
         self.vms = []
 
@@ -71,6 +83,12 @@ class GetVmApplication(BaseApplication):
         )
 
         self.initialized = True
+
+    # -------------------------------------------------------------------------
+    @property
+    def cfg_dir(self):
+        """Directory of the configuration file."""
+        return self._cfg_dir
 
     # -------------------------------------------------------------------------
     @property
@@ -91,7 +109,15 @@ class GetVmApplication(BaseApplication):
         """
 
         res = super(GetVmApplication, self).as_dict(short=short)
+        res['cfg_dir'] = self.cfg_dir
         res['cfg_file'] = self.cfg_file
+
+        res['vsphere'] = {}
+        for vsphere_name in self.vsphere:
+            res['vsphere'][vsphere_name] = {}
+            vsphere = self.vsphere[vsphere_name]
+            if vsphere:
+                res['vsphere'][vsphere_name] = vsphere.as_dict(short=short)
 
         return res
 
@@ -112,9 +138,21 @@ class GetVmApplication(BaseApplication):
 
         self.init_logging()
 
+        self._cfg_dir = self.base_dir.joinpath('etc')
+        self._cfg_file = self.cfg_dir.joinpath(VMWARE_CFGFILE_BASENAME)
+
         self.perform_arg_parser()
 
-        self.config = GetVmConfiguration(
+        if not self.cfg_file.exists():
+            default_conf_file = self.cfg_dir.joinpath(VMWARE_CFGFILE_BASENAME + '.default')
+            msg = (_(
+                "Configuration file {f!r} does not exists. Please copy {d!r} to {f!r} and "
+                "fill out all necessary entries, e.g. the passwords.").format(
+                    f=str(self.cfg_file), d=str(default_conf_file)))
+            LOG.error(msg)
+            self.exit(1)
+
+        self.config = VmwareConfiguration(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             config_file=self.cfg_file)
 
@@ -126,21 +164,25 @@ class GetVmApplication(BaseApplication):
         if self.verbose > 3:
             LOG.debug("Read configuration:\n{}".format(pp(self.config.as_dict())))
 
-        self.perform_arg_parser_vmware()
+        if not self.config.vsphere.keys():
+            msg = (_(
+                'Did not found any valid VSphere definition in {!r}.').format(self.cfg_file))
+            LOG.error(msg)
+            self.exit(1)
 
-        if not self.config.password:
-            prompt = _('Enter password for host {h!r} and user {u!r}: ').format(
-                h=self.config.vsphere_host, u=self.config.vsphere_user)
-            self.config.password = getpass.getpass(prompt=prompt)
+        for vsphere_name in self.config.vsphere.keys():
+            vsphere_data = self.config.vsphere[vsphere_name]
+            pw = None
+            if 'password' in vsphere_data:
+                pw = vsphere_data['password']
+                if pw is None or pw == '':
+                    prompt = (
+                        _('Enter password for {n} VSPhere user {u!r} on host {h!r}:').format(
+                            n=vsphere_name, u=vsphere_data['user'], h=vsphere_data['host'])) + ' '
+                    vsphere_data['password'] = getpass.getpass(prompt=prompt)
 
-        self.vsphere = VsphereServer(
-            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            host=self.config.vsphere_host, port=self.config.vsphere_port,
-            user=self.config.vsphere_user, password=self.config.password,
-            dc=self.config.dc, auto_close=True, simulate=self.simulate, force=self.force,
-            terminal_has_colors=self.terminal_has_colors, initialized=False)
+        self.init_vsphere_handlers()
 
-        self.vsphere.initialized = True
         self.initialized = True
 
     # -------------------------------------------------------------------------
@@ -151,37 +193,14 @@ class GetVmApplication(BaseApplication):
 
         super(GetVmApplication, self).init_arg_parser()
 
-        default_cfg_file = self.base_dir.joinpath('etc').joinpath(self.appname + '.ini')
+        self._cfg_dir = self.base_dir.joinpath('etc')
+        self._cfg_file = self.cfg_dir.joinpath(VMWARE_CFGFILE_BASENAME)
+        default_cfg_file = self.cfg_file
 
         self.arg_parser.add_argument(
             '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
             action=CfgFileOptionAction,
             help=_("Configuration file (default: {!r})").format(str(default_cfg_file))
-        )
-
-        vmware_group = self.arg_parser.add_argument_group(_('VMWare options'))
-
-        vmware_group.add_argument(
-            '-H', '--host', dest='host',
-            help=_("Remote vSphere host to connect to (Default: {!r}).").format(
-                GetVmConfiguration.default_vsphere_host)
-        )
-
-        vmware_group.add_argument(
-            '-p', '--port', dest='port', type=int,
-            help=_("Port on vSphere host to connect on (Default: {}).").format(
-                GetVmConfiguration.default_vsphere_port)
-        )
-
-        vmware_group.add_argument(
-            '-U', '--user', dest='user', metavar=_('USER'),
-            help=_("User name to use when connecting to vSphere host (Default: {!r}).").format(
-                GetVmConfiguration.default_vsphere_user)
-        )
-
-        vmware_group.add_argument(
-            '-P', '--password', dest='password', metavar=_('PASSWORD'),
-            help=_("Password to use when connecting to vSphere host."),
         )
 
         self.arg_parser.add_argument(
@@ -192,6 +211,9 @@ class GetVmApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
 
+        if self.verbose > 2:
+            LOG.debug(_("Got command line arguments:") + '\n' + pp(self.args))
+
         if self.args.cfg_file:
             self._cfg_file = self.args.cfg_file
 
@@ -199,20 +221,34 @@ class GetVmApplication(BaseApplication):
             self.vms.append(vm)
 
     # -------------------------------------------------------------------------
-    def perform_arg_parser_vmware(self):
-        """
-        Public available method to execute some actions after parsing
-        the command line parameters.
-        """
+    def init_vsphere_handlers(self):
 
-        if self.args.host:
-            self.config.vsphere_host = self.args.host
-        if self.args.port:
-            self.config.vsphere_port = self.args.port
-        if self.args.user:
-            self.config.vsphere_user = self.args.user
-        if self.args.password:
-            self.config.password = self.args.password
+        for vsphere_name in self.config.vsphere.keys():
+            self.init_vsphere_handler(vsphere_name)
+
+    # -------------------------------------------------------------------------
+    def init_vsphere_handler(self, vsphere_name):
+
+        vsphere_data = self.config.vsphere[vsphere_name]
+
+        pwd = None
+        if 'password' in vsphere_data:
+            pwd = vsphere_data['password']
+
+        vsphere = VsphereServer(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            host=vsphere_data['host'], port=vsphere_data['port'], dc=vsphere_data['dc'],
+            user=vsphere_data['user'], password=pwd,
+            auto_close=True, simulate=self.simulate, force=self.force,
+            terminal_has_colors=self.terminal_has_colors, initialized=False)
+
+        if vsphere:
+            self.vsphere[vsphere_name] = vsphere
+            vsphere.initialized = True
+        else:
+            msg = _("Could not initialize {} object from:").format('VsphereServer')
+            msg += '\n' + pp(vsphere_data)
+            LOG.error(msg)
 
     # -------------------------------------------------------------------------
     def _run(self):
@@ -222,32 +258,116 @@ class GetVmApplication(BaseApplication):
 
         ret = 99
         try:
-            ret = self.get_vms()
+            ret = self.show_vms()
         finally:
             # Aufräumen ...
-            LOG.debug(_("Closing ..."))
-            self.vsphere.disconnect()
-            self.vsphere = None
+            for vsphere_name in self.config.vsphere.keys():
+                LOG.debug(_("Closing VSPhere object {!r} ...").format(vsphere_name))
+                self.vsphere[vsphere_name].disconnect()
+                del self.vsphere[vsphere_name]
 
         self.exit(ret)
 
     # -------------------------------------------------------------------------
-    def get_vms(self):
+    def show_vms(self):
 
         ret = 0
-        for vm in self.vms:
 
-            print('\n{}: '.format(vm), end='')
-            vm_info = self.vsphere.get_vm(vm, no_error=True)
+        for vsphere_name in self.vsphere:
+            vsphere = self.vsphere[vsphere_name]
+            vsphere.get_datacenter()
 
-            if not vm_info:
+        for vm_name in sorted(self.vms, key=str.lower):
+            if not self.show_vm(vm_name):
                 ret = 1
-                print(self.colored(_("NOT FOUND"), 'RED'))
-                continue
-
-            print("{ok}\n{vm}".format(ok=self.colored("OK", 'GREEN'), vm=pp(vm_info)))
 
         return ret
+
+    # -------------------------------------------------------------------------
+    def show_vm(self, vm_name):
+
+        print('\n{}: '.format(vm_name), end='')
+        if self.verbose:
+            print()
+        vm = None
+        for vsphere_name in self.vsphere:
+            vsphere = self.vsphere[vsphere_name]
+            vm = vsphere.get_vm(vm_name, vsphere_name=vsphere_name, no_error=True, as_obj=True)
+            if vm:
+                break
+
+        if not vm:
+            print(self.colored(_("NOT FOUND"), 'RED'))
+            return False
+
+        # print("{ok}\n{vm}".format(ok=self.colored("OK", 'GREEN'), vm=pp(vm.as_dict(bare=True))))
+        print("{ok}".format(ok=self.colored("OK", 'GREEN')))
+        print()
+        print("    State:    {s:<13} Config version: {v}".format(
+            s=vm.power_state, v=vm.config_version))
+        msg = "    VSPhere:  {vs:<10}    Cluster: {cl:<20}    Path: {p}".format(
+            vs=vm.vsphere, cl=vm.cluster_name, p=vm.path)
+        print(msg)
+        msg = (
+            "    No. CPUs: {cp:4d}          RAM: {m:5.1f} GiB"
+            "                   Cfg-Path: {p}").format(
+                cp=vm.num_cpu, m=vm.memory_gb, p=vm.config_path)
+        print(msg)
+        print("    OS:       {id:<43}    {os}".format(id=vm.guest_id, os=vm.guest_fullname))
+        first = True
+        for ctrlr in sorted(
+                filter(lambda x: x.scsi_ctrl_nr is not None, vm.controllers),
+                key=attrgetter('bus_nr')):
+            if ctrlr.scsi_ctrl_nr is None:
+                continue
+            label = ''
+            if first:
+                label = 'Controller:'
+            first = False
+            ctype = _('Unknown')
+            if ctrlr.ctrl_type in VsphereDiskController.type_names.keys():
+                ctype = VsphereDiskController.type_names[ctrlr.ctrl_type]
+            no_disk = ngettext(" 1 disk ", "{>2} disks", len(ctrlr.devices)).format(
+                len(ctrlr.devices))
+            msg = "    {la:<15}  {nr:>2} - {di} - {ty}".format(
+                la=label, nr=ctrlr.bus_nr, di=no_disk, ty=ctype)
+            print(msg)
+
+        if vm.disks:
+            first = True
+            for disk in vm.disks:
+                label = ' ' * 15
+                if first:
+                    label = (ngettext('Disk', 'Disks', len(vm.disks)) + ':').ljust(15)
+                first = False
+                ctrlr_nr = -1
+                for ctrlr in vm.controllers:
+                    if disk.key in ctrlr.devices:
+                        ctrlr_nr = ctrlr.bus_nr
+                        break
+                msg = "    {la}  {n:<15} - {s:5.1f} GiB - Controller {c:>2} - File {f}".format(
+                    la=label, n=disk.label, s=disk.size_gb, c=ctrlr_nr, f=disk.file_name)
+                print(msg)
+        else:
+            print("    Disks:       {}".format(_('None')))
+
+        if vm.interfaces:
+            first = True
+            for dev in vm.interfaces:
+                label = ' ' * 15
+                if first:
+                    label = 'Ethernet:'.ljust(15)
+                first = False
+                etype = _('Unknown')
+                if dev.ether_type in VsphereEthernetcard.ether_types.keys():
+                    etype = VsphereEthernetcard.ether_types[dev.ether_type]
+                msg = "    {la}  {n:<15} - Network {nw:<20} - Connection: {c:<4} - {t}".format(
+                    la=label, n=dev.label, nw=dev.backing_device, c=dev.connect_status, t=etype)
+                print(msg)
+        else:
+            print("    Ethernet:    {}".format(_('None')))
+
+        return True
 
 
 # =============================================================================

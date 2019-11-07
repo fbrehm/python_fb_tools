@@ -45,7 +45,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.5.4'
+__version__ = '1.6.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -217,6 +217,16 @@ class HandlingObject(FbBaseObject):
 
     # -----------------------------------------------------------
     @property
+    def is_venv(self):
+        """Flag showing, that the current application is running
+            inside a virtual environment."""
+
+        if hasattr(sys, 'real_prefix'):
+            return True
+        return (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+
+    # -----------------------------------------------------------
+    @property
     def interrupted(self):
         """Flag indicating, that the current process was interrupted."""
         return self._interrupted
@@ -244,12 +254,13 @@ class HandlingObject(FbBaseObject):
         """
 
         res = super(HandlingObject, self).as_dict(short=short)
+        res['fileio_timeout'] = self.fileio_timeout
         res['force'] = self.force
+        res['interrupted'] = self.interrupted
+        res['is_venv'] = self.is_venv
         res['quiet'] = self.quiet
         res['simulate'] = self.simulate
-        res['interrupted'] = self.interrupted
         res['terminal_has_colors'] = self.terminal_has_colors
-        res['fileio_timeout'] = self.fileio_timeout
 
         return res
 

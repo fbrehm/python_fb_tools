@@ -1,4 +1,13 @@
-fb-tools (1.6.2) UNRELEASED; urgency=medium
+fb-tools (1.6.3) UNRELEASED; urgency=medium
+
+  * Refactoring VSPhere classes
+  * Refactoring update-env.sh
+  * New class RegexOptionAction
+  * Adding property is_venv to class HandlingObject
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 16 Oct 2019 18:02:34 +0200
+
+fb-tools (1.6.2) all; urgency=medium
 
   * Fixing .gitlab-ci.yml
 

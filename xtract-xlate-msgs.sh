@@ -13,6 +13,7 @@ po_with="99"
 my_address="${DEBEMAIL:-frank@brehm-online.com}"
 
 pkg_version=$( head -n 1 debian/changelog | sed -e 's/^[^(]*(//' -e 's/).*//' )
+echo "Package-Version: '${pkg_version}'"
 
 pybabel extract bin/* lib \
     -o "${pot_file}" \

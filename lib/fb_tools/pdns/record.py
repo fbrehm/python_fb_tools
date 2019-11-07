@@ -34,7 +34,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.5.8'
+__version__ = '0.5.9'
 
 LOG = logging.getLogger(__name__)
 
@@ -477,6 +477,7 @@ class PowerDNSRecordList(MutableSequence):
                 j = int(args[1])
 
         index = 0
+        start = 0
         if i is not None:
             start = i
             if i < 0:
@@ -1108,6 +1109,7 @@ class PowerDNSRecordSetList(MutableSequence):
                 j = int(args[1])
 
         index = 0
+        start = 0
         if i is not None:
             start = i
             if i < 0:

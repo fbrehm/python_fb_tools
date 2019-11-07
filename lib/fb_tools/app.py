@@ -38,7 +38,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.3.3'
+__version__ = '1.4.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -53,6 +53,36 @@ SIGNAL_NAMES = {
 }
 
 _ = XLATOR.gettext
+
+
+# =============================================================================
+class RegexOptionAction(argparse.Action):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, topic, re_options=None, *args, **kwargs):
+
+        self._topic = topic
+        self._re_options = None
+        if re_options is not None:
+            self._re_options = re_options
+
+        super(RegexOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, pattern, option_string=None):
+
+        try:
+            if self._re_options is None:
+                re_test = re.compile(pattern)                               # noqa
+            else:
+                re_test = re.compile(pattern, self._re_options)             # noqa
+        except Exception as e:
+            msg = _("Got a {c} for pattern {p!r}: {e}").format(
+                c=e.__class__.__name__, p=pattern, e=e)
+            raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, pattern)
 
 
 # =============================================================================
