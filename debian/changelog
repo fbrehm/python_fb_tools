@@ -4,6 +4,7 @@ fb-tools (1.6.3) UNRELEASED; urgency=medium
   * Refactoring update-env.sh
   * New class RegexOptionAction
   * Adding property is_venv to class HandlingObject
+  * Reformatting output of get-vmware-vm-info and get-vmware-vm-list
 
  -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 16 Oct 2019 18:02:34 +0200
 
