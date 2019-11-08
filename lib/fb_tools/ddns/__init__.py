@@ -15,6 +15,7 @@ import sys
 import socket
 import errno
 import os
+import ipaddress
 
 # Third party modules
 import requests
@@ -38,7 +39,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -430,11 +431,66 @@ class BaseDdnsApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def write_ip_cache(self, address, cache_file):
 
+        LOG.debug(_(
+            "Writing IP address {a!r} into {f!r} ...").format(
+                a=str(address), f=str(cache_file)))
+        cont = str(address) + '\n'
         try:
-            self.write_file(
-                filename=str(cache_file), content=str(address), must_exists=False)
+            self.write_file(filename=str(cache_file), content=cnt, must_exists=False)
         except (IOError, IoTimeoutError) as e:
             LOG.error(str(e))
+            if self.exit_value <= 1:
+                self.exit_value = 4
+
+    # -------------------------------------------------------------------------
+    def get_ipv4_cache(self):
+        return self.get_ip_cache(self.config.ipv4_cache_file)
+
+    # -------------------------------------------------------------------------
+    def get_ipv6_cache(self):
+        return self.get_ip_cache(self.config.ipv6_cache_file)
+
+    # -------------------------------------------------------------------------
+    def get_ip_cache(self, cache_file):
+
+        re_comment = re.compile(r'^\s*[;#]')
+
+        if not cache_file.exists():
+            if self.verbose > 2:
+                LOG.debug(_("File {!r} not found.").format(cache_file))
+            return None
+
+        LOG.debug(_("Reading IP address from {!r}...").format(str(cache_file)))
+        has_errors = False
+        try:
+            cont = self.read_file(str(cache_file))
+        except (IOError, IoTimeoutError) as e:
+            LOG.error(str(e))
+            has_errors = True
+
+        if not has_errors:
+            address = None
+            lines = cont.splitlines()
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+                if re_comment.match(line):
+                    continue
+                try:
+                    addr = ipaddress.ip_address(line)
+                except ValueError as e:
+                    msg = _("Line {li!r} in {f!r} is not a valid IP address:").format(
+                        li=line, f=str(cache_file))
+                    LOG.error(msg)
+                    continue
+                address = addr
+                break
+            return address
+
+        if self.exit_value <= 1:
+            self.exit_value = 5
+        return None
 
 
 # =============================================================================
