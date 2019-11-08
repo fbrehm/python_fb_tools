@@ -16,6 +16,7 @@ import socket
 import errno
 import os
 import ipaddress
+import re
 
 # Third party modules
 import requests
