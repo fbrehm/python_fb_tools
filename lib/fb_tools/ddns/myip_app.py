@@ -18,13 +18,13 @@ from .. import __version__ as GLOBAL_VERSION
 
 from ..xlate import XLATOR, format_list
 
-from ..common import pp
+from ..common import pp, to_bool
 
-from . import DdnsAppError, DdnsRequestError, BaseDdnsApplication
+from . import DdnsAppError, DdnsRequestError, BaseDdnsApplication, WorkDirError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.1.0'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -40,6 +40,8 @@ class MyIpApplication(BaseDdnsApplication):
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
+
+        self._write_ips = False
 
         if description is None:
             description = _(
@@ -59,6 +61,76 @@ class MyIpApplication(BaseDdnsApplication):
         )
 
         self.initialized = True
+
+    # -------------------------------------------------------------------------
+    @property
+    def write_ips(self):
+        """Flag to write retreived IPs into the working directory."""
+        return self._write_ips
+
+    @write_ips.setter
+    def write_ips(self, value):
+        self._write_ips = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True):
+        """
+        Transforms the elements of the object into a dict
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+
+        @return: structure as dict
+        @rtype:  dict
+        """
+
+        res = super(MyIpApplication, self).as_dict(short=short)
+        res['write_ips'] = self.write_ips
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def init_arg_parser(self):
+        """
+        Public available method to initiate the argument parser.
+        """
+
+        super(MyIpApplication, self).init_arg_parser()
+
+        myip_group = self.arg_parser.add_argument_group(_('myip options'))
+
+        myip_group.add_argument(
+            '-W', "--write", "--write-ips", action="store_true", dest="write_ips",
+            help=_("Write found public IPs into a cache file in working directory.")
+        )
+
+    # -------------------------------------------------------------------------
+    def post_init(self):
+        """
+        Method to execute before calling run(). Here could be done some
+        finishing actions after reading in commandline parameters,
+        configuration a.s.o.
+        """
+
+        super(MyIpApplication, self).post_init()
+        self.initialized = False
+
+        if self.write_ips:
+            try:
+                self.verify_working_dir()
+            except WorkDirError as e:
+                LOG.error(str(e))
+                self.exit(3)
+
+    # -------------------------------------------------------------------------
+    def perform_arg_parser(self):
+        """
+        Public available method to execute some actions after parsing
+        the command line parameters.
+        """
+
+        if self.args.write_ips:
+            self.write_ips = True
 
     # -------------------------------------------------------------------------
     def _run(self):
