@@ -22,7 +22,7 @@ from ..config import ConfigError, BaseConfiguration
 
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -157,7 +157,7 @@ class DdnsConfiguration(BaseConfiguration):
         if self.verbose > 1:
             LOG.debug("Checking config section {!r} ...".format(section_name))
 
-        re_domains = re.compile(r'(\s+)|\s*([,;]\s*)+')
+        re_domains = re.compile(r'[,;\s]+')
         re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
         re_with_mx = re.compile(r'^\s*with[_-]?mx\s*$', re.IGNORECASE)
         re_get_url = re.compile(r'^\s*get[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
