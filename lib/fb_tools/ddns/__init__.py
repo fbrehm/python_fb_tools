@@ -83,7 +83,7 @@ class WorkDirNotExistsError(WorkDirError, FileNotFoundError):
     def __init__(self, workdir):
 
         super(WorkDirNotExistsError, self).__init__(
-            errno.ENOENT, _("Directory does not exists."), str(workdir))
+            errno.ENOENT, _("Directory does not exists"), str(workdir))
 
 
 # =============================================================================
@@ -94,7 +94,7 @@ class WorkDirNotDirError(WorkDirError, NotADirectoryError):
     def __init__(self, workdir):
 
         super(WorkDirNotDirError, self).__init__(
-            errno.ENOTDIR, _("Path is not a directory."), str(workdir))
+            errno.ENOTDIR, _("Path is not a directory"), str(workdir))
 
 
 # =============================================================================
@@ -105,7 +105,7 @@ class WorkDirAccessError(WorkDirError, PermissionError):
     def __init__(self, workdir, msg=None):
 
         if not msg:
-            msg = _("Invalid permissions.")
+            msg = _("Invalid permissions")
 
         super(WorkDirAccessError, self).__init__(errno.EACCES, msg, str(workdir))
 
@@ -414,11 +414,11 @@ class BaseDdnsApplication(BaseApplication):
 
         if not os.access(str(self.config.working_dir), os.R_OK):
             raise WorkDirAccessError(
-                self.config.working_dir, _("No read access."))
+                self.config.working_dir, _("No read access"))
 
         if not os.access(str(self.config.working_dir), os.W_OK):
             raise WorkDirAccessError(
-                self.config.working_dir, _("No write access."))
+                self.config.working_dir, _("No write access"))
 
     # -------------------------------------------------------------------------
     def write_ipv4_cache(self, address):
@@ -436,7 +436,7 @@ class BaseDdnsApplication(BaseApplication):
                 a=str(address), f=str(cache_file)))
         cont = str(address) + '\n'
         try:
-            self.write_file(filename=str(cache_file), content=cnt, must_exists=False)
+            self.write_file(filename=str(cache_file), content=cont, must_exists=False, quiet=True)
         except (IOError, IoTimeoutError) as e:
             LOG.error(str(e))
             if self.exit_value <= 1:
@@ -463,7 +463,7 @@ class BaseDdnsApplication(BaseApplication):
         LOG.debug(_("Reading IP address from {!r}...").format(str(cache_file)))
         has_errors = False
         try:
-            cont = self.read_file(str(cache_file))
+            cont = self.read_file(str(cache_file), quiet=True)
         except (IOError, IoTimeoutError) as e:
             LOG.error(str(e))
             has_errors = True

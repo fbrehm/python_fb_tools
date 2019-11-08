@@ -24,7 +24,7 @@ from . import DdnsAppError, DdnsRequestError, BaseDdnsApplication, WorkDirError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -46,7 +46,7 @@ class MyIpApplication(BaseDdnsApplication):
         if description is None:
             description = _(
                 "Tries to detect the public NAT IPv4 address and/or the automatic assigned "
-                "IPv6 addess in a local network and print it out.")
+                "IPv6 address in a local network and print it out.")
         valid_proto_list = copy.copy(DdnsConfiguration.valid_protocols)
 
         self._ipv4_help = _("Use only {} to retreive the public IP address.").format('IPv4')
@@ -122,6 +122,8 @@ class MyIpApplication(BaseDdnsApplication):
                 LOG.error(str(e))
                 self.exit(3)
 
+        self.initialized = True
+
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
         """
@@ -143,14 +145,17 @@ class MyIpApplication(BaseDdnsApplication):
         if self.config.protocol in ('any', 'both', 'ipv6'):
             self.print_my_ipv(6)
 
-        self.exit(0)
-
     # -------------------------------------------------------------------------
     def print_my_ipv(self, protocol):
 
         my_ip = self.get_my_ipv(protocol)
         if my_ip:
             print('IPv{p}: {i}'.format(p=protocol, i=my_ip))
+            if self.write_ips:
+                if protocol == 4:
+                    self.write_ipv4_cache(my_ip)
+                else:
+                    self.write_ipv6_cache(my_ip)
 
 
 # =============================================================================
