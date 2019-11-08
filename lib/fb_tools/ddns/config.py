@@ -22,7 +22,7 @@ from ..config import ConfigError, BaseConfiguration
 
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 
 LOG = logging.getLogger(__name__)
 
@@ -47,10 +47,10 @@ class DdnsConfiguration(BaseConfiguration):
     default_working_dir = Path('/var/lib/ddns')
     default_logfile = Path('/var/log/ddnss/ddnss-update.log')
 
-    default_get_ipv4_url = 'http://ip4.ddnss.de/jsonip.php'
-    default_get_ipv6_url = 'http://ip6.ddnss.de/jsonip.php'
-    default_upd_ipv4_url = 'http://ip4.ddnss.de/upd.php'
-    default_upd_ipv6_url = 'http://ip6.ddnss.de/upd.php'
+    default_get_ipv4_url = 'https://ip4.ddnss.de/jsonip.php'
+    default_get_ipv6_url = 'https://ip6.ddnss.de/jsonip.php'
+    default_upd_ipv4_url = 'https://ip4.ddnss.de/upd.php'
+    default_upd_ipv6_url = 'https://ip6.ddnss.de/upd.php'
 
     default_ipv4_cache_basename = 'my-ipv4-address'
     default_ipv6_cache_basename = 'my-ipv6-address'
