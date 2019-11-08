@@ -13,6 +13,8 @@ import logging
 import copy
 import sys
 import socket
+import errno
+import os
 
 # Third party modules
 import requests
@@ -36,7 +38,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -64,6 +66,48 @@ class DdnsRequestError(DdnsAppError):
         msg = _("Got an error {c} on requesting {u!r}: {m}").format(
             c=self.code, u=self.url, m=self.content)
         return msg
+
+# =============================================================================
+class WorkDirError(DdnsAppError):
+    """Special exception class with problems with the working directory."""
+
+    pass
+
+
+# =============================================================================
+class WorkDirNotExistsError(WorkDirError, FileNotFoundError):
+    """Special exception class, if working diretory does not exists."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, workdir):
+
+        super(WorkDirNotExistsError, self).__init__(
+            errno.ENOENT, str(workdir), _("Directory does not exists."))
+
+
+# =============================================================================
+class WorkDirNotDirError(WorkDirError, NotADirectoryError):
+    """Special exception class, if path to working diretory is not a directory."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, workdir):
+
+        super(WorkDirNotDirError, self).__init__(
+            errno.ENOTDIR, str(workdir), _("Path is not a directory."))
+
+
+# =============================================================================
+class WorkDirAccessError(WorkDirError, PermissionError):
+    """Special exception class, if working diretory is not accessible."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, workdir, msg=None):
+
+        if not msg:
+            msg = _("Invalid permissions.")
+
+        super(WorkDirAccessError, self).__init__(errno.EACCES, str(workdir), msg)
+
 
 # =============================================================================
 class BaseDdnsApplication(BaseApplication):
@@ -147,12 +191,14 @@ class BaseDdnsApplication(BaseApplication):
 
         super(BaseDdnsApplication, self).init_arg_parser()
 
+        ddns_group = self.arg_parser.add_argument_group(_('DDNS options'))
+
         self._cfg_dir = self.base_dir.joinpath('etc')
         self._cfg_file = self.cfg_dir.joinpath(DDNS_CFG_BASENAME)
         default_cfg_file = copy.copy(self.cfg_file)
         valid_list = copy.copy(DdnsConfiguration.valid_protocols)
 
-        protocol_group = self.arg_parser.add_mutually_exclusive_group()
+        protocol_group = ddns_group.add_mutually_exclusive_group()
 
         ipv4_help = getattr(self, '_ipv4_help', None)
         ipv6_help = getattr(self, '_ipv6_help', None)
@@ -183,13 +229,13 @@ class BaseDdnsApplication(BaseApplication):
             choices=valid_list, help=proto_help,
         )
 
-        self.arg_parser.add_argument(
+        ddns_group.add_argument(
             '-T', '--timeout', dest='timeout', type=int, metavar=_('SECONDS'),
             help=_("The timeout in seconds for Web requests (default: {}).").format(
                 DdnsConfiguration.default_timeout),
         )
 
-        self.arg_parser.add_argument(
+        ddns_group.add_argument(
             '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
             action=CfgFileOptionAction,
             help=_("Configuration file (default: {!r})").format(str(default_cfg_file))
@@ -349,6 +395,29 @@ class BaseDdnsApplication(BaseApplication):
         code = response.status_code
         msg = err['error']
         raise DdnsRequestError(code, msg, url)
+
+    # -------------------------------------------------------------------------
+    def verify_working_dir(self):
+        """Verifying existence and accessibility of working directory."""
+
+        if self.verbose > 1:
+            LOG.debug(_(
+                "Checking existence and accessibility of working directory {!r} ...").format(
+                str(self.config.working_dir)))
+
+        if not self.config.working_dir.exists():
+            raise WorkDirNotExistsError(self.config.working_dir)
+
+        if not self.config.working_dir.is_dir():
+            raise WorkDirNotDirError(self.config.working_dir)
+
+        if not os.access(str(self.config.working_dir), os.R_OK):
+            raise WorkDirAccessError(
+                self.config.working_dir, _("No read access."))
+
+        if not os.access(str(self.config.working_dir), os.W_OK):
+            raise WorkDirAccessError(
+                self.config.working_dir, _("No write access."))
 
 
 # =============================================================================
