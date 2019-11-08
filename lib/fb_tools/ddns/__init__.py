@@ -24,7 +24,7 @@ import urllib3
 from .. import __version__ as GLOBAL_VERSION
 from .. import DDNS_CFG_BASENAME
 
-from ..errors import FunctionNotImplementedError
+from ..errors import FunctionNotImplementedError, IoTimeoutError
 
 from ..xlate import XLATOR, format_list
 
@@ -38,7 +38,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -82,7 +82,7 @@ class WorkDirNotExistsError(WorkDirError, FileNotFoundError):
     def __init__(self, workdir):
 
         super(WorkDirNotExistsError, self).__init__(
-            errno.ENOENT, str(workdir), _("Directory does not exists."))
+            errno.ENOENT, _("Directory does not exists."), str(workdir))
 
 
 # =============================================================================
@@ -93,7 +93,7 @@ class WorkDirNotDirError(WorkDirError, NotADirectoryError):
     def __init__(self, workdir):
 
         super(WorkDirNotDirError, self).__init__(
-            errno.ENOTDIR, str(workdir), _("Path is not a directory."))
+            errno.ENOTDIR, _("Path is not a directory."), str(workdir))
 
 
 # =============================================================================
@@ -106,7 +106,7 @@ class WorkDirAccessError(WorkDirError, PermissionError):
         if not msg:
             msg = _("Invalid permissions.")
 
-        super(WorkDirAccessError, self).__init__(errno.EACCES, str(workdir), msg)
+        super(WorkDirAccessError, self).__init__(errno.EACCES, msg, str(workdir))
 
 
 # =============================================================================
@@ -418,6 +418,23 @@ class BaseDdnsApplication(BaseApplication):
         if not os.access(str(self.config.working_dir), os.W_OK):
             raise WorkDirAccessError(
                 self.config.working_dir, _("No write access."))
+
+    # -------------------------------------------------------------------------
+    def write_ipv4_cache(self, address):
+        self.write_ip_cache(address, self.config.ipv4_cache_file)
+
+    # -------------------------------------------------------------------------
+    def write_ipv6_cache(self, address):
+        self.write_ip_cache(address, self.config.ipv6_cache_file)
+
+    # -------------------------------------------------------------------------
+    def write_ip_cache(self, address, cache_file):
+
+        try:
+            self.write_file(
+                filename=str(cache_file), content=str(address), must_exists=False)
+        except (IOError, IoTimeoutError) as e:
+            LOG.error(str(e))
 
 
 # =============================================================================
