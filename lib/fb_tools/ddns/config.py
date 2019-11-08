@@ -22,7 +22,7 @@ from ..config import ConfigError, BaseConfiguration
 
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -52,6 +52,9 @@ class DdnsConfiguration(BaseConfiguration):
     default_upd_ipv4_url = 'http://ip4.ddnss.de/upd.php'
     default_upd_ipv6_url = 'http://ip6.ddnss.de/upd.php'
 
+    default_ipv4_cache_basename = 'my-ipv4-address'
+    default_ipv6_cache_basename = 'my-ipv6-address'
+
     default_timeout = 20
 
     valid_protocols = ('any', 'both', 'ipv4', 'ipv6')
@@ -74,6 +77,8 @@ class DdnsConfiguration(BaseConfiguration):
         self.upd_ipv6_url = self.default_upd_ipv6_url
         self._timeout = self.default_timeout
         self.protocol = 'any'
+        self.ipv4_cache_basename = self.default_ipv4_cache_basename
+        self.ipv6_cache_basename = self.default_ipv6_cache_basename
 
         super(DdnsConfiguration, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -103,6 +108,18 @@ class DdnsConfiguration(BaseConfiguration):
         self._timeout = val
 
     # -------------------------------------------------------------------------
+    @property
+    def ipv4_cache_file(self):
+        """Filename (as Path-object) for storing the current public IPv4 address."""
+        return self.working_dir / self.ipv4_cache_basename
+
+    # -------------------------------------------------------------------------
+    @property
+    def ipv6_cache_file(self):
+        """Filename (as Path-object) for storing the current public IPv6 address."""
+        return self.working_dir / self.ipv6_cache_basename
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -130,6 +147,10 @@ class DdnsConfiguration(BaseConfiguration):
         res['default_upd_ipv4_url'] = self.default_upd_ipv4_url
         res['default_upd_ipv6_url'] = self.default_upd_ipv6_url
         res['default_timeout'] = self.default_timeout
+        res['default_ipv4_cache_basename'] = self.default_ipv4_cache_basename
+        res['default_ipv6_cache_basename'] = self.default_ipv6_cache_basename
+        res['ipv4_cache_file'] = self.ipv4_cache_file
+        res['ipv6_cache_file'] = self.ipv6_cache_file
         res['timeout'] = self.timeout
         res['valid_protocols'] = self.valid_protocols
 
