@@ -14,6 +14,12 @@ import copy
 import sys
 import time
 import os
+import ipaddress
+
+from pathlib import Path
+
+# Third party module
+from six.moves.urllib.parse import quote
 
 # Own modules
 from .. import __version__ as GLOBAL_VERSION
@@ -29,7 +35,7 @@ from . import WorkDirError, WorkDirNotExistsError, WorkDirNotDirError, WorkDirAc
 
 from .config import DdnsConfiguration
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -49,6 +55,11 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         self.last_ipv4_address = None
         self.last_ipv6_address = None
+        self.current_ipv4_address = None
+        self.current_ipv6_address = None
+        self.txt_records = []
+
+        self._force_desc_msg = _("Updating the DDNS records, even if seems not to be changed.")
 
         if description is None:
             description = _(
@@ -135,6 +146,9 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     def init_file_logging(self):
 
         logfile = self.config.logfile
+        if not logfile:
+            return
+
         logdir = logfile.parent
 
         if self.verbose > 1:
@@ -166,6 +180,43 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         root_log.addHandler(lh_file)
 
     # -------------------------------------------------------------------------
+    def init_arg_parser(self):
+        """
+        Public available method to initiate the argument parser.
+        """
+
+        super(UpdateDdnsApplication, self).init_arg_parser()
+
+        update_group = self.arg_parser.add_argument_group(_('Update DDNS options'))
+
+        update_group.add_argument(
+            '-U', "--user", metavar=_('USER'), dest="user",
+            help=_("The username to login at ddns.de.")
+        )
+
+        update_group.add_argument(
+            '-P', "--password", metavar=_('PASSWORD'), dest="password",
+            help=_("The password of the user to login at ddns.de.")
+        )
+
+        update_group.add_argument(
+            '--logfile', nargs='?', metavar=_('FILENAME'), dest="logfile", const='',
+            help=_("The filename to use as a logfile. Leave it empty to disable file logging."),
+        )
+
+        domain_group = update_group.add_mutually_exclusive_group()
+
+        domain_group.add_argument(
+            '-A', '--all', '--all-domains', action="store_true", dest="all_domains",
+            help=_("Update all domains, which are connected whith the given ddns account."),
+        )
+
+        domain_group.add_argument(
+            '-D', '--domain', nargs="+", metavar=_("DOMAIN"), dest="domains",
+            help=_("The particular domain(s), which should be updated (if not all).")
+        )
+
+    # -------------------------------------------------------------------------
     def post_init(self):
         """
         Method to execute before calling run(). Here could be done some
@@ -175,6 +226,13 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         super(UpdateDdnsApplication, self).post_init()
         self.initialized = False
+
+        self.perform_arg_parser_late()
+
+        if not self.config.all_domains and not self.config.domains:
+            msg = _("No domains to update given, but the option all domains is deactivated.")
+            LOG.error(msg)
+            self.exit(6)
 
         try:
             self.init_file_logging()
@@ -186,16 +244,121 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         self.initialized = True
 
     # -------------------------------------------------------------------------
+    def perform_arg_parser_late(self):
+        """
+        Public available method to execute some actions after parsing
+        the command line parameters.
+        """
+
+        if self.args.user:
+            user = self.args.user.strip()
+            if user:
+                self.config.ddns_user = user
+
+        if self.args.password:
+            self.config.ddns_pwd = self.args.password
+
+        if self.args.logfile is not None:
+            logfile = self.args.logfile.strip()
+            if logfile == '':
+                self.config.logfile = None
+            else:
+                self.config.logfile = Path(logfile).resolve()
+
+        if self.args.all_domains:
+            self.config.all_domains = True
+        elif self.args.domains:
+            self.config.domains = []
+            for domain in self.args.domains:
+                self.config.domains.append(domain)
+
+    # -------------------------------------------------------------------------
     def _run(self):
 
         LOG.info(_("Starting {a!r}, version {v!r} ...").format(
             a=self.appname, v=self.version))
 
-        time.sleep(2)
+        if self.config.protocol in ('any', 'both', 'ipv4'):
+            self.do_update_ipv4()
 
         LOG.info(_("Ending {a!r}.").format(
             a=self.appname, v=self.version))
 
+
+    # -------------------------------------------------------------------------
+    def do_update_ipv4(self):
+
+        last_address = self.get_ipv4_cache()
+        if last_address:
+            LOG.debug(_("Last {w} address: {a!r}.").format(w='IPv4', a=str(last_address)))
+        else:
+            LOG.debug(_("Did not found a last {} address.").format('IPv4'))
+        current_address = self.get_my_ipv(4)
+        if not current_address:
+            LOG.error(_("Got no public IPv4 address."))
+            return
+        try:
+            my_ip = ipaddress.ip_address(current_address)
+        except ValueError as e:
+            msg = _("Address {a!r} seems not to be a valid {w} address.").format(
+                a=current_address, w='IP')
+            LOG.error(msg)
+            return
+        if my_ip.version != 4:
+            msg = _("Address {a!r} seems not to be a valid {w} address.").format(
+                a=current_address, w='IPv4')
+            LOG.error(msg)
+            return
+
+        LOG.debug(_("Current {w} address is {a!r}.").format(w='IPv4', a=str(my_ip)))
+
+        if last_address == my_ip:
+            msg = _(
+                "The public {w} address {a!r} seems not to be changed since "
+                "the last update.").format(w='IPv4', a=str(last_address))
+            LOG.info(msg)
+            if not self.force:
+                return
+
+        self.do_update(my_ip, 4)
+        self.write_ipv4_cache(my_ip)
+
+    # -------------------------------------------------------------------------
+    def do_update(self, my_ip, protocol):
+
+        msg = _("Updating DNS records to IPv{p} address {a!r} ...").format(
+            p=protocol, a=str(my_ip))
+        LOG.info(msg)
+
+        url = self.config.upd_ipv4_url
+        if protocol == 6:
+            url = self.config.upd_ipv6_url
+
+        args = []
+
+        arg = 'user=' + quote(self.config.ddns_user)
+        args.append(arg)
+
+        arg = 'pwd=' + quote(self.config.ddns_pwd)
+        args.append(arg)
+
+        if self.config.all_domains:
+            arg = 'host=all'
+            args.append(arg)
+        else:
+            domains = ','.join(map(quote, self.config.domains))
+            arg = 'host=' + domains
+            args.append(arg)
+
+        if self.config.with_mx:
+            args.append('mx=1')
+
+        url += '?' + '&'.join(args)
+        LOG.debug("Update-URL: {}".format(url))
+
+        if self.simulate:
+            LOG.debug("Simulation mode, update will not be sended.")
+            return True
 
 
 # =============================================================================
