@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.6.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-10-17 16:43+0200\n"
-"PO-Revision-Date: 2019-10-11 13:45+0100\n"
+"POT-Creation-Date: 2019-11-28 18:37+0100\n"
+"PO-Revision-Date: 2019-11-28 18:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <frank@brehm-online.com>\n"
@@ -26,7 +26,7 @@ msgstr ""
 "{c}-Objekt:\n"
 "{a}"
 
-#: lib/fb_tools/app.py:81 lib/fb_tools/get_vm_list_app.py:294
+#: lib/fb_tools/app.py:81 lib/fb_tools/get_vm_list_app.py:335
 msgid "Got a {c} for pattern {p!r}: {e}"
 msgstr "Habe ein(e) {c} zum Suchmuster {p!r} erhalten: {e}"
 
@@ -377,7 +377,7 @@ msgstr ""
 "{default}, Minimum {min})?"
 
 #: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:201
-#: lib/fb_tools/get_vm_list_app.py:271 lib/fb_tools/pdns_bulk_rm_app.py:189
+#: lib/fb_tools/get_vm_list_app.py:312 lib/fb_tools/pdns_bulk_rm_app.py:189
 #: lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
 msgstr "DATEI"
@@ -498,7 +498,7 @@ msgstr "Keine gültige VSPhere Definition in {!r} gefunden."
 msgid "Enter password for {n} VSPhere user {u!r} on host {h!r}:"
 msgstr "Geben Sie das Passwort für den {n}-VSPhere-Nutzer {u!r} auf Host {h!r} ein:"
 
-#: lib/fb_tools/get_vm_app.py:203 lib/fb_tools/get_vm_list_app.py:273
+#: lib/fb_tools/get_vm_app.py:203 lib/fb_tools/get_vm_list_app.py:314
 #: lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr "Konfigurationsdatei (Vorgabe: {!r})"
@@ -507,19 +507,19 @@ msgstr "Konfigurationsdatei (Vorgabe: {!r})"
 msgid "Names of the VM to get information."
 msgstr "Die Namen der VMs, über die Informationen ermittelt werden sollen."
 
-#: lib/fb_tools/get_vm_app.py:215 lib/fb_tools/get_vm_list_app.py:280
+#: lib/fb_tools/get_vm_app.py:215 lib/fb_tools/get_vm_list_app.py:321
 msgid "Got command line arguments:"
 msgstr "Erhaltene Kommandozeilen-Argumente:"
 
-#: lib/fb_tools/get_vm_app.py:249 lib/fb_tools/get_vm_list_app.py:324
+#: lib/fb_tools/get_vm_app.py:249 lib/fb_tools/get_vm_list_app.py:371
 msgid "Could not initialize {} object from:"
 msgstr "Konnte kein {}-Objekt initialisieren aus:"
 
-#: lib/fb_tools/get_vm_app.py:256 lib/fb_tools/get_vm_list_app.py:331
+#: lib/fb_tools/get_vm_app.py:256 lib/fb_tools/get_vm_list_app.py:378
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr "Starte {a!r}, Version {v!r} …"
 
-#: lib/fb_tools/get_vm_app.py:265 lib/fb_tools/get_vm_list_app.py:340
+#: lib/fb_tools/get_vm_app.py:265 lib/fb_tools/get_vm_list_app.py:387
 msgid "Closing VSPhere object {!r} ..."
 msgstr "Schließe VSPhere-Objekt {!r} …"
 
@@ -559,37 +559,93 @@ msgstr "Überprüfe die konfigurierte VSPhere-Instanz {!r} …"
 msgid "VSPhere {!r} not found in list of configured VSPhere instances."
 msgstr "VSPhere {!r} wurde nicht in der Liste der konfigurierten VSPhere-Instanzen gefunden."
 
-#: lib/fb_tools/get_vm_list_app.py:253
+#: lib/fb_tools/get_vm_list_app.py:250
+msgid "Filter options"
+msgstr "Filteroptionen"
+
+#: lib/fb_tools/get_vm_list_app.py:255
 msgid "for names of VMs"
 msgstr "für Name von VMs"
 
-#: lib/fb_tools/get_vm_list_app.py:254
+#: lib/fb_tools/get_vm_list_app.py:256
 msgid "A regular expression to filter the output list of VMs by their name (Default: {!r})."
 msgstr "Ein regulärer Ausdruck, um die Ausgabeliste der VMs nach ihrem Namen zu filtern(Vorgabe: {!r})."
 
-#: lib/fb_tools/get_vm_list_app.py:261
-msgid "Detailed output list (quering data needs some time longer)."
-msgstr "Detaillierte Ausgabeliste (die Abfrage der Daten benötigt signifikant mehr Zeit)."
+#: lib/fb_tools/get_vm_list_app.py:263
+msgid "TYPE"
+msgstr "TYP"
 
-#: lib/fb_tools/get_vm_list_app.py:266
+#: lib/fb_tools/get_vm_list_app.py:264
+msgid "Filter output for the type of the VM. Valid values are {li} (Default: {dflt!r})."
+msgstr "Filtern der Ausgabeliste nach dem Typ. Gültige Werte sind {li} (Vorgabe: {dflt!r})."
+
+#: lib/fb_tools/get_vm_list_app.py:273
+msgid "Filter output for online VMs."
+msgstr "Filtern der Ausgabeliste nach eingeschalteten VMs."
+
+#: lib/fb_tools/get_vm_list_app.py:277
+msgid "Filter output for offline VMs and templates."
+msgstr "Filtern der Ausgabeliste nach ausgeschalteten VMs und Vorlagen."
+
+#: lib/fb_tools/get_vm_list_app.py:282
+msgid "for VMWare hardware config version"
+msgstr "für die VMWare-Hardwarekonfigurationsversion"
+
+#: lib/fb_tools/get_vm_list_app.py:283
+msgid ""
+"A regular expression to filter the output list of VMs by the VMWare hardware configuration "
+"version (e.g. '{}')."
+msgstr ""
+"Ein regulärer Ausdruck, um die Ausgabeliste der VMs nach ihrer VMWare-"
+"Hardwarekonfigurationsversion zu filtern (z.Bsp. '{}')."
+
+#: lib/fb_tools/get_vm_list_app.py:290
+msgid "for the Operating System version"
+msgstr "für die Betriebssystemversion"
+
+#: lib/fb_tools/get_vm_list_app.py:291
+msgid ""
+"A regular expression to filter the output list of VMs by their Operating System version, e.g. "
+"'{}'."
+msgstr ""
+"Ein regulärer Ausdruck, um die Ausgabeliste der VMs nach ihrem Betriebssystem zu filtern, z.Bsp."
+" '{}'."
+
+#: lib/fb_tools/get_vm_list_app.py:298
 msgid "The VSPhere names from configuration, in which the VMs should be searched."
 msgstr "Die Namen der VSPheres aus der Konfiguration, in denen die VMs gesucht werden sollen."
 
-#: lib/fb_tools/get_vm_list_app.py:291
+#: lib/fb_tools/get_vm_list_app.py:302
+msgid "Output options"
+msgstr "Ausgabeoptionen"
+
+#: lib/fb_tools/get_vm_list_app.py:306
+msgid "Detailed output list (quering data needs some time longer)."
+msgstr "Detaillierte Ausgabeliste (die Abfrage der Daten benötigt signifikant mehr Zeit)."
+
+#: lib/fb_tools/get_vm_list_app.py:309
+msgid "Additional options"
+msgstr "ZUsätzliche Optionen"
+
+#: lib/fb_tools/get_vm_list_app.py:332
 msgid "Regular expression for filtering: {!r}"
 msgstr "Regulärer Ausdruck als Filter: {!r}"
 
-#: lib/fb_tools/get_vm_list_app.py:440
+#: lib/fb_tools/get_vm_list_app.py:342
+msgid "Detailed output is required because of your given options."
+msgstr "Eine detaillierte Ausgabe is wegen der von Ihnen gewählten Optionen notwendig."
+
+#: lib/fb_tools/get_vm_list_app.py:488
 msgid "Found no VMWare VMs."
 msgstr "Fand keine VMWare VMs."
 
-#: lib/fb_tools/get_vm_list_app.py:442
+#: lib/fb_tools/get_vm_list_app.py:490
 msgid "Found one VMWare VM."
 msgid_plural "Found {} VMWare VMs."
 msgstr[0] "Fand eine VMWare VM."
 msgstr[1] "Fand {} VMWare VMs."
 
-#: lib/fb_tools/get_vm_list_app.py:498
+#: lib/fb_tools/get_vm_list_app.py:554
 msgid "Found a {} object:"
 msgstr "Fand ein {}-Objekt:"
 
@@ -1696,7 +1752,7 @@ msgstr "Habe Netzwerk {n!r} für die IP {i} gefunden."
 
 #: lib/fb_tools/vsphere/network.py:465
 msgid "Could not find VSphere network for IP {}."
-msgstr "Konnte kein VSphere-Netzwerk für die IP {i} finden."
+msgstr "Konnte kein VSphere-Netzwerk für die IP {} finden."
 
 #: lib/fb_tools/vsphere/network.py:468
 msgid "Could not find VSphere network for IP addresses {}."
