@@ -22,7 +22,7 @@ import pytz
 from . import __version__ as GLOBAL_VERSION
 from . import VMWARE_CFGFILE_BASENAME
 
-from .xlate import XLATOR
+from .xlate import XLATOR, format_list
 
 from .common import pp, to_bool
 
@@ -38,7 +38,7 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.2.4'
+__version__ = '1.3.1'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -247,7 +247,9 @@ class GetVmListApplication(BaseApplication):
         self._cfg_file = self.cfg_dir.joinpath(VMWARE_CFGFILE_BASENAME)
         default_cfg_file = self.cfg_file
 
-        self.arg_parser.add_argument(
+        filter_group = self.arg_parser.add_argument_group(_('Filter options'))
+
+        filter_group.add_argument(
             '-p', '--pattern', '--search-pattern',
             dest='vm_pattern', metavar='REGEX', action=RegexOptionAction,
             topic=_('for names of VMs'), re_options=re.IGNORECASE,
@@ -256,18 +258,57 @@ class GetVmListApplication(BaseApplication):
                 "(Default: {!r}).").format(self.default_vm_pattern)
         )
 
-        self.arg_parser.add_argument(
-            '-D', '--details', dest='details', action="store_true",
-            help=_("Detailed output list (quering data needs some time longer).")
+        valid_vm_types = ('all', 'vm', 'template')
+        filter_group.add_argument(
+            '-T', '--type', metavar=_('TYPE'), dest='vm_type', choices=valid_vm_types,
+            default='all', help=_(
+                "Filter output for the type of the VM. Valid values are {li} "
+                "(Default: {dflt!r}).").format(
+                dflt='all', li=format_list(valid_vm_types, do_repr=True))
         )
 
-        self.arg_parser.add_argument(
+        online_filter = filter_group.add_mutually_exclusive_group()
+        online_filter.add_argument(
+            '--on', '--online', action="store_true", dest="online",
+            help=_("Filter output for online VMs.")
+        )
+        online_filter.add_argument(
+            '--off', '--offline', action="store_true", dest="offline",
+            help=_("Filter output for offline VMs and templates.")
+        )
+
+        filter_group.add_argument(
+            '-H', '--hw', '--hardware-config', metavar='REGEX', action=RegexOptionAction,
+            dest='hw', topic=_('for VMWare hardware config version'), re_options=re.IGNORECASE,
+            help=_(
+                "A regular expression to filter the output list of VMs by the VMWare hardware "
+                "configuration version (e.g. '{}').").format('vmx-0\d$'),
+        )
+
+        filter_group.add_argument(
+            '--os', metavar='REGEX', action=RegexOptionAction, dest='os',
+            topic=_('for the Operating System version'), re_options=re.IGNORECASE,
+            help=_(
+                "A regular expression to filter the output list of VMs by their Operating "
+                "System version, e.g. '{}'.").format('oracleLinux.*(_64)?Guest')
+        )
+
+        filter_group.add_argument(
             '--vs', '--vsphere', dest='req_vsphere', nargs='*',
             help=_(
                 "The VSPhere names from configuration, in which the VMs should be searched.")
         )
 
-        self.arg_parser.add_argument(
+        output_options = self.arg_parser.add_argument_group(_('Output options'))
+
+        output_options.add_argument(
+            '-D', '--details', dest='details', action="store_true",
+            help=_("Detailed output list (quering data needs some time longer).")
+        )
+
+        other_options = self.arg_parser.add_argument_group(_('Additional options'))
+
+        other_options.add_argument(
             '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
             action=CfgFileOptionAction,
             help=_("Configuration file (default: {!r})").format(str(default_cfg_file))
@@ -294,6 +335,12 @@ class GetVmListApplication(BaseApplication):
                 msg = _("Got a {c} for pattern {p!r}: {e}").format(
                     c=e.__class__.__name__, p=self.args.vm_pattern, e=e)
                 LOG.error(msg)
+
+        if not self.details:
+            if self.args.online or self.args.offline or self.args.hw or self.args.os or \
+                    self.args.vm_type != 'all':
+                LOG.info(_("Detailed output is required because of your given options."))
+                self.details = True
 
     # -------------------------------------------------------------------------
     def init_vsphere_handlers(self):
@@ -493,6 +540,14 @@ class GetVmListApplication(BaseApplication):
 
         vms = []
 
+        re_hw = None
+        if self.args.hw:
+            re_hw = re.compile(self.args.hw, re.IGNORECASE)
+
+        re_os = None
+        if self.args.os:
+            re_os = re.compile(self.args.os, re.IGNORECASE)
+
         first = True
         for vm in sorted(vm_list, key=attrgetter('name', 'path')):
             if not isinstance(vm, VsphereVm):
@@ -514,8 +569,29 @@ class GetVmListApplication(BaseApplication):
                 'cfg_ver': vm.config_version,
                 'os': vm.guest_id,
             }
-            if vm.template:
-                continue
+
+            if self.args.vm_type != 'all':
+                if self.args.vm_type == 'vm':
+                    if vm.template:
+                        continue
+                else:
+                    if not vm.template:
+                        continue
+
+            if self.args.online:
+                if not vm.online:
+                    continue
+            elif self.args.offline:
+                if vm.online:
+                    continue
+
+            if re_hw:
+                if not re_hw.search(vm.config_version):
+                    continue
+
+            if re_os:
+                if not re_os.search(vm.config_version):
+                    continue
 
             if cdata['path']:
                 cdata['path'] = '/' + cdata['path']
