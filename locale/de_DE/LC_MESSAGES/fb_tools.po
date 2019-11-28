@@ -1696,7 +1696,7 @@ msgstr "Habe Netzwerk {n!r} für die IP {i} gefunden."
 
 #: lib/fb_tools/vsphere/network.py:465
 msgid "Could not find VSphere network for IP {}."
-msgstr "Konnte kein VSphere-Netzwerk für die IP {i} finden."
+msgstr "Konnte kein VSphere-Netzwerk für die IP {} finden."
 
 #: lib/fb_tools/vsphere/network.py:468
 msgid "Could not find VSphere network for IP addresses {}."
