@@ -1,16 +1,16 @@
 # Translations template for fb_tools.
 # Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
+# Frank Brehm <frank@brehm-online.com>, 2019.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.6.3\n"
-"Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2019-11-28 18:37+0100\n"
+"Report-Msgid-Bugs-To: frank@brehm-online.com\n"
+"POT-Creation-Date: 2019-12-02 15:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
+"Last-Translator: FULL NAME <frank@brehm-online.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -23,134 +23,154 @@ msgid ""
 "{a}"
 msgstr ""
 
-#: lib/fb_tools/app.py:81 lib/fb_tools/get_vm_list_app.py:335
+#: lib/fb_tools/app.py:82 lib/fb_tools/get_vm_list_app.py:338
 msgid "Got a {c} for pattern {p!r}: {e}"
 msgstr ""
 
-#: lib/fb_tools/app.py:97
+#: lib/fb_tools/app.py:107 lib/fb_tools/pdns/__init__.py:321
+msgid "The path {!r} must be an absolute path."
+msgstr ""
+
+#: lib/fb_tools/app.py:113
+msgid "The directory {!r} does not exists."
+msgstr ""
+
+#: lib/fb_tools/app.py:117
+msgid "The given path {!r} exists, but is not a directory."
+msgstr ""
+
+#: lib/fb_tools/app.py:121
+msgid "The given directory {!r} is not readable."
+msgstr ""
+
+#: lib/fb_tools/app.py:125
+msgid "The given directory {!r} is not writeable."
+msgstr ""
+
+#: lib/fb_tools/app.py:140
 msgid "Forced execution - whatever it means."
 msgstr ""
 
-#: lib/fb_tools/app.py:176
+#: lib/fb_tools/app.py:219
 msgid "Invalid env_prefix {!r} given - it may not be empty."
 msgstr ""
 
-#: lib/fb_tools/app.py:180
+#: lib/fb_tools/app.py:223
 msgid ""
 "Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
 "underscore (this not as the first character) are allowed."
 msgstr ""
 
-#: lib/fb_tools/app.py:191
+#: lib/fb_tools/app.py:234
 msgid "Unknown and undescriped application."
 msgstr ""
 
-#: lib/fb_tools/app.py:216
+#: lib/fb_tools/app.py:259
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr ""
 
-#: lib/fb_tools/app.py:446
+#: lib/fb_tools/app.py:489
 msgid "Trying to get {} via console ..."
 msgstr ""
 
-#: lib/fb_tools/app.py:461
+#: lib/fb_tools/app.py:504
 msgid "Got a signal {}."
 msgstr ""
 
-#: lib/fb_tools/app.py:464
+#: lib/fb_tools/app.py:507
 msgid "Got a signal {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:471
+#: lib/fb_tools/app.py:514
 msgid "Exit on signal {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:479
+#: lib/fb_tools/app.py:522
 msgid "Tweaking signal handlers."
 msgstr ""
 
-#: lib/fb_tools/app.py:485
+#: lib/fb_tools/app.py:528
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:496
+#: lib/fb_tools/app.py:539
 msgid "Enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:503
+#: lib/fb_tools/app.py:546
 msgid "Repeat enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:513
+#: lib/fb_tools/app.py:556
 msgid "{n} and repeated {n} did not match."
 msgstr ""
 
-#: lib/fb_tools/app.py:517
+#: lib/fb_tools/app.py:560
 msgid "Restoring original signal handlers."
 msgstr ""
 
-#: lib/fb_tools/app.py:522
+#: lib/fb_tools/app.py:565
 msgid "Got {n!r}: {s!r}"
 msgstr ""
 
-#: lib/fb_tools/app.py:572
+#: lib/fb_tools/app.py:615
 msgid "The application is not completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:583
+#: lib/fb_tools/app.py:626
 msgid "Object {!r} seems not to be completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:593
+#: lib/fb_tools/app.py:636
 msgid "Ending."
 msgstr ""
 
-#: lib/fb_tools/app.py:612
+#: lib/fb_tools/app.py:655
 msgid "Executing {} ..."
 msgstr ""
 
-#: lib/fb_tools/app.py:634
+#: lib/fb_tools/app.py:677
 msgid "General options"
 msgstr ""
 
-#: lib/fb_tools/app.py:638
+#: lib/fb_tools/app.py:681
 msgid "Simulation mode, nothing is really done."
 msgstr ""
 
-#: lib/fb_tools/app.py:649
+#: lib/fb_tools/app.py:692
 msgid "Use colored output for messages."
 msgstr ""
 
-#: lib/fb_tools/app.py:656
+#: lib/fb_tools/app.py:699
 msgid "Increase the verbosity level"
 msgstr ""
 
-#: lib/fb_tools/app.py:661
+#: lib/fb_tools/app.py:704
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr ""
 
-#: lib/fb_tools/app.py:666
+#: lib/fb_tools/app.py:709
 msgid "Show this help message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:670
+#: lib/fb_tools/app.py:713
 msgid "Display brief usage message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:672
+#: lib/fb_tools/app.py:715
 #, python-format
 msgid "Version of %(prog)s: {}"
 msgstr ""
 
-#: lib/fb_tools/app.py:675
+#: lib/fb_tools/app.py:718
 msgid "Show program's version number and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:809
+#: lib/fb_tools/app.py:852
 msgid "Starting in:"
 msgstr ""
 
-#: lib/fb_tools/app.py:831
+#: lib/fb_tools/app.py:874
 msgid "Aborted by user interrupt."
 msgstr ""
 
@@ -232,6 +252,269 @@ msgstr ""
 
 #: lib/fb_tools/config.py:254
 msgid "Checking config section {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:68
+msgid "Got an error {c} on requesting {u!r}: {m}"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:87
+msgid "Directory does not exists"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:98
+msgid "Path is not a directory"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:109
+msgid "Invalid permissions"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:130
+msgid "This is a base DDNS related application."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:166 lib/fb_tools/pdns/__init__.py:253
+msgid "Invalid user agent {!r} given."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:196
+msgid "DDNS options"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:210 lib/fb_tools/ddns/__init__.py:213
+msgid "Perform action only for {}."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:216
+msgid "The IP protocol, for which the action should be performed (one of {c}, default {d!r})."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:230
+msgid "PROTOCOL"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:240
+msgid "DIRECTORY"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:242
+msgid ""
+"The directory, where to read and write the cache files of the evaluated IP addresses (default: "
+"{!r})."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:249
+msgid "SECONDS"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:250
+msgid "The timeout in seconds for Web requests (default: {})."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:309 lib/fb_tools/ddns/config.py:210
+msgid "Invalid value {!r} as timeout:"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:319 lib/fb_tools/pdns/__init__.py:117
+msgid "Setting Loglevel of the {m} module to {ll}."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:330
+msgid "Trying to get my public IPv{} address."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:342 lib/fb_tools/pdns/server.py:109 lib/fb_tools/pdns/server.py:126
+msgid "Got a response:"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:354 lib/fb_tools/pdns/__init__.py:357
+msgid "Request method: {!r}"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:374 lib/fb_tools/pdns/__init__.py:379
+msgid "Simulation mode, Request will not be sent."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:387
+msgid "Got a {c} on requesting {u!r}: {e}."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:394 lib/fb_tools/pdns/__init__.py:402
+msgid "Failed to parse the response"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:423
+msgid "Checking existence and accessibility of working directory {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:435 lib/fb_tools/ddns/update_app.py:166
+msgid "No read access"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:439 lib/fb_tools/ddns/update_app.py:169
+msgid "No write access"
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:452
+msgid "Writing IP address {a!r} into {f!r} ..."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:478
+msgid "File {!r} not found."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:481
+msgid "Reading IP address from {!r}..."
+msgstr ""
+
+#: lib/fb_tools/ddns/__init__.py:501
+msgid "Line {li!r} in {f!r} is not a valid IP address:"
+msgstr ""
+
+#: lib/fb_tools/ddns/config.py:103
+msgid "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600."
+msgstr ""
+
+#: lib/fb_tools/ddns/config.py:224
+msgid "Invalid value {ur} for protocols to update, valid protocols are: "
+msgstr ""
+
+#: lib/fb_tools/ddns/config.py:233 lib/fb_tools/ddns/config.py:270
+msgid "Unknown configuration option {o!r} with value {v!r} in section {s!r}."
+msgstr ""
+
+#: lib/fb_tools/ddns/config.py:255
+msgid "The path to the working directory must be an absolute path (given: {!r})."
+msgstr ""
+
+#: lib/fb_tools/ddns/config.py:265
+msgid "The path to the logfile must be an absolute path (given: {!r})."
+msgstr ""
+
+#: lib/fb_tools/ddns/myip_app.py:47
+msgid ""
+"Tries to detect the public NAT IPv4 address and/or the automatic assigned IPv6 address in a "
+"local network and print it out."
+msgstr ""
+
+#: lib/fb_tools/ddns/myip_app.py:52 lib/fb_tools/ddns/myip_app.py:53
+msgid "Use only {} to retreive the public IP address."
+msgstr ""
+
+#: lib/fb_tools/ddns/myip_app.py:54
+msgid "The IP protocol, for which the public IP should be retrieved (one of {c}, default {d!r})."
+msgstr ""
+
+#: lib/fb_tools/ddns/myip_app.py:100
+msgid "myip options"
+msgstr ""
+
+#: lib/fb_tools/ddns/myip_app.py:104
+msgid "Write found public IPs into a cache file in working directory."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:62
+msgid "Updating the DDNS records, even if seems not to be changed."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:65
+msgid "Tries to update the A and/or AAAA record at ddns.de with the current IP address."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:70 lib/fb_tools/ddns/update_app.py:71
+msgid "Update only the {} record with the public IP address."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:72
+msgid ""
+"The IP protocol, for which the appropriate DNS record should be updated with the public IP (one "
+"of {c}, default {d!r})."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:155
+msgid "Checking existence and accessibility of log directory {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:190
+msgid "Update DDNS options"
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:193
+msgid "USER"
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:194
+msgid "The username to login at ddns.de."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:198
+msgid "PASSWORD"
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:199
+msgid "The password of the user to login at ddns.de."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:203
+msgid "FILENAME"
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:204
+msgid "The filename to use as a logfile. Leave it empty to disable file logging."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:211
+msgid "Update all domains, which are connected whith the given ddns account."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:215
+msgid "DOMAIN"
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:216
+msgid "The particular domain(s), which should be updated (if not all)."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:233
+msgid "No domains to update given, but the option all domains is deactivated."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:287
+msgid "Ending {a!r}."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:296 lib/fb_tools/ddns/update_app.py:334
+msgid "Last {w} address: {a!r}."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:298 lib/fb_tools/ddns/update_app.py:336
+msgid "Did not found a last {} address."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:301
+msgid "Got no public IPv4 address."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:306 lib/fb_tools/ddns/update_app.py:311
+#: lib/fb_tools/ddns/update_app.py:344 lib/fb_tools/ddns/update_app.py:349
+msgid "Address {a!r} seems not to be a valid {w} address."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:316 lib/fb_tools/ddns/update_app.py:354
+msgid "Current {w} address is {a!r}."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:319 lib/fb_tools/ddns/update_app.py:357
+msgid "The public {w} address {a!r} seems not to be changed since the last update."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:339
+msgid "Got no public IPv6 address."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:370
+msgid "Updating DNS records to IPv{p} address {a!r} ..."
 msgstr ""
 
 #: lib/fb_tools/errors.py:44
@@ -357,9 +640,9 @@ msgstr ""
 msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:201
-#: lib/fb_tools/get_vm_list_app.py:312 lib/fb_tools/pdns_bulk_rm_app.py:189
-#: lib/fb_tools/pdns_bulk_rm_app.py:236
+#: lib/fb_tools/ddns/__init__.py:255 lib/fb_tools/get_file_rm_app.py:312
+#: lib/fb_tools/get_vm_app.py:201 lib/fb_tools/get_vm_list_app.py:315
+#: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
 msgstr ""
 
@@ -461,22 +744,22 @@ msgstr ""
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:148 lib/fb_tools/get_vm_list_app.py:172
+#: lib/fb_tools/get_vm_app.py:148 lib/fb_tools/get_vm_list_app.py:175
 msgid ""
 "Configuration file {f!r} does not exists. Please copy {d!r} to {f!r} and fill out all necessary "
 "entries, e.g. the passwords."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:168 lib/fb_tools/get_vm_list_app.py:218
+#: lib/fb_tools/get_vm_app.py:168 lib/fb_tools/get_vm_list_app.py:221
 msgid "Did not found any valid VSphere definition in {!r}."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:180 lib/fb_tools/get_vm_list_app.py:230
+#: lib/fb_tools/get_vm_app.py:180 lib/fb_tools/get_vm_list_app.py:233
 msgid "Enter password for {n} VSPhere user {u!r} on host {h!r}:"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:203 lib/fb_tools/get_vm_list_app.py:314
-#: lib/fb_tools/pdns_bulk_rm_app.py:191
+#: lib/fb_tools/ddns/__init__.py:257 lib/fb_tools/get_vm_app.py:203
+#: lib/fb_tools/get_vm_list_app.py:317 lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr ""
 
@@ -484,19 +767,20 @@ msgstr ""
 msgid "Names of the VM to get information."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:215 lib/fb_tools/get_vm_list_app.py:321
+#: lib/fb_tools/get_vm_app.py:215 lib/fb_tools/get_vm_list_app.py:324
 msgid "Got command line arguments:"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:249 lib/fb_tools/get_vm_list_app.py:371
+#: lib/fb_tools/get_vm_app.py:249 lib/fb_tools/get_vm_list_app.py:379
 msgid "Could not initialize {} object from:"
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:256 lib/fb_tools/get_vm_list_app.py:378
+#: lib/fb_tools/ddns/myip_app.py:140 lib/fb_tools/ddns/update_app.py:278
+#: lib/fb_tools/get_vm_app.py:256 lib/fb_tools/get_vm_list_app.py:386
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr ""
 
-#: lib/fb_tools/get_vm_app.py:265 lib/fb_tools/get_vm_list_app.py:387
+#: lib/fb_tools/get_vm_app.py:265 lib/fb_tools/get_vm_list_app.py:395
 msgid "Closing VSPhere object {!r} ..."
 msgstr ""
 
@@ -528,97 +812,97 @@ msgstr ""
 msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:195
+#: lib/fb_tools/get_vm_list_app.py:198
 msgid "Checking for configured VSPhere instance {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:199
+#: lib/fb_tools/get_vm_list_app.py:202
 msgid "VSPhere {!r} not found in list of configured VSPhere instances."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:250
+#: lib/fb_tools/get_vm_list_app.py:253
 msgid "Filter options"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:255
+#: lib/fb_tools/get_vm_list_app.py:258
 msgid "for names of VMs"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:256
+#: lib/fb_tools/get_vm_list_app.py:259
 msgid "A regular expression to filter the output list of VMs by their name (Default: {!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:263
+#: lib/fb_tools/get_vm_list_app.py:266
 msgid "TYPE"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:264
+#: lib/fb_tools/get_vm_list_app.py:267
 msgid "Filter output for the type of the VM. Valid values are {li} (Default: {dflt!r})."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:273
+#: lib/fb_tools/get_vm_list_app.py:276
 msgid "Filter output for online VMs."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:277
+#: lib/fb_tools/get_vm_list_app.py:280
 msgid "Filter output for offline VMs and templates."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:282
+#: lib/fb_tools/get_vm_list_app.py:285
 msgid "for VMWare hardware config version"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:283
+#: lib/fb_tools/get_vm_list_app.py:286
 msgid ""
 "A regular expression to filter the output list of VMs by the VMWare hardware configuration "
 "version (e.g. '{}')."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:290
+#: lib/fb_tools/get_vm_list_app.py:293
 msgid "for the Operating System version"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:291
+#: lib/fb_tools/get_vm_list_app.py:294
 msgid ""
 "A regular expression to filter the output list of VMs by their Operating System version, e.g. "
 "'{}'."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:298
+#: lib/fb_tools/get_vm_list_app.py:301
 msgid "The VSPhere names from configuration, in which the VMs should be searched."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:302
+#: lib/fb_tools/get_vm_list_app.py:305
 msgid "Output options"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:306
+#: lib/fb_tools/get_vm_list_app.py:309
 msgid "Detailed output list (quering data needs some time longer)."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:309
+#: lib/fb_tools/get_vm_list_app.py:312
 msgid "Additional options"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:332
+#: lib/fb_tools/get_vm_list_app.py:335
 msgid "Regular expression for filtering: {!r}"
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:342
+#: lib/fb_tools/get_vm_list_app.py:345
 msgid "Detailed output is required because of your given options."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:488
+#: lib/fb_tools/get_vm_list_app.py:496
 msgid "Found no VMWare VMs."
 msgstr ""
 
-#: lib/fb_tools/get_vm_list_app.py:490
+#: lib/fb_tools/get_vm_list_app.py:498
 msgid "Found one VMWare VM."
 msgid_plural "Found {} VMWare VMs."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/get_vm_list_app.py:554
+#: lib/fb_tools/get_vm_list_app.py:555
 msgid "Found a {} object:"
 msgstr ""
 
@@ -997,10 +1281,6 @@ msgstr ""
 msgid "Exception happened"
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:117
-msgid "Setting Loglevel of the {m} module to {ll}."
-msgstr ""
-
 #: lib/fb_tools/pdns/__init__.py:155
 msgid "Invalid port number {!r} for the PowerDNS API, must be 0 < PORT < 65536."
 msgstr ""
@@ -1013,10 +1293,6 @@ msgstr ""
 msgid "Invalid timeout {!r} for requesting the PowerDNS API, must be 0 < SECONDS < 3600."
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:253
-msgid "Invalid user agent {!r} given."
-msgstr ""
-
 #: lib/fb_tools/pdns/__init__.py:265
 msgid "Invalid API server name {!r} given."
 msgstr ""
@@ -1025,28 +1301,12 @@ msgstr ""
 msgid "Failed to extract request ID from response header 'location': {!r}"
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:321
-msgid "The path {!r} must be an absolute path."
-msgstr ""
-
 #: lib/fb_tools/pdns/__init__.py:341
 msgid "Used URL: {!r}"
 msgstr ""
 
-#: lib/fb_tools/pdns/__init__.py:357
-msgid "Request method: {!r}"
-msgstr ""
-
-#: lib/fb_tools/pdns/__init__.py:379
-msgid "Simulation mode, Request will not be sent."
-msgstr ""
-
 #: lib/fb_tools/pdns/__init__.py:394 lib/fb_tools/vsphere/server.py:135
 msgid "Got a {c} on connecting to {h!r}: {e}."
-msgstr ""
-
-#: lib/fb_tools/pdns/__init__.py:402
-msgid "Failed to parse the response"
 msgstr ""
 
 #: lib/fb_tools/pdns/__init__.py:427
@@ -1176,10 +1436,6 @@ msgstr ""
 
 #: lib/fb_tools/pdns/server.py:106
 msgid "Could not found server info."
-msgstr ""
-
-#: lib/fb_tools/pdns/server.py:109 lib/fb_tools/pdns/server.py:126
-msgid "Got a response:"
 msgstr ""
 
 #: lib/fb_tools/pdns/server.py:113
@@ -2096,23 +2352,23 @@ msgstr ""
 msgid "VM is not in VM list."
 msgstr ""
 
-#: lib/fb_tools/xlate.py:92
+#: lib/fb_tools/xlate.py:95
 msgid "Module directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:93
+#: lib/fb_tools/xlate.py:96
 msgid "Base directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:94
+#: lib/fb_tools/xlate.py:97
 msgid "Locale directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:95
+#: lib/fb_tools/xlate.py:98
 msgid "Locale domain: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:96
+#: lib/fb_tools/xlate.py:99
 msgid "Found .mo-file: {!r}"
 msgstr ""
 

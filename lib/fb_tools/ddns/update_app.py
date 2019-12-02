@@ -70,7 +70,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         self._ipv4_help = _("Update only the {} record with the public IP address.").format('A')
         self._ipv6_help = _("Update only the {} record with the public IP address.").format('AAAA')
         self._proto_help = _(
-            "The IP protocol, for which the appropriate DNS record sould be updated with the "
+            "The IP protocol, for which the appropriate DNS record should be updated with the "
             "public IP (one of {c}, default {d!r}).").format(c=format_list(
                 valid_proto_list, do_repr=True, style='or'), d='any')
 
