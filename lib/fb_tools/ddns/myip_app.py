@@ -11,20 +11,19 @@ from __future__ import absolute_import, print_function
 # Standard modules
 import logging
 import copy
-import sys
 
 # Own modules
 from .. import __version__ as GLOBAL_VERSION
 
 from ..xlate import XLATOR, format_list
 
-from ..common import pp, to_bool
+from ..common import to_bool
 
-from . import DdnsAppError, DdnsRequestError, BaseDdnsApplication, WorkDirError
+from . import BaseDdnsApplication, WorkDirError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
