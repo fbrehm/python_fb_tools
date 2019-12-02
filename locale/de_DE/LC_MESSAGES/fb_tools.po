@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: fb_tools 1.6.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
 "POT-Creation-Date: 2019-11-28 18:37+0100\n"
-"PO-Revision-Date: 2019-11-28 18:30+0100\n"
+"PO-Revision-Date: 2019-11-29 10:55+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <frank@brehm-online.com>\n"
@@ -625,7 +625,7 @@ msgstr "Detaillierte Ausgabeliste (die Abfrage der Daten benötigt signifikant m
 
 #: lib/fb_tools/get_vm_list_app.py:309
 msgid "Additional options"
-msgstr "ZUsätzliche Optionen"
+msgstr "Zusätzliche Optionen"
 
 #: lib/fb_tools/get_vm_list_app.py:332
 msgid "Regular expression for filtering: {!r}"

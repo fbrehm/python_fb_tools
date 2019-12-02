@@ -38,7 +38,7 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -76,6 +76,9 @@ class GetVmListApplication(BaseApplication):
         self._vm_pattern = self.default_vm_pattern
         self.req_vspheres = None
         self._details = False
+
+        self._re_hw = None
+        self._re_os = None
 
         # Hash with all VSphere handler objects
         self.vsphere = {}
@@ -282,7 +285,7 @@ class GetVmListApplication(BaseApplication):
             dest='hw', topic=_('for VMWare hardware config version'), re_options=re.IGNORECASE,
             help=_(
                 "A regular expression to filter the output list of VMs by the VMWare hardware "
-                "configuration version (e.g. '{}').").format('vmx-0\d$'),
+                "configuration version (e.g. '{}').").format(r'vmx-0\d$'),
         )
 
         filter_group.add_argument(
@@ -341,6 +344,11 @@ class GetVmListApplication(BaseApplication):
                     self.args.vm_type != 'all':
                 LOG.info(_("Detailed output is required because of your given options."))
                 self.details = True
+
+        if self.args.hw:
+            self._re_hw = re.compile(self.args.hw, re.IGNORECASE)
+        if self.args.os:
+            self._re_os = re.compile(self.args.os, re.IGNORECASE)
 
     # -------------------------------------------------------------------------
     def init_vsphere_handlers(self):
@@ -540,79 +548,85 @@ class GetVmListApplication(BaseApplication):
 
         vms = []
 
-        re_hw = None
-        if self.args.hw:
-            re_hw = re.compile(self.args.hw, re.IGNORECASE)
-
-        re_os = None
-        if self.args.os:
-            re_os = re.compile(self.args.os, re.IGNORECASE)
-
         first = True
         for vm in sorted(vm_list, key=attrgetter('name', 'path')):
+
             if not isinstance(vm, VsphereVm):
                 msg = _("Found a {} object:").format(vm.__class__.__name__)
                 msg += '\n' + pp(vm)
                 LOG.error(msg)
                 continue
+
             if self.verbose > 2 and first:
                 LOG.debug("VM:\n" + pp(vm.as_dict()))
             first = False
-            cdata = {
-                'vsphere': vsphere_name,
-                'cluster': vm.cluster_name,
-                'name': vm.name,
-                'path': vm.path,
-                'type': 'Virtual Machine',
-                'online': vm.online,
-                'onl_str': 'Online',
-                'cfg_ver': vm.config_version,
-                'os': vm.guest_id,
-            }
 
-            if self.args.vm_type != 'all':
-                if self.args.vm_type == 'vm':
-                    if vm.template:
-                        continue
-                else:
-                    if not vm.template:
-                        continue
-
-            if self.args.online:
-                if not vm.online:
-                    continue
-            elif self.args.offline:
-                if vm.online:
-                    continue
-
-            if re_hw:
-                if not re_hw.search(vm.config_version):
-                    continue
-
-            if re_os:
-                if not re_os.search(vm.config_version):
-                    continue
-
-            if cdata['path']:
-                cdata['path'] = '/' + cdata['path']
-            else:
-                cdata['path'] = '/'
-
-            if not cdata['cluster']:
-                cdata['cluster'] = None
-
-            if not cdata['os']:
-                cdata['os'] = None
-
-            if not vm.online:
-                cdata['onl_str'] = 'Offline'
-
-            if vm.template:
-                cdata['type'] = 'VMWare Template'
+            cdata = self._mangle_vm_details(vm, vsphere_name)
+            if not cdata:
+                continue
 
             vms.append(cdata)
 
         return vms
+
+    # -------------------------------------------------------------------------
+    def _mangle_vm_details(self, vm, vsphere_name):
+
+        cdata = None
+
+        if self.args.vm_type != 'all':
+            if self.args.vm_type == 'vm':
+                if vm.template:
+                    return None
+            else:
+                if not vm.template:
+                    return None
+
+        if self.args.online:
+            if not vm.online:
+                return None
+        elif self.args.offline:
+            if vm.online:
+                return None
+
+        if self._re_hw:
+            if not self._re_hw.search(vm.config_version):
+                return None
+
+        if self._re_os:
+            if not self._re_os.search(vm.config_version):
+                return None
+
+        cdata = {
+            'vsphere': vsphere_name,
+            'cluster': vm.cluster_name,
+            'name': vm.name,
+            'path': vm.path,
+            'type': 'Virtual Machine',
+            'online': vm.online,
+            'onl_str': 'Online',
+            'cfg_ver': vm.config_version,
+            'os': vm.guest_id,
+        }
+
+        if cdata['path']:
+            cdata['path'] = '/' + cdata['path']
+        else:
+            cdata['path'] = '/'
+
+        if not cdata['cluster']:
+            cdata['cluster'] = None
+
+        if not cdata['os']:
+            cdata['os'] = None
+
+        if not vm.online:
+            cdata['onl_str'] = 'Offline'
+
+        if vm.template:
+            cdata['type'] = 'VMWare Template'
+
+        return cdata
 
 
 # =============================================================================
