@@ -41,7 +41,10 @@ if not LOCALE_DIR.is_dir():
     if not LOCALE_DIR.is_dir():
         LOCALE_DIR = None
 
-DEFAULT_LOCALE = default_locale()
+DEFAULT_LOCALE_DEF = 'en_US'
+DEFAULT_LOCALE = babel.core.default_locale()
+if not DEFAULT_LOCALE:
+    DEFAULT_LOCALE = DEFAULT_LOCALE_DEF
 
 __mo_file__ = gettext.find(DOMAIN, str(LOCALE_DIR))
 if __mo_file__:

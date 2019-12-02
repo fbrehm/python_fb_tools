@@ -20,6 +20,7 @@ import signal
 import time
 
 # Third party modules
+from pathlib import Path
 
 # Own modules
 from . import __version__ as __pkg_version__
@@ -38,7 +39,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.4.2'
+__version__ = '1.5.1'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -83,6 +84,48 @@ class RegexOptionAction(argparse.Action):
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, pattern)
+
+# =============================================================================
+class DirectoryOptionAction(argparse.Action):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, must_exists=True, writeable=False, *args, **kwargs):
+
+        self.must_exists = bool(must_exists)
+        self.writeable = bool(writeable)
+        if self.writeable:
+            self.must_exists = True
+
+        super(DirectoryOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, given_path, option_string=None):
+
+        path = Path(given_path)
+        if not path.is_absolute():
+            msg = _("The path {!r} must be an absolute path.").format(given_path)
+            raise argparse.ArgumentError(self, msg)
+
+        if self.must_exists:
+
+            if not path.exists():
+                msg = _("The directory {!r} does not exists.").format(str(path))
+                raise argparse.ArgumentError(self, msg)
+
+            if not path.is_dir():
+                msg = _("The given path {!r} exists, but is not a directory.").format(str(path))
+                raise argparse.ArgumentError(self, msg)
+
+            if not os.access(str(path), os.R_OK) or not os.access(str(path), os.X_OK):
+                msg = _("The given directory {!r} is not readable.").format(str(path))
+                raise argparse.ArgumentError(self, msg)
+
+            if self.writeable and not os.access(str(path), os.W_OK):
+                msg = _("The given directory {!r} is not writeable.").format(str(path))
+                raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, path)
 
 
 # =============================================================================
