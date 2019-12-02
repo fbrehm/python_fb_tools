@@ -32,7 +32,7 @@ from ..xlate import XLATOR, format_list
 
 from ..common import pp
 
-from ..app import BaseApplication
+from ..app import BaseApplication, DirectoryOptionAction
 
 from ..config import CfgFileOptionAction
 
@@ -40,7 +40,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.3.3'
+__version__ = '0.4.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -229,6 +229,20 @@ class BaseDdnsApplication(BaseApplication):
         protocol_group.add_argument(
             '-p', '--protocol', dest='protocol', metavar=_('PROTOCOL'),
             choices=valid_list, help=proto_help,
+        )
+
+        dir_must_exists = False
+        writeable = False
+        if self.appname == 'update-ddns':
+            dir_must_exists = True
+            writeable = True
+        ddns_group.add_argument(
+            '-d', '--dir', '--work-directory', dest='directory', metavar=_('DIRECTORY'),
+            action=DirectoryOptionAction, must_exists=dir_must_exists, writeable=writeable,
+            help=_(
+                "The directory, where to read and write the cache files of the "
+                "evaluated IP addresses (default: {!r}).").format(
+                str(DdnsConfiguration.default_working_dir)),
         )
 
         ddns_group.add_argument(
