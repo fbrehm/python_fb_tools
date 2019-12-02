@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.6.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-12-02 15:34+0100\n"
+"POT-Creation-Date: 2019-12-02 16:18+0100\n"
 "PO-Revision-Date: 2019-12-02 13:00+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -259,51 +259,51 @@ msgstr "Fehler beim Parsen der Konfiguration"
 msgid "Checking config section {!r} ..."
 msgstr "Überprüfe Konfigurationsabschnitt {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:68
+#: lib/fb_tools/ddns/__init__.py:69
 msgid "Got an error {c} on requesting {u!r}: {m}"
 msgstr "Habe einen Fehler {c} beim Abfrage der URL {u!r} erhalten: {m}"
 
-#: lib/fb_tools/ddns/__init__.py:87
+#: lib/fb_tools/ddns/__init__.py:88
 msgid "Directory does not exists"
 msgstr "Das Verzwichnis existiert nicht"
 
-#: lib/fb_tools/ddns/__init__.py:98
+#: lib/fb_tools/ddns/__init__.py:99
 msgid "Path is not a directory"
 msgstr "Der Pfad ist kein Verzeichnis"
 
-#: lib/fb_tools/ddns/__init__.py:109
+#: lib/fb_tools/ddns/__init__.py:110
 msgid "Invalid permissions"
 msgstr "Ungültige Zugriffsrechte"
 
-#: lib/fb_tools/ddns/__init__.py:130
+#: lib/fb_tools/ddns/__init__.py:131
 msgid "This is a base DDNS related application."
 msgstr "Das ist eine DDNS-bezogene Basisanwendung."
 
-#: lib/fb_tools/ddns/__init__.py:166 lib/fb_tools/pdns/__init__.py:253
+#: lib/fb_tools/ddns/__init__.py:167 lib/fb_tools/pdns/__init__.py:253
 msgid "Invalid user agent {!r} given."
 msgstr "Ungültiger User-Agent {!r} übergeben."
 
-#: lib/fb_tools/ddns/__init__.py:196
+#: lib/fb_tools/ddns/__init__.py:197
 msgid "DDNS options"
 msgstr "DDNS-Optionen"
 
-#: lib/fb_tools/ddns/__init__.py:210 lib/fb_tools/ddns/__init__.py:213
+#: lib/fb_tools/ddns/__init__.py:211 lib/fb_tools/ddns/__init__.py:214
 msgid "Perform action only for {}."
 msgstr "Führe die Aktion nur für {} aus."
 
-#: lib/fb_tools/ddns/__init__.py:216
+#: lib/fb_tools/ddns/__init__.py:217
 msgid "The IP protocol, for which the action should be performed (one of {c}, default {d!r})."
 msgstr "Das IP-Protokoll, für das die Aktion ausgeführt werden soll (eins ais {c}, Vorgabe {d!r})."
 
-#: lib/fb_tools/ddns/__init__.py:230
+#: lib/fb_tools/ddns/__init__.py:231
 msgid "PROTOCOL"
 msgstr "PROTOKOLL"
 
-#: lib/fb_tools/ddns/__init__.py:240
+#: lib/fb_tools/ddns/__init__.py:241
 msgid "DIRECTORY"
 msgstr "VERZEICHNIS"
 
-#: lib/fb_tools/ddns/__init__.py:242
+#: lib/fb_tools/ddns/__init__.py:243
 msgid ""
 "The directory, where to read and write the cache files of the evaluated IP addresses (default: "
 "{!r})."
@@ -311,71 +311,71 @@ msgstr ""
 "Das Verzeichnis, von wo Cache-Dateien mit den ermittelten IP-Adresses und wohin sie auch "
 "geschrieben werden (Vorgane: {!r})."
 
-#: lib/fb_tools/ddns/__init__.py:249
+#: lib/fb_tools/ddns/__init__.py:250
 msgid "SECONDS"
 msgstr "SEKUNDEN"
 
-#: lib/fb_tools/ddns/__init__.py:250
+#: lib/fb_tools/ddns/__init__.py:251
 msgid "The timeout in seconds for Web requests (default: {})."
 msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Web-Abfragen (Vorgabe: {})."
 
-#: lib/fb_tools/ddns/__init__.py:309 lib/fb_tools/ddns/config.py:210
+#: lib/fb_tools/ddns/__init__.py:310 lib/fb_tools/ddns/config.py:210
 msgid "Invalid value {!r} as timeout:"
 msgstr "Ungültiger Wert {!r} für die Zeit der Zeitüberschreitung:"
 
-#: lib/fb_tools/ddns/__init__.py:319 lib/fb_tools/pdns/__init__.py:117
+#: lib/fb_tools/ddns/__init__.py:320 lib/fb_tools/pdns/__init__.py:117
 msgid "Setting Loglevel of the {m} module to {ll}."
 msgstr "Setze Loglevel des {m}-Moduls auf {ll}."
 
-#: lib/fb_tools/ddns/__init__.py:330
+#: lib/fb_tools/ddns/__init__.py:331
 msgid "Trying to get my public IPv{} address."
 msgstr "Versuche meine öffentliche IPv{}-Adresse zu ermitteln."
 
-#: lib/fb_tools/ddns/__init__.py:342 lib/fb_tools/pdns/server.py:109 lib/fb_tools/pdns/server.py:126
+#: lib/fb_tools/ddns/__init__.py:343 lib/fb_tools/pdns/server.py:109 lib/fb_tools/pdns/server.py:126
 msgid "Got a response:"
 msgstr "Erhaltene Antwort:"
 
-#: lib/fb_tools/ddns/__init__.py:354 lib/fb_tools/pdns/__init__.py:357
+#: lib/fb_tools/ddns/__init__.py:355 lib/fb_tools/pdns/__init__.py:357
 msgid "Request method: {!r}"
 msgstr "Request-Methode: {!r}"
 
-#: lib/fb_tools/ddns/__init__.py:374 lib/fb_tools/pdns/__init__.py:379
+#: lib/fb_tools/ddns/__init__.py:375 lib/fb_tools/pdns/__init__.py:379
 msgid "Simulation mode, Request will not be sent."
 msgstr "Simulationsmodus, der Request wird nicht gesendet."
 
-#: lib/fb_tools/ddns/__init__.py:387
+#: lib/fb_tools/ddns/__init__.py:388
 msgid "Got a {c} on requesting {u!r}: {e}."
 msgstr "Habe ein {c} bei der Abfrage von {u!r} erhalten: {e}."
 
-#: lib/fb_tools/ddns/__init__.py:394 lib/fb_tools/pdns/__init__.py:402
+#: lib/fb_tools/ddns/__init__.py:395 lib/fb_tools/pdns/__init__.py:402
 msgid "Failed to parse the response"
 msgstr "Konnte Rückgabe nicht auswerten"
 
-#: lib/fb_tools/ddns/__init__.py:423
+#: lib/fb_tools/ddns/__init__.py:424
 msgid "Checking existence and accessibility of working directory {!r} ..."
 msgstr "Überprüfe Existenz und Verfügbarkeit des Arbeitverzeichnisses {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:435 lib/fb_tools/ddns/update_app.py:166
+#: lib/fb_tools/ddns/__init__.py:436 lib/fb_tools/ddns/update_app.py:163
 msgid "No read access"
 msgstr "Kein Lesezugriff"
 
-#: lib/fb_tools/ddns/__init__.py:439 lib/fb_tools/ddns/update_app.py:169
+#: lib/fb_tools/ddns/__init__.py:440 lib/fb_tools/ddns/update_app.py:166
 msgid "No write access"
 msgstr "Kein Schreinzugriff"
 
-#: lib/fb_tools/ddns/__init__.py:452
+#: lib/fb_tools/ddns/__init__.py:453
 msgid "Writing IP address {a!r} into {f!r} ..."
 msgstr "Schreibe IP-Adresse {a!r} nach {f!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:478
+#: lib/fb_tools/ddns/__init__.py:479
 msgid "File {!r} not found."
 msgstr "Datei {!r} nicht gefunden."
 
-#: lib/fb_tools/ddns/__init__.py:481
+#: lib/fb_tools/ddns/__init__.py:482
 msgid "Reading IP address from {!r}..."
 msgstr "Lese IP-Adresse aus {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:501
+#: lib/fb_tools/ddns/__init__.py:502
 msgid "Line {li!r} in {f!r} is not a valid IP address:"
 msgstr "Zeile {li!r} in {f!r} ist keine gültige IP-Adresse:"
 
@@ -401,7 +401,7 @@ msgstr "Der Pfad zum Arbeitsverzeichnis muss ein absoluter Pfad sein (gegeben: {
 msgid "The path to the logfile must be an absolute path (given: {!r})."
 msgstr "Der Pfad zur Logdatei muss absolut sein (gegeben: {!r})."
 
-#: lib/fb_tools/ddns/myip_app.py:47
+#: lib/fb_tools/ddns/myip_app.py:46
 msgid ""
 "Tries to detect the public NAT IPv4 address and/or the automatic assigned IPv6 address in a "
 "local network and print it out."
@@ -409,37 +409,37 @@ msgstr ""
 "Versucht die öffentliche NAT-IPv4-Adresse bzw. die automatisch zugewiesene IPv6-Adresse in einem"
 " lokalem Netzwerk zu ermitten und zu zeigen."
 
-#: lib/fb_tools/ddns/myip_app.py:52 lib/fb_tools/ddns/myip_app.py:53
+#: lib/fb_tools/ddns/myip_app.py:51 lib/fb_tools/ddns/myip_app.py:52
 msgid "Use only {} to retreive the public IP address."
 msgstr "Verwende nur {}, um die öffentliche IP-Adresse zu ermiteln."
 
-#: lib/fb_tools/ddns/myip_app.py:54
+#: lib/fb_tools/ddns/myip_app.py:53
 msgid "The IP protocol, for which the public IP should be retrieved (one of {c}, default {d!r})."
 msgstr ""
 "Das IP-Protokoll, für welches die öffentliche IP-Adresse ermittelt werden soll (eins aus {c}, "
 "Vorgabe: {d!r})."
 
-#: lib/fb_tools/ddns/myip_app.py:100
+#: lib/fb_tools/ddns/myip_app.py:99
 msgid "myip options"
 msgstr "Optionen für myip"
 
-#: lib/fb_tools/ddns/myip_app.py:104
+#: lib/fb_tools/ddns/myip_app.py:103
 msgid "Write found public IPs into a cache file in working directory."
 msgstr "Schreibe die gefundenen öffentliche IP-Adressen in eine Cache-Datei im Arbeitsverzeichnis zurück."
 
-#: lib/fb_tools/ddns/update_app.py:62
+#: lib/fb_tools/ddns/update_app.py:59
 msgid "Updating the DDNS records, even if seems not to be changed."
 msgstr "Aktualisieren der DDNS-Einträge, auch wenn sie nicht verändert zu sein scheinen."
 
-#: lib/fb_tools/ddns/update_app.py:65
+#: lib/fb_tools/ddns/update_app.py:62
 msgid "Tries to update the A and/or AAAA record at ddns.de with the current IP address."
 msgstr "Versucht den A- bzw. AAAA-Eintrag bei ddns.de mit der aktuellen IP-Adresse zu aktualisieren."
 
-#: lib/fb_tools/ddns/update_app.py:70 lib/fb_tools/ddns/update_app.py:71
+#: lib/fb_tools/ddns/update_app.py:67 lib/fb_tools/ddns/update_app.py:68
 msgid "Update only the {} record with the public IP address."
 msgstr "Aktualisiere nur den {}-Eintrag mit der aktuellen IP-Adresse."
 
-#: lib/fb_tools/ddns/update_app.py:72
+#: lib/fb_tools/ddns/update_app.py:69
 msgid ""
 "The IP protocol, for which the appropriate DNS record should be updated with the public IP (one "
 "of {c}, default {d!r})."
@@ -447,92 +447,92 @@ msgstr ""
 "Das IP-Protokoll, für welches der entsprechende DNS-Eintrag der üffentlichen IP aktualisiert "
 "werden soll (eins aus {c}, Vorgabe {d!r})."
 
-#: lib/fb_tools/ddns/update_app.py:155
+#: lib/fb_tools/ddns/update_app.py:152
 msgid "Checking existence and accessibility of log directory {!r} ..."
 msgstr "Überprüfe Existenz und Verfügbarkeit des Log-Verzeichnisses {!r} …"
 
-#: lib/fb_tools/ddns/update_app.py:190
+#: lib/fb_tools/ddns/update_app.py:187
 msgid "Update DDNS options"
 msgstr "DDNS-Aktualisierungsoptionen"
 
-#: lib/fb_tools/ddns/update_app.py:193
+#: lib/fb_tools/ddns/update_app.py:190
 msgid "USER"
 msgstr "BENUTZER"
 
-#: lib/fb_tools/ddns/update_app.py:194
+#: lib/fb_tools/ddns/update_app.py:191
 msgid "The username to login at ddns.de."
 msgstr "Der Nutzername, um sich bei ddns.de eizuloggen."
 
-#: lib/fb_tools/ddns/update_app.py:198
+#: lib/fb_tools/ddns/update_app.py:195
 msgid "PASSWORD"
 msgstr "PASSWORT"
 
-#: lib/fb_tools/ddns/update_app.py:199
+#: lib/fb_tools/ddns/update_app.py:196
 msgid "The password of the user to login at ddns.de."
 msgstr "Das Login-Passwort des Nutzers bei ddns.de."
 
-#: lib/fb_tools/ddns/update_app.py:203
+#: lib/fb_tools/ddns/update_app.py:200
 msgid "FILENAME"
 msgstr "DATEINAME"
 
-#: lib/fb_tools/ddns/update_app.py:204
+#: lib/fb_tools/ddns/update_app.py:201
 msgid "The filename to use as a logfile. Leave it empty to disable file logging."
 msgstr "Der Dateiname der Logdatei. Leer lassen, um Dateilogging zu deaktivieren."
 
-#: lib/fb_tools/ddns/update_app.py:211
+#: lib/fb_tools/ddns/update_app.py:208
 msgid "Update all domains, which are connected whith the given ddns account."
 msgstr "Aktualisirung alle Domänen, die mit dem gegebenen DDNS-Konto verbunden sind."
 
-#: lib/fb_tools/ddns/update_app.py:215
+#: lib/fb_tools/ddns/update_app.py:212
 msgid "DOMAIN"
 msgstr "DOMÄNE"
 
-#: lib/fb_tools/ddns/update_app.py:216
+#: lib/fb_tools/ddns/update_app.py:213
 msgid "The particular domain(s), which should be updated (if not all)."
 msgstr ""
 "Die bestimmte Domäne(n)m die aktualisiert werden solln (wenn nicht alle aktualisiert werden "
 "sollen)."
 
-#: lib/fb_tools/ddns/update_app.py:233
+#: lib/fb_tools/ddns/update_app.py:230
 msgid "No domains to update given, but the option all domains is deactivated."
 msgstr "Keine Domänen zur Aktualisierungg angegeben, aber die Option 'für alle Domänen' ist deaktiviert."
 
-#: lib/fb_tools/ddns/update_app.py:287
+#: lib/fb_tools/ddns/update_app.py:284
 msgid "Ending {a!r}."
 msgstr "Beende {a!r}."
 
-#: lib/fb_tools/ddns/update_app.py:296 lib/fb_tools/ddns/update_app.py:334
+#: lib/fb_tools/ddns/update_app.py:292 lib/fb_tools/ddns/update_app.py:330
 msgid "Last {w} address: {a!r}."
 msgstr "Letzte {w}-Adresse: {a!r}."
 
-#: lib/fb_tools/ddns/update_app.py:298 lib/fb_tools/ddns/update_app.py:336
+#: lib/fb_tools/ddns/update_app.py:294 lib/fb_tools/ddns/update_app.py:332
 msgid "Did not found a last {} address."
 msgstr "Fand keine letzte {}-Adresse."
 
-#: lib/fb_tools/ddns/update_app.py:301
+#: lib/fb_tools/ddns/update_app.py:297
 msgid "Got no public IPv4 address."
 msgstr "Keine öffentliche IPv4-Adresse gefunden."
 
-#: lib/fb_tools/ddns/update_app.py:306 lib/fb_tools/ddns/update_app.py:311
-#: lib/fb_tools/ddns/update_app.py:344 lib/fb_tools/ddns/update_app.py:349
+#: lib/fb_tools/ddns/update_app.py:302 lib/fb_tools/ddns/update_app.py:307
+#: lib/fb_tools/ddns/update_app.py:340 lib/fb_tools/ddns/update_app.py:345
 msgid "Address {a!r} seems not to be a valid {w} address."
 msgstr "Die Adresse {a!r} scheint keine gültige {w}-Adresse zu sein."
 
-#: lib/fb_tools/ddns/update_app.py:316 lib/fb_tools/ddns/update_app.py:354
+#: lib/fb_tools/ddns/update_app.py:312 lib/fb_tools/ddns/update_app.py:350
 msgid "Current {w} address is {a!r}."
 msgstr "Aktuelle {w}-Adresse ist {a!r}."
 
-#: lib/fb_tools/ddns/update_app.py:319 lib/fb_tools/ddns/update_app.py:357
+#: lib/fb_tools/ddns/update_app.py:315 lib/fb_tools/ddns/update_app.py:353
 msgid "The public {w} address {a!r} seems not to be changed since the last update."
 msgstr ""
 "Die öffentliche {w}-Adresse {a!r} scheint sich seit der letzten Aktualisierung nicht geändert zu"
 " haben."
 
-#: lib/fb_tools/ddns/update_app.py:339
+#: lib/fb_tools/ddns/update_app.py:335
 msgid "Got no public IPv6 address."
 msgstr "Keine öffentliche IPv6-Adresse gefunden."
 
-#: lib/fb_tools/ddns/update_app.py:370
+#: lib/fb_tools/ddns/update_app.py:366
 msgid "Updating DNS records to IPv{p} address {a!r} ..."
 msgstr "Aktualisier DNS-Einträge zu IPv{p}-Adresse {a!r} …"
 
@@ -673,7 +673,7 @@ msgstr ""
 "Wieviele Dateien (eine pro Jahr) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
 "{default}, Minimum {min})?"
 
-#: lib/fb_tools/ddns/__init__.py:255 lib/fb_tools/get_file_rm_app.py:312
+#: lib/fb_tools/ddns/__init__.py:256 lib/fb_tools/get_file_rm_app.py:312
 #: lib/fb_tools/get_vm_app.py:201 lib/fb_tools/get_vm_list_app.py:315
 #: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
@@ -795,7 +795,7 @@ msgstr "Keine gültige VSPhere Definition in {!r} gefunden."
 msgid "Enter password for {n} VSPhere user {u!r} on host {h!r}:"
 msgstr "Geben Sie das Passwort für den {n}-VSPhere-Nutzer {u!r} auf Host {h!r} ein:"
 
-#: lib/fb_tools/ddns/__init__.py:257 lib/fb_tools/get_vm_app.py:203
+#: lib/fb_tools/ddns/__init__.py:258 lib/fb_tools/get_vm_app.py:203
 #: lib/fb_tools/get_vm_list_app.py:317 lib/fb_tools/pdns_bulk_rm_app.py:191
 msgid "Configuration file (default: {!r})"
 msgstr "Konfigurationsdatei (Vorgabe: {!r})"
@@ -812,7 +812,7 @@ msgstr "Erhaltene Kommandozeilen-Argumente:"
 msgid "Could not initialize {} object from:"
 msgstr "Konnte kein {}-Objekt initialisieren aus:"
 
-#: lib/fb_tools/ddns/myip_app.py:140 lib/fb_tools/ddns/update_app.py:278
+#: lib/fb_tools/ddns/myip_app.py:139 lib/fb_tools/ddns/update_app.py:275
 #: lib/fb_tools/get_vm_app.py:256 lib/fb_tools/get_vm_list_app.py:386
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr "Starte {a!r}, Version {v!r} …"
@@ -2419,23 +2419,23 @@ msgstr "Irgendetwas stimmt mit der VM {n!r} in Cluster {c!r}  im Pfad {p!r} nich
 msgid "VM is not in VM list."
 msgstr "Die VM ist nicht in der Liste der VMs."
 
-#: lib/fb_tools/xlate.py:95
+#: lib/fb_tools/xlate.py:94
 msgid "Module directory: {!r}"
 msgstr "Modul-Verzeichnis: {!r}"
 
-#: lib/fb_tools/xlate.py:96
+#: lib/fb_tools/xlate.py:95
 msgid "Base directory: {!r}"
 msgstr "Basis-Verzeichnis: {!r}"
 
-#: lib/fb_tools/xlate.py:97
+#: lib/fb_tools/xlate.py:96
 msgid "Locale directory: {!r}"
 msgstr "Verzeichnis für Locales: {!r}"
 
-#: lib/fb_tools/xlate.py:98
+#: lib/fb_tools/xlate.py:97
 msgid "Locale domain: {!r}"
 msgstr "Locale-Domäne: {!r}"
 
-#: lib/fb_tools/xlate.py:99
+#: lib/fb_tools/xlate.py:98
 msgid "Found .mo-file: {!r}"
 msgstr "Gefundene .mo-Datei: {!r}"
 
