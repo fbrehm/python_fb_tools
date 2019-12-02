@@ -12,7 +12,6 @@ from __future__ import absolute_import, print_function
 import logging
 import copy
 import sys
-import time
 import os
 import ipaddress
 
@@ -26,16 +25,14 @@ from .. import __version__ as GLOBAL_VERSION
 
 from ..xlate import XLATOR, format_list
 
-from ..common import pp, to_bool
-
 from ..colored import ColoredFormatter
 
-from . import DdnsAppError, DdnsRequestError, BaseDdnsApplication, WorkDirError
-from . import WorkDirError, WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
+from . import BaseDdnsApplication, WorkDirError
+from . import WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -286,7 +283,6 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         LOG.info(_("Ending {a!r}.").format(
             a=self.appname, v=self.version))
-
 
     # -------------------------------------------------------------------------
     def do_update_ipv4(self):
