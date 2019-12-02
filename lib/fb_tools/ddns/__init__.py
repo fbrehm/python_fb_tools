@@ -40,7 +40,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -311,6 +311,9 @@ class BaseDdnsApplication(BaseApplication):
                 print()
                 self.arg_parser.print_usage(sys.stdout)
                 self.exit(1)
+
+        if self.args.directory:
+            self.config.working_dir = self.args.directory
 
         if not self.loglevel_requests_set:
             msg = _("Setting Loglevel of the {m} module to {ll}.").format(
