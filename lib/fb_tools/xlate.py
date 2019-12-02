@@ -21,7 +21,6 @@ from distutils.version import LooseVersion
 
 # Third party modules
 import babel
-from babel.core import default_locale
 import babel.lists
 from babel.support import Translations
 
@@ -29,7 +28,7 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
