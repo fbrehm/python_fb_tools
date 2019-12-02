@@ -21,12 +21,13 @@ import re
 # Third party modules
 import requests
 import urllib3
+import json
 
 # Own modules
 from .. import __version__ as GLOBAL_VERSION
 from .. import DDNS_CFG_BASENAME
 
-from ..errors import FunctionNotImplementedError, IoTimeoutError
+from ..errors import IoTimeoutError
 
 from ..xlate import XLATOR, format_list
 
@@ -40,7 +41,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -216,7 +217,7 @@ class BaseDdnsApplication(BaseApplication):
             proto_help = _(
                 "The IP protocol, for which the action should be performed "
                 "(one of {c}, default {d!r}).").format(
-                 c=format_list(valid_list, do_repr=True, style='or'), d='any')
+                    c=format_list(valid_list, do_repr=True, style='or'), d='any')
 
         protocol_group.add_argument(
             '-4', '--ipv4', dest='ipv4', action="store_true", help=ipv4_help,
