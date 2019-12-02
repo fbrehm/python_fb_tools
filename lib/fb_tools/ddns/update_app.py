@@ -35,7 +35,7 @@ from . import WorkDirError, WorkDirNotExistsError, WorkDirNotDirError, WorkDirAc
 
 from .config import DdnsConfiguration
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -281,6 +281,9 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         if self.config.protocol in ('any', 'both', 'ipv4'):
             self.do_update_ipv4()
 
+        if self.config.protocol in ('any', 'both', 'ipv6'):
+            self.do_update_ipv6()
+
         LOG.info(_("Ending {a!r}.").format(
             a=self.appname, v=self.version))
 
@@ -322,6 +325,44 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         self.do_update(my_ip, 4)
         self.write_ipv4_cache(my_ip)
+
+    # -------------------------------------------------------------------------
+    def do_update_ipv6(self):
+
+        last_address = self.get_ipv6_cache()
+        if last_address:
+            LOG.debug(_("Last {w} address: {a!r}.").format(w='IPv6', a=str(last_address)))
+        else:
+            LOG.debug(_("Did not found a last {} address.").format('IPv6'))
+        current_address = self.get_my_ipv(6)
+        if not current_address:
+            LOG.error(_("Got no public IPv6 address."))
+            return
+        try:
+            my_ip = ipaddress.ip_address(current_address)
+        except ValueError as e:
+            msg = _("Address {a!r} seems not to be a valid {w} address.").format(
+                a=current_address, w='IP')
+            LOG.error(msg)
+            return
+        if my_ip.version != 6:
+            msg = _("Address {a!r} seems not to be a valid {w} address.").format(
+                a=current_address, w='IPv6')
+            LOG.error(msg)
+            return
+
+        LOG.debug(_("Current {w} address is {a!r}.").format(w='IPv6', a=str(my_ip)))
+
+        if last_address == my_ip:
+            msg = _(
+                "The public {w} address {a!r} seems not to be changed since "
+                "the last update.").format(w='IPv6', a=str(last_address))
+            LOG.info(msg)
+            if not self.force:
+                return
+
+        self.do_update(my_ip, 6)
+        self.write_ipv6_cache(my_ip)
 
     # -------------------------------------------------------------------------
     def do_update(self, my_ip, protocol):
