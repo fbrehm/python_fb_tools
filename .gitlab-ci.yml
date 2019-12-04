@@ -105,8 +105,11 @@ Linter:
     - apt install --yes shellcheck yamllint
     - pip install --upgrade --upgrade-strategy eager flake8 pylint
     - pip list --format columns
+    - 'echo; echo -e "flake8 --max-line-length=${FLAKE8_MAX_LINE_LENGTH} --max-complexity=${FLAKE8_MAX_COMPLEXITY} --ignore=${FLAKE8_IGNORE_ERRORS} bin lib"'
     - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
+    - 'echo; echo -e "shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh"'
     - shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
+    - 'echo; echo -e "yamllint -c yamllint.yaml .gitlab-ci.yml"'
     - yamllint -c yamllint.yaml .gitlab-ci.yml
   tags:
     - docker
