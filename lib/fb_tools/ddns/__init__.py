@@ -41,7 +41,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -500,7 +500,7 @@ class BaseDdnsApplication(BaseApplication):
                     addr = ipaddress.ip_address(line)
                 except ValueError as e:
                     msg = _("Line {li!r} in {f!r} is not a valid IP address:").format(
-                        li=line, f=str(cache_file))
+                        li=line, f=str(cache_file)) + ' ' + str(e)
                     LOG.error(msg)
                     continue
                 address = addr

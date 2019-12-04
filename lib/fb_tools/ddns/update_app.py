@@ -32,7 +32,7 @@ from . import WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -299,8 +299,8 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         try:
             my_ip = ipaddress.ip_address(current_address)
         except ValueError as e:
-            msg = _("Address {a!r} seems not to be a valid {w} address.").format(
-                a=current_address, w='IP')
+            msg = _("Address {a!r} seems not to be a valid {w} address: {e}").format(
+                a=current_address, w='IP', e=e)
             LOG.error(msg)
             return
         if my_ip.version != 4:
@@ -337,8 +337,8 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         try:
             my_ip = ipaddress.ip_address(current_address)
         except ValueError as e:
-            msg = _("Address {a!r} seems not to be a valid {w} address.").format(
-                a=current_address, w='IP')
+            msg = _("Address {a!r} seems not to be a valid {w} address: {e}").format(
+                a=current_address, w='IP', e=e)
             LOG.error(msg)
             return
         if my_ip.version != 6:
