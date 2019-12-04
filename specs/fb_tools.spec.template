@@ -109,7 +109,9 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %{python3_sitelib}/*
 
 %changelog
-*   Thu 29 Aug 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.5.5-1
+*   Mon Oct 07 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.6.2-1
+-   Version bump to 1.6.2
+*   Thu Aug 29 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.5.5-1
 -   Version bump to 1.5.5
 *   Thu Jul 25 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.5.2-2
 -   Version bump to 1.5.2
