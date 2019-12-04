@@ -1,13 +1,13 @@
 # English (United States) translations for fb_tools.
 # Copyright (C) 2019 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank@brehm-online.com>, 2019.
+# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.6.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-12-02 16:18+0100\n"
+"POT-Creation-Date: 2019-12-04 13:00+0100\n"
 "PO-Revision-Date: 2019-09-11 16:15+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -497,8 +497,11 @@ msgstr ""
 msgid "Got no public IPv4 address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:302 lib/fb_tools/ddns/update_app.py:307
-#: lib/fb_tools/ddns/update_app.py:340 lib/fb_tools/ddns/update_app.py:345
+#: lib/fb_tools/ddns/update_app.py:302 lib/fb_tools/ddns/update_app.py:340
+msgid "Address {a!r} seems not to be a valid {w} address: {e}"
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:307 lib/fb_tools/ddns/update_app.py:345
 msgid "Address {a!r} seems not to be a valid {w} address."
 msgstr ""
 
