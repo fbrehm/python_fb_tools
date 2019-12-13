@@ -29,7 +29,9 @@ from .object import VsphereObject
 
 from .about import VsphereAboutInfo
 
-__version__ = '0.4.3'
+from .host_port_group import VsphereHostPortgroup, VsphereHostPortgroupList
+
+__version__ = '0.5.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -286,6 +288,9 @@ class VsphereHost(VsphereObject):
         self.standby = None
         self._reboot_required = False
         self._mgmt_ip = None
+        self.ipv6_enabled = None
+        self.atboot_ipv6_enabled = None
+        self.portgroups = None
 
         self.product = None
 
@@ -432,6 +437,9 @@ class VsphereHost(VsphereObject):
         res['reboot_required'] = self.reboot_required
         res['mgmt_ip'] = self.mgmt_ip
         res['online'] = self.online
+        res['portgroups'] = None
+        if self.portgroups:
+            res['portgroups'] = self.portgroups.as_dict(short=short)
         if self.bios is not None:
             res['bios'] = self.bios.as_dict(short=short)
 
@@ -480,6 +488,7 @@ class VsphereHost(VsphereObject):
         host.reboot_required = self.reboot_required
         host.mgmt_ip = self.mgmt_ip
         host.product = copy.copy(self.product)
+        host.portgroups = copy.copy(self.portgroups)
 
         return host
 
@@ -555,6 +564,16 @@ class VsphereHost(VsphereObject):
         if data.config:
             host.product = VsphereAboutInfo.from_summary(
                 data.config.product, appname=appname, verbose=verbose, base_dir=base_dir)
+            if data.config.network:
+                host.ipv6_enabled = data.config.network.ipV6Enabled
+                host.atboot_ipv6_enabled = data.config.network.atBootIpV6Enabled
+                host.portgroups = VsphereHostPortgroupList(
+                    appname=appname, verbose=verbose, base_dir=base_dir, hostname=host.name)
+                for pg_data in data.config.network.portgroup:
+                    pgroup = VsphereHostPortgroup.from_summary(
+                        pg_data, hostname=host.name, appname=appname, verbose=verbose,
+                        base_dir=base_dir)
+                    host.portgroups.append(pgroup)
 
         return host
 

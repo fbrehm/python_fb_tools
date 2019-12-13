@@ -1910,7 +1910,7 @@ msgstr "Der Cluster {c!r} hat den Datastore {d!r}."
 #: lib/fb_tools/vsphere/ether.py:412 lib/fb_tools/vsphere/host.py:231 lib/fb_tools/vsphere/host.py:505
 #: lib/fb_tools/vsphere/vm.py:490
 msgid "Parameter {t!r} must be a {e}, {v!r} ({vt}) was given."
-msgstr "Der Parameter {t!r} muss ein {e} sein, v!r} ({vt}) wurde gegeben."
+msgstr "Der Parameter {t!r} muss ein {e} sein, {v!r} ({vt}) wurde gegeben."
 
 #: lib/fb_tools/vsphere/controller.py:263
 msgid "Checking class of controller: {!r}"
