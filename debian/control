@@ -65,4 +65,3 @@ Recommends: python3-pyvmomi
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python3 modules for this package.
-

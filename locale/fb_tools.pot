@@ -2374,4 +2374,3 @@ msgstr ""
 #: lib/fb_tools/xlate.py:98
 msgid "Found .mo-file: {!r}"
 msgstr ""
-
