@@ -74,7 +74,7 @@ class CfgFileOptionAction(argparse.Action):
 # =============================================================================
 class BaseConfiguration(FbBaseObject):
     """
-    A base class for providing a configuration for the CrTplApplication class
+    A base class for providing a configuration for the BaseConfiguration class
     and methods to read it from configuration files.
     """
 
