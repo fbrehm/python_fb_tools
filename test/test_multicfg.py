@@ -52,6 +52,25 @@ class TestFbMultiConfig(FbToolsTestcase):
         LOG.info("Testing import of fb_tools.multi_config ...")
         import fb_tools.multi_config                                        # noqa
 
+        LOG.info("Testing import of MultiConfigError from fb_tools.multi_config ...")
+        from fb_tools.multi_config import MultiConfigError                  # noqa
+
+        LOG.info("Testing import of BaseMultiConfig from fb_tools.multi_config ...")
+        from fb_tools.multi_config import BaseMultiConfig                   # noqa
+
+    # -------------------------------------------------------------------------
+    def test_object(self):
+
+        LOG.info("Testing init of a BaseMultiConfig object.")
+
+        from fb_tools.multi_config import BaseMultiConfig
+
+        cfg = BaseMultiConfig(
+            appname='test_multicfg',
+            verbose=1,
+        )
+        LOG.debug("BaseMultiConfig %%r: %r", cfg)
+        LOG.debug("BaseMultiConfig %%s: %s", str(cfg))
 
 # =============================================================================
 if __name__ == '__main__':
@@ -66,6 +85,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     suite.addTest(TestFbMultiConfig('test_import', verbose))
+    suite.addTest(TestFbMultiConfig('test_object', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

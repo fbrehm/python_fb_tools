@@ -14,6 +14,7 @@ import pathlib
 import codecs
 import argparse
 import json
+import re
 
 from pathlib import Path
 
@@ -43,7 +44,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.1.1'
+__version__ = '0.2.0'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -70,6 +71,21 @@ class BaseMultiConfig(FbBaseObject):
     default_stems = []
     default_config_dir = 'fb-tools'
 
+    default_loader_methods = {
+        'yaml': 'load_yaml',
+        'json': 'load_json',
+        'hjson': 'load_hjson',
+    }
+    default_type_extension_patterns = {
+        'yaml': [r'ya?ml'],
+        'json': [r'js(?:on)'],
+        'hjson': [r'hjs(?:on)'],
+    }
+
+    available_cfg_types = ['yaml', 'json']
+    if HAS_HJSON:
+        available_cfg_types.append('hjson')
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
@@ -80,6 +96,9 @@ class BaseMultiConfig(FbBaseObject):
         self._config_dir = None
         self._additional_config_file = None
         self._simulate = False
+        self.type2loader = {}
+        self.type_extensions = {}
+        self.config_dirs = []
 
         super(BaseMultiConfig, self).__init__(
             appname=appname, verbose=verbose, version=version,
@@ -98,6 +117,8 @@ class BaseMultiConfig(FbBaseObject):
 
         if additional_config_file:
             self.additional_config_file = additional_config_file
+
+        self._init_config_dirs()
 
         if initialized:
             self.initialized = True
@@ -153,7 +174,7 @@ class BaseMultiConfig(FbBaseObject):
         if value is None:
             raise TypeError(_("A configuration directory may not be None."))
         cdir = pathlib.Path(value)
-        if cdir.is_absolute:
+        if cdir.is_absolute():
             msg = _("Configuration directory {!r} may not be absolute.").format(str(cdir))
             raise MultiConfigError(msg)
 
@@ -178,6 +199,27 @@ class BaseMultiConfig(FbBaseObject):
         res['additional_config_file'] = self.additional_config_file
 
         return res
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def is_venv(cls):
+        """Flag showing, that the current application is running
+            inside a virtual environment."""
+
+        if hasattr(sys, 'real_prefix'):
+            return True
+        return (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+
+    # -------------------------------------------------------------------------
+    def _init_config_dirs(self):
+
+        self.config_dirs = []
+        self.config_dirs.append(Path('/etc') / self.config_dir)
+        self.config_dirs.append(Path.home() / '.config' / self.config_dir)
+        if self.is_venv():
+            self.config_dirs.append(Path(sys.prefix).parent / 'etc')
+        self.config_dirs.append(Path.cwd() / 'etc')
+        self.config_dirs.append(Path.cwd())
 
 
 # =============================================================================
