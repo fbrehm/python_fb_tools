@@ -5,4 +5,6 @@ pytz
 setuptools
 wheel
 Babel
+PyYAML
+hjson
 requests_mock
