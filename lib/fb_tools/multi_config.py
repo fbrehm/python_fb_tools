@@ -15,6 +15,7 @@ import codecs
 import argparse
 import json
 import re
+import sys
 
 from pathlib import Path
 
@@ -44,7 +45,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -177,6 +178,7 @@ class BaseMultiConfig(FbBaseObject):
         if cdir.is_absolute():
             msg = _("Configuration directory {!r} may not be absolute.").format(str(cdir))
             raise MultiConfigError(msg)
+        self._config_dir = cdir
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -215,11 +217,25 @@ class BaseMultiConfig(FbBaseObject):
 
         self.config_dirs = []
         self.config_dirs.append(Path('/etc') / self.config_dir)
-        self.config_dirs.append(Path.home() / '.config' / self.config_dir)
+        path = Path.home() / '.config' / self.config_dir
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
         if self.is_venv():
-            self.config_dirs.append(Path(sys.prefix).parent / 'etc')
-        self.config_dirs.append(Path.cwd() / 'etc')
-        self.config_dirs.append(Path.cwd())
+            path = Path(sys.prefix) / 'etc'
+            if path not in self.config_dirs:
+                self.config_dirs.append(path)
+        path = Path.cwd() / 'etc'
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
+        path = self.base_dir / 'etc'
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
+        path = self.base_dir
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
+        path = Path.cwd()
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
 
 
 # =============================================================================
