@@ -17,6 +17,7 @@ import json
 import re
 import sys
 import copy
+import os
 
 from pathlib import Path
 
@@ -46,7 +47,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -87,6 +88,8 @@ class BaseMultiConfig(FbBaseObject):
     available_cfg_types = ['yaml', 'json']
     if HAS_HJSON:
         available_cfg_types.append('hjson')
+
+    re_invlid_stem = re.compile(re.escape(os.sep))
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -216,6 +219,16 @@ class BaseMultiConfig(FbBaseObject):
         return (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
 
     # -------------------------------------------------------------------------
+    @classmethod
+    def valid_stem(cls, stem):
+        """Checks, whether the given stem is a valid file name stem
+            (whithout a path separator)."""
+
+        if cls.re_invlid_stem.search(stem):
+            return False
+        return True
+
+    # -------------------------------------------------------------------------
     def _init_config_dirs(self):
 
         self.config_dirs = []
@@ -252,6 +265,9 @@ class BaseMultiConfig(FbBaseObject):
                         msg = _("Stem {!r} is not a String type.").format(stem)
                         raise TypeError(msg)
                     s = to_str(stem)
+                    if not self.valid_stem(s):
+                        msg = _("File name stem {!r} is invalid.").format(s)
+                        raise ValueError(msg)
                     if s not in self.stems:
                         self.stems.append(s)
             else:
@@ -259,10 +275,16 @@ class BaseMultiConfig(FbBaseObject):
                     msg = _("Stem {!r} is not a String type.").format(additional_stems)
                     raise TypeError(msg)
                 s = to_str(additional_stems)
+                if not self.valid_stem(s):
+                    msg = _("File name stem {!r} is invalid.").format(s)
+                    raise ValueError(msg)
                 if s not in self.stems:
                     self.stems.append(s)
 
         if not self.stems or append_appname_to_stems:
+            if not self.valid_stem(self.appname):
+                msg = _("File name stem {!r} is invalid.").format(self.appname)
+                raise ValueError(msg)
             if self.appname not in self.stems:
                 self.stems.append(self.appname)
 
