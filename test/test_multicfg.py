@@ -67,7 +67,8 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         cfg = BaseMultiConfig(
             appname='test_multicfg',
-            verbose=1,
+            config_dir='test', additional_stems='test',
+            verbose=self.verbose,
         )
         LOG.debug("BaseMultiConfig %%r: %r", cfg)
         LOG.debug("BaseMultiConfig %%s: %s", str(cfg))

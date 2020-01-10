@@ -16,6 +16,7 @@ import argparse
 import json
 import re
 import sys
+import copy
 
 from pathlib import Path
 
@@ -39,13 +40,13 @@ except ImportError:
 # Own modules
 from .config import ConfigError
 
-from .common import to_bool
+from .common import to_bool, to_str, is_sequence
 
 from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -90,7 +91,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
-            append_appname_to_stems=True, config_dir=None,
+            append_appname_to_stems=True, config_dir=None, additional_stems=None,
             encoding=DEFAULT_ENCODING, additional_config_file=None, initialized=False):
 
         self._encoding = None
@@ -100,6 +101,7 @@ class BaseMultiConfig(FbBaseObject):
         self.type2loader = {}
         self.type_extensions = {}
         self.config_dirs = []
+        self.stems = copy.copy(self.default_stems)
 
         super(BaseMultiConfig, self).__init__(
             appname=appname, verbose=verbose, version=version,
@@ -120,6 +122,7 @@ class BaseMultiConfig(FbBaseObject):
             self.additional_config_file = additional_config_file
 
         self._init_config_dirs()
+        self._init_stems(append_appname_to_stems, additional_stems)
 
         if initialized:
             self.initialized = True
@@ -236,6 +239,32 @@ class BaseMultiConfig(FbBaseObject):
         path = Path.cwd()
         if path not in self.config_dirs:
             self.config_dirs.append(path)
+
+    # -------------------------------------------------------------------------
+    def _init_stems(self, append_appname_to_stems, additional_stems=None):
+
+        self.stems = copy.copy(self.default_stems)
+
+        if additional_stems:
+            if is_sequence(additional_stems):
+                for stem in additional_stems:
+                    if not isinstance(stem, six.string_types):
+                        msg = _("Stem {!r} is not a String type.").format(stem)
+                        raise TypeError(msg)
+                    s = to_str(stem)
+                    if s not in self.stems:
+                        self.stems.append(s)
+            else:
+                if not isinstance(additional_stems, six.string_types):
+                    msg = _("Stem {!r} is not a String type.").format(additional_stems)
+                    raise TypeError(msg)
+                s = to_str(additional_stems)
+                if s not in self.stems:
+                    self.stems.append(s)
+
+        if not self.stems or append_appname_to_stems:
+            if self.appname not in self.stems:
+                self.stems.append(self.appname)
 
 
 # =============================================================================
