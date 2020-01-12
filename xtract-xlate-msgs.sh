@@ -44,4 +44,3 @@ for lang in de_DE en_US ; do
             --update-header-comment
     fi
 done
-
