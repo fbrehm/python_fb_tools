@@ -6,5 +6,6 @@ setuptools
 wheel
 Babel
 PyYAML
+toml
 hjson
 requests_mock

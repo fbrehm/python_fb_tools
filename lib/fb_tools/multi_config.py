@@ -38,6 +38,13 @@ try:
 except ImportError:
     pass
 
+HAS_TOML = False
+try:
+    import toml
+    HAS_TOML = True
+except ImportError:
+    pass
+
 # Own modules
 from .config import ConfigError
 
@@ -47,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.4'
+__version__ = '0.2.5'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -88,6 +95,11 @@ class BaseMultiConfig(FbBaseObject):
     available_cfg_types = ['yaml', 'json']
     if HAS_HJSON:
         available_cfg_types.append('hjson')
+
+    if HAS_TOML:
+        default_loader_methods['toml'] = 'load_toml'
+        default_type_extension_patterns['toml'] = [r'to?ml']
+        available_cfg_types.append('toml')
 
     re_invlid_stem = re.compile(re.escape(os.sep))
 
@@ -202,6 +214,9 @@ class BaseMultiConfig(FbBaseObject):
         res['default_encoding'] = self.default_encoding
         res['default_stems'] = self.default_stems
         res['default_config_dir'] = self.default_config_dir
+        res['default_loader_methods'] = self.default_loader_methods
+        res['default_type_extension_patterns'] = self.default_type_extension_patterns
+        res['available_cfg_types'] = self.available_cfg_types
         res['encoding'] = self.encoding
         res['config_dir'] = self.config_dir
         res['additional_config_file'] = self.additional_config_file
