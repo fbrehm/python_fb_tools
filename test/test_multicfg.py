@@ -90,7 +90,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         LOG.debug("Testing existence of system config path {!r}.".format(system_path))
         self.assertIn(system_path, cfg.config_dirs)
 
-        user_path = Path.home() / '.config' / 'test'
+        user_path = Path(os.path.expanduser('~')) / '.config' / 'test'
         LOG.debug("Testing existence of user config path {!r}.".format(user_path))
         self.assertIn(user_path, cfg.config_dirs)
 

@@ -47,7 +47,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -233,7 +233,7 @@ class BaseMultiConfig(FbBaseObject):
 
         self.config_dirs = []
         self.config_dirs.append(Path('/etc') / self.config_dir)
-        path = Path.home() / '.config' / self.config_dir
+        path = Path(os.path.expanduser('~')) / '.config' / self.config_dir
         if path not in self.config_dirs:
             self.config_dirs.append(path)
         if self.is_venv():
