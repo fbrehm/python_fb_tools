@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.5'
+__version__ = '0.2.6'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -115,6 +115,8 @@ class BaseMultiConfig(FbBaseObject):
         self._simulate = False
         self.type2loader = {}
         self.type_extensions = {}
+        self.configs = {}
+        self.configs_raw = {}
         self.config_dirs = []
         self.stems = copy.copy(self.default_stems)
 
@@ -138,6 +140,7 @@ class BaseMultiConfig(FbBaseObject):
 
         self._init_config_dirs()
         self._init_stems(append_appname_to_stems, additional_stems)
+        self._init_types()
 
         if initialized:
             self.initialized = True
@@ -302,6 +305,11 @@ class BaseMultiConfig(FbBaseObject):
                 raise ValueError(msg)
             if self.appname not in self.stems:
                 self.stems.append(self.appname)
+
+    # -------------------------------------------------------------------------
+    def _init_types(self):
+        """Initializing configuration types and their assigned file extensions."""
+        pass
 
 
 # =============================================================================
