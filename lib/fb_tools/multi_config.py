@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.8'
+__version__ = '0.3.0'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -121,6 +121,8 @@ class BaseMultiConfig(FbBaseObject):
         self.configs = {}
         self.configs_raw = {}
         self.config_dirs = []
+        self.config_files = []
+        self.config_file_methods = {}
         self.stems = copy.copy(self.default_stems)
         self.ini_style_types = []
 
@@ -340,7 +342,7 @@ class BaseMultiConfig(FbBaseObject):
         if type_name not in self.available_cfg_types:
             self.available_cfg_types.append(type_name)
         self.ext_loader[ext_pattern] = loader_method_name
-        self.ext_re[ext_pattern] = re.compile(ext_pattern, re.IGNORECASE)
+        self.ext_re[ext_pattern] = re.compile(r'\.' + ext_pattern + r'$', re.IGNORECASE)
         if ini_style is not None:
             if ini_style:
                 if ext_pattern not in self.ini_style_types:
@@ -348,6 +350,36 @@ class BaseMultiConfig(FbBaseObject):
             else:
                 if ext_pattern in self.ini_style_types:
                     self.ini_style_types.remove(ext_pattern)
+
+    # -------------------------------------------------------------------------
+    def collect_config_files(self):
+
+        self.config_files = []
+        self.config_file_pattern = {}
+
+        for cfg_dir in self.config_dirs:
+            if self.verbose > 1:
+                msg = _("Discovering config directory {!r} ...").format(str(cfg_dir))
+                LOG.debug(msg)
+            self._eval_config_dir(cfg_dir)
+
+    # -------------------------------------------------------------------------
+    def _eval_config_dir(self, cfg_dir):
+
+        for found_file in cfg_dir.glob('*'):
+            for stem in self.stems:
+                for ext_pattern in self.ext_loader:
+                    pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
+                    if re.match(pat, found_file.name, re.IGNORECASE):
+                        method = self.ext_loader[ext_pattern]
+                        if self.verbose > 1:
+                            msg = _("Found config file {fi!r}, loader method {m!r}.").format(
+                                fi=str(found_file), m=method)
+                        if found_file in self.config_files:
+                            self.config_files.remove(found_file)
+                        self.config_files.append(found_file)
+                        self.config_file_methods[found_file] = method
+
 
 # =============================================================================
 
