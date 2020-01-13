@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.6'
+__version__ = '0.2.7'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -119,6 +119,7 @@ class BaseMultiConfig(FbBaseObject):
         self.configs_raw = {}
         self.config_dirs = []
         self.stems = copy.copy(self.default_stems)
+        self.re_ext = {}
 
         super(BaseMultiConfig, self).__init__(
             appname=appname, verbose=verbose, version=version,
@@ -309,8 +310,22 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def _init_types(self):
         """Initializing configuration types and their assigned file extensions."""
-        pass
 
+        invalid_msg = _("Invalig configuration type {t!r} - not found in {w!r}.")
+
+        for cfg_type in self.available_cfg_types:
+
+            if cfg_type not in self.default_loader_methods:
+                msg = invalid_msg.format(t=cfg_type, w='default_loader_methods')
+                raise RuntimeError(msg)
+            if cfg_type not in self.default_type_extension_patterns:
+                msg = invalid_msg.format(t=cfg_type, w='default_type_extension_patterns')
+                raise RuntimeError(msg)
+
+            self.type2loader[cfg_type] = self.default_loader_methods[cfg_type]
+            for pattern in self.default_type_extension_patterns[cfg_type]:
+                self.type_extensions[pattern] = cfg_type
+                self.re_ext = re.compile(pattern, re.IGNORECASE)
 
 # =============================================================================
 
