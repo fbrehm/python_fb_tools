@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.7'
+__version__ = '0.3.0'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -83,16 +83,19 @@ class BaseMultiConfig(FbBaseObject):
 
     default_loader_methods = {
         'yaml': 'load_yaml',
+        'ini': 'load_ini',
         'json': 'load_json',
         'hjson': 'load_hjson',
     }
     default_type_extension_patterns = {
         'yaml': [r'ya?ml'],
+        'ini': [r'ini', r'conf(?:ig)?', r'cfg'],
         'json': [r'js(?:on)'],
         'hjson': [r'hjs(?:on)'],
     }
 
-    available_cfg_types = ['yaml', 'json']
+    available_cfg_types = ['yaml', 'ini', 'json']
+    default_ini_style_types = ['ini']
     if HAS_HJSON:
         available_cfg_types.append('hjson')
 
@@ -113,13 +116,15 @@ class BaseMultiConfig(FbBaseObject):
         self._config_dir = None
         self._additional_config_file = None
         self._simulate = False
-        self.type2loader = {}
-        self.type_extensions = {}
+        self.ext_loader = {}
+        self.ext_re = {}
         self.configs = {}
         self.configs_raw = {}
         self.config_dirs = []
+        self.config_files = []
+        self.config_file_methods = {}
         self.stems = copy.copy(self.default_stems)
-        self.re_ext = {}
+        self.ini_style_types = []
 
         super(BaseMultiConfig, self).__init__(
             appname=appname, verbose=verbose, version=version,
@@ -220,6 +225,7 @@ class BaseMultiConfig(FbBaseObject):
         res['default_config_dir'] = self.default_config_dir
         res['default_loader_methods'] = self.default_loader_methods
         res['default_type_extension_patterns'] = self.default_type_extension_patterns
+        res['default_ini_style_types'] = self.default_ini_style_types
         res['available_cfg_types'] = self.available_cfg_types
         res['encoding'] = self.encoding
         res['config_dir'] = self.config_dir
@@ -322,10 +328,58 @@ class BaseMultiConfig(FbBaseObject):
                 msg = invalid_msg.format(t=cfg_type, w='default_type_extension_patterns')
                 raise RuntimeError(msg)
 
-            self.type2loader[cfg_type] = self.default_loader_methods[cfg_type]
+            method = self.default_loader_methods[cfg_type]
             for pattern in self.default_type_extension_patterns[cfg_type]:
-                self.type_extensions[pattern] = cfg_type
-                self.re_ext = re.compile(pattern, re.IGNORECASE)
+                ini_style = False
+                if cfg_type in self.default_ini_style_types:
+                    ini_style = True
+                self.assign_extension(cfg_type, pattern, method, ini_style)
+
+    # -------------------------------------------------------------------------
+    def assign_extension(self, type_name, ext_pattern, loader_method_name, ini_style=None):
+
+        type_name = type_name.lower()
+        if type_name not in self.available_cfg_types:
+            self.available_cfg_types.append(type_name)
+        self.ext_loader[ext_pattern] = loader_method_name
+        self.ext_re[ext_pattern] = re.compile(r'\.' + ext_pattern + r'$', re.IGNORECASE)
+        if ini_style is not None:
+            if ini_style:
+                if ext_pattern not in self.ini_style_types:
+                    self.ini_style_types.append(ext_pattern)
+            else:
+                if ext_pattern in self.ini_style_types:
+                    self.ini_style_types.remove(ext_pattern)
+
+    # -------------------------------------------------------------------------
+    def collect_config_files(self):
+
+        self.config_files = []
+        self.config_file_pattern = {}
+
+        for cfg_dir in self.config_dirs:
+            if self.verbose > 1:
+                msg = _("Discovering config directory {!r} ...").format(str(cfg_dir))
+                LOG.debug(msg)
+            self._eval_config_dir(cfg_dir)
+
+    # -------------------------------------------------------------------------
+    def _eval_config_dir(self, cfg_dir):
+
+        for found_file in cfg_dir.glob('*'):
+            for stem in self.stems:
+                for ext_pattern in self.ext_loader:
+                    pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
+                    if re.match(pat, found_file.name, re.IGNORECASE):
+                        method = self.ext_loader[ext_pattern]
+                        if self.verbose > 1:
+                            msg = _("Found config file {fi!r}, loader method {m!r}.").format(
+                                fi=str(found_file), m=method)
+                        if found_file in self.config_files:
+                            self.config_files.remove(found_file)
+                        self.config_files.append(found_file)
+                        self.config_file_methods[found_file] = method
+
 
 # =============================================================================
 
