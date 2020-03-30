@@ -34,7 +34,7 @@ from . import BasePowerDNSHandler, DEFAULT_PORT, DEFAULT_API_PREFIX
 
 from .errors import PowerDNSRecordSetError, PowerDNSWrongSoaDataError
 
-__version__ = '0.5.9'
+__version__ = '0.5.10'
 
 LOG = logging.getLogger(__name__)
 
@@ -601,6 +601,12 @@ class PowerDNSRecordList(MutableSequence):
         "Remove all items from the PowerDNSRecordList."
 
         self._list = []
+
+    # -------------------------------------------------------------------------
+    def clean(self):
+        "Wrapper for clear()"
+
+        return self.clear()
 
 
 # =============================================================================
