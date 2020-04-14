@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -286,20 +286,20 @@ class BaseMultiConfig(FbBaseObject):
         if additional_stems:
             if is_sequence(additional_stems):
                 for stem in additional_stems:
-                    if not isinstance(stem, six.string_types):
+                    if not isinstance(stem, (six.string_types, six.binary_type, pathlib.Path)):
                         msg = _("Stem {!r} is not a String type.").format(stem)
                         raise TypeError(msg)
-                    s = to_str(stem)
+                    s = str(to_str(stem))
                     if not self.valid_stem(s):
                         msg = _("File name stem {!r} is invalid.").format(s)
                         raise ValueError(msg)
                     if s not in self.stems:
                         self.stems.append(s)
             else:
-                if not isinstance(additional_stems, six.string_types):
+                if not isinstance(additional_stems, (six.string_types, six.binary_type, pathlib.Path)):
                     msg = _("Stem {!r} is not a String type.").format(additional_stems)
                     raise TypeError(msg)
-                s = to_str(additional_stems)
+                s = str(to_str(additional_stems))
                 if not self.valid_stem(s):
                     msg = _("File name stem {!r} is invalid.").format(s)
                     raise ValueError(msg)

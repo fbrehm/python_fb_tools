@@ -13,6 +13,7 @@ import sys
 import logging
 import tempfile
 import datetime
+import six
 
 from pathlib import Path
 
@@ -28,7 +29,7 @@ sys.path.insert(0, libdir)
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
-from fb_tools.common import pp, to_bool
+from fb_tools.common import pp, to_str, to_bool, is_sequence
 
 LOG = logging.getLogger('test_multicfg')
 
@@ -67,7 +68,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         from fb_tools.multi_config import BaseMultiConfig
 
         cfg = BaseMultiConfig(
-            appname='test_multicfg',
+            appname=self.appname,
             config_dir='test', additional_stems='test',
             verbose=self.verbose,
         )
@@ -82,7 +83,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         from fb_tools.multi_config import BaseMultiConfig
 
         cfg = BaseMultiConfig(
-            appname='test_multicfg', base_dir=self.base_dir,
+            appname=self.appname, base_dir=self.base_dir,
             config_dir='test', additional_stems='test',
             verbose=self.verbose,
         )
@@ -113,6 +114,58 @@ class TestFbMultiConfig(FbToolsTestcase):
         LOG.debug("Testing existence of current dir {!r}.".format(cur_dir))
         self.assertIn(cur_dir, cfg.config_dirs)
 
+    # -------------------------------------------------------------------------
+    def test_init_stems(self):
+
+        LOG.info("Testing init of configuration file stems.")
+
+        valid_stems = [
+            'uhu', ('bla', 'blub'), b'banane', ['item0', 'item1'], Path('p0'),
+        ]
+        if six.PY2:
+            valid_stems.append(unicode('uhu'))
+            valid_stems.append(('a', unicode('b'), Path('p1')))
+        else:
+            valid_stems.append(('a', b'b', Path('p1')))
+
+        invalid_stems = (
+            1, 2.3, {'uhu': 'banane'}, os.sep, str(Path('p0') / 'p1'), Path('uhu') / 'banane',
+        )
+
+        from fb_tools.multi_config import BaseMultiConfig
+
+        LOG.debug("Testing for valid stems ...")
+
+        for stem in valid_stems:
+            LOG.debug("Testing valid stem {s!r} ({c}).".format(s=stem, c=stem.__class__.__name__))
+            cfg = BaseMultiConfig(
+                appname=self.appname, config_dir='test', additional_stems=stem,
+                verbose=self.verbose,
+            )
+            if self.verbose >= 2:
+                LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+            if is_sequence(stem):
+                for st in stem:
+                    item = str(to_str(st))
+                    if self.verbose > 1:
+                        LOG.debug("Checking for existence of stem {!r}.".format(item))
+                    self.assertIn(item, cfg.stems)
+            else:
+                item = str(to_str(stem))
+                if self.verbose > 1:
+                    LOG.debug("Checking for existence of stem {!r}.".format(item))
+                self.assertIn(item, cfg.stems)
+
+        for stem in invalid_stems:
+            LOG.debug("Testing invalid stem {s!r} ({c}).".format(s=stem, c=stem.__class__.__name__))
+            with self.assertRaises((TypeError, ValueError)) as cm:
+                cfg = BaseMultiConfig(
+                    appname=self.appname, config_dir='test', additional_stems=stem,
+                    verbose=self.verbose,
+                )
+            e = cm.exception
+            LOG.debug("{c} raised on stem {s!r}: {e}".format( c=e.__class__.__name__, s=stem, e=e))
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -129,6 +182,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbMultiConfig('test_import', verbose))
     suite.addTest(TestFbMultiConfig('test_object', verbose))
     suite.addTest(TestFbMultiConfig('test_init_cfg_dirs', verbose))
+    suite.addTest(TestFbMultiConfig('test_init_stems', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
