@@ -28,7 +28,7 @@ sys.path.insert(0, libdir)
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
-from fb_tools.common import to_bool
+from fb_tools.common import pp, to_bool
 
 LOG = logging.getLogger('test_multicfg')
 
@@ -39,7 +39,8 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def setUp(self):
 
-        pass
+        self.test_dir = Path(__file__).parent.resolve()
+        self.base_dir = self.test_dir.parent
 
     # -------------------------------------------------------------------------
     def tearDown(self):
@@ -76,15 +77,18 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_init_cfg_dirs(self):
 
-        LOG.info("Testing init of cofiguration directories.")
+        LOG.info("Testing init of configuration directories.")
 
         from fb_tools.multi_config import BaseMultiConfig
 
         cfg = BaseMultiConfig(
-            appname='test_multicfg',
+            appname='test_multicfg', base_dir=self.base_dir,
             config_dir='test', additional_stems='test',
             verbose=self.verbose,
         )
+
+        if self.verbose >= 2:
+            LOG.debug("Current configuration directories:\n{}".format(pp(cfg.config_dirs)))
 
         system_path = Path('/etc', 'test')
         LOG.debug("Testing existence of system config path {!r}.".format(system_path))
@@ -95,9 +99,19 @@ class TestFbMultiConfig(FbToolsTestcase):
         self.assertIn(user_path, cfg.config_dirs)
 
         cwd_etc_dir = Path.cwd() / 'etc'
-        LOG.debug("Testing existence of basedir config path {!r}.".format(cwd_etc_dir))
+        LOG.debug("Testing existence of config path in current dir {!r}.".format(cwd_etc_dir))
         self.assertIn(cwd_etc_dir, cfg.config_dirs)
 
+        base_etc_dir = self.base_dir / 'etc'
+        LOG.debug("Testing existence of basedir config path {!r}.".format(base_etc_dir))
+        self.assertIn(base_etc_dir, cfg.config_dirs)
+
+        LOG.debug("Testing existence of basedir {!r}.".format(self.base_dir))
+        self.assertIn(self.base_dir, cfg.config_dirs)
+
+        cur_dir = Path.cwd()
+        LOG.debug("Testing existence of current dir {!r}.".format(cur_dir))
+        self.assertIn(cur_dir, cfg.config_dirs)
 
 
 # =============================================================================
