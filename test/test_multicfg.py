@@ -134,6 +134,14 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         from fb_tools.multi_config import BaseMultiConfig
 
+        LOG.debug("Testing, whether appname is in file stems ...")
+        cfg = BaseMultiConfig(appname=self.appname, config_dir='test', verbose=self.verbose)
+        if self.verbose >= 2:
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+        if self.verbose > 1:
+            LOG.debug("Checking for existence of stem {!r}.".format(self.appname))
+        self.assertIn(self.appname, cfg.stems)
+
         LOG.debug("Testing for valid stems ...")
 
         for stem in valid_stems:
