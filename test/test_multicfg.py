@@ -42,6 +42,7 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         self.test_dir = Path(__file__).parent.resolve()
         self.base_dir = self.test_dir.parent
+        self.test_cfg_dir = self.test_dir / 'test-multiconfig'
 
     # -------------------------------------------------------------------------
     def tearDown(self):
@@ -85,7 +86,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         cfg = BaseMultiConfig(
             appname=self.appname, base_dir=self.base_dir,
             config_dir='test', additional_stems='test',
-            verbose=self.verbose,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
         )
 
         if self.verbose >= 2:
@@ -113,6 +114,9 @@ class TestFbMultiConfig(FbToolsTestcase):
         cur_dir = Path.cwd()
         LOG.debug("Testing existence of current dir {!r}.".format(cur_dir))
         self.assertIn(cur_dir, cfg.config_dirs)
+
+        LOG.debug("Testing existence of config dir {!r}.".format(str(self.test_cfg_dir)))
+        self.assertIn(self.test_cfg_dir, cfg.config_dirs)
 
     # -------------------------------------------------------------------------
     def test_init_stems(self):
@@ -174,6 +178,20 @@ class TestFbMultiConfig(FbToolsTestcase):
             e = cm.exception
             LOG.debug("{c} raised on stem {s!r}: {e}".format( c=e.__class__.__name__, s=stem, e=e))
 
+    # -------------------------------------------------------------------------
+    def test_collect_cfg_files(self):
+
+        LOG.info("Testing collecting of configuration files.")
+
+        from fb_tools.multi_config import BaseMultiConfig
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose)
+        if self.verbose >= 2:
+            LOG.debug("Current configuration directories:\n{}".format(pp(cfg.config_dirs)))
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -191,6 +209,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbMultiConfig('test_object', verbose))
     suite.addTest(TestFbMultiConfig('test_init_cfg_dirs', verbose))
     suite.addTest(TestFbMultiConfig('test_init_stems', verbose))
+    suite.addTest(TestFbMultiConfig('test_collect_cfg_files', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
