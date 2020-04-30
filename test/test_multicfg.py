@@ -183,6 +183,13 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         LOG.info("Testing collecting of configuration files.")
 
+        exts = ('.ini', '.js', '.yaml')
+        ext_methods = {
+            '.ini': 'load_ini',
+            '.js': 'load_json',
+            '.yaml': 'load_yaml',
+        }
+
         from fb_tools.multi_config import BaseMultiConfig
 
         cfg = BaseMultiConfig(
@@ -192,6 +199,21 @@ class TestFbMultiConfig(FbToolsTestcase):
             LOG.debug("Current configuration directories:\n{}".format(pp(cfg.config_dirs)))
             LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
 
+        cfg.collect_config_files()
+        if self.verbose >= 2:
+            LOG.debug("Found configuration files:\n{}".format(pp(cfg.config_files)))
+            LOG.debug("Found read methods:\n{}".format(pp(cfg.config_file_methods)))
+
+        for ext in exts:
+            path = self.test_cfg_dir / (self.appname + ext)
+            exp_method = ext_methods[ext]
+            LOG.debug("Checking for existence of detected cfg file {!r}.".format(str(path)))
+            self.assertIn(path, cfg.config_files)
+            LOG.debug("Checking method {m!r} of cfg file {f!r}.".format(
+                m=exp_method, f=str(path)))
+            found_method = cfg.config_file_methods[path]
+            LOG.debug("Found method: {!r}".format(found_method))
+            self.assertEqual(exp_method, found_method)
 
 # =============================================================================
 if __name__ == '__main__':
