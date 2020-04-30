@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.4'
+__version__ = '0.3.5'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -90,8 +90,8 @@ class BaseMultiConfig(FbBaseObject):
     default_type_extension_patterns = {
         'yaml': [r'ya?ml'],
         'ini': [r'ini', r'conf(?:ig)?', r'cfg'],
-        'json': [r'js(?:on)'],
-        'hjson': [r'hjs(?:on)'],
+        'json': [r'js(?:on)?'],
+        'hjson': [r'hjs(?:on)?'],
     }
 
     available_cfg_types = ['yaml', 'ini', 'json']
