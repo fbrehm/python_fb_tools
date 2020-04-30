@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -317,7 +317,7 @@ class BaseMultiConfig(FbBaseObject):
     def _init_types(self):
         """Initializing configuration types and their assigned file extensions."""
 
-        invalid_msg = _("Invalig configuration type {t!r} - not found in {w!r}.")
+        invalid_msg = _("Invalid configuration type {t!r} - not found in {w!r}.")
 
         for cfg_type in self.available_cfg_types:
 
@@ -367,6 +367,14 @@ class BaseMultiConfig(FbBaseObject):
     def _eval_config_dir(self, cfg_dir):
 
         for found_file in cfg_dir.glob('*'):
+            if self.verbose > 1:
+                msg = "Checking, whether {!r} is a possible config file.".format(str(found_file))
+                LOG.debug(msg)
+            if not found_file.is_file():
+                if self.verbose > 1:
+                    msg = "Path {!r} is not a regular file.".format(str(found_file))
+                    LOG.debug(msg)
+                continue
             for stem in self.stems:
                 for ext_pattern in self.ext_loader:
                     pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
