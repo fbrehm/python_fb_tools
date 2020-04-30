@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -110,7 +110,8 @@ class BaseMultiConfig(FbBaseObject):
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             append_appname_to_stems=True, config_dir=None, additional_stems=None,
-            encoding=DEFAULT_ENCODING, additional_config_file=None, initialized=False):
+            additional_cfgdirs=None, encoding=DEFAULT_ENCODING, additional_config_file=None,
+            initialized=False):
 
         self._encoding = None
         self._config_dir = None
@@ -144,7 +145,7 @@ class BaseMultiConfig(FbBaseObject):
         if additional_config_file:
             self.additional_config_file = additional_config_file
 
-        self._init_config_dirs()
+        self._init_config_dirs(additional_cfgdirs)
         self._init_stems(append_appname_to_stems, additional_stems)
         self._init_types()
 
@@ -254,29 +255,55 @@ class BaseMultiConfig(FbBaseObject):
         return True
 
     # -------------------------------------------------------------------------
-    def _init_config_dirs(self):
+    def _init_config_dirs(self, additional_cfgdirs=None):
 
         self.config_dirs = []
+
         self.config_dirs.append(Path('/etc') / self.config_dir)
+
         path = Path(os.path.expanduser('~')) / '.config' / self.config_dir
-        if path not in self.config_dirs:
-            self.config_dirs.append(path)
+        if path in self.config_dirs:
+            self.config_dirs.remove(path)
+
+        self.config_dirs.append(path)
         if self.is_venv():
             path = Path(sys.prefix) / 'etc'
-            if path not in self.config_dirs:
-                self.config_dirs.append(path)
+            if path in self.config_dirs:
+                self.config_dirs.remove(path)
+            self.config_dirs.append(path)
+
         path = Path.cwd() / 'etc'
-        if path not in self.config_dirs:
-            self.config_dirs.append(path)
+        if path in self.config_dirs:
+            self.config_dirs.remove(path)
+        self.config_dirs.append(path)
+
         path = self.base_dir / 'etc'
-        if path not in self.config_dirs:
-            self.config_dirs.append(path)
+        if path in self.config_dirs:
+            self.config_dirs.remove(path)
+        self.config_dirs.append(path)
+
         path = self.base_dir
-        if path not in self.config_dirs:
-            self.config_dirs.append(path)
+        if path in self.config_dirs:
+            self.config_dirs.remove(path)
+        self.config_dirs.append(path)
+
         path = Path.cwd()
-        if path not in self.config_dirs:
-            self.config_dirs.append(path)
+        if path in self.config_dirs:
+            self.config_dirs.remove(path)
+        self.config_dirs.append(path)
+
+        if additional_cfgdirs:
+            if is_sequence(additional_cfgdirs):
+                for item in additional_cfgdirs:
+                    path = Path(item)
+                    if path in self.config_dirs:
+                        self.config_dirs.remove(path)
+                    self.config_dirs.append(path)
+            else:
+                path = Path(additional_cfgdirs)
+                if path in self.config_dirs:
+                    self.config_dirs.remove(path)
+                self.config_dirs.append(path)
 
     # -------------------------------------------------------------------------
     def _init_stems(self, append_appname_to_stems, additional_stems=None):
