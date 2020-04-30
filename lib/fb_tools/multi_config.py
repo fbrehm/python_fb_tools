@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -104,7 +104,7 @@ class BaseMultiConfig(FbBaseObject):
         default_type_extension_patterns['toml'] = [r'to?ml']
         available_cfg_types.append('toml')
 
-    re_invlid_stem = re.compile(re.escape(os.sep))
+    re_invalid_stem = re.compile(re.escape(os.sep))
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -249,7 +249,7 @@ class BaseMultiConfig(FbBaseObject):
         """Checks, whether the given stem is a valid file name stem
             (whithout a path separator)."""
 
-        if cls.re_invlid_stem.search(stem):
+        if cls.re_invalid_stem.search(stem):
             return False
         return True
 
