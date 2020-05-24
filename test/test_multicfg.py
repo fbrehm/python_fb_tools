@@ -215,6 +215,22 @@ class TestFbMultiConfig(FbToolsTestcase):
             LOG.debug("Found method: {!r}".format(found_method))
             self.assertEqual(exp_method, found_method)
 
+    # -------------------------------------------------------------------------
+    def test_read_cfg_files(self):
+
+        LOG.info("Testing reading of configuration files.")
+
+        from fb_tools.multi_config import BaseMultiConfig
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose)
+        if self.verbose >= 2:
+            LOG.debug("Current configuration directories:\n{}".format(pp(cfg.config_dirs)))
+
+        cfg.read()
+
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -232,6 +248,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbMultiConfig('test_init_cfg_dirs', verbose))
     suite.addTest(TestFbMultiConfig('test_init_stems', verbose))
     suite.addTest(TestFbMultiConfig('test_collect_cfg_files', verbose))
+    suite.addTest(TestFbMultiConfig('test_read_cfg_files', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

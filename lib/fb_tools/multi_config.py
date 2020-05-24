@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.5'
+__version__ = '0.4.0'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -117,6 +117,7 @@ class BaseMultiConfig(FbBaseObject):
         self._config_dir = None
         self._additional_config_file = None
         self._simulate = False
+        self._cfgfiles_collected = False
         self.ext_loader = {}
         self.ext_re = {}
         self.configs = {}
@@ -209,6 +210,12 @@ class BaseMultiConfig(FbBaseObject):
         self._config_dir = cdir
 
     # -------------------------------------------------------------------------
+    @property
+    def cfgfiles_collected(self):
+        """Flage, whether the configuration files were collected."""
+        return self._cfgfiles_collected
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -231,6 +238,7 @@ class BaseMultiConfig(FbBaseObject):
         res['encoding'] = self.encoding
         res['config_dir'] = self.config_dir
         res['additional_config_file'] = self.additional_config_file
+        res['cfgfiles_collected'] = self.cfgfiles_collected
 
         return res
 
@@ -381,6 +389,8 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def collect_config_files(self):
 
+        LOG.debug("Collecting all configuration files.")
+
         self.config_files = []
         self.config_file_pattern = {}
 
@@ -390,15 +400,17 @@ class BaseMultiConfig(FbBaseObject):
                 LOG.debug(msg)
             self._eval_config_dir(cfg_dir)
 
+        self._cfgfiles_collected = True
+
     # -------------------------------------------------------------------------
     def _eval_config_dir(self, cfg_dir):
 
         for found_file in cfg_dir.glob('*'):
-            if self.verbose > 1:
+            if self.verbose > 2:
                 msg = "Checking, whether {!r} is a possible config file.".format(str(found_file))
                 LOG.debug(msg)
             if not found_file.is_file():
-                if self.verbose > 1:
+                if self.verbose > 2:
                     msg = "Path {!r} is not a regular file.".format(str(found_file))
                     LOG.debug(msg)
                 continue
@@ -414,6 +426,24 @@ class BaseMultiConfig(FbBaseObject):
                             self.config_files.remove(found_file)
                         self.config_files.append(found_file)
                         self.config_file_methods[found_file] = method
+
+    # -------------------------------------------------------------------------
+    def read(self):
+        """
+        Reading all collected config files and save their appropriate
+        configuration in self.raw_configs.
+        """
+
+        if not self.cfgfiles_collected:
+            self.collect_config_files()
+
+        for cfg_file in self.config_files:
+
+            LOG.info("Reading configuration file {!r} ...".format(str(cfg_file)))
+
+            method = self.config_file_methods[cfg_file]
+            if self.verbose > 1:
+                LOG.debug("Using loading method {!r}.".format(method))
 
 
 # =============================================================================
