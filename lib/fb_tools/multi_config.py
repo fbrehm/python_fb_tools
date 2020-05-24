@@ -54,7 +54,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -67,6 +67,22 @@ class MultiConfigError(ConfigError):
     execution this configured application"""
 
     pass
+
+
+# =============================================================================
+class MultiCfgLoaderNotFoundError(MultiConfigError, RuntimeError):
+    """Special error class for the case, that a loader method was not found."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, method):
+
+        self.method = method
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = _("Config loader method {!r} was not found.").format(self.method)
+        return msg
 
 
 # =============================================================================
@@ -444,6 +460,37 @@ class BaseMultiConfig(FbBaseObject):
             method = self.config_file_methods[cfg_file]
             if self.verbose > 1:
                 LOG.debug("Using loading method {!r}.".format(method))
+
+            meth = getattr(self, method, None)
+            if not meth:
+                raise MultiCfgLoaderNotFoundError(method)
+
+            meth(cfg_file)
+
+    # -------------------------------------------------------------------------
+    def load_json(self, cfg_file):
+
+        LOG.debug("Reading JSON file {!r} ...".format(str(cfg_file)))
+
+    # -------------------------------------------------------------------------
+    def load_hjson(self, cfg_file):
+
+        LOG.debug("Reading human readable JSON file {!r} ...".format(str(cfg_file)))
+
+    # -------------------------------------------------------------------------
+    def load_ini(self, cfg_file):
+
+        LOG.debug("Reading INI file {!r} ...".format(str(cfg_file)))
+
+    # -------------------------------------------------------------------------
+    def load_toml(self, cfg_file):
+
+        LOG.debug("Reading TOML file {!r} ...".format(str(cfg_file)))
+
+    # -------------------------------------------------------------------------
+    def load_yaml(self, cfg_file):
+
+        LOG.debug("Reading YAML file {!r} ...".format(str(cfg_file)))
 
 
 # =============================================================================
