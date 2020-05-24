@@ -28,6 +28,8 @@ from six import StringIO
 from six.moves import configparser
 
 from configparser import Error as ConfigParseError
+if six.PY3:
+    from configparser import ExtendedInterpolation
 
 import yaml
 
@@ -48,7 +50,7 @@ except ImportError:
 # Own modules
 from .config import ConfigError
 
-from .common import to_bool, to_str, is_sequence
+from .common import pp, to_bool, to_str, is_sequence
 
 from .obj import FbBaseObject
 
@@ -122,6 +124,8 @@ class BaseMultiConfig(FbBaseObject):
 
     re_invalid_stem = re.compile(re.escape(os.sep))
 
+    default_ini_default_section = 'general'
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
@@ -134,6 +138,14 @@ class BaseMultiConfig(FbBaseObject):
         self._additional_config_file = None
         self._simulate = False
         self._cfgfiles_collected = False
+        self._ini_allow_no_value = False
+        self._ini_delimiters = None
+        self._ini_extended_interpolation = False
+        self._ini_comment_prefixes = None
+        self._ini_inline_comment_prefixes = None
+        self._ini_strict = True
+        self._ini_empty_lines_in_values = True
+        self._ini_default_section = self.default_ini_default_section
         self.ext_loader = {}
         self.ext_re = {}
         self.configs = {}
@@ -228,8 +240,18 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def cfgfiles_collected(self):
-        """Flage, whether the configuration files were collected."""
+        """Flag, whether the configuration files were collected."""
         return self._cfgfiles_collected
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_allow_no_value(self):
+        """Accept keys without values in ini-files."""
+        return self._ini_allow_no_value
+
+    @ini_allow_no_value.setter
+    def ini_allow_no_value(self, value):
+        self._ini_allow_no_value = to_bool(value)
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -255,6 +277,7 @@ class BaseMultiConfig(FbBaseObject):
         res['config_dir'] = self.config_dir
         res['additional_config_file'] = self.additional_config_file
         res['cfgfiles_collected'] = self.cfgfiles_collected
+        res['ini_allow_no_value'] = self.ini_allow_no_value
 
         return res
 
@@ -470,27 +493,38 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def load_json(self, cfg_file):
 
-        LOG.debug("Reading JSON file {!r} ...".format(str(cfg_file)))
+        LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='JSON', fn=str(cfg_file)))
 
     # -------------------------------------------------------------------------
     def load_hjson(self, cfg_file):
 
-        LOG.debug("Reading human readable JSON file {!r} ...".format(str(cfg_file)))
+        LOG.debug(_("Reading {tp} file {fn!r} ...").format(
+            tp='human readable JSON', fn=str(cfg_file)))
 
     # -------------------------------------------------------------------------
     def load_ini(self, cfg_file):
 
-        LOG.debug("Reading INI file {!r} ...".format(str(cfg_file)))
+        LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='INI', fn=str(cfg_file)))
+
+        kargs = {
+            'allow_no_value': self.ini_allow_no_value,
+        }
+
+        if self.verbose > 1:
+            LOG.debug(_("Arguments on initializing ConfigParser:\n{}").format(pp(kargs)))
+
+        parser = configparser.ConfigParser(**kargs)
+
 
     # -------------------------------------------------------------------------
     def load_toml(self, cfg_file):
 
-        LOG.debug("Reading TOML file {!r} ...".format(str(cfg_file)))
+        LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='TOML', fn=str(cfg_file)))
 
     # -------------------------------------------------------------------------
     def load_yaml(self, cfg_file):
 
-        LOG.debug("Reading YAML file {!r} ...".format(str(cfg_file)))
+        LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='YAML', fn=str(cfg_file)))
 
 
 # =============================================================================
