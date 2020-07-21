@@ -169,8 +169,9 @@ build Debian 10 Buster:
     - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}-${PKG_RELEASE}"'
     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
     - 'echo "Version to build: ${BUILD_VERSION} - Bulder: ${BUILDER}"'
-    - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
-    - 'dpkg-buildpackage --build=full --no-sign -v"${BUILD_VERSION}" -C"Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}" --release-by="${BUILDER}" --build-by="${BUILDER}"'
+      # - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
+      # - 'dpkg-buildpackage --build=full --no-sign -v"${BUILD_VERSION}" -C"Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}" --release-by="${BUILDER}" --build-by="${BUILDER}"'
+    - 'dpkg-buildpackage --build=full --no-sign -C"Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}" --release-by="${BUILDER}" --build-by="${BUILDER}"'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
     - ls -lA --color=always ..
   tags:
