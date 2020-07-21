@@ -116,7 +116,7 @@ test Python 3.8:
 Linter:
   <<: *docker_job_definition
   stage: linter
-  image: python:3.7
+  image: python:3.8
   script:
     - apt install --yes shellcheck yamllint
     - pip install --upgrade --upgrade-strategy eager flake8 pylint
