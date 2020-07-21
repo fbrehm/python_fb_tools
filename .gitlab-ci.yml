@@ -7,6 +7,8 @@ stages:
   - deploy
 
 variables:
+  DEBFULLNAME: 'Frank Brehm'
+  DEBEMAIL: 'frank@brehm-online.com'
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
@@ -154,7 +156,12 @@ build Debian 10 Buster:
       python-all python-argparse python-babel python-setuptools python-pathlib
       python-pip python-six python-tz python3-all python3-babel python3-pip
       python3-setuptools python3-six python3-tz dh-python
+    - 'export ODIR=$(pwd)'
+    - 'export PKG_VERSION=$( ./get-debian-version )'
+    - 'export PKG_RELEASE=$( ./get-debian-release )'
+    - 'echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"'
     - ls -lA --color=always
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
   tags:
     - docker
   only:
