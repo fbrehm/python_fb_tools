@@ -143,9 +143,8 @@ build Debian 10 Buster:
     - whoami
     - pwd
     - locale -a
-    - apt update && apt install --yes --no-install-recommends \
-        sudo locales gettext build-essential devscripts fakeroot debhelper automake \
-        autotools-dev pkg-config help2man lsb-release ca-certificates
+    - apt update
+    - apt install --yes --no-install-recommends sudo locales gettext build-essential devscripts fakeroot debhelper automake autotools-dev pkg-config help2man lsb-release ca-certificates
   tags:
     - docker
   only:
