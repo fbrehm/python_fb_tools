@@ -170,7 +170,7 @@ build Debian 10 Buster:
     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
     - 'echo "Version to build: ${BUILD_VERSION} - Bulder: ${BUILDER}"'
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
-    - debuild -i -us -uc
+    - 'echo "y" | debuild -i -us -uc'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
     - ls -lA --color=always ..
   tags:
