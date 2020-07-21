@@ -135,6 +135,22 @@ Linter:
     - /^hf.*$/
     - tags
 
+build Debian 10 Buster:
+  stage: build
+  image: debian:buster
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - apt update && apt install --yes --no-install-recommends \
+        sudo locales gettext build-essential devscripts fakeroot debhelper automake \
+        autotools-dev pkg-config help2man lsb-release ca-certificates
+  tags:
+    - docker
+  only:
+    - dev-pkgbuild
+
 build CentOS 7 with Python 3.6:
   stage: build
   image: centos:7
