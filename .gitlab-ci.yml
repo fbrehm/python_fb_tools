@@ -12,6 +12,7 @@ variables:
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
+  VERSION_PREFIX: 'unknown'
   YUM_REPO_GPG_ID: 'C0E73F70'
   YUM_REPO_GPG_PASSWD: 'secret'
   YUM_REPO_HOST: 'repo01.pixelpark.com'
@@ -138,6 +139,11 @@ Linter:
     - tags
 
 build Debian 10 Buster:
+  variables:
+    VERSION_PREFIX: 'deb10'
+    DISTRIBUTOR: 'Debian'
+    OS_RELEASE: '10'
+    OS_CODENAME: 'buster'
   stage: build
   image: debian:buster
   before_script:
@@ -159,8 +165,11 @@ build Debian 10 Buster:
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
-    - 'echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"'
+    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}-${PKG_RELEASE}"'
+    - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
+    - 'echo "Version to build: ${BUILD_VERSION}"'
     - ls -lA --color=always
+    - 'dpkg-buildpackage --build all --no-sign -v"${BUILD_VERSION}" -C"Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}" --release-by "${BUILDER}" --build-by "${BUILDER}"'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
   tags:
     - docker
