@@ -171,10 +171,14 @@ build Debian 10 Buster:
     - ls -lA --color=always
     - dpkg-buildpackage --version
     - dpkg-buildpackage --help
-    - 'dpkg-buildpackage --build=full --no-sign -v"${BUILD_VERSION}" -C"Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}" --release-by "${BUILDER}" --build-by "${BUILDER}"'
+    - 'dpkg-buildpackage --build=full --no-sign -v"${BUILD_VERSION}" -C"Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}" --release-by="${BUILDER}" --build-by="${BUILDER}"'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
   tags:
     - docker
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .debian-version
   only:
     - dev-pkgbuild
 
