@@ -166,7 +166,7 @@ build Debian 10 Buster:
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
-    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}-${PKG_RELEASE}"'
+    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
     - 'echo "Version to build: ${BUILD_VERSION} - Bulder: ${BUILDER}"'
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
