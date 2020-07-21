@@ -1,0 +1,10 @@
+Package: s3fs-fuse
+Version: __VERSION__
+Depends: libfuse2, libssl1.0.0, libxml2
+Recommends: lsb-release
+Section: devel
+Priority: optional
+Architecture: amd64
+Installed-Size: __FILESIZE__
+Maintainer: Xan Manning <hello@[some-domain].co.uk>
+Description: s3fs-fuse package.
