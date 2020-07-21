@@ -144,8 +144,16 @@ build Debian 10 Buster:
     - pwd
     - locale -a
     - apt update
-    - apt install --yes --no-install-recommends sudo locales gettext build-essential devscripts fakeroot debhelper automake autotools-dev pkg-config help2man lsb-release ca-certificates
+    - >
+      apt install --yes --no-install-recommends sudo locales gettext build-essential
+      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+      lsb-release ca-certificates
   script:
+    - >
+      apt install --yes --no-install-recommends
+      python-all python-argparse python-babel python-setuptools python-pathlib
+      python-pip python-six python-tz python3-all python3-babel python3-pip
+      python3-setuptools python3-six python3-tz dh-python
     - ls -lA --color=always
   tags:
     - docker
