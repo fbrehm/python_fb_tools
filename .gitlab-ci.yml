@@ -172,7 +172,7 @@ build Debian 10 Buster:
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
     - gpg --list-public-keys
-    - echo "$YUM_REPO_GPG_KEY_SEC" | base64 --decode | gpg --import --no-tty --batch --yes
+    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
     - gpg --list-secret-keys
     - 'echo "y" | debuild -i -us -uc'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
