@@ -170,15 +170,33 @@ build Debian 10 Buster:
     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
     - 'echo "Version to build: ${BUILD_VERSION} - Bulder: ${BUILDER}"'
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
+    - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+    - gpg --list-public-keys
+    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
+    - gpg --list-secret-keys
     - 'echo "y" | debuild -i -us -uc'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
     - ls -lA --color=always ..
+    - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.dsc ../*.tar.* ../*.build* ../*.changes debian/pkgs/src'
+    - ls -lA --color=always debian/pkgs/*/*
   tags:
     - docker
   cache:
     key: ${CI_JOB_NAME}
     paths:
       - .debian-version
+#  artifacts:
+#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#    paths:
+#      - debian/pkgs/*/*
+#    expire_in: '1 week'
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
   only:
     - dev-pkgbuild
 
@@ -237,7 +255,7 @@ build CentOS 7 with Python 3.6:
     paths:
       - rpmdir/RPMS/*/*.rpm
       - rpmdir/SRPMS/*.src.rpm
-    expire_in: '3 mos'
+    expire_in: '1 week'
   tags:
     - docker
   except:
@@ -245,6 +263,72 @@ build CentOS 7 with Python 3.6:
     - /^dev\/.*$/
     - /^hf.*$/
     - tags
+
+build CentOS 8 with Python 3.8:
+  stage: build
+  image: centos:8
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - yum clean all && yum makecache
+    - 'for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
+    - locale -a
+    - locale
+    - 'export LC_ALL=en_US.utf8'
+    - locale
+    - yum --assumeyes install epel-release
+    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
+    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+    - yum makecache
+    - yum --assumeyes upgrade
+    - yum --assumeyes install python38 python38-setuptools python38-pip python38-devel python38-pytz python38-babel platform-python-devel gnupg2 rpm-build tree expect gettext rpm-sign
+    - ls -l --color=always /bin/python* /bin/pip* || true
+    - pip3 list
+  script:
+    - mkdir -pv rpmdir
+    - mkdir -pv rpmdir/SOURCES
+    - 'export ODIR=$(pwd)'
+    - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )'
+    - 'export PKG_VERSION=$( ./get-rpm-version )'
+    - 'export PKG_RELEASE=$( ./get-rpm-release )'
+    - 'echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"'
+    - 'mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION'
+    - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
+    - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
+    - 'cat specs/fb_tools.spec.template | sed -e "s/@@@Version@@@/$PKG_VERSION/gi" -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec'
+    - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version $PKG_VERSION" --define "python3_version_nodots 36" specs/fb_tools.spec'
+    - tree -aQpugs rpmdir/*RPMS || true
+    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
+    - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+    - gpg --list-public-keys
+    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
+    - gpg --list-secret-keys
+    - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
+    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .rpm-version
+#  artifacts:
+#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#    paths:
+#      - rpmdir/RPMS/*/*.rpm
+#      - rpmdir/SRPMS/*.src.rpm
+#    expire_in: '1 week'
+  tags:
+    - docker
+#  except:
+#    - /^dev-.*$/
+#    - /^dev\/.*$/
+#    - /^hf.*$/
+#    - tags
+  only:
+    - dev-pkgbuild
 
 Deploy packages EL7:
   stage: deploy
