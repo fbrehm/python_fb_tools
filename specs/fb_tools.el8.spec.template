@@ -2,6 +2,7 @@
 %global python2_pkgversion 2
 
 %define version @@@Version@@@
+%define builddir python_fb_tools-%{version}
 %define builddir3 python38_fb_tools-%{version}
 
 Name:		python38-fb-tools
@@ -41,7 +42,9 @@ In this package are contained the following scripts:
  * update-ddns
 
 %prep
-%setup -n %{builddir3}
+%setup -n %{builddir}
+rm -rf ../%{builddir3}
+cp -a . ../%{builddir3}
 
 %build
 cd ../%{builddir3}
