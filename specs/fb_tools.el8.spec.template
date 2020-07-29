@@ -48,12 +48,12 @@ cp -a . ../%{builddir3}
 
 %build
 cd ../%{builddir3}
-python38 setup.py build
+python3.8 setup.py build
 
 %install
 cd ../%{builddir3}
 echo "Buildroot: %{buildroot}"
-python38 setup.py install --prefix=%{_prefix} --root=%{buildroot}
+python3.8 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 
 %files
 %defattr(-,root,root,-)
