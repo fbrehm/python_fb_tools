@@ -171,8 +171,8 @@ build Debian 10 Buster:
     - 'echo "Version to build: ${BUILD_VERSION} - Bulder: ${BUILDER}"'
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+    # - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
     - gpg --list-public-keys
-    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
     - gpg --list-secret-keys
     - 'echo "y" | debuild -i -us -uc'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
@@ -273,7 +273,7 @@ build CentOS 8 with Python 3.8:
     - pwd
     - locale -a
     - yum clean all && yum makecache
-    - 'for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
+    - yum --assumeyes install langpacks-de langpacks-en langpacks-en_GB
     - locale -a
     - locale
     - 'export LC_ALL=en_US.utf8'
