@@ -174,7 +174,8 @@ build Debian 10 Buster:
     - gpg --list-public-keys
     - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
     - gpg --list-secret-keys
-    - 'echo "y" | debuild -i -us -uc'
+    - 'echo "${YUM_REPO_GPG_PASSWD}" >/tmp/uhu.txt'
+    - 'echo "y" | debuild -i -p"gpg --pinentry-mode loopback --passphrase-file /tmp/uhu.txt" -k ${YUM_REPO_GPG_ID}'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
     - ls -lA --color=always ..
     - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
