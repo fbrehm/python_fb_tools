@@ -358,17 +358,17 @@ build CentOS 8 with Python 3.8:
     - tree -aQpugs rpmdir/*RPMS || true
     - tree -aQpugs rpmdir/*RPMS || true
     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
-    - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
-    - gpg --list-public-keys
-    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
-    - gpg --list-secret-keys
-    - 'echo "pinentry-program /usr/bin/pinentry-curses" >> /etc/gnupg/gpg-agent.conf'
-    - ls -lA /etc/gnupg/gpg-agent.conf
-    - cat /etc/gnupg/gpg-agent.conf
-    - 'export GPG_TTY=$( tty )'
-    - 'echo GPG_TTY=${GPG_TTY}'
-    - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
-    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    # - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+    # - gpg --list-public-keys
+    # - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
+    # - gpg --list-secret-keys
+    # - 'echo "pinentry-program /usr/bin/pinentry-curses" >> /etc/gnupg/gpg-agent.conf'
+    # - ls -lA /etc/gnupg/gpg-agent.conf
+    # - cat /etc/gnupg/gpg-agent.conf
+    # - 'export GPG_TTY=$( tty )'
+    # - 'echo GPG_TTY=${GPG_TTY}'
+    # - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
+    # - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
   cache:
     key: ${CI_JOB_NAME}
