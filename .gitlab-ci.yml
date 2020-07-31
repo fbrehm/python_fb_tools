@@ -294,7 +294,7 @@ build CentOS 7 with Python 3.6:
     - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
     - gpg --list-public-keys
-    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
+    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
     - gpg --list-secret-keys
     - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
@@ -360,7 +360,7 @@ build CentOS 8 with Python 3.8:
     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
     - gpg --list-public-keys
-    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
+    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
     - gpg --list-secret-keys
     - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
