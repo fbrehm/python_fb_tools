@@ -170,18 +170,12 @@ build Debian 10 Buster:
     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
     - 'echo "Version to build: ${BUILD_VERSION} - Bulder: ${BUILDER}"'
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
-    # - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
-    # - gpg --list-public-keys
-    # - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
-    # - gpg --list-secret-keys
-    # - 'echo "${YUM_REPO_GPG_PASSWD}" >/tmp/uhu.txt'
-    # - 'echo "y" | debuild -p"gpg --pinentry-mode loopback --passphrase-file /tmp/uhu.txt" -k ${YUM_REPO_GPG_ID}'
-    - 'echo "y" | debuild -i -us -uc'
+    - 'echo "y" | debuild -b -i -us -uc'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
     - ls -lA --color=always ..
     - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
     - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
-    - 'mv -vi ../*.dsc ../*.tar.* ../*.build* ../*.changes debian/pkgs/src'
+    # - 'mv -vi ../*.dsc ../*.tar.* ../*.build* ../*.changes debian/pkgs/src'
     - ls -lA --color=always debian/pkgs/*/*
   tags:
     - docker
@@ -244,7 +238,7 @@ build CentOS 7 with Python 3.6:
     - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
     - gpg --list-public-keys
-    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
+    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
     - gpg --list-secret-keys
     - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
