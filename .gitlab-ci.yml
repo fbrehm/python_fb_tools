@@ -5,13 +5,19 @@ stages:
   - linter
   - build
   - deploy
+  - notify
 
 variables:
   DEBFULLNAME: 'Frank Brehm'
   DEBEMAIL: 'frank@brehm-online.com'
+  DEB_REPO_HOST: 'repo.uhu-banane.de'
+  DEB_REPO_USER: 'repo.in'
+  DEB_REPO_UPLOAD_DIR: '/var/www/incoming'
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
+  NOTIFY_ADDRESS: 'frank@brehm-online.com frank.brehm@pixelpark.com'
+  SENDER_ADDRESS: 'gitlab-ci@pixelpark.com'
   USED_TIMEZONE: 'Europe/Berlin'
   VERSION_PREFIX: 'unknown'
   YUM_REPO_GPG_ID: 'C0E73F70'
@@ -416,13 +422,11 @@ build binaries for Ubuntu 16.04 LTS Xenial Xerus:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-#  except:
-#    - /^dev-.*$/
-#    - /^dev\/.*$/
-#    - /^hf.*$/
-#    - tags
-  only:
-    - dev-pkgbuild
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
 
 build binaries for Ubuntu 18.04 LTS Bionic Beaver:
   variables:
@@ -536,13 +540,11 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-#  except:
-#    - /^dev-.*$/
-#    - /^dev\/.*$/
-#    - /^hf.*$/
-#    - tags
-  only:
-    - dev-pkgbuild
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
 
 build CentOS 7 with Python 3.6:
   variables:
@@ -684,6 +686,34 @@ build CentOS 8 with Python 3.8:
     - /^hf.*$/
     - tags
 
+Deploy packages Debian and Ubuntu:
+  stage: deploy
+  tags:
+    - deploy
+  script:
+    - hostname -f
+    - whoami
+    - pwd
+    - ls -lA --color=always
+    - tree -aQpugs debian/pkgs || true
+    - 'echo -e "DEB_REPO_HOST: ${DEB_REPO_HOST}"'
+    - 'echo -e "DEB_REPO_USER: ${DEB_REPO_USER}"'
+    - 'echo -e "DEB_REPO_UPLOAD_DIR: ${DEB_REPO_UPLOAD_DIR}"'
+    - 'scp -p -o StrictHostKeyChecking=no $( find debian/pkgs -type f | sort ) ${DEB_REPO_USER}@${DEB_REPO_HOST}:${DEB_REPO_UPLOAD_DIR}/'
+  environment:
+    name: production
+  dependencies:
+    - 'build Debian Sources'
+    - 'build binaries for Debian 9 Stretch'
+    - 'build binaries for Debian 10 Buster'
+    - 'build binaries for Ubuntu 16.04 LTS Xenial Xerus'
+    - 'build binaries for Ubuntu 18.04 LTS Bionic Beaver'
+    - 'build binaries for Ubuntu 20.04 LTS Focal Fossa'
+  only:
+    - master
+    - develop
+  when: manual
+
 Deploy packages EL7:
   variables:
     EL_MAJOR_VERSION: '7'
@@ -737,5 +767,26 @@ Deploy packages EL8:
   only:
     - master
   when: manual
+
+Notify Success:
+  stage: notify
+  tags:
+    - deploy
+  allow_failure: true
+  script: 'echo -e "Module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME}): all checks successful\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI: Python module fb_tools" -r "$SENDER_ADDRESS" $NOTIFY_ADDRESS'
+  only:
+    - master
+    - develop
+
+Notify Error:
+  stage: notify
+  tags:
+    - deploy
+  allow_failure: true
+  when: on_failure
+  script: 'echo -e "Error in module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME})\nPlease check ${CI_PROJECT_URL}/pipelines/${CI_PIPELINE_ID}\n\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI error for Python module fb_tools" -r "$SENDER_ADDRESS" "$NOTIFY_ADDRESS"'
+  only:
+    - master
+    - develop
 
 # vim: ts=2 et
