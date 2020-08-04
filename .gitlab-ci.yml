@@ -378,7 +378,7 @@ build binaries for Ubuntu 18.04 Bionic Beaver:
     - locale -a
     - apt update
     - apt dist-upgrade --yes --no-install-recommends
-    - 'Setting system timezone to ${USED_TIMEZONE} ...'
+    - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
     - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
     - export DEBIAN_FRONTEND=noninteractive
     - >
