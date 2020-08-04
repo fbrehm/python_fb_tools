@@ -10,9 +10,9 @@ stages:
 variables:
   DEBFULLNAME: 'Frank Brehm'
   DEBEMAIL: 'frank@brehm-online.com'
-  DEB_REPO_HOST: 'repo.uhu-banane.de'
-  DEB_REPO_USER: 'repo.in'
-  DEB_REPO_UPLOAD_DIR: '/var/www/incoming'
+  DEB_REPO_HOST: 'repo01.pixelpark.com'
+  DEB_REPO_USER: 'rpm-repo'
+  DEB_REPO_UPLOAD_DIR: '/srv/www/repo/Linux/debian/incoming'
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
