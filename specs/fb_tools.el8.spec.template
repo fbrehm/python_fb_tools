@@ -23,9 +23,12 @@ BuildRequires:	python38-devel
 BuildRequires:	python38-pytz
 BuildRequires:	python38-setuptools
 BuildRequires:	python38-babel
+BuildRequires:	python38-six
 Requires:	python38
 Requires:	python38-libs
 Requires:	python38-babel
+Requires:	python38-requests
+Requires:	python38-six
 BuildArch:      noarch
 
 %description

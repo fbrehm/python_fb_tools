@@ -26,6 +26,7 @@ BuildRequires:	python-setuptools
 BuildRequires:	python-pathlib
 BuildRequires:	python-babel
 BuildRequires:	python-ipaddress
+BuildRequires:	python-six
 BuildRequires:	pytz
 BuildRequires:	python%{python3_version_nodots}
 BuildRequires:	python%{python3_version_nodots}-libs
@@ -33,11 +34,14 @@ BuildRequires:	python%{python3_version_nodots}-devel
 BuildRequires:	python%{python3_version_nodots}-pytz
 BuildRequires:	python%{python3_version_nodots}-setuptools
 BuildRequires:	python%{python3_version_nodots}-babel
+BuildRequires:	python%{python3_version_nodots}-six
 Requires:	python
 Requires:	python-libs
 Requires:	python-babel
 Requires:	python-pathlib
+Requires:	python-requests
 Requires:	python-ipaddress
+Requires:	python-six
 BuildArch:      noarch
 
 %description
@@ -50,6 +54,8 @@ Summary:	Python modules for common used objects, error classes and functions
 Requires:	python%{python3_version_nodots}
 Requires:	python%{python3_version_nodots}-libs
 Requires:	python%{python3_version_nodots}-babel
+Requires:	python%{python3_version_nodots}-requests
+Requires:	python%{python3_version_nodots}-six
 
 %description -n     python%{python3_version_nodots}-fb-tools
 Python modules for common used objects, error classes and functions.
