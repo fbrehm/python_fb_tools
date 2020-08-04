@@ -12,6 +12,7 @@ variables:
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
+  USED_TIMEZONE: 'Europe/Berlin'
   VERSION_PREFIX: 'unknown'
   YUM_REPO_GPG_ID: 'C0E73F70'
   YUM_REPO_GPG_PASSWD: 'secret'
@@ -304,63 +305,63 @@ build binaries for Debian 10 Buster:
     - /^hf.*$/
     - tags
 
-build binaries for Debian 11 Bullseye:
-  variables:
-    VERSION_PREFIX: 'deb11'
-    DISTRIBUTOR: 'Debian'
-    OS_RELEASE: '11'
-    OS_CODENAME: 'bullseye'
-  stage: build
-  image: debian:bullseye
-  before_script:
-    - hostname -f
-    - whoami
-    - pwd
-    - locale -a
-    - apt update
-    - apt dist-upgrade --yes --no-install-recommends
-    - >
-      apt install --yes --no-install-recommends sudo locales gettext build-essential
-      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
-      lsb-release ca-certificates libdistro-info-perl
-  script:
-    - >
-      apt install --yes --no-install-recommends
-      python-all python-argparse python-babel python-setuptools python-pathlib
-      python-pip python-six python-tz python3-all python3-babel python3-pip
-      python3-setuptools python3-six python3-tz dh-python
-    - 'export ODIR=$(pwd)'
-    - 'export PKG_VERSION=$( ./get-debian-version )'
-    - 'export PKG_RELEASE=$( ./get-debian-release )'
-    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
-    - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
-    - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
-    - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
-    - 'echo "y" | debuild -b -i -us -uc'
-    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
-    - ls -lA --color=always ..
-    - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
-    - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
-    - 'mv -vi ../*.build* debian/pkgs/src'
-    - ls -lA --color=always debian/pkgs/*/*
-  tags:
-    - docker
-  cache:
-    key: ${CI_JOB_NAME}
-    paths:
-      - .debian-version
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-      - debian/pkgs/*/*
-    expire_in: '1 week'
-#  except:
-#    - /^dev-.*$/
-#    - /^dev\/.*$/
-#    - /^hf.*$/
-#    - tags
-  only:
-    - dev-pkgbuild
+# build binaries for Debian 11 Bullseye:
+#   variables:
+#     VERSION_PREFIX: 'deb11'
+#     DISTRIBUTOR: 'Debian'
+#     OS_RELEASE: '11'
+#     OS_CODENAME: 'bullseye'
+#   stage: build
+#   image: debian:bullseye
+#   before_script:
+#     - hostname -f
+#     - whoami
+#     - pwd
+#     - locale -a
+#     - apt update
+#     - apt dist-upgrade --yes --no-install-recommends
+#     - >
+#       apt install --yes --no-install-recommends sudo locales gettext build-essential
+#       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+#       lsb-release ca-certificates libdistro-info-perl
+#   script:
+#     - >
+#       apt install --yes --no-install-recommends
+#       python-all python-argparse python-babel python-setuptools python-pathlib
+#       python-pip python-six python-tz python3-all python3-babel python3-pip
+#       python3-setuptools python3-six python3-tz dh-python
+#     - 'export ODIR=$(pwd)'
+#     - 'export PKG_VERSION=$( ./get-debian-version )'
+#     - 'export PKG_RELEASE=$( ./get-debian-release )'
+#     - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+#     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
+#     - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
+#     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
+#     - 'echo "y" | debuild -b -i -us -uc'
+#     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
+#     - ls -lA --color=always ..
+#     - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
+#     - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
+#     - 'mv -vi ../*.build* debian/pkgs/src'
+#     - ls -lA --color=always debian/pkgs/*/*
+#   tags:
+#     - docker
+#   cache:
+#     key: ${CI_JOB_NAME}
+#     paths:
+#       - .debian-version
+#   artifacts:
+#     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#     paths:
+#       - debian/pkgs/*/*
+#     expire_in: '1 week'
+# #  except:
+# #    - /^dev-.*$/
+# #    - /^dev\/.*$/
+# #    - /^hf.*$/
+# #    - tags
+#   only:
+#     - dev-pkgbuild
 
 build binaries for Ubuntu 18.04 Bionic Beaver:
   variables:
@@ -377,10 +378,13 @@ build binaries for Ubuntu 18.04 Bionic Beaver:
     - locale -a
     - apt update
     - apt dist-upgrade --yes --no-install-recommends
+    - 'Setting system timezone to ${USED_TIMEZONE} ...'
+    - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
+    - export DEBIAN_FRONTEND=noninteractive
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
-      lsb-release ca-certificates libdistro-info-perl
+      lsb-release ca-certificates libdistro-info-perl tzdata
   script:
     - >
       apt install --yes --no-install-recommends
@@ -554,13 +558,11 @@ build CentOS 8 with Python 3.8:
     expire_in: '1 week'
   tags:
     - docker
-#  except:
-#    - /^dev-.*$/
-#    - /^dev\/.*$/
-#    - /^hf.*$/
-#    - tags
-  only:
-    - dev-pkgbuild
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
 
 Deploy packages EL7:
   variables:
