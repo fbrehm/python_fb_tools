@@ -711,7 +711,6 @@ Deploy packages Debian and Ubuntu:
     - 'build binaries for Ubuntu 20.04 LTS Focal Fossa'
   only:
     - master
-    - develop
   when: manual
 
 Deploy packages EL7:
@@ -776,7 +775,6 @@ Notify Success:
   script: 'echo -e "Module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME}): all checks successful\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI: Python module fb_tools" -r "$SENDER_ADDRESS" $NOTIFY_ADDRESS'
   only:
     - master
-    - develop
 
 Notify Error:
   stage: notify
