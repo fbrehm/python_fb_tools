@@ -5,6 +5,11 @@ fb-tools (1.7.0) all; urgency=medium
 
  -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 04 Aug 2020 16:58:37 +0200
 
+fb-tools (1.6.5) all; urgency=medium
+
+  * Allowing directories in get-file-to-remove
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 03 Nov 2020 08:53:39 +0100
 
 fb-tools (1.6.4) all; urgency=medium
 
