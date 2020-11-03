@@ -1,13 +1,13 @@
 # German (Germany) translations for fb_tools.
-# Copyright (C) 2019 Frank Brehm, Berlin
+# Copyright (C) 2020 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2019.
+# Frank Brehm <frank.brehm@pixelpark.com>, 2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.6.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2019-10-17 16:43+0200\n"
+"POT-Creation-Date: 2020-11-03 08:48+0100\n"
 "PO-Revision-Date: 2019-10-11 13:45+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.7.0\n"
+"Generated-By: Babel 2.8.0\n"
 
 #: bin/get-file-to-remove:79
 msgid ""
@@ -191,7 +191,7 @@ msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
 msgid "File {!r} does not exists."
 msgstr "Die Datei {!r} existiert nicht."
 
-#: lib/fb_tools/config.py:68 lib/fb_tools/get_file_rm_app.py:391 lib/fb_tools/pdns_bulk_rm_app.py:279
+#: lib/fb_tools/config.py:68 lib/fb_tools/get_file_rm_app.py:397 lib/fb_tools/pdns_bulk_rm_app.py:279
 msgid "File {!r} is not a regular file."
 msgstr "Die Datei {!r} ist keine reguläre Datei."
 
@@ -410,69 +410,77 @@ msgstr "Das Dateimuster {!r} passt auf keine Dateien."
 msgid "Checking {!r} ..."
 msgstr "Überprüfe {!r} …"
 
-#: lib/fb_tools/get_file_rm_app.py:396
+#: lib/fb_tools/get_file_rm_app.py:392
+msgid "File {!r} is a regular file."
+msgstr "Die Datei {!r} ist eine reguläre Datei."
+
+#: lib/fb_tools/get_file_rm_app.py:395
+msgid "Path {!r} is a directory."
+msgstr "Der Pfad {!r} ist ein Verzeichnis."
+
+#: lib/fb_tools/get_file_rm_app.py:402
 msgid "File {fi!r} does not match pattern {pa!r}."
 msgstr "Die Datei {fi!r} passt nicht in das Dateimuster {pa!r}."
 
-#: lib/fb_tools/get_file_rm_app.py:406
+#: lib/fb_tools/get_file_rm_app.py:412
 msgid "Date in file {fi!r} is not a valid date: {e}."
 msgstr "Das Datum in der Datei {fi!r} ist kein gültiges Datum: {e}."
 
-#: lib/fb_tools/get_file_rm_app.py:458
+#: lib/fb_tools/get_file_rm_app.py:464
 msgid "Did not found any files to evaluate."
 msgstr "Fand keine Dateien zur Auswertung"
 
-#: lib/fb_tools/get_file_rm_app.py:491
+#: lib/fb_tools/get_file_rm_app.py:497
 msgid "Keeping last file ..."
 msgid_plural "Keeping last {} files ..."
 msgstr[0] "Behalte die letzte Datei …"
 msgstr[1] "Behalte die letzten {} Dateien …"
 
-#: lib/fb_tools/get_file_rm_app.py:497
+#: lib/fb_tools/get_file_rm_app.py:503
 msgid "Keep last file {!r}."
 msgstr "Behalte die letzte Datei {!r}."
 
-#: lib/fb_tools/get_file_rm_app.py:502
+#: lib/fb_tools/get_file_rm_app.py:508
 msgid "Files to keep:"
 msgstr "Zu behaltende Dateien:"
 
-#: lib/fb_tools/get_file_rm_app.py:523
+#: lib/fb_tools/get_file_rm_app.py:529
 msgid "Files to keep for year:"
 msgstr "Dateien, die für Jahr zu behalten sind:"
 
-#: lib/fb_tools/get_file_rm_app.py:545
+#: lib/fb_tools/get_file_rm_app.py:551
 msgid "Got last month: {!r}"
 msgstr "Ermittelter letzter Monat: {!r}"
 
-#: lib/fb_tools/get_file_rm_app.py:559
+#: lib/fb_tools/get_file_rm_app.py:565
 msgid "Files to keep for month:"
 msgstr "Dateien, die für Monat zu behalten sind:"
 
-#: lib/fb_tools/get_file_rm_app.py:573
+#: lib/fb_tools/get_file_rm_app.py:579
 msgid "Got last Monday: {!r}"
 msgstr "Ermittelter letzter Montag: {!r}"
 
-#: lib/fb_tools/get_file_rm_app.py:586
+#: lib/fb_tools/get_file_rm_app.py:592
 msgid "Files to keep for week:"
 msgstr "Dateien, die für Woche zu behalten sind:"
 
-#: lib/fb_tools/get_file_rm_app.py:599
+#: lib/fb_tools/get_file_rm_app.py:605
 msgid "Got last day: {!r}"
 msgstr "Ermittelter letzter Tag: {!r}"
 
-#: lib/fb_tools/get_file_rm_app.py:610
+#: lib/fb_tools/get_file_rm_app.py:616
 msgid "Keeping all files from today."
 msgstr "Aufheben aller Dateien von heute."
 
-#: lib/fb_tools/get_file_rm_app.py:617
+#: lib/fb_tools/get_file_rm_app.py:623
 msgid "Files to keep for day:"
 msgstr "Dateien, die für Tag zu behalten sind:"
 
-#: lib/fb_tools/get_file_rm_app.py:634
+#: lib/fb_tools/get_file_rm_app.py:640
 msgid "Trying to get date of file {!r}."
 msgstr "Versuche das Datum aus der Datei {!r} zu entnehmen."
 
-#: lib/fb_tools/get_file_rm_app.py:673
+#: lib/fb_tools/get_file_rm_app.py:679
 msgid "Explored and assigned files:"
 msgstr "Ermittelte und zugewiesene Dateien:"
 
@@ -579,17 +587,17 @@ msgstr "Die Namen der VSPheres aus der Konfiguration, in denen die VMs gesucht w
 msgid "Regular expression for filtering: {!r}"
 msgstr "Regulärer Ausdruck als Filter: {!r}"
 
-#: lib/fb_tools/get_vm_list_app.py:440
+#: lib/fb_tools/get_vm_list_app.py:441
 msgid "Found no VMWare VMs."
 msgstr "Fand keine VMWare VMs."
 
-#: lib/fb_tools/get_vm_list_app.py:442
+#: lib/fb_tools/get_vm_list_app.py:443
 msgid "Found one VMWare VM."
 msgid_plural "Found {} VMWare VMs."
 msgstr[0] "Fand eine VMWare VM."
 msgstr[1] "Fand {} VMWare VMs."
 
-#: lib/fb_tools/get_vm_list_app.py:498
+#: lib/fb_tools/get_vm_list_app.py:499
 msgid "Found a {} object:"
 msgstr "Fand ein {}-Objekt:"
 
@@ -1068,8 +1076,8 @@ msgstr "Konnte SOA-Daten nicht interpretieren: {!r}."
 msgid "Argument {a} {v!r} must be a {o} object."
 msgstr "Das Argument {a} {v!r} muss ein {o}-Objekt sein."
 
-#: lib/fb_tools/pdns/record.py:187 lib/fb_tools/pdns/record.py:396 lib/fb_tools/pdns/record.py:771
-#: lib/fb_tools/pdns/record.py:1047 lib/fb_tools/vsphere/cluster.py:261
+#: lib/fb_tools/pdns/record.py:187 lib/fb_tools/pdns/record.py:396 lib/fb_tools/pdns/record.py:777
+#: lib/fb_tools/pdns/record.py:1053 lib/fb_tools/vsphere/cluster.py:261
 #: lib/fb_tools/vsphere/controller.py:175 lib/fb_tools/vsphere/dc.py:120
 #: lib/fb_tools/vsphere/disk.py:273 lib/fb_tools/vsphere/ds.py:324
 #: lib/fb_tools/vsphere/ds_cluster.py:166 lib/fb_tools/vsphere/ether.py:305
@@ -1087,13 +1095,13 @@ msgstr ""
 "Überlauf der Seriennummer - die alte Seriennummer liegt in der Zukunft, die neue Seriennummer "
 "{n} hat seinen Maimalwert erreicht."
 
-#: lib/fb_tools/pdns/record.py:455 lib/fb_tools/pdns/record.py:1087
+#: lib/fb_tools/pdns/record.py:455 lib/fb_tools/pdns/record.py:1093
 #: lib/fb_tools/vsphere/controller.py:290 lib/fb_tools/vsphere/disk.py:402
 #: lib/fb_tools/vsphere/ether.py:479 lib/fb_tools/vsphere/vm.py:587
 msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
 msgstr "Ungültiger Typ {t!r} als ein Eintrag von {c}, nor {o}-Objekte sind erlaubt."
 
-#: lib/fb_tools/pdns/record.py:473 lib/fb_tools/pdns/record.py:1105
+#: lib/fb_tools/pdns/record.py:473 lib/fb_tools/pdns/record.py:1111
 #: lib/fb_tools/vsphere/controller.py:358 lib/fb_tools/vsphere/disk.py:470
 #: lib/fb_tools/vsphere/ether.py:547 lib/fb_tools/vsphere/vm.py:655
 msgid "{m} takes at most {max} arguments ({n} given)."
@@ -1103,43 +1111,43 @@ msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
 msgid "Record {!r} is not in Record list."
 msgstr "Der Record {!r} ist nicht in der Recordliste."
 
-#: lib/fb_tools/pdns/record.py:673
+#: lib/fb_tools/pdns/record.py:679
 msgid "Invalid value for {w} of a {c} object - "
 msgstr "Ungültiger Wert für {w} eines {c}-Objektes - "
 
-#: lib/fb_tools/pdns/record.py:678
+#: lib/fb_tools/pdns/record.py:684
 msgid "Invalid value for {w} {v!r} of a {c} object - must be greater than or equal to zero."
 msgstr "Ungültiger Wert für {w} {v!r} eines {c}-Objektes - er muss größer oder gleich Null sein."
 
-#: lib/fb_tools/pdns/record.py:831 lib/fb_tools/pdns/record.py:861 lib/fb_tools/pdns/zone.py:1080
+#: lib/fb_tools/pdns/record.py:837 lib/fb_tools/pdns/record.py:867 lib/fb_tools/pdns/zone.py:1080
 msgid "A {w} must be a string type, but is {v!r} instead."
 msgstr "Ein {w} muss ein String-Typ sein, ist stattdessen ein {v!r}."
 
-#: lib/fb_tools/pdns/record.py:836 lib/fb_tools/pdns/record.py:866
+#: lib/fb_tools/pdns/record.py:842 lib/fb_tools/pdns/record.py:872
 msgid "A {w} may not be empty: {v!r}."
 msgstr "Ein {w} darf nicht leer sein: {v!r}."
 
-#: lib/fb_tools/pdns/record.py:891 lib/fb_tools/pdns/zone.py:137
+#: lib/fb_tools/pdns/record.py:897 lib/fb_tools/pdns/zone.py:137
 msgid "Given data {!r} is not a dict object."
 msgstr "Die übergebenen Daten {!r} sind kein dict-Objekt."
 
-#: lib/fb_tools/pdns/record.py:894
+#: lib/fb_tools/pdns/record.py:900
 msgid "Creating {} object from data:"
 msgstr "Erstelle ein {}-Objekt aus Daten:"
 
-#: lib/fb_tools/pdns/record.py:1064
+#: lib/fb_tools/pdns/record.py:1070
 msgid "Cannot create {o} from record set:"
 msgstr "Kann kein {o} aus RecordSet erstellen:"
 
-#: lib/fb_tools/pdns/record.py:1069
+#: lib/fb_tools/pdns/record.py:1075
 msgid "RecordSet has no records:"
 msgstr "der RecordSet hat keine Records:"
 
-#: lib/fb_tools/pdns/record.py:1077
+#: lib/fb_tools/pdns/record.py:1083
 msgid "Got SOA:"
 msgstr "Erhielt SOA:"
 
-#: lib/fb_tools/pdns/record.py:1143
+#: lib/fb_tools/pdns/record.py:1149
 msgid "RecordSet {n!r} ({n}) is not in RecordSet list."
 msgstr "Der RecordSet {n!r} ({n}) befindet sich nicht in der RecordSet-Liste."
 
