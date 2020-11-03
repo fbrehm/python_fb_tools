@@ -1,3 +1,9 @@
+fb-tools (1.7.1) UNRELEASED; urgency=medium
+
+  * Merging master into develop
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 03 Nov 2020 09:04:48 +0100
+
 fb-tools (1.7.0) all; urgency=medium
 
   * Adding many jobs in .gitlab-ci.yml for creating RPM- and Debian-
