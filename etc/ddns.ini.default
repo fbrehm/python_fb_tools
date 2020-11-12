@@ -1,0 +1,47 @@
+[ddns]
+
+; The username taken to access ddns.de
+;user = 
+
+; The password of the latter user at ddns.de
+;password =
+
+; A comma or whitespace separated list of domainnames to update
+;domains = 
+
+; A boolean flag to update all registred domains independent of the latter domain list
+;all_domains = false
+
+; A boolean flag to set an additional MX record for each updated domain
+;with_mx = false
+
+; The timeout in seconds for all operations at ddns.de
+;timeout = 20
+
+; The URL to get the public IPv4 address
+;get_ipv4_url = http://ip4.ddnss.de/jsonip.php
+
+; The URL to get the public IPv6 address
+;get_ipv6_url = http://ip6.ddnss.de/jsonip.php
+
+; The URL to update the domain(s) with the current IPv4 address
+;update_ipv4_url = http://ip4.ddnss.de/upd.php
+
+; The URL to update the domain(s) with the current IPv6 address
+;update_ipv6_url = http://ip6.ddnss.de/upd.php
+
+; Which IP protocol should be updated? (One of 'any', 'both', 'ipv4' and 'ipv6')
+; Note: protocol 'any' is identic to 'both'.
+;protocol = any
+
+
+[files]
+
+; The working directory of the DDNS related application, e.g. for caching the last recognized puplic IP
+; Normally should it be a directory under /var/lib.
+;working_directory = /var/lib/ddns
+
+; The logfile of updating the DDNS information.
+;logfile = /var/log/ddnss/ddnss-update.log
+
+# vim: filetype=dosini
