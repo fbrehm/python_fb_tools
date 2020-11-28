@@ -21,7 +21,6 @@ from distutils.version import LooseVersion
 
 # Third party modules
 import babel
-from babel.core import default_locale
 import babel.lists
 from babel.support import Translations
 
@@ -42,7 +41,7 @@ if not LOCALE_DIR.is_dir():
         LOCALE_DIR = None
 
 DEFAULT_LOCALE_DEF = 'en_US'
-DEFAULT_LOCALE = default_locale()
+DEFAULT_LOCALE = babel.core.default_locale()
 if not DEFAULT_LOCALE:
     DEFAULT_LOCALE = DEFAULT_LOCALE_DEF
 
