@@ -1,13 +1,13 @@
 # English (United States) translations for fb_tools.
 # Copyright (C) 2020 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2020.
+# Frank Brehm <frank@brehm-online.com>, 2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.6.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2020-11-03 08:48+0100\n"
+"POT-Creation-Date: 2020-11-28 20:25+0100\n"
 "PO-Revision-Date: 2019-09-11 16:15+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.6.0\n"
 
 #: bin/get-file-to-remove:79
 msgid ""
@@ -250,9 +250,9 @@ msgid "File options"
 msgstr ""
 
 #: lib/fb_tools/cfg_converter.py:654 lib/fb_tools/cfg_converter.py:661
-#: lib/fb_tools/get_file_rm_app.py:312 lib/fb_tools/get_vm_app.py:201
-#: lib/fb_tools/get_vm_list_app.py:271 lib/fb_tools/pdns_bulk_rm_app.py:189
-#: lib/fb_tools/pdns_bulk_rm_app.py:236
+#: lib/fb_tools/ddns/__init__.py:256 lib/fb_tools/get_file_rm_app.py:312
+#: lib/fb_tools/get_vm_app.py:201 lib/fb_tools/get_vm_list_app.py:315
+#: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
 msgid "FILE"
 msgstr ""
 
@@ -340,8 +340,9 @@ msgstr ""
 msgid "HJSON output options"
 msgstr ""
 
-#: lib/fb_tools/cfg_converter.py:857 lib/fb_tools/get_vm_app.py:256
-#: lib/fb_tools/get_vm_list_app.py:331
+#: lib/fb_tools/cfg_converter.py:857 lib/fb_tools/ddns/myip_app.py:139
+#: lib/fb_tools/ddns/update_app.py:275 lib/fb_tools/get_vm_app.py:256
+#: lib/fb_tools/get_vm_list_app.py:386
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr "Starting {a!r}, version {v!r} …"
 
@@ -833,12 +834,6 @@ msgstr ""
 msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:256 lib/fb_tools/get_file_rm_app.py:312
-#: lib/fb_tools/get_vm_app.py:201 lib/fb_tools/get_vm_list_app.py:315
-#: lib/fb_tools/pdns_bulk_rm_app.py:189 lib/fb_tools/pdns_bulk_rm_app.py:236
-msgid "FILE"
-msgstr ""
-
 #: lib/fb_tools/get_file_rm_app.py:313
 msgid "File pattern to generate list of files to remove."
 msgstr ""
@@ -975,11 +970,6 @@ msgstr ""
 #: lib/fb_tools/get_vm_app.py:249 lib/fb_tools/get_vm_list_app.py:379
 msgid "Could not initialize {} object from:"
 msgstr ""
-
-#: lib/fb_tools/ddns/myip_app.py:139 lib/fb_tools/ddns/update_app.py:275
-#: lib/fb_tools/get_vm_app.py:256 lib/fb_tools/get_vm_list_app.py:386
-msgid "Starting {a!r}, version {v!r} ..."
-msgstr "Starting {a!r}, version {v!r} …"
 
 #: lib/fb_tools/get_vm_app.py:265 lib/fb_tools/get_vm_list_app.py:395
 msgid "Closing VSPhere object {!r} ..."
@@ -2553,23 +2543,27 @@ msgstr "There is something wrong wit VM {n!r} in cluster {c!r} and path {p!r} �
 msgid "VM is not in VM list."
 msgstr ""
 
-#: lib/fb_tools/xlate.py:94
+#: lib/fb_tools/xlate.py:114
 msgid "Module directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:95
+#: lib/fb_tools/xlate.py:115
 msgid "Base directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:96
+#: lib/fb_tools/xlate.py:116
 msgid "Locale directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:97
+#: lib/fb_tools/xlate.py:117
 msgid "Locale domain: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:98
+#: lib/fb_tools/xlate.py:118
+msgid "Default Locale: {!r}"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:119
 msgid "Found .mo-file: {!r}"
 msgstr ""
 
