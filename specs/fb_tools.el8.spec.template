@@ -1,13 +1,11 @@
-%{!?python3_version_nodots:%global python3_version_nodots 3}
-
 # For consistency and completeness
 %global python2_pkgversion 2
 
 %define version @@@Version@@@
-%define builddir2 python_fb_tools-%{version}
-%define builddir3 python%{python3_version_nodots}_fb_tools-%{version}
+%define builddir python_fb_tools-%{version}
+%define builddir3 python38_fb_tools-%{version}
 
-Name:		python-fb-tools
+Name:		python38-fb-tools
 Version:	%{version}
 Release:	@@@Release@@@%{?dist}
 Summary:	Python modules for common used objects, error classes and functions
@@ -19,48 +17,24 @@ URL:		https://git.pixelpark.com/frabrehm/python_fb_tools
 Source0:	https://git.pixelpark.com/frabrehm/python_fb_tools/repository/%{version}/fb_tools.%{version}.tar.gz
 
 BuildRequires:	gettext
-BuildRequires:	python
-BuildRequires:	python-libs
-BuildRequires:	python-devel
-BuildRequires:	python-setuptools
-BuildRequires:	python-pathlib
-BuildRequires:	python-babel
-BuildRequires:	python-ipaddress
-BuildRequires:	python-six
-BuildRequires:	pytz
-BuildRequires:	python%{python3_version_nodots}
-BuildRequires:	python%{python3_version_nodots}-libs
-BuildRequires:	python%{python3_version_nodots}-devel
-BuildRequires:	python%{python3_version_nodots}-pytz
-BuildRequires:	python%{python3_version_nodots}-setuptools
-BuildRequires:	python%{python3_version_nodots}-babel
-BuildRequires:	python%{python3_version_nodots}-six
-Requires:	python
-Requires:	python-libs
-Requires:	python-babel
-Requires:	python-pathlib
-Requires:	python-requests
-Requires:	python-ipaddress
-Requires:	python-six
+BuildRequires:	python38
+BuildRequires:	python38-libs
+BuildRequires:	python38-devel
+BuildRequires:	python38-pytz
+BuildRequires:	python38-setuptools
+BuildRequires:	python38-babel
+BuildRequires:	python38-six
+Requires:	python38
+Requires:	python38-libs
+Requires:	python38-babel
+Requires:	python38-requests
+Requires:	python38-six
 BuildArch:      noarch
 
 %description
 Python modules for common used objects, error classes and functions.
 
-This is the Python2 version.
-
-%package -n     python%{python3_version_nodots}-fb-tools
-Summary:	Python modules for common used objects, error classes and functions
-Requires:	python%{python3_version_nodots}
-Requires:	python%{python3_version_nodots}-libs
-Requires:	python%{python3_version_nodots}-babel
-Requires:	python%{python3_version_nodots}-requests
-Requires:	python%{python3_version_nodots}-six
-
-%description -n     python%{python3_version_nodots}-fb-tools
-Python modules for common used objects, error classes and functions.
-
-This is the Python%{python3_version_nodots} version.
+This is the Python38 version.
 
 In this package are contained the following scripts:
  * get-file-to-remove
@@ -71,38 +45,20 @@ In this package are contained the following scripts:
  * update-ddns
 
 %prep
-%setup -n %{builddir2}
+%setup -n %{builddir}
 rm -rf ../%{builddir3}
 cp -a . ../%{builddir3}
 
-
 %build
-cd ../%{builddir2}
-python2 setup.py build
-#pushd ../%{builddir3}
 cd ../%{builddir3}
-python3 setup.py build
-#popd
-cd ../%{builddir2}
+python3.8 setup.py build
 
 %install
-cd ../%{builddir2}
-#pushd ../%{builddir2}
-echo "Buildroot: %{buildroot}"
-python2 setup.py install --prefix=%{_prefix} --root=%{buildroot}
-rm -rv %{buildroot}/%{_bindir}
-#popd
 cd ../%{builddir3}
 echo "Buildroot: %{buildroot}"
-python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
+python3.8 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 
 %files
-%defattr(-,root,root,-)
-%license debian/copyright
-%doc README.md requirements.txt debian/changelog
-%{python2_sitelib}/*
-
-%files -n python%{python3_version_nodots}-fb-tools
 %defattr(-,root,root,-)
 %license debian/copyright
 %doc README.md requirements.txt debian/changelog
