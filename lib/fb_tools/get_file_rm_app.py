@@ -28,7 +28,7 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '1.1.5'
+__version__ = '1.1.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -387,7 +387,13 @@ class GetFileRmApplication(BaseApplication):
                 if not fpath.exists():
                     LOG.warning(_("File {!r} does not exists.").format(str(fpath)))
                     continue
-                if not fpath.is_file():
+                if fpath.is_file():
+                    if self.verbose > 2:
+                        LOG.debug(_("File {!r} is a regular file.").format(str(fpath)))
+                elif fpath.is_dir():
+                    if self.verbose > 2:
+                        LOG.debug(_("Path {!r} is a directory.").format(str(fpath)))
+                else:
                     LOG.warning(_("File {!r} is not a regular file.").format(str(fpath)))
                     continue
 

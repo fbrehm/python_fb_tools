@@ -40,7 +40,7 @@ from .record import PowerDnsSOAData, PowerDNSRecord
 from .record import PowerDNSRecordSetComment
 from .record import PowerDNSRecordSet, PowerDNSRecordSetList
 
-__version__ = '0.9.12'
+__version__ = '0.9.13'
 
 LOG = logging.getLogger(__name__)
 
@@ -912,7 +912,7 @@ class PowerDNSZone(BasePowerDNSHandler):
                 msg = _("Got an existing rrset for FQDN {f!r}, type {t!r}.").format(
                     f=fqdn_used, t=rtype)
                 LOG.debug(msg)
-            rrset.records.clean()
+            rrset.records.clear()
             if ttl:
                 rrset.ttl = ttl
         else:

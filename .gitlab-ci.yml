@@ -5,11 +5,21 @@ stages:
   - linter
   - build
   - deploy
+  - notify
 
 variables:
+  DEBFULLNAME: 'Frank Brehm'
+  DEBEMAIL: 'frank@brehm-online.com'
+  DEB_REPO_HOST: 'repo01.pixelpark.com'
+  DEB_REPO_USER: 'rpm-repo'
+  DEB_REPO_UPLOAD_DIR: '/srv/www/repo/Linux/debian/incoming'
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
+  NOTIFY_ADDRESS: 'frank@brehm-online.com frank.brehm@pixelpark.com'
+  SENDER_ADDRESS: 'gitlab-ci@pixelpark.com'
+  USED_TIMEZONE: 'Europe/Berlin'
+  VERSION_PREFIX: 'unknown'
   YUM_REPO_GPG_ID: 'C0E73F70'
   YUM_REPO_GPG_PASSWD: 'secret'
   YUM_REPO_HOST: 'repo01.pixelpark.com'
@@ -97,10 +107,26 @@ test Python 3.7:
     - /^hf.*$/
     - tags
 
+test Python 3.8:
+  <<: *docker_job_definition
+  stage: test
+  image: python:3.8
+  script:
+    - pip install --upgrade --upgrade-strategy eager pytest
+    - pip list --format columns
+    - pytest --verbose
+#  tags:
+#    - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
 Linter:
   <<: *docker_job_definition
   stage: linter
-  image: python:3.7
+  image: python:3.8
   script:
     - apt install --yes shellcheck yamllint
     - pip install --upgrade --upgrade-strategy eager flake8 pylint
@@ -119,7 +145,410 @@ Linter:
     - /^hf.*$/
     - tags
 
+build Debian Sources:
+  variables:
+    VERSION_PREFIX: 'deb10'
+    DISTRIBUTOR: 'Debian'
+    OS_RELEASE: '10'
+    OS_CODENAME: 'buster'
+  stage: build
+  image: debian:buster
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - apt update
+    - apt dist-upgrade --yes --no-install-recommends
+    - >
+      apt install --yes --no-install-recommends sudo locales gettext build-essential
+      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+      lsb-release ca-certificates libdistro-info-perl
+  script:
+    - >
+      apt install --yes --no-install-recommends
+      python-all python-argparse python-babel python-setuptools python-pathlib
+      python-pip python-six python-tz python3-all python3-babel python3-pip
+      python3-setuptools python3-six python3-tz dh-python
+    - 'export ODIR=$(pwd)'
+    - 'export PKG_VERSION=$( ./get-debian-version )'
+    - 'export PKG_RELEASE=$( ./get-debian-release )'
+    - 'export BUILD_VERSION="${PKG_VERSION}"'
+    - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
+    - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
+    - 'echo "y" | debuild -S -i -us -uc'
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
+    - ls -lA --color=always ..
+    - 'mkdir -pv debian/pkgs/src'
+    - 'mv -vi ../*.dsc ../*.tar.* ../*.build* ../*.changes debian/pkgs/src'
+    - ls -lA --color=always debian/pkgs/*/*
+  tags:
+    - docker
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .debian-version
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - debian/pkgs/*/*
+    expire_in: '1 week'
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
+build binaries for Debian 9 Stretch:
+  variables:
+    VERSION_PREFIX: 'deb9'
+    DISTRIBUTOR: 'Debian'
+    OS_RELEASE: '9'
+    OS_CODENAME: 'stretch'
+  stage: build
+  image: debian:stretch
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - apt update
+    - apt dist-upgrade --yes --no-install-recommends
+    - >
+      apt install --yes --no-install-recommends sudo locales gettext build-essential
+      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+      lsb-release ca-certificates libdistro-info-perl
+  script:
+    - >
+      apt install --yes --no-install-recommends
+      python-all python-argparse python-babel python-setuptools python-pathlib
+      python-pip python-six python-tz python3-all python3-babel python3-pip
+      python3-setuptools python3-six python3-tz dh-python
+    - 'export ODIR=$(pwd)'
+    - 'export PKG_VERSION=$( ./get-debian-version )'
+    - 'export PKG_RELEASE=$( ./get-debian-release )'
+    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+    - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
+    - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
+    - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
+    - 'echo "y" | debuild -b -i -us -uc'
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
+    - ls -lA --color=always ..
+    - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.build* debian/pkgs/src'
+    - ls -lA --color=always debian/pkgs/*/*
+  tags:
+    - docker
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .debian-version
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - debian/pkgs/*/*
+    expire_in: '1 week'
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
+build binaries for Debian 10 Buster:
+  variables:
+    VERSION_PREFIX: 'deb10'
+    DISTRIBUTOR: 'Debian'
+    OS_RELEASE: '10'
+    OS_CODENAME: 'buster'
+  stage: build
+  image: debian:buster
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - apt update
+    - apt dist-upgrade --yes --no-install-recommends
+    - >
+      apt install --yes --no-install-recommends sudo locales gettext build-essential
+      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+      lsb-release ca-certificates libdistro-info-perl
+  script:
+    - >
+      apt install --yes --no-install-recommends
+      python-all python-argparse python-babel python-setuptools python-pathlib
+      python-pip python-six python-tz python3-all python3-babel python3-pip
+      python3-setuptools python3-six python3-tz dh-python
+    - 'export ODIR=$(pwd)'
+    - 'export PKG_VERSION=$( ./get-debian-version )'
+    - 'export PKG_RELEASE=$( ./get-debian-release )'
+    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+    - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
+    - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
+    - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
+    - 'echo "y" | debuild -b -i -us -uc'
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
+    - ls -lA --color=always ..
+    - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.build* debian/pkgs/src'
+    - ls -lA --color=always debian/pkgs/*/*
+  tags:
+    - docker
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .debian-version
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - debian/pkgs/*/*
+    expire_in: '1 week'
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
+# build binaries for Debian 11 Bullseye:
+#   variables:
+#     VERSION_PREFIX: 'deb11'
+#     DISTRIBUTOR: 'Debian'
+#     OS_RELEASE: '11'
+#     OS_CODENAME: 'bullseye'
+#   stage: build
+#   image: debian:bullseye
+#   before_script:
+#     - hostname -f
+#     - whoami
+#     - pwd
+#     - locale -a
+#     - apt update
+#     - apt dist-upgrade --yes --no-install-recommends
+#     - >
+#       apt install --yes --no-install-recommends sudo locales gettext build-essential
+#       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+#       lsb-release ca-certificates libdistro-info-perl
+#   script:
+#     - >
+#       apt install --yes --no-install-recommends
+#       python-all python-argparse python-babel python-setuptools python-pathlib
+#       python-pip python-six python-tz python3-all python3-babel python3-pip
+#       python3-setuptools python3-six python3-tz dh-python
+#     - 'export ODIR=$(pwd)'
+#     - 'export PKG_VERSION=$( ./get-debian-version )'
+#     - 'export PKG_RELEASE=$( ./get-debian-release )'
+#     - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+#     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
+#     - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
+#     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
+#     - 'echo "y" | debuild -b -i -us -uc'
+#     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
+#     - ls -lA --color=always ..
+#     - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
+#     - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
+#     - 'mv -vi ../*.build* debian/pkgs/src'
+#     - ls -lA --color=always debian/pkgs/*/*
+#   tags:
+#     - docker
+#   cache:
+#     key: ${CI_JOB_NAME}
+#     paths:
+#       - .debian-version
+#   artifacts:
+#     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#     paths:
+#       - debian/pkgs/*/*
+#     expire_in: '1 week'
+# #  except:
+# #    - /^dev-.*$/
+# #    - /^dev\/.*$/
+# #    - /^hf.*$/
+# #    - tags
+#   only:
+#     - dev-pkgbuild
+
+build binaries for Ubuntu 16.04 LTS Xenial Xerus:
+  variables:
+    VERSION_PREFIX: 'ubuntu16.04'
+    DISTRIBUTOR: 'Ubuntu'
+    OS_RELEASE: '16.04'
+    OS_CODENAME: 'xenial'
+  stage: build
+  image: ubuntu:xenial
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - apt update
+    - apt dist-upgrade --yes --no-install-recommends
+    - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
+    - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
+    - export DEBIAN_FRONTEND=noninteractive
+    - >
+      apt install --yes --no-install-recommends sudo locales gettext build-essential
+      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+      lsb-release ca-certificates libdistro-info-perl tzdata
+  script:
+    - >
+      apt install --yes --no-install-recommends
+      python-all python-argparse python-babel python-setuptools python-pathlib
+      python-pip python-six python-tz python3-all python3-babel python3-pip
+      python3-setuptools python3-six python3-tz dh-python
+    - 'export ODIR=$(pwd)'
+    - 'export PKG_VERSION=$( ./get-debian-version )'
+    - 'export PKG_RELEASE=$( ./get-debian-release )'
+    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+    - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
+    - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
+    - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
+    - 'echo "y" | debuild -b -i -us -uc'
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
+    - ls -lA --color=always ..
+    - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.build* debian/pkgs/src'
+    - ls -lA --color=always debian/pkgs/*/*
+  tags:
+    - docker
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .debian-version
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - debian/pkgs/*/*
+    expire_in: '1 week'
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
+build binaries for Ubuntu 18.04 LTS Bionic Beaver:
+  variables:
+    VERSION_PREFIX: 'ubuntu18.04'
+    DISTRIBUTOR: 'Ubuntu'
+    OS_RELEASE: '18.04'
+    OS_CODENAME: 'bionic'
+  stage: build
+  image: ubuntu:bionic
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - apt update
+    - apt dist-upgrade --yes --no-install-recommends
+    - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
+    - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
+    - export DEBIAN_FRONTEND=noninteractive
+    - >
+      apt install --yes --no-install-recommends sudo locales gettext build-essential
+      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+      lsb-release ca-certificates libdistro-info-perl tzdata
+  script:
+    - >
+      apt install --yes --no-install-recommends
+      python-all python-argparse python-babel python-setuptools python-pathlib
+      python-pip python-six python-tz python3-all python3-babel python3-pip
+      python3-setuptools python3-six python3-tz dh-python
+    - 'export ODIR=$(pwd)'
+    - 'export PKG_VERSION=$( ./get-debian-version )'
+    - 'export PKG_RELEASE=$( ./get-debian-release )'
+    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+    - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
+    - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
+    - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
+    - 'echo "y" | debuild -b -i -us -uc'
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
+    - ls -lA --color=always ..
+    - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.build* debian/pkgs/src'
+    - ls -lA --color=always debian/pkgs/*/*
+  tags:
+    - docker
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .debian-version
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - debian/pkgs/*/*
+    expire_in: '1 week'
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
+build binaries for Ubuntu 20.04 LTS Focal Fossa:
+  variables:
+    VERSION_PREFIX: 'ubuntu20.04'
+    DISTRIBUTOR: 'Ubuntu'
+    OS_RELEASE: '20.04'
+    OS_CODENAME: 'focal'
+  stage: build
+  image: ubuntu:bionic
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - apt update
+    - apt dist-upgrade --yes --no-install-recommends
+    - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
+    - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
+    - export DEBIAN_FRONTEND=noninteractive
+    - >
+      apt install --yes --no-install-recommends sudo locales gettext build-essential
+      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+      lsb-release ca-certificates libdistro-info-perl tzdata
+  script:
+    - >
+      apt install --yes --no-install-recommends
+      python-all python-argparse python-babel python-setuptools python-pathlib
+      python-pip python-six python-tz python3-all python3-babel python3-pip
+      python3-setuptools python3-six python3-tz dh-python
+    - 'export ODIR=$(pwd)'
+    - 'export PKG_VERSION=$( ./get-debian-version )'
+    - 'export PKG_RELEASE=$( ./get-debian-release )'
+    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+    - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
+    - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
+    - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
+    - 'echo "y" | debuild -b -i -us -uc'
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version'
+    - ls -lA --color=always ..
+    - 'mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
+    - 'mv -vi ../*.build* debian/pkgs/src'
+    - ls -lA --color=always debian/pkgs/*/*
+  tags:
+    - docker
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .debian-version
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - debian/pkgs/*/*
+    expire_in: '1 week'
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
 build CentOS 7 with Python 3.6:
+  variables:
+    EL_MAJOR_VERSION: '7'
   stage: build
   image: centos:7
   before_script:
@@ -139,7 +568,7 @@ build CentOS 7 with Python 3.6:
     - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
     - yum makecache
     - yum --assumeyes upgrade
-    - yum --assumeyes install python36 python36-pip python36-devel python36-pytz python36-babel gnupg2 rpm-build tree expect gettext python-devel python2-pip python-setuptools python-pathlib python-babel python-ipaddress pytz rpm-sign
+    - yum --assumeyes install python36 python36-pip python36-devel python36-pytz python36-babel gnupg2 rpm-build tree expect gettext python-devel python2-pip python-setuptools python-pathlib python-babel python-ipaddress pytz rpm-sign python-six python36-six
     - ls -l --color=always /bin/python* /bin/pip* || true
     - pip2 list
     - pip3 list
@@ -174,7 +603,7 @@ build CentOS 7 with Python 3.6:
     paths:
       - rpmdir/RPMS/*/*.rpm
       - rpmdir/SRPMS/*.src.rpm
-    expire_in: '3 mos'
+    expire_in: '1 week'
   tags:
     - docker
   except:
@@ -183,7 +612,110 @@ build CentOS 7 with Python 3.6:
     - /^hf.*$/
     - tags
 
+build CentOS 8 with Python 3.8:
+  variables:
+    EL_MAJOR_VERSION: '8'
+  stage: build
+  image: centos:8
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - yum clean all && yum makecache
+    - yum --assumeyes install langpacks-de langpacks-en langpacks-en_GB
+    - locale -a
+    - locale
+    - 'export LC_ALL=en_US.utf8'
+    - locale
+    - yum --assumeyes install epel-release
+    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
+    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+    - yum makecache
+    - yum --assumeyes upgrade
+    - yum --assumeyes install python38 python38-setuptools python38-pip python38-devel python38-pytz python38-six python38-babel platform-python-devel gnupg2 rpm-build tree expect gettext rpm-sign pinentry
+    - ls -l --color=always /bin/python* /bin/pip* || true
+    - pip3 list
+  script:
+    - mkdir -pv rpmdir
+    - mkdir -pv rpmdir/SOURCES
+    - 'export ODIR=$(pwd)'
+    - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )'
+    - 'export PKG_VERSION=$( ./get-rpm-version )'
+    - 'export PKG_RELEASE=$( ./get-rpm-release )'
+    - 'echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"'
+    - 'mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION'
+    - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
+    - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
+    - 'cat specs/fb_tools.el8.spec.template | sed -e "s/@@@Version@@@/$PKG_VERSION/gi" -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec'
+    - 'echo; echo "#################"; echo "Creating $HOME/.rpmmacros"'
+    - 'echo -e "%__python3 /bin/python3.8\n%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
+    - 'echo "Generated \"$HOME/.rpmmacros\":"; cat $HOME/.rpmmacros; echo'
+    - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version $PKG_VERSION" specs/fb_tools.spec'
+    - tree -aQpugs rpmdir/*RPMS || true
+    - tree -aQpugs rpmdir/*RPMS || true
+    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    # - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+    # - gpg --list-public-keys
+    # - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
+    # - gpg --list-secret-keys
+    # - 'echo "pinentry-program /usr/bin/pinentry-curses" >> /etc/gnupg/gpg-agent.conf'
+    # - ls -lA /etc/gnupg/gpg-agent.conf
+    # - cat /etc/gnupg/gpg-agent.conf
+    # - 'export GPG_TTY=$( tty )'
+    # - 'echo GPG_TTY=${GPG_TTY}'
+    # - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
+    # - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .rpm-version
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - rpmdir/RPMS/*/*.rpm
+      - rpmdir/SRPMS/*.src.rpm
+    expire_in: '1 week'
+  tags:
+    - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
+Deploy packages Debian and Ubuntu:
+  stage: deploy
+  tags:
+    - deploy
+  script:
+    - hostname -f
+    - whoami
+    - pwd
+    - ls -lA --color=always
+    - tree -aQpugs debian/pkgs || true
+    - 'echo -e "DEB_REPO_HOST: ${DEB_REPO_HOST}"'
+    - 'echo -e "DEB_REPO_USER: ${DEB_REPO_USER}"'
+    - 'echo -e "DEB_REPO_UPLOAD_DIR: ${DEB_REPO_UPLOAD_DIR}"'
+    - 'scp -p -o StrictHostKeyChecking=no $( find debian/pkgs -type f | sort ) ${DEB_REPO_USER}@${DEB_REPO_HOST}:${DEB_REPO_UPLOAD_DIR}/'
+  environment:
+    name: production
+  dependencies:
+    - 'build Debian Sources'
+    - 'build binaries for Debian 9 Stretch'
+    - 'build binaries for Debian 10 Buster'
+    - 'build binaries for Ubuntu 16.04 LTS Xenial Xerus'
+    - 'build binaries for Ubuntu 18.04 LTS Bionic Beaver'
+    - 'build binaries for Ubuntu 20.04 LTS Focal Fossa'
+  only:
+    - master
+  when: manual
+
 Deploy packages EL7:
+  variables:
+    EL_MAJOR_VERSION: '7'
   stage: deploy
   tags:
     - deploy
@@ -196,8 +728,8 @@ Deploy packages EL7:
     - 'echo -e "YUM_REPO_USER: ${YUM_REPO_USER}"'
     - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
     - 'echo -e "YUM_REPO_DIR: ${YUM_REPO_DIR}"'
-    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/7/'
-    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/7/ && createrepo --update . && chmod -v a+x repodata && chmod -Rv a+r repodata"'
+    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/'
+    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/ && createrepo --update . && chmod -v a+x repodata && chmod -Rv a+r repodata"'
   after_script:
     - rm -rf rpmdir
   environment:
@@ -207,5 +739,52 @@ Deploy packages EL7:
   only:
     - master
   when: manual
+
+Deploy packages EL8:
+  variables:
+    EL_MAJOR_VERSION: '8'
+  stage: deploy
+  tags:
+    - deploy
+  script:
+    - hostname -f
+    - whoami
+    - pwd
+    - ls -lA --color=always
+    - if test -d rpmdir ; then ls -lA --color=always rpmdir/RPMS/*/* rpmdir/SRPMS/*; fi
+    - 'echo -e "YUM_REPO_USER: ${YUM_REPO_USER}"'
+    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    - 'echo -e "YUM_REPO_DIR: ${YUM_REPO_DIR}"'
+    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/'
+    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/ && createrepo --update . && chmod -v a+x repodata && chmod -Rv a+r repodata"'
+  after_script:
+    - rm -rf rpmdir
+  environment:
+    name: production
+  dependencies:
+    - 'build CentOS 8 with Python 3.8'
+  only:
+    - master
+  when: manual
+
+Notify Success:
+  stage: notify
+  tags:
+    - deploy
+  allow_failure: true
+  script: 'echo -e "Module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME}): all checks successful\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI: Python module fb_tools" -r "$SENDER_ADDRESS" $NOTIFY_ADDRESS'
+  only:
+    - master
+
+Notify Error:
+  stage: notify
+  tags:
+    - deploy
+  allow_failure: true
+  when: on_failure
+  script: 'echo -e "Error in module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME})\nPlease check ${CI_PROJECT_URL}/pipelines/${CI_PIPELINE_ID}\n\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI error for Python module fb_tools" -r "$SENDER_ADDRESS" "$NOTIFY_ADDRESS"'
+  only:
+    - master
+    - develop
 
 # vim: ts=2 et
