@@ -18,6 +18,8 @@ try:
 except ImportError:
     import unittest
 
+import six
+
 # Setting the user’s preferred locale settings
 locale.setlocale(locale.LC_ALL, '')
 
@@ -603,6 +605,58 @@ class TestFbCommon(FbToolsTestcase):
                 LOG.debug("Got result: {!r}".format(result))
             self.assertEqual(expected, result)
 
+    # -------------------------------------------------------------------------
+    def test_compare_ldap_values(self):
+
+        LOG.info("Testing compare_ldap_values() from fb_tools.common ...")
+
+        if six.PY2:
+            bin_a = 'a'
+            bin_b = 'b'
+            text_a = u'a'
+        else:
+            bin_a = b'a'
+            bin_b = b'b'
+            text_a = 'a'
+
+        test_values = (
+            (1, 1, True),
+            (1, [1], True),
+            ([1], 1, True),
+            ([1], [1], True),
+            ('1', 1, True),
+            (' 1', 1, False),
+            ('a', 'a', True),
+            ('a', 'A', True),
+            ('A', 'a', True),
+            ('A', 'A', True),
+            ('b', 'a', False),
+            ('', 'a', False),
+            (['a', 'b'], ['a', 'b'], True),
+            (['a', 'b'], ['b', 'a'], True),
+            (['a'], ['a', 'b'], False),
+            (bin_a, text_a, True),
+            (bin_a, text_a, True),
+            (bin_a, bin_b, False),
+            (['{crypt}sICBZoVI7wX0s'], ['{crypt}sICBZoVI7wX0s'], True),
+            ('{crypt}sICBZoVI7wX0s', '{crypt}sICBZoVI7wX0s', True),
+            ('{crypt}sICBZoVI7wX0s', b'{crypt}sICBZoVI7wX0s', True),
+            (['{crypt}sICBZoVI7wX0s'], [b'{crypt}sICBZoVI7wX0s'], True),
+            ([b'{crypt}sICBZoVI7wX0s'], [b'{crypt}sICBZoVI7wX0s'], True),
+        )
+
+        from fb_tools.common import compare_ldap_values
+
+        for test_tuple in test_values:
+
+            first = test_tuple[0]
+            second = test_tuple[1]
+            expected = test_tuple[2]
+            result = compare_ldap_values(first, second)
+            LOG.debug("Compared {f!r} and {s!r}, result: {res} (expected: {ex}).".format(
+                f=first, s=second, res=result, ex=expected))
+            self.assertEqual(result, expected)
+
 
 # =============================================================================
 
@@ -626,6 +680,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCommon('test_bytes2human', verbose))
     suite.addTest(TestFbCommon('test_to_bool', verbose))
     suite.addTest(TestFbCommon('test_indent', verbose))
+    suite.addTest(TestFbCommon('test_compare_ldap_values', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
