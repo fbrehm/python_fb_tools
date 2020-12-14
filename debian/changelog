@@ -1,8 +1,9 @@
-fb-tools (1.7.1) UNRELEASED; urgency=medium
+fb-tools (1.7.2) all; urgency=medium
 
-  * Merging master into develop
+  * Adding functions is_general_string() and compare_ldap_values() to
+    lib/fb_tools/common.py
 
- -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 03 Nov 2020 09:04:48 +0100
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 14 Dec 2020 15:09:56 +0100
 
 fb-tools (1.7.0) all; urgency=medium
 
