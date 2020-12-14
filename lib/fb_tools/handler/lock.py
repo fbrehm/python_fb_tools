@@ -19,7 +19,10 @@ import traceback
 import datetime
 import fcntl
 
-from pathlib import Path
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from numbers import Number
 
@@ -33,7 +36,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.7.7'
+__version__ = '0.7.8'
 
 LOG = logging.getLogger(__name__)
 

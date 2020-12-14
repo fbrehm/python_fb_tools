@@ -20,7 +20,11 @@ import signal
 import time
 
 # Third party modules
-from pathlib import Path
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 # Own modules
 from . import __version__ as __pkg_version__
@@ -39,7 +43,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.5.1'
+__version__ = '1.5.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
