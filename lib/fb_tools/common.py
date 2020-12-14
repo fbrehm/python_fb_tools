@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2020 by Frank Brehm, Berlin
 @summary: The module for common used functions.
 """
 
@@ -33,7 +33,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '1.4.6'
+__version__ = '1.4.7'
 
 _ = XLATOR.gettext
 
@@ -230,6 +230,18 @@ def to_bool(value):
         return False
 
     return bool(value)
+
+
+# =============================================================================
+def is_general_string(value):
+
+    if isinstance(value, six.string_types):
+        return True
+
+    if isinstance(value, six.binary_type):
+        return True
+
+    return False
 
 
 # =============================================================================
@@ -452,6 +464,60 @@ def compare_fqdn_tokens(xs, ys):
         return -1
 
     return 0
+
+
+# =============================================================================
+def compare_ldap_values(first, second):
+
+    def _to_str_single(value):
+
+        if is_sequence(value):
+            if is_general_string(value[0]):
+                return to_str(value[0]).lower()
+            return str(value[0]).lower()
+        if is_general_string(value):
+            return to_str(value).lower()
+        return str(value).lower()
+
+    if is_sequence(first) and not is_sequence(second):
+        if len(first) == 1:
+            str_first = _to_str_single(first)
+            str_second = _to_str_single(second)
+            if str_first == str_second:
+                return True
+        return False
+
+    if is_sequence(second) and not is_sequence(first):
+        if len(second) == 1:
+            str_first = _to_str_single(first)
+            str_second = _to_str_single(second)
+            if str_first == str_second:
+                return True
+        return False
+
+    if not is_sequence(first):
+        # second is also not an array at this point
+        str_first = _to_str_single(first)
+        str_second = _to_str_single(second)
+        if str_first == str_second:
+            return True
+        return False
+
+    # Both parameters are arays
+    if len(first) != len(second):
+        return False
+    first_array = []
+    for val in first:
+        first_array.append(_to_str_single(val))
+    first_array.sort()
+    second_array = []
+    for val in second:
+        second_array.append(_to_str_single(val))
+    second_array.sort()
+
+    if first_array == second_array:
+        return True
+    return False
 
 
 # =============================================================================
