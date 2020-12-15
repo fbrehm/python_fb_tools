@@ -24,11 +24,13 @@ import six
 # Own modules
 from .errors import FbError
 
+from .common import is_sequence
+
 from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -85,16 +87,21 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     wrong_type_msg =  _("Item {item!r} must be of type {must!r}, but is of type {cls!r} instead.")
 
     # -------------------------------------------------------------------------
-    def __init__(self, iterable=[]):
+    def __init__(self, iterable=None):
 
         self._items = {}
+        if iterable is not None:
+            if not is_sequence(iterable):
+                msg = _("Parameter {p!r} is not a sequence type, but a {c!r} object instead.")
+                msg = msg.format(p='iterable', c=iterable.__class__.__name__)
+                raise TypeError(msg)
 
-        for item in iterable:
+            for item in iterable:
 
-            if not isinstance(item, str):
-                raise WrongItemTypeError(item)
-            ival = value.lower()
-            self._items[ival] = value
+                if not isinstance(item, str):
+                    raise WrongItemTypeError(item)
+                ival = value.lower()
+                self._items[ival] = value
 
     # -------------------------------------------------------------------------
     # Mandatory methods (ABC methods)
@@ -236,7 +243,10 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
             return "{}()".format(self.__class__.__name__)
 
         ret = "{}(".format(self.__class__.__name__)
-        ret += ', '.join(map(lambda x: "{!r}".format(x), self.values()))
+        if len(self):
+            ret += '['
+            ret += ', '.join(map(lambda x: "{!r}".format(x), self.values()))
+            ret += ']'
         ret += ')'
 
         return ret
@@ -365,6 +375,24 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
                 return False
 
         return True
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True):
+        """
+        Transforms the elements of the object into a dict
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+
+        @return: structure as dict
+        @rtype:  dict
+        """
+
+        res = super(FbBaseObject, self).as_dict(short=short)
+
+        res['items'] = self.values()
+
+        return res
 
     # -------------------------------------------------------------------------
     def as_list(self):
