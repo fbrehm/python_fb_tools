@@ -411,6 +411,37 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug("Result: {r} (expected: {e}).".format(r=result, e=expected))
             self.assertEqual(result, expected)
 
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_or(self):
+
+        LOG.info("Testing operator ge ('|', union()) of a FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        set_one = FrozenCaseInsensitiveStringSet(['a', 'B', 'c'])
+        set_two = FrozenCaseInsensitiveStringSet(['b', 'c', 'e'])
+        set_three = FrozenCaseInsensitiveStringSet(['C', 'd', 'f'])
+
+        set_expected = FrozenCaseInsensitiveStringSet(['a', 'B', 'c', 'd', 'e', 'f'])
+
+        LOG.debug("Trying to union with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            my_set = set_one | ['a']
+            LOG.debug('bla')
+        e = cm.exception
+        msg = "WrongCompareSetClassError on a union with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        msg = "Making a union of frozen sets {one!r}, {two!r} and {three!r}."
+        msg = msg.format(one=set_one.as_list(), two=set_two.as_list(), three=set_three.as_list())
+        LOG.debug(msg)
+        set_result = set_one | set_two | set_three
+        msg = "Got a union result {res!r} (expecting: {exp!r}).".format(
+            res=set_result.as_list(), exp=set_expected.as_list())
+        LOG.debug(msg)
+        self.assertEqual(set_result.as_list(), set_expected.as_list())
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -434,6 +465,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozenset_operator_ne', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_gt', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_ge', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_or', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
