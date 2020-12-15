@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -52,7 +52,7 @@ class WrongItemTypeError(TypeError, FbError):
 
         msg = _("Item {item!r} must be of type {must!r}, but is of type {cls!r} instead.")
         return msg.format(
-                item=self.item, imust='str', cls=self.item.__class__.__name__)
+                item=self.item, must='str', cls=self.item.__class__.__name__)
 
 
 # =============================================================================
@@ -100,8 +100,8 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
 
                 if not isinstance(item, str):
                     raise WrongItemTypeError(item)
-                ival = value.lower()
-                self._items[ival] = value
+                ival = item.lower()
+                self._items[ival] = item
 
     # -------------------------------------------------------------------------
     # Mandatory methods (ABC methods)
