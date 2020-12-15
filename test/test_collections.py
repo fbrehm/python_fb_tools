@@ -70,6 +70,8 @@ class TestFbCollections(FbToolsTestcase):
             expected = test_tuple[1]
             LOG.debug("Testing init of a FrozenCaseInsensitiveStringSet from {!r}.".format(src))
             my_set = FrozenCaseInsensitiveStringSet(src)
+            if self.verbose > 1:
+                LOG.debug("FrozenCaseInsensitiveStringSet %s: {}".format(my_set))
             result = my_set.as_list()
             LOG.debug("FrozenCaseInsensitiveStringSet as a list: {r!r} (expeced: {ex!r})".format(
                 r=result, ex=expected))
@@ -109,6 +111,32 @@ class TestFbCollections(FbToolsTestcase):
                     "FrozenCaseInsensitiveStringSet object: {}").format(e)
             LOG.debug(msg)
 
+    # -------------------------------------------------------------------------
+    def test_frozenset_len(self):
+
+        LOG.info("Testing len() of a FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+
+        test_tuples = (
+            (None, 0),
+            ([], 0),
+            (['a'], 1),
+            (['a', 'b'], 2),
+        )
+
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected_len = test_tuple[1]
+            LOG.debug("Testing len() of a FrozenCaseInsensitiveStringSet from {!r}.".format(src))
+            my_set = FrozenCaseInsensitiveStringSet(src)
+            if self.verbose > 1:
+                LOG.debug("FrozenCaseInsensitiveStringSet %s: {}".format(my_set))
+            result = len(my_set)
+            LOG.debug("Got a length of: {}".format(result))
+            self.assertEqual(result, expected_len)
+
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -123,6 +151,7 @@ if __name__ == '__main__':
 
     suite.addTest(TestFbCollections('test_import', verbose))
     suite.addTest(TestFbCollections('test_init_frozenset', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_len', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
