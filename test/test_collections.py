@@ -270,12 +270,11 @@ class TestFbCollections(FbToolsTestcase):
         )
 
         LOG.debug("Trying to compare with a wrong partner ...")
-        with self.assertRaises(WrongCompareSetClassError) as cm:
-            if my_set == ['a']:
-                LOG.debug("Bla")
-        e = cm.exception
-        msg = "WrongCompareSetClassError on comparing with a wrong object: {}".format(e)
-        LOG.debug(msg)
+        result = False
+        if my_set == ['a', 'b']:
+            result = True
+        LOG.debug("Result: {r} (expected: {e}).".format(r=result, e=False))
+        self.assertEqual(result, False)
 
         for test_tuple in test_tuples:
             src = test_tuple[0]
@@ -310,12 +309,11 @@ class TestFbCollections(FbToolsTestcase):
         )
 
         LOG.debug("Trying to compare with a wrong partner ...")
-        with self.assertRaises(WrongCompareSetClassError) as cm:
-            if my_set != ['a']:
-                LOG.debug("Bla")
-        e = cm.exception
-        msg = "WrongCompareSetClassError on comparing with a wrong object: {}".format(e)
-        LOG.debug(msg)
+        result = True
+        if my_set != ['a']:
+            result = False
+        LOG.debug("Result: {r} (expected: {e}).".format(r=result, e=False))
+        self.assertEqual(result, False)
 
         for test_tuple in test_tuples:
             src = test_tuple[0]
@@ -442,6 +440,38 @@ class TestFbCollections(FbToolsTestcase):
         LOG.debug(msg)
         self.assertEqual(set_result.as_list(), set_expected.as_list())
 
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_and(self):
+
+        LOG.info("Testing operator and ('&', intersection()) of a "
+                "FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        set_one = FrozenCaseInsensitiveStringSet(['a', 'B', 'c', 'd', 'E', 'f', 'G'])
+        set_two = FrozenCaseInsensitiveStringSet(['a', 'b', 'd', 'e', 'h'])
+        set_three = FrozenCaseInsensitiveStringSet(['A', 'b', 'C', 'd', 'f', 'g'])
+
+        set_expected = FrozenCaseInsensitiveStringSet(['a', 'B', 'd'])
+
+        LOG.debug("Trying to intersection with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            my_set = set_one & ['a']
+            LOG.debug('bla')
+        e = cm.exception
+        msg = "WrongCompareSetClassError on a union with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        msg = "Making an intersection of frozen sets {one!r}, {two!r} and {three!r}."
+        msg = msg.format(one=set_one.as_list(), two=set_two.as_list(), three=set_three.as_list())
+        LOG.debug(msg)
+        set_result = set_one & set_two & set_three
+        msg = "Got an intersection result {res!r} (expecting: {exp!r}).".format(
+            res=set_result.as_list(), exp=set_expected.as_list())
+        LOG.debug(msg)
+        self.assertEqual(set_result.as_list(), set_expected.as_list())
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -466,6 +496,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozenset_operator_gt', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_ge', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_or', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_and', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

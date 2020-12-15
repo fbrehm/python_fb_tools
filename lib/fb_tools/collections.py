@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -177,9 +177,8 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     def __eq__(self, other):
         """The '==' operator."""
 
-        cls = self.__class__.__name__
         if not isinstance(other, FrozenCaseInsensitiveStringSet):
-            raise WrongCompareSetClassError(other, cls)
+            return False
 
         if len(self) != len(other):
             return False
