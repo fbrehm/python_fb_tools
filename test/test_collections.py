@@ -53,6 +53,14 @@ class TestFbCollections(FbToolsTestcase):
         LOG.debug("FrozenCaseInsensitiveStringSet %s: {}".format(my_set))
         self.assertEqual(my_set.as_list(), [])
 
+        LOG.debug("Trying to add add a value to a FrozenCaseInsensitiveStringSet ...")
+        with self.assertRaises(AttributeError) as cm:
+            my_set.add('bla')
+        e = cm.exception
+        msg = ("AttributeError raised on trying to add a value to a "
+                "FrozenCaseInsensitiveStringSet object: {}").format(e)
+        LOG.debug(msg)
+
         correct_iterables = (
             (('a',), ['a']),
             (['a'], ['a']),
@@ -136,6 +144,273 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug("Got a length of: {}".format(result))
             self.assertEqual(result, expected_len)
 
+    # -------------------------------------------------------------------------
+    def test_frozenset_bool(self):
+
+        LOG.info("Testing bool() of a FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+
+        test_tuples = (
+            (None, False),
+            ([], False),
+            (['a'], True),
+            (['a', 'b'], True),
+        )
+
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected_bool = test_tuple[1]
+            LOG.debug("Testing bool() of a FrozenCaseInsensitiveStringSet from {!r}.".format(src))
+            my_set = FrozenCaseInsensitiveStringSet(src)
+            if self.verbose > 1:
+                LOG.debug("FrozenCaseInsensitiveStringSet %s: {}".format(my_set))
+            result = bool(my_set)
+            LOG.debug("Got boolean of: {}".format(result))
+            self.assertEqual(result, expected_bool)
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_le(self):
+
+        LOG.info("Testing operator le ('<=', issubset()) of a "
+            "FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+
+        test_tuples = (
+            (['a', 'b'], True),
+            (['A', 'b'], True),
+            (['a', 'B'], True),
+            (['a'], False),
+            (['a', 'b', 'c'], True),
+            (['b', 'c'], False),
+        )
+
+        LOG.debug("Trying to compare with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            if my_set <= ['a']:
+                LOG.debug("Bla")
+        e = cm.exception
+        msg = "WrongCompareSetClassError on comparing with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            test_set = FrozenCaseInsensitiveStringSet(src)
+            msg = "Testing, whether set {left!r} is a subset of {right!r}.".format(
+                left=my_set.as_list(), right=test_set.as_list())
+            LOG.debug(msg)
+            result = False
+            if my_set <= test_set:
+                result = True
+            LOG.debug("Result: {r} (expected: {e}).".format(r=result, e=expected))
+            self.assertEqual(result, expected)
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_lt(self):
+
+        LOG.info("Testing operator lt ('<') of a FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+
+        test_tuples = (
+            (['a', 'b'], False),
+            (['A', 'b'], False),
+            (['a', 'B'], False),
+            (['a'], False),
+            (['a', 'b', 'c'], True),
+            (['b', 'c'], False),
+        )
+
+        LOG.debug("Trying to compare with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            if my_set < ['a']:
+                LOG.debug("Bla")
+        e = cm.exception
+        msg = "WrongCompareSetClassError on comparing with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            test_set = FrozenCaseInsensitiveStringSet(src)
+            msg = "Testing, whether set {left!r} is a real subset of {right!r}.".format(
+                left=my_set.as_list(), right=test_set.as_list())
+            LOG.debug(msg)
+            result = False
+            if my_set < test_set:
+                result = True
+            LOG.debug("Result: {r} (expected: {e}).".format(r=result, e=expected))
+            self.assertEqual(result, expected)
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_eq(self):
+
+        LOG.info("Testing operator eq ('==') of a FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+
+        test_tuples = (
+            (['a', 'b'], True),
+            (['A', 'b'], True),
+            (['a', 'B'], True),
+            (['a'], False),
+            (['a', 'b', 'c'], False),
+            (['b', 'c'], False),
+        )
+
+        LOG.debug("Trying to compare with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            if my_set == ['a']:
+                LOG.debug("Bla")
+        e = cm.exception
+        msg = "WrongCompareSetClassError on comparing with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            test_set = FrozenCaseInsensitiveStringSet(src)
+            msg = "Testing, whether set {left!r} is equal to {right!r}.".format(
+                left=my_set.as_list(), right=test_set.as_list())
+            LOG.debug(msg)
+            result = False
+            if my_set == test_set:
+                result = True
+            LOG.debug("Result: {r} (expected: {e}).".format(r=result, e=expected))
+            self.assertEqual(result, expected)
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_ne(self):
+
+        LOG.info("Testing operator ne ('!=') of a FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+
+        test_tuples = (
+            (['a', 'b'], False),
+            (['A', 'b'], False),
+            (['a', 'B'], False),
+            (['a'], True),
+            (['a', 'b', 'c'], True),
+            (['b', 'c'], True),
+        )
+
+        LOG.debug("Trying to compare with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            if my_set != ['a']:
+                LOG.debug("Bla")
+        e = cm.exception
+        msg = "WrongCompareSetClassError on comparing with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            test_set = FrozenCaseInsensitiveStringSet(src)
+            msg = "Testing, whether set {left!r} is not equal to {right!r}.".format(
+                left=my_set.as_list(), right=test_set.as_list())
+            LOG.debug(msg)
+            result = False
+            if my_set != test_set:
+                result = True
+            LOG.debug("Result: {r} (expected: {e}).".format(r=result, e=expected))
+            self.assertEqual(result, expected)
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_gt(self):
+
+        LOG.info("Testing operator gt ('>') of a "
+            "FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+
+        test_tuples = (
+            (['a', 'b'], False),
+            (['A', 'b'], False),
+            (['a', 'B'], False),
+            (['a'], True),
+            (['a', 'b', 'c'], False),
+            (['b', 'c'], False),
+        )
+
+        LOG.debug("Trying to compare with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            if my_set > ['a']:
+                LOG.debug("Bla")
+        e = cm.exception
+        msg = "WrongCompareSetClassError on comparing with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            test_set = FrozenCaseInsensitiveStringSet(src)
+            msg = "Testing, whether set {right!r} is a real subset of {left!r}.".format(
+                left=my_set.as_list(), right=test_set.as_list())
+            LOG.debug(msg)
+            result = False
+            if my_set > test_set:
+                result = True
+            LOG.debug("Result: {r} (expected: {e}).".format(r=result, e=expected))
+            self.assertEqual(result, expected)
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_ge(self):
+
+        LOG.info("Testing operator ge ('>=') of a FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+
+        test_tuples = (
+            (['a', 'b'], True),
+            (['A', 'b'], True),
+            (['a', 'B'], True),
+            (['a'], True),
+            (['a', 'b', 'c'], False),
+            (['b', 'c'], False),
+        )
+
+        LOG.debug("Trying to compare with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            if my_set >= ['a']:
+                LOG.debug("Bla")
+        e = cm.exception
+        msg = "WrongCompareSetClassError on comparing with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            test_set = FrozenCaseInsensitiveStringSet(src)
+            msg = "Testing, whether set {right!r} is a subset of {left!r}.".format(
+                left=my_set.as_list(), right=test_set.as_list())
+            LOG.debug(msg)
+            result = False
+            if my_set >= test_set:
+                result = True
+            LOG.debug("Result: {r} (expected: {e}).".format(r=result, e=expected))
+            self.assertEqual(result, expected)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -152,6 +427,13 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_import', verbose))
     suite.addTest(TestFbCollections('test_init_frozenset', verbose))
     suite.addTest(TestFbCollections('test_frozenset_len', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_bool', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_le', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_lt', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_eq', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_ne', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_gt', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_ge', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
