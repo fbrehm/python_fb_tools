@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -72,7 +72,7 @@ class WrongCompareSetClassError(TypeError, FbError):
 
         msg = _("Object {o!r} is not a {e} object.")
         expected = 'CaseInsensitiveStringSet'
-        if self.expecteda:
+        if self.expected:
             expected = self.expected
         return msg.format(o=self.other_class, e=expected)
 
@@ -202,16 +202,31 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     def __gt__(self, other):
         """The '>' operator."""
 
-        if self.__le__(other):
-            return False
-        return True
+        cls = self.__class__.__name__
+        if not isinstance(other, FrozenCaseInsensitiveStringSet):
+            raise WrongCompareSetClassError(other, cls)
+
+        ret = True
+        for item in other._items:
+            if item not in self:
+                ret = False
+        if ret:
+            if len(self) != len(other):
+                return True
+
+        return False
 
     # -------------------------------------------------------------------------
     def __ge__(self, other):
         """The '>=' operator."""
 
-        if self.__lt__(other):
-            return False
+        cls = self.__class__.__name__
+        if not isinstance(other, FrozenCaseInsensitiveStringSet):
+            raise WrongCompareSetClassError(other, cls)
+
+        for item in other._items:
+            if item not in self:
+                return False
         return True
 
     # -------------------------------------------------------------------------
