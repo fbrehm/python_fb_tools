@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -246,8 +246,9 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     def values(self):
 
         ret = []
-        for item in self:
-            ret.append(item)
+        for key in sorted(self._items.keys()):
+            val = self._items[key]
+            ret.append(val)
         return ret
 
     # -------------------------------------------------------------------------
@@ -402,7 +403,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
         @rtype:  dict
         """
 
-        res = super(FbBaseObject, self).as_dict(short=short)
+        res = super(FrozenCaseInsensitiveStringSet, self).as_dict(short=short)
 
         res['items'] = self.values()
 
