@@ -22,6 +22,8 @@ sys.path.insert(0, libdir)
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
+from fb_tools.common import pp
+
 LOG = logging.getLogger('test_collections')
 
 
@@ -52,6 +54,18 @@ class TestFbCollections(FbToolsTestcase):
         LOG.debug("FrozenCaseInsensitiveStringSet %r: {!r}".format(my_set))
         LOG.debug("FrozenCaseInsensitiveStringSet %s: {}".format(my_set))
         self.assertEqual(my_set.as_list(), [])
+
+        src = ('B', 'a')
+        expected = {
+            '__class_name__': 'FrozenCaseInsensitiveStringSet',
+            'items': ['a', 'B'],
+        }
+        LOG.debug("Checking as_dict(), source: {src}, expeced: {ex}.".format(
+            src=src, ex=expected))
+        my_set = FrozenCaseInsensitiveStringSet(src)
+        result = my_set.as_dict()
+        LOG.debug("Result of as_dict(): {}".format(pp(result)))
+        self.assertEqual(expected, result)
 
         LOG.debug("Trying to add add a value to a FrozenCaseInsensitiveStringSet ...")
         with self.assertRaises(AttributeError) as cm:
@@ -168,6 +182,41 @@ class TestFbCollections(FbToolsTestcase):
             result = bool(my_set)
             LOG.debug("Got boolean of: {}".format(result))
             self.assertEqual(result, expected_bool)
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_in(self):
+
+        LOG.info("Testing operator 'in' of a "
+            "FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongItemTypeError
+
+        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+
+        valid_items = ('a', 'A', 'b')
+        invalid_items = ('c', 'aA', 'bb', '%')
+        wrong_items = (None, ['a'], 2, True)
+
+        for item in valid_items:
+            LOG.debug("Testing, that {i!r} is a member of {s!r}.".format(
+                i=item, s=my_set.as_list()))
+            self.assertIn(item, my_set)
+
+        for item in invalid_items:
+            LOG.debug("Testing, that {i!r} is NOT a member of {s!r}.".format(
+                i=item, s=my_set.as_list()))
+            self.assertNotIn(item, my_set)
+
+        for item in wrong_items:
+            LOG.debug("Testing, that {i!r} has the wrong type to be a member of {s!r}.".format(
+                i=item, s=my_set.as_list()))
+            with self.assertRaises(WrongItemTypeError) as cm:
+                if item in my_set:
+                    LOG.debug("Bla")
+            e = cm.exception
+            msg = "WrongItemTypeError on operator in: {}".format(e)
+            LOG.debug(msg)
 
     # -------------------------------------------------------------------------
     def test_frozenset_operator_le(self):
@@ -460,7 +509,7 @@ class TestFbCollections(FbToolsTestcase):
             my_set = set_one & ['a']
             LOG.debug('bla')
         e = cm.exception
-        msg = "WrongCompareSetClassError on a union with a wrong object: {}".format(e)
+        msg = "WrongCompareSetClassError on a intersection with a wrong object: {}".format(e)
         LOG.debug(msg)
 
         msg = "Making an intersection of frozen sets {one!r}, {two!r} and {three!r}."
@@ -471,6 +520,106 @@ class TestFbCollections(FbToolsTestcase):
             res=set_result.as_list(), exp=set_expected.as_list())
         LOG.debug(msg)
         self.assertEqual(set_result.as_list(), set_expected.as_list())
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_sub(self):
+
+        LOG.info("Testing operator sub ('-', difference()) of a "
+                "FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        set_src = FrozenCaseInsensitiveStringSet(['a', 'B', 'c', 'd', 'E', 'f', 'G'])
+        set_one = FrozenCaseInsensitiveStringSet(['a', 'd',])
+        set_two = FrozenCaseInsensitiveStringSet(['e', 'f', 'H'])
+
+        set_expected = FrozenCaseInsensitiveStringSet(['B', 'c', 'G'])
+
+        LOG.debug("Trying to make a difference with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            my_set = set_one - ['a']
+            LOG.debug('bla')
+        e = cm.exception
+        msg = "WrongCompareSetClassError on a difference with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        msg = "Making a difference of frozen set {src!r} minus {one!r} and {two!r}."
+        msg = msg.format(src=set_src.as_list(), one=set_one.as_list(), two=set_two.as_list())
+        LOG.debug(msg)
+        set_result = set_src - set_one - set_two
+        msg = "Got an difference result {res!r} (expecting: {exp!r}).".format(
+            res=set_result.as_list(), exp=set_expected.as_list())
+        LOG.debug(msg)
+        self.assertEqual(set_result.as_list(), set_expected.as_list())
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_operator_xor(self):
+
+        LOG.info("Testing operator xor ('^', symmetric_difference()) of a "
+                "FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        set_one = FrozenCaseInsensitiveStringSet(['a', 'B', 'c'])
+        set_two = FrozenCaseInsensitiveStringSet(['b', 'c', 'H'])
+
+        set_expected = FrozenCaseInsensitiveStringSet(['a', 'H'])
+
+        LOG.debug("Trying to make a symmetric difference with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            my_set = set_one ^ ['a']
+            LOG.debug('bla')
+        e = cm.exception
+        msg = "WrongCompareSetClassError on a symmetric difference with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        msg = "Making a symmetric difference of frozen set {one!r} and {two!r}."
+        msg = msg.format(one=set_one.as_list(), two=set_two.as_list())
+        LOG.debug(msg)
+        set_result = set_one ^ set_two
+        msg = "Got an isymmetric difference result {res!r} (expecting: {exp!r}).".format(
+            res=set_result.as_list(), exp=set_expected.as_list())
+        LOG.debug(msg)
+        self.assertEqual(set_result.as_list(), set_expected.as_list())
+
+    # -------------------------------------------------------------------------
+    def test_frozenset_method_isdisjoint(self):
+
+        LOG.info("Testing method isdisjoint of a "
+                "FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongCompareSetClassError
+
+        set_src = FrozenCaseInsensitiveStringSet(['a', 'B', 'c'])
+        tuples_test = (
+            (['a'], False),
+            (['A'], False),
+            (['b', 'd'], False),
+            (['d'], True),
+            (['d', 'E'], True),
+        )
+
+        LOG.debug("Trying to exec isdisjoint with a wrong partner ...")
+        with self.assertRaises(WrongCompareSetClassError) as cm:
+            if set_src.isdisjoint(['a']):
+                LOG.debug('bla')
+        e = cm.exception
+        msg = "WrongCompareSetClassError on isdisjoint() with a wrong object: {}".format(e)
+        LOG.debug(msg)
+
+        for test_tuple in tuples_test:
+            set_test = FrozenCaseInsensitiveStringSet(test_tuple[0])
+            expected = test_tuple[1]
+            LOG.debug(
+                "Testing, whether {src!r} is isdisjoint from {tst!r} - expected {exp}.".format(
+                    src=set_src.as_list(), tst=set_test.as_list(), exp=expected))
+            res = False
+            if set_src.isdisjoint(set_test):
+                res = True
+            self.assertEqual(res, expected)
 
 
 # =============================================================================
@@ -489,6 +638,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_init_frozenset', verbose))
     suite.addTest(TestFbCollections('test_frozenset_len', verbose))
     suite.addTest(TestFbCollections('test_frozenset_bool', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_in', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_le', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_lt', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_eq', verbose))
@@ -497,6 +647,9 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozenset_operator_ge', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_or', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_and', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_sub', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_operator_xor', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_method_isdisjoint', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
