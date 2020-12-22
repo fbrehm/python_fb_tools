@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -177,6 +177,13 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
 
         if not isinstance(other, FrozenCaseInsensitiveStringSet):
             return False
+
+        if isinstance(self, CaseInsensitiveStringSet):
+            if not isinstance(other, CaseInsensitiveStringSet):
+                return False
+        else:
+            if isinstance(other, CaseInsensitiveStringSet):
+                return False
 
         if len(self) != len(other):
             return False
@@ -438,6 +445,43 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
         ival = value.lower()
         if ival in self._items:
             del self._items[ival]
+
+    # -------------------------------------------------------------------------
+    def update(self, *others):
+
+        for other in others:
+            if not isinstance(other, FrozenCaseInsensitiveStringSet):
+                raise WrongCompareSetClassError(other)
+
+        for other in others:
+            for item in other:
+                if item not in self:
+                    self.add(item)
+
+    # -------------------------------------------------------------------------
+    def __ior__(self, *others):
+        """The '|=' operator."""
+
+        self.update(*others)
+
+    # -------------------------------------------------------------------------
+    def intersection_update(self, *others):
+
+        for other in others:
+            if not isinstance(other, FrozenCaseInsensitiveStringSet):
+                raise WrongCompareSetClassError(other)
+
+        for item in self:
+            for other in others:
+                if item not in other:
+                    self.discard(item)
+                    break
+
+    # -------------------------------------------------------------------------
+    def __iand__(self, *others):
+        """The '&=' operator."""
+
+        self.intersection_update(*others)
 
 
 # =============================================================================
