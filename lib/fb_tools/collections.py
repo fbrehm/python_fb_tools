@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.1.6'
+__version__ = '0.2.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -83,8 +83,6 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     The items MUST be of type string!
     It works like a set.
     """
-
-    wrong_type_msg =  _("Item {item!r} must be of type {must!r}, but is of type {cls!r} instead.")
 
     # -------------------------------------------------------------------------
     def __init__(self, iterable=None):
@@ -413,6 +411,33 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
             ret.append(item)
 
         return ret
+
+# =============================================================================
+class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
+    """
+    A mutable set, where the strings are insensitive strings.
+    The items MUST be of type string!
+    It works like a set.
+    """
+
+    # -------------------------------------------------------------------------
+    def add(self, value):
+
+        if not isinstance(value, str):
+            raise WrongItemTypeError(value)
+
+        if value in self:
+            return
+
+        ival = value.lower()
+        self._items[ival] = value
+
+    # -------------------------------------------------------------------------
+    def discard(self, value):
+
+        ival = value.lower()
+        if ival in self._items:
+            del self._items[ival]
 
 
 # =============================================================================

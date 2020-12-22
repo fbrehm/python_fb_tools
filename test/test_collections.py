@@ -621,6 +621,91 @@ class TestFbCollections(FbToolsTestcase):
                 res = True
             self.assertEqual(res, expected)
 
+    # -------------------------------------------------------------------------
+    def test_init_set(self):
+
+        LOG.info("Testing init of a CaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import CaseInsensitiveStringSet
+        from fb_tools.collections import WrongItemTypeError
+
+        LOG.debug("Testing init of an empty set.")
+        my_set = CaseInsensitiveStringSet()
+        LOG.debug("CaseInsensitiveStringSet %r: {!r}".format(my_set))
+        LOG.debug("CaseInsensitiveStringSet %s: {}".format(my_set))
+        self.assertEqual(my_set.as_list(), [])
+
+        src = ('B', 'a')
+        expected = {
+            '__class_name__': 'CaseInsensitiveStringSet',
+            'items': ['a', 'B'],
+        }
+        LOG.debug("Checking as_dict(), source: {src}, expeced: {ex}.".format(
+            src=src, ex=expected))
+        my_set = CaseInsensitiveStringSet(src)
+        result = my_set.as_dict()
+        LOG.debug("Result of as_dict(): {}".format(pp(result)))
+        self.assertEqual(expected, result)
+
+        correct_iterables = (
+            (('a',), ['a']),
+            (['a'], ['a']),
+            (['A'], ['A']),
+            (['a', 'b'], ['a', 'b']),
+            (['a', 'B'], ['a', 'B']),
+            (['b', 'a'], ['a', 'b']),
+            (['a', 'a'], ['a']),
+            (['a', 'A'], ['A']),
+            (['A', 'a'], ['a']),
+        )
+
+        for test_tuple in correct_iterables:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            LOG.debug("Testing init of a CaseInsensitiveStringSet from {!r}.".format(src))
+            my_set = CaseInsensitiveStringSet(src)
+            if self.verbose > 1:
+                LOG.debug("CaseInsensitiveStringSet %s: {}".format(my_set))
+            result = my_set.as_list()
+            LOG.debug("CaseInsensitiveStringSet as a list: {r!r} (expeced: {ex!r})".format(
+                r=result, ex=expected))
+            self.assertEqual(result, expected)
+
+        class Tobj(object):
+            def uhu(self):
+                return 'banane'
+
+        tobj = Tobj()
+
+        wrong_iterables = (
+            'a', 1, {'uhu': 'banane'}, tobj, tobj.uhu)
+
+        for obj in wrong_iterables:
+
+            msg = "Trying to init a CaseInsensitiveStringSet from {!r} ..."
+            LOG.debug(msg.format(obj))
+            with self.assertRaises(TypeError) as cm:
+                my_set = CaseInsensitiveStringSet(obj)
+            e = cm.exception
+            msg = ("TypeError raised on init of a "
+                    "CaseInsensitiveStringSet object: {}").format(e)
+            LOG.debug(msg)
+
+        iterables_with_wrong_values = (
+                [None], [1], ['a', 1], [{'uhu': 'banane'}], [tobj], [tobj.uhu])
+
+        for obj in iterables_with_wrong_values:
+
+            msg = "Trying to init a CaseInsensitiveStringSet from {!r} ..."
+            LOG.debug(msg.format(obj))
+            with self.assertRaises(WrongItemTypeError) as cm:
+                my_set = CaseInsensitiveStringSet(obj)
+            e = cm.exception
+            msg = ("WrongItemTypeError raised on init of a "
+                    "CaseInsensitiveStringSet object: {}").format(e)
+            LOG.debug(msg)
+
+    # -------------------------------------------------------------------------
 
 # =============================================================================
 if __name__ == '__main__':
@@ -650,6 +735,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozenset_operator_sub', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_xor', verbose))
     suite.addTest(TestFbCollections('test_frozenset_method_isdisjoint', verbose))
+    suite.addTest(TestFbCollections('test_init_set', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
