@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -245,11 +245,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def values(self):
 
-        ret = []
-        for key in sorted(self._items.keys()):
-            val = self._items[key]
-            ret.append(val)
-        return ret
+        return self.as_list()
 
     # -------------------------------------------------------------------------
     def __str__(self):
