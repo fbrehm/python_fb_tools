@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -502,6 +502,72 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
         """The '&=' operator."""
 
         self.intersection_update(*others)
+
+    # -------------------------------------------------------------------------
+    def difference_update(self, *others):
+
+        for other in others:
+            if not isinstance(other, CaseInsensitiveStringSet):
+                raise WrongCompareSetClassError(other)
+
+        for item in self:
+            for other in others:
+                if item in other:
+                    self.discard(item)
+                    break
+
+    # -------------------------------------------------------------------------
+    def __isub__(self, *others):
+        """The '-=' operator."""
+
+        self.difference_update(*others)
+
+    # -------------------------------------------------------------------------
+    def symmetric_difference_update(self, other):
+
+        if not isinstance(other, CaseInsensitiveStringSet):
+            raise WrongCompareSetClassError(other)
+
+        for item in self:
+            if item in other:
+                self.discard(item)
+
+        for item in other:
+            if item not in self:
+                self.add(item)
+
+    # -------------------------------------------------------------------------
+    def __ixor__(self, other):
+        """The '|=' operator."""
+
+        self.symmetric_difference_update(other)
+
+    # -------------------------------------------------------------------------
+    def remove(self, value):
+
+        ival = value.lower()
+        if ival in self._items:
+            del self._items[ival]
+            return
+
+        raise KeyError(value)
+
+    # -------------------------------------------------------------------------
+    def pop(self):
+
+        if len(self) == 0:
+            raise IndexError("pop() from empty list")
+
+        key = self._items.keys()[0]
+        value = self._items[key]
+        del self._items[key]
+
+        return value
+
+    # -------------------------------------------------------------------------
+    def clear(self):
+
+        self._items = {}
 
 
 # =============================================================================
