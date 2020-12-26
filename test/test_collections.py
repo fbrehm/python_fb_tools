@@ -762,6 +762,57 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
+    def test_set_add(self):
+
+        LOG.info("Testing method add() of a CaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import CaseInsensitiveStringSet
+        from fb_tools.collections import WrongItemTypeError
+
+        src = ['a', 'b']
+
+        tuples_test = (
+            ('a', False, ['a', 'b']),
+            ('A', False, ['A', 'b']),
+            ('A', True, ['a', 'b']),
+            ('c', False, ['a', 'b', 'c']),
+            (('c', 'd'), False, ['a', 'b', 'c', 'd']),
+            (['c', 'd'], False, ['a', 'b', 'c', 'd']),
+            (CaseInsensitiveStringSet(['c', 'd']), False, ['a', 'b', 'c', 'd']),
+            (['A', 'd'], False, ['A', 'b', 'd']),
+            (['a', 'd'], True, ['a', 'b', 'd']),
+        )
+
+        LOG.debug("Test adding valid values ...")
+        for test_tuple in tuples_test:
+            set_test = CaseInsensitiveStringSet(src)
+            value = test_tuple[0]
+            keep = test_tuple[1]
+            expected = test_tuple[2]
+            if self.verbose > 1:
+                msg = "Testing adding {v!r} to {s!r}, keep existing is {k}.".format(
+                    v=value, s=set_test, k=keep)
+                LOG.debug(msg)
+            set_test.add(value, keep=keep)
+            result = set_test.values()
+            if self.verbose > 1:
+                LOG.debug("Got {r!r}, expected {e!r}.".format(r=result, e=expected))
+            self.assertEqual(result, expected)
+
+        LOG.debug("Test adding valid values ...")
+        wrong_values = (None, [None], 1, [2], ['c', 3], ['c', ['d']])
+        for value in wrong_values:
+            set_test = CaseInsensitiveStringSet(src)
+            if self.verbose > 1:
+                msg = "Trying to add {!r} to a CaseInsensitiveStringSet ..."
+                LOG.debug(msg.format(value))
+            with self.assertRaises(WrongItemTypeError) as cm:
+                set_test.add(value)
+            e = cm.exception
+            msg = ("WrongItemTypeError raised on adding an invalid value to a"
+                    "CaseInsensitiveStringSet object: {}").format(e)
+            LOG.debug(msg)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -793,6 +844,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozenset_operator_xor', verbose))
     suite.addTest(TestFbCollections('test_frozenset_method_isdisjoint', verbose))
     suite.addTest(TestFbCollections('test_init_set', verbose))
+    suite.addTest(TestFbCollections('test_set_add', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
