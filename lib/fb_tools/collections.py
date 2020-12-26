@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -89,7 +89,12 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
 
         self._items = {}
         if iterable is not None:
-            if not is_sequence(iterable):
+            ok = False
+            if is_sequence(iterable):
+                ok = True
+            elif isinstance(iterable, FrozenCaseInsensitiveStringSet):
+                ok = True
+            if not ok:
                 msg = _("Parameter {p!r} is not a sequence type, but a {c!r} object instead.")
                 msg = msg.format(p='iterable', c=iterable.__class__.__name__)
                 raise TypeError(msg)
@@ -128,6 +133,17 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     # Nice to have methods
+
+    def real_value(self, item):
+
+        if not isinstance(item, str):
+            raise WrongItemTypeError(item)
+
+        ival = item.lower()
+        if ival not in self._items:
+            raise KeyError(item)
+
+        return self._items[ival]
 
     # -------------------------------------------------------------------------
     def __bool__(self):
@@ -282,9 +298,8 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
         new_set = self.__copy__()
         for other in others:
             for item in other:
-                if item not in new_set:
-                    ival = item.lower()
-                    new_set._items[ival] = item
+                ival = item.lower()
+                new_set._items[ival] = item
 
         return new_set
 
@@ -302,16 +317,18 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
             if not isinstance(other, FrozenCaseInsensitiveStringSet):
                 raise WrongCompareSetClassError(other, cls)
 
-        empty = []
-        new_set = self.__class__(empty)
+        new_set = self.__class__()
         for item in self:
             do_add = True
+            value = item
             for other in others:
-                if item not in other:
+                if item in other:
+                    value = other.real_value(item)
+                else:
                     do_add = False
             if do_add:
                 ival = item.lower()
-                new_set._items[ival] = item
+                new_set._items[ival] = value
 
         return new_set
 
@@ -329,8 +346,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
             if not isinstance(other, FrozenCaseInsensitiveStringSet):
                 raise WrongCompareSetClassError(other, cls)
 
-        empty = []
-        new_set = self.__class__(empty)
+        new_set = self.__class__()
         for item in self:
             do_add = True
             for other in others:
@@ -428,12 +444,12 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
     """
 
     # -------------------------------------------------------------------------
-    def add(self, value):
+    def add(self, value, keep=False):
 
         if not isinstance(value, str):
             raise WrongItemTypeError(value)
 
-        if value in self:
+        if keep and value in self:
             return
 
         ival = value.lower()
@@ -455,8 +471,7 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
 
         for other in others:
             for item in other:
-                if item not in self:
-                    self.add(item)
+                self.add(item)
 
     # -------------------------------------------------------------------------
     def __ior__(self, *others):
@@ -473,9 +488,14 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
 
         for item in self:
             for other in others:
-                if item not in other:
+                value = item
+                if item in other:
+                    value = other.real_value(item)
+                else:
                     self.discard(item)
                     break
+                if value != item:
+                    self.add(value)
 
     # -------------------------------------------------------------------------
     def __iand__(self, *others):

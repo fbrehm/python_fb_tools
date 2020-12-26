@@ -85,6 +85,8 @@ class TestFbCollections(FbToolsTestcase):
             (['a', 'a'], ['a']),
             (['a', 'A'], ['A']),
             (['A', 'a'], ['a']),
+            (FrozenCaseInsensitiveStringSet(['a', 'b']), ['a', 'b']),
+            (['a', 'b', 'A'], ['A', 'b']),
         )
 
         for test_tuple in correct_iterables:
@@ -470,7 +472,7 @@ class TestFbCollections(FbToolsTestcase):
         set_two = FrozenCaseInsensitiveStringSet(['b', 'c', 'e'])
         set_three = FrozenCaseInsensitiveStringSet(['C', 'd', 'f'])
 
-        set_expected = FrozenCaseInsensitiveStringSet(['a', 'B', 'c', 'd', 'e', 'f'])
+        set_expected = FrozenCaseInsensitiveStringSet(['a', 'b', 'C', 'd', 'e', 'f'])
 
         LOG.debug("Trying to union with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
@@ -502,7 +504,7 @@ class TestFbCollections(FbToolsTestcase):
         set_two = FrozenCaseInsensitiveStringSet(['a', 'b', 'd', 'e', 'h'])
         set_three = FrozenCaseInsensitiveStringSet(['A', 'b', 'C', 'd', 'f', 'g'])
 
-        set_expected = FrozenCaseInsensitiveStringSet(['a', 'B', 'd'])
+        set_expected = FrozenCaseInsensitiveStringSet(['A', 'b', 'd'])
 
         LOG.debug("Trying to intersection with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
@@ -626,6 +628,7 @@ class TestFbCollections(FbToolsTestcase):
 
         LOG.info("Testing init of a CaseInsensitiveStringSet object.")
 
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
         from fb_tools.collections import CaseInsensitiveStringSet
         from fb_tools.collections import WrongItemTypeError
 
@@ -657,6 +660,9 @@ class TestFbCollections(FbToolsTestcase):
             (['a', 'a'], ['a']),
             (['a', 'A'], ['A']),
             (['A', 'a'], ['a']),
+            (FrozenCaseInsensitiveStringSet(['a', 'b']), ['a', 'b']),
+            (CaseInsensitiveStringSet(['a', 'b']), ['a', 'b']),
+            (['a', 'b', 'A'], ['A', 'b']),
         )
 
         for test_tuple in correct_iterables:
