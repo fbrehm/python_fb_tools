@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.4'
+__version__ = '0.2.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -467,9 +467,21 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
     # -------------------------------------------------------------------------
     def discard(self, value):
 
-        ival = value.lower()
-        if ival in self._items:
-            del self._items[ival]
+        vals = []
+        if is_sequence(value):
+            vals = value
+        elif isinstance(value, FrozenCaseInsensitiveStringSet):
+            vals = value
+        else:
+            vals = [value]
+
+        for val in vals:
+            if not isinstance(val, str):
+                raise WrongItemTypeError(val)
+
+            ival = val.lower()
+            if ival in self._items:
+                del self._items[ival]
 
     # -------------------------------------------------------------------------
     def update(self, *others):
@@ -554,12 +566,23 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
     # -------------------------------------------------------------------------
     def remove(self, value):
 
-        ival = value.lower()
-        if ival in self._items:
-            del self._items[ival]
-            return
+        vals = []
+        if is_sequence(value):
+            vals = value
+        elif isinstance(value, FrozenCaseInsensitiveStringSet):
+            vals = value
+        else:
+            vals = [value]
 
-        raise KeyError(value)
+        for val in vals:
+            if not isinstance(val, str):
+                raise WrongItemTypeError(val)
+
+            ival = val.lower()
+            if ival in self._items:
+                del self._items[ival]
+            else:
+                raise KeyError(value)
 
     # -------------------------------------------------------------------------
     def pop(self):
