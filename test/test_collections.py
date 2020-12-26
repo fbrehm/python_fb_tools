@@ -136,6 +136,56 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
+    def test_frozenset_real_value(self):
+
+        LOG.info("Testing method real_value() of a FrozenCaseInsensitiveStringSet object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import WrongItemTypeError
+
+        test_tuples = (
+            (['A'], 'a', 'A'),
+            (['A'], 'A', 'A'),
+            (['a'], 'a', 'a'),
+            (['a'], 'A', 'a'),
+        )
+
+        LOG.debug("Testing real_value() with correct parameters.")
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            key = test_tuple[1]
+            expected = test_tuple[2]
+            my_set = FrozenCaseInsensitiveStringSet(src)
+
+            if self.verbose > 1:
+                LOG.debug("Testing to get the real value of {v!r} of {s}.".format(v=key, s=my_set))
+            result = my_set.real_value(key)
+            if self.verbose > 1:
+                LOG.debug("Got {res!r} - expected {ex!r}.".format(res=result, ex=expected))
+
+            self.assertEqual(result, expected)
+
+        my_set = FrozenCaseInsensitiveStringSet(['A', 'b'])
+
+        LOG.debug("Testing real_value() with a parameter of an incorrect type.")
+        with self.assertRaises(WrongItemTypeError) as cm:
+            value = my_set.real_value(1)
+            LOG.debug("Got a value {!r}.".format(value))
+        e = cm.exception
+        msg = ("WrongItemTypeError raised on real_value() of a "
+                "FrozenCaseInsensitiveStringSet object: {}").format(e)
+        LOG.debug(msg)
+
+        LOG.debug("Testing real_value() with a not existing key.")
+        with self.assertRaises(KeyError) as cm:
+            value = my_set.real_value('c')
+            LOG.debug("Got a value {!r}.".format(value))
+        e = cm.exception
+        msg = ("KeyError raised on real_value() of a "
+                "FrozenCaseInsensitiveStringSet object: {}").format(e)
+        LOG.debug(msg)
+
+    # -------------------------------------------------------------------------
     def test_frozenset_len(self):
 
         LOG.info("Testing len() of a FrozenCaseInsensitiveStringSet object.")
@@ -727,6 +777,7 @@ if __name__ == '__main__':
 
     suite.addTest(TestFbCollections('test_import', verbose))
     suite.addTest(TestFbCollections('test_init_frozenset', verbose))
+    suite.addTest(TestFbCollections('test_frozenset_real_value', verbose))
     suite.addTest(TestFbCollections('test_frozenset_len', verbose))
     suite.addTest(TestFbCollections('test_frozenset_bool', verbose))
     suite.addTest(TestFbCollections('test_frozenset_operator_in', verbose))
