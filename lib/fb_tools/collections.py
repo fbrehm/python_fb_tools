@@ -15,8 +15,10 @@ import logging
 
 try:
     from collections.abc import Set, MutableSet
+    from collections.abc import Mapping, MutableMapping
 except ImportError:
     from collections import Set, MutableSet
+    from collections import Mapping, MutableMapping
 
 # Third party modules
 import six
@@ -30,7 +32,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -653,6 +655,79 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
 
         self._items = {}
 
+
+# =============================================================================
+class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
+    """
+    A dictionary, where the keys are insensitive strings.
+    The keys MUST be of type string!
+    It works like a dict.
+    """
+
+    # -------------------------------------------------------------------------
+    def __init__(self, **kwargs):
+        '''Use the object dict'''
+
+        self._map = dict()
+
+        for key in kwargs:
+            if not isinstance(key, str):
+                raise WrongKeyTypeError(key)
+            lkey = key.lower()
+            self._map[lkey] = {
+                'key': key,
+                'val': kwargs[key],
+            }
+
+    # -------------------------------------------------------------------------
+    def _get_item(self, key):
+
+        if not isinstance(key, str):
+            raise WrongKeyTypeError(key)
+        lkey = key.lower()
+        if lkey in self._map:
+            return self._map[lkey]['val']
+
+        raise CaseInsensitiveKeyError(key)
+
+    # -------------------------------------------------------------------------
+    def get(self, key):
+        return self._get_item(key)
+
+    # -------------------------------------------------------------------------
+    # The next three methods are requirements of the ABC.
+
+    # -------------------------------------------------------------------------
+    def __getitem__(self, key):
+        return self._get_item(key)
+
+    # -------------------------------------------------------------------------
+    def __iter__(self):
+
+        for key in self.keys():
+            yield key
+
+    # -------------------------------------------------------------------------
+    def __len__(self):
+        return len(self._map)
+
+    # -------------------------------------------------------------------------
+    # The next methods aren't required, but nice for different purposes:
+
+    # -------------------------------------------------------------------------
+    def __contains__(self, key):
+
+        if not isinstance(key, str):
+            raise WrongKeyTypeError(key)
+
+        if key.lower() in self._map:
+            return True
+        return False
+
+    # -------------------------------------------------------------------------
+    def keys(self):
+
+        return map(lambda x: self._map[x]['key'], sorted(self._map.keys()))
 
 # =============================================================================
 
