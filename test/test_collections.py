@@ -766,6 +766,7 @@ class TestFbCollections(FbToolsTestcase):
 
         LOG.info("Testing method add() of a CaseInsensitiveStringSet object.")
 
+        from fb_tools.collections import FrozenCaseInsensitiveStringSet
         from fb_tools.collections import CaseInsensitiveStringSet
         from fb_tools.collections import WrongItemTypeError
 
@@ -778,6 +779,7 @@ class TestFbCollections(FbToolsTestcase):
             ('c', False, ['a', 'b', 'c']),
             (('c', 'd'), False, ['a', 'b', 'c', 'd']),
             (['c', 'd'], False, ['a', 'b', 'c', 'd']),
+            (FrozenCaseInsensitiveStringSet(['c', 'd']), False, ['a', 'b', 'c', 'd']),
             (CaseInsensitiveStringSet(['c', 'd']), False, ['a', 'b', 'c', 'd']),
             (['A', 'd'], False, ['A', 'b', 'd']),
             (['a', 'd'], True, ['a', 'b', 'd']),

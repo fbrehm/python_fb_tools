@@ -30,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.2.5'
+__version__ = '0.3.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -42,17 +42,17 @@ class WrongItemTypeError(TypeError, FbError):
     """Exeception class for the case, that a given parameter ist not of type str."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, item):
+    def __init__(self, item, expected='str'):
 
         self.item = item
+        self.expected = expected
         super(WrongItemTypeError, self).__init__()
 
     # -------------------------------------------------------------------------
     def __str__(self):
 
         msg = _("Item {item!r} must be of type {must!r}, but is of type {cls!r} instead.")
-        return msg.format(
-                item=self.item, must='str', cls=self.item.__class__.__name__)
+        return msg.format(item=self.item, must=self.expected, cls=self.item.__class__.__name__)
 
 
 # =============================================================================
@@ -61,7 +61,7 @@ class WrongCompareSetClassError(TypeError, FbError):
        instance of CaseInsensitiveStringSet."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, other, expected=None):
+    def __init__(self, other, expected='CaseInsensitiveStringSet'):
 
         self.other_class = other.__class__.__name__
         self.expected = expected
@@ -71,10 +71,58 @@ class WrongCompareSetClassError(TypeError, FbError):
     def __str__(self):
 
         msg = _("Object {o!r} is not a {e} object.")
-        expected = 'CaseInsensitiveStringSet'
-        if self.expected:
-            expected = self.expected
-        return msg.format(o=self.other_class, e=expected)
+        return msg.format(o=self.other_class, e=self.expected)
+
+
+# =============================================================================
+class WrongKeyTypeError(TypeError, FbError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, key, expected='str'):
+
+        self.key = key
+        self.expected = expected
+        super(WrongKeyTypeError, self).__init__()
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = _("Key {key!r} must be of type {must!r}, but is of type {cls!r} instead.")
+        return msg.format(key=self.key, must=self.expected, cls=self.item.__class__.__name__)
+
+
+# =============================================================================
+class WrongCompareClassError(TypeError, FbError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, other, expected='FrozenCaseInsensitiveDict'):
+
+        self.other_class = other.__class__.__name__
+        self.expected = expected
+        super(WrongCompareClassError, self).__init__()
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = _("Object {o!r} is not a {e} object.")
+        return msg.format(o=self.other_class, e=self.expected)
+
+
+# =============================================================================
+class CaseInsensitiveKeyError(KeyError, FbError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, key):
+
+        self.key = key
+        super(CaseInsensitiveKeyError, self).__init__()
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = _("Key {!r} is not existing.")
+        return msg.format(self.key)
+
 
 # =============================================================================
 class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
@@ -369,7 +417,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
 
         cls = self.__class__.__name__
         if not isinstance(other, FrozenCaseInsensitiveStringSet):
-            raise WrongCompareSetClassError(other, self)
+            raise WrongCompareSetClassError(other, cls)
 
         new_set = self.__class__()
 
@@ -488,7 +536,8 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
 
         for other in others:
             if not isinstance(other, FrozenCaseInsensitiveStringSet):
-                raise WrongCompareSetClassError(other)
+                cls = self.__class__.__name__
+                raise WrongCompareSetClassError(other, cls)
 
         for other in others:
             for item in other:
@@ -505,7 +554,8 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
 
         for other in others:
             if not isinstance(other, FrozenCaseInsensitiveStringSet):
-                raise WrongCompareSetClassError(other)
+                cls = self.__class__.__name__
+                raise WrongCompareSetClassError(other, cls)
 
         for item in self:
             for other in others:
@@ -529,7 +579,8 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
 
         for other in others:
             if not isinstance(other, CaseInsensitiveStringSet):
-                raise WrongCompareSetClassError(other)
+                cls = self.__class__.__name__
+                raise WrongCompareSetClassError(other, cls)
 
         for item in self:
             for other in others:
@@ -547,7 +598,8 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
     def symmetric_difference_update(self, other):
 
         if not isinstance(other, CaseInsensitiveStringSet):
-            raise WrongCompareSetClassError(other)
+            cls = self.__class__.__name__
+            raise WrongCompareSetClassError(other, cls)
 
         for item in self:
             if item in other:
