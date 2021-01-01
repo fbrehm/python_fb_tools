@@ -32,7 +32,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -94,20 +94,21 @@ class WrongKeyTypeError(TypeError, FbError):
 
 
 # =============================================================================
-class WrongCompareClassError(TypeError, FbError):
+class WrongUpdateClassError(TypeError, FbError):
 
     # -------------------------------------------------------------------------
-    def __init__(self, other, expected='FrozenCaseInsensitiveDict'):
+    def __init__(self, other):
 
         self.other_class = other.__class__.__name__
-        self.expected = expected
-        super(WrongCompareClassError, self).__init__()
+        super(WrongUpdateClassError, self).__init__()
 
     # -------------------------------------------------------------------------
     def __str__(self):
 
-        msg = _("Object {o!r} is not a {e} object.")
-        return msg.format(o=self.other_class, e=self.expected)
+        msg = _(
+            "Object is neither a {m} object, nor a sequential object, "
+            "but a {o!r} object instead.")
+        return msg.format(o=self.other_class, m="Mapping")
 
 
 # =============================================================================
@@ -695,7 +696,7 @@ class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
         return self._get_item(key)
 
     # -------------------------------------------------------------------------
-    # The next three methods are requirements of the ABC.
+    # The next four methods are requirements of the ABC.
 
     # -------------------------------------------------------------------------
     def __getitem__(self, key):
@@ -712,7 +713,64 @@ class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
         return len(self._map)
 
     # -------------------------------------------------------------------------
+    def __repr__(self):
+
+        if len(self) == 0:
+            return "{}()".format(self.__class__.__name__)
+
+        ret = "{}(".format(self.__class__.__name__)
+        kargs = []
+        for pair in self.items():
+            arg = "{k!r}={v!r}".format(k=pair[0], v=pair[1])
+            kargs.append(arg)
+        ret += ', '.join(kargs)
+        ret += ')'
+
+        return ret
+
+    # -------------------------------------------------------------------------
     # The next methods aren't required, but nice for different purposes:
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True):
+        """
+        Transforms the elements of the object into a dict
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+
+        @return: structure as dict
+        @rtype:  dict
+        """
+
+        res = super(FrozenCaseInsensitiveDict, self).as_dict(short=short)
+        for pair in self.items():
+            if isinstance(val, FbGenericBaseObject):
+                val = pair[1].as_dict(short=short)
+            else:
+                val = pair[1]
+            res[pair[0]] = val
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def real_key(self, key):
+
+        if not isinstance(key, str):
+            raise WrongKeyTypeError(key)
+
+        lkey = key.lower()
+        if lkey in self._map:
+            return self._map[lkey]['key']
+
+        raise CaseInsensitiveKeyError(key)
+
+    # -------------------------------------------------------------------------
+    def __bool__(self):
+
+        if len(self._map) > 0:
+            return True
+        return False
 
     # -------------------------------------------------------------------------
     def __contains__(self, key):
@@ -728,6 +786,172 @@ class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
     def keys(self):
 
         return map(lambda x: self._map[x]['key'], sorted(self._map.keys()))
+
+    # -------------------------------------------------------------------------
+    def items(self):
+
+        item_list = []
+
+        for lkey in sorted(self._map.keys()):
+            key = self._map[lkey]['key']
+            value = self._map[lkey]['val']
+            item_list.append((key, value))
+
+        return item_list
+
+    # -------------------------------------------------------------------------
+    def values(self):
+
+        return map(lambda x: self._map[x]['val'], sorted(self._map.keys()))
+
+    # -------------------------------------------------------------------------
+    def __eq__(self, other):
+
+        if not isinstance(other, FrozenCaseInsensitiveDict):
+            return False
+
+        if isinstance(self, CaseInsensitiveDict) and not isinstance(other, CaseInsensitiveDict):
+            return False
+
+        if not isinstance(self, CaseInsensitiveDict) and isinstance(other, CaseInsensitiveDict):
+            return False
+
+        if len(self) != len(other):
+            return False
+
+        # First compare keys
+        my_keys = []
+        other_keys = []
+
+        for key in self.keys():
+            my_keys.append(key.lower())
+
+        for key in other.keys():
+            other_keys.append(key.lower())
+
+        if my_keys != other_keys:
+            return False
+
+        # Now compare values
+        for key in self.keys():
+            if self[key] != other[key]:
+                return False
+
+        return True
+
+    # -------------------------------------------------------------------------
+    def __ne__(self, other):
+
+        if self == other:
+            return False
+
+        return True
+
+# =============================================================================
+class CaseInsensitiveDict(MutableMapping, FrozenCaseInsensitiveDict):
+    """
+    A dictionary, where the keys are insensitive strings.
+    The keys MUST be of type string!
+    It works like a dict.
+    """
+
+    # -------------------------------------------------------------------------
+    # The next two methods are requirements of the ABC.
+
+    # -------------------------------------------------------------------------
+    def __setitem__(self, key, value):
+
+        if not isinstance(key, str):
+            raise WrongKeyTypeError(key)
+
+        lkey = key.lower()
+        self._map[lkey] = {
+            'key': key,
+            'val': kwargs[key],
+        }
+
+    # -------------------------------------------------------------------------
+    def __delitem__(self, key):
+
+        if not isinstance(key, str):
+            raise WrongKeyTypeError(key)
+
+        lkey = key.lower()
+        if lkey not in self._map:
+            raise CaseInsensitiveKeyError(key)
+
+        del self._map[lkey]
+
+    # -------------------------------------------------------------------------
+    # The next methods aren't required, but nice for different purposes:
+
+    # -------------------------------------------------------------------------
+    def pop(self, key, *args):
+
+        if not isinstance(key, str):
+            raise WrongKeyTypeError(key)
+
+        if len(args) > 1:
+            msg = _("The method {met}() expected at most {max} arguments, got {got}.").format(
+                met='pop', max=2, got=(len(args) + 1))
+            raise TypeError(msg)
+
+        lkey = key.lower()
+        if lkey not in self._map:
+            if args:
+                return args[0]
+            raise CaseInsensitiveKeyError(key)
+
+        val = self._map[lkey]['val']
+        del self._map[lkey]
+
+        return val
+
+    # -------------------------------------------------------------------------
+    def popitem(self):
+
+        if not len(self._map):
+            return None
+
+        key = self.keys()[0]
+        lkey = key.lower()
+        value = self[key]
+        del self._map[lkey]
+        return (key, value)
+
+    # -------------------------------------------------------------------------
+    def clear(self):
+
+        self._map = dict()
+
+    # -------------------------------------------------------------------------
+    def setdefault(self, key, default=None):
+
+        if not isinstance(key, str):
+            raise WrongKeyTypeError(key)
+
+        if key in self:
+            return self[key]
+
+        self[key] = default
+        return default
+
+    # -------------------------------------------------------------------------
+    def update(self, other):
+
+        if not isinstance(other, Mapping) and not is_sequence(other):
+            raise WrongUpdateClassError(other)
+
+        if isinstance(other, Mapping):
+            for pair in other.items():
+                self[pair[0]] = pair[1]
+            return
+
+        for tokens in other:
+            key = tokens[0]
+            value = tokens[1]
+            self[key] = value
+
 
 # =============================================================================
 
