@@ -936,6 +936,56 @@ class TestFbCollections(FbToolsTestcase):
                 n=e.__class__.__name__, e=e)
             LOG.debug(msg)
 
+    # -------------------------------------------------------------------------
+    def test_frozendict_real_key(self):
+
+        LOG.info("Testing method real_key() of a FrozenCIDict object.")
+
+        from fb_tools.collections import FrozenCIDict
+        from fb_tools.collections import FbCollectionsError
+
+        test_tuples = (
+            ({'A': 1}, 'a', 'A'),
+            ({'A': 1}, 'A', 'A'),
+            ({'a': 1}, 'a', 'a'),
+            ({'a': 1}, 'A', 'a'),
+        )
+
+        LOG.debug("Testing real_key() with correct parameters.")
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            key = test_tuple[1]
+            expected = test_tuple[2]
+            my_dict = FrozenCIDict(src)
+
+            if self.verbose > 1:
+                LOG.debug("Testing to get the real key of {v!r} of {s}.".format(
+                    v=key, s=my_dict.dict()))
+            result = my_dict.real_key(key)
+            if self.verbose > 1:
+                LOG.debug("Got {res!r} - expected {ex!r}.".format(res=result, ex=expected))
+
+            self.assertEqual(result, expected)
+
+        my_dict = FrozenCIDict(A=1, b=2)
+
+        LOG.debug("Testing real_key() with a parameter of an incorrect type.")
+        with self.assertRaises(FbCollectionsError) as cm:
+            value = my_dict.real_key(1)
+            LOG.debug("Got a value {!r}.".format(value))
+        e = cm.exception
+        msg = "{c} raised on real_key() of a FrozenCIDict object: {e}"
+        LOG.debug(msg.format(c=e.__class__.__name__, e=e))
+
+        LOG.debug("Testing real_key() with a not existing key.")
+        with self.assertRaises(FbCollectionsError) as cm:
+            value = my_dict.real_key('c')
+            LOG.debug("Got a value {!r}.".format(value))
+        e = cm.exception
+        msg = "{c} raised on real_key() of a FrozenCIDict object: {e}"
+        LOG.debug(msg.format(c=e.__class__.__name__, e=e))
+
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -968,6 +1018,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_init_set', verbose))
     suite.addTest(TestFbCollections('test_set_add', verbose))
     suite.addTest(TestFbCollections('test_init_frozendict', verbose))
+    suite.addTest(TestFbCollections('test_frozendict_real_key', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
