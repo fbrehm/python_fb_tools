@@ -44,35 +44,35 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_init_frozenset(self):
 
-        LOG.info("Testing init of a FrozenCaseInsensitiveStringSet object.")
+        LOG.info("Testing init of a FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongItemTypeError
 
         LOG.debug("Testing init of an empty set.")
-        my_set = FrozenCaseInsensitiveStringSet()
-        LOG.debug("FrozenCaseInsensitiveStringSet %r: {!r}".format(my_set))
-        LOG.debug("FrozenCaseInsensitiveStringSet %s: {}".format(my_set))
+        my_set = FrozenCIStringSet()
+        LOG.debug("FrozenCIStringSet %r: {!r}".format(my_set))
+        LOG.debug("FrozenCIStringSet %s: {}".format(my_set))
         self.assertEqual(my_set.as_list(), [])
 
         src = ('B', 'a')
         expected = {
-            '__class_name__': 'FrozenCaseInsensitiveStringSet',
+            '__class_name__': 'FrozenCIStringSet',
             'items': ['a', 'B'],
         }
         LOG.debug("Checking as_dict(), source: {src}, expeced: {ex}.".format(
             src=src, ex=expected))
-        my_set = FrozenCaseInsensitiveStringSet(src)
+        my_set = FrozenCIStringSet(src)
         result = my_set.as_dict()
         LOG.debug("Result of as_dict(): {}".format(pp(result)))
         self.assertEqual(expected, result)
 
-        LOG.debug("Trying to add add a value to a FrozenCaseInsensitiveStringSet ...")
+        LOG.debug("Trying to add add a value to a FrozenCIStringSet ...")
         with self.assertRaises(AttributeError) as cm:
             my_set.add('bla')
         e = cm.exception
         msg = ("AttributeError raised on trying to add a value to a "
-                "FrozenCaseInsensitiveStringSet object: {}").format(e)
+                "FrozenCIStringSet object: {}").format(e)
         LOG.debug(msg)
 
         correct_iterables = (
@@ -85,19 +85,19 @@ class TestFbCollections(FbToolsTestcase):
             (['a', 'a'], ['a']),
             (['a', 'A'], ['A']),
             (['A', 'a'], ['a']),
-            (FrozenCaseInsensitiveStringSet(['a', 'b']), ['a', 'b']),
+            (FrozenCIStringSet(['a', 'b']), ['a', 'b']),
             (['a', 'b', 'A'], ['A', 'b']),
         )
 
         for test_tuple in correct_iterables:
             src = test_tuple[0]
             expected = test_tuple[1]
-            LOG.debug("Testing init of a FrozenCaseInsensitiveStringSet from {!r}.".format(src))
-            my_set = FrozenCaseInsensitiveStringSet(src)
+            LOG.debug("Testing init of a FrozenCIStringSet from {!r}.".format(src))
+            my_set = FrozenCIStringSet(src)
             if self.verbose > 1:
-                LOG.debug("FrozenCaseInsensitiveStringSet %s: {}".format(my_set))
+                LOG.debug("FrozenCIStringSet %s: {}".format(my_set))
             result = my_set.as_list()
-            LOG.debug("FrozenCaseInsensitiveStringSet as a list: {r!r} (expeced: {ex!r})".format(
+            LOG.debug("FrozenCIStringSet as a list: {r!r} (expeced: {ex!r})".format(
                 r=result, ex=expected))
             self.assertEqual(result, expected)
 
@@ -112,13 +112,13 @@ class TestFbCollections(FbToolsTestcase):
 
         for obj in wrong_iterables:
 
-            msg = "Trying to init a FrozenCaseInsensitiveStringSet from {!r} ..."
+            msg = "Trying to init a FrozenCIStringSet from {!r} ..."
             LOG.debug(msg.format(obj))
             with self.assertRaises(TypeError) as cm:
-                my_set = FrozenCaseInsensitiveStringSet(obj)
+                my_set = FrozenCIStringSet(obj)
             e = cm.exception
             msg = ("TypeError raised on init of a "
-                    "FrozenCaseInsensitiveStringSet object: {}").format(e)
+                    "FrozenCIStringSet object: {}").format(e)
             LOG.debug(msg)
 
         iterables_with_wrong_values = (
@@ -126,21 +126,21 @@ class TestFbCollections(FbToolsTestcase):
 
         for obj in iterables_with_wrong_values:
 
-            msg = "Trying to init a FrozenCaseInsensitiveStringSet from {!r} ..."
+            msg = "Trying to init a FrozenCIStringSet from {!r} ..."
             LOG.debug(msg.format(obj))
             with self.assertRaises(WrongItemTypeError) as cm:
-                my_set = FrozenCaseInsensitiveStringSet(obj)
+                my_set = FrozenCIStringSet(obj)
             e = cm.exception
             msg = ("WrongItemTypeError raised on init of a "
-                    "FrozenCaseInsensitiveStringSet object: {}").format(e)
+                    "FrozenCIStringSet object: {}").format(e)
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
     def test_frozenset_real_value(self):
 
-        LOG.info("Testing method real_value() of a FrozenCaseInsensitiveStringSet object.")
+        LOG.info("Testing method real_value() of a FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongItemTypeError
 
         test_tuples = (
@@ -155,7 +155,7 @@ class TestFbCollections(FbToolsTestcase):
             src = test_tuple[0]
             key = test_tuple[1]
             expected = test_tuple[2]
-            my_set = FrozenCaseInsensitiveStringSet(src)
+            my_set = FrozenCIStringSet(src)
 
             if self.verbose > 1:
                 LOG.debug("Testing to get the real value of {v!r} of {s}.".format(v=key, s=my_set))
@@ -165,7 +165,7 @@ class TestFbCollections(FbToolsTestcase):
 
             self.assertEqual(result, expected)
 
-        my_set = FrozenCaseInsensitiveStringSet(['A', 'b'])
+        my_set = FrozenCIStringSet(['A', 'b'])
 
         LOG.debug("Testing real_value() with a parameter of an incorrect type.")
         with self.assertRaises(WrongItemTypeError) as cm:
@@ -173,7 +173,7 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug("Got a value {!r}.".format(value))
         e = cm.exception
         msg = ("WrongItemTypeError raised on real_value() of a "
-                "FrozenCaseInsensitiveStringSet object: {}").format(e)
+                "FrozenCIStringSet object: {}").format(e)
         LOG.debug(msg)
 
         LOG.debug("Testing real_value() with a not existing key.")
@@ -182,15 +182,15 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug("Got a value {!r}.".format(value))
         e = cm.exception
         msg = ("KeyError raised on real_value() of a "
-                "FrozenCaseInsensitiveStringSet object: {}").format(e)
+                "FrozenCIStringSet object: {}").format(e)
         LOG.debug(msg)
 
     # -------------------------------------------------------------------------
     def test_frozenset_len(self):
 
-        LOG.info("Testing len() of a FrozenCaseInsensitiveStringSet object.")
+        LOG.info("Testing len() of a FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
 
         test_tuples = (
             (None, 0),
@@ -202,10 +202,10 @@ class TestFbCollections(FbToolsTestcase):
         for test_tuple in test_tuples:
             src = test_tuple[0]
             expected_len = test_tuple[1]
-            LOG.debug("Testing len() of a FrozenCaseInsensitiveStringSet from {!r}.".format(src))
-            my_set = FrozenCaseInsensitiveStringSet(src)
+            LOG.debug("Testing len() of a FrozenCIStringSet from {!r}.".format(src))
+            my_set = FrozenCIStringSet(src)
             if self.verbose > 1:
-                LOG.debug("FrozenCaseInsensitiveStringSet %s: {}".format(my_set))
+                LOG.debug("FrozenCIStringSet %s: {}".format(my_set))
             result = len(my_set)
             LOG.debug("Got a length of: {}".format(result))
             self.assertEqual(result, expected_len)
@@ -213,9 +213,9 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_bool(self):
 
-        LOG.info("Testing bool() of a FrozenCaseInsensitiveStringSet object.")
+        LOG.info("Testing bool() of a FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
 
         test_tuples = (
             (None, False),
@@ -227,10 +227,10 @@ class TestFbCollections(FbToolsTestcase):
         for test_tuple in test_tuples:
             src = test_tuple[0]
             expected_bool = test_tuple[1]
-            LOG.debug("Testing bool() of a FrozenCaseInsensitiveStringSet from {!r}.".format(src))
-            my_set = FrozenCaseInsensitiveStringSet(src)
+            LOG.debug("Testing bool() of a FrozenCIStringSet from {!r}.".format(src))
+            my_set = FrozenCIStringSet(src)
             if self.verbose > 1:
-                LOG.debug("FrozenCaseInsensitiveStringSet %s: {}".format(my_set))
+                LOG.debug("FrozenCIStringSet %s: {}".format(my_set))
             result = bool(my_set)
             LOG.debug("Got boolean of: {}".format(result))
             self.assertEqual(result, expected_bool)
@@ -239,12 +239,12 @@ class TestFbCollections(FbToolsTestcase):
     def test_frozenset_operator_in(self):
 
         LOG.info("Testing operator 'in' of a "
-            "FrozenCaseInsensitiveStringSet object.")
+            "FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongItemTypeError
 
-        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+        my_set = FrozenCIStringSet(['a', 'b'])
 
         valid_items = ('a', 'A', 'b')
         invalid_items = ('c', 'aA', 'bb', '%')
@@ -274,12 +274,12 @@ class TestFbCollections(FbToolsTestcase):
     def test_frozenset_operator_le(self):
 
         LOG.info("Testing operator le ('<=', issubset()) of a "
-            "FrozenCaseInsensitiveStringSet object.")
+            "FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+        my_set = FrozenCIStringSet(['a', 'b'])
 
         test_tuples = (
             (['a', 'b'], True),
@@ -301,7 +301,7 @@ class TestFbCollections(FbToolsTestcase):
         for test_tuple in test_tuples:
             src = test_tuple[0]
             expected = test_tuple[1]
-            test_set = FrozenCaseInsensitiveStringSet(src)
+            test_set = FrozenCIStringSet(src)
             msg = "Testing, whether set {left!r} is a subset of {right!r}.".format(
                 left=my_set.as_list(), right=test_set.as_list())
             LOG.debug(msg)
@@ -314,12 +314,12 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_lt(self):
 
-        LOG.info("Testing operator lt ('<') of a FrozenCaseInsensitiveStringSet object.")
+        LOG.info("Testing operator lt ('<') of a FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+        my_set = FrozenCIStringSet(['a', 'b'])
 
         test_tuples = (
             (['a', 'b'], False),
@@ -341,7 +341,7 @@ class TestFbCollections(FbToolsTestcase):
         for test_tuple in test_tuples:
             src = test_tuple[0]
             expected = test_tuple[1]
-            test_set = FrozenCaseInsensitiveStringSet(src)
+            test_set = FrozenCIStringSet(src)
             msg = "Testing, whether set {left!r} is a real subset of {right!r}.".format(
                 left=my_set.as_list(), right=test_set.as_list())
             LOG.debug(msg)
@@ -354,12 +354,12 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_eq(self):
 
-        LOG.info("Testing operator eq ('==') of a FrozenCaseInsensitiveStringSet object.")
+        LOG.info("Testing operator eq ('==') of a FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+        my_set = FrozenCIStringSet(['a', 'b'])
 
         test_tuples = (
             (['a', 'b'], True),
@@ -380,7 +380,7 @@ class TestFbCollections(FbToolsTestcase):
         for test_tuple in test_tuples:
             src = test_tuple[0]
             expected = test_tuple[1]
-            test_set = FrozenCaseInsensitiveStringSet(src)
+            test_set = FrozenCIStringSet(src)
             msg = "Testing, whether set {left!r} is equal to {right!r}.".format(
                 left=my_set.as_list(), right=test_set.as_list())
             LOG.debug(msg)
@@ -393,12 +393,12 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_ne(self):
 
-        LOG.info("Testing operator ne ('!=') of a FrozenCaseInsensitiveStringSet object.")
+        LOG.info("Testing operator ne ('!=') of a FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+        my_set = FrozenCIStringSet(['a', 'b'])
 
         test_tuples = (
             (['a', 'b'], False),
@@ -419,7 +419,7 @@ class TestFbCollections(FbToolsTestcase):
         for test_tuple in test_tuples:
             src = test_tuple[0]
             expected = test_tuple[1]
-            test_set = FrozenCaseInsensitiveStringSet(src)
+            test_set = FrozenCIStringSet(src)
             msg = "Testing, whether set {left!r} is not equal to {right!r}.".format(
                 left=my_set.as_list(), right=test_set.as_list())
             LOG.debug(msg)
@@ -433,12 +433,12 @@ class TestFbCollections(FbToolsTestcase):
     def test_frozenset_operator_gt(self):
 
         LOG.info("Testing operator gt ('>') of a "
-            "FrozenCaseInsensitiveStringSet object.")
+            "FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+        my_set = FrozenCIStringSet(['a', 'b'])
 
         test_tuples = (
             (['a', 'b'], False),
@@ -460,7 +460,7 @@ class TestFbCollections(FbToolsTestcase):
         for test_tuple in test_tuples:
             src = test_tuple[0]
             expected = test_tuple[1]
-            test_set = FrozenCaseInsensitiveStringSet(src)
+            test_set = FrozenCIStringSet(src)
             msg = "Testing, whether set {right!r} is a real subset of {left!r}.".format(
                 left=my_set.as_list(), right=test_set.as_list())
             LOG.debug(msg)
@@ -473,12 +473,12 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_ge(self):
 
-        LOG.info("Testing operator ge ('>=') of a FrozenCaseInsensitiveStringSet object.")
+        LOG.info("Testing operator ge ('>=') of a FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        my_set = FrozenCaseInsensitiveStringSet(['a', 'b'])
+        my_set = FrozenCIStringSet(['a', 'b'])
 
         test_tuples = (
             (['a', 'b'], True),
@@ -500,7 +500,7 @@ class TestFbCollections(FbToolsTestcase):
         for test_tuple in test_tuples:
             src = test_tuple[0]
             expected = test_tuple[1]
-            test_set = FrozenCaseInsensitiveStringSet(src)
+            test_set = FrozenCIStringSet(src)
             msg = "Testing, whether set {right!r} is a subset of {left!r}.".format(
                 left=my_set.as_list(), right=test_set.as_list())
             LOG.debug(msg)
@@ -513,16 +513,16 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_or(self):
 
-        LOG.info("Testing operator ge ('|', union()) of a FrozenCaseInsensitiveStringSet object.")
+        LOG.info("Testing operator ge ('|', union()) of a FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        set_one = FrozenCaseInsensitiveStringSet(['a', 'B', 'c'])
-        set_two = FrozenCaseInsensitiveStringSet(['b', 'c', 'e'])
-        set_three = FrozenCaseInsensitiveStringSet(['C', 'd', 'f'])
+        set_one = FrozenCIStringSet(['a', 'B', 'c'])
+        set_two = FrozenCIStringSet(['b', 'c', 'e'])
+        set_three = FrozenCIStringSet(['C', 'd', 'f'])
 
-        set_expected = FrozenCaseInsensitiveStringSet(['a', 'b', 'C', 'd', 'e', 'f'])
+        set_expected = FrozenCIStringSet(['a', 'b', 'C', 'd', 'e', 'f'])
 
         LOG.debug("Trying to union with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
@@ -545,16 +545,16 @@ class TestFbCollections(FbToolsTestcase):
     def test_frozenset_operator_and(self):
 
         LOG.info("Testing operator and ('&', intersection()) of a "
-                "FrozenCaseInsensitiveStringSet object.")
+                "FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        set_one = FrozenCaseInsensitiveStringSet(['a', 'B', 'c', 'd', 'E', 'f', 'G'])
-        set_two = FrozenCaseInsensitiveStringSet(['a', 'b', 'd', 'e', 'h'])
-        set_three = FrozenCaseInsensitiveStringSet(['A', 'b', 'C', 'd', 'f', 'g'])
+        set_one = FrozenCIStringSet(['a', 'B', 'c', 'd', 'E', 'f', 'G'])
+        set_two = FrozenCIStringSet(['a', 'b', 'd', 'e', 'h'])
+        set_three = FrozenCIStringSet(['A', 'b', 'C', 'd', 'f', 'g'])
 
-        set_expected = FrozenCaseInsensitiveStringSet(['A', 'b', 'd'])
+        set_expected = FrozenCIStringSet(['A', 'b', 'd'])
 
         LOG.debug("Trying to intersection with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
@@ -577,16 +577,16 @@ class TestFbCollections(FbToolsTestcase):
     def test_frozenset_operator_sub(self):
 
         LOG.info("Testing operator sub ('-', difference()) of a "
-                "FrozenCaseInsensitiveStringSet object.")
+                "FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        set_src = FrozenCaseInsensitiveStringSet(['a', 'B', 'c', 'd', 'E', 'f', 'G'])
-        set_one = FrozenCaseInsensitiveStringSet(['a', 'd',])
-        set_two = FrozenCaseInsensitiveStringSet(['e', 'f', 'H'])
+        set_src = FrozenCIStringSet(['a', 'B', 'c', 'd', 'E', 'f', 'G'])
+        set_one = FrozenCIStringSet(['a', 'd',])
+        set_two = FrozenCIStringSet(['e', 'f', 'H'])
 
-        set_expected = FrozenCaseInsensitiveStringSet(['B', 'c', 'G'])
+        set_expected = FrozenCIStringSet(['B', 'c', 'G'])
 
         LOG.debug("Trying to make a difference with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
@@ -609,15 +609,15 @@ class TestFbCollections(FbToolsTestcase):
     def test_frozenset_operator_xor(self):
 
         LOG.info("Testing operator xor ('^', symmetric_difference()) of a "
-                "FrozenCaseInsensitiveStringSet object.")
+                "FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        set_one = FrozenCaseInsensitiveStringSet(['a', 'B', 'c'])
-        set_two = FrozenCaseInsensitiveStringSet(['b', 'c', 'H'])
+        set_one = FrozenCIStringSet(['a', 'B', 'c'])
+        set_two = FrozenCIStringSet(['b', 'c', 'H'])
 
-        set_expected = FrozenCaseInsensitiveStringSet(['a', 'H'])
+        set_expected = FrozenCIStringSet(['a', 'H'])
 
         LOG.debug("Trying to make a symmetric difference with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
@@ -640,12 +640,12 @@ class TestFbCollections(FbToolsTestcase):
     def test_frozenset_method_isdisjoint(self):
 
         LOG.info("Testing method isdisjoint of a "
-                "FrozenCaseInsensitiveStringSet object.")
+                "FrozenCIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
 
-        set_src = FrozenCaseInsensitiveStringSet(['a', 'B', 'c'])
+        set_src = FrozenCIStringSet(['a', 'B', 'c'])
         tuples_test = (
             (['a'], False),
             (['A'], False),
@@ -663,7 +663,7 @@ class TestFbCollections(FbToolsTestcase):
         LOG.debug(msg)
 
         for test_tuple in tuples_test:
-            set_test = FrozenCaseInsensitiveStringSet(test_tuple[0])
+            set_test = FrozenCIStringSet(test_tuple[0])
             expected = test_tuple[1]
             LOG.debug(
                 "Testing, whether {src!r} is isdisjoint from {tst!r} - expected {exp}.".format(
@@ -676,26 +676,26 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_init_set(self):
 
-        LOG.info("Testing init of a CaseInsensitiveStringSet object.")
+        LOG.info("Testing init of a CIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
-        from fb_tools.collections import CaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
+        from fb_tools.collections import CIStringSet
         from fb_tools.collections import WrongItemTypeError
 
         LOG.debug("Testing init of an empty set.")
-        my_set = CaseInsensitiveStringSet()
-        LOG.debug("CaseInsensitiveStringSet %r: {!r}".format(my_set))
-        LOG.debug("CaseInsensitiveStringSet %s: {}".format(my_set))
+        my_set = CIStringSet()
+        LOG.debug("CIStringSet %r: {!r}".format(my_set))
+        LOG.debug("CIStringSet %s: {}".format(my_set))
         self.assertEqual(my_set.as_list(), [])
 
         src = ('B', 'a')
         expected = {
-            '__class_name__': 'CaseInsensitiveStringSet',
+            '__class_name__': 'CIStringSet',
             'items': ['a', 'B'],
         }
         LOG.debug("Checking as_dict(), source: {src}, expeced: {ex}.".format(
             src=src, ex=expected))
-        my_set = CaseInsensitiveStringSet(src)
+        my_set = CIStringSet(src)
         result = my_set.as_dict()
         LOG.debug("Result of as_dict(): {}".format(pp(result)))
         self.assertEqual(expected, result)
@@ -710,20 +710,20 @@ class TestFbCollections(FbToolsTestcase):
             (['a', 'a'], ['a']),
             (['a', 'A'], ['A']),
             (['A', 'a'], ['a']),
-            (FrozenCaseInsensitiveStringSet(['a', 'b']), ['a', 'b']),
-            (CaseInsensitiveStringSet(['a', 'b']), ['a', 'b']),
+            (FrozenCIStringSet(['a', 'b']), ['a', 'b']),
+            (CIStringSet(['a', 'b']), ['a', 'b']),
             (['a', 'b', 'A'], ['A', 'b']),
         )
 
         for test_tuple in correct_iterables:
             src = test_tuple[0]
             expected = test_tuple[1]
-            LOG.debug("Testing init of a CaseInsensitiveStringSet from {!r}.".format(src))
-            my_set = CaseInsensitiveStringSet(src)
+            LOG.debug("Testing init of a CIStringSet from {!r}.".format(src))
+            my_set = CIStringSet(src)
             if self.verbose > 1:
-                LOG.debug("CaseInsensitiveStringSet %s: {}".format(my_set))
+                LOG.debug("CIStringSet %s: {}".format(my_set))
             result = my_set.as_list()
-            LOG.debug("CaseInsensitiveStringSet as a list: {r!r} (expeced: {ex!r})".format(
+            LOG.debug("CIStringSet as a list: {r!r} (expeced: {ex!r})".format(
                 r=result, ex=expected))
             self.assertEqual(result, expected)
 
@@ -738,13 +738,13 @@ class TestFbCollections(FbToolsTestcase):
 
         for obj in wrong_iterables:
 
-            msg = "Trying to init a CaseInsensitiveStringSet from {} ..."
+            msg = "Trying to init a CIStringSet from {} ..."
             LOG.debug(msg.format(pp(obj)))
             with self.assertRaises(TypeError) as cm:
-                my_set = CaseInsensitiveStringSet(obj)
+                my_set = CIStringSet(obj)
             e = cm.exception
             msg = ("TypeError raised on init of a "
-                    "CaseInsensitiveStringSet object: {}").format(e)
+                    "CIStringSet object: {}").format(e)
             LOG.debug(msg)
 
         iterables_with_wrong_values = (
@@ -752,22 +752,22 @@ class TestFbCollections(FbToolsTestcase):
 
         for obj in iterables_with_wrong_values:
 
-            msg = "Trying to init a CaseInsensitiveStringSet from {!r} ..."
+            msg = "Trying to init a CIStringSet from {!r} ..."
             LOG.debug(msg.format(obj))
             with self.assertRaises(WrongItemTypeError) as cm:
-                my_set = CaseInsensitiveStringSet(obj)
+                my_set = CIStringSet(obj)
             e = cm.exception
             msg = ("WrongItemTypeError raised on init of a "
-                    "CaseInsensitiveStringSet object: {}").format(e)
+                    "CIStringSet object: {}").format(e)
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
     def test_set_add(self):
 
-        LOG.info("Testing method add() of a CaseInsensitiveStringSet object.")
+        LOG.info("Testing method add() of a CIStringSet object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveStringSet
-        from fb_tools.collections import CaseInsensitiveStringSet
+        from fb_tools.collections import FrozenCIStringSet
+        from fb_tools.collections import CIStringSet
         from fb_tools.collections import WrongItemTypeError
 
         src = ['a', 'b']
@@ -779,15 +779,15 @@ class TestFbCollections(FbToolsTestcase):
             ('c', False, ['a', 'b', 'c']),
             (('c', 'd'), False, ['a', 'b', 'c', 'd']),
             (['c', 'd'], False, ['a', 'b', 'c', 'd']),
-            (FrozenCaseInsensitiveStringSet(['c', 'd']), False, ['a', 'b', 'c', 'd']),
-            (CaseInsensitiveStringSet(['c', 'd']), False, ['a', 'b', 'c', 'd']),
+            (FrozenCIStringSet(['c', 'd']), False, ['a', 'b', 'c', 'd']),
+            (CIStringSet(['c', 'd']), False, ['a', 'b', 'c', 'd']),
             (['A', 'd'], False, ['A', 'b', 'd']),
             (['a', 'd'], True, ['a', 'b', 'd']),
         )
 
         LOG.debug("Test adding valid values ...")
         for test_tuple in tuples_test:
-            set_test = CaseInsensitiveStringSet(src)
+            set_test = CIStringSet(src)
             value = test_tuple[0]
             keep = test_tuple[1]
             expected = test_tuple[2]
@@ -804,29 +804,29 @@ class TestFbCollections(FbToolsTestcase):
         LOG.debug("Test adding valid values ...")
         wrong_values = (None, [None], 1, [2], ['c', 3], ['c', ['d']])
         for value in wrong_values:
-            set_test = CaseInsensitiveStringSet(src)
+            set_test = CIStringSet(src)
             if self.verbose > 1:
-                msg = "Trying to add {!r} to a CaseInsensitiveStringSet ..."
+                msg = "Trying to add {!r} to a CIStringSet ..."
                 LOG.debug(msg.format(value))
             with self.assertRaises(WrongItemTypeError) as cm:
                 set_test.add(value)
             e = cm.exception
             msg = ("WrongItemTypeError raised on adding an invalid value to a "
-                    "CaseInsensitiveStringSet object: {}").format(e)
+                    "CIStringSet object: {}").format(e)
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
     def test_init_frozendict(self):
 
-        LOG.info("Testing init of a FrozenCaseInsensitiveDict object.")
+        LOG.info("Testing init of a FrozenCIDict object.")
 
-        from fb_tools.collections import FrozenCaseInsensitiveDict
+        from fb_tools.collections import FrozenCIDict
         from fb_tools.collections import FbCollectionsError
 
         LOG.debug("Testing init of an empty frozen dict.")
-        my_dict = FrozenCaseInsensitiveDict()
-        LOG.debug("FrozenCaseInsensitiveDict %r: {!r}".format(my_dict))
-        LOG.debug("FrozenCaseInsensitiveDict %s: {}".format(my_dict))
+        my_dict = FrozenCIDict()
+        LOG.debug("FrozenCIDict %r: {!r}".format(my_dict))
+        LOG.debug("FrozenCIDict %s: {}".format(my_dict))
         self.assertEqual(my_dict.dict(), {})
 
         src = {
@@ -835,57 +835,57 @@ class TestFbCollections(FbToolsTestcase):
             'uhu': 'banane',
         }
         expected = {
-            '__class_name__': 'FrozenCaseInsensitiveDict',
+            '__class_name__': 'FrozenCIDict',
             'a': 'b',
             'num': 3,
             'uhu': 'banane',
         }
         LOG.debug("Checking as_dict(), source: {src}, expeced: {ex}.".format(
             src=pp(src), ex=pp(expected)))
-        my_dict = FrozenCaseInsensitiveDict(**src)
+        my_dict = FrozenCIDict(**src)
         result = my_dict.as_dict()
         LOG.debug("Result of as_dict(): {}".format(pp(result)))
         self.assertEqual(expected, result)
 
         comp = {'one': 1, 'two': 2, 'three': 3}
 
-        LOG.debug("Init a: FrozenCaseInsensitiveDict(one=1, two=2, three=3)")
-        a = FrozenCaseInsensitiveDict(one=1, two=2, three=3)
+        LOG.debug("Init a: FrozenCIDict(one=1, two=2, three=3)")
+        a = FrozenCIDict(one=1, two=2, three=3)
         result = a.dict()
         if self.verbose > 1:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
-        LOG.debug("Init b: FrozenCaseInsensitiveDict({'one': 1, 'two': 2, 'three': 3})")
-        b = FrozenCaseInsensitiveDict({'one': 1, 'two': 2, 'three': 3})
+        LOG.debug("Init b: FrozenCIDict({'one': 1, 'two': 2, 'three': 3})")
+        b = FrozenCIDict({'one': 1, 'two': 2, 'three': 3})
         result = b.dict()
         if self.verbose > 1:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
-        LOG.debug("Init c: FrozenCaseInsensitiveDict(zip(['one', 'two', 'three'], [1, 2, 3]))")
-        c = FrozenCaseInsensitiveDict(zip(['one', 'two', 'three'], [1, 2, 3]))
+        LOG.debug("Init c: FrozenCIDict(zip(['one', 'two', 'three'], [1, 2, 3]))")
+        c = FrozenCIDict(zip(['one', 'two', 'three'], [1, 2, 3]))
         result = c.dict()
         if self.verbose > 1:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
-        LOG.debug("Init d: FrozenCaseInsensitiveDict([('two', 2), ('one', 1), ('three', 3)])")
-        d = FrozenCaseInsensitiveDict([('two', 2), ('one', 1), ('three', 3)])
+        LOG.debug("Init d: FrozenCIDict([('two', 2), ('one', 1), ('three', 3)])")
+        d = FrozenCIDict([('two', 2), ('one', 1), ('three', 3)])
         result = d.dict()
         if self.verbose > 1:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
-        LOG.debug("Init e: FrozenCaseInsensitiveDict({'three': 3, 'one': 1, 'two': 2})")
-        e = FrozenCaseInsensitiveDict({'three': 3, 'one': 1, 'two': 2})
+        LOG.debug("Init e: FrozenCIDict({'three': 3, 'one': 1, 'two': 2})")
+        e = FrozenCIDict({'three': 3, 'one': 1, 'two': 2})
         result = e.dict()
         if self.verbose > 1:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
-        LOG.debug("Init f: FrozenCaseInsensitiveDict({'one': 1, 'three': 3}, two=2)")
-        f = FrozenCaseInsensitiveDict({'one': 1, 'three': 3}, two=2)
+        LOG.debug("Init f: FrozenCIDict({'one': 1, 'three': 3}, two=2)")
+        f = FrozenCIDict({'one': 1, 'three': 3}, two=2)
         result = f.dict()
         if self.verbose > 1:
             LOG.debug("Result: {}".format(pp(result)))
@@ -903,13 +903,13 @@ class TestFbCollections(FbToolsTestcase):
             src = test_tuple[0]
             expected = test_tuple[1]
             if self.verbose > 1:
-                LOG.debug("Testing init of a FrozenCaseInsensitiveDict from {}.".format(pp(src)))
-            my_dict = FrozenCaseInsensitiveDict(src)
+                LOG.debug("Testing init of a FrozenCIDict from {}.".format(pp(src)))
+            my_dict = FrozenCIDict(src)
             if self.verbose > 2:
-                LOG.debug("FrozenCaseInsensitiveDict %s: {}".format(my_dict))
+                LOG.debug("FrozenCIDict %s: {}".format(my_dict))
             result = my_dict.dict()
             if self.verbose > 1:
-                LOG.debug("FrozenCaseInsensitiveDict as a dict: {r} (expeced: {e})".format(
+                LOG.debug("FrozenCIDict as a dict: {r} (expeced: {e})".format(
                     r=pp(result), e=pp(expected)))
             self.assertEqual(result, expected)
 
@@ -927,12 +927,12 @@ class TestFbCollections(FbToolsTestcase):
 
         for obj in wrong_sources:
 
-            msg = "Trying to init a FrozenCaseInsensitiveDict from {} ..."
+            msg = "Trying to init a FrozenCIDict from {} ..."
             LOG.debug(msg.format(pp(obj)))
             with self.assertRaises(FbCollectionsError) as cm:
-                my_dict = FrozenCaseInsensitiveDict(obj)
+                my_dict = FrozenCIDict(obj)
             e = cm.exception
-            msg = "{n} raised on init of a FrozenCaseInsensitiveDict object: {e}".format(
+            msg = "{n} raised on init of a FrozenCIDict object: {e}".format(
                 n=e.__class__.__name__, e=e)
             LOG.debug(msg)
 

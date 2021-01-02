@@ -32,7 +32,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.3'
+__version__ = '0.3.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -67,10 +67,10 @@ class WrongItemTypeError(TypeError, FbCollectionsError):
 # =============================================================================
 class WrongCompareSetClassError(TypeError, FbCollectionsError):
     """Exeception class for the case, that a given class ist not of an
-       instance of CaseInsensitiveStringSet."""
+       instance of CIStringSet."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, other, expected='CaseInsensitiveStringSet'):
+    def __init__(self, other, expected='CIStringSet'):
 
         self.other_class = other.__class__.__name__
         self.expected = expected
@@ -138,7 +138,7 @@ class CaseInsensitiveKeyError(KeyError, FbCollectionsError):
 class CIInitfromSequenceError(TypeError, FbCollectionsError):
 
     # -------------------------------------------------------------------------
-    def __init__(self, item, emesg, expected='FrozenCaseInsensitiveDict'):
+    def __init__(self, item, emesg, expected='FrozenCIDict'):
 
         self.item = item
         self.emesg = emesg
@@ -156,7 +156,7 @@ class CIInitfromSequenceError(TypeError, FbCollectionsError):
 class CIInitfromTupleError(IndexError, FbCollectionsError):
 
     # -------------------------------------------------------------------------
-    def __init__(self, item, emesg, expected='FrozenCaseInsensitiveDict'):
+    def __init__(self, item, emesg, expected='FrozenCIDict'):
 
         self.item = item
         self.emesg = emesg
@@ -171,7 +171,7 @@ class CIInitfromTupleError(IndexError, FbCollectionsError):
 
 
 # =============================================================================
-class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
+class FrozenCIStringSet(Set, FbGenericBaseObject):
     """
     An immutable set, where the items are insensitive strings.
     The items MUST be of type string!
@@ -186,7 +186,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
             ok = False
             if is_sequence(iterable):
                 ok = True
-            elif isinstance(iterable, FrozenCaseInsensitiveStringSet):
+            elif isinstance(iterable, FrozenCIStringSet):
                 ok = True
             if not ok:
                 msg = _("Parameter {p!r} is not a sequence type, but a {c!r} object instead.")
@@ -249,7 +249,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     def issubset(self, other):
 
         cls = self.__class__.__name__
-        if not isinstance(other, FrozenCaseInsensitiveStringSet):
+        if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
 
         for item in self._items:
@@ -269,7 +269,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
         """The '<' operator."""
 
         cls = self.__class__.__name__
-        if not isinstance(other, FrozenCaseInsensitiveStringSet):
+        if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
 
         ret = True
@@ -285,14 +285,14 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     def __eq__(self, other):
         """The '==' operator."""
 
-        if not isinstance(other, FrozenCaseInsensitiveStringSet):
+        if not isinstance(other, FrozenCIStringSet):
             return False
 
-        if isinstance(self, CaseInsensitiveStringSet):
-            if not isinstance(other, CaseInsensitiveStringSet):
+        if isinstance(self, CIStringSet):
+            if not isinstance(other, CIStringSet):
                 return False
         else:
-            if isinstance(other, CaseInsensitiveStringSet):
+            if isinstance(other, CIStringSet):
                 return False
 
         if len(self) != len(other):
@@ -317,7 +317,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
         """The '>' operator."""
 
         cls = self.__class__.__name__
-        if not isinstance(other, FrozenCaseInsensitiveStringSet):
+        if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
 
         ret = True
@@ -335,7 +335,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
         """The '>=' operator."""
 
         cls = self.__class__.__name__
-        if not isinstance(other, FrozenCaseInsensitiveStringSet):
+        if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
 
         for item in other._items:
@@ -386,7 +386,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
 
         cls = self.__class__.__name__
         for other in others:
-            if not isinstance(other, FrozenCaseInsensitiveStringSet):
+            if not isinstance(other, FrozenCIStringSet):
                 raise WrongCompareSetClassError(other, cls)
 
         new_set = self.__copy__()
@@ -408,7 +408,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
 
         cls = self.__class__.__name__
         for other in others:
-            if not isinstance(other, FrozenCaseInsensitiveStringSet):
+            if not isinstance(other, FrozenCIStringSet):
                 raise WrongCompareSetClassError(other, cls)
 
         new_set = self.__class__()
@@ -437,7 +437,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
 
         cls = self.__class__.__name__
         for other in others:
-            if not isinstance(other, FrozenCaseInsensitiveStringSet):
+            if not isinstance(other, FrozenCIStringSet):
                 raise WrongCompareSetClassError(other, cls)
 
         new_set = self.__class__()
@@ -462,7 +462,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     def symmetric_difference(self, other):
 
         cls = self.__class__.__name__
-        if not isinstance(other, FrozenCaseInsensitiveStringSet):
+        if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
 
         new_set = self.__class__()
@@ -489,7 +489,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
     def isdisjoint(self, other):
 
         cls = self.__class__.__name__
-        if not isinstance(other, FrozenCaseInsensitiveStringSet):
+        if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
 
         for item in self:
@@ -514,7 +514,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
         @rtype:  dict
         """
 
-        res = super(FrozenCaseInsensitiveStringSet, self).as_dict(short=short)
+        res = super(FrozenCIStringSet, self).as_dict(short=short)
 
         res['items'] = self.values()
 
@@ -530,7 +530,7 @@ class FrozenCaseInsensitiveStringSet(Set, FbGenericBaseObject):
         return ret
 
 # =============================================================================
-class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
+class CIStringSet(MutableSet, FrozenCIStringSet):
     """
     A mutable set, where the strings are insensitive strings.
     The items MUST be of type string!
@@ -543,7 +543,7 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
         vals = []
         if is_sequence(value):
             vals = value
-        elif isinstance(value, FrozenCaseInsensitiveStringSet):
+        elif isinstance(value, FrozenCIStringSet):
             vals = value
         else:
             vals = [value]
@@ -564,7 +564,7 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
         vals = []
         if is_sequence(value):
             vals = value
-        elif isinstance(value, FrozenCaseInsensitiveStringSet):
+        elif isinstance(value, FrozenCIStringSet):
             vals = value
         else:
             vals = [value]
@@ -581,7 +581,7 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
     def update(self, *others):
 
         for other in others:
-            if not isinstance(other, FrozenCaseInsensitiveStringSet):
+            if not isinstance(other, FrozenCIStringSet):
                 cls = self.__class__.__name__
                 raise WrongCompareSetClassError(other, cls)
 
@@ -599,7 +599,7 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
     def intersection_update(self, *others):
 
         for other in others:
-            if not isinstance(other, FrozenCaseInsensitiveStringSet):
+            if not isinstance(other, FrozenCIStringSet):
                 cls = self.__class__.__name__
                 raise WrongCompareSetClassError(other, cls)
 
@@ -624,7 +624,7 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
     def difference_update(self, *others):
 
         for other in others:
-            if not isinstance(other, CaseInsensitiveStringSet):
+            if not isinstance(other, CIStringSet):
                 cls = self.__class__.__name__
                 raise WrongCompareSetClassError(other, cls)
 
@@ -643,7 +643,7 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
     # -------------------------------------------------------------------------
     def symmetric_difference_update(self, other):
 
-        if not isinstance(other, CaseInsensitiveStringSet):
+        if not isinstance(other, CIStringSet):
             cls = self.__class__.__name__
             raise WrongCompareSetClassError(other, cls)
 
@@ -667,7 +667,7 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
         vals = []
         if is_sequence(value):
             vals = value
-        elif isinstance(value, FrozenCaseInsensitiveStringSet):
+        elif isinstance(value, FrozenCIStringSet):
             vals = value
         else:
             vals = [value]
@@ -701,9 +701,9 @@ class CaseInsensitiveStringSet(MutableSet, FrozenCaseInsensitiveStringSet):
 
 
 # =============================================================================
-class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
+class FrozenCIDict(Mapping, FbGenericBaseObject):
     """
-    A dictionary, where the keys are insensitive strings.
+    A dictionary, where the keys are case insensitive strings.
     The keys MUST be of type string!
     It works like a dict.
     """
@@ -830,7 +830,7 @@ class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
         if pure:
             res = {}
         else:
-            res = super(FrozenCaseInsensitiveDict, self).as_dict(short=short)
+            res = super(FrozenCIDict, self).as_dict(short=short)
         for pair in self.items():
             if isinstance(pair[1], FbGenericBaseObject):
                 val = pair[1].as_dict(short=short)
@@ -899,13 +899,13 @@ class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __eq__(self, other):
 
-        if not isinstance(other, FrozenCaseInsensitiveDict):
+        if not isinstance(other, FrozenCIDict):
             return False
 
-        if isinstance(self, CaseInsensitiveDict) and not isinstance(other, CaseInsensitiveDict):
+        if isinstance(self, CIDict) and not isinstance(other, CIDict):
             return False
 
-        if not isinstance(self, CaseInsensitiveDict) and isinstance(other, CaseInsensitiveDict):
+        if not isinstance(self, CIDict) and isinstance(other, CIDict):
             return False
 
         if len(self) != len(other):
@@ -940,9 +940,9 @@ class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
         return True
 
 # =============================================================================
-class CaseInsensitiveDict(MutableMapping, FrozenCaseInsensitiveDict):
+class CIDict(MutableMapping, FrozenCIDict):
     """
-    A dictionary, where the keys are insensitive strings.
+    A dictionary, where the keys are case insensitive strings.
     The keys MUST be of type string!
     It works like a dict.
     """
