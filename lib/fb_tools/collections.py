@@ -32,7 +32,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -40,7 +40,14 @@ ngettext = XLATOR.ngettext
 
 
 # =============================================================================
-class WrongItemTypeError(TypeError, FbError):
+class FbCollectionsError(FbError):
+    """Base class for all self defined execeptiond in this module."""
+
+    pass
+
+
+# =============================================================================
+class WrongItemTypeError(TypeError, FbCollectionsError):
     """Exeception class for the case, that a given parameter ist not of type str."""
 
     # -------------------------------------------------------------------------
@@ -58,7 +65,7 @@ class WrongItemTypeError(TypeError, FbError):
 
 
 # =============================================================================
-class WrongCompareSetClassError(TypeError, FbError):
+class WrongCompareSetClassError(TypeError, FbCollectionsError):
     """Exeception class for the case, that a given class ist not of an
        instance of CaseInsensitiveStringSet."""
 
@@ -77,7 +84,7 @@ class WrongCompareSetClassError(TypeError, FbError):
 
 
 # =============================================================================
-class WrongKeyTypeError(TypeError, FbError):
+class WrongKeyTypeError(TypeError, FbCollectionsError):
 
     # -------------------------------------------------------------------------
     def __init__(self, key, expected='str'):
@@ -90,11 +97,11 @@ class WrongKeyTypeError(TypeError, FbError):
     def __str__(self):
 
         msg = _("Key {key!r} must be of type {must!r}, but is of type {cls!r} instead.")
-        return msg.format(key=self.key, must=self.expected, cls=self.item.__class__.__name__)
+        return msg.format(key=self.key, must=self.expected, cls=self.key.__class__.__name__)
 
 
 # =============================================================================
-class WrongUpdateClassError(TypeError, FbError):
+class WrongUpdateClassError(TypeError, FbCollectionsError):
 
     # -------------------------------------------------------------------------
     def __init__(self, other):
@@ -112,7 +119,7 @@ class WrongUpdateClassError(TypeError, FbError):
 
 
 # =============================================================================
-class CaseInsensitiveKeyError(KeyError, FbError):
+class CaseInsensitiveKeyError(KeyError, FbCollectionsError):
 
     # -------------------------------------------------------------------------
     def __init__(self, key):
@@ -125,6 +132,42 @@ class CaseInsensitiveKeyError(KeyError, FbError):
 
         msg = _("Key {!r} is not existing.")
         return msg.format(self.key)
+
+
+# =============================================================================
+class CIInitfromSequenceError(TypeError, FbCollectionsError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, item, emesg, expected='FrozenCaseInsensitiveDict'):
+
+        self.item = item
+        self.emesg = emesg
+        self.expected = expected
+        super(CIInitfromSequenceError, self).__init__()
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = _("Could update {ex} with {i!r}: {m}")
+        return msg.format(ex=self.expected, i=self.item, m=self.emesg)
+
+
+# =============================================================================
+class CIInitfromTupleError(IndexError, FbCollectionsError):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, item, emesg, expected='FrozenCaseInsensitiveDict'):
+
+        self.item = item
+        self.emesg = emesg
+        self.expected = expected
+        super(CIInitfromTupleError, self).__init__()
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        msg = _("Could update {ex} with {i!r}: {m}")
+        return msg.format(ex=self.expected, i=self.item, m=self.emesg)
 
 
 # =============================================================================
@@ -666,18 +709,57 @@ class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
     """
 
     # -------------------------------------------------------------------------
-    def __init__(self, **kwargs):
+    def __init__(self, first_param=None, **kwargs):
         '''Use the object dict'''
 
         self._map = dict()
 
-        for key in kwargs:
+        if first_param is not None:
+
+#            LOG.debug("First parameter type {t!r}: {p!r}".format(
+#                t=type(first_param), p=first_param))
+
+            if isinstance(first_param, Mapping):
+                self._update_from_mapping(first_param)
+            elif first_param.__class__.__name__ == 'zip':
+                self._update_from_mapping(dict(first_param))
+            elif is_sequence(first_param):
+                self._update_from_sequence(first_param)
+            else:
+                raise WrongUpdateClassError(first_param)
+
+        if kwargs:
+            self._update_from_mapping(kwargs)
+
+    # -------------------------------------------------------------------------
+    def _update_from_mapping(self, mapping):
+
+        for key in mapping.keys():
             if not isinstance(key, str):
                 raise WrongKeyTypeError(key)
             lkey = key.lower()
             self._map[lkey] = {
                 'key': key,
-                'val': kwargs[key],
+                'val': mapping[key],
+            }
+
+    # -------------------------------------------------------------------------
+    def _update_from_sequence(self, sequence):
+
+        for token in sequence:
+            try:
+                key = token[0]
+                value = token[1]
+            except TypeError as e:
+                raise CIInitfromSequenceError(token, str(e), self.__class__.__name__)
+            except IndexError as e:
+                raise CIInitfromTupleError(token, str(e), self.__class__.__name__)
+            if not isinstance(key, str):
+                raise WrongKeyTypeError(key)
+            lkey = key.lower()
+            self._map[lkey] = {
+                'key': key,
+                'val': value,
             }
 
     # -------------------------------------------------------------------------
@@ -732,26 +814,36 @@ class FrozenCaseInsensitiveDict(Mapping, FbGenericBaseObject):
     # The next methods aren't required, but nice for different purposes:
 
     # -------------------------------------------------------------------------
-    def as_dict(self, short=True):
+    def as_dict(self, short=True, pure=False):
         """
         Transforms the elements of the object into a dict
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
+        @param pure: Only include keys and values of the internal map
+        @type pure: bool
 
         @return: structure as dict
         @rtype:  dict
         """
 
-        res = super(FrozenCaseInsensitiveDict, self).as_dict(short=short)
+        if pure:
+            res = {}
+        else:
+            res = super(FrozenCaseInsensitiveDict, self).as_dict(short=short)
         for pair in self.items():
-            if isinstance(val, FbGenericBaseObject):
+            if isinstance(pair[1], FbGenericBaseObject):
                 val = pair[1].as_dict(short=short)
             else:
                 val = pair[1]
             res[pair[0]] = val
 
         return res
+
+    # -------------------------------------------------------------------------
+    def dict(self):
+
+        return self.as_dict(pure=True)
 
     # -------------------------------------------------------------------------
     def real_key(self, key):
@@ -939,18 +1031,14 @@ class CaseInsensitiveDict(MutableMapping, FrozenCaseInsensitiveDict):
     # -------------------------------------------------------------------------
     def update(self, other):
 
-        if not isinstance(other, Mapping) and not is_sequence(other):
-            raise WrongUpdateClassError(other)
-
         if isinstance(other, Mapping):
-            for pair in other.items():
-                self[pair[0]] = pair[1]
-            return
-
-        for tokens in other:
-            key = tokens[0]
-            value = tokens[1]
-            self[key] = value
+            self._update_from_mapping(other)
+        elif other.__class__.__name__ == 'zip':
+            self._update_from_mapping(dict(other))
+        elif is_sequence(other):
+            self._update_from_sequence(other)
+        else:
+            WrongUpdateClassError(other)
 
 
 # =============================================================================
