@@ -738,8 +738,8 @@ class TestFbCollections(FbToolsTestcase):
 
         for obj in wrong_iterables:
 
-            msg = "Trying to init a CaseInsensitiveStringSet from {!r} ..."
-            LOG.debug(msg.format(obj))
+            msg = "Trying to init a CaseInsensitiveStringSet from {} ..."
+            LOG.debug(msg.format(pp(obj)))
             with self.assertRaises(TypeError) as cm:
                 my_set = CaseInsensitiveStringSet(obj)
             e = cm.exception
@@ -811,10 +811,130 @@ class TestFbCollections(FbToolsTestcase):
             with self.assertRaises(WrongItemTypeError) as cm:
                 set_test.add(value)
             e = cm.exception
-            msg = ("WrongItemTypeError raised on adding an invalid value to a"
+            msg = ("WrongItemTypeError raised on adding an invalid value to a "
                     "CaseInsensitiveStringSet object: {}").format(e)
             LOG.debug(msg)
 
+    # -------------------------------------------------------------------------
+    def test_init_frozendict(self):
+
+        LOG.info("Testing init of a FrozenCaseInsensitiveDict object.")
+
+        from fb_tools.collections import FrozenCaseInsensitiveDict
+        from fb_tools.collections import FbCollectionsError
+
+        LOG.debug("Testing init of an empty frozen dict.")
+        my_dict = FrozenCaseInsensitiveDict()
+        LOG.debug("FrozenCaseInsensitiveDict %r: {!r}".format(my_dict))
+        LOG.debug("FrozenCaseInsensitiveDict %s: {}".format(my_dict))
+        self.assertEqual(my_dict.dict(), {})
+
+        src = {
+            'a': 'b',
+            'num': 3,
+            'uhu': 'banane',
+        }
+        expected = {
+            '__class_name__': 'FrozenCaseInsensitiveDict',
+            'a': 'b',
+            'num': 3,
+            'uhu': 'banane',
+        }
+        LOG.debug("Checking as_dict(), source: {src}, expeced: {ex}.".format(
+            src=pp(src), ex=pp(expected)))
+        my_dict = FrozenCaseInsensitiveDict(**src)
+        result = my_dict.as_dict()
+        LOG.debug("Result of as_dict(): {}".format(pp(result)))
+        self.assertEqual(expected, result)
+
+        comp = {'one': 1, 'two': 2, 'three': 3}
+
+        LOG.debug("Init a: FrozenCaseInsensitiveDict(one=1, two=2, three=3)")
+        a = FrozenCaseInsensitiveDict(one=1, two=2, three=3)
+        result = a.dict()
+        if self.verbose > 1:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init b: FrozenCaseInsensitiveDict({'one': 1, 'two': 2, 'three': 3})")
+        b = FrozenCaseInsensitiveDict({'one': 1, 'two': 2, 'three': 3})
+        result = b.dict()
+        if self.verbose > 1:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init c: FrozenCaseInsensitiveDict(zip(['one', 'two', 'three'], [1, 2, 3]))")
+        c = FrozenCaseInsensitiveDict(zip(['one', 'two', 'three'], [1, 2, 3]))
+        result = c.dict()
+        if self.verbose > 1:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init d: FrozenCaseInsensitiveDict([('two', 2), ('one', 1), ('three', 3)])")
+        d = FrozenCaseInsensitiveDict([('two', 2), ('one', 1), ('three', 3)])
+        result = d.dict()
+        if self.verbose > 1:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init e: FrozenCaseInsensitiveDict({'three': 3, 'one': 1, 'two': 2})")
+        e = FrozenCaseInsensitiveDict({'three': 3, 'one': 1, 'two': 2})
+        result = e.dict()
+        if self.verbose > 1:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init f: FrozenCaseInsensitiveDict({'one': 1, 'three': 3}, two=2)")
+        f = FrozenCaseInsensitiveDict({'one': 1, 'three': 3}, two=2)
+        result = f.dict()
+        if self.verbose > 1:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        test_tuples = (
+            ({'a': 1}, {'a': 1}),
+            ({'A': 1}, {'A': 1}),
+            ([('a', 1), ('b', 2)], {'a': 1, 'b': 2}),
+            ([('a', 1), ('A', 2)], {'A': 2}),
+        )
+
+        LOG.debug("Testing init with correct sources.")
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            if self.verbose > 1:
+                LOG.debug("Testing init of a FrozenCaseInsensitiveDict from {}.".format(pp(src)))
+            my_dict = FrozenCaseInsensitiveDict(src)
+            if self.verbose > 2:
+                LOG.debug("FrozenCaseInsensitiveDict %s: {}".format(my_dict))
+            result = my_dict.dict()
+            if self.verbose > 1:
+                LOG.debug("FrozenCaseInsensitiveDict as a dict: {r} (expeced: {e})".format(
+                    r=pp(result), e=pp(expected)))
+            self.assertEqual(result, expected)
+
+        class Tobj(object):
+            def uhu(self):
+                return 'banane'
+
+        tobj = Tobj()
+
+        wrong_sources = (
+            'a', 1, {1: 2}, {None: 2},
+            [1], [1, 2],
+            [(1,), (2,)], [('a',)], [(1, 1), (2, 2)],
+            tobj, tobj.uhu)
+
+        for obj in wrong_sources:
+
+            msg = "Trying to init a FrozenCaseInsensitiveDict from {} ..."
+            LOG.debug(msg.format(pp(obj)))
+            with self.assertRaises(FbCollectionsError) as cm:
+                my_dict = FrozenCaseInsensitiveDict(obj)
+            e = cm.exception
+            msg = "{n} raised on init of a FrozenCaseInsensitiveDict object: {e}".format(
+                n=e.__class__.__name__, e=e)
+            LOG.debug(msg)
 
 # =============================================================================
 if __name__ == '__main__':
@@ -847,6 +967,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozenset_method_isdisjoint', verbose))
     suite.addTest(TestFbCollections('test_init_set', verbose))
     suite.addTest(TestFbCollections('test_set_add', verbose))
+    suite.addTest(TestFbCollections('test_init_frozendict', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
