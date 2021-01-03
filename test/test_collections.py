@@ -238,8 +238,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_in(self):
 
-        LOG.info("Testing operator 'in' of a "
-            "FrozenCIStringSet object.")
+        LOG.info("Testing operator 'in' of a FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongItemTypeError
@@ -273,8 +272,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_le(self):
 
-        LOG.info("Testing operator le ('<=', issubset()) of a "
-            "FrozenCIStringSet object.")
+        LOG.info("Testing operator le ('<=', issubset()) of a FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
@@ -432,8 +430,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_gt(self):
 
-        LOG.info("Testing operator gt ('>') of a "
-            "FrozenCIStringSet object.")
+        LOG.info("Testing operator gt ('>') of a FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
@@ -544,8 +541,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_and(self):
 
-        LOG.info("Testing operator and ('&', intersection()) of a "
-                "FrozenCIStringSet object.")
+        LOG.info("Testing operator and ('&', intersection()) of a FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
@@ -576,8 +572,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_sub(self):
 
-        LOG.info("Testing operator sub ('-', difference()) of a "
-                "FrozenCIStringSet object.")
+        LOG.info("Testing operator sub ('-', difference()) of a FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
@@ -609,7 +604,7 @@ class TestFbCollections(FbToolsTestcase):
     def test_frozenset_operator_xor(self):
 
         LOG.info("Testing operator xor ('^', symmetric_difference()) of a "
-                "FrozenCIStringSet object.")
+            "FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
@@ -639,8 +634,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_method_isdisjoint(self):
 
-        LOG.info("Testing method isdisjoint of a "
-                "FrozenCIStringSet object.")
+        LOG.info("Testing method isdisjoint of a FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
         from fb_tools.collections import WrongCompareSetClassError
