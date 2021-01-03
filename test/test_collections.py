@@ -1053,6 +1053,33 @@ class TestFbCollections(FbToolsTestcase):
                     n=e.__class__.__name__, e=e)
                 LOG.debug(msg)
 
+    # -------------------------------------------------------------------------
+    def test_frozendict_keys(self):
+
+        LOG.info("Testing methods keys() and __iter__() of a FrozenCIDict object.")
+
+        from fb_tools.collections import FrozenCIDict
+        from fb_tools.collections import FbCollectionsError
+
+        src = {'a': 1, 'B': 2, 'c': 3, 'aA': 4}
+        src_dict = FrozenCIDict(src)
+        expected = ['a', 'aA', 'B', 'c']
+
+        LOG.debug("Testing src_dict.keys() from {} ...".format(pp(src)))
+        result = src_dict.keys()
+        if self.verbose > 2:
+            LOG.debug("Got {r} - expected {e!r}.".format(r=pp(result), e=pp(expected)))
+        self.assertEqual(result, expected)
+
+        LOG.debug("Testing src_dict.__iter__() from {} ...".format(pp(src)))
+        result = []
+        for key in src_dict:
+            result.append(key)
+        if self.verbose > 2:
+            LOG.debug("Got {r} - expected {e!r}.".format(r=pp(result), e=pp(expected)))
+        self.assertEqual(result, expected)
+
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -1087,6 +1114,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_init_frozendict', verbose))
     suite.addTest(TestFbCollections('test_frozendict_real_key', verbose))
     suite.addTest(TestFbCollections('test_frozendict_get', verbose))
+    suite.addTest(TestFbCollections('test_frozendict_keys', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
