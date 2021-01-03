@@ -1021,8 +1021,7 @@ class TestFbCollections(FbToolsTestcase):
                 LOG.debug("Got {res!r} - expected {ex!r}.".format(res=result, ex=expected))
             self.assertEqual(result, expected)
 
-        wrong_keys = (
-            None, 1, [1], (1, 2), ['a'], {1: 2}, {'a': 1}, b'a', 'c')
+        wrong_keys = (None, 1, [1], (1, 2), ['a'], {1: 2}, {'a': 1}, b'a', 'c')
         src = {'a': 1, 'B': 2}
         src_dict = FrozenCIDict(src)
 
@@ -1079,6 +1078,58 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug("Got {r} - expected {e!r}.".format(r=pp(result), e=pp(expected)))
         self.assertEqual(result, expected)
 
+    # -------------------------------------------------------------------------
+    def test_frozendict_contains(self):
+
+        LOG.info("Testing method __contains__() (operator 'in') of a FrozenCIDict object.")
+
+        from fb_tools.collections import FrozenCIDict
+        from fb_tools.collections import FbCollectionsError
+
+        src = {'a': 1, 'B': 2, 'c': 3, 'aA': 4}
+        src_dict = FrozenCIDict(src)
+
+        test_tuples = (
+            ('a', True),
+            ('A', True),
+            ('b', True),
+            ('B', True),
+            ('d', False),
+            ('D', False),
+            ('aa', True),
+            ('ab', False),
+        )
+
+        LOG.debug("Testing 'key in src_dict' with correct keys in {} ...".format(pp(src)))
+        for test_tuple in test_tuples:
+            key = test_tuple[0]
+            should_be_in = test_tuple[1]
+            if should_be_in:
+                if self.verbose > 2:
+                    LOG.debug("Testing, that {!r} is contained.".format(key))
+                self.assertIn(key, src_dict)
+            else:
+                if self.verbose > 2:
+                    LOG.debug("Testing, that {!r} is NOT contained.".format(key))
+                self.assertNotIn(key, src_dict)
+
+        wrong_keys = (None, 1, [1], (1, 2), ['a'], {1: 2}, {'a': 1}, b'a')
+
+        LOG.debug("Testing operator 'in' with a key of an incorrect type.")
+        for key in wrong_keys:
+
+            if self.verbose > 2:
+                msg = "Testing, whether key {!r} is contained.".format(key)
+                LOG.debug(msg)
+
+            with self.assertRaises(FbCollectionsError) as cm:
+                if key in src_dict:
+                    LOG.debug("Bla with {!r}".format(key))
+            e = cm.exception
+            if self.verbose > 2:
+                msg = "{n} raised on key \"{k!r} in src_dict\" of a FrozenCIDict object: {e}".format(
+                    n=e.__class__.__name__, k=key, e=e)
+                LOG.debug(msg)
 
 # =============================================================================
 if __name__ == '__main__':
@@ -1115,6 +1166,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozendict_real_key', verbose))
     suite.addTest(TestFbCollections('test_frozendict_get', verbose))
     suite.addTest(TestFbCollections('test_frozendict_keys', verbose))
+    suite.addTest(TestFbCollections('test_frozendict_contains', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
