@@ -1058,7 +1058,7 @@ class TestFbCollections(FbToolsTestcase):
         LOG.info("Testing methods keys() and __iter__() of a FrozenCIDict object.")
 
         from fb_tools.collections import FrozenCIDict
-        from fb_tools.collections import FbCollectionsError
+        # from fb_tools.collections import FbCollectionsError
 
         src = {'a': 1, 'B': 2, 'c': 3, 'aA': 4}
         src_dict = FrozenCIDict(src)
@@ -1131,6 +1131,31 @@ class TestFbCollections(FbToolsTestcase):
                     n=e.__class__.__name__, k=key, e=e)
                 LOG.debug(msg)
 
+    # -------------------------------------------------------------------------
+    def test_frozendict_items(self):
+
+        LOG.info("Testing methods items() and values() of a FrozenCIDict object.")
+
+        from fb_tools.collections import FrozenCIDict
+
+        src = {'a': 1, 'B': 2, 'c': 3, 'aA': 4}
+        src_dict = FrozenCIDict(src)
+        expected_items = [('a', 1), ('aA', 4), ('B', 2), ('c', 3)]
+        expected_values = [1, 4, 2, 3]
+
+        LOG.debug("Testing src_dict.items() on {}".format(pp(src_dict.dict())))
+        result = src_dict.items()
+        if self.verbose > 2:
+            LOG.debug("Got {r} - expected {e!r}.".format(r=pp(result), e=pp(expected_items)))
+        self.assertEqual(result, expected_items)
+
+        LOG.debug("Testing src_dict.values() on {}".format(pp(src_dict.dict())))
+        result = src_dict.values()
+        if self.verbose > 2:
+            LOG.debug("Got {r} - expected {e!r}.".format(r=pp(result), e=pp(expected_values)))
+        self.assertEqual(result, expected_values)
+
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -1167,6 +1192,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozendict_get', verbose))
     suite.addTest(TestFbCollections('test_frozendict_keys', verbose))
     suite.addTest(TestFbCollections('test_frozendict_contains', verbose))
+    suite.addTest(TestFbCollections('test_frozendict_items', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

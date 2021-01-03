@@ -32,7 +32,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.5'
+__version__ = '0.3.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -894,7 +894,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def values(self):
 
-        return map(lambda x: self._map[x]['val'], sorted(self._map.keys()))
+        return list(map(lambda x: self._map[x]['val'], sorted(self._map.keys())))
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
