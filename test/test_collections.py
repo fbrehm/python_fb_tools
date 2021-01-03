@@ -94,7 +94,7 @@ class TestFbCollections(FbToolsTestcase):
             expected = test_tuple[1]
             LOG.debug("Testing init of a FrozenCIStringSet from {!r}.".format(src))
             my_set = FrozenCIStringSet(src)
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("FrozenCIStringSet %s: {}".format(my_set))
             result = my_set.as_list()
             LOG.debug("FrozenCIStringSet as a list: {r!r} (expeced: {ex!r})".format(
@@ -157,10 +157,10 @@ class TestFbCollections(FbToolsTestcase):
             expected = test_tuple[2]
             my_set = FrozenCIStringSet(src)
 
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("Testing to get the real value of {v!r} of {s}.".format(v=key, s=my_set))
             result = my_set.real_value(key)
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("Got {res!r} - expected {ex!r}.".format(res=result, ex=expected))
 
             self.assertEqual(result, expected)
@@ -204,7 +204,7 @@ class TestFbCollections(FbToolsTestcase):
             expected_len = test_tuple[1]
             LOG.debug("Testing len() of a FrozenCIStringSet from {!r}.".format(src))
             my_set = FrozenCIStringSet(src)
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("FrozenCIStringSet %s: {}".format(my_set))
             result = len(my_set)
             LOG.debug("Got a length of: {}".format(result))
@@ -229,7 +229,7 @@ class TestFbCollections(FbToolsTestcase):
             expected_bool = test_tuple[1]
             LOG.debug("Testing bool() of a FrozenCIStringSet from {!r}.".format(src))
             my_set = FrozenCIStringSet(src)
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("FrozenCIStringSet %s: {}".format(my_set))
             result = bool(my_set)
             LOG.debug("Got boolean of: {}".format(result))
@@ -714,7 +714,7 @@ class TestFbCollections(FbToolsTestcase):
             expected = test_tuple[1]
             LOG.debug("Testing init of a CIStringSet from {!r}.".format(src))
             my_set = CIStringSet(src)
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("CIStringSet %s: {}".format(my_set))
             result = my_set.as_list()
             LOG.debug("CIStringSet as a list: {r!r} (expeced: {ex!r})".format(
@@ -785,13 +785,13 @@ class TestFbCollections(FbToolsTestcase):
             value = test_tuple[0]
             keep = test_tuple[1]
             expected = test_tuple[2]
-            if self.verbose > 1:
+            if self.verbose > 2:
                 msg = "Testing adding {v!r} to {s!r}, keep existing is {k}.".format(
                     v=value, s=set_test, k=keep)
                 LOG.debug(msg)
             set_test.add(value, keep=keep)
             result = set_test.values()
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("Got {r!r}, expected {e!r}.".format(r=result, e=expected))
             self.assertEqual(result, expected)
 
@@ -799,7 +799,7 @@ class TestFbCollections(FbToolsTestcase):
         wrong_values = (None, [None], 1, [2], ['c', 3], ['c', ['d']])
         for value in wrong_values:
             set_test = CIStringSet(src)
-            if self.verbose > 1:
+            if self.verbose > 2:
                 msg = "Trying to add {!r} to a CIStringSet ..."
                 LOG.debug(msg.format(value))
             with self.assertRaises(WrongItemTypeError) as cm:
@@ -846,42 +846,42 @@ class TestFbCollections(FbToolsTestcase):
         LOG.debug("Init a: FrozenCIDict(one=1, two=2, three=3)")
         a = FrozenCIDict(one=1, two=2, three=3)
         result = a.dict()
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
         LOG.debug("Init b: FrozenCIDict({'one': 1, 'two': 2, 'three': 3})")
         b = FrozenCIDict({'one': 1, 'two': 2, 'three': 3})
         result = b.dict()
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
         LOG.debug("Init c: FrozenCIDict(zip(['one', 'two', 'three'], [1, 2, 3]))")
         c = FrozenCIDict(zip(['one', 'two', 'three'], [1, 2, 3]))
         result = c.dict()
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
         LOG.debug("Init d: FrozenCIDict([('two', 2), ('one', 1), ('three', 3)])")
         d = FrozenCIDict([('two', 2), ('one', 1), ('three', 3)])
         result = d.dict()
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
         LOG.debug("Init e: FrozenCIDict({'three': 3, 'one': 1, 'two': 2})")
         e = FrozenCIDict({'three': 3, 'one': 1, 'two': 2})
         result = e.dict()
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
         LOG.debug("Init f: FrozenCIDict({'one': 1, 'three': 3}, two=2)")
         f = FrozenCIDict({'one': 1, 'three': 3}, two=2)
         result = f.dict()
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug("Result: {}".format(pp(result)))
         self.assertEqual(result, comp)
 
@@ -896,13 +896,13 @@ class TestFbCollections(FbToolsTestcase):
         for test_tuple in test_tuples:
             src = test_tuple[0]
             expected = test_tuple[1]
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("Testing init of a FrozenCIDict from {}.".format(pp(src)))
             my_dict = FrozenCIDict(src)
-            if self.verbose > 2:
+            if self.verbose > 3:
                 LOG.debug("FrozenCIDict %s: {}".format(my_dict))
             result = my_dict.dict()
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("FrozenCIDict as a dict: {r} (expeced: {e})".format(
                     r=pp(result), e=pp(expected)))
             self.assertEqual(result, expected)
@@ -952,11 +952,11 @@ class TestFbCollections(FbToolsTestcase):
             expected = test_tuple[2]
             my_dict = FrozenCIDict(src)
 
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("Testing to get the real key of {v!r} of {s}.".format(
                     v=key, s=my_dict.dict()))
             result = my_dict.real_key(key)
-            if self.verbose > 1:
+            if self.verbose > 2:
                 LOG.debug("Got {res!r} - expected {ex!r}.".format(res=result, ex=expected))
 
             self.assertEqual(result, expected)
@@ -979,6 +979,79 @@ class TestFbCollections(FbToolsTestcase):
         msg = "{c} raised on real_key() of a FrozenCIDict object: {e}"
         LOG.debug(msg.format(c=e.__class__.__name__, e=e))
 
+    # -------------------------------------------------------------------------
+    def test_frozendict_get(self):
+
+        LOG.info("Testing methods get() and __getitem__() of a FrozenCIDict object.")
+
+        from fb_tools.collections import FrozenCIDict
+        from fb_tools.collections import FbCollectionsError
+
+        test_tuples = (
+                ({'a': 1, 'b': 2}, 'a', 1),
+                ({'a': 1, 'b': 2}, 'b', 2),
+                ({'a': 1, 'b': 2}, 'A', 1),
+                ({'a': 1, 'b': 2}, 'B', 2),
+                ({'A': 1, 'b': 2}, 'a', 1),
+                ({'a': 1, 'B': 2}, 'b', 2),
+                ({'A': 1, 'b': 2}, 'A', 1),
+                ({'a': 1, 'B': 2}, 'B', 2),
+        )
+
+        LOG.debug("Testing get() with correct parameters.")
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            key = test_tuple[1]
+            expected = test_tuple[2]
+            my_dict = FrozenCIDict(src)
+
+            if self.verbose > 2:
+                LOG.debug("Testing to get the value of key {v!r} of {s} with my_dict[key].".format(
+                    v=key, s=my_dict.dict()))
+            result = my_dict[key]
+            if self.verbose > 2:
+                LOG.debug("Got {res!r} - expected {ex!r}.".format(res=result, ex=expected))
+            self.assertEqual(result, expected)
+
+            if self.verbose > 2:
+                LOG.debug("Testing to get the value of key {v!r} of {s} with my_dict.get(key).".format(
+                    v=key, s=my_dict.dict()))
+            result = my_dict.get(key)
+            if self.verbose > 2:
+                LOG.debug("Got {res!r} - expected {ex!r}.".format(res=result, ex=expected))
+            self.assertEqual(result, expected)
+
+        wrong_keys = (
+            None, 1, [1], (1, 2), ['a'], {1: 2}, {'a': 1}, b'a', 'c')
+        src = {'a': 1, 'B': 2}
+        src_dict = FrozenCIDict(src)
+
+        LOG.debug("Testing get() and __getitem__() with a key of an incorrect type.")
+        for key in wrong_keys:
+
+            if self.verbose > 2:
+                msg = ("Trying to get a value from FrozenCIDict {d} "
+                    "for key {k!r} by src_dict[key] ...")
+                LOG.debug(msg.format(d=pp(src), k=key))
+            with self.assertRaises(FbCollectionsError) as cm:
+                result = src_dict[key]
+            e = cm.exception
+            if self.verbose > 2:
+                msg = "{n} raised on src_dict[key] of a FrozenCIDict object: {e}".format(
+                    n=e.__class__.__name__, e=e)
+                LOG.debug(msg)
+
+            if self.verbose > 2:
+                msg = ("Trying to get a value from FrozenCIDict {d} "
+                    "for key {k!r} by src_dict.get(key) ...")
+                LOG.debug(msg.format(d=pp(src), k=key))
+            with self.assertRaises(FbCollectionsError) as cm:
+                result = src_dict.get(key)
+            e = cm.exception
+            if self.verbose > 2:
+                msg = "{n} raised on src_dict.get(key) of a FrozenCIDict object: {e}".format(
+                    n=e.__class__.__name__, e=e)
+                LOG.debug(msg)
 
 # =============================================================================
 if __name__ == '__main__':
@@ -1013,6 +1086,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_set_add', verbose))
     suite.addTest(TestFbCollections('test_init_frozendict', verbose))
     suite.addTest(TestFbCollections('test_frozendict_real_key', verbose))
+    suite.addTest(TestFbCollections('test_frozendict_get', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
