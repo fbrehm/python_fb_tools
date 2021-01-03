@@ -1155,6 +1155,48 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug("Got {r} - expected {e!r}.".format(r=pp(result), e=pp(expected_values)))
         self.assertEqual(result, expected_values)
 
+    # -------------------------------------------------------------------------
+    def test_frozendict_operator_eq(self):
+
+        LOG.info("Testing operator eq ('==') and ne (!=) of a FrozenCIDict object.")
+
+        from fb_tools.collections import FrozenCIDict
+        from fb_tools.collections import CIDict
+
+        src = {'a': 1, 'B': 2, 'aA': 4}
+        src_dict = FrozenCIDict(src)
+
+        test_tuples = (
+            (FrozenCIDict({'a': 1, 'B': 2, 'aA': 4}), True),
+            (FrozenCIDict({'A': 1, 'B': 2, 'aA': 4}), True),
+            (FrozenCIDict({'A': 1, 'b': 2, 'Aa': 4}), True),
+            (CIDict({'a': 1, 'B': 2, 'aA': 4}), False),
+            (FrozenCIDict({'B': 2, 'aA': 4}), False),
+            (FrozenCIDict({'a': 2, 'B': 2, 'aA': 4}), False),
+            ({'a': 1, 'B': 2, 'aA': 4}, False),
+            (FrozenCIDict({'a': 1, 'B': 2, 'aA': 4, 'c': 3}), False),
+            (('a', 1, 'B', 2, 'aA', 4), False),
+            (['a', 1, 'B', 2, 'aA', 4], False),
+            ([('a', 1), ('B', 2), ('aA', 4)], False),
+            ('a', False),
+            (None, False),
+            (1, False),
+        )
+
+        LOG.debug("Testing __eq__ and __ne__ on FrozenCIDict {}.".format(pp(src)))
+
+        for test_tuple in test_tuples:
+            comp_object = test_tuple[0]
+            should_be_equal = test_tuple[1]
+
+            if should_be_equal:
+                if self.verbose > 2:
+                    LOG.debug("Testing, that {!r} is equal to src_dict ...".format(comp_object))
+                self.assertEqual(src_dict, comp_object)
+            else:
+                if self.verbose > 2:
+                    LOG.debug("Testing, that {!r} is NOT equal to src_dict ...".format(comp_object))
+                self.assertNotEqual(src_dict, comp_object)
 
 # =============================================================================
 if __name__ == '__main__':
@@ -1193,6 +1235,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozendict_keys', verbose))
     suite.addTest(TestFbCollections('test_frozendict_contains', verbose))
     suite.addTest(TestFbCollections('test_frozendict_items', verbose))
+    suite.addTest(TestFbCollections('test_frozendict_operator_eq', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
