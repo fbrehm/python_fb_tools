@@ -838,7 +838,8 @@ class TestFbCollections(FbToolsTestcase):
             src=pp(src), ex=pp(expected)))
         my_dict = FrozenCIDict(**src)
         result = my_dict.as_dict()
-        LOG.debug("Result of as_dict(): {}".format(pp(result)))
+        if self.verbose > 2:
+            LOG.debug("Result of as_dict(): {}".format(pp(result)))
         self.assertEqual(expected, result)
 
         comp = {'one': 1, 'two': 2, 'three': 3}
@@ -926,8 +927,9 @@ class TestFbCollections(FbToolsTestcase):
             with self.assertRaises(FbCollectionsError) as cm:
                 my_dict = FrozenCIDict(obj)
             e = cm.exception
-            msg = "{n} raised on init of a FrozenCIDict object: {e}".format(
-                n=e.__class__.__name__, e=e)
+            if self.verbose > 2:
+                msg = "{n} raised on init of a FrozenCIDict object: {e}".format(
+                    n=e.__class__.__name__, e=e)
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
@@ -946,6 +948,9 @@ class TestFbCollections(FbToolsTestcase):
 
         LOG.debug("Checking the equality of the dicts ...")
         self.assertEqual(src, tgt)
+
+        LOG.debug("Checking, that the copy is an instance of FrozenCIDict ...")
+        self.assertIsInstance(tgt_dict, FrozenCIDict)
 
         LOG.debug("Checking, that the copy is not a reference to its origin ...")
         self.assertIsNot(src_dict, tgt_dict)
@@ -1218,6 +1223,130 @@ class TestFbCollections(FbToolsTestcase):
                     LOG.debug("Testing, that {!r} is NOT equal to src_dict ...".format(comp_object))
                 self.assertNotEqual(src_dict, comp_object)
 
+    # -------------------------------------------------------------------------
+    def test_init_dict(self):
+
+        LOG.info("Testing init of a CIDict object.")
+
+        from fb_tools.collections import CIDict
+        from fb_tools.collections import FbCollectionsError
+
+        LOG.debug("Testing init of an empty dict.")
+        my_dict = CIDict()
+        LOG.debug("CIDict %r: {!r}".format(my_dict))
+        LOG.debug("CIDict %s: {}".format(my_dict))
+        self.assertEqual(my_dict.dict(), {})
+
+        src = {
+            'a': 'b',
+            'num': 3,
+            'uhu': 'banane',
+        }
+        expected = {
+            '__class_name__': 'CIDict',
+            'a': 'b',
+            'num': 3,
+            'uhu': 'banane',
+        }
+        LOG.debug("Checking as_dict(), source: {src}, expeced: {ex}.".format(
+            src=pp(src), ex=pp(expected)))
+        my_dict = CIDict(**src)
+        result = my_dict.as_dict()
+        if self.verbose > 2:
+            LOG.debug("Result of as_dict(): {}".format(pp(result)))
+        self.assertEqual(expected, result)
+
+        comp = {'one': 1, 'two': 2, 'three': 3}
+
+        LOG.debug("Init a: CIDict(one=1, two=2, three=3)")
+        a = CIDict(one=1, two=2, three=3)
+        result = a.dict()
+        if self.verbose > 2:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init b: CIDict({'one': 1, 'two': 2, 'three': 3})")
+        b = CIDict({'one': 1, 'two': 2, 'three': 3})
+        result = b.dict()
+        if self.verbose > 2:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init c: CIDict(zip(['one', 'two', 'three'], [1, 2, 3]))")
+        c = CIDict(zip(['one', 'two', 'three'], [1, 2, 3]))
+        result = c.dict()
+        if self.verbose > 2:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init d: CIDict([('two', 2), ('one', 1), ('three', 3)])")
+        d = CIDict([('two', 2), ('one', 1), ('three', 3)])
+        result = d.dict()
+        if self.verbose > 2:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init e: CIDict({'three': 3, 'one': 1, 'two': 2})")
+        e = CIDict({'three': 3, 'one': 1, 'two': 2})
+        result = e.dict()
+        if self.verbose > 2:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        LOG.debug("Init f: CIDict({'one': 1, 'three': 3}, two=2)")
+        f = CIDict({'one': 1, 'three': 3}, two=2)
+        result = f.dict()
+        if self.verbose > 2:
+            LOG.debug("Result: {}".format(pp(result)))
+        self.assertEqual(result, comp)
+
+        test_tuples = (
+            ({'a': 1}, {'a': 1}),
+            ({'A': 1}, {'A': 1}),
+            ([('a', 1), ('b', 2)], {'a': 1, 'b': 2}),
+            ([('a', 1), ('A', 2)], {'A': 2}),
+        )
+
+        LOG.debug("Testing init with correct sources.")
+        for test_tuple in test_tuples:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            if self.verbose > 2:
+                LOG.debug("Testing init of a CIDict from {}.".format(pp(src)))
+            my_dict = CIDict(src)
+            if self.verbose > 3:
+                LOG.debug("CIDict %s: {}".format(my_dict))
+            result = my_dict.dict()
+            if self.verbose > 2:
+                LOG.debug("CIDict as a dict: {r} (expeced: {e})".format(
+                    r=pp(result), e=pp(expected)))
+            self.assertEqual(result, expected)
+
+        class Tobj(object):
+            def uhu(self):
+                return 'banane'
+
+        tobj = Tobj()
+
+        wrong_sources = (
+            'a', 1, {1: 2}, {None: 2},
+            [1], [1, 2],
+            [(1,), (2,)], [('a',)], [(1, 1), (2, 2)],
+            tobj, tobj.uhu)
+
+        for obj in wrong_sources:
+
+            msg = "Trying to init a CIDict from {} ..."
+            LOG.debug(msg.format(pp(obj)))
+            with self.assertRaises(FbCollectionsError) as cm:
+                my_dict = CIDict(obj)
+            e = cm.exception
+            if self.verbose > 2:
+                msg = "{n} raised on init of a CIDict object: {e}".format(
+                    n=e.__class__.__name__, e=e)
+            LOG.debug(msg)
+
+
 # =============================================================================
 if __name__ == '__main__':
 
@@ -1257,6 +1386,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozendict_contains', verbose))
     suite.addTest(TestFbCollections('test_frozendict_items', verbose))
     suite.addTest(TestFbCollections('test_frozendict_operator_eq', verbose))
+    suite.addTest(TestFbCollections('test_init_dict', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
