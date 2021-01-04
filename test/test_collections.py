@@ -1431,6 +1431,53 @@ class TestFbCollections(FbToolsTestcase):
                     n=e.__class__.__name__, e=e)
                 LOG.debug(msg)
 
+    # -------------------------------------------------------------------------
+    def test_dict_del(self):
+
+        LOG.info("Testing method __del__() of a CIDict object.")
+
+        from fb_tools.collections import CIDict
+        from fb_tools.collections import FbCollectionsError
+
+        wrong_keys = (None, 1, [1], (1, 2), ['a'], {1: 2}, {'a': 1}, b'a', 'c')
+        src = {'a': 1, 'B': 2}
+
+        test_tuples = (
+            ('a', {'B': 2}),
+            ('b', {'a': 1}),
+        )
+
+        LOG.debug("Testing method __del__() with correct keys ...")
+
+        for test_tuple in test_tuples:
+
+            key = test_tuple[0]
+            expected = test_tuple[1]
+
+            src_dict = CIDict(src)
+            if self.verbose > 2:
+                LOG.debug("Deleting key {k!r} from {s} ...".format(k=key, s=src))
+            del src_dict[key]
+            result = src_dict.dict()
+            if self.verbose > 2:
+                LOG.debug("Got {}.".format(result))
+            self.assertEqual(result, expected)
+
+        LOG.debug("Testing __del__() with a key of an incorrect type.")
+        src_dict = CIDict(src)
+        for key in wrong_keys:
+
+            if self.verbose > 2:
+                msg = "Trying to delete key {k!r} from {s} ...".format(k=key, s=src)
+                LOG.debug(msg)
+            with self.assertRaises(FbCollectionsError) as cm:
+                del src_dict[key]
+            e = cm.exception
+            if self.verbose > 2:
+                msg = "{n} raised on 'del src_dict[key]' from a CIDict object: {e}".format(
+                    n=e.__class__.__name__, e=e)
+                LOG.debug(msg)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -1473,6 +1520,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozendict_operator_eq', verbose))
     suite.addTest(TestFbCollections('test_init_dict', verbose))
     suite.addTest(TestFbCollections('test_dict_set', verbose))
+    suite.addTest(TestFbCollections('test_dict_del', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
