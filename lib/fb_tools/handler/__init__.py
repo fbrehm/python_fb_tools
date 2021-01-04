@@ -12,7 +12,6 @@ from __future__ import absolute_import, print_function
 import os
 import logging
 import stat
-import pathlib
 import subprocess
 import pwd
 import locale
@@ -20,6 +19,11 @@ import time
 import pipes
 import datetime
 from fcntl import fcntl, F_GETFL, F_SETFL
+
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 # Third party modules
 import pytz
@@ -38,7 +42,7 @@ from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '1.4.8'
+__version__ = '1.4.9'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')

@@ -31,10 +31,15 @@ if sys.version_info[1] < __min_py_version_minor__:
 
 import os
 import logging
-import pathlib
 import locale
 
-from pathlib import Path
+try:
+    import pathlib
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+    import pathlib2 as pathlib
+
 
 # own modules:
 

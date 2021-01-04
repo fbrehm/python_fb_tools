@@ -36,14 +36,20 @@ class TestFbBaseObject(FbToolsTestcase):
     def test_import(self):
 
         LOG.info("Testing import of fb_tools.obj ...")
-        import fb_tools.obj                               # noqa
+        import fb_tools.obj
+        LOG.debug("Version of fb_tools.obj: {!r}".format(fb_tools.obj.__version__))
 
     # -------------------------------------------------------------------------
     def test_object(self):
 
         LOG.info("Testing init of a simple object.")
 
-        from fb_tools.obj import FbBaseObject
+        from fb_tools.obj import FbGenericBaseObject, FbBaseObject
+
+        with self.assertRaises(TypeError) as cm:
+            gen_obj = FbGenericBaseObject()
+        e = cm.exception
+        LOG.debug("TypeError raised on instantiate a FbGenericBaseObject: %s", str(e))
 
         obj = FbBaseObject(
             appname='test_base_object',

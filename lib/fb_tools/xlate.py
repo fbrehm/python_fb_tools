@@ -15,7 +15,10 @@ import logging
 import gettext
 import copy
 
-from pathlib import Path
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from distutils.version import LooseVersion
 
@@ -28,7 +31,7 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent

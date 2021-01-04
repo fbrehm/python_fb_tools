@@ -18,8 +18,11 @@ import locale
 import string
 import random
 import datetime
-import pathlib
 import ipaddress
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 try:
     from collections.abc import Sequence
@@ -33,7 +36,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '1.4.7'
+__version__ = '1.4.8'
 
 _ = XLATOR.gettext
 

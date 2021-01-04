@@ -42,23 +42,6 @@ variables:
     - pip install --upgrade pip
     - pip install -r requirements.txt --upgrade --upgrade-strategy eager
 
-test Python 2.7:
-  <<: *docker_job_definition
-  stage: test
-  image: python:2.7
-  script:
-    - pip install -r requirements-2.7.txt --upgrade --upgrade-strategy eager
-    - pip install --upgrade --upgrade-strategy eager pytest
-    - pip list --format columns
-    - pytest --verbose
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
-    - tags
-
 test Python 3.5:
   <<: *docker_job_definition
   stage: test

@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2020 by Frank Brehm, Berlin
 @summary: The module for a base object with extended handling.
 """
 from __future__ import absolute_import
@@ -12,13 +12,17 @@ from __future__ import absolute_import
 import os
 import logging
 import pipes
-import pathlib
 import signal
 import errno
 import sys
 import locale
 import datetime
 import copy
+
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 from subprocess import Popen, PIPE
 if sys.version_info[0] >= 3:
@@ -45,7 +49,7 @@ from .colored import colorstr
 
 from .obj import FbBaseObject
 
-__version__ = '1.6.2'
+__version__ = '1.6.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext

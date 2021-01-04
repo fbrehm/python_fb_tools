@@ -15,7 +15,10 @@ import sys
 import os
 import ipaddress
 
-from pathlib import Path
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 # Third party module
 from six.moves.urllib.parse import quote
@@ -32,7 +35,7 @@ from . import WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
