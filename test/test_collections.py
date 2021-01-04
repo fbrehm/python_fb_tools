@@ -1346,6 +1346,91 @@ class TestFbCollections(FbToolsTestcase):
                     n=e.__class__.__name__, e=e)
             LOG.debug(msg)
 
+    # -------------------------------------------------------------------------
+    def test_dict_set(self):
+
+        LOG.info("Testing methods set() and __setitem__() of a CIDict object.")
+
+        from fb_tools.collections import CIDict
+        from fb_tools.collections import FbCollectionsError
+
+        test_tuples = (
+                ({'a': 1, 'b': 2}, 'a', 1, {'a': 1, 'b': 2},),
+                ({'a': 1, 'b': 2}, 'c', 3, {'a': 1, 'b': 2, 'c': 3},),
+                ({'a': 1, 'b': 2}, 'A', 1, {'A': 1, 'b': 2},),
+        )
+
+        LOG.debug("Testing set() with correct parameters.")
+        for test_tuple in test_tuples:
+
+            src = test_tuple[0]
+            key = test_tuple[1]
+            value = test_tuple[2]
+            expected = test_tuple[3]
+
+            if self.verbose > 2:
+                LOG.debug("Testing to set key {k!r} to value {v!r} in {s} with my_dict[key].".format(
+                    k=key, v=value, s=src))
+
+            my_dict = CIDict(src)
+            my_dict[key] = value
+            result_val = my_dict[key]
+            result_dict = my_dict.dict()
+            if self.verbose > 2:
+                LOG.debug((
+                    "Got new value {v!r} and dict {d} - expected value {exv!r} and "
+                    "dict {exd}.").format(v=result_val, d=result_dict, exv=value, exd=expected))
+            self.assertEqual(result_val, value)
+            self.assertEqual(result_dict, expected)
+
+            if self.verbose > 2:
+                LOG.debug((
+                    "Testing to set key {k!r} to value {v!r} in {s} with "
+                    "my_dict.set(key, value).").format(k=key, v=value, s=my_dict.dict()))
+
+            my_dict = CIDict(src)
+            my_dict.set(key, value)
+            result_val = my_dict[key]
+            result_dict = my_dict.dict()
+            if self.verbose > 2:
+                LOG.debug((
+                    "Got new value {v!r} and dict {d} - expected value {exv!r} and "
+                    "dict {exd}.").format(v=result_val, d=result_dict, exv=value, exd=expected))
+            self.assertEqual(result_val, value)
+            self.assertEqual(result_dict, expected)
+
+        wrong_keys = (None, 1, [1], (1, 2), ['a'], {1: 2}, {'a': 1}, b'a')
+        value = 'bla'
+        src = {'a': 1, 'B': 2}
+        src_dict = CIDict(src)
+
+        LOG.debug("Testing set() and __setitem__() with a key of an incorrect type.")
+        for key in wrong_keys:
+
+            if self.verbose > 2:
+                msg = ("Trying to set key {k!r} to value {v!r} in {s} with "
+                    "src_dict[key] ...").format(k=key, v=value, s=src)
+                LOG.debug(msg)
+            with self.assertRaises(FbCollectionsError) as cm:
+                src_dict[key] = value
+            e = cm.exception
+            if self.verbose > 2:
+                msg = "{n} raised on src_dict[key] of a CIDict object: {e}".format(
+                    n=e.__class__.__name__, e=e)
+                LOG.debug(msg)
+
+            if self.verbose > 2:
+                msg = ("Trying to set key {k!r} to value {v!r} in {s} with "
+                    "src_dict.set(key, value) ...").format(k=key, v=value, s=my_dict.dict())
+                LOG.debug(msg)
+            with self.assertRaises(FbCollectionsError) as cm:
+                src_dict.set(key, value)
+            e = cm.exception
+            if self.verbose > 2:
+                msg = "{n} raised on src_dict.set(key, value) of a CIDict object: {e}".format(
+                    n=e.__class__.__name__, e=e)
+                LOG.debug(msg)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -1387,6 +1472,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_frozendict_items', verbose))
     suite.addTest(TestFbCollections('test_frozendict_operator_eq', verbose))
     suite.addTest(TestFbCollections('test_init_dict', verbose))
+    suite.addTest(TestFbCollections('test_dict_set', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
