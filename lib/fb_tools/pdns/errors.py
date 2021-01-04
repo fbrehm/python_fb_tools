@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2019 Frank Brehm, Berlin
+@copyright: © 2021 Frank Brehm, Berlin
 @summary: The module for special error classes on PowerDNS API operations.
 """
 from __future__ import absolute_import

@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2020 by Frank Brehm, Berlin
+@copyright: © 2021 by Frank Brehm, Berlin
 @summary: This module implements specialized container datatypes providing
           alternatives to Python's general purpose built-in frozen_set, set and dict.
 """
