@@ -1,3 +1,9 @@
+fb-tools (1.7.4) UNRELEASED; urgency=medium
+
+  * Satisfying linter in lib/fb_tools/collections.py
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 04 Jan 2021 12:50:26 +0100
+
 fb-tools (1.7.3) all; urgency=medium
 
   * New module lib/fb_tools/collections.py with new classes
