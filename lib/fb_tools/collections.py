@@ -10,7 +10,6 @@
 from __future__ import absolute_import
 
 # Standard modules
-import os
 import logging
 
 try:
@@ -21,7 +20,6 @@ except ImportError:
     from collections import Mapping, MutableMapping
 
 # Third party modules
-import six
 
 # Own modules
 from .errors import FbError
@@ -32,7 +30,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.9'
+__version__ = '1.0.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -716,8 +714,8 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
         if first_param is not None:
 
-#            LOG.debug("First parameter type {t!r}: {p!r}".format(
-#                t=type(first_param), p=first_param))
+            # LOG.debug("First parameter type {t!r}: {p!r}".format(
+            #     t=type(first_param), p=first_param))
 
             if isinstance(first_param, Mapping):
                 self._update_from_mapping(first_param)
