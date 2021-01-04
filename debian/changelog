@@ -1,4 +1,4 @@
-fb-tools (1.7.3) UNRELEASED; urgency=medium
+fb-tools (1.7.3) all; urgency=medium
 
   * New module lib/fb_tools/collections.py with new classes
     FrozenCIStringSet, CIStringSet, FrozenCIDict and CIDict, and some
