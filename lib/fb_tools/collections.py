@@ -32,7 +32,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.8'
+__version__ = '0.3.9'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -968,8 +968,13 @@ class CIDict(MutableMapping, FrozenCIDict):
         lkey = key.lower()
         self._map[lkey] = {
             'key': key,
-            'val': kwargs[key],
+            'val': value,
         }
+
+    # -------------------------------------------------------------------------
+    def set(self, key, value):
+
+        self[key] = value
 
     # -------------------------------------------------------------------------
     def __delitem__(self, key):
