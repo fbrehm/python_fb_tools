@@ -1,3 +1,15 @@
+fb-tools (1.7.3) UNRELEASED; urgency=medium
+
+  * New module lib/fb_tools/collections.py with new classes
+    FrozenCIStringSet, CIStringSet, FrozenCIDict and CIDict, and some
+    additional Exception classes
+  * Adding test script test/test_collections.py for testing
+    lib/fb_tools/collections.py
+  * Modifying .github/workflows/superlinter.yml to execute only in
+    Branch master
+
+ -- Frank Brehm <frank@brehm-online.com>  Mon, 04 Jan 2021 12:00:55 +0100
+
 fb-tools (1.7.2) all; urgency=medium
 
   * Adding functions is_general_string() and compare_ldap_values() to
