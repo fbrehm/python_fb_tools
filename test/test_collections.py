@@ -931,6 +931,26 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
+    def test_frozendict_copy(self):
+
+        LOG.info("Testing copying a FrozenCIDict object.")
+
+        import copy
+        from fb_tools.collections import FrozenCIDict
+
+        src = {'a': 1, 'B': 2, 'c': 3, 'aA': 4}
+        src_dict = FrozenCIDict(src)
+
+        tgt_dict = copy.copy(src_dict)
+        tgt = tgt_dict.dict()
+
+        LOG.debug("Checking the equality of the dicts ...")
+        self.assertEqual(src, tgt)
+
+        LOG.debug("Checking, that the copy is not a reference to its origin ...")
+        self.assertIsNot(src_dict, tgt_dict)
+
+    # -------------------------------------------------------------------------
     def test_frozendict_real_key(self):
 
         LOG.info("Testing method real_key() of a FrozenCIDict object.")
@@ -1230,6 +1250,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCollections('test_init_set', verbose))
     suite.addTest(TestFbCollections('test_set_add', verbose))
     suite.addTest(TestFbCollections('test_init_frozendict', verbose))
+    suite.addTest(TestFbCollections('test_frozendict_copy', verbose))
     suite.addTest(TestFbCollections('test_frozendict_real_key', verbose))
     suite.addTest(TestFbCollections('test_frozendict_get', verbose))
     suite.addTest(TestFbCollections('test_frozendict_keys', verbose))
