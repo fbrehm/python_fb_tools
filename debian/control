@@ -32,7 +32,7 @@ Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
 Depends: python3-fb-tools (= ${binary:Version}),
          ${misc:Depends},
-         ${python:Depends}
+         ${python3:Depends}
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the executable binaries.
