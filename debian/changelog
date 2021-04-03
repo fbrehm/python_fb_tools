@@ -1,8 +1,8 @@
-fb-tools (1.7.5) UNRELEASED; urgency=medium
+fb-tools (1.7.5) all; urgency=medium
 
   * Decreasing minimal values of files to keep
 
- -- Frank Brehm <frank@brehm-online.com>  Sat, 03 Apr 2021 09:15:51 +0200
+ -- Frank Brehm <frank@brehm-online.com>  Sat, 03 Apr 2021 09:19:49 +0200
 
 fb-tools (1.7.4) all; urgency=medium
 
