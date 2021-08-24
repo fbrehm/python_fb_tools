@@ -334,7 +334,7 @@ build binaries for Debian 11 Bullseye:
     - cp -v debian/rules-py3only debian/rules
     - >
       apt install --yes --no-install-recommends
-      python3-pip python3-all python3-babel python3-pip
+      python3-pip python3-all python3-babel python3-pip python3-toml
       python3-setuptools python3-six python3-tz dh-python
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
