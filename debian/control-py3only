@@ -6,14 +6,6 @@ Build-Depends: debhelper (>= 9),
                gettext,
                dh-python,
                help2man,
-               python-all,
-               python-argparse,
-               python-babel,
-               python-setuptools,
-               python-pathlib,
-               python-pip,
-               python-six,
-               python-tz,
                python3-all,
                python3-babel,
                python3-pip,
@@ -36,22 +28,6 @@ Depends: python3-fb-tools (= ${binary:Version}),
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the executable binaries.
-
-Package: python-fb-tools
-Architecture: all
-Depends: python-argparse,
-         python-babel,
-         python-ipaddress,
-         python-pathlib,
-         python-requests,
-         python-six,
-         python-tz,
-         ${misc:Depends},
-         ${python:Depends}
-Recommends: python-pyvmomi
-Description: Python modules for common used objects, error classes and functions
- .
- This package includes the Python2 modules for this package.
 
 Package: python3-fb-tools
 Architecture: all
