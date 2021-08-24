@@ -332,6 +332,7 @@ build binaries for Debian 11 Bullseye:
   script:
     - cp -v debian/control-py3only debian/control
     - cp -v debian/rules-py3only debian/rules
+    - echo '12' > debian/compat
     - >
       apt install --yes --no-install-recommends
       python3-pip python3-all python3-babel python3-pip python3-toml
