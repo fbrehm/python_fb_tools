@@ -1,4 +1,4 @@
-fb-tools (1.7.6) UNRELEASED; urgency=medium
+fb-tools (1.7.6) all; urgency=medium
 
   * Adding Build for Debian 11 bullseye
 
