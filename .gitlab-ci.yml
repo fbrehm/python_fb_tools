@@ -333,7 +333,7 @@ build binaries for Debian 11 Bullseye:
     - >
       apt install --yes --no-install-recommends
       python-all python-argparse python-babel python-setuptools python-pathlib
-      python-pip python-six python-tz python3-all python3-babel python3-pip
+      python3-pip python-six python3-all python3-babel python3-pip
       python3-setuptools python3-six python3-tz dh-python
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
