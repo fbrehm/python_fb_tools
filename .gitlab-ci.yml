@@ -330,10 +330,11 @@ build binaries for Debian 11 Bullseye:
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
       lsb-release ca-certificates libdistro-info-perl
   script:
+    - cp -v debian/control-py3only debian/control
+    - cp -v debian/rules-py3only debian/rules
     - >
       apt install --yes --no-install-recommends
-      python-all python-argparse python-babel python-setuptools python-pathlib
-      python3-pip python-six python3-all python3-babel python3-pip
+      python3-pip python3-all python3-babel python3-pip
       python3-setuptools python3-six python3-tz dh-python
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
