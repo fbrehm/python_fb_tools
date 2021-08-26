@@ -2,7 +2,9 @@
 
 set -e
 set -u
-set -x
+# set -x
+
+YUM_REPO_GPG_ID='C0E73F70'
 
 hostname -f
 whoami
@@ -63,8 +65,25 @@ cat specs/fb_tools.el8.spec.template | \
         -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec
 
 python3.6 changelog-deb2rpm debian/changelog >>specs/fb_tools.spec
-echo >> specs/fb_tools.spec
-echo '# vim: filetype=spec' >>specs/fb_tools.spec
 
-sleep 1
+echo
+echo "#################"
+echo "Creating $HOME/.rpmmacros"
+echo "%__python3 /bin/python3.8" >$HOME/.rpmmacros
+echo "%_signature gpg" >>$HOME/.rpmmacros
+echo "%_gpg_name ${YUM_REPO_GPG_ID}" >>$HOME/.rpmmacros
+echo "Generated $HOME/.rpmmacros:"
+cat $HOME/.rpmmacros
+echo
+
+rpmbuild -ba --nocheck --verbose \
+    --define "_topdir $(pwd)/rpmdir" \
+    --define "version ${PKG_VERSION}" \
+    specs/fb_tools.spec
+
+tree -aQpugs rpmdir/*RPMS || true
+tree -aQpugs rpmdir/*RPMS || true
+ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+
+echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version
 

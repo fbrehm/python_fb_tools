@@ -84,11 +84,14 @@ with changelog_file.open('r', encoding='utf-8', errors='backslashreplace') as fh
 
     # print("Changelog {f!r} hat {nr} Einträge.".format(f=filename, nr=len(ch)), file=sys.stderr)
 
+    days = {}
+
     for block in ch:
 
         lines = []
         date = datetime.datetime.strptime(block.date, '%a, %d %b %Y %H:%M:%S %z')
-        date = date.strftime('%a %b %d %Y')
+        day = date.strftime('%Y-%m-%d')
+        # date = date.strftime('%a %b %d %Y')
         author = block.author
         version = str(block.version) + '-1'
         lines.append('*   {date} {author} {version}'.format(
@@ -96,7 +99,24 @@ with changelog_file.open('r', encoding='utf-8', errors='backslashreplace') as fh
 
         changes = mangle_changes(block._changes)
 
-        for change in changes:
+        if day not in days:
+            days[day] = {
+                    'date': date.strftime('%a %b %d %Y'),
+                    'author': author,
+                    'version': version,
+                    'changes': changes,
+            }
+        else:
+            for change in changes:
+                days[day]['changes'].append(change)
+
+    for day in reversed(sorted(days.keys())):
+        lines = []
+        block = days[day]
+        lines.append('*   {date} {author} {version}'.format(
+            date=block['date'], author=block['author'], version=block['version']))
+
+        for change in block['changes']:
             for line in textwrap.wrap(
                     change, width=70, initial_indent="-   ", subsequent_indent="    "):
                 lines.append(line)
