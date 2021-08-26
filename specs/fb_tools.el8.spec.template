@@ -71,25 +71,3 @@ python3.8 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %{python3_sitelib}/*
 
 %changelog
-*   Mon Oct 07 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.6.2-1
--   Version bump to 1.6.2
-*   Thu Aug 29 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.5.5-1
--   Version bump to 1.5.5
-*   Thu Jul 25 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.5.2-2
--   Version bump to 1.5.2
-*   Mon Jun 17 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.4.5-2
--   Version bump to 1.4.5
-*   Wed Jan 09 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.4.1-1
--   Version bump to 1.4.1
-*   Thu Jan 03 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.9-1
--   Version bump to 1.3.9
-*   Thu Jan 03 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.8-1
--   Version bump to 1.3.8
-*   Wed Jan 02 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.7-2
--   Correcting build architecture
-*   Wed Jan 02 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.7-1
--   Version bump to 1.3.7
-*   Wed Jan 02 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.6-1
--   Initial
-
-# vim: filetype=spec
