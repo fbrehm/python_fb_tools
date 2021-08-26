@@ -1,3 +1,9 @@
+fb-tools (1.7.6) all; urgency=medium
+
+  * Adding Build for Debian 11 bullseye
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 24 Aug 2021 15:48:46 +0200
+
 fb-tools (1.7.5) all; urgency=medium
 
   * Decreasing minimal values of files to keep
