@@ -2,9 +2,6 @@
 
 set -e
 set -u
-# set -x
-
-YUM_REPO_GPG_ID='C0E73F70'
 
 hostname -f
 whoami
@@ -71,7 +68,6 @@ echo "#################"
 echo "Creating $HOME/.rpmmacros"
 echo "%__python3 /bin/python3.8" >$HOME/.rpmmacros
 echo "%_signature gpg" >>$HOME/.rpmmacros
-echo "%_gpg_name ${YUM_REPO_GPG_ID}" >>$HOME/.rpmmacros
 echo "Generated $HOME/.rpmmacros:"
 cat $HOME/.rpmmacros
 echo
