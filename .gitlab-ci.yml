@@ -487,57 +487,59 @@ build CentOS 8 with Python 3.8:
     EL_MAJOR_VERSION: '8'
   stage: build
   image: centos:8
-  before_script:
-    - hostname -f
-    - whoami
-    - pwd
-    - locale -a
-    - yum clean all && yum makecache
-    - yum --assumeyes install langpacks-de langpacks-en langpacks-en_GB
-    - locale -a
-    - locale
-    - 'export LC_ALL=en_US.utf8'
-    - locale
-    - yum --assumeyes install epel-release
-    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
-    - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
-    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
-    - yum makecache
-    - yum --assumeyes upgrade
-    - yum --assumeyes install python38 python38-setuptools python38-pip python38-devel python38-pytz python38-six python38-babel platform-python-devel gnupg2 rpm-build tree expect gettext rpm-sign pinentry
-    - ls -l --color=always /bin/python* /bin/pip* || true
-    - pip3 list
+#   before_script:
+#     - hostname -f
+#     - whoami
+#     - pwd
+#     - locale -a
+#     - yum clean all && yum makecache
+#     - yum --assumeyes install langpacks-de langpacks-en langpacks-en_GB
+#     - locale -a
+#     - locale
+#     - 'export LC_ALL=en_US.utf8'
+#     - locale
+#     - yum --assumeyes install epel-release
+#     - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+#     - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
+#     - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+#     - yum makecache
+#     - yum --assumeyes upgrade
+#     - yum --assumeyes install python38 python38-setuptools python38-pip python38-devel python38-pytz python38-six python38-babel platform-python-devel gnupg2 rpm-build tree expect gettext rpm-sign pinentry
+#     - ls -l --color=always /bin/python* /bin/pip* || true
+#     - pip3 list
   script:
-    - mkdir -pv rpmdir
-    - mkdir -pv rpmdir/SOURCES
-    - 'export ODIR=$(pwd)'
-    - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )'
-    - 'export PKG_VERSION=$( ./get-rpm-version )'
-    - 'export PKG_RELEASE=$( ./get-rpm-release )'
-    - 'echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"'
-    - 'mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION'
-    - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
-    - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
-    - 'cat specs/fb_tools.el8.template.spec | sed -e "s/@@@Version@@@/$PKG_VERSION/gi" -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec'
-    - 'echo; echo "#################"; echo "Creating $HOME/.rpmmacros"'
-    - 'echo -e "%__python3 /bin/python3.8\n%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
-    - 'echo "Generated \"$HOME/.rpmmacros\":"; cat $HOME/.rpmmacros; echo'
-    - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version $PKG_VERSION" specs/fb_tools.spec'
-    - tree -aQpugs rpmdir/*RPMS || true
-    - tree -aQpugs rpmdir/*RPMS || true
-    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
-    # - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
-    # - gpg --list-public-keys
-    # - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
-    # - gpg --list-secret-keys
-    # - 'echo "pinentry-program /usr/bin/pinentry-curses" >> /etc/gnupg/gpg-agent.conf'
-    # - ls -lA /etc/gnupg/gpg-agent.conf
-    # - cat /etc/gnupg/gpg-agent.conf
-    # - 'export GPG_TTY=$( tty )'
-    # - 'echo GPG_TTY=${GPG_TTY}'
-    # - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
-    # - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
-    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
+    - 'if [[ ! -f bin-build/build-centos8-inner.sh ]] ; then echo "File bin-build/build-centos8-inner.sh not found"; false; fi'
+    - bash -x bin-build/build-centos8-inner.sh
+#     - mkdir -pv rpmdir
+#     - mkdir -pv rpmdir/SOURCES
+#     - 'export ODIR=$(pwd)'
+#     - 'export ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )'
+#     - 'export PKG_VERSION=$( ./get-rpm-version )'
+#     - 'export PKG_RELEASE=$( ./get-rpm-release )'
+#     - 'echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"'
+#     - 'mkdir -pv rpmdir/SOURCES/python_fb_tools-$PKG_VERSION'
+#     - 'tar cf - $ROOT_OBJECTS | (cd rpmdir/SOURCES/python_fb_tools-$PKG_VERSION; tar xf -)'
+#     - 'cd rpmdir/SOURCES && tar cfzv fb_tools.$PKG_VERSION.tar.gz python_fb_tools-$PKG_VERSION; cd $ODIR'
+#     - 'cat specs/fb_tools.el8.template.spec | sed -e "s/@@@Version@@@/$PKG_VERSION/gi" -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec'
+#     - 'echo; echo "#################"; echo "Creating $HOME/.rpmmacros"'
+#     - 'echo -e "%__python3 /bin/python3.8\n%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
+#     - 'echo "Generated \"$HOME/.rpmmacros\":"; cat $HOME/.rpmmacros; echo'
+#     - 'rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version $PKG_VERSION" specs/fb_tools.spec'
+#     - tree -aQpugs rpmdir/*RPMS || true
+#     - tree -aQpugs rpmdir/*RPMS || true
+#     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+#     # - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+#     # - gpg --list-public-keys
+#     # - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import --no-tty --batch --yes
+#     # - gpg --list-secret-keys
+#     # - 'echo "pinentry-program /usr/bin/pinentry-curses" >> /etc/gnupg/gpg-agent.conf'
+#     # - ls -lA /etc/gnupg/gpg-agent.conf
+#     # - cat /etc/gnupg/gpg-agent.conf
+#     # - 'export GPG_TTY=$( tty )'
+#     # - 'echo GPG_TTY=${GPG_TTY}'
+#     # - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
+#     # - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+#     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
   cache:
     key: ${CI_JOB_NAME}
     paths:
