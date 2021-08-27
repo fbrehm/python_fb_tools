@@ -8,7 +8,7 @@ IMAGE_NAME="centos:8"
 WORKDIR=/var/tmp/build/centos8
 WORK_BRANCH="develop"
 SRC_DIR=$( readlink -f $( dirname "$0" ) )
-DOCKER_SRCIPT="${SRC_DIR}/docker-script-centos8.sh"
+BUILD_SCRIPT="${SRC_DIR}/build-centos8-inner.sh"
 CHANGELOG_SCRIPT="${SRC_DIR}/changelog-deb2rpm.py"
 
 if type -p docker >/dev/null; then
@@ -46,13 +46,13 @@ pwd
 git switch "${WORK_BRANCH}"
 git branch
 
-if [[ ! -f "${DOCKER_SRCIPT}" ]] ; then
-    echo "File '${DOCKER_SRCIPT}' not found!"
+if [[ ! -f "${BUILD_SCRIPT}" ]] ; then
+    echo "File '${BUILD_SCRIPT}' not found!"
     exit 6
 fi
 
-cp -pv "${DOCKER_SRCIPT}" "docker-script"
-chmod -v 0755 "docker-script"
+cp -pv "${BUILD_SCRIPT}" "build-script"
+chmod -v 0755 "build-script"
 
 if [[ ! -f "${CHANGELOG_SCRIPT}" ]] ; then
     echo "File '${CHANGELOG_SCRIPT}' not found!"
@@ -62,6 +62,6 @@ fi
 cp -pv "${CHANGELOG_SCRIPT}" "changelog-deb2rpm"
 chmod -v 0755 "changelog-deb2rpm"
 
-docker run --hostname "$(hostname -f)" -v "${WORKDIR}":/work --workdir=/work/repo --entrypoint=./docker-script "${IMAGE_NAME}"
+docker run --hostname "$(hostname -f)" -v "${WORKDIR}":/work --workdir=/work/repo --entrypoint=./build-script "${IMAGE_NAME}"
 
 exit 0
