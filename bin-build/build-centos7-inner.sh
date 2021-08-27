@@ -45,6 +45,10 @@ yum --assumeyes install \
     tree \
     gettext
 
+
+echo "I want this bloody foolish package python36-babel!!!1!1!!"
+yum --assumeyes install python36-babel
+
 ls -l --color=always /bin/python* /bin/pip* || true
 pip2 list
 pip3 list
