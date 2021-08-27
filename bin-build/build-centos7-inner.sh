@@ -69,7 +69,7 @@ cat specs/fb_tools.el7.template.spec | \
     sed -e "s/@@@Version@@@/$PKG_VERSION/gi" \
         -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec
 
-python2 bin-build/changelog-deb2rpm debian/changelog >>specs/fb_tools.spec
+python2 bin-build/changelog-deb2rpm.py debian/changelog >>specs/fb_tools.spec
 
 rpmbuild -ba --nocheck --verbose \
     --define "_topdir $(pwd)/rpmdir" \
