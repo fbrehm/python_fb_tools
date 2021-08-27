@@ -8,37 +8,45 @@ whoami
 pwd
 echo
 locale -a
-dnf clean all && dnf makecache
-dnf --assumeyes install langpacks-en glibc-all-langpacks
+yum clean all && yum makecache
+
+for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do
+    echo "${l}.utf8"
+    localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"
+done
+
 locale -a
 locale
 export LC_ALL=en_US.utf8
 locale
-dnf --assumeyes install epel-release
-dnf makecache
-dnf --assumeyes upgrade
+yum --assumeyes install epel-release
+yum makecache
+yum --assumeyes upgrade
 
-dnf --assumeyes module enable python36
-dnf --assumeyes module enable python38
-
-dnf --assumeyes install \
-    python3-debian \
+yum --assumeyes install \
+    python \
+    python-devel \
+    python-pathlib \
+    python-debian \
+    python2-pip \
+    python-setuptools \
+    python-babel \
+    python-ipaddress \
+    python-six \
+    pytz \
     python36 \
-    python38 \
-    python38-setuptools \
-    python38-pip \
-    python38-devel \
-    python38-pytz \
-    python38-six \
-    python38-babel \
-    platform-python-devel \
+    python36-pip \
+    python36-devel \
+    python36-pytz \
+    python36-babel \
+    python36-six \
     gnupg2 \
     rpm-build \
     tree \
-    expect \
     gettext
 
 ls -l --color=always /bin/python* /bin/pip* || true
+pip2 list
 pip3 list
 
 echo "--------------------------------------"
@@ -57,24 +65,16 @@ cd rpmdir/SOURCES && tar cfz "fb_tools.${PKG_VERSION}.tar.gz" "python_fb_tools-$
 ls -lA --color=always
 cd "${ODIR}"
 
-cat specs/fb_tools.el8.template.spec | \
+cat specs/fb_tools.el7.template.spec | \
     sed -e "s/@@@Version@@@/$PKG_VERSION/gi" \
         -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec
 
-python3.6 bin-build/changelog-deb2rpm debian/changelog >>specs/fb_tools.spec
-
-echo
-echo "#################"
-echo "Creating $HOME/.rpmmacros"
-echo "%__python3 /bin/python3.8" >$HOME/.rpmmacros
-echo "%_signature gpg" >>$HOME/.rpmmacros
-echo "Generated $HOME/.rpmmacros:"
-cat $HOME/.rpmmacros
-echo
+python2 bin-build/changelog-deb2rpm debian/changelog >>specs/fb_tools.spec
 
 rpmbuild -ba --nocheck --verbose \
     --define "_topdir $(pwd)/rpmdir" \
     --define "version ${PKG_VERSION}" \
+    --define "python3_version_nodots 36" \
     specs/fb_tools.spec
 
 tree -aQpugs rpmdir/*RPMS || true
