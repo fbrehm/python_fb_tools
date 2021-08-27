@@ -61,7 +61,7 @@ cat specs/fb_tools.el8.spec.template | \
     sed -e "s/@@@Version@@@/$PKG_VERSION/gi" \
         -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec
 
-python3.6 changelog-deb2rpm debian/changelog >>specs/fb_tools.spec
+python3.6 bin-build/changelog-deb2rpm debian/changelog >>specs/fb_tools.spec
 
 echo
 echo "#################"
