@@ -20,6 +20,18 @@ locale
 export LC_ALL=en_US.utf8
 locale
 yum --assumeyes install epel-release
+
+# Because of python36-babel
+#     - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+cat > /etc/yum.repos.d/pixelpark.repo <<- EOF
+	[pixelpark]
+	name=pixelpark
+	baseurl=https://repo01.pixelpark.com/Linux/yum/pixelpark/7/
+	enabled=1
+	gpgcheck=1
+	gpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg
+	EOF
+
 yum makecache
 yum --assumeyes upgrade
 
@@ -46,8 +58,8 @@ yum --assumeyes install \
     gettext
 
 
-echo "I want this bloody foolish package python36-babel!!!1!1!!"
-yum --assumeyes install python36-babel
+# echo "I want this bloody foolish package python36-babel!!!1!1!!"
+# yum --assumeyes install python36-babel
 
 ls -l --color=always /bin/python* /bin/pip* || true
 pip2 list
