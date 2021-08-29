@@ -15,11 +15,40 @@ env:
 
 jobs:
 
-  test_python_3-9:
-
+  test_python_3-6:
     runs-on: ubuntu-latest
-    container: python:3.9
+    name: Testing with Python 3.6
+    container: python:3.6
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/prepare-debian-container
+      - uses: ./.github/actions/install-pip-modules
+      - uses: ./.github/actions/python-test
 
+  test_python_3-7:
+    runs-on: ubuntu-latest
+    name: Testing with Python 3.7
+    container: python:3.7
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/prepare-debian-container
+      - uses: ./.github/actions/install-pip-modules
+      - uses: ./.github/actions/python-test
+
+  test_python_3-8:
+    runs-on: ubuntu-latest
+    name: Testing with Python 3.8
+    container: python:3.8
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/prepare-debian-container
+      - uses: ./.github/actions/install-pip-modules
+      - uses: ./.github/actions/python-test
+
+  test_python_3-9:
+    runs-on: ubuntu-latest
+    name: Testing with Python 3.9
+    container: python:3.9
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/prepare-debian-container
