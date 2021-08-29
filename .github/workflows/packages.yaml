@@ -100,6 +100,12 @@ jobs:
       - linter
     steps:
       - uses: actions/checkout@v2
+      - name: "Caching .debian-version"
+        id: cache-debian-version
+        uses: actions/cache@v2
+        with:
+          path: .debian-version
+          key: build_debian_sources
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/debian-install-buildenv
       - name: Updating Changelog
@@ -125,14 +131,8 @@ jobs:
       - name: 'Upload Source Package'
         uses: actions/upload-artifact@v2
         with:
-          name: "build_debian_sources-${GITHUB_REF}"
+          name: build_debian_sources-${{ github.ref }}
           path: debian/pkgs/*/*
           retention-days: 15
-      - name: "Caching .debian-version"
-        id: cache-debian-version
-        uses: actions/cache@v2
-        with:
-          path: .debian-version
-          key: build_debian_sources
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
