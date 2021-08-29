@@ -80,10 +80,17 @@ jobs:
           pip list --format columns
       - name: Execute Flake 8
         run: |
-          echo -e "flake8 --max-line-length=${FLAKE8_MAX_LINE_LENGTH} --max-complexity=${FLAKE8_MAX_COMPLEXITY} --ignore=${FLAKE8_IGNORE_ERRORS} bin lib"
-          flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
+          flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH \
+                 --max-complexity=$FLAKE8_MAX_COMPLEXITY \
+                 --ignore=$FLAKE8_IGNORE_ERRORS bin lib
       - name: Execute Shellcheck
-        run: shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
+        run: shellcheck -x compile-xlate-msgs.sh \
+                           test.py-*.sh \
+                           test.rc \
+                           test/call_script.sh \
+                           test/call_sleep.sh \
+                           update-env.sh \
+                           xtract-xlate-msgs.sh
       - name: Execute Yamllint
         run: yamllint -c yamllint.yaml .gitlab-ci.yml
 
@@ -108,12 +115,17 @@ jobs:
           export PKG_RELEASE=$( ./get-debian-release )
           export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"
           BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
+          echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"
           debchange --newversion "${BUILD_VERSION}" --force-bad-version \
                     --distribution "${OS_CODENAME}" \
                     --urgency medium \
                     "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"
+          head -n 5 debian/changelog
       - name: Debian build
         run: |
+          cp -v debian/control-py3only debian/control
+          cp -v debian/rules-py3only debian/rules
+          echo '12' > debian/compat
           echo "y" | debuild -b -i -us -uc
           echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
           ls -lA --color=always ..
