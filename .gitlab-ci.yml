@@ -130,12 +130,12 @@ Linter:
 
 build Debian Sources:
   variables:
-    VERSION_PREFIX: 'deb10'
+    VERSION_PREFIX: 'deb11'
     DISTRIBUTOR: 'Debian'
-    OS_RELEASE: '10'
-    OS_CODENAME: 'buster'
+    OS_RELEASE: '11'
+    OS_CODENAME: 'bullseye'
   stage: build
-  image: debian:buster
+  image: debian:bullseye
   before_script:
     - hostname -f
     - whoami
@@ -150,9 +150,7 @@ build Debian Sources:
   script:
     - >
       apt install --yes --no-install-recommends
-      python-all python-argparse python-babel python-setuptools python-pathlib
-      python-pip python-six python-tz python3-all python3-babel python3-pip
-      python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
@@ -202,11 +200,11 @@ build binaries for Debian 10 Buster:
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
       lsb-release ca-certificates libdistro-info-perl
   script:
+    - 'echo "Setting debian/compat to 11"'
+    - 'echo "11" > debian/compat'
     - >
       apt install --yes --no-install-recommends
-      python-all python-argparse python-babel python-setuptools python-pathlib
-      python-pip python-six python-tz python3-all python3-babel python3-pip
-      python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
@@ -258,13 +256,9 @@ build binaries for Debian 11 Bullseye:
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
       lsb-release ca-certificates libdistro-info-perl
   script:
-    - cp -v debian/control-py3only debian/control
-    - cp -v debian/rules-py3only debian/rules
-    - echo '12' > debian/compat
     - >
       apt install --yes --no-install-recommends
-      python3-pip python3-all python3-babel python3-pip python3-toml
-      python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-toml python3-setuptools python3-six python3-tz dh-python
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
@@ -321,11 +315,11 @@ build binaries for Ubuntu 18.04 LTS Bionic Beaver:
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
       lsb-release ca-certificates libdistro-info-perl tzdata
   script:
+    - 'echo "Setting debian/compat to 11"'
+    - 'echo "11" > debian/compat'
     - >
       apt install --yes --no-install-recommends
-      python-all python-argparse python-babel python-setuptools python-pathlib
-      python-pip python-six python-tz python3-all python3-babel python3-pip
-      python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
@@ -382,9 +376,7 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
   script:
     - >
       apt install --yes --no-install-recommends
-      python-all python-argparse python-babel python-setuptools python-pathlib
-      python-pip python-six python-tz python3-all python3-babel python3-pip
-      python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
