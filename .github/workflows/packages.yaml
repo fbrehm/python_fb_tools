@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Update all packages
-        run: apt updates
+        run: apt update --yes
       - name: Install locales and gettext
         run: apt install --yes sudo locales gettext
       - name: Update Locales
