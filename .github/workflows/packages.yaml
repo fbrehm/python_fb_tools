@@ -45,7 +45,7 @@ jobs:
           fi
           locale-gen
           locale -a
-      - name: Install PIP modules:
+      - name: Install PIP modules
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt --upgrade --upgrade-strategy eager
