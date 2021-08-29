@@ -100,12 +100,6 @@ jobs:
       - linter
     steps:
       - uses: actions/checkout@v2
-      - name: "Caching .debian-version"
-        id: cache-debian-version
-        uses: actions/cache@v2
-        with:
-          path: .debian-version
-          key: build_debian_sources
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/debian-install-buildenv
       - name: Updating Changelog
@@ -132,6 +126,49 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: debian_sources
+          path: debian/pkgs/*/*
+          retention-days: 15
+
+  build_bin_debian-10:
+    runs-on: ubuntu-latest
+    name: Building Bin Packages for Debian 10
+    container: debian:buster
+    env:
+      VERSION_PREFIX: 'deb10'
+      DISTRIBUTOR: 'Debian'
+      OS_RELEASE: '10'
+      OS_CODENAME: 'buster'
+    needs:
+      - linter
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/prepare-debian-container
+      - uses: ./.github/actions/debian-install-buildenv
+      - name: Updating Changelog
+        run: |
+          export PKG_VERSION=$( ./get-debian-version )
+          export PKG_RELEASE=$( ./get-debian-release )
+          export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"
+          BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
+          echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"
+          debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"
+          head -n 5 debian/changelog
+      - name: Debian build
+        run: |
+          cp -v debian/control-py3only debian/control
+          cp -v debian/rules-py3only debian/rules
+          echo '11' > debian/compat
+          echo "y" | debuild -b -i -us -uc
+          echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
+          ls -lA --color=always ..
+          mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}
+          mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}
+          mv -vi ../*.build* debian/pkgs/src
+          ls -lA --color=always debian/pkgs/*/*
+      - name: 'Upload Source Package'
+        uses: actions/upload-artifact@v2
+        with:
+          name: debian_bin_pkgs_deb10
           path: debian/pkgs/*/*
           retention-days: 15
 
