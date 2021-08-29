@@ -3,7 +3,7 @@
 name: "Building OS packages."
 
 on:
-  pull:
+  push:
     branches-ignore:
       - /^dev-.*$/
       - /^dev\/.*$/
