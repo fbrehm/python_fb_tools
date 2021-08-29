@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     container: python:3.9
     env:
+      DEBFULLNAME: 'Frank Brehm'
+      DEBEMAIL: 'frank@brehm-online.com'
 
     steps:
       - uses: actions/checkout@v2
