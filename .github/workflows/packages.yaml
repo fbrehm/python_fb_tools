@@ -103,15 +103,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/debian-install-buildenv
-      - name: Updating Changelog
-        run: |
-          export PKG_VERSION=$( ./get-debian-version )
-          export PKG_RELEASE=$( ./get-debian-release )
-          export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"
-          BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
-          echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"
-          debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"
-          head -n 5 debian/changelog
       - name: Debian build
         run: |
           cp -v debian/control-py3only debian/control
