@@ -10,6 +10,8 @@ runs:
         PKGLIST="sudo locales gettext build-essential"
         PKGLIST+=" devscripts fakeroot debhelper automake autotools-dev pkg-config help2man"
         PKGLIST+=" lsb-release ca-certificates libdistro-info-perl"
+        PKGLIST+=" python3-all python3-babel python3-pip python3-setuptools"
+        PKGLIST+=" python3-six python3-tz dh-python"
         apt install --yes --no-install-recommends ${PKGLIST}
 
 
