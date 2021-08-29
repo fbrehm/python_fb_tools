@@ -2,9 +2,6 @@
 
 set -e
 set -u
-# set -x
-
-YUM_REPO_GPG_ID='C0E73F70'
 
 hostname -f
 whoami
@@ -60,18 +57,17 @@ cd rpmdir/SOURCES && tar cfz "fb_tools.${PKG_VERSION}.tar.gz" "python_fb_tools-$
 ls -lA --color=always
 cd "${ODIR}"
 
-cat specs/fb_tools.el8.spec.template | \
+cat specs/fb_tools.el8.template.spec | \
     sed -e "s/@@@Version@@@/$PKG_VERSION/gi" \
         -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec
 
-python3.6 changelog-deb2rpm debian/changelog >>specs/fb_tools.spec
+python3.6 bin-build/changelog-deb2rpm.py debian/changelog >>specs/fb_tools.spec
 
 echo
 echo "#################"
 echo "Creating $HOME/.rpmmacros"
 echo "%__python3 /bin/python3.8" >$HOME/.rpmmacros
 echo "%_signature gpg" >>$HOME/.rpmmacros
-echo "%_gpg_name ${YUM_REPO_GPG_ID}" >>$HOME/.rpmmacros
 echo "Generated $HOME/.rpmmacros:"
 cat $HOME/.rpmmacros
 echo
