@@ -122,5 +122,17 @@ jobs:
           mkdir -pv debian/pkgs/src
           mv -vi ../*.dsc ../*.tar.* ../*.build* ../*.changes debian/pkgs/src
           ls -lA --color=always debian/pkgs/*/*
+      - name: 'Upload Source Package'
+        uses: actions/upload-artifact@v2
+        with:
+          name: "build_debian_sources-${GITHUB_REF}"
+          path: debian/pkgs/*/*
+          retention-days: 15
+      - name: "Caching .debian-version"
+        id: cache-debian-version
+        uses: actions/cache@v2
+        with:
+          path: .debian-version
+          key: build_debian_sources
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
