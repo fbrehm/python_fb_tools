@@ -7,9 +7,10 @@ runs:
       id: install-debian-build-pkgs
       shell: bash
       run: |
-        apt install --yes --no-install-recommends sudo locales gettext build-essential \
-          devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
-          lsb-release ca-certificates libdistro-info-perl
+        PKGLIST="sudo locales gettext build-essential"
+        PKGLIST+=" devscripts fakeroot debhelper automake autotools-dev pkg-config help2man"
+        PKGLIST+=" lsb-release ca-certificates libdistro-info-perl"
+        apt install --yes --no-install-recommends ${PKGLIST}
 
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
