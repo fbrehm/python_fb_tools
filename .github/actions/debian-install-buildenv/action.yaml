@@ -1,0 +1,15 @@
+---
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Debian Build Environment
+      id: install-debian-build-pkgs
+      shell: bash
+      run: |
+        apt install --yes --no-install-recommends sudo locales gettext build-essential \
+          devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+          lsb-release ca-certificates libdistro-info-perl
+
+
+# vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list

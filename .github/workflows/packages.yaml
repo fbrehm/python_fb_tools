@@ -12,9 +12,6 @@ on:
 env:
   DEBFULLNAME: 'Frank Brehm'
   DEBEMAIL: 'frank@brehm-online.com'
-  FLAKE8_MAX_LINE_LENGTH: 99
-  FLAKE8_MAX_COMPLEXITY: 20
-  FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
 
 jobs:
 
@@ -62,6 +59,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Executing Linters
     container: python:3.9
+    env:
+      FLAKE8_MAX_LINE_LENGTH: 99
+      FLAKE8_MAX_COMPLEXITY: 20
+      FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
     needs:
       - test_python_3-6
       - test_python_3-7
@@ -85,5 +86,20 @@ jobs:
         run: shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
       - name: Execute Yamllint
         run: yamllint -c yamllint.yaml .gitlab-ci.yml
+
+  build_debian_sources:
+    runs-on: ubuntu-latest
+    name: Building Debian Source Packages
+    container: debian:bullseye
+    env:
+      VERSION_PREFIX: 'deb11'
+      DISTRIBUTOR: 'Debian'
+      OS_RELEASE: '11'
+      OS_CODENAME: 'bullseye'
+    needs:
+      - linter
+      - uses: ./.github/actions/prepare-debian-container
+      - uses: ./.github/actions/debian-install-buildenv
+
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
