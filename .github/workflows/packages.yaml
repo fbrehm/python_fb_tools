@@ -15,13 +15,23 @@ jobs:
 
     runs-on: ubuntu-latest
     container: python:3.9
+    env:
 
     steps:
       - uses: actions/checkout@v2
-      - run: hostname -f
-      - run: whoami
-      - run: pwd
+      - run: locale -a
+      - run: apt update && apt install --yes sudo locales gettext
       - run: ls -lA --color=always
+      - run: if test -f /etc/locale.gen; then echo "/etc/locale.gen:"; grep -P -v '^\s*(#.*)?$' /etc/locale.gen || true; echo "<-- EOF"; fi
+      - run: if grep 'en_US.UTF-8' /etc/locale.gen; then sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen; fi
+      - run: if grep 'de_DE.UTF-8' /etc/locale.gen; then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen ; else echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen; fi
+      - run: locale-gen
+      - run: locale -a
+      - run: pip install --upgrade pip
+      - run: pip install -r requirements.txt --upgrade --upgrade-strategy eager
+      - run: pip install --upgrade --upgrade-strategy eager pytest
+      - run: pip list --format columns
+      - run: pytest --verbose
 
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
