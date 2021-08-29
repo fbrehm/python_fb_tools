@@ -12,6 +12,9 @@ on:
 env:
   DEBFULLNAME: 'Frank Brehm'
   DEBEMAIL: 'frank@brehm-online.com'
+  FLAKE8_MAX_LINE_LENGTH: 99
+  FLAKE8_MAX_COMPLEXITY: 20
+  FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
 
 jobs:
 
@@ -54,5 +57,31 @@ jobs:
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/install-pip-modules
       - uses: ./.github/actions/python-test
+
+  linter:
+    runs-on: ubuntu-latest
+    name: Executing Linters
+    container: python:3.9
+    needs:
+      - test_python_3-6
+      - test_python_3-7
+      - test_python_3-8
+      - test_python_3-9
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/prepare-debian-container
+      - uses: ./.github/actions/install-pip-modules
+      - name: Install shellcheck and yamllint
+        run: apt install --yes shellcheck yamllint
+      - name: Install flake8 and pylint
+        run: |
+          pip install --upgrade --upgrade-strategy eager flake8 pylint
+          pip list --format columns
+      - name: Execute Flake 8
+        run: flake8 --max-line-length==$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
+      - name: Execute Shellcheck
+        run: shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
+      - name: Execute Yamllint
+        run: yamllint -c yamllint.yaml .gitlab-ci.yml
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
