@@ -116,7 +116,7 @@ jobs:
           cp -v debian/control-py3only debian/control
           cp -v debian/rules-py3only debian/rules
           echo '12' > debian/compat
-          echo "y" | debuild -b -i -us -uc
+          echo "y" | debuild -S -i -us -uc
           echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
           ls -lA --color=always ..
           mkdir -pv debian/pkgs/src
