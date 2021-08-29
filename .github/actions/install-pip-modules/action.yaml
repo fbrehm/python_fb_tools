@@ -7,11 +7,7 @@ runs:
       id: install-pip-modules
       shell: bash
       run: |
-        pip install --upgrade --upgrade-strategy eager pytest
-        pip list --format columns
-    - name: Executing PyTest
-      id: pytest
-      shell: bash
-      run: pytest --verbose
+        pip install --upgrade pip
+        pip install -r requirements.txt --upgrade --upgrade-strategy eager
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
