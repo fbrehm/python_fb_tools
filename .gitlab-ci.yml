@@ -4,6 +4,7 @@ stages:
   - test
   - linter
   - build
+  - sign
   - deploy
   - notify
 
@@ -552,6 +553,94 @@ build CentOS 8 with Python 3.8:
     - /^hf.*$/
     - tags
 
+Sign EL 7 packages:
+  stage: sign
+  image: centos:7
+  needs:
+    - 'build CentOS 7 with Python 3.6'
+  dependencies:
+    - 'build CentOS 7 with Python 3.6'
+  before_script:
+    - yum clean all && yum makecache
+    - 'for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
+    - locale -a
+    - locale
+    - 'export LC_ALL=en_US.utf8'
+    - locale
+    - yum --assumeyes install epel-release
+    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
+    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+    - yum makecache
+    - yum --assumeyes upgrade
+    - yum --assumeyes install rpm-sign
+  script:
+     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+     - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
+     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+     - gpg --list-public-keys
+     - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
+     - gpg --list-secret-keys
+     - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
+     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - rpmdir/RPMS/*/*.rpm
+      - rpmdir/SRPMS/*.src.rpm
+    expire_in: '1 week'
+  tags:
+    - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
+Sign EL 8 packages:
+  stage: sign
+  image: centos:7
+  needs:
+    - 'build CentOS 8 with Python 3.8'
+  dependencies:
+    - 'build CentOS 8 with Python 3.8'
+  before_script:
+    - yum clean all && yum makecache
+    - 'for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
+    - locale -a
+    - locale
+    - 'export LC_ALL=en_US.utf8'
+    - locale
+    - yum --assumeyes install epel-release
+    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
+    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+    - yum makecache
+    - yum --assumeyes upgrade
+    - yum --assumeyes install rpm-sign
+  script:
+     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+     - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
+     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+     - gpg --list-public-keys
+     - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
+     - gpg --list-secret-keys
+     - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
+     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - rpmdir/RPMS/*/*.rpm
+      - rpmdir/SRPMS/*.src.rpm
+    expire_in: '1 week'
+  tags:
+    - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
 Deploy packages Debian and Ubuntu:
   stage: deploy
   tags:
@@ -600,7 +689,7 @@ Deploy packages EL7:
   environment:
     name: production
   dependencies:
-    - 'build CentOS 7 with Python 3.6'
+    - 'Sign EL 7 packages'
   only:
     - master
   when: manual
@@ -627,7 +716,7 @@ Deploy packages EL8:
   environment:
     name: production
   dependencies:
-    - 'build CentOS 8 with Python 3.8'
+    - 'Sign EL 8 packages'
   only:
     - master
   when: manual
@@ -652,4 +741,4 @@ Notify Error:
     - master
     - develop
 
-# vim: ts=2 et
+# vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
