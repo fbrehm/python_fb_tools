@@ -132,7 +132,7 @@ jobs:
 
   build_bin_debian-10:
     runs-on: ubuntu-latest
-    name: Build Bin Pkgs for Debian 10
+    name: Build Bin Pkgs for Debian 10 Buster
     container: debian:buster
     env:
       VERSION_PREFIX: 'deb10'
@@ -175,7 +175,7 @@ jobs:
 
   build_bin_debian-11:
     runs-on: ubuntu-latest
-    name: Build Bin Pkgs for Debian 11
+    name: Build Bin Pkgs for Debian 11 Bullseye
     container: debian:bullseye
     env:
       VERSION_PREFIX: 'deb11'
@@ -212,7 +212,7 @@ jobs:
       - name: 'Upload Source Package'
         uses: actions/upload-artifact@v2
         with:
-          name: debian_bin_pkgs_deb10
+          name: debian_bin_pkgs_deb11
           path: debian/pkgs/*/*
           retention-days: 15
 
