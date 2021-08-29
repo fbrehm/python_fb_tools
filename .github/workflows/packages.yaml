@@ -79,18 +79,19 @@ jobs:
           pip install --upgrade --upgrade-strategy eager flake8 pylint
           pip list --format columns
       - name: Execute Flake 8
-        run: |
-          flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH \
-                 --max-complexity=$FLAKE8_MAX_COMPLEXITY \
+        run: >
+          flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH
+                 --max-complexity=$FLAKE8_MAX_COMPLEXITY
                  --ignore=$FLAKE8_IGNORE_ERRORS bin lib
       - name: Execute Shellcheck
-        run: shellcheck -x compile-xlate-msgs.sh \
-                           test.py-*.sh \
-                           test.rc \
-                           test/call_script.sh \
-                           test/call_sleep.sh \
-                           update-env.sh \
-                           xtract-xlate-msgs.sh
+        run: >
+          shellcheck -x compile-xlate-msgs.sh
+                        test.py-*.sh
+                        test.rc
+                        test/call_script.sh
+                        test/call_sleep.sh
+                        update-env.sh
+                        xtract-xlate-msgs.sh
       - name: Execute Yamllint
         run: yamllint -c yamllint.yaml .gitlab-ci.yml
 
@@ -109,20 +110,22 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/debian-install-buildenv
-      - name: Updating Changelog
+      - name: Preparing Update Changelog
         run: |
           export PKG_VERSION=$( ./get-debian-version )
           export PKG_RELEASE=$( ./get-debian-release )
           export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"
           BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
           echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"
-          debchange --newversion "${BUILD_VERSION}" --force-bad-version \
-                    --distribution "${OS_CODENAME}" \
-                    --urgency medium \
+      - name: Updating Changelog
+        run: >
+          debchange --newversion "${BUILD_VERSION}" --force-bad-version
+                    --distribution "${OS_CODENAME}"
+                    --urgency medium
                     "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"
-          head -n 5 debian/changelog
       - name: Debian build
         run: |
+          head -n 5 debian/changelog
           cp -v debian/control-py3only debian/control
           cp -v debian/rules-py3only debian/rules
           echo '12' > debian/compat
