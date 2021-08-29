@@ -131,7 +131,7 @@ jobs:
       - name: 'Upload Source Package'
         uses: actions/upload-artifact@v2
         with:
-          name: build_debian_sources-${{ github.ref }}
+          name: debian_sources
           path: debian/pkgs/*/*
           retention-days: 15
 
