@@ -1,0 +1,27 @@
+---
+
+name: "Building OS packages."
+
+on:
+  pull:
+    branches-ignore:
+      - /^dev-.*$/
+      - /^dev\/.*$/
+      - /^hf.*$/
+
+jobs:
+
+  test-python3.9:
+
+    runs-on: ubuntu-latest
+    container: python:3.9
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: hostname -f
+      - run: whoami
+      - run: pwd
+      - run: ls -lA --color=always
+
+
+# vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
