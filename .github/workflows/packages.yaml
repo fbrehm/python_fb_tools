@@ -105,8 +105,6 @@ jobs:
       - uses: ./.github/actions/debian-install-buildenv
       - name: Debian build
         run: |
-          cp -v debian/control-py3only debian/control
-          cp -v debian/rules-py3only debian/rules
           echo "y" | debuild -S -i -us -uc
           echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
           ls -lA --color=always ..
@@ -146,8 +144,7 @@ jobs:
           head -n 5 debian/changelog
       - name: Debian build
         run: |
-          cp -v debian/control-py3only debian/control
-          cp -v debian/rules-py3only debian/rules
+          echo "Setting debian/compat to 11"
           echo '11' > debian/compat
           echo "y" | debuild -b -i -us -uc
           echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
@@ -189,8 +186,6 @@ jobs:
           head -n 5 debian/changelog
       - name: Debian build
         run: |
-          cp -v debian/control-py3only debian/control
-          cp -v debian/rules-py3only debian/rules
           echo "y" | debuild -b -i -us -uc
           echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
           ls -lA --color=always ..
@@ -236,8 +231,7 @@ jobs:
           head -n 5 debian/changelog
       - name: Debian build
         run: |
-          cp -v debian/control-py3only debian/control
-          cp -v debian/rules-py3only debian/rules
+          echo "Setting debian/compat to 11"
           echo '11' > debian/compat
           echo "y" | debuild -b -i -us -uc
           echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
@@ -284,8 +278,6 @@ jobs:
           head -n 5 debian/changelog
       - name: Debian build
         run: |
-          cp -v debian/control-py3only debian/control
-          cp -v debian/rules-py3only debian/rules
           echo "y" | debuild -b -i -us -uc
           echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
           ls -lA --color=always ..
