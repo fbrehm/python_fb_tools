@@ -218,8 +218,8 @@ jobs:
 
   build_bin_ubuntu_18-04:
     runs-on: ubuntu-latest
-    name: Build Bin Pkgs for Ubuntu 18.04
-    container: bionic
+    name: Build Bin Pkgs for Ubuntu 18.04 LTS Bionic Beaver
+    container: ubuntu:bionic
     env:
       VERSION_PREFIX: 'ubuntu18.04'
       DISTRIBUTOR: 'Ubuntu'
@@ -266,8 +266,8 @@ jobs:
 
   build_bin_ubuntu_20-04:
     runs-on: ubuntu-latest
-    name: Build Bin Pkgs for Ubuntu 20.04
-    container: bionic
+    name: Build Bin Pkgs for Ubuntu 20.04 LTS Focal Fossa
+    container: ubuntu:focal
     env:
       VERSION_PREFIX: 'ubuntu20.04'
       DISTRIBUTOR: 'Ubuntu'

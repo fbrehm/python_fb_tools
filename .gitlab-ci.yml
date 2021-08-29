@@ -364,7 +364,7 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
     OS_RELEASE: '20.04'
     OS_CODENAME: 'focal'
   stage: build
-  image: ubuntu:bionic
+  image: ubuntu:focal
   before_script:
     - hostname -f
     - whoami
