@@ -564,13 +564,13 @@ Sign EL 7 packages:
     - yum clean all && yum makecache
     - 'for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
     - locale -a
-    - locale
+    # - locale
     - 'export LC_ALL=en_US.utf8'
     - locale
-    - yum --assumeyes install epel-release
-    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
-    - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
-    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+    # - yum --assumeyes install epel-release
+    # - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    # - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
+    # - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
     - yum makecache
     - yum --assumeyes upgrade
     - yum --assumeyes install rpm-sign
@@ -608,13 +608,13 @@ Sign EL 8 packages:
     - yum clean all && yum makecache
     - 'for l in de_AT de_CH de_DE en_CA en_GB en_IE en_IN en_US ; do echo "${l}.utf8"; localedef --charmap UTF-8 --inputfile "${l}" "${l}.utf8"; done'
     - locale -a
-    - locale
+    # - locale
     - 'export LC_ALL=en_US.utf8'
     - locale
-    - yum --assumeyes install epel-release
-    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
-    - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
-    - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
+    # - yum --assumeyes install epel-release
+    # - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    # - 'echo -e "YUM_REPO_DIR_HTTP: ${YUM_REPO_DIR_HTTP}"'
+    # - 'echo -e "[pixelpark]\nname=pixelpark\nbaseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/7/\nenabled=1\ngpgcheck=1\ngpgkey=https://repo01.pixelpark.com/gpg/pixelpark.gpg" > /etc/yum.repos.d/pixelpark.repo'
     - yum makecache
     - yum --assumeyes upgrade
     - yum --assumeyes install rpm-sign
