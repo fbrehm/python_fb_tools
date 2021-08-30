@@ -119,7 +119,7 @@ Linter:
     - flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
     - 'echo; echo -e "shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh"'
     - shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
-    - 'echo; echo -e "yamllint -c yamllint.yaml .gitlab-ci.yml"'
+    - 'echo; echo -e "yamllint -c yamllint.yaml .gitlab-ci.yml .github"'
     - yamllint -c yamllint.yaml .gitlab-ci.yml
   tags:
     - docker
@@ -575,14 +575,14 @@ Sign EL 7 packages:
     - yum --assumeyes upgrade
     - yum --assumeyes install rpm-sign
   script:
-     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
-     - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
-     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
-     - gpg --list-public-keys
-     - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
-     - gpg --list-secret-keys
-     - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
-     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
+    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
+    - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+    - gpg --list-public-keys
+    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
+    - gpg --list-secret-keys
+    - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
@@ -619,14 +619,14 @@ Sign EL 8 packages:
     - yum --assumeyes upgrade
     - yum --assumeyes install rpm-sign
   script:
-     - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
-     - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
-     - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
-     - gpg --list-public-keys
-     - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
-     - gpg --list-secret-keys
-     - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
-     - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
+    - ls -lA rpmdir/RPMS/*/* rpmdir/SRPMS/*
+    - 'echo -e "%_signature gpg\n%_gpg_name ${YUM_REPO_GPG_ID}" >$HOME/.rpmmacros'
+    - echo "$YUM_REPO_GPG_KEY_PUB" | gpg --import
+    - gpg --list-public-keys
+    - echo "$YUM_REPO_GPG_KEY_SEC" | gpg --import
+    - gpg --list-secret-keys
+    - 'for f in $( find rpmdir -type f -iname "*.rpm" ) ; do echo "Signing ${f} ..."; ./rpm-addsign-wrapper.expect "${f}" "${YUM_REPO_GPG_PASSWD}"; done'
+    - 'echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version'
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
