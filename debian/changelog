@@ -1,3 +1,16 @@
+fb-tools (1.8.0) UNRELEASED; urgency=medium
+
+  * Adding bin-build/changelog-deb2rpm.py for converting Debian
+    changelog to spec format
+  * Removing Python 2 support
+  * Removing support for Debian 9 and for Ubuntu 16.04
+  * Moving some build functionality from .gitlab-ci.yml into separate
+    scripts
+  * Adding Github workflow and Github actions for building packages
+  * Setting debian/compat to 12
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 30 Aug 2021 18:43:21 +0200
+
 fb-tools (1.7.6) all; urgency=medium
 
   * Adding Build for Debian 11 bullseye
