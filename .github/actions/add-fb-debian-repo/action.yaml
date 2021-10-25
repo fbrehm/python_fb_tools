@@ -56,6 +56,9 @@ runs:
         KEY_URL="${URL}${REPO_SERVER}${ROOT_PATH}${GPG_KEY_PATH}"
         URL+="${REPO_SERVER}${ROOT_PATH}${VENDOR}/${DISTRO}"
         echo
+        echo "Updating APT ..."
+        apt update --yes
+        echo
         echo "Installing necessary packages ..."
         apt install --yes --no-install-recommends curl gpg
         echo
@@ -67,5 +70,9 @@ runs:
         echo
         echo "Content of /etc/apt/sources.list.d/fbrehm.list:"
         cat /etc/apt/sources.list.d/fbrehm.list
+        echo
+        echo "Updating APT again ..."
+        apt update --yes
+        echo
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
