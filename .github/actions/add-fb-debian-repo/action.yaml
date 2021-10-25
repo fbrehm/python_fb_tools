@@ -56,6 +56,9 @@ runs:
         KEY_URL="${URL}${REPO_SERVER}${ROOT_PATH}${GPG_KEY_PATH}"
         URL+="${REPO_SERVER}${ROOT_PATH}${VENDOR}/${DISTRO}"
         echo
+        echo "Installing necessary packages ..."
+        apt install --yes --no-install-recommends curl gpg
+        echo
         echo "Importing GPG key from '${KEY_URL}' ..."
         curl "${KEY_URL}" | apt-key add -
         echo
