@@ -1,0 +1,57 @@
+---
+
+name: Adding Debian repo definitions of Frank Brehm
+author: Frank Brehm
+description: Adding Debian repository definitions for the Repo server of Frank Brehm
+inputs:
+  use_https:
+    description: Use HTTPS instead of HTTP as the URL schema.
+    required: false
+    default: false
+  repo_server:
+    description: The FQDN of the repository server.
+    required: false
+    default: repo.uhu-banane.de
+  root_path:
+    description: The root path on the repository server.
+    required: false
+    default: /
+  vendor:
+    description: The main Debian vendor (Debian or Ubuntu).
+    required: true
+  distro:
+    description: The distribution of the vendor (buster, focal, bullshead a.s.o.)
+    required: true
+  suite:
+    description: The suite of the distribution
+    required: false
+    default: '/.'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Creating sources.list
+      shell: bash
+      env:
+        USE_HTTPS: ${{ inputs.use_https }}
+        REPO_SERVER: ${{ inputs.repo_server }}
+        ROOT_PATH: ${{ inputs.root_path }}
+        VENDOR: ${{ inputs.vendor }}
+        DISTRO: ${{ inputs.distro }}
+        SUITE: ${{ inputs.suite }}
+      run: |
+        if [[ ! -d /etc/apt/sources.list.d/ ]] ; then
+            echo "Directory '/etc/apt/sources.list.d' not found or is not a directory." >&2
+            exit 5
+        fi
+        URL="https://"
+        if [[ "${USE_HTTPS}" == false ]] ; then
+            URL="http://"
+        fi
+        URL+="${REPO_SERVER}${ROOT_PATH}${VENDOR}/${DISTRO}"
+        echo "deb	${URL}		${SUITE}" >/etc/apt/sources.list.d/fbrehm.list
+        echo
+        echo "Content of /etc/apt/sources.list.d/fbrehm.list:"
+        cat /etc/apt/sources.list.d/fbrehm.list
+
+# vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
