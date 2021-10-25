@@ -21,12 +21,7 @@ except ImportError:
     import unittest
 
 # Own modules
-HAS_COLORED_LOGGING = False
-try:
-    from pb_logging.colored import ColoredFormatter
-    HAS_COLORED_LOGGING = True
-except ImportError:
-    pass
+from fb_logging.colored import ColoredFormatter
 
 # =============================================================================
 
@@ -66,10 +61,7 @@ def init_root_logger(verbose=0):
             format_str += '%(name)s '
     format_str += '%(levelname)s - %(message)s'
     formatter = None
-    if HAS_COLORED_LOGGING:
-        formatter = ColoredFormatter(format_str)
-    else:
-        formatter = Formatter(format_str)
+    formatter = ColoredFormatter(format_str)
 
     # create log handler for console output
     lh_console = logging.StreamHandler(sys.stderr)
