@@ -19,7 +19,7 @@ inputs:
   gpg_key_path:
     description: The path to the GPG key of the repository on the repo server.
     required: false
-    default: public/repo.uhu-banane.de.gpg-key2.pub
+    default: public/repo.uhu-banane.de.gpg-key2.asc
   vendor:
     description: The main Debian vendor (Debian or Ubuntu).
     required: true
@@ -60,10 +60,12 @@ runs:
         apt update --yes
         echo
         echo "Installing necessary packages ..."
-        apt install --yes --no-install-recommends curl gpg
+        apt install --yes --no-install-recommends curl
         echo
         echo "Importing GPG key from '${KEY_URL}' ..."
-        curl "${KEY_URL}" | apt-key add -
+        mkdir --verbose --parents /etc/apt/trusted.gpg.d
+        curl --silent "${KEY_URL}" >/etc/apt/trusted.gpg.d/${REPO_SERVER}.keyring.asc
+        ls -l --color=always /etc/apt/trusted.gpg.d/
         echo
         echo "Creating '/etc/apt/sources.list.d/fbrehm.list' ..."
         echo "deb	${URL}		${SUITE}" >/etc/apt/sources.list.d/fbrehm.list
