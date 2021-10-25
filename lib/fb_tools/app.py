@@ -27,14 +27,14 @@ except ImportError:
     from pathlib2 import Path
 
 # Own modules
+from fb_logging.colored import ColoredFormatter
+
 from . import __version__ as __pkg_version__
 
 from .errors import FbAppError
 from .errors import FunctionNotImplementedError
 
 from .common import terminal_can_colors
-
-from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 

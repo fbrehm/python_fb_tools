@@ -24,11 +24,11 @@ except ImportError:
 from six.moves.urllib.parse import quote
 
 # Own modules
+from fb_logging.colored import ColoredFormatter
+
 from .. import __version__ as GLOBAL_VERSION
 
 from ..xlate import XLATOR, format_list
-
-from ..colored import ColoredFormatter
 
 from . import BaseDdnsApplication, WorkDirError
 from . import WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
