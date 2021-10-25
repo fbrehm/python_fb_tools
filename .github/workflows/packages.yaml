@@ -123,7 +123,7 @@ jobs:
   build_debian_bin:
     runs-on: ubuntu-latest
     name: Building Debian Binary Packages
-    # if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
     needs:
       - linter
     strategy:
@@ -246,6 +246,12 @@ jobs:
       - name: Show results
         shell: bash
         run: ls -l --color=always dist/
+      - name: 'Upload Python Package'
+        uses: actions/upload-artifact@v2
+        with:
+          name: python_pkgs
+          path: dist/*
+          retention-days: 8
 
   notify_success:
     runs-on: ubuntu-latest
