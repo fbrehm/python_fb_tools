@@ -123,7 +123,7 @@ jobs:
   build_debian_bin:
     runs-on: ubuntu-latest
     name: Building Debian Binary Packages
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
+    # if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
     needs:
       - linter
     strategy:
@@ -198,6 +198,7 @@ jobs:
   deploy_to_pypi:
     runs-on: ubuntu-latest
     name: "Deployment of the Python package to PyPi"
+    container: debian:bullseye
     needs:
       - linter
       # - 'build_debian_sources'
@@ -253,7 +254,7 @@ jobs:
       - 'build_debian_sources'
       - 'build_debian_bin'
       # - 'build_rpm'
-      # - 'deploy_to_pypi'
+      - 'deploy_to_pypi'
     steps:
       - name: Sending message
         uses: dawidd6/action-send-mail@v2
