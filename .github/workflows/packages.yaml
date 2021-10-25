@@ -5,57 +5,48 @@ name: "Building OS packages."
 # yamllint disable-line rule:truthy
 on:
   push:
-    branches-ignore:
-      - /^dev-.*$/
-      - /^dev\/.*$/
-      - /^hf.*$/
+    branches:
+      - '**'
+      - '!dev-**'
+      - '!dev/**'
+      - '!hf**'
+      - '!old**'
+    tags:
+      - '**'
 
 env:
   DEBFULLNAME: 'Frank Brehm'
   DEBEMAIL: 'frank@brehm-online.com'
+  GITREF: ${{ github.ref }}
+  NOTIFY_ADDRESS: 'frank@brehm-online.com,frank.brehm@pixelpark.com'
+  PKG_NAME: 'fb_tools'
+  SENDER_ADDRESS: 'Frank Brehm <frank@brehm-online.com>'
+  SMTP_SERVER_ADDRESS: 'mail.uhu-banane.net'
+  SMTP_SERVER_PORT: 587
   USED_TIMEZONE: 'Europe/Berlin'
 
 jobs:
 
-  test_python_3-6:
+  test:
     runs-on: ubuntu-latest
-    name: Testing with Python 3.6
-    container: python:3.6
+    name: Executing Python tests
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version: [ '3.6', '3.7', '3.8', '3.9', '3.10' ]
+    container: python:${{ matrix.python_version }}
     steps:
       - uses: actions/checkout@v2
+      - name: Show Environment
+        run: python --version
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/install-pip-modules
-      - uses: ./.github/actions/python-test
-
-  test_python_3-7:
-    runs-on: ubuntu-latest
-    name: Testing with Python 3.7
-    container: python:3.7
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/prepare-debian-container
-      - uses: ./.github/actions/install-pip-modules
-      - uses: ./.github/actions/python-test
-
-  test_python_3-8:
-    runs-on: ubuntu-latest
-    name: Testing with Python 3.8
-    container: python:3.8
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/prepare-debian-container
-      - uses: ./.github/actions/install-pip-modules
-      - uses: ./.github/actions/python-test
-
-  test_python_3-9:
-    runs-on: ubuntu-latest
-    name: Testing with Python 3.9
-    container: python:3.9
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/prepare-debian-container
-      - uses: ./.github/actions/install-pip-modules
-      - uses: ./.github/actions/python-test
+      - name: Install PyTest with pip
+        run: |
+          pip install --upgrade --upgrade-strategy eager pytest
+          pip list --format columns
+      - name: Executing PyTest
+        run: pytest --verbose
 
   linter:
     runs-on: ubuntu-latest
@@ -66,48 +57,63 @@ jobs:
       FLAKE8_MAX_COMPLEXITY: 20
       FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
     needs:
-      - test_python_3-6
-      - test_python_3-7
-      - test_python_3-8
-      - test_python_3-9
+      - test
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/install-pip-modules
       - name: Install shellcheck and yamllint
+        shell: bash
         run: apt install --yes shellcheck yamllint
       - name: Install flake8 and pylint
+        shell: bash
         run: |
           pip install --upgrade --upgrade-strategy eager flake8 pylint
           pip list --format columns
+      - name: "Checking module version against tag."
+        shell: bash
+        run: |
+          MODULE_VERSION=$( cat lib/fb_tools/__init__.py | grep -P '^__version__(\s|=)' | sed -e "s/^[^'\"]*['\"]//"  -e "s/['\"][ 	]*\$//" )
+          echo "Module version: '${MODULE_VERSION}'"
+          if echo "${GITREF}" | grep -q -P '^refs/tags/' ; then
+              TAG_VERSION=$( echo "${GITREF}" | sed -e 's|^refs/tags/||' )
+              if [[ "${MODULE_VERSION}" == "${TAG_VERSION}" ]] ; then
+                  echo "Tag and module version '${TAG_VERSION}' are okay."
+              else
+                  echo "Tag '${TAG_VERSION}' does not match module version '${MODULE_VERSION}'" >&2
+                  exit 5
+              fi
+          fi
       - name: Execute Flake 8
+        shell: bash
         run: |
           flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
       - name: Execute Shellcheck
+        shell: bash
         run: >
           shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
       - name: Execute Yamllint
+        shell: bash
         run: yamllint -c yamllint.yaml .gitlab-ci.yml
 
   build_debian_sources:
     runs-on: ubuntu-latest
     name: Building Debian Source Packages
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
     container: debian:bullseye
-    env:
-      VERSION_PREFIX: 'deb11'
-      DISTRIBUTOR: 'Debian'
-      OS_RELEASE: '11'
-      OS_CODENAME: 'bullseye'
     needs:
       - linter
     steps:
       - uses: actions/checkout@v2
+      - uses: ./.github/actions/add-fb-debian-repo
+        with:
+          vendor: Debian
+          distro: bullseye
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/debian-install-buildenv
       - name: Debian build
         run: |
           echo "y" | debuild -S -i -us -uc
-          echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
           ls -lA --color=always ..
           mkdir -pv debian/pkgs/src
           mv -vi ../*.dsc ../*.tar.* ../*.build* ../*.changes debian/pkgs/src
@@ -119,178 +125,172 @@ jobs:
           path: debian/pkgs/*/*
           retention-days: 15
 
-  build_bin_debian-10:
+  build_debian_bin:
     runs-on: ubuntu-latest
-    name: Build Bin Pkgs for Debian 10 Buster
-    container: debian:buster
-    env:
-      VERSION_PREFIX: 'deb10'
-      DISTRIBUTOR: 'Debian'
-      OS_RELEASE: '10'
-      OS_CODENAME: 'buster'
+    name: Building Debian Binary Packages
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
     needs:
       - linter
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distributor: 'Debian'
+            os_codename: 'buster'
+            os_release: '10'
+            container: 'debian:buster'
+            version_prefix: 'deb10'
+            compat: '11'
+          - distributor: 'Debian'
+            os_codename: 'bullseye'
+            os_release: '11'
+            container: 'debian:bullseye'
+            version_prefix: 'deb11'
+            compat: '12'
+          - distributor: 'Ubuntu'
+            os_codename: 'bionic'
+            os_release: '18.04'
+            container: 'ubuntu:bionic'
+            version_prefix: 'ubuntu18.04'
+            compat: '11'
+          - distributor: 'Ubuntu'
+            os_codename: 'focal'
+            os_release: '20.04'
+            container: 'ubuntu:focal'
+            version_prefix: 'ubuntu20.04'
+            compat: '12'
+    env:
+      COMPAT: ${{ matrix.compat }}
+      DISTRIBUTOR: ${{ matrix.distributor }}
+      OS_CODENAME: ${{ matrix.os_codename }}
+      OS_RELEASE: ${{ matrix.os_release }}
+      VERSION_PREFIX: ${{ matrix.version_prefix }}
+    container: ${{ matrix.container }}
     steps:
       - uses: actions/checkout@v2
+      - name: Setting timezone
+        if: ${{ matrix.distributor == 'Ubuntu' }}
+        run: |
+          echo "Setting system timezone to ${USED_TIMEZONE} ..."
+          ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime
+          export DEBIAN_FRONTEND=noninteractive
+      - uses: ./.github/actions/add-fb-debian-repo
+        with:
+          vendor: ${{ matrix.distributor }}
+          distro: ${{ matrix.os_codename }}
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/debian-install-buildenv
       - name: Updating Changelog
         run: |
           export PKG_VERSION=$( ./get-debian-version )
-          export PKG_RELEASE=$( ./get-debian-release )
-          export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"
+          export BUILD_VERSION="${PKG_VERSION}+${VERSION_PREFIX}"
           BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
           echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"
           debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"
           head -n 5 debian/changelog
       - name: Debian build
         run: |
-          echo "Setting debian/compat to 11"
-          echo '11' > debian/compat
+          echo "Setting debian/compat to ${COMPAT}"
+          echo "${COMPAT}" > debian/compat
           echo "y" | debuild -b -i -us -uc
-          echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
           ls -lA --color=always ..
-          mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}
-          mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}
-          mv -vi ../*.build* debian/pkgs/src
+          mkdir -pv debian/pkgs/${VERSION_PREFIX}
+          mv -vi ../*.deb ../*.build* debian/pkgs/${VERSION_PREFIX}
           ls -lA --color=always debian/pkgs/*/*
-      - name: 'Upload Source Package'
+      - name: 'Upload Binary Package'
         uses: actions/upload-artifact@v2
         with:
-          name: debian_bin_pkgs_deb10
+          name: debian_bin_pkgs_${{ matrix.version_prefix }}
           path: debian/pkgs/*/*
           retention-days: 15
 
-  build_bin_debian-11:
+  deploy_to_pypi:
     runs-on: ubuntu-latest
-    name: Build Bin Pkgs for Debian 11 Bullseye
+    name: "Deployment of the Python package to PyPi"
     container: debian:bullseye
-    env:
-      VERSION_PREFIX: 'deb11'
-      DISTRIBUTOR: 'Debian'
-      OS_RELEASE: '11'
-      OS_CODENAME: 'bullseye'
     needs:
       - linter
+      # - 'build_debian_sources'
+      # - 'build_debian_bin'
+      # - 'build_rpm'
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/prepare-debian-container
-      - uses: ./.github/actions/debian-install-buildenv
-      - name: Updating Changelog
+      - name: Update all packages
+        shell: bash
         run: |
-          export PKG_VERSION=$( ./get-debian-version )
-          export PKG_RELEASE=$( ./get-debian-release )
-          export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"
-          BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
-          echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"
-          debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"
-          head -n 5 debian/changelog
-      - name: Debian build
+          apt update --yes
+          apt list --upgradeable
+          apt dist-upgrade --yes
+      - name: Install locales and gettext
+        shell: bash
+        run: apt install --yes sudo locales gettext
+      - name: Update Locales
+        shell: bash
         run: |
-          echo "y" | debuild -b -i -us -uc
-          echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
-          ls -lA --color=always ..
-          mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}
-          mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}
-          mv -vi ../*.build* debian/pkgs/src
-          ls -lA --color=always debian/pkgs/*/*
-      - name: 'Upload Source Package'
+          locale -a
+          if test -f /etc/locale.gen; then
+            echo "/etc/locale.gen:"
+            grep -P -v '^\s*(#.*)?$' /etc/locale.gen || true; echo "<-- EOF"
+          fi
+          if grep 'en_US.UTF-8' /etc/locale.gen; then
+            sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+          else
+            echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+          fi
+          if grep 'de_DE.UTF-8' /etc/locale.gen
+            then sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen
+          else
+            echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen
+          fi
+          locale-gen
+          locale -a
+      - uses: actions/setup-python@v2
+      - uses: casperdcl/deploy-pypi@v2
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
+          pip: wheel -w dist/ --no-deps .
+          build: clean sdist -d dist/ bdist_wheel -d dist/
+          # only upload if a tag is pushed (otherwise just build & check)
+          upload: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') }}
+      - name: Show results
+        shell: bash
+        run: ls -l --color=always dist/
+      - name: 'Upload Python Package'
         uses: actions/upload-artifact@v2
         with:
-          name: debian_bin_pkgs_deb11
-          path: debian/pkgs/*/*
-          retention-days: 15
+          name: python_pkgs
+          path: dist/*
+          retention-days: 8
 
-  build_bin_ubuntu_18-04:
+  notify_success:
     runs-on: ubuntu-latest
-    name: Build Bin Pkgs for Ubuntu 18.04 LTS Bionic Beaver
-    container: ubuntu:bionic
-    env:
-      VERSION_PREFIX: 'ubuntu18.04'
-      DISTRIBUTOR: 'Ubuntu'
-      OS_RELEASE: '18.04'
-      OS_CODENAME: 'bionic'
+    name: Sending Success message
     needs:
-      - linter
+      - 'build_debian_sources'
+      - 'build_debian_bin'
+      # - 'build_rpm'
+      - 'deploy_to_pypi'
     steps:
-      - uses: actions/checkout@v2
-      - name: Setting timezone
-        run: |
-          echo "Setting system timezone to ${USED_TIMEZONE} ..."
-          ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime
-          export DEBIAN_FRONTEND=noninteractive
-      - uses: ./.github/actions/prepare-debian-container
-      - uses: ./.github/actions/debian-install-buildenv
-      - name: Updating Changelog
-        run: |
-          export PKG_VERSION=$( ./get-debian-version )
-          export PKG_RELEASE=$( ./get-debian-release )
-          export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"
-          BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
-          echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"
-          debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"
-          head -n 5 debian/changelog
-      - name: Debian build
-        run: |
-          echo "Setting debian/compat to 11"
-          echo '11' > debian/compat
-          echo "y" | debuild -b -i -us -uc
-          echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
-          ls -lA --color=always ..
-          mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}
-          mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}
-          mv -vi ../*.build* debian/pkgs/src
-          ls -lA --color=always debian/pkgs/*/*
-      - name: 'Upload Source Package'
-        uses: actions/upload-artifact@v2
+      - name: Sending message
+        uses: dawidd6/action-send-mail@v2
         with:
-          name: ubuntu_bin_pkgs_18-04
-          path: debian/pkgs/*/*
-          retention-days: 15
+          # mail server settings
+          server_address: ${{ env.SMTP_SERVER_ADDRESS }}
+          server_port: ${{ env.SMTP_SERVER_PORT }}
+          # user credentials
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          # email subject
+          subject: Github Workflow ${{ github.workflow }} of ${{ github.repository }} for ${{ github.ref }} was successful.
+          # email body as text
+          body: |
+            Github Actions Workflow ${{ github.workflow }} of ${{ github.repository }} for ${{ github.ref }} was successful.
+            Commiter: ${{ github.actor }}
 
-  build_bin_ubuntu_20-04:
-    runs-on: ubuntu-latest
-    name: Build Bin Pkgs for Ubuntu 20.04 LTS Focal Fossa
-    container: ubuntu:focal
-    env:
-      VERSION_PREFIX: 'ubuntu20.04'
-      DISTRIBUTOR: 'Ubuntu'
-      OS_RELEASE: '20.04'
-      OS_CODENAME: 'focal'
-    needs:
-      - linter
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setting timezone
-        run: |
-          echo "Setting system timezone to ${USED_TIMEZONE} ..."
-          ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime
-          export DEBIAN_FRONTEND=noninteractive
-      - uses: ./.github/actions/prepare-debian-container
-      - uses: ./.github/actions/debian-install-buildenv
-      - name: Updating Changelog
-        run: |
-          export PKG_VERSION=$( ./get-debian-version )
-          export PKG_RELEASE=$( ./get-debian-release )
-          export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"
-          BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
-          echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"
-          debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"
-          head -n 5 debian/changelog
-      - name: Debian build
-        run: |
-          echo "y" | debuild -b -i -us -uc
-          echo "${PKG_VERSION}-${PKG_RELEASE}" > .debian-version
-          ls -lA --color=always ..
-          mkdir -pv debian/pkgs/src debian/pkgs/${VERSION_PREFIX}
-          mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}
-          mv -vi ../*.build* debian/pkgs/src
-          ls -lA --color=always debian/pkgs/*/*
-      - name: 'Upload Source Package'
-        uses: actions/upload-artifact@v2
-        with:
-          name: ubuntu_bin_pkgs_20-04
-          path: debian/pkgs/*/*
-          retention-days: 15
+            Cheers Frank
+          # comma-separated string, send email to
+          to: ${{ env.NOTIFY_ADDRESS }}
+          # from email name
+          from: ${{ env.SENDER_ADDRESS }}
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list

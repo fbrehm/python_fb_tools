@@ -1,13 +1,13 @@
 # German (Germany) translations for fb_tools.
 # Copyright (C) 2021 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank@brehm-online.com>, 2021.
+# Frank Brehm <frank.brehm@pixelpark.com>, 2021.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.7.4\n"
+"Project-Id-Version: fb_tools 1.8.0\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2021-01-04 11:44+0100\n"
+"POT-Creation-Date: 2021-10-25 13:45+0200\n"
 "PO-Revision-Date: 2019-12-04 13:00+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.0\n"
+"Generated-By: Babel 2.6.0\n"
 
 #: bin/get-file-to-remove:84
 msgid ""
@@ -179,37 +179,37 @@ msgstr "Start in:"
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
 
-#: lib/fb_tools/collections.py:63
+#: lib/fb_tools/collections.py:61
 msgid "Item {item!r} must be of type {must!r}, but is of type {cls!r} instead."
 msgstr "Der Eintrag {item!r} muss vom Typ {must!r} sein, ist aber statt dessen vom Typ {cls!r}."
 
-#: lib/fb_tools/collections.py:82 lib/fb_tools/pdns/zone.py:1181
+#: lib/fb_tools/collections.py:80 lib/fb_tools/pdns/zone.py:1181
 msgid "Object {o!r} is not a {e} object."
 msgstr "Das Objekt {o!r} ist kein {e}-Objekt."
 
-#: lib/fb_tools/collections.py:99
+#: lib/fb_tools/collections.py:97
 msgid "Key {key!r} must be of type {must!r}, but is of type {cls!r} instead."
 msgstr "Der Schlüssel muss vom Typ {must!r} sein, ist aber statt dessen vom Typ {cls!r}."
 
-#: lib/fb_tools/collections.py:115
+#: lib/fb_tools/collections.py:113
 msgid "Object is neither a {m} object, nor a sequential object, but a {o!r} object instead."
 msgstr ""
 "Das Objekt ist weder ein {m}-Objekt noch ein sequentielles Objekt, aber statt dessen vom Typ "
 "{o!r}."
 
-#: lib/fb_tools/collections.py:133
+#: lib/fb_tools/collections.py:131
 msgid "Key {!r} is not existing."
 msgstr "Der Schlüssel {!r} existiert nicht."
 
-#: lib/fb_tools/collections.py:151 lib/fb_tools/collections.py:169
+#: lib/fb_tools/collections.py:149 lib/fb_tools/collections.py:167
 msgid "Could update {ex} with {i!r}: {m}"
 msgstr "Konnte {ex} nicht mit {i!r} updaten: {m}"
 
-#: lib/fb_tools/collections.py:192
+#: lib/fb_tools/collections.py:190
 msgid "Parameter {p!r} is not a sequence type, but a {c!r} object instead."
 msgstr "DerParameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Typ {c!r}."
 
-#: lib/fb_tools/collections.py:1001
+#: lib/fb_tools/collections.py:999
 msgid "The method {met}() expected at most {max} arguments, got {got}."
 msgstr "Die Methode {met}() erwartet höchstens {max} Argumente, hat aber {got} erhalten."
 
@@ -1881,22 +1881,6 @@ msgid "Total one DNS record to remove."
 msgid_plural "Total {} DNS records to remove."
 msgstr[0] "Insgesamt ein DNS-Record, der gelöscht wird."
 msgstr[1] "Insgesamt {} DNS-Records, die gelöscht werden."
-
-#: lib/fb_tools/syslog_handler.py:76
-msgid "File doesn't exists"
-msgstr "Die Datei existiert nicht"
-
-#: lib/fb_tools/syslog_handler.py:80
-msgid "File is not a UNIX socket file"
-msgstr "Die Datei ist keine UNIX-Socket-Datei"
-
-#: lib/fb_tools/syslog_handler.py:83
-msgid "No write access to socket"
-msgstr "Kein Schreibzugriff auf den Socket"
-
-#: lib/fb_tools/unix_handler.py:220 lib/fb_tools/unix_handler.py:226
-msgid "Invalid value {!r} for facility."
-msgstr "Ungültiger Wert für Fazilität."
 
 #: lib/fb_tools/vmware_config.py:107
 msgid "Empty VSpehre name found."

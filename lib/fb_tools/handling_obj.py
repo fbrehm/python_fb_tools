@@ -38,14 +38,14 @@ else:
 import six
 
 # Own modules
+from fb_logging.colored import colorstr
+
 from .common import pp, to_bool, caller_search_path, to_str, encode_or_bust
 from .common import indent, is_sequence
 
 from .xlate import XLATOR
 
 from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
-
-from .colored import colorstr
 
 from .obj import FbBaseObject
 
