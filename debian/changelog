@@ -1,3 +1,11 @@
+fb-tools (1.81) UNRELEASED; urgency=medium
+
+  * Adding dependencies to fb-logging and removing all appropriate
+    modules and test scripts, which are substituted by this package.
+  * Modifying Github action and workflow to reflect this.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 25 Oct 2021 16:31:07 +0200
+
 fb-tools (1.8.0) all; urgency=medium
 
   * Adding bin-build/changelog-deb2rpm.py for converting Debian
