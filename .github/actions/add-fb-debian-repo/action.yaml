@@ -25,7 +25,7 @@ inputs:
   suite:
     description: The suite of the distribution
     required: false
-    default: '/.'
+    default: './'
 
 runs:
   using: "composite"
