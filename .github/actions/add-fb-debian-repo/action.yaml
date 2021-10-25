@@ -16,6 +16,10 @@ inputs:
     description: The root path on the repository server.
     required: false
     default: /
+  gpg_key_path:
+    description: The path to the GPG key of the repository on the repo server.
+    required: false
+    default: public/repo.uhu-banane.de.gpg-key2.pub
   vendor:
     description: The main Debian vendor (Debian or Ubuntu).
     required: true
@@ -36,6 +40,7 @@ runs:
         USE_HTTPS: ${{ inputs.use_https }}
         REPO_SERVER: ${{ inputs.repo_server }}
         ROOT_PATH: ${{ inputs.root_path }}
+        GPG_KEY_PATH: ${{ inputs.gpg_key_path }}
         VENDOR: ${{ inputs.vendor }}
         DISTRO: ${{ inputs.distro }}
         SUITE: ${{ inputs.suite }}
@@ -48,7 +53,13 @@ runs:
         if [[ "${USE_HTTPS}" == false ]] ; then
             URL="http://"
         fi
+        KEY_URL="${URL}${REPO_SERVER}${ROOT_PATH}${GPG_KEY_PATH}"
         URL+="${REPO_SERVER}${ROOT_PATH}${VENDOR}/${DISTRO}"
+        echo
+        echo "Importing GPG key from '${KEY_URL}' ..."
+        curl "${KEY_URL}" | apt-key add -
+        echo
+        echo "Creating '/etc/apt/sources.list.d/fbrehm.list' ..."
         echo "deb	${URL}		${SUITE}" >/etc/apt/sources.list.d/fbrehm.list
         echo
         echo "Content of /etc/apt/sources.list.d/fbrehm.list:"
