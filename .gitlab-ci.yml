@@ -109,6 +109,22 @@ test Python 3.9:
     - /^hf.*$/
     - tags
 
+test Python 3.10:
+  <<: *docker_job_definition
+  stage: test
+  image: python:3.10
+  script:
+    - pip install --upgrade --upgrade-strategy eager pytest
+    - pip list --format columns
+    - pytest --verbose
+#  tags:
+#    - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
 Linter:
   <<: *docker_job_definition
   stage: linter
