@@ -1,8 +1,11 @@
-fb-tools (1.81) UNRELEASED; urgency=medium
+fb-tools (1.8.1) all; urgency=medium
 
   * Adding dependencies to fb-logging and removing all appropriate
     modules and test scripts, which are substituted by this package.
   * Modifying Github action and workflow to reflect this.
+  * Adding Debian Repository definition of Franks Repo on building
+    Debian packages in .gitlab-ci.yml
+  * Completing tests and build process in .gitlab-ci.yml
 
  -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 25 Oct 2021 16:31:07 +0200
 
