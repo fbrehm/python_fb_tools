@@ -14,6 +14,8 @@ variables:
   DEB_REPO_HOST: 'repo01.pixelpark.com'
   DEB_REPO_USER: 'rpm-repo'
   DEB_REPO_UPLOAD_DIR: '/srv/www/repo/Linux/debian/incoming'
+  FB_REPOSERVER_URL: 'http://repo.uhu-banane.de'
+  FB_REPOSERVER_GPGKEY_URL: 'http://repo.uhu-banane.de/public/repo.uhu-banane.de.gpg-key2.asc'
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
@@ -107,6 +109,22 @@ test Python 3.9:
     - /^hf.*$/
     - tags
 
+test Python 3.10:
+  <<: *docker_job_definition
+  stage: test
+  image: python:3.10
+  script:
+    - pip install --upgrade --upgrade-strategy eager pytest
+    - pip list --format columns
+    - pytest --verbose
+#  tags:
+#    - docker
+  except:
+    - /^dev-.*$/
+    - /^dev\/.*$/
+    - /^hf.*$/
+    - tags
+
 Linter:
   <<: *docker_job_definition
   stage: linter
@@ -144,6 +162,16 @@ build Debian Sources:
     - locale -a
     - apt update
     - apt dist-upgrade --yes --no-install-recommends
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -151,7 +179,8 @@ build Debian Sources:
   script:
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
@@ -196,6 +225,16 @@ build binaries for Debian 10 Buster:
     - locale -a
     - apt update
     - apt dist-upgrade --yes --no-install-recommends
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -205,11 +244,12 @@ build binaries for Debian 10 Buster:
     - 'echo "11" > debian/compat'
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
-    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+    - 'export BUILD_VERSION="${PKG_VERSION}+${VERSION_PREFIX}"'
     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
     - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
@@ -252,6 +292,16 @@ build binaries for Debian 11 Bullseye:
     - locale -a
     - apt update
     - apt dist-upgrade --yes --no-install-recommends
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -259,11 +309,12 @@ build binaries for Debian 11 Bullseye:
   script:
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-toml python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-toml python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
-    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+    - 'export BUILD_VERSION="${PKG_VERSION}+${VERSION_PREFIX}"'
     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
     - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
@@ -311,6 +362,16 @@ build binaries for Ubuntu 18.04 LTS Bionic Beaver:
     - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
     - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
     - export DEBIAN_FRONTEND=noninteractive
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -320,11 +381,12 @@ build binaries for Ubuntu 18.04 LTS Bionic Beaver:
     - 'echo "11" > debian/compat'
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
-    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+    - 'export BUILD_VERSION="${PKG_VERSION}+${VERSION_PREFIX}"'
     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
     - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
@@ -370,6 +432,16 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
     - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
     - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
     - export DEBIAN_FRONTEND=noninteractive
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -377,11 +449,12 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
   script:
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
-    - 'export BUILD_VERSION="${PKG_VERSION}~${VERSION_PREFIX}"'
+    - 'export BUILD_VERSION="${PKG_VERSION}+${VERSION_PREFIX}"'
     - 'BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"'
     - 'echo "Version to build: ${BUILD_VERSION} - Builder: ${BUILDER}"'
     - 'debchange --newversion "${BUILD_VERSION}" --force-bad-version --distribution "${OS_CODENAME}" --urgency medium "Build for ${DISTRIBUTOR} ${OS_RELEASE} - ${OS_CODENAME}"'
