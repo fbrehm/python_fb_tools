@@ -169,7 +169,8 @@ build Debian Sources:
     - ls -l --color=always /etc/apt/trusted.gpg.d/
     - mkdir --verbose --parents /etc/apt/sources.list.d
     - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
-    - 'echo "deb	${FB_REPOSERVER_URL}/Debian/bullseye		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
     - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
@@ -224,6 +225,16 @@ build binaries for Debian 10 Buster:
     - locale -a
     - apt update
     - apt dist-upgrade --yes --no-install-recommends
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -233,7 +244,8 @@ build binaries for Debian 10 Buster:
     - 'echo "11" > debian/compat'
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
@@ -280,6 +292,16 @@ build binaries for Debian 11 Bullseye:
     - locale -a
     - apt update
     - apt dist-upgrade --yes --no-install-recommends
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -287,7 +309,8 @@ build binaries for Debian 11 Bullseye:
   script:
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-toml python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-toml python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
@@ -339,6 +362,16 @@ build binaries for Ubuntu 18.04 LTS Bionic Beaver:
     - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
     - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
     - export DEBIAN_FRONTEND=noninteractive
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -348,7 +381,8 @@ build binaries for Ubuntu 18.04 LTS Bionic Beaver:
     - 'echo "11" > debian/compat'
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
@@ -398,6 +432,16 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
     - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
     - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
     - export DEBIAN_FRONTEND=noninteractive
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -405,7 +449,8 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
   script:
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
