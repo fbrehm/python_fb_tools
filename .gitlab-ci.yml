@@ -14,6 +14,8 @@ variables:
   DEB_REPO_HOST: 'repo01.pixelpark.com'
   DEB_REPO_USER: 'rpm-repo'
   DEB_REPO_UPLOAD_DIR: '/srv/www/repo/Linux/debian/incoming'
+  FB_REPOSERVER_URL: 'http://repo.uhu-banane.de'
+  FB_REPOSERVER_GPGKEY_URL: 'http://repo.uhu-banane.de/public/repo.uhu-banane.de.gpg-key2.asc'
   FLAKE8_MAX_LINE_LENGTH: 99
   FLAKE8_MAX_COMPLEXITY: 20
   FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
@@ -144,6 +146,15 @@ build Debian Sources:
     - locale -a
     - apt update
     - apt dist-upgrade --yes --no-install-recommends
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/Debian/bullseye		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; apt update
     - >
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
@@ -151,7 +162,8 @@ build Debian Sources:
   script:
     - >
       apt install --yes --no-install-recommends
-      python3-all python3-babel python3-pip python3-setuptools python3-six python3-tz dh-python
+      python3-all python3-babel python3-pip python3-setuptools python3-six
+      python3-tz dh-python python3-fb-logging
     - 'export ODIR=$(pwd)'
     - 'export PKG_VERSION=$( ./get-debian-version )'
     - 'export PKG_RELEASE=$( ./get-debian-release )'
