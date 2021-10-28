@@ -1,0 +1,7 @@
+include test/*.py
+include test/*.txt
+include test/*.sh
+include test/*.js
+include test/do_sleep
+include LICENSE
+include README.md
