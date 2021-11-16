@@ -1,3 +1,9 @@
+fb-tools (1.8.3) all; urgency=medium
+
+  * Fixing .github/workflows/packages.yaml
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 16 Nov 2021 16:32:25 +0100
+
 fb-tools (1.8.2) all; urgency=medium
 
   * Updating setup.cfg for building Python packages
