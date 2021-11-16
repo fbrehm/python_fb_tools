@@ -335,7 +335,8 @@ jobs:
           cd "${ODIR}"
           echo
           echo "Generating spec file 'fb_logging.spec' ..."
-          cat specs/fb-tools.spec.template | sed -e "s/@@@Version@@@/${PKG_VERSION}/gi" \
+          cat specs/fb-tools.spec.template | tail -n +3 | \
+                              sed -e "s/@@@Version@@@/${PKG_VERSION}/gi" \
                                   -e "s/@@@Release@@@/${PKG_RELEASE}/gi" \
                                   -e "s/@@@py_version_nodot@@@/${PY_VERSION_NODOT}/gi" \
                                   -e "s/@@@py_version_dot@@@/${PY_VERSION_DOT}/gi" \

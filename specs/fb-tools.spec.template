@@ -1,3 +1,5 @@
+# vim: filetype=spec
+
 %define version @@@Version@@@
 %define builddir python@@@py_version_nodot@@@_fb-tools-%{version}
 
@@ -59,6 +61,12 @@ python@@@py_version_dot@@@ setup.py install --prefix=%{_prefix} --root=%{buildro
 %defattr(-,root,root,-)
 %license LICENSE
 %doc LICENSE README.md requirements.txt debian/changelog
+%{_bindir}/get-file-to-remove
+%{_bindir}/get-vmware-vm-info
+%{_bindir}/get-vmware-vm-list
+%{_bindir}/myip
+%{_bindir}/pdns-bulk-remove
+%{_bindir}/update-ddns
 %{python3_sitelib}/*
 
 %changelog
