@@ -338,7 +338,7 @@ jobs:
                                   -e "s/@@@py_version_nodot@@@/${PY_VERSION_NODOT}/gi" \
                                   -e "s/@@@py_version_dot@@@/${PY_VERSION_DOT}/gi" \
                                   > fb-tools.spec
-          python${PY_VERSION_DOT} changelog-deb2rpm/changelog-deb2rpm.py debian/changelog >>fb-tools.spec
+          python${PY_VERSION_DOT} bin-build/changelog-deb2rpm.py debian/changelog >>fb-tools.spec
           echo
           echo "Generated Spec file:"
           cat fb-tools.spec
