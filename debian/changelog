@@ -1,4 +1,4 @@
-fb-tools (1.8.2) UNRELEASED; urgency=medium
+fb-tools (1.8.2) all; urgency=medium
 
   * Updating setup.cfg for building Python packages
   * dch Fixing packages in Github action 'debian-install-buildenv'
