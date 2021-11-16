@@ -284,6 +284,8 @@ jobs:
                                   python${PY_VERSION_NODOT}-pip \
                                   python${PY_VERSION_NODOT}-devel \
                                   python${PY_VERSION_NODOT}-babel \
+                                  python${PY_VERSION_NODOT}-pytz \
+                                  python${PY_VERSION_NODOT}-six \
                                   python${PY_VERSION_NODOT}-fb-logging
           echo
           echo "Python binaries:"
@@ -300,7 +302,7 @@ jobs:
           LC_ALL: "en_US.utf8"
         run: |
           echo "Installing build tools"
-          yum --assumeyes install gnupg2 rpm-build
+          yum --assumeyes install gnupg2 rpm-build gettext
       - name: Create build environment
         shell: bash
         env:
