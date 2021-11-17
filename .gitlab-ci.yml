@@ -25,7 +25,6 @@ variables:
   YUM_REPO_GPG_KEY_PUB: 'nada'
   YUM_REPO_GPG_KEY_SEC: 'nada'
 
-# .template_docker_job: &docker_job_definition
 .docker_job_definition:
   before_script:
     - locale -a
@@ -487,11 +486,8 @@ Sign EL 8 packages:
       - rpmdir/RPMS/*/*.rpm
       - rpmdir/SRPMS/*.src.rpm
     expire_in: '1 week'
-  tags:
-    - docker
 
 Deploy packages Debian and Ubuntu:
-  stage: deploy
   tags:
     - deploy_v2
   script:
@@ -506,6 +502,12 @@ Deploy packages Debian and Ubuntu:
     - 'scp -p -o StrictHostKeyChecking=no $( find debian/pkgs -type f | sort ) ${DEB_REPO_USER}@${DEB_REPO_HOST}:${DEB_REPO_UPLOAD_DIR}/'
   environment:
     name: production
+  needs:
+    - 'build Debian Sources'
+    - 'build binaries for Debian 10 Buster'
+    - 'build binaries for Debian 11 Bullseye'
+    - 'build binaries for Ubuntu 18.04 LTS Bionic Beaver'
+    - 'build binaries for Ubuntu 20.04 LTS Focal Fossa'
   dependencies:
     - 'build Debian Sources'
     - 'build binaries for Debian 10 Buster'
@@ -516,7 +518,7 @@ Deploy packages Debian and Ubuntu:
     - tags
   when: manual
 
-.pkg-deploy-rules:
+.rpm-pkg-deploy:
   rules:
     - if: '$CI_COMMIT_TAG'
       when: manual
@@ -541,17 +543,21 @@ Deploy packages Debian and Ubuntu:
 
 Deploy packages EL7:
   extends:
-    - '.pkg-deploy-rules'
+    - '.rpm-pkg-deploy'
   variables:
     EL_MAJOR_VERSION: '7'
+  needs:
+    - 'Sign EL 7 packages'
   dependencies:
     - 'Sign EL 7 packages'
 
 Deploy packages EL8:
   extends:
-    - '.pkg-deploy-rules'
+    - '.rpm-pkg-deploy'
   variables:
     EL_MAJOR_VERSION: '8'
+  needs:
+    - 'Sign EL 8 packages'
   dependencies:
     - 'Sign EL 8 packages'
 
