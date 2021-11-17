@@ -41,7 +41,6 @@ In this package are contained the following scripts:
  * get-vmware-vm-info
  * get-vmware-vm-list
  * myip
- * pdns-bulk-remove
  * update-ddns
 
 %prep
@@ -66,7 +65,6 @@ python3.8 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %{_bindir}/get-vmware-vm-info
 %{_bindir}/get-vmware-vm-list
 %{_bindir}/myip
-%{_bindir}/pdns-bulk-remove
 %{_bindir}/update-ddns
 %{python3_sitelib}/*
 
