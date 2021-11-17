@@ -682,30 +682,30 @@ Deploy packages EL8:
     - tags
   when: manual
 
-Notify Success:
-  stage: notify
-  tags:
-    - deploy_v2
-  allow_failure: true
-  script: 'echo -e "Module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME}): all checks successful\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI: Python module fb_tools" -r "$SENDER_ADDRESS" $NOTIFY_ADDRESS'
-  only:
-    - master
-    - test
-    - main
-    - tags
+# Notify Success:
+#   stage: notify
+#   tags:
+#     - deploy_v2
+#   allow_failure: true
+#   script: 'echo -e "Module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME}): all checks successful\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI: Python module fb_tools" -r "$SENDER_ADDRESS" $NOTIFY_ADDRESS'
+#   only:
+#     - master
+#     - test
+#     - main
+#     - tags
 
-Notify Error:
-  stage: notify
-  tags:
-    - deploy_v2
-  allow_failure: true
-  when: on_failure
-  script: 'echo -e "Error in module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME})\nPlease check ${CI_PROJECT_URL}/pipelines/${CI_PIPELINE_ID}\n\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI error for Python module fb_tools" -r "$SENDER_ADDRESS" "$NOTIFY_ADDRESS"'
-  only:
-    - master
-    - test
-    - main
-    - tags
-    - develop
+# Notify Error:
+#   stage: notify
+#   tags:
+#     - deploy_v2
+#   allow_failure: true
+#   when: on_failure
+#   script: 'echo -e "Error in module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME})\nPlease check ${CI_PROJECT_URL}/pipelines/${CI_PIPELINE_ID}\n\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI error for Python module fb_tools" -r "$SENDER_ADDRESS" "$NOTIFY_ADDRESS"'
+#   only:
+#     - master
+#     - test
+#     - main
+#     - tags
+#     - develop
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
