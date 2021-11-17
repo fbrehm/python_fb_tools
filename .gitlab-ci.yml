@@ -605,7 +605,7 @@ Sign EL 8 packages:
 Deploy packages Debian and Ubuntu:
   stage: deploy
   tags:
-    - deploy
+    - deploy_v2
   script:
     - hostname -f
     - whoami
@@ -633,7 +633,7 @@ Deploy packages EL7:
     EL_MAJOR_VERSION: '7'
   stage: deploy
   tags:
-    - deploy
+    - deploy_v2
   script:
     - hostname -f
     - whoami
@@ -660,7 +660,7 @@ Deploy packages EL8:
     EL_MAJOR_VERSION: '8'
   stage: deploy
   tags:
-    - deploy
+    - deploy_v2
   script:
     - hostname -f
     - whoami
@@ -685,7 +685,7 @@ Deploy packages EL8:
 Notify Success:
   stage: notify
   tags:
-    - deploy
+    - deploy_v2
   allow_failure: true
   script: 'echo -e "Module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME}): all checks successful\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI: Python module fb_tools" -r "$SENDER_ADDRESS" $NOTIFY_ADDRESS'
   only:
@@ -697,7 +697,7 @@ Notify Success:
 Notify Error:
   stage: notify
   tags:
-    - deploy
+    - deploy_v2
   allow_failure: true
   when: on_failure
   script: 'echo -e "Error in module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME})\nPlease check ${CI_PROJECT_URL}/pipelines/${CI_PIPELINE_ID}\n\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI error for Python module fb_tools" -r "$SENDER_ADDRESS" "$NOTIFY_ADDRESS"'
