@@ -59,7 +59,6 @@ test Python 3.6:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
-    - tags
 
 test Python 3.7:
   <<: *docker_job_definition
@@ -75,7 +74,6 @@ test Python 3.7:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
-    - tags
 
 test Python 3.8:
   <<: *docker_job_definition
@@ -91,7 +89,6 @@ test Python 3.8:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
-    - tags
 
 test Python 3.9:
   <<: *docker_job_definition
@@ -107,7 +104,6 @@ test Python 3.9:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
-    - tags
 
 test Python 3.10:
   <<: *docker_job_definition
@@ -123,7 +119,6 @@ test Python 3.10:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
-    - tags
 
 Linter:
   <<: *docker_job_definition
@@ -145,7 +140,6 @@ Linter:
     - /^dev-.*$/
     - /^dev\/.*$/
     - /^hf.*$/
-    - tags
 
 build Debian Sources:
   variables:
@@ -204,10 +198,10 @@ build Debian Sources:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  only:
+    - test
+    - master
+    - main
     - tags
 
 build binaries for Debian 10 Buster:
@@ -271,10 +265,10 @@ build binaries for Debian 10 Buster:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  only:
+    - test
+    - master
+    - main
     - tags
 
 build binaries for Debian 11 Bullseye:
@@ -336,13 +330,11 @@ build binaries for Debian 11 Bullseye:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  only:
+    - test
+    - master
+    - main
     - tags
-#   only:
-#     - dev-pkgbuild
 
 build binaries for Ubuntu 18.04 LTS Bionic Beaver:
   variables:
@@ -408,10 +400,10 @@ build binaries for Ubuntu 18.04 LTS Bionic Beaver:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  only:
+    - test
+    - master
+    - main
     - tags
 
 build binaries for Ubuntu 20.04 LTS Focal Fossa:
@@ -476,10 +468,10 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  only:
+    - test
+    - master
+    - main
     - tags
 
 build CentOS 7 with Python 3.6:
@@ -502,10 +494,10 @@ build CentOS 7 with Python 3.6:
     expire_in: '1 week'
   tags:
     - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  only:
+    - test
+    - master
+    - main
     - tags
 
 build CentOS 8 with Python 3.8:
@@ -528,10 +520,10 @@ build CentOS 8 with Python 3.8:
     expire_in: '1 week'
   tags:
     - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  only:
+    - test
+    - master
+    - main
     - tags
 
 Sign EL 7 packages:
@@ -567,10 +559,9 @@ Sign EL 7 packages:
     expire_in: '1 week'
   tags:
     - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  only:
+    - master
+    - main
     - tags
 
 Sign EL 8 packages:
@@ -606,10 +597,9 @@ Sign EL 8 packages:
     expire_in: '1 week'
   tags:
     - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  only:
+    - master
+    - main
     - tags
 
 Deploy packages Debian and Ubuntu:
@@ -635,7 +625,7 @@ Deploy packages Debian and Ubuntu:
     - 'build binaries for Ubuntu 18.04 LTS Bionic Beaver'
     - 'build binaries for Ubuntu 20.04 LTS Focal Fossa'
   only:
-    - master
+    - tags
   when: manual
 
 Deploy packages EL7:
@@ -662,7 +652,7 @@ Deploy packages EL7:
   dependencies:
     - 'Sign EL 7 packages'
   only:
-    - master
+    - tags
   when: manual
 
 Deploy packages EL8:
@@ -689,7 +679,7 @@ Deploy packages EL8:
   dependencies:
     - 'Sign EL 8 packages'
   only:
-    - master
+    - tags
   when: manual
 
 Notify Success:
@@ -700,6 +690,9 @@ Notify Success:
   script: 'echo -e "Module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME}): all checks successful\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI: Python module fb_tools" -r "$SENDER_ADDRESS" $NOTIFY_ADDRESS'
   only:
     - master
+    - test
+    - main
+    - tags
 
 Notify Error:
   stage: notify
@@ -710,6 +703,9 @@ Notify Error:
   script: 'echo -e "Error in module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME})\nPlease check ${CI_PROJECT_URL}/pipelines/${CI_PIPELINE_ID}\n\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI error for Python module fb_tools" -r "$SENDER_ADDRESS" "$NOTIFY_ADDRESS"'
   only:
     - master
+    - test
+    - main
+    - tags
     - develop
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
