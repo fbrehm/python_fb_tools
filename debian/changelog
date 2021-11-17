@@ -1,4 +1,4 @@
-fb-tools (1.8.4) UNRELEASED; urgency=medium
+fb-tools (1.8.4) all; urgency=medium
 
   * Removing all pdns modules and bin/pdns-bulk-remove, because it's now
     located in Github repo 'fbrehm/fb-pdnstools.git'
