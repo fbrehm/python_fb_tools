@@ -1,13 +1,5 @@
 ---
 
-stages:
-  - test
-  - linter
-  - build
-  - sign
-  - deploy
-  - notify
-
 variables:
   DEBFULLNAME: 'Frank Brehm'
   DEBEMAIL: 'frank@brehm-online.com'
@@ -33,7 +25,8 @@ variables:
   YUM_REPO_GPG_KEY_PUB: 'nada'
   YUM_REPO_GPG_KEY_SEC: 'nada'
 
-.template_docker_job: &docker_job_definition
+# .template_docker_job: &docker_job_definition
+.docker_job_definition:
   before_script:
     - locale -a
     - apt update && apt install --yes sudo locales gettext
@@ -45,85 +38,56 @@ variables:
     - pip install --upgrade pip
     - pip install -r requirements.txt --upgrade --upgrade-strategy eager
 
-test Python 3.6:
-  <<: *docker_job_definition
-  stage: test
-  image: python:3.6
+.test-rules:
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
+    - if: $CI_COMMIT_BRANCH == "develop"
+  tags:
+    - docker
   script:
     - pip install --upgrade --upgrade-strategy eager pytest
     - pip list --format columns
     - pytest --verbose
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+
+test Python 3.6:
+  extends:
+    - .docker_job_definition
+    - .test-rules
+  image: python:3.6
 
 test Python 3.7:
-  <<: *docker_job_definition
-  stage: test
+  extends:
+    - .docker_job_definition
+    - .test-rules
   image: python:3.7
-  script:
-    - pip install --upgrade --upgrade-strategy eager pytest
-    - pip list --format columns
-    - pytest --verbose
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
 
 test Python 3.8:
-  <<: *docker_job_definition
-  stage: test
+  extends:
+    - .docker_job_definition
+    - .test-rules
   image: python:3.8
-  script:
-    - pip install --upgrade --upgrade-strategy eager pytest
-    - pip list --format columns
-    - pytest --verbose
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
 
 test Python 3.9:
-  <<: *docker_job_definition
-  stage: test
+  extends:
+    - .docker_job_definition
+    - .test-rules
   image: python:3.9
-  script:
-    - pip install --upgrade --upgrade-strategy eager pytest
-    - pip list --format columns
-    - pytest --verbose
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
 
 test Python 3.10:
-  <<: *docker_job_definition
-  stage: test
+  extends:
+    - .docker_job_definition
+    - .test-rules
   image: python:3.10
-  script:
-    - pip install --upgrade --upgrade-strategy eager pytest
-    - pip list --format columns
-    - pytest --verbose
-#  tags:
-#    - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
 
 Linter:
-  <<: *docker_job_definition
-  stage: linter
+  extends:
+    - .docker_job_definition
   image: python:3.9
+  tags:
+    - docker
   script:
     - apt install --yes shellcheck yamllint
     - pip install --upgrade --upgrade-strategy eager flake8 pylint
@@ -134,21 +98,31 @@ Linter:
     - shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
     - 'echo; echo -e "yamllint -c yamllint.yaml .gitlab-ci.yml .github"'
     - yamllint -c yamllint.yaml .gitlab-ci.yml
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
+    - if: $CI_COMMIT_BRANCH == "develop"
+  needs:
+    - 'test Python 3.6'
+    - 'test Python 3.7'
+    - 'test Python 3.8'
+    - 'test Python 3.9'
+    - 'test Python 3.10'
+
+.pkg-build-rules:
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
   tags:
     - docker
-  except:
-    - /^dev-.*$/
-    - /^dev\/.*$/
-    - /^hf.*$/
+  needs:
+    - 'Linter'
 
-build Debian Sources:
-  variables:
-    VERSION_PREFIX: 'deb11'
-    DISTRIBUTOR: 'Debian'
-    OS_RELEASE: '11'
-    OS_CODENAME: 'bullseye'
-  stage: build
-  image: debian:bullseye
+.build-debian-pkg:
   before_script:
     - hostname -f
     - whoami
@@ -170,6 +144,43 @@ build Debian Sources:
       apt install --yes --no-install-recommends sudo locales gettext build-essential
       devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
       lsb-release ca-certificates libdistro-info-perl
+
+.build-ubuntu-pkg:
+  before_script:
+    - hostname -f
+    - whoami
+    - pwd
+    - locale -a
+    - apt update
+    - apt dist-upgrade --yes --no-install-recommends
+    - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
+    - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt install --yes --no-install-recommends curl
+    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
+    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
+    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
+    - ls -l --color=always /etc/apt/trusted.gpg.d/
+    - mkdir --verbose --parents /etc/apt/sources.list.d
+    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
+    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
+    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
+    - echo; apt update
+    - >
+      apt install --yes --no-install-recommends sudo locales gettext build-essential
+      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
+      lsb-release ca-certificates libdistro-info-perl tzdata
+
+build Debian Sources:
+  variables:
+    VERSION_PREFIX: 'deb11'
+    DISTRIBUTOR: 'Debian'
+    OS_RELEASE: '11'
+    OS_CODENAME: 'bullseye'
+  extends:
+    - '.pkg-build-rules'
+    - '.build-debian-pkg'
+  image: debian:bullseye
   script:
     - >
       apt install --yes --no-install-recommends
@@ -198,11 +209,6 @@ build Debian Sources:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  only:
-    - test
-    - master
-    - main
-    - tags
 
 build binaries for Debian 10 Buster:
   variables:
@@ -210,29 +216,10 @@ build binaries for Debian 10 Buster:
     DISTRIBUTOR: 'Debian'
     OS_RELEASE: '10'
     OS_CODENAME: 'buster'
-  stage: build
+  extends:
+    - '.pkg-build-rules'
+    - '.build-debian-pkg'
   image: debian:buster
-  before_script:
-    - hostname -f
-    - whoami
-    - pwd
-    - locale -a
-    - apt update
-    - apt dist-upgrade --yes --no-install-recommends
-    - apt install --yes --no-install-recommends curl
-    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
-    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
-    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
-    - ls -l --color=always /etc/apt/trusted.gpg.d/
-    - mkdir --verbose --parents /etc/apt/sources.list.d
-    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
-    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
-    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
-    - echo; apt update
-    - >
-      apt install --yes --no-install-recommends sudo locales gettext build-essential
-      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
-      lsb-release ca-certificates libdistro-info-perl
   script:
     - 'echo "Setting debian/compat to 11"'
     - 'echo "11" > debian/compat'
@@ -254,8 +241,6 @@ build binaries for Debian 10 Buster:
     - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
     - 'mv -vi ../*.build* debian/pkgs/src'
     - ls -lA --color=always debian/pkgs/*/*
-  tags:
-    - docker
   cache:
     key: ${CI_JOB_NAME}
     paths:
@@ -265,11 +250,6 @@ build binaries for Debian 10 Buster:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  only:
-    - test
-    - master
-    - main
-    - tags
 
 build binaries for Debian 11 Bullseye:
   variables:
@@ -277,29 +257,10 @@ build binaries for Debian 11 Bullseye:
     DISTRIBUTOR: 'Debian'
     OS_RELEASE: '11'
     OS_CODENAME: 'bullseye'
-  stage: build
+  extends:
+    - '.pkg-build-rules'
+    - '.build-debian-pkg'
   image: debian:bullseye
-  before_script:
-    - hostname -f
-    - whoami
-    - pwd
-    - locale -a
-    - apt update
-    - apt dist-upgrade --yes --no-install-recommends
-    - apt install --yes --no-install-recommends curl
-    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
-    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
-    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
-    - ls -l --color=always /etc/apt/trusted.gpg.d/
-    - mkdir --verbose --parents /etc/apt/sources.list.d
-    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
-    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
-    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
-    - echo; apt update
-    - >
-      apt install --yes --no-install-recommends sudo locales gettext build-essential
-      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
-      lsb-release ca-certificates libdistro-info-perl
   script:
     - >
       apt install --yes --no-install-recommends
@@ -319,8 +280,6 @@ build binaries for Debian 11 Bullseye:
     - 'mv -vi ../*.deb debian/pkgs/${VERSION_PREFIX}'
     - 'mv -vi ../*.build* debian/pkgs/src'
     - ls -lA --color=always debian/pkgs/*/*
-  tags:
-    - docker
   cache:
     key: ${CI_JOB_NAME}
     paths:
@@ -330,11 +289,6 @@ build binaries for Debian 11 Bullseye:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  only:
-    - test
-    - master
-    - main
-    - tags
 
 build binaries for Ubuntu 18.04 LTS Bionic Beaver:
   variables:
@@ -342,32 +296,10 @@ build binaries for Ubuntu 18.04 LTS Bionic Beaver:
     DISTRIBUTOR: 'Ubuntu'
     OS_RELEASE: '18.04'
     OS_CODENAME: 'bionic'
-  stage: build
+  extends:
+    - '.pkg-build-rules'
+    - '.build-ubuntu-pkg'
   image: ubuntu:bionic
-  before_script:
-    - hostname -f
-    - whoami
-    - pwd
-    - locale -a
-    - apt update
-    - apt dist-upgrade --yes --no-install-recommends
-    - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
-    - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt install --yes --no-install-recommends curl
-    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
-    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
-    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
-    - ls -l --color=always /etc/apt/trusted.gpg.d/
-    - mkdir --verbose --parents /etc/apt/sources.list.d
-    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
-    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
-    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
-    - echo; apt update
-    - >
-      apt install --yes --no-install-recommends sudo locales gettext build-essential
-      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
-      lsb-release ca-certificates libdistro-info-perl tzdata
   script:
     - 'echo "Setting debian/compat to 11"'
     - 'echo "11" > debian/compat'
@@ -400,11 +332,6 @@ build binaries for Ubuntu 18.04 LTS Bionic Beaver:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  only:
-    - test
-    - master
-    - main
-    - tags
 
 build binaries for Ubuntu 20.04 LTS Focal Fossa:
   variables:
@@ -412,32 +339,10 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
     DISTRIBUTOR: 'Ubuntu'
     OS_RELEASE: '20.04'
     OS_CODENAME: 'focal'
-  stage: build
+  extends:
+    - '.pkg-build-rules'
+    - '.build-ubuntu-pkg'
   image: ubuntu:focal
-  before_script:
-    - hostname -f
-    - whoami
-    - pwd
-    - locale -a
-    - apt update
-    - apt dist-upgrade --yes --no-install-recommends
-    - 'echo "Setting system timezone to ${USED_TIMEZONE} ..."'
-    - 'ln -fvs /usr/share/zoneinfo/${USED_TIMEZONE} /etc/localtime'
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt install --yes --no-install-recommends curl
-    - 'echo; echo "Importing GPG key from ${FB_REPOSERVER_GPGKEY_URL} ..."'
-    - mkdir --verbose --parents /etc/apt/trusted.gpg.d
-    - 'curl --silent "${FB_REPOSERVER_GPGKEY_URL}" >/etc/apt/trusted.gpg.d/fb-repo.keyring.asc'
-    - ls -l --color=always /etc/apt/trusted.gpg.d/
-    - mkdir --verbose --parents /etc/apt/sources.list.d
-    - echo; echo "Creating /etc/apt/sources.list.d/fbrehm.list ..."
-    - 'echo "deb	${FB_REPOSERVER_URL}/${DISTRIBUTOR}/${OS_CODENAME}		./" >/etc/apt/sources.list.d/fbrehm.list'
-    - echo; echo "Content of /etc/apt/sources.list.d/fbrehm.list:"; cat /etc/apt/sources.list.d/fbrehm.list
-    - echo; apt update
-    - >
-      apt install --yes --no-install-recommends sudo locales gettext build-essential
-      devscripts fakeroot debhelper automake autotools-dev pkg-config help2man
-      lsb-release ca-certificates libdistro-info-perl tzdata
   script:
     - >
       apt install --yes --no-install-recommends
@@ -468,16 +373,12 @@ build binaries for Ubuntu 20.04 LTS Focal Fossa:
     paths:
       - debian/pkgs/*/*
     expire_in: '1 week'
-  only:
-    - test
-    - master
-    - main
-    - tags
 
 build CentOS 7 with Python 3.6:
   variables:
     EL_MAJOR_VERSION: '7'
-  stage: build
+  extends:
+    - '.pkg-build-rules'
   image: centos:7
   script:
     - 'if [[ ! -f bin-build/build-centos7-inner.sh ]] ; then echo "File bin-build/build-centos7-inner.sh not found"; false; fi'
@@ -492,18 +393,12 @@ build CentOS 7 with Python 3.6:
       - rpmdir/RPMS/*/*.rpm
       - rpmdir/SRPMS/*.src.rpm
     expire_in: '1 week'
-  tags:
-    - docker
-  only:
-    - test
-    - master
-    - main
-    - tags
 
 build CentOS 8 with Python 3.8:
   variables:
     EL_MAJOR_VERSION: '8'
-  stage: build
+  extends:
+    - '.pkg-build-rules'
   image: centos:8
   script:
     - 'if [[ ! -f bin-build/build-centos8-inner.sh ]] ; then echo "File bin-build/build-centos8-inner.sh not found"; false; fi'
@@ -518,16 +413,18 @@ build CentOS 8 with Python 3.8:
       - rpmdir/RPMS/*/*.rpm
       - rpmdir/SRPMS/*.src.rpm
     expire_in: '1 week'
+
+.pkg-sign-rules:
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "main"
   tags:
     - docker
-  only:
-    - test
-    - master
-    - main
-    - tags
 
 Sign EL 7 packages:
-  stage: sign
+  extends:
+    - '.pkg-sign-rules'
   image: centos:7
   needs:
     - 'build CentOS 7 with Python 3.6'
@@ -557,15 +454,10 @@ Sign EL 7 packages:
       - rpmdir/RPMS/*/*.rpm
       - rpmdir/SRPMS/*.src.rpm
     expire_in: '1 week'
-  tags:
-    - docker
-  only:
-    - master
-    - main
-    - tags
 
 Sign EL 8 packages:
-  stage: sign
+  extends:
+    - '.pkg-sign-rules'
   image: centos:7
   needs:
     - 'build CentOS 8 with Python 3.8'
@@ -597,10 +489,6 @@ Sign EL 8 packages:
     expire_in: '1 week'
   tags:
     - docker
-  only:
-    - master
-    - main
-    - tags
 
 Deploy packages Debian and Ubuntu:
   stage: deploy
@@ -628,84 +516,68 @@ Deploy packages Debian and Ubuntu:
     - tags
   when: manual
 
+.pkg-deploy-rules:
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: manual
+      allow_failure: true
+  tags:
+    - docker_v2
+  script:
+    - hostname -f
+    - whoami
+    - pwd
+    - ls -lA --color=always
+    - if test -d rpmdir ; then ls -lA --color=always rpmdir/RPMS/*/* rpmdir/SRPMS/*; fi
+    - 'echo -e "YUM_REPO_USER: ${YUM_REPO_USER}"'
+    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
+    - 'echo -e "YUM_REPO_DIR: ${YUM_REPO_DIR}"'
+    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/'
+    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/ && createrepo --update . && chmod -v a+x repodata && chmod -Rv a+r repodata"'
+  after_script:
+    - rm -rf rpmdir
+  environment:
+    name: production
+
 Deploy packages EL7:
+  extends:
+    - '.pkg-deploy-rules'
   variables:
     EL_MAJOR_VERSION: '7'
-  stage: deploy
-  tags:
-    - deploy_v2
-  script:
-    - hostname -f
-    - whoami
-    - pwd
-    - ls -lA --color=always
-    - if test -d rpmdir ; then ls -lA --color=always rpmdir/RPMS/*/* rpmdir/SRPMS/*; fi
-    - 'echo -e "YUM_REPO_USER: ${YUM_REPO_USER}"'
-    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
-    - 'echo -e "YUM_REPO_DIR: ${YUM_REPO_DIR}"'
-    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/'
-    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/ && createrepo --update . && chmod -v a+x repodata && chmod -Rv a+r repodata"'
-  after_script:
-    - rm -rf rpmdir
-  environment:
-    name: production
   dependencies:
     - 'Sign EL 7 packages'
-  only:
-    - tags
-  when: manual
 
 Deploy packages EL8:
+  extends:
+    - '.pkg-deploy-rules'
   variables:
     EL_MAJOR_VERSION: '8'
-  stage: deploy
-  tags:
-    - deploy_v2
-  script:
-    - hostname -f
-    - whoami
-    - pwd
-    - ls -lA --color=always
-    - if test -d rpmdir ; then ls -lA --color=always rpmdir/RPMS/*/* rpmdir/SRPMS/*; fi
-    - 'echo -e "YUM_REPO_USER: ${YUM_REPO_USER}"'
-    - 'echo -e "YUM_REPO_HOST: ${YUM_REPO_HOST}"'
-    - 'echo -e "YUM_REPO_DIR: ${YUM_REPO_DIR}"'
-    - 'scp -p -o StrictHostKeyChecking=no rpmdir/RPMS/*/*.rpm ${YUM_REPO_USER}@${YUM_REPO_HOST}:${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/'
-    - 'ssh -o StrictHostKeyChecking=no ${YUM_REPO_USER}@${YUM_REPO_HOST} "cd ${YUM_REPO_DIR}/${EL_MAJOR_VERSION}/ && createrepo --update . && chmod -v a+x repodata && chmod -Rv a+r repodata"'
-  after_script:
-    - rm -rf rpmdir
-  environment:
-    name: production
   dependencies:
     - 'Sign EL 8 packages'
-  only:
-    - tags
-  when: manual
+
+.notify-rules:
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
+  tags:
+    - docker_v2
+  needs:
+    - 'Deploy packages EL7'
+    - 'Deploy packages EL8'
 
 # Notify Success:
-#   stage: notify
-#   tags:
-#     - deploy_v2
+#   extends:
+#     - '.notify-rules'
 #   allow_failure: true
 #   script: 'echo -e "Module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME}): all checks successful\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI: Python module fb_tools" -r "$SENDER_ADDRESS" $NOTIFY_ADDRESS'
-#   only:
-#     - master
-#     - test
-#     - main
-#     - tags
 
 # Notify Error:
-#   stage: notify
-#   tags:
-#     - deploy_v2
+#   extends:
+#     - '.notify-rules'
 #   allow_failure: true
 #   when: on_failure
 #   script: 'echo -e "Error in module ${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME} (${CI_COMMIT_REF_NAME})\nPlease check ${CI_PROJECT_URL}/pipelines/${CI_PIPELINE_ID}\n\nCommiter: ${GITLAB_USER_NAME} <${GITLAB_USER_EMAIL}>" | mailx -s "Gitlab-CI error for Python module fb_tools" -r "$SENDER_ADDRESS" "$NOTIFY_ADDRESS"'
-#   only:
-#     - master
-#     - test
-#     - main
-#     - tags
-#     - develop
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
