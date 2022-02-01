@@ -1,3 +1,10 @@
+fb-tools (1.8.5) all; urgency=medium
+
+  * Support creating RPMs for CentOS Stream 9
+  * Changing Distro for building EL-8 packages to CentOS Stream 8
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 01 Feb 2022 10:16:54 +0100
+
 fb-tools (1.8.4) all; urgency=medium
 
   * Removing all pdns modules and bin/pdns-bulk-remove, because it's now
