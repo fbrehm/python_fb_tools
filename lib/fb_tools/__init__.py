@@ -3,6 +3,6 @@
 
 DDNS_CFG_BASENAME = 'ddns.ini'
 VMWARE_CFGFILE_BASENAME = 'vmware.ini'
-__version__ = '1.8.4'
+__version__ = '1.8.5'
 
 # vim: ts=4 et list
