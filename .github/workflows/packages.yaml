@@ -337,6 +337,9 @@ jobs:
           echo
           echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"
           echo
+          echo "Tweaking setup.cfg ..."
+          sed -i '/pyvmomi/d' setup.cfg
+          echo
           RPM_SRC_DIR="python${PY_VERSION_NODOT}_${PKG_NAME}-${PKG_VERSION}"
           mkdir -pv "rpmdir/SOURCES/${RPM_SRC_DIR}"
           echo
@@ -358,6 +361,11 @@ jobs:
                                   -e "s/@@@py_version_nodot@@@/${PY_VERSION_NODOT}/gi" \
                                   -e "s/@@@py_version_dot@@@/${PY_VERSION_DOT}/gi" \
                                   > fb-tools.spec
+          if [[ "${EL_VERSION}" -lt "8" ]] ; then
+              sed -i '/^Recommends/d' fb-tools.spec
+          elif [[ "${EL_VERSION}" == "9" ]] ; then
+              sed -i '/pyvmomi/d' fb-tools.spec
+          fi
           python${PY_VERSION_DOT} bin-build/changelog-deb2rpm.py debian/changelog >>fb-tools.spec
           echo
           echo "Generated Spec file:"

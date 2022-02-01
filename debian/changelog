@@ -1,3 +1,11 @@
+fb-tools (1.8.6) all; urgency=medium
+
+  * Tweaking dependencies in .github/workflows/packages.yaml and
+    specs/fb-tools.spec.template.
+  * Fixing creation of RPMs in Github workflow.
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 01 Feb 2022 16:15:54 +0100
+
 fb-tools (1.8.5) all; urgency=medium
 
   * Support creating RPMs for CentOS Stream 9
