@@ -337,6 +337,9 @@ jobs:
           echo
           echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"
           echo
+          echo "Tweaking setup.cfg ..."
+          sed -i '/pyvmomi/d' setup.cfg
+          echo
           RPM_SRC_DIR="python${PY_VERSION_NODOT}_${PKG_NAME}-${PKG_VERSION}"
           mkdir -pv "rpmdir/SOURCES/${RPM_SRC_DIR}"
           echo
@@ -350,9 +353,6 @@ jobs:
           echo "Source file:"
           ls -lA --color=always *.tar.gz
           cd "${ODIR}"
-          echo
-          echo "Tweaking setup.cfg ..."
-          sed -i '/pyvmomi/d' setup.cfg
           echo
           echo "Generating spec file 'fb_logging.spec' ..."
           cat specs/fb-tools.spec.template | tail -n +3 | \
