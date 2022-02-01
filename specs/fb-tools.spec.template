@@ -6,7 +6,7 @@
 Name:           python@@@py_version_nodot@@@-fb-tools
 Version:        %{version}
 Release:        @@@Release@@@%{?dist}
-Summary:	Python modules for common used objects, error classes and functions
+Summary:        Python modules for common used objects, error classes and functions
 
 Group:          Development/Languages/Python
 License:        LGPL-3
@@ -14,7 +14,7 @@ Distribution:   Frank Brehm
 URL:            https://github.com/fbrehm/python_fb_tools
 Source0:        fb-tools.%{version}.tar.gz
 
-BuildRequires:	gettext
+BuildRequires:  gettext
 BuildRequires:  python@@@py_version_nodot@@@
 BuildRequires:  python@@@py_version_nodot@@@-libs
 BuildRequires:  python@@@py_version_nodot@@@-devel
@@ -30,6 +30,7 @@ Requires:       python@@@py_version_nodot@@@-pytz
 Requires:       python@@@py_version_nodot@@@-requests
 Requires:       python@@@py_version_nodot@@@-six
 Requires:       python@@@py_version_nodot@@@-fb-logging
+Recommends:     python@@@py_version_nodot@@@-pyvmomi
 BuildArch:      noarch
 
 %description

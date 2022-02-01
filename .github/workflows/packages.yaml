@@ -351,6 +351,9 @@ jobs:
           ls -lA --color=always *.tar.gz
           cd "${ODIR}"
           echo
+          echo "Tweaking setup.cfg ..."
+          sed -i '/pyvmomi/d' setup.cfg
+          echo
           echo "Generating spec file 'fb_logging.spec' ..."
           cat specs/fb-tools.spec.template | tail -n +3 | \
                               sed -e "s/@@@Version@@@/${PKG_VERSION}/gi" \
@@ -358,6 +361,11 @@ jobs:
                                   -e "s/@@@py_version_nodot@@@/${PY_VERSION_NODOT}/gi" \
                                   -e "s/@@@py_version_dot@@@/${PY_VERSION_DOT}/gi" \
                                   > fb-tools.spec
+          if [[ "${EL_VERSION}" -lt "8" ]] ; then
+              sed -i '/^Recommends/d' fb-tools.spec
+          elif [[ "${EL_VERSION}" == "9" ]] ; then
+              sed -i '/pyvmomi/d' fb-tools.spec
+          fi
           python${PY_VERSION_DOT} bin-build/changelog-deb2rpm.py debian/changelog >>fb-tools.spec
           echo
           echo "Generated Spec file:"
