@@ -1,4 +1,4 @@
-fb-tools (1.8.6) UNRELEASED; urgency=medium
+fb-tools (1.8.6) all; urgency=medium
 
   * Tweaking dependencies in .github/workflows/packages.yaml and
     specs/fb-tools.spec.template.
