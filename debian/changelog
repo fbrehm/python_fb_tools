@@ -1,4 +1,4 @@
-fb-tools (1.8.5) UNRELEASED; urgency=medium
+fb-tools (1.8.5) all; urgency=medium
 
   * Support creating RPMs for CentOS Stream 9
   * Changing Distro for building EL-8 packages to CentOS Stream 8
