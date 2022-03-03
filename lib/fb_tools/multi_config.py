@@ -12,8 +12,6 @@ from __future__ import absolute_import
 import logging
 import pathlib
 import codecs
-import argparse
-import json
 import re
 import sys
 import copy
@@ -24,25 +22,24 @@ from pathlib import Path
 # Third party modules
 import six
 
-from six import StringIO
 from six.moves import configparser
 
-from configparser import Error as ConfigParseError
-if six.PY3:
-    from configparser import ExtendedInterpolation
+# from configparser import Error as ConfigParseError
+# if six.PY3:
+#     from configparser import ExtendedInterpolation
 
-import yaml
+import yaml                 # noqa
 
 HAS_HJSON = False
 try:
-    import hjson
+    import hjson            # noqa
     HAS_HJSON = True
 except ImportError:
     pass
 
 HAS_TOML = False
 try:
-    import toml
+    import toml             # noqa
     HAS_TOML = True
 except ImportError:
     pass
@@ -370,7 +367,8 @@ class BaseMultiConfig(FbBaseObject):
                     if s not in self.stems:
                         self.stems.append(s)
             else:
-                if not isinstance(additional_stems, (six.string_types, six.binary_type, pathlib.Path)):
+                if not isinstance(additional_stems, (
+                        six.string_types, six.binary_type, pathlib.Path)):
                     msg = _("Stem {!r} is not a String type.").format(additional_stems)
                     raise TypeError(msg)
                 s = str(to_str(additional_stems))
@@ -513,8 +511,7 @@ class BaseMultiConfig(FbBaseObject):
         if self.verbose > 1:
             LOG.debug(_("Arguments on initializing ConfigParser:\n{}").format(pp(kargs)))
 
-        parser = configparser.ConfigParser(**kargs)
-
+        parser = configparser.ConfigParser(**kargs)             # noqa
 
     # -------------------------------------------------------------------------
     def load_toml(self, cfg_file):

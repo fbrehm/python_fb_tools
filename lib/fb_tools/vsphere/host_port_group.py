@@ -23,7 +23,8 @@ from pyVmomi import vim
 # Own modules
 from ..xlate import XLATOR
 
-from ..common import pp, to_bool
+from ..common import pp
+# from ..common import to_bool
 
 from ..obj import FbBaseObject
 

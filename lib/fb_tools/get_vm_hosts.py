@@ -11,9 +11,9 @@ from __future__ import absolute_import, print_function
 # Standard modules
 import logging
 import getpass
-import re
+# import re
 
-from operator import itemgetter, attrgetter
+# from operator import itemgetter, attrgetter
 
 # Third party modules
 import pytz
@@ -22,11 +22,13 @@ import pytz
 from . import __version__ as GLOBAL_VERSION
 from . import VMWARE_CFGFILE_BASENAME
 
-from .xlate import XLATOR, format_list
+from .xlate import XLATOR
+# from .xlate import format_list
 
 from .common import pp, to_bool
 
-from .app import BaseApplication, RegexOptionAction
+from .app import BaseApplication
+# from .app import RegexOptionAction
 
 from .config import CfgFileOptionAction
 
@@ -36,7 +38,7 @@ from .vmware_config import VmwareConfiguration
 
 from .vsphere.server import VsphereServer
 
-from .vsphere.vm import VsphereVm
+# from .vsphere.vm import VsphereVm
 
 __version__ = '0.1.0'
 LOG = logging.getLogger(__name__)
@@ -352,8 +354,8 @@ class GetVmHostsApplication(BaseApplication):
             host = vsphere.hosts[host_name]
             hosts.append(host)
 
-
         return hosts
+
 
 # =============================================================================
 if __name__ == "__main__":
