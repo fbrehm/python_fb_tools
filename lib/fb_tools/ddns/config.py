@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2021 by Frank Brehm, Berlin
 @summary: A module for providing a configuration for the ddns-update script
 """
 from __future__ import absolute_import
@@ -11,7 +11,11 @@ from __future__ import absolute_import
 # Standard module
 import logging
 import re
-from pathlib import Path
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 # Third party modules
 
@@ -22,7 +26,7 @@ from ..config import ConfigError, BaseConfiguration
 
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.4.3'
+__version__ = '0.4.4'
 
 LOG = logging.getLogger(__name__)
 

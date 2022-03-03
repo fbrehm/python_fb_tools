@@ -1,54 +1,11 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-BIN_PKGNAME  := fb-tools
-LIB2_PKGNAME := python-fb-tools
-LIB3_PKGNAME := python3-fb-tools
-NLS_PKGNAME  := python-fb-tools-nls
-
-INSTALL_DIR_BIN  := $(CURDIR)/debian/$(BIN_PKGNAME)
-INSTALL_DIR_LIB2 := $(CURDIR)/debian/$(LIB2_PKGNAME)
-INSTALL_DIR_LIB3 := $(CURDIR)/debian/$(LIB3_PKGNAME)
-
-PYTHON2S := $(shell pyversions -vr || true)
-PYTHON3S := $(shell py3versions -vr || true)
+export PYBUILD_NAME=fb-tools
+export PYBUILD_DESTDIR_python3=debian/python3-fb-tools/
+export PYBUILD_DISABLE=test
 
 %:
-	dh $@ --with python2,python3
+	dh $@ --with python3 --buildsystem=pybuild
 
-override_dh_auto_clean:
-	@echo
-	@echo "-------------------------------------------"
-	@echo "Cleaning ..."
-	@echo
-	dh_auto_clean
-	rm -rf dist
-#	rm -fv man/*
-#	rm -fv tmp/*
-
-override_dh_auto_build:
-	@echo ""
-	@echo "Building Python 2 stuff ..."
-	set -e && for pyvers in $(PYTHON2S); do python$$pyvers setup.py build; done
-	@echo ""
-	@echo "Building Python 3 stuff ..."
-	set -e && for pyvers in $(PYTHON3S); do python$$pyvers setup.py build; done
-#	@echo ""
-#	./generate-manpages.sh
-
-override_dh_auto_install:
-	@echo ""
-	@echo "Installing Python 2 stuff ..."
-	set -e && for pyvers in $(PYTHON2S); do python$$pyvers setup.py install --root=$(INSTALL_DIR_LIB2) --install-layout=deb; done
-	rm -rv $(INSTALL_DIR_LIB2)/usr/bin
-	rm -rvf $(INSTALL_DIR_LIB2)/usr/share
-	@echo ""
-	@echo "Installing Python 3 stuff ..."
-	set -e && for pyvers in $(PYTHON3S); do python$$pyvers setup.py install --root=$(INSTALL_DIR_LIB3) --install-layout=deb; done
-	@echo ""
-	@echo "Installing bin package ..."
-	install -d $(INSTALL_DIR_BIN)/usr
-	mv -v $(INSTALL_DIR_LIB3)/usr/bin $(INSTALL_DIR_BIN)/usr
-#	@echo ""
-#	@echo "Manpages ..."
-#	dh_installman
+# vim: ts=8 list

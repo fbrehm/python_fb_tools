@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2021 by Frank Brehm, Berlin
 @summary: The module for the classes of the update-ddns application.
 """
 from __future__ import absolute_import, print_function
@@ -15,24 +15,27 @@ import sys
 import os
 import ipaddress
 
-from pathlib import Path
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 # Third party module
 from six.moves.urllib.parse import quote
 
 # Own modules
+from fb_logging.colored import ColoredFormatter
+
 from .. import __version__ as GLOBAL_VERSION
 
 from ..xlate import XLATOR, format_list
-
-from ..colored import ColoredFormatter
 
 from . import BaseDdnsApplication, WorkDirError
 from . import WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext

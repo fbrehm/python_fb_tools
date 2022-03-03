@@ -3,16 +3,20 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2021 by Frank Brehm, Berlin
 @summary: A module for providing a configuration
 """
 from __future__ import absolute_import
 
 # Standard module
 import logging
-import pathlib
 import codecs
 import argparse
+
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 # Third party modules
 import six
@@ -29,7 +33,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 

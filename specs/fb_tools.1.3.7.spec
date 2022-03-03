@@ -60,7 +60,6 @@ This is the Python%{python3_pkgversion} version.
 In this package are contained the following scripts:
  * get-file-to-remove
  * get-vmware-vm-info
- * pdns-bulk-remove
 
 %prep
 %setup -n %{builddir2}
@@ -96,7 +95,6 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %defattr(-,root,root,-)
 %{_bindir}/get-file-to-remove
 %{_bindir}/get-vmware-vm-info
-%{_bindir}/pdns-bulk-remove
 %{python3_sitelib}/*
 
 %changelog
