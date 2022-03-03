@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2021 by Frank Brehm, Berlin
 @summary: The module for the get-file-to-remove application object.
 """
 from __future__ import absolute_import
@@ -12,10 +12,14 @@ from __future__ import absolute_import
 import logging
 import datetime
 import argparse
-import pathlib
 import glob
 import re
 import sre_constants
+
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 # Third party modules
 
@@ -28,7 +32,7 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '1.1.6'
+__version__ = '1.1.8'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -118,9 +122,9 @@ class GetFileRmApplication(BaseApplication):
     default_keep_years = 3
     default_keep_last = 1
 
-    min_keep_days = 1
-    min_keep_weeks = 1
-    min_keep_months = 1
+    min_keep_days = 0
+    min_keep_weeks = 0
+    min_keep_months = 0
     min_keep_years = 0
     min_keep_last = 1
 

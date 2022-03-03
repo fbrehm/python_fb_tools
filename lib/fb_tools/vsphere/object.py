@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2021 by Frank Brehm, Berlin
 @summary: The base module module for a VSphere object.
 """
 from __future__ import absolute_import

@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2021 by Frank Brehm, Berlin
 @summary: The module for a base application object.
 """
 from __future__ import absolute_import
@@ -20,17 +20,21 @@ import signal
 import time
 
 # Third party modules
-from pathlib import Path
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 # Own modules
+from fb_logging.colored import ColoredFormatter
+
 from . import __version__ as __pkg_version__
 
 from .errors import FbAppError
 from .errors import FunctionNotImplementedError
 
 from .common import terminal_can_colors
-
-from .colored import ColoredFormatter
 
 from .handling_obj import HandlingObject
 
@@ -39,7 +43,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.5.1'
+__version__ = '1.5.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {

@@ -1,8 +1,102 @@
-fb-tools (1.7.1) UNRELEASED; urgency=medium
+fb-tools (1.8.6) all; urgency=medium
 
-  * Merging master into develop
+  * Tweaking dependencies in .github/workflows/packages.yaml and
+    specs/fb-tools.spec.template.
+  * Fixing creation of RPMs in Github workflow.
 
- -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 03 Nov 2020 09:04:48 +0100
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 01 Feb 2022 16:15:54 +0100
+
+fb-tools (1.8.5) all; urgency=medium
+
+  * Support creating RPMs for CentOS Stream 9
+  * Changing Distro for building EL-8 packages to CentOS Stream 8
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 01 Feb 2022 10:16:54 +0100
+
+fb-tools (1.8.4) all; urgency=medium
+
+  * Removing all pdns modules and bin/pdns-bulk-remove, because it's now
+    located in Github repo 'fbrehm/fb-pdnstools.git'
+  * Updating translations because of removed modules
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 17 Nov 2021 11:35:01 +0100
+
+fb-tools (1.8.3) all; urgency=medium
+
+  * Fixing .github/workflows/packages.yaml
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 16 Nov 2021 16:32:25 +0100
+
+fb-tools (1.8.2) all; urgency=medium
+
+  * Updating setup.cfg for building Python packages
+  * dch Fixing packages in Github action 'debian-install-buildenv'
+  * Adding Github action 'add-fb-yum-repo'
+  * Adding file LICENSE
+  * Adding job 'build_rpm' to Github workflow
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 16 Nov 2021 16:13:33 +0100
+
+fb-tools (1.8.1) all; urgency=medium
+
+  * Adding dependencies to fb-logging and removing all appropriate
+    modules and test scripts, which are substituted by this package.
+  * Modifying Github action and workflow to reflect this.
+  * Adding Debian Repository definition of Franks Repo on building
+    Debian packages in .gitlab-ci.yml
+  * Completing tests and build process in .gitlab-ci.yml
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 25 Oct 2021 16:31:07 +0200
+
+fb-tools (1.8.0) all; urgency=medium
+
+  * Adding bin-build/changelog-deb2rpm.py for converting Debian
+    changelog to spec format
+  * Removing Python 2 support
+  * Removing support for Debian 9 and for Ubuntu 16.04
+  * Moving some build functionality from .gitlab-ci.yml into separate
+    scripts
+  * Adding Github workflow and Github actions for building packages
+  * Setting debian/compat to 12
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 30 Aug 2021 18:53:33 +0200
+
+fb-tools (1.7.6) all; urgency=medium
+
+  * Adding Build for Debian 11 bullseye
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 24 Aug 2021 15:48:46 +0200
+
+fb-tools (1.7.5) all; urgency=medium
+
+  * Decreasing minimal values of files to keep
+
+ -- Frank Brehm <frank@brehm-online.com>  Sat, 03 Apr 2021 09:19:49 +0200
+
+fb-tools (1.7.4) all; urgency=medium
+
+  * Satisfying linter in lib/fb_tools/collections.py
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 04 Jan 2021 12:50:26 +0100
+
+fb-tools (1.7.3) all; urgency=medium
+
+  * New module lib/fb_tools/collections.py with new classes
+    FrozenCIStringSet, CIStringSet, FrozenCIDict and CIDict, and some
+    additional Exception classes
+  * Adding test script test/test_collections.py for testing
+    lib/fb_tools/collections.py
+  * Modifying .github/workflows/superlinter.yml to execute only in
+    Branch master
+
+ -- Frank Brehm <frank@brehm-online.com>  Mon, 04 Jan 2021 12:00:55 +0100
+
+fb-tools (1.7.2) all; urgency=medium
+
+  * Adding functions is_general_string() and compare_ldap_values() to
+    lib/fb_tools/common.py
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 14 Dec 2020 15:09:56 +0100
 
 fb-tools (1.7.0) all; urgency=medium
 

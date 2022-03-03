@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2021 by Frank Brehm, Berlin
 @summary: The module for i18n.
           It provides translation object, usable from all other
           modules in this package.
@@ -15,7 +15,10 @@ import logging
 import gettext
 import copy
 
-from pathlib import Path
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from distutils.version import LooseVersion
 
@@ -28,7 +31,7 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent

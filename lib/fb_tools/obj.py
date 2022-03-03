@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2019 Frank Brehm, Berlin
+@copyright: © 2021 Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
@@ -13,9 +13,17 @@ import os
 import logging
 import datetime
 import traceback
-import pathlib
+
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
+
+from abc import ABCMeta, abstractmethod
 
 # Third party modules
+
+from six import add_metaclass
 
 # Own modules
 from .common import pp, to_bytes
@@ -24,7 +32,7 @@ from .errors import FbError
 
 from .xlate import XLATOR
 
-__version__ = '1.1.1'
+__version__ = '1.2.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -59,9 +67,165 @@ class BasedirNotExistingError(FbBaseObjectError):
 
 
 # =============================================================================
-class FbBaseObject(object):
+@add_metaclass(ABCMeta)
+class FbGenericBaseObject(object):
     """
-    Base class for all objects.
+    Base class for all and everything.
+    42
+    """
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def get_generic_appname(cls, appname=None):
+
+        if appname:
+            v = str(appname).strip()
+            if v:
+                return v
+        return os.path.basename(sys.argv[0])
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """
+        Typecasting function for translating object structure
+        into a string
+
+        @return: structure as string
+        @rtype:  str
+        """
+
+        return pp(self.as_dict(short=True))
+
+    # -------------------------------------------------------------------------
+    @abstractmethod
+    def __repr__(self):
+        """Typecasting into a string for reproduction."""
+
+        out = "<%s()>" % (self.__class__.__name__)
+        return out
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True):
+        """
+        Transforms the elements of the object into a dict
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+
+        @return: structure as dict
+        @rtype:  dict
+        """
+
+        res = {}
+        for key in self.__dict__:
+            if short and key.startswith('_') and not key.startswith('__'):
+                continue
+            val = self.__dict__[key]
+            if isinstance(val, FbGenericBaseObject):
+                res[key] = val.as_dict(short=short)
+            else:
+                res[key] = val
+
+        res['__class_name__'] = self.__class__.__name__
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def handle_error(
+            self, error_message=None, exception_name=None, do_traceback=False):
+        """
+        Handle an error gracefully.
+
+        Print a traceback and continue.
+
+        @param error_message: the error message to display
+        @type error_message: Exception or str
+        @param exception_name: name of the exception class
+        @type exception_name: str
+        @param do_traceback: allways show a traceback
+        @type do_traceback: bool
+
+        """
+
+        msg = str(error_message).strip()
+        if not msg:
+            msg = _('undefined error.')
+        title = None
+
+        if isinstance(error_message, Exception):
+            title = error_message.__class__.__name__
+        else:
+            if exception_name is not None:
+                title = exception_name.strip()
+            else:
+                title = _('Exception happened')
+        msg = title + ': ' + msg
+
+        root_log = logging.getLogger()
+        has_handlers = False
+        if root_log.handlers:
+            has_handlers = True
+
+        if has_handlers:
+            LOG.error(msg)
+            if do_traceback:
+                LOG.error(traceback.format_exc())
+        else:
+            curdate = datetime.datetime.now()
+            curdate_str = "[" + curdate.isoformat(' ') + "]: "
+            msg = curdate_str + msg + "\n"
+            if hasattr(sys.stderr, 'buffer'):
+                sys.stderr.buffer.write(to_bytes(msg))
+            else:
+                sys.stderr.write(msg)
+            if do_traceback:
+                traceback.print_exc()
+
+        return
+
+    # -------------------------------------------------------------------------
+    def handle_info(self, message, info_name=None):
+        """
+        Shows an information. This happens both to STDERR and to all
+        initialized log handlers.
+
+        @param message: the info message to display
+        @type message: str
+        @param info_name: Title of information
+        @type info_name: str
+
+        """
+
+        msg = ''
+        if info_name is not None:
+            info_name = info_name.strip()
+            if info_name:
+                msg = info_name + ': '
+        msg += str(message).strip()
+
+        root_log = logging.getLogger()
+        has_handlers = False
+        if root_log.handlers:
+            has_handlers = True
+
+        if has_handlers:
+            LOG.info(msg)
+        else:
+            curdate = datetime.datetime.now()
+            curdate_str = "[" + curdate.isoformat(' ') + "]: "
+            msg = curdate_str + msg + "\n"
+            if hasattr(sys.stderr, 'buffer'):
+                sys.stderr.buffer.write(to_bytes(msg))
+            else:
+                sys.stderr.write(msg)
+
+        return
+
+
+# =============================================================================
+class FbBaseObject(FbGenericBaseObject):
+    """
+    Base class for all objects with some fundamental properties.
     """
 
     # -------------------------------------------------------------------------
@@ -74,17 +238,11 @@ class FbBaseObject(object):
         Raises an exception on a uncoverable error.
         """
 
-        self._appname = None
         """
         @ivar: name of the current running application
         @type: str
         """
-        if appname:
-            v = str(appname).strip()
-            if v:
-                self._appname = v
-        if not self._appname:
-            self._appname = os.path.basename(sys.argv[0])
+        self._appname = self.get_generic_appname(appname)
 
         self._version = version
         """
@@ -187,18 +345,6 @@ class FbBaseObject(object):
             self._base_dir = base_dir_path
 
     # -------------------------------------------------------------------------
-    def __str__(self):
-        """
-        Typecasting function for translating object structure
-        into a string
-
-        @return: structure as string
-        @rtype:  str
-        """
-
-        return pp(self.as_dict(short=True))
-
-    # -------------------------------------------------------------------------
     def __repr__(self):
         """Typecasting into a string for reproduction."""
 
@@ -226,17 +372,8 @@ class FbBaseObject(object):
         @rtype:  dict
         """
 
-        res = self.__dict__
-        res = {}
-        for key in self.__dict__:
-            if short and key.startswith('_') and not key.startswith('__'):
-                continue
-            val = self.__dict__[key]
-            if isinstance(val, FbBaseObject):
-                res[key] = val.as_dict(short=short)
-            else:
-                res[key] = val
-        res['__class_name__'] = self.__class__.__name__
+        res = super(FbBaseObject, self).as_dict(short=short)
+
         res['appname'] = self.appname
         res['version'] = self.version
         res['verbose'] = self.verbose
@@ -244,97 +381,6 @@ class FbBaseObject(object):
         res['base_dir'] = self.base_dir
 
         return res
-
-    # -------------------------------------------------------------------------
-    def handle_error(
-            self, error_message=None, exception_name=None, do_traceback=False):
-        """
-        Handle an error gracefully.
-
-        Print a traceback and continue.
-
-        @param error_message: the error message to display
-        @type error_message: Exception or str
-        @param exception_name: name of the exception class
-        @type exception_name: str
-        @param do_traceback: allways show a traceback
-        @type do_traceback: bool
-
-        """
-
-        msg = str(error_message).strip()
-        if not msg:
-            msg = _('undefined error.')
-        title = None
-
-        if isinstance(error_message, Exception):
-            title = error_message.__class__.__name__
-        else:
-            if exception_name is not None:
-                title = exception_name.strip()
-            else:
-                title = _('Exception happened')
-        msg = title + ': ' + msg
-
-        root_log = logging.getLogger()
-        has_handlers = False
-        if root_log.handlers:
-            has_handlers = True
-
-        if has_handlers:
-            LOG.error(msg)
-            if do_traceback:
-                LOG.error(traceback.format_exc())
-        else:
-            curdate = datetime.datetime.now()
-            curdate_str = "[" + curdate.isoformat(' ') + "]: "
-            msg = curdate_str + msg + "\n"
-            if hasattr(sys.stderr, 'buffer'):
-                sys.stderr.buffer.write(to_bytes(msg))
-            else:
-                sys.stderr.write(msg)
-            if do_traceback:
-                traceback.print_exc()
-
-        return
-
-    # -------------------------------------------------------------------------
-    def handle_info(self, message, info_name=None):
-        """
-        Shows an information. This happens both to STDERR and to all
-        initialized log handlers.
-
-        @param message: the info message to display
-        @type message: str
-        @param info_name: Title of information
-        @type info_name: str
-
-        """
-
-        msg = ''
-        if info_name is not None:
-            info_name = info_name.strip()
-            if info_name:
-                msg = info_name + ': '
-        msg += str(message).strip()
-
-        root_log = logging.getLogger()
-        has_handlers = False
-        if root_log.handlers:
-            has_handlers = True
-
-        if has_handlers:
-            LOG.info(msg)
-        else:
-            curdate = datetime.datetime.now()
-            curdate_str = "[" + curdate.isoformat(' ') + "]: "
-            msg = curdate_str + msg + "\n"
-            if hasattr(sys.stderr, 'buffer'):
-                sys.stderr.buffer.write(to_bytes(msg))
-            else:
-                sys.stderr.write(msg)
-
-        return
 
 
 # =============================================================================
