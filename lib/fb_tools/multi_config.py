@@ -3,7 +3,7 @@
 """
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
+@copyright: © 2022 by Frank Brehm, Berlin
 @summary: A module for providing a configuration based on multiple configuration files
 """
 from __future__ import absolute_import
@@ -16,6 +16,7 @@ import re
 import sys
 import copy
 import os
+import json
 
 from pathlib import Path
 
@@ -51,11 +52,15 @@ from .common import pp, to_bool, to_str, is_sequence
 
 from .obj import FbBaseObject
 
+from .merge import merge_structure
+
 from .xlate import XLATOR
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
+
 LOG = logging.getLogger(__name__)
-DEFAULT_ENCODING = 'utf-8'
+UTF8_ENCODING = 'utf-8'
+DEFAULT_ENCODING = UTF8_ENCODING
 
 _ = XLATOR.gettext
 
@@ -143,6 +148,8 @@ class BaseMultiConfig(FbBaseObject):
         self._ini_strict = True
         self._ini_empty_lines_in_values = True
         self._ini_default_section = self.default_ini_default_section
+
+        self.cfg = {}
         self.ext_loader = {}
         self.ext_re = {}
         self.configs = {}
@@ -181,7 +188,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def encoding(self):
-        """The encoding used to read config files."""
+        """The default encoding used to read config files."""
         return self._encoding
 
     @encoding.setter
@@ -474,6 +481,7 @@ class BaseMultiConfig(FbBaseObject):
         if not self.cfgfiles_collected:
             self.collect_config_files()
 
+        self.cfg = {}
         for cfg_file in self.config_files:
 
             LOG.info("Reading configuration file {!r} ...".format(str(cfg_file)))
@@ -486,18 +494,48 @@ class BaseMultiConfig(FbBaseObject):
             if not meth:
                 raise MultiCfgLoaderNotFoundError(method)
 
-            meth(cfg_file)
+            cfg = meth(cfg_file)
+            if self.verbose > 3:
+                msg = _("Read config from {fn!r}:").format(fn=str(cfg_file))
+                msg += '\n' + pp(cfg)
+                LOG.debug(msg)
+            if cfg and cfg.keys():
+                self.configs_raw[str(cfg_file)] = cfg
+                self.cfg = merge_structure(self.cfg, cfg)
+            else:
+                self.configs_raw[str(cfg_file)] = None
+
+        if self.verbose > 2:
+            LOG.debug(_('Read merged config:') + '\n' + pp(self.cfg))
 
     # -------------------------------------------------------------------------
     def load_json(self, cfg_file):
 
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='JSON', fn=str(cfg_file)))
 
+        open_opts = {
+            'encoding': UTF8_ENCODING,
+            'errors': 'surrogateescape',
+        }
+
+        try:
+            with cfg_file.open('r', **open_opts) as fh:
+                js = json.load(fh)
+        except json.JSONDecodeError as e:
+            msg = _("{what} parse error in {fn!r}, line {line}, column {col}.").format(
+                what='JSON', fn=str(cfg_file), line=e.lineno, col=e.colno)
+            LOG.error(msg)
+            return
+
+        return js
+
     # -------------------------------------------------------------------------
     def load_hjson(self, cfg_file):
 
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(
             tp='human readable JSON', fn=str(cfg_file)))
+
+        return {}
 
     # -------------------------------------------------------------------------
     def load_ini(self, cfg_file):
@@ -513,15 +551,21 @@ class BaseMultiConfig(FbBaseObject):
 
         parser = configparser.ConfigParser(**kargs)             # noqa
 
+        return {}
+
     # -------------------------------------------------------------------------
     def load_toml(self, cfg_file):
 
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='TOML', fn=str(cfg_file)))
 
+        return {}
+
     # -------------------------------------------------------------------------
     def load_yaml(self, cfg_file):
 
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='YAML', fn=str(cfg_file)))
+
+        return {}
 
 
 # =============================================================================

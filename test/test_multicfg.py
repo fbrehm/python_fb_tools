@@ -11,9 +11,6 @@
 import os
 import sys
 import logging
-import tempfile
-import datetime
-import six
 
 from pathlib import Path
 
@@ -22,14 +19,14 @@ try:
 except ImportError:
     import unittest
 
-from babel.dates import LOCALTZ
+# from babel.dates import LOCALTZ
 
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 sys.path.insert(0, libdir)
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
-from fb_tools.common import pp, to_str, to_bool, is_sequence
+from fb_tools.common import pp, to_str, is_sequence
 
 LOG = logging.getLogger('test_multicfg')
 
@@ -126,11 +123,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         valid_stems = [
             'uhu', ('bla', 'blub'), b'banane', ['item0', 'item1'], Path('p0'),
         ]
-        if six.PY2:
-            valid_stems.append(unicode('uhu'))
-            valid_stems.append(('a', unicode('b'), Path('p1')))
-        else:
-            valid_stems.append(('a', b'b', Path('p1')))
+        valid_stems.append(('a', b'b', Path('p1')))
 
         invalid_stems = (
             1, 2.3, {'uhu': 'banane'}, os.sep, str(Path('p0') / 'p1'), Path('uhu') / 'banane',
@@ -169,14 +162,15 @@ class TestFbMultiConfig(FbToolsTestcase):
                 self.assertIn(item, cfg.stems)
 
         for stem in invalid_stems:
-            LOG.debug("Testing invalid stem {s!r} ({c}).".format(s=stem, c=stem.__class__.__name__))
+            LOG.debug("Testing invalid stem {s!r} ({c}).".format(
+                s=stem, c=stem.__class__.__name__))
             with self.assertRaises((TypeError, ValueError)) as cm:
                 cfg = BaseMultiConfig(
                     appname=self.appname, config_dir='test', additional_stems=stem,
                     verbose=self.verbose,
                 )
             e = cm.exception
-            LOG.debug("{c} raised on stem {s!r}: {e}".format( c=e.__class__.__name__, s=stem, e=e))
+            LOG.debug("{c} raised on stem {s!r}: {e}".format(c=e.__class__.__name__, s=stem, e=e))
 
     # -------------------------------------------------------------------------
     def test_collect_cfg_files(self):
@@ -229,6 +223,9 @@ class TestFbMultiConfig(FbToolsTestcase):
             LOG.debug("Current configuration directories:\n{}".format(pp(cfg.config_dirs)))
 
         cfg.read()
+
+        if self.verbose > 1:
+            LOG.debug("Read raw configs:\n" + pp(cfg.configs_raw))
 
 
 # =============================================================================
