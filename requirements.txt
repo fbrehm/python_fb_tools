@@ -10,4 +10,3 @@ PyYAML
 toml
 hjson
 requests_mock
-filemagic

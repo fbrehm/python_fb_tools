@@ -45,6 +45,7 @@ try:
 except ImportError:
     pass
 
+
 # Own modules
 from .config import ConfigError
 
@@ -164,6 +165,12 @@ class BaseMultiConfig(FbBaseObject):
             appname=appname, verbose=verbose, version=version,
             base_dir=base_dir, initialized=False,
         )
+
+        if self.verbose > 1:
+            if not HAS_HJSON:
+                LOG.debug(_("{} configuration is not supported.").format('HJson'))
+            if not HAS_TOML:
+                LOG.debug(_("{} configuration is not supported.").format('Toml'))
 
         if encoding:
             self.encoding = encoding
@@ -444,6 +451,9 @@ class BaseMultiConfig(FbBaseObject):
                 LOG.debug(msg)
             self._eval_config_dir(cfg_dir)
 
+        if self.verbose > 2:
+            LOG.debug(_("Collected config files:") + '\n' + pp(self.config_files))
+
         self._cfgfiles_collected = True
 
     # -------------------------------------------------------------------------
@@ -461,7 +471,10 @@ class BaseMultiConfig(FbBaseObject):
             for stem in self.stems:
                 for ext_pattern in self.ext_loader:
                     pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
-                    if re.match(pat, found_file.name, re.IGNORECASE):
+                    if self.verbose > 2:
+                        LOG.debug(_("Checking file {fn!r} for pattern {pat!r}.").format(
+                            fn=found_file.name, pat=pat))
+                    if re.search(pat, found_file.name, re.IGNORECASE):
                         method = self.ext_loader[ext_pattern]
                         if self.verbose > 1:
                             msg = _("Found config file {fi!r}, loader method {m!r}.").format(
@@ -535,7 +548,22 @@ class BaseMultiConfig(FbBaseObject):
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(
             tp='human readable JSON', fn=str(cfg_file)))
 
-        return {}
+        open_opts = {
+            'encoding': self.encoding,
+            'errors': 'surrogateescape',
+        }
+
+        js = {}
+        try:
+            with cfg_file.open('r', **open_opts) as fh:
+                js = hjson.load(fh)
+        except hjson.HjsonDecodeError as e:
+            msg = _("{what} parse error in {fn!r}, line {line}, column {col}.").format(
+                what='HJSON', fn=str(cfg_file), line=e.lineno, col=e.colno)
+            LOG.error(msg)
+            return
+
+        return js
 
     # -------------------------------------------------------------------------
     def load_ini(self, cfg_file):
