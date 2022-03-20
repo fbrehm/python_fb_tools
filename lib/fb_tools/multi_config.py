@@ -25,6 +25,8 @@ import six
 
 from six.moves import configparser
 
+import chardet
+
 # from configparser import Error as ConfigParseError
 # if six.PY3:
 #     from configparser import ExtendedInterpolation
@@ -62,7 +64,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.4.4'
+__version__ = '0.4.5'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -138,12 +140,14 @@ class BaseMultiConfig(FbBaseObject):
 
     default_ini_default_section = 'general'
 
+    chardet_min_level_confidence = 1.0 / 3
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             append_appname_to_stems=True, config_dir=None, additional_stems=None,
             additional_cfgdirs=None, encoding=DEFAULT_ENCODING, additional_config_file=None,
-            initialized=False):
+            use_chardet=True, initialized=False):
 
         self._encoding = None
         self._config_dir = None
@@ -158,6 +162,7 @@ class BaseMultiConfig(FbBaseObject):
         self._ini_strict = True
         self._ini_empty_lines_in_values = True
         self._ini_default_section = self.default_ini_default_section
+        self._use_chardet = to_bool(use_chardet)
 
         self.cfg = {}
         self.ext_loader = {}
@@ -261,6 +266,13 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     @property
+    def use_chardet(self):
+        """Flag, whether to use the chardet module to detect the
+           character set of a config file."""
+        return self._use_chardet
+
+    # -------------------------------------------------------------------------
+    @property
     def cfgfiles_collected(self):
         """Flag, whether the configuration files were collected."""
         return self._cfgfiles_collected
@@ -294,6 +306,7 @@ class BaseMultiConfig(FbBaseObject):
         res['default_loader_methods'] = self.default_loader_methods
         res['default_type_extension_patterns'] = self.default_type_extension_patterns
         res['default_ini_style_types'] = self.default_ini_style_types
+        res['chardet_min_level_confidence'] = self.chardet_min_level_confidence
         res['available_cfg_types'] = self.available_cfg_types
         res['encoding'] = self.encoding
         res['config_dir'] = self.config_dir
@@ -533,6 +546,50 @@ class BaseMultiConfig(FbBaseObject):
             LOG.debug(_('Read merged config:') + '\n' + pp(self.cfg))
 
     # -------------------------------------------------------------------------
+    def detect_file_encoding(self, cfg_file, force=False):
+
+        if not force and not self.use_chardet:
+            if self.verbose > 2:
+                LOG.debug(_(
+                    "Character set detection by module {mod!r} for file {fn!r} should not be "
+                    "used, using character set {enc!r}.").format(
+                    mod='chardet', fn=str(cfg_file), enc=self.encoding))
+            return self.encoding
+
+        if self.verbose > 1:
+            LOG.debug(_("Trying to detect character set of file {fn!r} ...").format(
+                fn=str(cfg_file)))
+
+        encoding = self.encoding
+        confidence = 1
+        try:
+            rawdata = cfg_file.read_bytes()
+            chardet_result = chardet.detect(rawdata)
+            confidence = chardet_result['confidence']
+            if confidence < self.chardet_min_level_confidence:
+                if chardet_result['encoding'] != self.encoding:
+                    msg = _(
+                        "The confidence of {con} is lower than the limit of {lim}, using "
+                        "character set {cs_def!r} instead of {cs_found!r}.").format(
+                        con=chardet_result['confidence'], lim=self.chardet_min_level_confidence,
+                        cs_def=self.encoding, cs_found=chardet_result['encoding'])
+                    LOG.warn(msg)
+                return self.encoding
+            encoding = chardet_result['encoding']
+        except Exception as e:
+            msg = _("Got {what} on detecting cheracter set of {fn!r}: {e}").format(
+                what=e.__class__.__name__, fn=str(cfg_file), e=e)
+            LOG.error(msg)
+
+        if self.verbose > 2:
+            msg = _(
+                "Found character set {cs!r} for file {fn!r} with a confidence of {con}.").format(
+                cs=encoding, fn=str(cfg_file), con=confidence)
+            LOG.debug(msg)
+
+        return encoding
+
+    # -------------------------------------------------------------------------
     def load_json(self, cfg_file):
 
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='JSON', fn=str(cfg_file)))
@@ -564,8 +621,10 @@ class BaseMultiConfig(FbBaseObject):
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(
             tp='human readable JSON', fn=str(cfg_file)))
 
+        encoding = self.detect_file_encoding(cfg_file)
+
         open_opts = {
-            'encoding': self.encoding,
+            'encoding': encoding,
             'errors': 'surrogateescape',
         }
 
