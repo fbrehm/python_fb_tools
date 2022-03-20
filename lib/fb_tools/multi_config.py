@@ -29,7 +29,12 @@ from six.moves import configparser
 # if six.PY3:
 #     from configparser import ExtendedInterpolation
 
-import yaml                 # noqa
+HAS_YAML = False
+try:
+    import yaml             # noqa
+    HAS_YAML = True
+except ImportError:
+    pass
 
 HAS_HJSON = False
 try:
@@ -57,7 +62,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.4.2'
+__version__ = '0.4.4'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -115,8 +120,12 @@ class BaseMultiConfig(FbBaseObject):
         'hjson': [r'hjs(?:on)?'],
     }
 
-    available_cfg_types = ['yaml', 'ini', 'json']
+    available_cfg_types = ['ini', 'json']
     default_ini_style_types = ['ini']
+
+    if HAS_YAML:
+        available_cfg_types.append('yaml')
+
     if HAS_HJSON:
         available_cfg_types.append('hjson')
 
@@ -167,6 +176,8 @@ class BaseMultiConfig(FbBaseObject):
         )
 
         if self.verbose > 1:
+            if not HAS_YAML:
+                LOG.debug(_("{} configuration is not supported.").format('Yaml'))
             if not HAS_HJSON:
                 LOG.debug(_("{} configuration is not supported.").format('HJson'))
             if not HAS_TOML:
@@ -535,10 +546,15 @@ class BaseMultiConfig(FbBaseObject):
             with cfg_file.open('r', **open_opts) as fh:
                 js = json.load(fh)
         except json.JSONDecodeError as e:
-            msg = _("{what} parse error in {fn!r}, line {line}, column {col}.").format(
-                what='JSON', fn=str(cfg_file), line=e.lineno, col=e.colno)
+            msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
+                what='JSON', fn=str(cfg_file), line=e.lineno, col=e.colno, msg=e.msg)
             LOG.error(msg)
-            return
+            return None
+        except Exception as e:
+            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+                what=e.__class__.__name__, fn=str(cfg_file), e=e)
+            LOG.error(msg)
+            return None
 
         return js
 
@@ -558,10 +574,15 @@ class BaseMultiConfig(FbBaseObject):
             with cfg_file.open('r', **open_opts) as fh:
                 js = hjson.load(fh)
         except hjson.HjsonDecodeError as e:
-            msg = _("{what} parse error in {fn!r}, line {line}, column {col}.").format(
-                what='HJSON', fn=str(cfg_file), line=e.lineno, col=e.colno)
+            msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
+                what='HJSON', fn=str(cfg_file), line=e.lineno, col=e.colno, msg=e.msg)
             LOG.error(msg)
-            return
+            return None
+        except Exception as e:
+            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+                what=e.__class__.__name__, fn=str(cfg_file), e=e)
+            LOG.error(msg)
+            return None
 
         return js
 
