@@ -1,4 +1,6 @@
 ---
 section1:
   uhu: banane
+source:
+  'test_multicfg.yaml': 'Yaml'
 

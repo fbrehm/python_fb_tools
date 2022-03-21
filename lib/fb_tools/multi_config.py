@@ -23,13 +23,13 @@ from pathlib import Path
 # Third party modules
 import six
 
+from six import StringIO
 from six.moves import configparser
 
 import chardet
 
 # from configparser import Error as ConfigParseError
-# if six.PY3:
-#     from configparser import ExtendedInterpolation
+# from configparser import ExtendedInterpolation
 
 HAS_YAML = False
 try:
@@ -64,7 +64,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.4.6'
+__version__ = '0.4.7'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -521,7 +521,7 @@ class BaseMultiConfig(FbBaseObject):
             for stem in self.stems:
                 for ext_pattern in self.ext_loader:
                     pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
-                    if self.verbose > 2:
+                    if self.verbose > 3:
                         LOG.debug(_("Checking file {fn!r} for pattern {pat!r}.").format(
                             fn=found_file.name, pat=pat))
                     if re.search(pat, found_file.name, re.IGNORECASE):
@@ -691,9 +691,40 @@ class BaseMultiConfig(FbBaseObject):
         if self.verbose > 1:
             LOG.debug(_("Arguments on initializing ConfigParser:\n{}").format(pp(kargs)))
 
-        parser = configparser.ConfigParser(**kargs)             # noqa
+        parser = configparser.ConfigParser(**kargs)
 
-        return {}
+        encoding = self.detect_file_encoding(cfg_file)
+
+        open_opts = {
+            'encoding': encoding,
+            'errors': 'surrogateescape',
+        }
+
+        cfg = {}
+
+        try:
+            with cfg_file.open('r', **open_opts) as fh:
+                stream = StringIO("[/]\n" + fh.read())
+                parser.read_file(stream)
+        except Exception as e:
+            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+                what=e.__class__.__name__, fn=str(cfg_file), e=e)
+            if self.raise_on_error:
+                raise MultiCfgParseError(msg)
+            LOG.error(msg)
+            return None
+
+        for section in parser.sections():
+            if section not in cfg:
+                cfg[section] = {}
+            for (key, value) in parser.items(section):
+                k = key.lower()
+                cfg[section][k] = value
+
+        if not cfg['/'].keys():
+            del cfg['/']
+
+        return cfg
 
     # -------------------------------------------------------------------------
     def load_toml(self, cfg_file):
