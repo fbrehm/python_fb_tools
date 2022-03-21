@@ -104,4 +104,3 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 -   Version bump to 1.3.7
 *   Wed Jan 02 2019 Frank Brehm <frank.brehm@pixelpark.com> 1.3.6-1
 -   Initial
-

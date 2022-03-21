@@ -30,7 +30,9 @@ Requires:       python@@@py_version_nodot@@@-pytz
 Requires:       python@@@py_version_nodot@@@-requests
 Requires:       python@@@py_version_nodot@@@-six
 Requires:       python@@@py_version_nodot@@@-fb-logging
+Requires:       python@@@py_version_nodot@@@-chardet
 Recommends:     python@@@py_version_nodot@@@-pyvmomi
+Recommends:     python@@@py_version_nodot@@@-pyyaml
 BuildArch:      noarch
 
 %description

@@ -47,7 +47,7 @@ class TestFbBaseObject(FbToolsTestcase):
         from fb_tools.obj import FbGenericBaseObject, FbBaseObject
 
         with self.assertRaises(TypeError) as cm:
-            gen_obj = FbGenericBaseObject()
+            gen_obj = FbGenericBaseObject()                         # noqa
         e = cm.exception
         LOG.debug("TypeError raised on instantiate a FbGenericBaseObject: %s", str(e))
 

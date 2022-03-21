@@ -6,4 +6,8 @@ pytz
 setuptools
 wheel
 Babel
+PyYAML
+toml
+hjson
+chardet
 requests_mock
