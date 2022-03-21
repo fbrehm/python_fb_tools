@@ -1,0 +1,7 @@
+[section1]
+uhu = "banane"
+
+[source]
+'test_multicfg.toml' = 'Toml'
+
+# Last line

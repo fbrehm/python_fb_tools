@@ -35,11 +35,11 @@ Depends: python3-six,
          python3-babel,
          python3-fb-logging,
          python3-requests,
+         python3-chardet,
          python3-tz,
          ${misc:Depends},
          ${python3:Depends}
-Recommends: python3-pyvmomi
+Recommends: python3-pyvmomi, python3-yaml, python3-toml
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python3 modules for this package.
-
