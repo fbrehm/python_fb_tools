@@ -35,7 +35,7 @@ module_dir = os.path.join(lib_dir, 'fb_tools')
 if os.path.exists(module_dir):
     sys.path.insert(0, lib_dir)
 
-from fb_tools.get_vm_list_app import GetVmListApplication
+from fb_tools.get_vm_hosts import GetVmHostsApplication
 
 log = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ appname = os.path.basename(sys.argv[0])
 
 locale.setlocale(locale.LC_ALL, '')
 
-app = GetVmListApplication(appname=appname, base_dir=base_dir)
+app = GetVmHostsApplication(appname=appname, base_dir=base_dir)
 app.initialized = True
 
 if app.verbose > 2:

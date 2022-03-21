@@ -1,3 +1,11 @@
+fb-tools (1.9.0) all; urgency=medium
+
+  * Adding script bin/get-vmware-hosts
+  * Adding lib/fb_tools/merge.py
+  * Adding lib/fb_tools/multi_config.py with appropriate tests.
+
+ -- Frank Brehm <frank@brehm-online.com>  Mon, 21 Mar 2022 17:03:15 +0100
+
 fb-tools (1.8.6) all; urgency=medium
 
   * Tweaking dependencies in .github/workflows/packages.yaml and

@@ -5,4 +5,3 @@ spawn rpm --addsign $f
 expect "Enter pass phrase:"
 send -- "$p\r"
 expect eof
-
