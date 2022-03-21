@@ -33,21 +33,22 @@ import chardet
 
 HAS_YAML = False
 try:
-    import yaml             # noqa
+    import yaml
     HAS_YAML = True
 except ImportError:
     pass
 
 HAS_HJSON = False
 try:
-    import hjson            # noqa
+    import hjson
     HAS_HJSON = True
 except ImportError:
     pass
 
 HAS_TOML = False
 try:
-    import toml             # noqa
+    import toml
+    from toml import TomlDecodeError
     HAS_TOML = True
 except ImportError:
     pass
@@ -64,7 +65,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.4.8'
+__version__ = '0.4.9'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -132,11 +133,11 @@ class BaseMultiConfig(FbBaseObject):
     available_cfg_types = ['ini', 'json']
     default_ini_style_types = ['ini']
 
-    if HAS_YAML:
-        available_cfg_types.append('yaml')
-
     if HAS_HJSON:
         available_cfg_types.append('hjson')
+
+    if HAS_YAML:
+        available_cfg_types.append('yaml')
 
     if HAS_TOML:
         default_loader_methods['toml'] = 'load_toml'
@@ -186,6 +187,7 @@ class BaseMultiConfig(FbBaseObject):
         self.config_file_methods = {}
         self.stems = copy.copy(self.default_stems)
         self.ini_style_types = []
+        self.ext_patterns = {}
 
         super(BaseMultiConfig, self).__init__(
             appname=appname, verbose=verbose, version=version,
@@ -477,6 +479,9 @@ class BaseMultiConfig(FbBaseObject):
         type_name = type_name.lower()
         if type_name not in self.available_cfg_types:
             self.available_cfg_types.append(type_name)
+        if type_name not in self.ext_patterns:
+            self.ext_patterns[type_name] = []
+        self.ext_patterns[type_name].append(ext_pattern)
         self.ext_loader[ext_pattern] = loader_method_name
         self.ext_re[ext_pattern] = re.compile(r'\.' + ext_pattern + r'$', re.IGNORECASE)
         if ini_style is not None:
@@ -509,30 +514,54 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def _eval_config_dir(self, cfg_dir):
 
+        performed_files = []
+        file_list = []
         for found_file in cfg_dir.glob('*'):
-            if self.verbose > 2:
-                msg = "Checking, whether {!r} is a possible config file.".format(str(found_file))
-                LOG.debug(msg)
-            if not found_file.is_file():
-                if self.verbose > 2:
-                    msg = "Path {!r} is not a regular file.".format(str(found_file))
-                    LOG.debug(msg)
+            file_list.append(found_file)
+
+        for type_name in self.available_cfg_types:
+
+            if type_name not in self.ext_patterns:
+                msg = _("Something strange is happend, file type {!r} not found.")
+                LOG.error(msg.format(type_name))
                 continue
-            for stem in self.stems:
-                for ext_pattern in self.ext_loader:
-                    pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
-                    if self.verbose > 3:
-                        LOG.debug(_("Checking file {fn!r} for pattern {pat!r}.").format(
-                            fn=found_file.name, pat=pat))
-                    if re.search(pat, found_file.name, re.IGNORECASE):
-                        method = self.ext_loader[ext_pattern]
-                        if self.verbose > 1:
-                            msg = _("Found config file {fi!r}, loader method {m!r}.").format(
-                                fi=str(found_file), m=method)
-                        if found_file in self.config_files:
-                            self.config_files.remove(found_file)
-                        self.config_files.append(found_file)
-                        self.config_file_methods[found_file] = method
+
+            for found_file in file_list:
+
+                if found_file in performed_files:
+                    continue
+
+                if self.verbose > 3:
+                    msg = _("Checking, whether {!r} is a possible config file.").format(
+                        str(found_file))
+                    LOG.debug(msg)
+                if not found_file.is_file():
+                    if self.verbose > 2:
+                        msg = _("Path {!r} is not a regular file.").format(str(found_file))
+                        LOG.debug(msg)
+                    performed_files.append(found_file)
+                    continue
+
+                for stem in self.stems:
+
+                    for ext_pattern in self.ext_patterns[type_name]:
+
+                        pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
+                        if self.verbose > 3:
+                            LOG.debug(_("Checking file {fn!r} for pattern {pat!r}.").format(
+                                fn=found_file.name, pat=pat))
+
+                        if re.search(pat, found_file.name, re.IGNORECASE):
+                            method = self.ext_loader[ext_pattern]
+                            if self.verbose > 1:
+                                msg = _("Found config file {fi!r}, loader method {m!r}.").format(
+                                    fi=str(found_file), m=method)
+                                LOG.debug(msg)
+                            if found_file in self.config_files:
+                                self.config_files.remove(found_file)
+                            self.config_files.append(found_file)
+                            self.config_file_methods[found_file] = method
+                            performed_files.append(found_file)
 
     # -------------------------------------------------------------------------
     def read(self):
@@ -731,7 +760,26 @@ class BaseMultiConfig(FbBaseObject):
 
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='TOML', fn=str(cfg_file)))
 
-        return {}
+        cfg = {}
+
+        try:
+            cfg = toml.load(cfg_file)
+        except TomlDecodeError as e:
+            msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
+                what='TOML', fn=str(cfg_file), line=e.lineno, col=e.colno, msg=e.msg)
+            if self.raise_on_error:
+                raise MultiCfgParseError(msg)
+            LOG.error(msg)
+            return None
+        except Exception as e:
+            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+                what=e.__class__.__name__, fn=str(cfg_file), e=e)
+            if self.raise_on_error:
+                raise MultiCfgParseError(msg)
+            LOG.error(msg)
+            return None
+
+        return cfg
 
     # -------------------------------------------------------------------------
     def load_yaml(self, cfg_file):
