@@ -40,6 +40,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         self.test_dir = Path(__file__).parent.resolve()
         self.base_dir = self.test_dir.parent
         self.test_cfg_dir = self.test_dir / 'test-multiconfig'
+        self._appname = 'test_multicfg'
 
     # -------------------------------------------------------------------------
     def tearDown(self):
