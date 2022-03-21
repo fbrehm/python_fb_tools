@@ -227,6 +227,61 @@ class TestFbMultiConfig(FbToolsTestcase):
         if self.verbose > 1:
             LOG.debug("Read raw configs:\n" + pp(cfg.configs_raw))
 
+    # -------------------------------------------------------------------------
+    def test_read_charset(self):
+
+        LOG.info("Testing reading of configuration files with different charcter sets.")
+
+        from fb_tools.multi_config import BaseMultiConfig
+
+        test_stems = (
+            'test_multicfg-latin1', 'test_multicfg-utf-16',
+            'test_multicfg-utf-32', 'test_multicfg-utf8')
+
+        for stem in test_stems:
+
+            print()
+            LOG.info("Testing for file stem {!r} ...".format(stem))
+
+            cfg = BaseMultiConfig(
+                appname=self.appname, config_dir=self.test_cfg_dir.name,
+                additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+                append_appname_to_stems=False, additional_stems=stem)
+
+            cfg.read()
+            LOG.info('Read config:\n' + pp(cfg.cfg))
+
+    # -------------------------------------------------------------------------
+    def test_read_broken(self):
+
+        LOG.info("Testing reading of broken configuration files.")
+
+        from fb_tools.multi_config import BaseMultiConfig, MultiCfgParseError
+
+        test_stems = (
+            'test_multicfg-broken-ini',
+            'test_multicfg-broken-json',
+            'test_multicfg-broken-hjson',
+            'test_multicfg-broken-yaml',
+            'test_multicfg-broken-toml',
+        )
+
+        for stem in test_stems:
+
+            print()
+            LOG.info("Testing for file stem {!r} ...".format(stem))
+
+            with self.assertRaises(MultiCfgParseError) as cm:
+                cfg = BaseMultiConfig(
+                    appname=self.appname, config_dir=self.test_cfg_dir.name,
+                    additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+                    append_appname_to_stems=False, additional_stems=stem)
+
+                cfg.read()
+                LOG.info('Read config:\n' + pp(cfg.cfg))
+            e = cm.exception
+            LOG.info("{c} raised on stem {s!r}: {e}".format(c=e.__class__.__name__, s=stem, e=e))
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -246,6 +301,8 @@ if __name__ == '__main__':
     suite.addTest(TestFbMultiConfig('test_init_stems', verbose))
     suite.addTest(TestFbMultiConfig('test_collect_cfg_files', verbose))
     suite.addTest(TestFbMultiConfig('test_read_cfg_files', verbose))
+    suite.addTest(TestFbMultiConfig('test_read_charset', verbose))
+    suite.addTest(TestFbMultiConfig('test_read_broken', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
