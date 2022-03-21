@@ -495,7 +495,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def collect_config_files(self):
 
-        LOG.debug("Collecting all configuration files.")
+        LOG.debug(_("Collecting all configuration files."))
 
         self.config_files = []
         self.config_file_pattern = {}
@@ -576,11 +576,11 @@ class BaseMultiConfig(FbBaseObject):
         self.cfg = {}
         for cfg_file in self.config_files:
 
-            LOG.info("Reading configuration file {!r} ...".format(str(cfg_file)))
+            LOG.info(_("Reading configuration file {!r} ...").format(str(cfg_file)))
 
             method = self.config_file_methods[cfg_file]
             if self.verbose > 1:
-                LOG.debug("Using loading method {!r}.".format(method))
+                LOG.debug(_("Using loading method {!r}.").format(method))
 
             meth = getattr(self, method, None)
             if not meth:
@@ -624,9 +624,10 @@ class BaseMultiConfig(FbBaseObject):
             if confidence < self.chardet_min_level_confidence:
                 if chardet_result['encoding'] != self.encoding:
                     msg = _(
-                        "The confidence of {con} is lower than the limit of {lim}, using "
-                        "character set {cs_def!r} instead of {cs_found!r}.").format(
-                        con=chardet_result['confidence'], lim=self.chardet_min_level_confidence,
+                        "The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, "
+                        "using character set {cs_def!r} instead of {cs_found!r}.").format(
+                        con=(chardet_result['confidence'] * 100),
+                        lim=(self.chardet_min_level_confidence * 100),
                         cs_def=self.encoding, cs_found=chardet_result['encoding'])
                     LOG.warn(msg)
                 return self.encoding
@@ -638,8 +639,8 @@ class BaseMultiConfig(FbBaseObject):
 
         if self.verbose > 2:
             msg = _(
-                "Found character set {cs!r} for file {fn!r} with a confidence of {con}.").format(
-                cs=encoding, fn=str(cfg_file), con=confidence)
+                "Found character set {cs!r} for file {fn!r} with a confidence of "
+                "{con:0.1f}%.").format(cs=encoding, fn=str(cfg_file), con=(confidence * 100))
             LOG.debug(msg)
 
         return encoding
@@ -718,7 +719,7 @@ class BaseMultiConfig(FbBaseObject):
         }
 
         if self.verbose > 1:
-            LOG.debug(_("Arguments on initializing ConfigParser:\n{}").format(pp(kargs)))
+            LOG.debug(_("Arguments on initializing {}:").format('ConfigParser') + "\n" + pp(kargs))
 
         parser = configparser.ConfigParser(**kargs)
 
