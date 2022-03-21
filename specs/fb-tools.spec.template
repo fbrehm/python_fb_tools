@@ -42,6 +42,7 @@ This is the Python@@@py_version_nodot@@@ version.
 
 In this package are contained the following scripts:
  * get-file-to-remove
+ * get-vmware-hosts
  * get-vmware-vm-info
  * get-vmware-vm-list
  * myip
@@ -64,6 +65,7 @@ python@@@py_version_dot@@@ setup.py install --prefix=%{_prefix} --root=%{buildro
 %license LICENSE
 %doc LICENSE README.md requirements.txt debian/changelog
 %{_bindir}/get-file-to-remove
+%{_bindir}/get-vmware-hosts
 %{_bindir}/get-vmware-vm-info
 %{_bindir}/get-vmware-vm-list
 %{_bindir}/myip
