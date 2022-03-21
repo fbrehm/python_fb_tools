@@ -64,7 +64,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.4.5'
+__version__ = '0.4.6'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -96,6 +96,13 @@ class MultiCfgLoaderNotFoundError(MultiConfigError, RuntimeError):
         msg = _("Config loader method {!r} was not found.").format(self.method)
         return msg
 
+
+# =============================================================================
+class MultiCfgParseError(MultiConfigError, ValueError):
+    """Exception class, when a parse error of a loader module was raised and
+       BaseMultiConfig.raise_on_error was set to True."""
+
+    pass
 
 # =============================================================================
 class BaseMultiConfig(FbBaseObject):
@@ -142,12 +149,16 @@ class BaseMultiConfig(FbBaseObject):
 
     chardet_min_level_confidence = 1.0 / 3
 
+    has_hjson = HAS_HJSON
+    has_toml = HAS_TOML
+    has_yaml = HAS_YAML
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             append_appname_to_stems=True, config_dir=None, additional_stems=None,
             additional_cfgdirs=None, encoding=DEFAULT_ENCODING, additional_config_file=None,
-            use_chardet=True, initialized=False):
+            use_chardet=True, raise_on_error=True, initialized=False):
 
         self._encoding = None
         self._config_dir = None
@@ -163,6 +174,7 @@ class BaseMultiConfig(FbBaseObject):
         self._ini_empty_lines_in_values = True
         self._ini_default_section = self.default_ini_default_section
         self._use_chardet = to_bool(use_chardet)
+        self._raise_on_error = to_bool(raise_on_error)
 
         self.cfg = {}
         self.ext_loader = {}
@@ -288,6 +300,16 @@ class BaseMultiConfig(FbBaseObject):
         self._ini_allow_no_value = to_bool(value)
 
     # -------------------------------------------------------------------------
+    @property
+    def raise_on_error(self):
+        """Accept keys without values in ini-files."""
+        return self._raise_on_error
+
+    @raise_on_error.setter
+    def raise_on_error(self, value):
+        self._raise_on_error = to_bool(value)
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -313,6 +335,10 @@ class BaseMultiConfig(FbBaseObject):
         res['additional_config_file'] = self.additional_config_file
         res['cfgfiles_collected'] = self.cfgfiles_collected
         res['ini_allow_no_value'] = self.ini_allow_no_value
+        res['raise_on_error'] = self.raise_on_error
+        res['has_hjson'] = self.has_hjson
+        res['has_toml'] = self.has_toml
+        res['has_yaml'] = self.has_yaml
 
         return res
 
@@ -605,11 +631,15 @@ class BaseMultiConfig(FbBaseObject):
         except json.JSONDecodeError as e:
             msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
                 what='JSON', fn=str(cfg_file), line=e.lineno, col=e.colno, msg=e.msg)
+            if self.raise_on_error:
+                raise MultiCfgParseError(msg)
             LOG.error(msg)
             return None
         except Exception as e:
             msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
                 what=e.__class__.__name__, fn=str(cfg_file), e=e)
+            if self.raise_on_error:
+                raise MultiCfgParseError(msg)
             LOG.error(msg)
             return None
 
@@ -635,11 +665,15 @@ class BaseMultiConfig(FbBaseObject):
         except hjson.HjsonDecodeError as e:
             msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
                 what='HJSON', fn=str(cfg_file), line=e.lineno, col=e.colno, msg=e.msg)
+            if self.raise_on_error:
+                raise MultiCfgParseError(msg)
             LOG.error(msg)
             return None
         except Exception as e:
             msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
                 what=e.__class__.__name__, fn=str(cfg_file), e=e)
+            if self.raise_on_error:
+                raise MultiCfgParseError(msg)
             LOG.error(msg)
             return None
 
