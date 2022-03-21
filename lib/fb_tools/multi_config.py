@@ -64,7 +64,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.4.7'
+__version__ = '0.4.8'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -738,7 +738,37 @@ class BaseMultiConfig(FbBaseObject):
 
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='YAML', fn=str(cfg_file)))
 
-        return {}
+        open_opts = {
+            'encoding': UTF8_ENCODING,
+            'errors': 'surrogateescape',
+        }
+
+        cfg = {}
+        try:
+            with cfg_file.open('r', **open_opts) as fh:
+                cfg = yaml.safe_load(fh)
+        except yaml.YAMLError as e:
+            if hasattr(e, 'problem_mark'):
+                mark = e.problem_mark
+                msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
+                    what='YAML', fn=str(cfg_file),
+                    line=(mark.line + 1), col=(mark.column + 1), msg=str(e))
+            else:
+                msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+                    what=e.__class__.__name__, fn=str(cfg_file), e=e)
+            if self.raise_on_error:
+                raise MultiCfgParseError(msg)
+            LOG.error(msg)
+            return None
+        except Exception as e:
+            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+                what=e.__class__.__name__, fn=str(cfg_file), e=e)
+            if self.raise_on_error:
+                raise MultiCfgParseError(msg)
+            LOG.error(msg)
+            return None
+
+        return cfg
 
 
 # =============================================================================
