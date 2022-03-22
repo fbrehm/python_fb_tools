@@ -65,7 +65,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -175,7 +175,7 @@ class BaseMultiConfig(FbBaseObject):
         self._ini_empty_lines_in_values = True
         self._use_chardet = to_bool(use_chardet)
         self._raise_on_error = to_bool(raise_on_error)
-        self._read = False
+        self._was_read = False
 
         self.cfg = {}
         self.ext_loader = {}
@@ -293,9 +293,9 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     @property
-    def read(self):
+    def was_read(self):
         """Flag, whether the configuration files were read."""
-        return self._read
+        return self._was_read
 
     # -------------------------------------------------------------------------
     @property
@@ -442,7 +442,7 @@ class BaseMultiConfig(FbBaseObject):
         res['config_dir'] = self.config_dir
         res['additional_config_file'] = self.additional_config_file
         res['cfgfiles_collected'] = self.cfgfiles_collected
-        res['read'] = self.read
+        res['was_read'] = self.was_read
         res['ini_allow_no_value'] = self.ini_allow_no_value
         res['ini_delimiters'] = self.ini_delimiters
         res['ini_comment_prefixes'] = self.ini_comment_prefixes
@@ -709,7 +709,7 @@ class BaseMultiConfig(FbBaseObject):
             else:
                 self.configs_raw[str(cfg_file)] = None
 
-        self._read = True
+        self._was_read = True
         if self.verbose > 2:
             LOG.debug(_('Read merged config:') + '\n' + pp(self.cfg))
 
@@ -941,6 +941,50 @@ class BaseMultiConfig(FbBaseObject):
             return None
 
         return cfg
+
+    # -------------------------------------------------------------------------
+    def eval(self):
+        """Evaluating read configuration and storing them in object properties."""
+
+        if not self.was_read:
+            msg = _("Evaluation of configuration could only be happen after reading it.")
+            raise RuntimeError(msg)
+
+        for section_name in self.cfg.keys():
+
+            if section_name.lower() in ('default', 'global', 'common'):
+                self.eval_global_section(section_name)
+                continue
+            self.eval_section(section_name)
+
+    # -------------------------------------------------------------------------
+    def eval_global_section(self, section_name):
+        """Evaluating section [global] of configuration.
+            May be overridden in descendant classes."""
+
+        if self.verbose > 1:
+            LOG.debug(_("Checking config section {!r} ...").format(section_name))
+
+        config = self.cfg[section_name]
+        for (key, value) in config.items(section_name):
+            if key.lower() == 'verbose':
+                val = 0
+                if value is None:
+                    pass
+                elif isinstance(value, bool):
+                    if value:
+                        val = 1
+                else:
+                    val = int(value)
+                if val > self.verbose:
+                    self.verbose = val
+
+    # -------------------------------------------------------------------------
+    def eval_section(self, section_name):
+        """Evaluating section with given name of configuration.
+            Should be overridden in descendant classes."""
+
+        pass
 
 
 # =============================================================================
