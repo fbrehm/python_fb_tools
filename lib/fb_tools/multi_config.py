@@ -65,7 +65,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.5.3'
+__version__ = '0.5.4'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -211,12 +211,11 @@ class BaseMultiConfig(FbBaseObject):
         else:
             self.config_dir = self.default_config_dir
 
-        if additional_config_file:
-            self.additional_config_file = additional_config_file
-
         self._init_config_dirs(additional_cfgdirs)
         self._init_stems(append_appname_to_stems, additional_stems)
         self._init_types()
+
+        self.additional_config_file = additional_config_file
 
         if initialized:
             self.initialized = True
@@ -251,16 +250,23 @@ class BaseMultiConfig(FbBaseObject):
             self._additional_config_file = None
             return
 
-        cfile = pathlib.Path(value)
-        if cfile.exists():
-            if not cfile.is_file():
-                msg = _("Configuration file {!r} exists, but is not a regular file.").format(
-                    str(cfile))
-                raise MultiConfigError(msg)
-            self._additional_config_file = cfile.resolve()
-        else:
-            msg = _("Given configuration file {!r} does not exists.").format(str(cfile))
-            LOG.warn(msg)
+        cfg_file = Path(value)
+        if not cfg_file.exists():
+            msg = _("Additional config file {!r} does not exists.")
+            if self.raise_on_error:
+                raise MultiConfigError(msg.format(str(cfg_file)))
+            LOG.error(msg.format(str(cfg_file)))
+            return
+
+        if not cfg_file.is_file():
+            msg = _("Configuration file {!r} exists, but is not a regular file.")
+            if self.raise_on_error:
+                raise MultiConfigError(msg.format(str(cfg_file)))
+            LOG.error(msg.format(str(cfg_file)))
+            return
+
+        cfg_file = cfg_file.resolve()
+        self._additional_config_file = cfg_file
 
     # -------------------------------------------------------------------------
     @property
@@ -619,43 +625,53 @@ class BaseMultiConfig(FbBaseObject):
                 LOG.debug(msg)
             self._eval_config_dir(cfg_dir)
 
-        if self.additional_config_file:
-
-            cfg_file = self.additional_config_file
-            if self.verbose > 1:
-                msg = _("Trying to detect file type of additional config file {!r}.")
-                LOG.debug(msg.format(str(cfg_file)))
-            performed = False
-            for type_name in self.available_cfg_types:
-                for ext_pattern in self.ext_patterns[type_name]:
-
-                    pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
-                    if self.verbose > 3:
-                        LOG.debug(_("Checking file {fn!r} for pattern {pat!r}.").format(
-                            fn=cfg_file.name, pat=pat))
-
-                    if re.search(pat, cfg_file.name, re.IGNORECASE):
-                        method = self.ext_loader[ext_pattern]
-                        if self.verbose > 1:
-                            msg = _("Found config file {fi!r}, loader method {m!r}.").format(
-                                fi=str(cfg_file), m=method)
-                            LOG.debug(msg)
-                        if cfg_file in self.config_files:
-                            self.config_files.remove(cfg_file)
-                        self.config_files.append(cfg_file)
-                        self.config_file_methods[cfg_file] = method
-                        performed = True
-                        break
-
-            if not performed:
-                msg = _("Did not found file type of additional config file {!r}.").format(
-                    str(cfg_file))
-                raise MultiConfigError(msg)
+        self._set_additional_file(self.additional_config_file)
 
         if self.verbose > 2:
             LOG.debug(_("Collected config files:") + '\n' + pp(self.config_files))
 
         self._cfgfiles_collected = True
+
+    # -------------------------------------------------------------------------
+    def _set_additional_file(self, cfg_file):
+
+        if not cfg_file:
+            return
+
+        if self.verbose > 1:
+            msg = _("Trying to detect file type of additional config file {!r}.")
+            LOG.debug(msg.format(str(cfg_file)))
+
+        performed = False
+        for type_name in self.available_cfg_types:
+            for ext_pattern in self.ext_patterns[type_name]:
+
+                pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
+                if self.verbose > 3:
+                    msg = _("Checking file {fn!r} for pattern {pat!r}.")
+                    LOG.debug(msg.format(fn=cfg_file.name, pat=pat))
+
+                if re.search(pat, cfg_file.name, re.IGNORECASE):
+                    method = self.ext_loader[ext_pattern]
+                    if self.verbose > 1:
+                        msg = _("Found config file {fi!r}, loader method {m!r}.")
+                        LOG.debug(msg.format(fi=str(cfg_file), m=method))
+                    if self.additional_config_file:
+                        ocfg = self.additional_config_file
+                        if ocfg in self.config_files:
+                            self.config_files.remove(ocfg)
+                    if cfg_file in self.config_files:
+                        self.config_files.remove(cfg_file)
+                    self.config_files.append(cfg_file)
+                    self.config_file_methods[cfg_file] = method
+                    performed = True
+                    break
+
+            if not performed:
+                msg = _("Did not found file type of additional config file {!r}.")
+                if self.raise_on_error:
+                    raise MultiConfigError(msg.format(str(cfg_file)))
+                LOG.error(msg.format(str(cfg_file)))
 
     # -------------------------------------------------------------------------
     def _eval_config_dir(self, cfg_dir):

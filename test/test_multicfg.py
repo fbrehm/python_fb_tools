@@ -296,6 +296,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         if self.verbose > 3:
             used_verbose = 3
 
+        # TODO Continue here ...
         cfg = BaseMultiConfig(
             appname=self.appname, config_dir=self.test_cfg_dir.name,
             additional_cfgdirs=self.test_cfg_dir, verbose=used_verbose,
@@ -319,6 +320,10 @@ class TestFbMultiConfig(FbToolsTestcase):
     def test_additional_config_file(self):
 
         LOG.info("Test performing additional config file.")
+
+        from fb_tools.multi_config import BaseMultiConfig
+
+        test_stem = 'test_multicfg-add'
 
 
 # =============================================================================
