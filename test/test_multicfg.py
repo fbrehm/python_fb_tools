@@ -315,6 +315,11 @@ class TestFbMultiConfig(FbToolsTestcase):
         LOG.debug("New debug level: {!r}.".format(cfg.verbose))
         self.assertEqual(cfg.verbose, 7)
 
+    # -------------------------------------------------------------------------
+    def test_additional_config_file(self):
+
+        LOG.info("Test performing additional config file.")
+
 
 # =============================================================================
 if __name__ == '__main__':
