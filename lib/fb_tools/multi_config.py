@@ -65,7 +65,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -966,7 +966,8 @@ class BaseMultiConfig(FbBaseObject):
             LOG.debug(_("Checking config section {!r} ...").format(section_name))
 
         config = self.cfg[section_name]
-        for (key, value) in config.items(section_name):
+        for key in config.keys():
+            value = config[key]
             if key.lower() == 'verbose':
                 val = 0
                 if value is None:

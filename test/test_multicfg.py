@@ -283,6 +283,38 @@ class TestFbMultiConfig(FbToolsTestcase):
             e = cm.exception
             LOG.info("{c} raised on stem {s!r}: {e}".format(c=e.__class__.__name__, s=stem, e=e))
 
+    # -------------------------------------------------------------------------
+    def test_evaluation(self):
+
+        LOG.info("Testing evaluation configuration.")
+
+        from fb_tools.multi_config import BaseMultiConfig
+
+        test_stem = 'test_multicfg-verbose'
+
+        used_verbose = self.verbose
+        if self.verbose > 3:
+            used_verbose = 3
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=used_verbose,
+            append_appname_to_stems=False, additional_stems=test_stem)
+
+        LOG.debug("Testing raising RuntimeError on unread configuration ...")
+        with self.assertRaises(RuntimeError) as cm:
+            cfg.eval()
+        e = cm.exception
+        LOG.info("{c} raised on unread configuration: {e}".format(
+            c=e.__class__.__name__, e=e))
+
+        LOG.debug("Reading verbose level from configuration.")
+        cfg.read()
+        LOG.info('Read config:\n' + pp(cfg.cfg))
+        cfg.eval()
+        LOG.debug("New debug level: {!r}.".format(cfg.verbose))
+        self.assertEqual(cfg.verbose, 7)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -304,6 +336,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbMultiConfig('test_read_cfg_files', verbose))
     suite.addTest(TestFbMultiConfig('test_read_charset', verbose))
     suite.addTest(TestFbMultiConfig('test_read_broken', verbose))
+    suite.addTest(TestFbMultiConfig('test_evaluation', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
