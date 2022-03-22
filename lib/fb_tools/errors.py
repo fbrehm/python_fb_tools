@@ -13,7 +13,7 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '1.2.6'
+__version__ = '1.2.7'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -58,6 +58,12 @@ class FbHandlerError(FbError):
 
 # =============================================================================
 class FbAppError(FbHandlerError):
+
+    pass
+
+
+# =============================================================================
+class FbCfgAppError(FbAppError):
 
     pass
 

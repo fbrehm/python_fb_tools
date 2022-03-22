@@ -65,7 +65,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.5.2'
+__version__ = '0.5.3'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -164,7 +164,6 @@ class BaseMultiConfig(FbBaseObject):
         self._encoding = None
         self._config_dir = None
         self._additional_config_file = None
-        self._simulate = False
         self._cfgfiles_collected = False
         self._ini_allow_no_value = False
         self._ini_delimiters = None
@@ -259,8 +258,9 @@ class BaseMultiConfig(FbBaseObject):
                     str(cfile))
                 raise MultiConfigError(msg)
             self._additional_config_file = cfile.resolve()
-            return
-        self._additional_config_file = cfile
+        else:
+            msg = _("Given configuration file {!r} does not exists.").format(str(cfile))
+            LOG.warn(msg)
 
     # -------------------------------------------------------------------------
     @property
@@ -453,6 +453,7 @@ class BaseMultiConfig(FbBaseObject):
         res['has_hjson'] = self.has_hjson
         res['has_toml'] = self.has_toml
         res['has_yaml'] = self.has_yaml
+        res['use_chardet'] = self.use_chardet
 
         return res
 
@@ -617,6 +618,39 @@ class BaseMultiConfig(FbBaseObject):
                 msg = _("Discovering config directory {!r} ...").format(str(cfg_dir))
                 LOG.debug(msg)
             self._eval_config_dir(cfg_dir)
+
+        if self.additional_config_file:
+
+            cfg_file = self.additional_config_file
+            if self.verbose > 1:
+                msg = _("Trying to detect file type of additional config file {!r}.")
+                LOG.debug(msg.format(str(cfg_file)))
+            performed = False
+            for type_name in self.available_cfg_types:
+                for ext_pattern in self.ext_patterns[type_name]:
+
+                    pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
+                    if self.verbose > 3:
+                        LOG.debug(_("Checking file {fn!r} for pattern {pat!r}.").format(
+                            fn=cfg_file.name, pat=pat))
+
+                    if re.search(pat, cfg_file.name, re.IGNORECASE):
+                        method = self.ext_loader[ext_pattern]
+                        if self.verbose > 1:
+                            msg = _("Found config file {fi!r}, loader method {m!r}.").format(
+                                fi=str(cfg_file), m=method)
+                            LOG.debug(msg)
+                        if cfg_file in self.config_files:
+                            self.config_files.remove(cfg_file)
+                        self.config_files.append(cfg_file)
+                        self.config_file_methods[cfg_file] = method
+                        performed = True
+                        break
+
+            if not performed:
+                msg = _("Did not found file type of additional config file {!r}.").format(
+                    str(cfg_file))
+                raise MultiConfigError(msg)
 
         if self.verbose > 2:
             LOG.debug(_("Collected config files:") + '\n' + pp(self.config_files))
