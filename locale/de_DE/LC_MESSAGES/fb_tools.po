@@ -1466,7 +1466,7 @@ msgstr "Erhielt {what} bei der Zeichensatzerkennung von {fn!r}: {e}."
 
 #: lib/fb_tools/multi_config.py:641
 msgid "Found character set {cs!r} for file {fn!r} with a confidence of {con:0.1f}%."
-msgstr "Fand Zeichensatz {cs!r} für die Datei {fn!r} mit einer Zuverlässigkeit von con:0.1f}%."
+msgstr "Fand Zeichensatz {cs!r} für die Datei {fn!r} mit einer Zuverlässigkeit von {con:0.1f}%."
 
 #: lib/fb_tools/multi_config.py:651 lib/fb_tools/multi_config.py:681 lib/fb_tools/multi_config.py:715
 #: lib/fb_tools/multi_config.py:762 lib/fb_tools/multi_config.py:788

@@ -29,7 +29,7 @@ from six.moves import configparser
 import chardet
 
 # from configparser import Error as ConfigParseError
-# from configparser import ExtendedInterpolation
+from configparser import ExtendedInterpolation
 
 HAS_YAML = False
 try:
@@ -65,7 +65,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR
 
-__version__ = '0.4.9'
+__version__ = '0.5.0'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -146,7 +146,7 @@ class BaseMultiConfig(FbBaseObject):
 
     re_invalid_stem = re.compile(re.escape(os.sep))
 
-    default_ini_default_section = 'general'
+    default_ini_default_section = '/'
 
     chardet_min_level_confidence = 1.0 / 3
 
@@ -168,14 +168,14 @@ class BaseMultiConfig(FbBaseObject):
         self._cfgfiles_collected = False
         self._ini_allow_no_value = False
         self._ini_delimiters = None
-        self._ini_extended_interpolation = False
         self._ini_comment_prefixes = None
         self._ini_inline_comment_prefixes = None
+        self._ini_extended_interpolation = False
         self._ini_strict = True
         self._ini_empty_lines_in_values = True
-        self._ini_default_section = self.default_ini_default_section
         self._use_chardet = to_bool(use_chardet)
         self._raise_on_error = to_bool(raise_on_error)
+        self._read = False
 
         self.cfg = {}
         self.ext_loader = {}
@@ -293,6 +293,12 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     @property
+    def read(self):
+        """Flag, whether the configuration files were read."""
+        return self._read
+
+    # -------------------------------------------------------------------------
+    @property
     def ini_allow_no_value(self):
         """Accept keys without values in ini-files."""
         return self._ini_allow_no_value
@@ -300,6 +306,106 @@ class BaseMultiConfig(FbBaseObject):
     @ini_allow_no_value.setter
     def ini_allow_no_value(self, value):
         self._ini_allow_no_value = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_delimiters(self):
+        """Delimiters are substrings that delimit keys from values within a section
+        in ini-files."""
+        return self._ini_delimiters
+
+    @ini_delimiters.setter
+    def ini_delimiters(self, value):
+        if not value:
+            self._ini_delimiters = None
+            return
+        if isinstance(value, str):
+            self._ini_delimiters = []
+            for character in value:
+                self._ini_delimiters.append(character)
+            return
+        if is_sequence(value):
+            self._ini_delimiters = copy.copy(value)
+            return
+        msg = _("Cannot use {!r} as delimiters for ini-files.").format(value)
+        raise TypeError(msg)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_comment_prefixes(self):
+        """Prefixes for comment lines in ini-files."""
+        return self._ini_comment_prefixes
+
+    @ini_comment_prefixes.setter
+    def ini_comment_prefixes(self, value):
+        if not value:
+            self._ini_comment_prefixes = None
+            return
+        if isinstance(value, str):
+            self._ini_comment_prefixes = []
+            for character in value:
+                self._ini_comment_prefixes.append(character)
+            return
+        if is_sequence(value):
+            self._ini_comment_prefixes = copy.copy(value)
+            return
+        msg = _("Cannot use {!r} as comment prefixes for ini-files.").format(value)
+        raise TypeError(msg)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_inline_comment_prefixes(self):
+        """Inline prefixes for comment lines in ini-files."""
+        return self._ini_inline_comment_prefixes
+
+    @ini_inline_comment_prefixes.setter
+    def ini_inline_comment_prefixes(self, value):
+        if not value:
+            self._ini_inline_comment_prefixes = None
+            return
+        if isinstance(value, str):
+            self._ini_inline_comment_prefixes = []
+            for character in value:
+                self._ini_inline_comment_prefixes.append(character)
+            return
+        if is_sequence(value):
+            self._ini_inline_comment_prefixes = copy.copy(value)
+            return
+        msg = _("Cannot use {!r} as inline comment prefixes for ini-files.").format(value)
+        raise TypeError(msg)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_extended_interpolation(self):
+        """Use ExtendedInterpolation for interpolation of ini-files
+        instead of BasicInterpolation."""
+        return self._ini_extended_interpolation
+
+    @ini_extended_interpolation.setter
+    def ini_extended_interpolation(self, value):
+        self._ini_extended_interpolation = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_strict(self):
+        """The ini-parser will not allow for any section or option duplicates while
+        reading from a single source"""
+        return self._ini_strict
+
+    @ini_strict.setter
+    def ini_strict(self, value):
+        self._ini_strict = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_empty_lines_in_values(self):
+        """May values can span multiple lines as long as they are indented more thans
+         the key that holds them in ini-files."""
+        return self._ini_empty_lines_in_values
+
+    @ini_empty_lines_in_values.setter
+    def ini_empty_lines_in_values(self, value):
+        self._ini_empty_lines_in_values = to_bool(value)
 
     # -------------------------------------------------------------------------
     @property
@@ -336,7 +442,13 @@ class BaseMultiConfig(FbBaseObject):
         res['config_dir'] = self.config_dir
         res['additional_config_file'] = self.additional_config_file
         res['cfgfiles_collected'] = self.cfgfiles_collected
+        res['read'] = self.read
         res['ini_allow_no_value'] = self.ini_allow_no_value
+        res['ini_delimiters'] = self.ini_delimiters
+        res['ini_comment_prefixes'] = self.ini_comment_prefixes
+        res['ini_inline_comment_prefixes'] = self.ini_inline_comment_prefixes
+        res['ini_extended_interpolation'] = self.ini_extended_interpolation
+        res['ini_strict'] = self.ini_strict
         res['raise_on_error'] = self.raise_on_error
         res['has_hjson'] = self.has_hjson
         res['has_toml'] = self.has_toml
@@ -597,6 +709,7 @@ class BaseMultiConfig(FbBaseObject):
             else:
                 self.configs_raw[str(cfg_file)] = None
 
+        self._read = True
         if self.verbose > 2:
             LOG.debug(_('Read merged config:') + '\n' + pp(self.cfg))
 
@@ -716,7 +829,17 @@ class BaseMultiConfig(FbBaseObject):
 
         kargs = {
             'allow_no_value': self.ini_allow_no_value,
+            'strict': self.ini_strict,
+            'empty_lines_in_values': self.ini_empty_lines_in_values,
         }
+        if self.ini_delimiters:
+            kargs['delimiters'] = self.ini_delimiters
+        if self.ini_comment_prefixes:
+            kargs['comment_prefixes'] = self.ini_comment_prefixes
+        if self.ini_inline_comment_prefixes:
+            kargs['cinline_omment_prefixes'] = self.ini_inline_comment_prefixes
+        if self.ini_extended_interpolation:
+            kargs['interpolation'] = ExtendedInterpolation
 
         if self.verbose > 1:
             LOG.debug(_("Arguments on initializing {}:").format('ConfigParser') + "\n" + pp(kargs))
