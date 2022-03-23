@@ -66,7 +66,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.6.0'
+__version__ = '0.6.1'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -177,6 +177,7 @@ class BaseMultiConfig(FbBaseObject):
         self._raise_on_error = to_bool(raise_on_error)
         self._was_read = False
         self._ensure_privacy = to_bool(ensure_privacy)
+        self._logfile = None
 
         self.cfg = {}
         self.ext_loader = {}
@@ -292,6 +293,20 @@ class BaseMultiConfig(FbBaseObject):
             msg = _("Configuration directory {!r} may not be absolute.").format(str(cdir))
             raise MultiConfigError(msg)
         self._config_dir = cdir
+
+    # -------------------------------------------------------------------------
+    @property
+    def logfile(self):
+        """A possible log file, which can be used as a FileAppender target
+        in logging."""
+        return self._logfile
+
+    @logfile.setter
+    def logfile(self, value):
+        if value is None:
+            self._logfile = None
+            return
+        self._logfile = Path(value)
 
     # -------------------------------------------------------------------------
     @property
@@ -481,6 +496,7 @@ class BaseMultiConfig(FbBaseObject):
         res['has_yaml'] = self.has_yaml
         res['use_chardet'] = self.use_chardet
         res['ensure_privacy'] = self.ensure_privacy
+        res['logfile'] = self.logfile
 
         return res
 
@@ -1089,6 +1105,10 @@ class BaseMultiConfig(FbBaseObject):
                     val = int(value)
                 if val > self.verbose:
                     self.verbose = val
+                continue
+            if key.lower() in ('logfile', 'log-file', 'log'):
+                self.logfile = value
+                continue
 
     # -------------------------------------------------------------------------
     def eval_section(self, section_name):

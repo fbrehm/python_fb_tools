@@ -52,6 +52,9 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing import of fb_tools.multi_config ...")
         import fb_tools.multi_config                                        # noqa
 
@@ -63,6 +66,9 @@ class TestFbMultiConfig(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_object(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Testing init of a BaseMultiConfig object.")
 
@@ -78,6 +84,9 @@ class TestFbMultiConfig(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_init_cfg_dirs(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Testing init of configuration directories.")
 
@@ -120,6 +129,9 @@ class TestFbMultiConfig(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_init_stems(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Testing init of configuration file stems.")
 
@@ -178,6 +190,9 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_collect_cfg_files(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing collecting of configuration files.")
 
         exts = ('.ini', '.js', '.yaml')
@@ -215,6 +230,9 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_read_cfg_files(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing reading of configuration files.")
 
         from fb_tools.multi_config import BaseMultiConfig
@@ -233,6 +251,9 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_read_charset(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing reading of configuration files with different charcter sets.")
 
         from fb_tools.multi_config import BaseMultiConfig
@@ -243,7 +264,8 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         for stem in test_stems:
 
-            print()
+            if self.verbose:
+                print()
             LOG.info("Testing for file stem {!r} ...".format(stem))
 
             cfg = BaseMultiConfig(
@@ -256,6 +278,9 @@ class TestFbMultiConfig(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_read_broken(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Testing reading of broken configuration files.")
 
@@ -271,7 +296,8 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         for stem in test_stems:
 
-            print()
+            if self.verbose:
+                print()
             LOG.info("Testing for file stem {!r} ...".format(stem))
 
             with self.assertRaises(MultiCfgParseError) as cm:
@@ -288,11 +314,15 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_evaluation(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing evaluation configuration.")
 
         from fb_tools.multi_config import BaseMultiConfig
 
         test_stem = 'test_multicfg-verbose'
+        test_logfile = Path('/var/log/test-multiconfig.log')
 
         used_verbose = self.verbose
         if self.verbose > 3:
@@ -315,10 +345,15 @@ class TestFbMultiConfig(FbToolsTestcase):
         LOG.info('Read config:\n' + pp(cfg.cfg))
         cfg.eval()
         LOG.debug("New debug level: {!r}.".format(cfg.verbose))
+        LOG.debug("Evaluated logfile: {!r}.".format(cfg.logfile))
         self.assertEqual(cfg.verbose, 7)
+        self.assertEqual(cfg.logfile, test_logfile)
 
     # -------------------------------------------------------------------------
     def test_additional_config_file(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Test performing additional config file.")
 
@@ -365,6 +400,9 @@ class TestFbMultiConfig(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_checking_privacy(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Testing check privacy ...")
 
