@@ -11,6 +11,8 @@
 import os
 import sys
 import logging
+import tempfile
+import stat
 
 from pathlib import Path
 
@@ -296,7 +298,6 @@ class TestFbMultiConfig(FbToolsTestcase):
         if self.verbose > 3:
             used_verbose = 3
 
-        # TODO Continue here ...
         cfg = BaseMultiConfig(
             appname=self.appname, config_dir=self.test_cfg_dir.name,
             additional_cfgdirs=self.test_cfg_dir, verbose=used_verbose,
@@ -362,6 +363,49 @@ class TestFbMultiConfig(FbToolsTestcase):
             LOG.info("{c} raised on not usable config file {fn!r}: {e}".format(
                 c=e.__class__.__name__, fn=test_add_config, e=e))
 
+    # -------------------------------------------------------------------------
+    def test_checking_privacy(self):
+
+        LOG.info("Testing check privacy ...")
+
+        from fb_tools.multi_config import BaseMultiConfig, MultiConfigError
+
+        source_file = self.test_cfg_dir / 'test_multicfg.ini'
+        content = source_file.read_bytes()
+        test_stem = 'test_multicfg-uhu'
+
+        mode_private = stat.S_IRUSR | stat.S_IWUSR
+        mode_public = mode_private | stat.S_IRGRP | stat.S_IROTH
+        LOG.debug("Using modes private '{priv:04o}' and public '{pub:04o}'.".format(
+            priv=mode_private, pub=mode_public))
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=False, additional_stems=test_stem,
+            ensure_privacy=True)
+
+        with tempfile.NamedTemporaryFile(
+                mode="w+b", buffering=0, prefix='test_multicfg-', suffix='.ini',
+                dir=str(self.test_cfg_dir)) as fh:
+            cfg_file = Path(fh.name)
+            if self.verbose > 1:
+                LOG.debug("Using temporary file {!r} ...".format(str(cfg_file)))
+            fh.write(content)
+
+            LOG.debug("Testing privacy with a private config file ...")
+            os.chmod(cfg_file, mode_private)
+            cfg.additional_config_file = cfg_file
+            cfg.collect_config_files()
+
+            LOG.debug("Testing privacy with a public config file ...")
+            os.chmod(cfg_file, mode_public)
+            with self.assertRaises(MultiConfigError) as cm:
+                cfg.check_privacy()
+            e = cm.exception
+            LOG.info("{c} raised on public visible config file: {e}".format(
+                c=e.__class__.__name__, e=e))
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -385,6 +429,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbMultiConfig('test_read_broken', verbose))
     suite.addTest(TestFbMultiConfig('test_evaluation', verbose))
     suite.addTest(TestFbMultiConfig('test_additional_config_file', verbose))
+    suite.addTest(TestFbMultiConfig('test_checking_privacy', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

@@ -17,6 +17,7 @@ import sys
 import copy
 import os
 import json
+import stat
 
 from pathlib import Path
 
@@ -65,7 +66,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.5.6'
+__version__ = '0.6.0'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -159,7 +160,7 @@ class BaseMultiConfig(FbBaseObject):
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             append_appname_to_stems=True, config_dir=None, additional_stems=None,
             additional_cfgdirs=None, encoding=DEFAULT_ENCODING, additional_config_file=None,
-            use_chardet=True, raise_on_error=True, initialized=False):
+            use_chardet=True, raise_on_error=True, ensure_privacy=False, initialized=False):
 
         self._encoding = None
         self._config_dir = None
@@ -175,6 +176,7 @@ class BaseMultiConfig(FbBaseObject):
         self._use_chardet = to_bool(use_chardet)
         self._raise_on_error = to_bool(raise_on_error)
         self._was_read = False
+        self._ensure_privacy = to_bool(ensure_privacy)
 
         self.cfg = {}
         self.ext_loader = {}
@@ -431,6 +433,17 @@ class BaseMultiConfig(FbBaseObject):
         self._raise_on_error = to_bool(value)
 
     # -------------------------------------------------------------------------
+    @property
+    def ensure_privacy(self):
+        """If True, then all found config files, which are not located below /etc,
+        must not readable for others or the group (mode 0400 or 0600)."""
+        return self._ensure_privacy
+
+    @ensure_privacy.setter
+    def ensure_privacy(self, value):
+        self._ensure_privacy = to_bool(value)
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -467,6 +480,7 @@ class BaseMultiConfig(FbBaseObject):
         res['has_toml'] = self.has_toml
         res['has_yaml'] = self.has_yaml
         res['use_chardet'] = self.use_chardet
+        res['ensure_privacy'] = self.ensure_privacy
 
         return res
 
@@ -634,10 +648,46 @@ class BaseMultiConfig(FbBaseObject):
 
         self._set_additional_file(self.additional_config_file)
 
+        self.check_privacy()
+
         if self.verbose > 2:
             LOG.debug(_("Collected config files:") + '\n' + pp(self.config_files))
 
         self._cfgfiles_collected = True
+
+    # -------------------------------------------------------------------------
+    def check_privacy(self):
+
+        if not self.ensure_privacy:
+            return
+
+        LOG.debug(_("Checking permissions of config files ..."))
+
+        def is_relative_to_etc(cfile):
+            try:
+                rel = cfile.relative_to('/etc')
+                return True
+            except ValueError:
+                return False
+
+        for cfg_file in self.config_files:
+
+            # if cfg_file.is_relative_to('/etc'):
+            if is_relative_to_etc(cfg_file):
+                continue
+
+            if self.verbose > 1:
+                LOG.debug(_("Checking permissions of {!r} ...").format(str(cfg_file)))
+
+            mode = cfg_file.stat().st_mode
+            if self.verbose > 2:
+                msg = _("Found file permissions of {fn!r}: {mode:04o}")
+                LOG.debug(msg.format(fn=str(cfg_file), mode=mode))
+            if (mode & stat.S_IRGRP) or (mode & stat.S_IROTH):
+                msg = _("File {fn!r} is readable by group or by others, found mode {mode:04o}.")
+                if self.raise_on_error:
+                    raise MultiConfigError(msg.format(fn=str(cfg_file), mode=mode))
+                LOG.error(msg.format(fn=str(cfg_file), mode=mode))
 
     # -------------------------------------------------------------------------
     def _set_additional_file(self, cfg_file):
