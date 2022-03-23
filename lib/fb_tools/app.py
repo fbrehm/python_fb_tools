@@ -43,7 +43,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.5.2'
+__version__ = '1.5.3'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -415,11 +415,12 @@ class BaseApplication(HandlingObject):
         log_level = logging.INFO
         if self.verbose:
             log_level = logging.DEBUG
-        elif self.quiet:
+        root_loglevel = log_level
+        if self.quiet:
             log_level = logging.WARNING
 
         root_logger = logging.getLogger()
-        root_logger.setLevel(log_level)
+        root_logger.setLevel(root_loglevel)
 
         # create formatter
         format_str = ''

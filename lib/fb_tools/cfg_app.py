@@ -11,6 +11,9 @@ from __future__ import absolute_import
 
 # Standard modules
 import os
+import logging
+
+from pathlib import Path
 
 # Third party modules
 import six
@@ -32,11 +35,54 @@ from .multi_config import MultiConfigError, BaseMultiConfig
 
 from .xlate import XLATOR
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 LOG = logging.getLogger(__name__)
 
 
 _ = XLATOR.gettext
+
+
+# =============================================================================
+class LogFileOptionAction(argparse.Action):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, *args, **kwargs):
+
+        super(LogFileOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, values, option_string=None):
+
+        if values is None:
+            setattr(namespace, self.dest, None)
+            return
+
+        path = pathlib.Path(values)
+        logdir = path.parent
+
+        # Checking the parent directory of the Logfile
+        if not logdir.exists():
+            msg = _("Directory {!r} does not exists.").format(str(logdir))
+            raise argparse.ArgumentError(self, msg)
+        if not logdir.is_dir():
+            msg = _("Path {!r} exists, but is not a directory.").format(str(logdir))
+            raise argparse.ArgumentError(self, msg)
+
+        # Checking logfile, if it is already existing
+        if path.exists():
+            if not path.is_file():
+                msg = _("File {!r} is not a regular file.").format(values)
+                raise argparse.ArgumentError(self, msg)
+            if not os.access(values, os.W_OK):
+                msg = _("File {!r} is not writeable.").format(values)
+                raise argparse.ArgumentError(self, msg)
+        else:
+            if not os.access(logdir, os.W_OK):
+                msg = _("Directory {!r} is not writeable.").format(str(logdir))
+                raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, path.resolve())
 
 
 # =============================================================================
@@ -63,6 +109,7 @@ class FbConfigApplication(BaseApplication):
         self._use_chardet = True
         self.use_chardet = use_chardet
         self._additional_cfg_file = None
+        self._logfile = None
 
         super(FbConfigApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -95,6 +142,20 @@ class FbConfigApplication(BaseApplication):
         return self._additional_cfg_file
 
     # -------------------------------------------------------------------------
+    @property
+    def logfile(self):
+        """A possible log file, which can be used as a FileAppender target
+        in logging."""
+        return self._logfile
+
+    @logfile.setter
+    def logfile(self, value):
+        if value is None:
+            self._logfile = None
+            return
+        self._logfile = Path(value)
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transforms the elements of the object into a dict
@@ -124,9 +185,14 @@ class FbConfigApplication(BaseApplication):
 
         self.arg_parser.add_argument(
             "-C", "--cfgfile", "--cfg-file", "--config",
-            metavar=_("FILE"), nargs='+', dest="cfg_file",
-            action=CfgFileOptionAction,
+            metavar=_("FILE"), dest="cfg_file", action=CfgFileOptionAction,
             help=_("Configuration files to use additional to the standard configuration files."),
+        )
+
+        self.arg_parser.add_argument(
+            "--logfile", "--log",
+            metavar=_("FILE"), dest="logfile", action=LogFileOptionAction,
+            help=_("A logfile for storing all logging output."),
         )
 
     # -------------------------------------------------------------------------
@@ -139,6 +205,9 @@ class FbConfigApplication(BaseApplication):
             self._additional_cfg_file = self.args.cfg_file
             if self.cfg:
                 self.cfg.additional_cfg_file = self.args.cfg_file
+
+        if self.args.logfile:
+            self.logfile = self.args.logfile
 
     # -------------------------------------------------------------------------
     def post_init(self):
@@ -166,6 +235,62 @@ class FbConfigApplication(BaseApplication):
         self.cfg.eval()
         if self.cfg.verbose > self.verbose:
             self.verbose = self.cfg.verbose
+
+        if self.cfg.logfile and not self.logfile:
+            self.logfile = self.cfg.logfile.resolve()
+
+        if self.logfile:
+            self.init_file_logging()
+
+    # -------------------------------------------------------------------------
+    def init_file_logging(self):
+
+        if not self.logfile:
+            return
+
+        logdir = self.logfile.parent
+
+        # Checking the parent directory of the Logfile
+        if not logdir.exists():
+            msg = _("Directory {!r} does not exists.").format(str(logdir))
+            LOG.error(msg)
+            self.exit(6)
+        if not logdir.is_dir():
+            msg = _("Path {!r} exists, but is not a directory.").format(str(logdir))
+            LOG.error(msg)
+            self.exit(6)
+
+        # Checking logfile, if it is already existing
+        if self.logfile.exists():
+            if not self.logfile.is_file():
+                msg = _("File {!r} is not a regular file.").format(str(self.logfile))
+                LOG.error(msg)
+                self.exit(6)
+            if not os.access(self.logfile, os.W_OK):
+                msg = _("File {!r} is not writeable.").format(self.logfile)
+                LOG.error(msg)
+                self.exit(6)
+        else:
+            if not os.access(logdir, os.W_OK):
+                msg = _("Directory {!r} is not writeable.").format(str(logdir))
+                LOG.error(msg)
+                self.exit(6)
+
+        LOG.debug(_("Start logging into file {!r} ...").format(str(self.logfile)))
+
+        log_level = logging.INFO
+        if self.verbose:
+            log_level = logging.DEBUG
+
+        root_logger = logging.getLogger()
+        format_str = '[%(asctime)s]: ' + self.appname + ': %(levelname)s - %(message)s'
+        formatter = logging.Formatter(format_str)
+
+        lh_file = logging.WatchedFileHandler(str(self.logfile), encoding=UTF8_ENCODING)
+        lh_file.setLevel(log_level)
+        lh_file.setFormatter(formatter)
+
+        oot_logger.addHandler(lh_file)
 
 
 # =============================================================================
