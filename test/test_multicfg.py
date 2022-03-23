@@ -3,7 +3,7 @@
 '''
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2020 Frank Brehm, Berlin
+@copyright: © 2022 Frank Brehm, Berlin
 @license: GPL3
 @summary: test script (and module) for unit tests on multi config class
 '''
@@ -321,9 +321,46 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         LOG.info("Test performing additional config file.")
 
-        from fb_tools.multi_config import BaseMultiConfig
+        from fb_tools.multi_config import BaseMultiConfig, MultiConfigError
 
         test_stem = 'test_multicfg-add'
+        test_add_config = self.test_cfg_dir / 'test_multicfg-additional.ini'
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=False, additional_stems=test_stem,
+            additional_config_file=str(test_add_config))
+        cfg.collect_config_files()
+        self.assertIn(test_add_config, cfg.config_files)
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=False, additional_stems=test_stem)
+        cfg.additional_config_file = str(test_add_config)
+        cfg.collect_config_files()
+        self.assertIn(test_add_config, cfg.config_files)
+
+        wrong_configs = (
+            '/this/should/not/exists',
+            '/dev',
+            '/etc/shadow',
+            str(self.test_cfg_dir / 'test_multicfg-additional.uhu'),
+        )
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=False, additional_stems=test_stem)
+
+        for test_add_config in wrong_configs:
+            LOG.debug("Testing not usable config file {!r} ...".format(test_add_config))
+            with self.assertRaises(MultiConfigError) as cm:
+                cfg.additional_config_file = test_add_config
+                cfg.collect_config_files()
+            e = cm.exception
+            LOG.info("{c} raised on not usable config file {fn!r}: {e}".format(
+                c=e.__class__.__name__, fn=test_add_config, e=e))
 
 
 # =============================================================================
@@ -347,6 +384,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbMultiConfig('test_read_charset', verbose))
     suite.addTest(TestFbMultiConfig('test_read_broken', verbose))
     suite.addTest(TestFbMultiConfig('test_evaluation', verbose))
+    suite.addTest(TestFbMultiConfig('test_additional_config_file', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

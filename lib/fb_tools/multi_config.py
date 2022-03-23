@@ -63,9 +63,9 @@ from .obj import FbBaseObject
 
 from .merge import merge_structure
 
-from .xlate import XLATOR
+from .xlate import XLATOR, format_list
 
-__version__ = '0.5.4'
+__version__ = '0.5.6'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -260,6 +260,13 @@ class BaseMultiConfig(FbBaseObject):
 
         if not cfg_file.is_file():
             msg = _("Configuration file {!r} exists, but is not a regular file.")
+            if self.raise_on_error:
+                raise MultiConfigError(msg.format(str(cfg_file)))
+            LOG.error(msg.format(str(cfg_file)))
+            return
+
+        if not os.access(cfg_file, os.R_OK):
+            msg = _("Configuration file {!r} is not readable.")
             if self.raise_on_error:
                 raise MultiConfigError(msg.format(str(cfg_file)))
             LOG.error(msg.format(str(cfg_file)))
@@ -646,7 +653,7 @@ class BaseMultiConfig(FbBaseObject):
         for type_name in self.available_cfg_types:
             for ext_pattern in self.ext_patterns[type_name]:
 
-                pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
+                pat = r'\.' + ext_pattern + r'$'
                 if self.verbose > 3:
                     msg = _("Checking file {fn!r} for pattern {pat!r}.")
                     LOG.debug(msg.format(fn=cfg_file.name, pat=pat))
@@ -668,10 +675,13 @@ class BaseMultiConfig(FbBaseObject):
                     break
 
             if not performed:
-                msg = _("Did not found file type of additional config file {!r}.")
+                msg = _(
+                    "Did not found file type of additional config file {fn!r}. "
+                    "Available config types are: {list}.").format(
+                    fn=str(cfg_file), list=format_list(self.available_cfg_types))
                 if self.raise_on_error:
-                    raise MultiConfigError(msg.format(str(cfg_file)))
-                LOG.error(msg.format(str(cfg_file)))
+                    raise MultiConfigError(msg)
+                LOG.error(msg)
 
     # -------------------------------------------------------------------------
     def _eval_config_dir(self, cfg_dir):
