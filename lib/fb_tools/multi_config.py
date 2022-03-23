@@ -66,7 +66,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.6.1'
+__version__ = '0.6.2'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -681,7 +681,7 @@ class BaseMultiConfig(FbBaseObject):
 
         def is_relative_to_etc(cfile):
             try:
-                rel = cfile.relative_to('/etc')
+                rel = cfile.relative_to('/etc')                 # noqa
                 return True
             except ValueError:
                 return False

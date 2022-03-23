@@ -12,11 +12,12 @@ from __future__ import absolute_import
 # Standard modules
 import os
 import logging
+import argparse
 
 from pathlib import Path
 
 # Third party modules
-import six
+# import six
 
 # Own modules
 
@@ -24,7 +25,7 @@ from . import __version__ as __pkg_version__
 
 from .app import BaseApplication
 
-from .error import FbCfgAppError
+# from .error import FbCfgAppError
 
 from .common import pp, to_bool
 
@@ -35,7 +36,7 @@ from .multi_config import MultiConfigError, BaseMultiConfig
 
 from .xlate import XLATOR
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -58,7 +59,7 @@ class LogFileOptionAction(argparse.Action):
             setattr(namespace, self.dest, None)
             return
 
-        path = pathlib.Path(values)
+        path = Path(values)
         logdir = path.parent
 
         # Checking the parent directory of the Logfile
@@ -94,7 +95,7 @@ class FbConfigApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__pkg_version__, base_dir=None,
-            initialized=None, usage=None, description=None, cfg_class=BaseMultiConfig,
+            usage=None, description=None, cfg_class=BaseMultiConfig,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None,
             append_appname_to_stems=True, config_dir=None, additional_stems=None,
             additional_cfgdirs=None, cfg_encoding=DEFAULT_ENCODING,
@@ -123,6 +124,9 @@ class FbConfigApplication(BaseApplication):
             append_appname_to_stems=append_appname_to_stems, config_dir=config_dir,
             additional_stems=additional_stems, additional_cfgdirs=additional_cfgdirs,
             encoding=cfg_encoding, use_chardet=self.use_chardet, initialized=initialized)
+
+        if initialized:
+            self.initialized = True
 
     # -------------------------------------------------------------------------
     @property
@@ -231,8 +235,13 @@ class FbConfigApplication(BaseApplication):
             msg = _("The configuration should be existing at this point.")
             raise RuntimeError(msg)
 
-        self.cfg.read()
-        self.cfg.eval()
+        try:
+            self.cfg.read()
+            self.cfg.eval()
+        except MultiConfigError as e:
+            msg = _("Error on reading configuration:") + ' ' + str(e)
+            LOG.error(msg)
+            self.exit(4)
         if self.cfg.verbose > self.verbose:
             self.verbose = self.cfg.verbose
 
@@ -290,7 +299,7 @@ class FbConfigApplication(BaseApplication):
         lh_file.setLevel(log_level)
         lh_file.setFormatter(formatter)
 
-        oot_logger.addHandler(lh_file)
+        root_logger.addHandler(lh_file)
 
 
 # =============================================================================
