@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
-@copyright: © 2021 by Frank Brehm, Berlin
+@contact: frank@brehm-online.com
+@copyright: © 2022 by Frank Brehm, Berlin
 @summary: The module for the 'get-vmware-vm-info' application object.
 """
 from __future__ import absolute_import, print_function
@@ -28,17 +28,15 @@ from .common import pp, to_bool
 
 from .argparse_actions import RegexOptionAction
 
-from .cfg_app import FbConfigApplication
+from .vmware_app import BaseVmwareApplication, VmwareAppError
 
 from .errors import FbAppError
-
-from .vmware_config import VmwareConfiguration
 
 from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.4.2'
+__version__ = '1.5.0'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -47,13 +45,13 @@ ngettext = XLATOR.ngettext
 
 
 # =============================================================================
-class GetVmListAppError(FbAppError):
+class GetVmListAppError(VmwareAppError):
     """ Base exception class for all exceptions in this application."""
     pass
 
 
 # =============================================================================
-class GetVmListApplication(FbConfigApplication):
+class GetVmListApplication(BaseVmwareApplication):
     """
     Class for the application objects.
     """
@@ -63,7 +61,7 @@ class GetVmListApplication(FbConfigApplication):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
-            cfg_class=VmwareConfiguration, initialized=False, usage=None, description=None,
+            initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
         desc = _(
@@ -71,21 +69,16 @@ class GetVmListApplication(FbConfigApplication):
             "VMWare VSphere and print it out.")
 
         self._vm_pattern = self.default_vm_pattern
-        self.req_vspheres = None
-        self.do_vspheres = []
         self._details = False
 
         self._re_hw = None
         self._re_os = None
 
-        # Hash with all VSphere handler objects
-        self.vsphere = {}
-
         self.vms = []
 
         super(GetVmListApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            description=desc, cfg_class=cfg_class, initialized=False,
+            description=desc, initialized=False,
         )
 
         self.initialized = True
@@ -138,51 +131,7 @@ class GetVmListApplication(FbConfigApplication):
 
         """
 
-        self.initialized = False
-
         super(GetVmListApplication, self).post_init()
-
-        if not self.cfg.vsphere.keys():
-            msg = _("Did not found any configured Vsphere environments.")
-            LOG.error(msg)
-            self.exit(3)
-
-        if self.args.req_vsphere:
-            self.req_vspheres = []
-            all_found = True
-            for vs_name in self.args.req_vsphere:
-                LOG.debug(_("Checking for configured VSPhere instance {!r} ...").format(vs_name))
-                vs = vs_name.strip().lower()
-                if vs not in self.cfg.vsphere.keys():
-                    all_found = False
-                    msg = _(
-                        "VSPhere {!r} not found in list of configured VSPhere instances.").format(
-                            vs_name)
-                    LOG.error(msg)
-                else:
-                    if vs not in self.req_vspheres:
-                        self.req_vspheres.append(vs)
-            if not all_found:
-                self.exit(1)
-
-        if self.req_vspheres:
-            self.do_vspheres = copy.copy(self.req_vspheres)
-        else:
-            for vs_name in self.cfg.vsphere.keys():
-                self.do_vspheres.append(vs_name)
-
-        for vsphere_name in self.cfg.vsphere.keys():
-            vsphere_data = self.cfg.vsphere[vsphere_name]
-            pw = None
-            if 'password' in vsphere_data:
-                pw = vsphere_data['password']
-                if pw is None or pw == '':
-                    prompt = (
-                        _('Enter password for {n} VSPhere user {u!r} on host {h!r}:').format(
-                            n=vsphere_name, u=vsphere_data['user'], h=vsphere_data['host'])) + ' '
-                    vsphere_data['password'] = getpass.getpass(prompt=prompt)
-
-        self.init_vsphere_handlers()
 
         self.initialized = True
 
@@ -240,12 +189,6 @@ class GetVmListApplication(FbConfigApplication):
                 "System version, e.g. '{}'.").format('oracleLinux.*(_64)?Guest')
         )
 
-        filter_group.add_argument(
-            '--vs', '--vsphere', dest='req_vsphere', nargs='*',
-            help=_(
-                "The VSPhere names from configuration, in which the VMs should be searched.")
-        )
-
         output_options = self.arg_parser.add_argument_group(_('Output options'))
 
         output_options.add_argument(
@@ -256,11 +199,7 @@ class GetVmListApplication(FbConfigApplication):
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
 
-        if self.verbose > 2:
-            LOG.debug(_("Got command line arguments:") + '\n' + pp(self.args))
-
-        if self.args.cfg_file:
-            self._cfg_file = self.args.cfg_file
+        super(GetVmListApplication, self).perform_arg_parser()
 
         if self.args.details:
             self.details = self.args.details
@@ -285,36 +224,6 @@ class GetVmListApplication(FbConfigApplication):
             self._re_hw = re.compile(self.args.hw, re.IGNORECASE)
         if self.args.os:
             self._re_os = re.compile(self.args.os, re.IGNORECASE)
-
-    # -------------------------------------------------------------------------
-    def init_vsphere_handlers(self):
-
-        for vsphere_name in self.do_vspheres:
-            self.init_vsphere_handler(vsphere_name)
-
-    # -------------------------------------------------------------------------
-    def init_vsphere_handler(self, vsphere_name):
-
-        vsphere_data = self.cfg.vsphere[vsphere_name]
-
-        pwd = None
-        if 'password' in vsphere_data:
-            pwd = vsphere_data['password']
-
-        vsphere = VsphereServer(
-            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            host=vsphere_data['host'], port=vsphere_data['port'], dc=vsphere_data['dc'],
-            user=vsphere_data['user'], password=pwd,
-            auto_close=True, simulate=self.simulate, force=self.force,
-            terminal_has_colors=self.terminal_has_colors, initialized=False)
-
-        if vsphere:
-            self.vsphere[vsphere_name] = vsphere
-            vsphere.initialized = True
-        else:
-            msg = _("Could not initialize {} object from:").format('VsphereServer')
-            msg += '\n' + pp(vsphere_data)
-            LOG.error(msg)
 
     # -------------------------------------------------------------------------
     def _run(self):
