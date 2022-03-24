@@ -1,4 +1,4 @@
-fb-tools (1.9.1) UNRELEASED; urgency=medium
+fb-tools (1.9.1) all; urgency=medium
 
   * Adding evaluation of configuration in BaseMultiConfig
   * Performing additional config file in BaseMultiConfig
