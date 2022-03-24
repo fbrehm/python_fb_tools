@@ -10,9 +10,7 @@ from __future__ import absolute_import, print_function
 
 # Standard modules
 import logging
-import getpass
 import re
-import copy
 
 from operator import itemgetter, attrgetter
 
@@ -30,13 +28,9 @@ from .argparse_actions import RegexOptionAction
 
 from .vmware_app import BaseVmwareApplication, VmwareAppError
 
-from .errors import FbAppError
-
-from .vsphere.server import VsphereServer
-
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.5.0'
+__version__ = '1.5.1'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
