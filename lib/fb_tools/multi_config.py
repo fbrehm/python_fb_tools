@@ -66,7 +66,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -814,7 +814,8 @@ class BaseMultiConfig(FbBaseObject):
         self.cfg = {}
         for cfg_file in self.config_files:
 
-            LOG.info(_("Reading configuration file {!r} ...").format(str(cfg_file)))
+            if self.verbose:
+                LOG.info(_("Reading configuration file {!r} ...").format(str(cfg_file)))
 
             method = self.config_file_methods[cfg_file]
             if self.verbose > 1:

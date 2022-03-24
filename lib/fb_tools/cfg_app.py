@@ -36,7 +36,7 @@ from .multi_config import MultiConfigError, BaseMultiConfig
 
 from .xlate import XLATOR
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -111,6 +111,12 @@ class FbConfigApplication(BaseApplication):
         self.use_chardet = use_chardet
         self._additional_cfg_file = None
         self._logfile = None
+        self._cfg_class = cfg_class
+        self._append_appname_to_stems = append_appname_to_stems
+        self._config_dir = config_dir
+        self._additional_stems = additional_stems
+        self._additional_cfgdirs = additional_cfgdirs
+        self._cfg_encoding = cfg_encoding
 
         super(FbConfigApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -118,12 +124,6 @@ class FbConfigApplication(BaseApplication):
             argparse_epilog=argparse_epilog, argparse_prefix_chars=argparse_prefix_chars,
             env_prefix=env_prefix,
         )
-
-        self.cfg = cfg_class(
-            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            append_appname_to_stems=append_appname_to_stems, config_dir=config_dir,
-            additional_stems=additional_stems, additional_cfgdirs=additional_cfgdirs,
-            encoding=cfg_encoding, use_chardet=self.use_chardet, initialized=initialized)
 
         if initialized:
             self.initialized = True
@@ -231,9 +231,11 @@ class FbConfigApplication(BaseApplication):
         self.init_logging()
         self.perform_arg_parser()
 
-        if not self.cfg:
-            msg = _("The configuration should be existing at this point.")
-            raise RuntimeError(msg)
+        self.cfg = self._cfg_class(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            append_appname_to_stems=self._append_appname_to_stems, config_dir=self._config_dir,
+            additional_stems=self._additional_stems, additional_cfgdirs=self._additional_cfgdirs,
+            encoding=self._cfg_encoding, use_chardet=self.use_chardet, initialized=True)
 
         try:
             self.cfg.read()
