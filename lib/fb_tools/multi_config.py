@@ -17,6 +17,7 @@ import sys
 import copy
 import os
 import json
+import stat
 
 from pathlib import Path
 
@@ -29,7 +30,7 @@ from six.moves import configparser
 import chardet
 
 # from configparser import Error as ConfigParseError
-# from configparser import ExtendedInterpolation
+from configparser import ExtendedInterpolation
 
 HAS_YAML = False
 try:
@@ -63,9 +64,9 @@ from .obj import FbBaseObject
 
 from .merge import merge_structure
 
-from .xlate import XLATOR
+from .xlate import XLATOR, format_list
 
-__version__ = '0.4.9'
+__version__ = '0.6.3'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -146,7 +147,7 @@ class BaseMultiConfig(FbBaseObject):
 
     re_invalid_stem = re.compile(re.escape(os.sep))
 
-    default_ini_default_section = 'general'
+    default_ini_default_section = '/'
 
     chardet_min_level_confidence = 1.0 / 3
 
@@ -159,23 +160,24 @@ class BaseMultiConfig(FbBaseObject):
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             append_appname_to_stems=True, config_dir=None, additional_stems=None,
             additional_cfgdirs=None, encoding=DEFAULT_ENCODING, additional_config_file=None,
-            use_chardet=True, raise_on_error=True, initialized=False):
+            use_chardet=True, raise_on_error=True, ensure_privacy=False, initialized=False):
 
         self._encoding = None
         self._config_dir = None
         self._additional_config_file = None
-        self._simulate = False
         self._cfgfiles_collected = False
         self._ini_allow_no_value = False
         self._ini_delimiters = None
-        self._ini_extended_interpolation = False
         self._ini_comment_prefixes = None
         self._ini_inline_comment_prefixes = None
+        self._ini_extended_interpolation = False
         self._ini_strict = True
         self._ini_empty_lines_in_values = True
-        self._ini_default_section = self.default_ini_default_section
         self._use_chardet = to_bool(use_chardet)
         self._raise_on_error = to_bool(raise_on_error)
+        self._was_read = False
+        self._ensure_privacy = to_bool(ensure_privacy)
+        self._logfile = None
 
         self.cfg = {}
         self.ext_loader = {}
@@ -212,12 +214,11 @@ class BaseMultiConfig(FbBaseObject):
         else:
             self.config_dir = self.default_config_dir
 
-        if additional_config_file:
-            self.additional_config_file = additional_config_file
-
         self._init_config_dirs(additional_cfgdirs)
         self._init_stems(append_appname_to_stems, additional_stems)
         self._init_types()
+
+        self.additional_config_file = additional_config_file
 
         if initialized:
             self.initialized = True
@@ -252,15 +253,30 @@ class BaseMultiConfig(FbBaseObject):
             self._additional_config_file = None
             return
 
-        cfile = pathlib.Path(value)
-        if cfile.exists():
-            if not cfile.is_file():
-                msg = _("Configuration file {!r} exists, but is not a regular file.").format(
-                    str(cfile))
-                raise MultiConfigError(msg)
-            self._additional_config_file = cfile.resolve()
+        cfg_file = Path(value)
+        if not cfg_file.exists():
+            msg = _("Additional config file {!r} does not exists.")
+            if self.raise_on_error:
+                raise MultiConfigError(msg.format(str(cfg_file)))
+            LOG.error(msg.format(str(cfg_file)))
             return
-        self._additional_config_file = cfile
+
+        if not cfg_file.is_file():
+            msg = _("Configuration file {!r} exists, but is not a regular file.")
+            if self.raise_on_error:
+                raise MultiConfigError(msg.format(str(cfg_file)))
+            LOG.error(msg.format(str(cfg_file)))
+            return
+
+        if not os.access(cfg_file, os.R_OK):
+            msg = _("Configuration file {!r} is not readable.")
+            if self.raise_on_error:
+                raise MultiConfigError(msg.format(str(cfg_file)))
+            LOG.error(msg.format(str(cfg_file)))
+            return
+
+        cfg_file = cfg_file.resolve()
+        self._additional_config_file = cfg_file
 
     # -------------------------------------------------------------------------
     @property
@@ -280,6 +296,20 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     @property
+    def logfile(self):
+        """A possible log file, which can be used as a FileAppender target
+        in logging."""
+        return self._logfile
+
+    @logfile.setter
+    def logfile(self, value):
+        if value is None:
+            self._logfile = None
+            return
+        self._logfile = Path(value)
+
+    # -------------------------------------------------------------------------
+    @property
     def use_chardet(self):
         """Flag, whether to use the chardet module to detect the
            character set of a config file."""
@@ -293,6 +323,12 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     @property
+    def was_read(self):
+        """Flag, whether the configuration files were read."""
+        return self._was_read
+
+    # -------------------------------------------------------------------------
+    @property
     def ini_allow_no_value(self):
         """Accept keys without values in ini-files."""
         return self._ini_allow_no_value
@@ -303,6 +339,106 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     @property
+    def ini_delimiters(self):
+        """Delimiters are substrings that delimit keys from values within a section
+        in ini-files."""
+        return self._ini_delimiters
+
+    @ini_delimiters.setter
+    def ini_delimiters(self, value):
+        if not value:
+            self._ini_delimiters = None
+            return
+        if isinstance(value, str):
+            self._ini_delimiters = []
+            for character in value:
+                self._ini_delimiters.append(character)
+            return
+        if is_sequence(value):
+            self._ini_delimiters = copy.copy(value)
+            return
+        msg = _("Cannot use {!r} as delimiters for ini-files.").format(value)
+        raise TypeError(msg)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_comment_prefixes(self):
+        """Prefixes for comment lines in ini-files."""
+        return self._ini_comment_prefixes
+
+    @ini_comment_prefixes.setter
+    def ini_comment_prefixes(self, value):
+        if not value:
+            self._ini_comment_prefixes = None
+            return
+        if isinstance(value, str):
+            self._ini_comment_prefixes = []
+            for character in value:
+                self._ini_comment_prefixes.append(character)
+            return
+        if is_sequence(value):
+            self._ini_comment_prefixes = copy.copy(value)
+            return
+        msg = _("Cannot use {!r} as comment prefixes for ini-files.").format(value)
+        raise TypeError(msg)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_inline_comment_prefixes(self):
+        """Inline prefixes for comment lines in ini-files."""
+        return self._ini_inline_comment_prefixes
+
+    @ini_inline_comment_prefixes.setter
+    def ini_inline_comment_prefixes(self, value):
+        if not value:
+            self._ini_inline_comment_prefixes = None
+            return
+        if isinstance(value, str):
+            self._ini_inline_comment_prefixes = []
+            for character in value:
+                self._ini_inline_comment_prefixes.append(character)
+            return
+        if is_sequence(value):
+            self._ini_inline_comment_prefixes = copy.copy(value)
+            return
+        msg = _("Cannot use {!r} as inline comment prefixes for ini-files.").format(value)
+        raise TypeError(msg)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_extended_interpolation(self):
+        """Use ExtendedInterpolation for interpolation of ini-files
+        instead of BasicInterpolation."""
+        return self._ini_extended_interpolation
+
+    @ini_extended_interpolation.setter
+    def ini_extended_interpolation(self, value):
+        self._ini_extended_interpolation = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_strict(self):
+        """The ini-parser will not allow for any section or option duplicates while
+        reading from a single source"""
+        return self._ini_strict
+
+    @ini_strict.setter
+    def ini_strict(self, value):
+        self._ini_strict = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ini_empty_lines_in_values(self):
+        """May values can span multiple lines as long as they are indented more thans
+         the key that holds them in ini-files."""
+        return self._ini_empty_lines_in_values
+
+    @ini_empty_lines_in_values.setter
+    def ini_empty_lines_in_values(self, value):
+        self._ini_empty_lines_in_values = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
     def raise_on_error(self):
         """Accept keys without values in ini-files."""
         return self._raise_on_error
@@ -310,6 +446,17 @@ class BaseMultiConfig(FbBaseObject):
     @raise_on_error.setter
     def raise_on_error(self, value):
         self._raise_on_error = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def ensure_privacy(self):
+        """If True, then all found config files, which are not located below /etc,
+        must not readable for others or the group (mode 0400 or 0600)."""
+        return self._ensure_privacy
+
+    @ensure_privacy.setter
+    def ensure_privacy(self, value):
+        self._ensure_privacy = to_bool(value)
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -336,11 +483,20 @@ class BaseMultiConfig(FbBaseObject):
         res['config_dir'] = self.config_dir
         res['additional_config_file'] = self.additional_config_file
         res['cfgfiles_collected'] = self.cfgfiles_collected
+        res['was_read'] = self.was_read
         res['ini_allow_no_value'] = self.ini_allow_no_value
+        res['ini_delimiters'] = self.ini_delimiters
+        res['ini_comment_prefixes'] = self.ini_comment_prefixes
+        res['ini_inline_comment_prefixes'] = self.ini_inline_comment_prefixes
+        res['ini_extended_interpolation'] = self.ini_extended_interpolation
+        res['ini_strict'] = self.ini_strict
         res['raise_on_error'] = self.raise_on_error
         res['has_hjson'] = self.has_hjson
         res['has_toml'] = self.has_toml
         res['has_yaml'] = self.has_yaml
+        res['use_chardet'] = self.use_chardet
+        res['ensure_privacy'] = self.ensure_privacy
+        res['logfile'] = self.logfile
 
         return res
 
@@ -506,10 +662,92 @@ class BaseMultiConfig(FbBaseObject):
                 LOG.debug(msg)
             self._eval_config_dir(cfg_dir)
 
+        self._set_additional_file(self.additional_config_file)
+
+        self.check_privacy()
+
         if self.verbose > 2:
             LOG.debug(_("Collected config files:") + '\n' + pp(self.config_files))
 
         self._cfgfiles_collected = True
+
+    # -------------------------------------------------------------------------
+    def check_privacy(self):
+
+        if not self.ensure_privacy:
+            return
+
+        LOG.debug(_("Checking permissions of config files ..."))
+
+        def is_relative_to_etc(cfile):
+            try:
+                rel = cfile.relative_to('/etc')                 # noqa
+                return True
+            except ValueError:
+                return False
+
+        for cfg_file in self.config_files:
+
+            # if cfg_file.is_relative_to('/etc'):
+            if is_relative_to_etc(cfg_file):
+                continue
+
+            if self.verbose > 1:
+                LOG.debug(_("Checking permissions of {!r} ...").format(str(cfg_file)))
+
+            mode = cfg_file.stat().st_mode
+            if self.verbose > 2:
+                msg = _("Found file permissions of {fn!r}: {mode:04o}")
+                LOG.debug(msg.format(fn=str(cfg_file), mode=mode))
+            if (mode & stat.S_IRGRP) or (mode & stat.S_IROTH):
+                msg = _("File {fn!r} is readable by group or by others, found mode {mode:04o}.")
+                if self.raise_on_error:
+                    raise MultiConfigError(msg.format(fn=str(cfg_file), mode=mode))
+                LOG.error(msg.format(fn=str(cfg_file), mode=mode))
+
+    # -------------------------------------------------------------------------
+    def _set_additional_file(self, cfg_file):
+
+        if not cfg_file:
+            return
+
+        if self.verbose > 1:
+            msg = _("Trying to detect file type of additional config file {!r}.")
+            LOG.debug(msg.format(str(cfg_file)))
+
+        performed = False
+        for type_name in self.available_cfg_types:
+            for ext_pattern in self.ext_patterns[type_name]:
+
+                pat = r'\.' + ext_pattern + r'$'
+                if self.verbose > 3:
+                    msg = _("Checking file {fn!r} for pattern {pat!r}.")
+                    LOG.debug(msg.format(fn=cfg_file.name, pat=pat))
+
+                if re.search(pat, cfg_file.name, re.IGNORECASE):
+                    method = self.ext_loader[ext_pattern]
+                    if self.verbose > 1:
+                        msg = _("Found config file {fi!r}, loader method {m!r}.")
+                        LOG.debug(msg.format(fi=str(cfg_file), m=method))
+                    if self.additional_config_file:
+                        ocfg = self.additional_config_file
+                        if ocfg in self.config_files:
+                            self.config_files.remove(ocfg)
+                    if cfg_file in self.config_files:
+                        self.config_files.remove(cfg_file)
+                    self.config_files.append(cfg_file)
+                    self.config_file_methods[cfg_file] = method
+                    performed = True
+                    break
+
+            if not performed:
+                msg = _(
+                    "Did not found file type of additional config file {fn!r}. "
+                    "Available config types are: {list}.").format(
+                    fn=str(cfg_file), list=format_list(self.available_cfg_types))
+                if self.raise_on_error:
+                    raise MultiConfigError(msg)
+                LOG.error(msg)
 
     # -------------------------------------------------------------------------
     def _eval_config_dir(self, cfg_dir):
@@ -576,7 +814,8 @@ class BaseMultiConfig(FbBaseObject):
         self.cfg = {}
         for cfg_file in self.config_files:
 
-            LOG.info(_("Reading configuration file {!r} ...").format(str(cfg_file)))
+            if self.verbose:
+                LOG.info(_("Reading configuration file {!r} ...").format(str(cfg_file)))
 
             method = self.config_file_methods[cfg_file]
             if self.verbose > 1:
@@ -597,6 +836,7 @@ class BaseMultiConfig(FbBaseObject):
             else:
                 self.configs_raw[str(cfg_file)] = None
 
+        self._was_read = True
         if self.verbose > 2:
             LOG.debug(_('Read merged config:') + '\n' + pp(self.cfg))
 
@@ -716,7 +956,17 @@ class BaseMultiConfig(FbBaseObject):
 
         kargs = {
             'allow_no_value': self.ini_allow_no_value,
+            'strict': self.ini_strict,
+            'empty_lines_in_values': self.ini_empty_lines_in_values,
         }
+        if self.ini_delimiters:
+            kargs['delimiters'] = self.ini_delimiters
+        if self.ini_comment_prefixes:
+            kargs['comment_prefixes'] = self.ini_comment_prefixes
+        if self.ini_inline_comment_prefixes:
+            kargs['cinline_omment_prefixes'] = self.ini_inline_comment_prefixes
+        if self.ini_extended_interpolation:
+            kargs['interpolation'] = ExtendedInterpolation
 
         if self.verbose > 1:
             LOG.debug(_("Arguments on initializing {}:").format('ConfigParser') + "\n" + pp(kargs))
@@ -818,6 +1068,55 @@ class BaseMultiConfig(FbBaseObject):
             return None
 
         return cfg
+
+    # -------------------------------------------------------------------------
+    def eval(self):
+        """Evaluating read configuration and storing them in object properties."""
+
+        if not self.was_read:
+            msg = _("Evaluation of configuration could only be happen after reading it.")
+            raise RuntimeError(msg)
+
+        for section_name in self.cfg.keys():
+
+            if section_name.lower() in ('default', 'global', 'common'):
+                self.eval_global_section(section_name)
+                continue
+            self.eval_section(section_name)
+
+    # -------------------------------------------------------------------------
+    def eval_global_section(self, section_name):
+        """Evaluating section [global] of configuration.
+            May be overridden in descendant classes."""
+
+        if self.verbose > 1:
+            LOG.debug(_("Checking config section {!r} ...").format(section_name))
+
+        config = self.cfg[section_name]
+        for key in config.keys():
+            value = config[key]
+            if key.lower() == 'verbose':
+                val = 0
+                if value is None:
+                    pass
+                elif isinstance(value, bool):
+                    if value:
+                        val = 1
+                else:
+                    val = int(value)
+                if val > self.verbose:
+                    self.verbose = val
+                continue
+            if key.lower() in ('logfile', 'log-file', 'log'):
+                self.logfile = value
+                continue
+
+    # -------------------------------------------------------------------------
+    def eval_section(self, section_name):
+        """Evaluating section with given name of configuration.
+            Should be overridden in descendant classes."""
+
+        pass
 
 
 # =============================================================================
