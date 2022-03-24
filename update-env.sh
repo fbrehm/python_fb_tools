@@ -26,7 +26,6 @@ PIP_OPTIONS=
 export VIRTUAL_ENV_DISABLE_PROMPT=y
 
 declare -a VALID_PY_VERSIONS=("3.10" "3.9" "3.8" "3.7" "3.6")
-PY_VERSION_FINAL=
 PYTHON=
 
 #-------------------------------------------------------------------
@@ -261,7 +260,6 @@ get_options() {
         debug "Testing Python binary '${CYAN}${PYTHON}${NORMAL}' …"
         if type -t "${PYTHON}" >/dev/null ; then
             py_found="y"
-            PY_VERSION_FINAL="${py_version}"
             empty_line
             info "Found '${GREEN}${PYTHON}${NORMAL}'."
             break
