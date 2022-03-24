@@ -25,10 +25,8 @@ BASE_DIR=$( readlink -f . )
 PIP_OPTIONS=
 export VIRTUAL_ENV_DISABLE_PROMPT=y
 
-declare -a VALID_PY_VERSIONS=("3.8" "3.7" "3.6" "3.5")
-PY_VERSION_FINAL=
+declare -a VALID_PY_VERSIONS=("3.10" "3.9" "3.8" "3.7" "3.6")
 PYTHON=
-VENV_BIN='virtualenv'
 
 #-------------------------------------------------------------------
 detect_color() {
@@ -262,7 +260,6 @@ get_options() {
         debug "Testing Python binary '${CYAN}${PYTHON}${NORMAL}' …"
         if type -t "${PYTHON}" >/dev/null ; then
             py_found="y"
-            PY_VERSION_FINAL="${py_version}"
             empty_line
             info "Found '${GREEN}${PYTHON}${NORMAL}'."
             break
@@ -276,26 +273,6 @@ get_options() {
         empty_line >&2
         exit 5
     fi
-
-    info "Searching for valid virtualenv …"
-    VENV_BIN="virtualenv-${PY_VERSION_FINAL}"
-    debug "Testing '${VENV_BIN}' …"
-    if type -t "${VENV_BIN}" >/dev/null ; then
-        :
-    else
-        VENV_BIN="virtualenv"
-        debug "Testing '${VENV_BIN}' …"
-        if type -t "${VENV_BIN}" >/dev/null ; then
-            :
-        else
-            empty_line >&2
-            error "Did not found a usable virtualenv." >&2
-            error "Command '${RED}virtualenv${NORMAL}' not found, please install package '${YELLOW}python-virtualenv${NORMAL}' or appropriate."
-            empty_line >&2
-            exit 6
-        fi
-    fi
-    info "Found '${GREEN}${VENV_BIN}${NORMAL}'."
 
     if type -t msgfmt >/dev/null ; then
         :
@@ -324,11 +301,7 @@ init_venv() {
     if [[ ! -f venv/bin/activate ]] ; then
 
         empty_line
-        if [[ "${VENV_BIN}" == 'virtualenv' ]] ; then
-            virtualenv --python="${PYTHON}" venv
-        else
-            ${VENV_BIN} venv
-        fi
+        "${PYTHON}" -m venv venv
 
     fi
 

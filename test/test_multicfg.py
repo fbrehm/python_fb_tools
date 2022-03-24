@@ -3,7 +3,7 @@
 '''
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2020 Frank Brehm, Berlin
+@copyright: © 2022 Frank Brehm, Berlin
 @license: GPL3
 @summary: test script (and module) for unit tests on multi config class
 '''
@@ -11,6 +11,8 @@
 import os
 import sys
 import logging
+import tempfile
+import stat
 
 from pathlib import Path
 
@@ -50,6 +52,9 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing import of fb_tools.multi_config ...")
         import fb_tools.multi_config                                        # noqa
 
@@ -61,6 +66,9 @@ class TestFbMultiConfig(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_object(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Testing init of a BaseMultiConfig object.")
 
@@ -76,6 +84,9 @@ class TestFbMultiConfig(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_init_cfg_dirs(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Testing init of configuration directories.")
 
@@ -118,6 +129,9 @@ class TestFbMultiConfig(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_init_stems(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Testing init of configuration file stems.")
 
@@ -176,6 +190,9 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_collect_cfg_files(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing collecting of configuration files.")
 
         exts = ('.ini', '.js', '.yaml')
@@ -213,6 +230,9 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_read_cfg_files(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing reading of configuration files.")
 
         from fb_tools.multi_config import BaseMultiConfig
@@ -231,6 +251,9 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_read_charset(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing reading of configuration files with different charcter sets.")
 
         from fb_tools.multi_config import BaseMultiConfig
@@ -241,7 +264,8 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         for stem in test_stems:
 
-            print()
+            if self.verbose:
+                print()
             LOG.info("Testing for file stem {!r} ...".format(stem))
 
             cfg = BaseMultiConfig(
@@ -254,6 +278,9 @@ class TestFbMultiConfig(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_read_broken(self):
+
+        if self.verbose == 1:
+            print()
 
         LOG.info("Testing reading of broken configuration files.")
 
@@ -269,7 +296,8 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         for stem in test_stems:
 
-            print()
+            if self.verbose:
+                print()
             LOG.info("Testing for file stem {!r} ...".format(stem))
 
             with self.assertRaises(MultiCfgParseError) as cm:
@@ -282,6 +310,139 @@ class TestFbMultiConfig(FbToolsTestcase):
                 LOG.info('Read config:\n' + pp(cfg.cfg))
             e = cm.exception
             LOG.info("{c} raised on stem {s!r}: {e}".format(c=e.__class__.__name__, s=stem, e=e))
+
+    # -------------------------------------------------------------------------
+    def test_evaluation(self):
+
+        if self.verbose == 1:
+            print()
+
+        LOG.info("Testing evaluation configuration.")
+
+        from fb_tools.multi_config import BaseMultiConfig
+
+        test_stem = 'test_multicfg-verbose'
+        test_logfile = Path('/var/log/test-multiconfig.log')
+
+        used_verbose = self.verbose
+        if self.verbose > 3:
+            used_verbose = 3
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=used_verbose,
+            append_appname_to_stems=False, additional_stems=test_stem)
+
+        LOG.debug("Testing raising RuntimeError on unread configuration ...")
+        with self.assertRaises(RuntimeError) as cm:
+            cfg.eval()
+        e = cm.exception
+        LOG.info("{c} raised on unread configuration: {e}".format(
+            c=e.__class__.__name__, e=e))
+
+        LOG.debug("Reading verbose level from configuration.")
+        cfg.read()
+        LOG.info('Read config:\n' + pp(cfg.cfg))
+        cfg.eval()
+        LOG.debug("New debug level: {!r}.".format(cfg.verbose))
+        LOG.debug("Evaluated logfile: {!r}.".format(cfg.logfile))
+        self.assertEqual(cfg.verbose, 7)
+        self.assertEqual(cfg.logfile, test_logfile)
+
+    # -------------------------------------------------------------------------
+    def test_additional_config_file(self):
+
+        if self.verbose == 1:
+            print()
+
+        LOG.info("Test performing additional config file.")
+
+        from fb_tools.multi_config import BaseMultiConfig, MultiConfigError
+
+        test_stem = 'test_multicfg-add'
+        test_add_config = self.test_cfg_dir / 'test_multicfg-additional.ini'
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=False, additional_stems=test_stem,
+            additional_config_file=str(test_add_config))
+        cfg.collect_config_files()
+        self.assertIn(test_add_config, cfg.config_files)
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=False, additional_stems=test_stem)
+        cfg.additional_config_file = str(test_add_config)
+        cfg.collect_config_files()
+        self.assertIn(test_add_config, cfg.config_files)
+
+        wrong_configs = (
+            '/this/should/not/exists',
+            '/dev',
+            '/etc/shadow',
+            str(self.test_cfg_dir / 'test_multicfg-additional.uhu'),
+        )
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=False, additional_stems=test_stem)
+
+        for test_add_config in wrong_configs:
+            LOG.debug("Testing not usable config file {!r} ...".format(test_add_config))
+            with self.assertRaises(MultiConfigError) as cm:
+                cfg.additional_config_file = test_add_config
+                cfg.collect_config_files()
+            e = cm.exception
+            LOG.info("{c} raised on not usable config file {fn!r}: {e}".format(
+                c=e.__class__.__name__, fn=test_add_config, e=e))
+
+    # -------------------------------------------------------------------------
+    def test_checking_privacy(self):
+
+        if self.verbose == 1:
+            print()
+
+        LOG.info("Testing check privacy ...")
+
+        from fb_tools.multi_config import BaseMultiConfig, MultiConfigError
+
+        source_file = self.test_cfg_dir / 'test_multicfg.ini'
+        content = source_file.read_bytes()
+        test_stem = 'test_multicfg-uhu'
+
+        mode_private = stat.S_IRUSR | stat.S_IWUSR
+        mode_public = mode_private | stat.S_IRGRP | stat.S_IROTH
+        LOG.debug("Using modes private '{priv:04o}' and public '{pub:04o}'.".format(
+            priv=mode_private, pub=mode_public))
+
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=False, additional_stems=test_stem,
+            ensure_privacy=True)
+
+        with tempfile.NamedTemporaryFile(
+                mode="w+b", buffering=0, prefix='test_multicfg-', suffix='.ini',
+                dir=str(self.test_cfg_dir)) as fh:
+            cfg_file = Path(fh.name)
+            if self.verbose > 1:
+                LOG.debug("Using temporary file {!r} ...".format(str(cfg_file)))
+            fh.write(content)
+
+            LOG.debug("Testing privacy with a private config file ...")
+            os.chmod(cfg_file, mode_private)
+            cfg.additional_config_file = cfg_file
+            cfg.collect_config_files()
+
+            LOG.debug("Testing privacy with a public config file ...")
+            os.chmod(cfg_file, mode_public)
+            with self.assertRaises(MultiConfigError) as cm:
+                cfg.check_privacy()
+            e = cm.exception
+            LOG.info("{c} raised on public visible config file: {e}".format(
+                c=e.__class__.__name__, e=e))
 
 
 # =============================================================================
@@ -304,6 +465,9 @@ if __name__ == '__main__':
     suite.addTest(TestFbMultiConfig('test_read_cfg_files', verbose))
     suite.addTest(TestFbMultiConfig('test_read_charset', verbose))
     suite.addTest(TestFbMultiConfig('test_read_broken', verbose))
+    suite.addTest(TestFbMultiConfig('test_evaluation', verbose))
+    suite.addTest(TestFbMultiConfig('test_additional_config_file', verbose))
+    suite.addTest(TestFbMultiConfig('test_checking_privacy', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
