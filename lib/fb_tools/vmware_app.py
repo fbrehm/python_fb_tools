@@ -31,7 +31,7 @@ from .vmware_config import VmwareConfiguration
 
 from .vsphere.server import VsphereServer
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -67,6 +67,13 @@ class BaseVmwareApplication(FbConfigApplication):
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
             description=description, cfg_class=cfg_class, initialized=False,
         )
+
+    # -------------------------------------------------------------------------
+    def __del__(self):
+        """Cleaning up in emergency case."""
+
+        if self.vsphere.keys():
+            self.cleaning_up()
 
     # -------------------------------------------------------------------------
     def post_init(self):
@@ -176,6 +183,17 @@ class BaseVmwareApplication(FbConfigApplication):
             msg = _("Could not initialize {} object from:").format('VsphereServer')
             msg += '\n' + pp(vsphere_data)
             LOG.error(msg)
+
+    # -------------------------------------------------------------------------
+    def cleaning_up(self):
+
+        if self.verbose > 1:
+            LOG.debug(_("Cleaning up ..."))
+
+        for vsphere_name in self.do_vspheres:
+            LOG.debug(_("Closing VSPhere object {!r} ...").format(vsphere_name))
+            self.vsphere[vsphere_name].disconnect()
+            del self.vsphere[vsphere_name]
 
 
 # =============================================================================

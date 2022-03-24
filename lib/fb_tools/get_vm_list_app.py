@@ -30,7 +30,7 @@ from .vmware_app import BaseVmwareApplication, VmwareAppError
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.5.1'
+__version__ = '1.5.2'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
@@ -229,11 +229,7 @@ class GetVmListApplication(BaseVmwareApplication):
         try:
             ret = self.get_all_vms()
         finally:
-            # Aufräumen ...
-            for vsphere_name in self.do_vspheres:
-                LOG.debug(_("Closing VSPhere object {!r} ...").format(vsphere_name))
-                self.vsphere[vsphere_name].disconnect()
-                del self.vsphere[vsphere_name]
+            self.cleaning_up()
 
         self.exit(ret)
 
