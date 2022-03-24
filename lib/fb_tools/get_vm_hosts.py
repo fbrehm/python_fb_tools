@@ -29,7 +29,7 @@ from .common import pp, to_bool
 
 from .app import BaseApplication
 
-from .config import CfgFileOptionAction
+from .argparse_actions import CfgFileOptionAction
 
 from .errors import FbAppError
 
@@ -39,7 +39,7 @@ from .vsphere.server import VsphereServer
 
 # from .vsphere.vm import VsphereVm
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 

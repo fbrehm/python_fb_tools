@@ -37,13 +37,13 @@ from ..argparse_actions import DirectoryOptionAction
 
 from ..app import BaseApplication
 
-from ..config import CfgFileOptionAction
+from ..argparse_actions import CfgFileOptionAction
 
 from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.4.4'
+__version__ = '0.4.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext

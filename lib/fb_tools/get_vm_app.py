@@ -27,7 +27,7 @@ from .common import pp
 
 from .app import BaseApplication
 
-from .config import CfgFileOptionAction
+from .argparse_actions import CfgFileOptionAction
 
 from .errors import FbAppError
 
@@ -39,7 +39,7 @@ from .vsphere.controller import VsphereDiskController
 
 from .vsphere.ether import VsphereEthernetcard
 
-__version__ = '1.4.2'
+__version__ = '1.4.3'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
