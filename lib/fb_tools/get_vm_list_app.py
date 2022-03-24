@@ -15,7 +15,6 @@ import re
 from operator import itemgetter, attrgetter
 
 # Third party modules
-import pytz
 
 # Own modules
 from . import __version__ as GLOBAL_VERSION
@@ -30,9 +29,8 @@ from .vmware_app import BaseVmwareApplication, VmwareAppError
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.5.2'
+__version__ = '1.5.3'
 LOG = logging.getLogger(__name__)
-TZ = pytz.timezone('Europe/Berlin')
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext

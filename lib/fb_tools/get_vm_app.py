@@ -14,14 +14,13 @@ import logging
 from operator import attrgetter
 
 # Third party modules
-import pytz
 
 # Own modules
 from . import __version__ as GLOBAL_VERSION
 
 from .xlate import XLATOR
 
-from .common import pp
+# from .common import pp
 
 from .vmware_app import BaseVmwareApplication, VmwareAppError
 
@@ -29,9 +28,8 @@ from .vsphere.controller import VsphereDiskController
 
 from .vsphere.ether import VsphereEthernetcard
 
-__version__ = '1.5.0'
+__version__ = '1.5.1'
 LOG = logging.getLogger(__name__)
-TZ = pytz.timezone('Europe/Berlin')
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -84,8 +82,7 @@ class GetVmApplication(BaseVmwareApplication):
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
 
-        if self.verbose > 2:
-            LOG.debug(_("Got command line arguments:") + '\n' + pp(self.args))
+        super(GetVmApplication, self).perform_arg_parser()
 
         for vm in self.args.vms:
             self.vms.append(vm)
