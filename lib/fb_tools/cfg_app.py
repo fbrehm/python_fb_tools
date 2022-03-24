@@ -30,14 +30,14 @@ from .common import pp, to_bool
 
 from .argparse_actions import LogFileOptionAction
 
-from .config import CfgFileOptionAction
+from .argparse_actions import CfgFileOptionAction
 
 from .multi_config import UTF8_ENCODING, DEFAULT_ENCODING
 from .multi_config import MultiConfigError, BaseMultiConfig
 
 from .xlate import XLATOR
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 LOG = logging.getLogger(__name__)
 
 

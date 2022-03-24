@@ -26,7 +26,7 @@ from .xlate import XLATOR, format_list
 
 from .common import pp, to_bool
 
-from .app import RegexOptionAction
+from .argparse_actions import RegexOptionAction
 
 from .cfg_app import FbConfigApplication
 
@@ -38,7 +38,7 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 
