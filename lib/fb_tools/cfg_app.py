@@ -12,7 +12,6 @@ from __future__ import absolute_import
 # Standard modules
 import os
 import logging
-import argparse
 
 from pathlib import Path
 
@@ -29,6 +28,8 @@ from .app import BaseApplication
 
 from .common import pp, to_bool
 
+from .argparse_actions import LogFileOptionAction
+
 from .config import CfgFileOptionAction
 
 from .multi_config import UTF8_ENCODING, DEFAULT_ENCODING
@@ -36,54 +37,11 @@ from .multi_config import MultiConfigError, BaseMultiConfig
 
 from .xlate import XLATOR
 
-__version__ = '0.2.2'
+__version__ = '0.3.0'
 LOG = logging.getLogger(__name__)
 
 
 _ = XLATOR.gettext
-
-
-# =============================================================================
-class LogFileOptionAction(argparse.Action):
-
-    # -------------------------------------------------------------------------
-    def __init__(self, option_strings, *args, **kwargs):
-
-        super(LogFileOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
-
-    # -------------------------------------------------------------------------
-    def __call__(self, parser, namespace, values, option_string=None):
-
-        if values is None:
-            setattr(namespace, self.dest, None)
-            return
-
-        path = Path(values)
-        logdir = path.parent
-
-        # Checking the parent directory of the Logfile
-        if not logdir.exists():
-            msg = _("Directory {!r} does not exists.").format(str(logdir))
-            raise argparse.ArgumentError(self, msg)
-        if not logdir.is_dir():
-            msg = _("Path {!r} exists, but is not a directory.").format(str(logdir))
-            raise argparse.ArgumentError(self, msg)
-
-        # Checking logfile, if it is already existing
-        if path.exists():
-            if not path.is_file():
-                msg = _("File {!r} is not a regular file.").format(values)
-                raise argparse.ArgumentError(self, msg)
-            if not os.access(values, os.W_OK):
-                msg = _("File {!r} is not writeable.").format(values)
-                raise argparse.ArgumentError(self, msg)
-        else:
-            if not os.access(logdir, os.W_OK):
-                msg = _("Directory {!r} is not writeable.").format(str(logdir))
-                raise argparse.ArgumentError(self, msg)
-
-        setattr(namespace, self.dest, path.resolve())
 
 
 # =============================================================================

@@ -33,7 +33,9 @@ from ..xlate import XLATOR, format_list
 
 from ..common import pp
 
-from ..app import BaseApplication, DirectoryOptionAction
+from ..argparse_actions import DirectoryOptionAction
+
+from ..app import BaseApplication
 
 from ..config import CfgFileOptionAction
 
@@ -41,7 +43,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.4.3'
+__version__ = '0.4.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext

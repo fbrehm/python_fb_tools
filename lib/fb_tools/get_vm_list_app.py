@@ -21,7 +21,6 @@ import pytz
 
 # Own modules
 from . import __version__ as GLOBAL_VERSION
-from . import VMWARE_CFGFILE_BASENAME
 
 from .xlate import XLATOR, format_list
 
@@ -31,8 +30,6 @@ from .app import RegexOptionAction
 
 from .cfg_app import FbConfigApplication
 
-from .config import CfgFileOptionAction
-
 from .errors import FbAppError
 
 from .vmware_config import VmwareConfiguration
@@ -41,7 +38,7 @@ from .vsphere.server import VsphereServer
 
 from .vsphere.vm import VsphereVm
 
-__version__ = '1.4.0'
+__version__ = '1.4.1'
 LOG = logging.getLogger(__name__)
 TZ = pytz.timezone('Europe/Berlin')
 

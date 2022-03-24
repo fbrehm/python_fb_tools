@@ -28,7 +28,6 @@ from .xlate import XLATOR
 from .common import pp, to_bool
 
 from .app import BaseApplication
-# from .app import RegexOptionAction
 
 from .config import CfgFileOptionAction
 
