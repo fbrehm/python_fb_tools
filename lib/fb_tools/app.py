@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
-@copyright: © 2021 by Frank Brehm, Berlin
+@contact: frank@brehm-online.com
+@copyright: © 2022 by Frank Brehm, Berlin
 @summary: The module for a base application object.
 """
 from __future__ import absolute_import
@@ -20,11 +20,6 @@ import signal
 import time
 
 # Third party modules
-
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
 
 # Own modules
 from fb_logging.colored import ColoredFormatter
@@ -43,7 +38,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.5.2'
+__version__ = '1.6.0'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -58,78 +53,6 @@ SIGNAL_NAMES = {
 }
 
 _ = XLATOR.gettext
-
-
-# =============================================================================
-class RegexOptionAction(argparse.Action):
-
-    # -------------------------------------------------------------------------
-    def __init__(self, option_strings, topic, re_options=None, *args, **kwargs):
-
-        self._topic = topic
-        self._re_options = None
-        if re_options is not None:
-            self._re_options = re_options
-
-        super(RegexOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
-
-    # -------------------------------------------------------------------------
-    def __call__(self, parser, namespace, pattern, option_string=None):
-
-        try:
-            if self._re_options is None:
-                re_test = re.compile(pattern)                               # noqa
-            else:
-                re_test = re.compile(pattern, self._re_options)             # noqa
-        except Exception as e:
-            msg = _("Got a {c} for pattern {p!r}: {e}").format(
-                c=e.__class__.__name__, p=pattern, e=e)
-            raise argparse.ArgumentError(self, msg)
-
-        setattr(namespace, self.dest, pattern)
-
-# =============================================================================
-class DirectoryOptionAction(argparse.Action):
-
-    # -------------------------------------------------------------------------
-    def __init__(self, option_strings, must_exists=True, writeable=False, *args, **kwargs):
-
-        self.must_exists = bool(must_exists)
-        self.writeable = bool(writeable)
-        if self.writeable:
-            self.must_exists = True
-
-        super(DirectoryOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
-
-    # -------------------------------------------------------------------------
-    def __call__(self, parser, namespace, given_path, option_string=None):
-
-        path = Path(given_path)
-        if not path.is_absolute():
-            msg = _("The path {!r} must be an absolute path.").format(given_path)
-            raise argparse.ArgumentError(self, msg)
-
-        if self.must_exists:
-
-            if not path.exists():
-                msg = _("The directory {!r} does not exists.").format(str(path))
-                raise argparse.ArgumentError(self, msg)
-
-            if not path.is_dir():
-                msg = _("The given path {!r} exists, but is not a directory.").format(str(path))
-                raise argparse.ArgumentError(self, msg)
-
-            if not os.access(str(path), os.R_OK) or not os.access(str(path), os.X_OK):
-                msg = _("The given directory {!r} is not readable.").format(str(path))
-                raise argparse.ArgumentError(self, msg)
-
-            if self.writeable and not os.access(str(path), os.W_OK):
-                msg = _("The given directory {!r} is not writeable.").format(str(path))
-                raise argparse.ArgumentError(self, msg)
-
-        setattr(namespace, self.dest, path)
 
 
 # =============================================================================
@@ -415,11 +338,12 @@ class BaseApplication(HandlingObject):
         log_level = logging.INFO
         if self.verbose:
             log_level = logging.DEBUG
-        elif self.quiet:
+        root_loglevel = log_level
+        if self.quiet:
             log_level = logging.WARNING
 
         root_logger = logging.getLogger()
-        root_logger.setLevel(log_level)
+        root_logger.setLevel(root_loglevel)
 
         # create formatter
         format_str = ''

@@ -11,7 +11,6 @@ from __future__ import absolute_import
 # Standard module
 import logging
 import codecs
-import argparse
 
 try:
     import pathlib
@@ -33,7 +32,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '1.2.4'
+__version__ = '1.3.0'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -46,33 +45,6 @@ class ConfigError(FbError):
     execution this configured application"""
 
     pass
-
-
-# =============================================================================
-class CfgFileOptionAction(argparse.Action):
-
-    # -------------------------------------------------------------------------
-    def __init__(self, option_strings, *args, **kwargs):
-
-        super(CfgFileOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
-
-    # -------------------------------------------------------------------------
-    def __call__(self, parser, namespace, values, option_string=None):
-
-        if values is None:
-            setattr(namespace, self.dest, None)
-            return
-
-        path = pathlib.Path(values)
-        if not path.exists():
-            msg = _("File {!r} does not exists.").format(values)
-            raise argparse.ArgumentError(self, msg)
-        if not path.is_file():
-            msg = _("File {!r} is not a regular file.").format(values)
-            raise argparse.ArgumentError(self, msg)
-
-        setattr(namespace, self.dest, path.resolve())
 
 
 # =============================================================================
