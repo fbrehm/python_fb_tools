@@ -1476,7 +1476,7 @@ msgstr ""
 
 #: lib/fb_tools/multi_config.py:855
 msgid "Trying to detect character set of file {fn!r} ..."
-msgstr "Versuche den Zeichensatz der Datei {!r} zu ernitteln …"
+msgstr "Versuche den Zeichensatz der Datei {fn!r} zu ermitteln …"
 
 #: lib/fb_tools/multi_config.py:866
 #, python-format
