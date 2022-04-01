@@ -30,7 +30,7 @@ from .obj import FbBaseObjectError, FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 
 LOG = logging.getLogger(__name__)
 
@@ -70,9 +70,9 @@ class InvalidPidFileError(PidFileError):
         msg = None
         if self.reason:
             msg = _("Invalid pidfile {f!r} given: {r}").format(
-                f=self.pidfile, r=self.reason)
+                f=str(self.pidfile), r=self.reason)
         else:
-            msg = _("Invalid pidfile {!r} given.").format(self.pidfile)
+            msg = _("Invalid pidfile {!r} given.").format(str(self.pidfile))
 
         return msg
 
@@ -103,7 +103,7 @@ class PidFileInUseError(PidFileError):
 
         msg = _(
             "The pidfile {f!r} is currently in use by the application with the PID {p}.").format(
-            f=self.pidfile, p=self.pid)
+            f=str(self.pidfile), p=self.pid)
 
         return msg
 
