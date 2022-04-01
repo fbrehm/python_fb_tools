@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.9.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-03-24 10:39+0100\n"
-"PO-Revision-Date: 2022-03-24 10:45+0100\n"
+"POT-Creation-Date: 2022-03-31 18:27+0200\n"
+"PO-Revision-Date: 2022-03-31 18:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
 "Language-Team: en_US <frank@brehm-online.com>\n"
@@ -1490,6 +1490,118 @@ msgstr ""
 
 #: lib/fb_tools/obj.py:342
 msgid "Path for base directory {!r} is not a directory."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:72
+msgid "Invalid pidfile {f!r} given: {r}"
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:75
+msgid "Invalid pidfile {!r} given."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:104
+msgid "The pidfile {f!r} is currently in use by the application with the PID {p}."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:174
+msgid "No filename given on initializing {} object."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:292
+msgid "Pidfile {!r} doesn't exists, not removing."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:297
+msgid "Auto removing disabled, don't deleting {!r}."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:301
+msgid "Removing pidfile {!r} ..."
+msgstr "Removing lockfile {!r} …"
+
+#: lib/fb_tools/pidfile.py:304 lib/fb_tools/pidfile.py:338
+msgid "Just kidding ..."
+msgstr "Just kidding …"
+
+#: lib/fb_tools/pidfile.py:309
+msgid "Could not delete pidfile {f!r}: {e}"
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:328
+msgid "Invalid PID {p} for creating pidfile {f!r} given."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:336
+msgid "Deleting pidfile {!r} ..."
+msgstr "Deleting pidfile {!r}  …"
+
+#: lib/fb_tools/pidfile.py:346
+msgid "Trying opening {!r} exclusive ..."
+msgstr "Trying opening {!r} exclusive …"
+
+#: lib/fb_tools/pidfile.py:349 lib/fb_tools/pidfile.py:401
+msgid "Simulation mode - don't real writing in {!r}."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:359
+msgid "Error on creating pidfile {f!r}: {e}"
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:363 lib/fb_tools/pidfile.py:413
+msgid "Writing {p} into {f!r} ..."
+msgstr "Writing {p} into {f!r} …"
+
+#: lib/fb_tools/pidfile.py:385
+msgid "Calling {} on a not self created pidfile."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:398
+msgid "Trying opening {!r} for recreate ..."
+msgstr "Trying opening {!r} for recreate …"
+
+#: lib/fb_tools/pidfile.py:409
+msgid "Error on recreating pidfile {f!r}: {e}"
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:442
+msgid "Pidfile parent directory {!r} doesn't exists."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:446
+msgid "Pidfile parent directory {!r} is not a directory."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:450
+msgid "No write access to pidfile parent directory {!r}."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:457
+msgid "It is not a regular file."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:474
+msgid "Reading content of pidfile {!r} ..."
+msgstr "Reading content of pidfile {!r} …"
+
+#: lib/fb_tools/pidfile.py:499
+msgid "No useful information found in pidfile {f!r}: {z!r}"
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:504
+msgid "Trying check for process with PID {} ..."
+msgstr "Trying check for process with PID {} …"
+
+#: lib/fb_tools/pidfile.py:510
+msgid "Process with PID {} anonymous died."
+msgstr ""
+
+#: lib/fb_tools/pidfile.py:514
+msgid "No permission to signal the process {} ..."
+msgstr "No permission to signal the process {} …"
+
+#: lib/fb_tools/pidfile.py:518
+msgid "Got a {c}: {e}."
 msgstr ""
 
 #: lib/fb_tools/vmware_app.py:96
