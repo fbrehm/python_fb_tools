@@ -10,8 +10,8 @@
 import os
 import sys
 import logging
-import tempfile
-import time
+# import tempfile
+# import time
 
 from pathlib import Path
 
@@ -23,7 +23,7 @@ except ImportError:
 libdir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), '..', 'lib'))
 sys.path.insert(0, libdir)
 
-from fb_tools.common import pp, to_utf8
+# from fb_tools.common import pp, to_utf8
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
