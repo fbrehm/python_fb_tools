@@ -12,19 +12,31 @@ from __future__ import absolute_import
 import logging
 import re
 
+# Third party modules
+import six
+
 # Own modules
 from .errors import InvalidMailAddressError
+# from .errors import GeneralMailAddressError, EmptyMailAddressError
+from .errors import EmptyMailAddressError
 
-from .common import to_str
+from .common import to_str, to_bool
 
 from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
 __version__ = '0.6.1'
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
+
+
+# =============================================================================
+def convert_attr(value):
+    if isinstance(value, six.string_types):
+        return to_str(value).lower().strip()
+    return value
 
 
 # =============================================================================
@@ -55,7 +67,7 @@ class MailAddress(FbGenericBaseObject):
             if raise_on_failure:
                 raise e
             elif cls.verbose > 2:
-                log.debug(str(e))
+                LOG.debug(str(e))
             return False
 
         addr = to_str(address)
@@ -64,7 +76,7 @@ class MailAddress(FbGenericBaseObject):
             if raise_on_failure:
                 raise e
             elif cls.verbose > 2:
-                log.debug(str(e))
+                LOG.debug(str(e))
             return False
 
         if cls.re_valid_address.search(addr):
@@ -74,18 +86,22 @@ class MailAddress(FbGenericBaseObject):
         if raise_on_failure:
             raise e
         elif cls.verbose > 2:
-            log.debug(str(e))
+            LOG.debug(str(e))
         return False
 
     # -------------------------------------------------------------------------
-    def __init__(self, user=None, domain=None):
+    def __init__(self, user=None, domain=None, verbose=0, empty_ok=False):
 
         self._user = ''
         self._domain = ''
+        self._verbose = 0
+        self.verbose = verbose
+        self._empty_ok = False
+        self.empty_ok = empty_ok
 
         if not domain:
             if user:
-                addr = to_str(user)
+                addr = convert_attr(user)
                 if self.valid_address(addr):
                     match = self.re_valid_address.search(addr)
                     self._user = match.group(1)
@@ -98,8 +114,15 @@ class MailAddress(FbGenericBaseObject):
                 self._user = addr
                 return
 
-        self._user = to_str(user)
-        self._domain = to_str(domain)
+            e = EmptyMailAddressError()
+            if self.empty_ok:
+                if self.verbose > 2:
+                    LOG.debug(str(e))
+                return
+            raise e
+
+        self._user = convert_attr(user)
+        self._domain = convert_attr(domain)
 
     # -----------------------------------------------------------
     @property
@@ -116,6 +139,51 @@ class MailAddress(FbGenericBaseObject):
         if self._domain is None:
             return ''
         return self._domain
+
+    # -----------------------------------------------------------
+    @property
+    def verbose(self):
+        """The verbosity level."""
+        return getattr(self, '_verbose', 0)
+
+    @verbose.setter
+    def verbose(self, value):
+        v = int(value)
+        if v >= 0:
+            self._verbose = v
+        else:
+            LOG.warning(_("Wrong verbose level {!r}, must be >= 0").format(value))
+
+    # -----------------------------------------------------------
+    @property
+    def empty_ok(self):
+        """Is an empty mail address valid or should there be raised an exceptiom."""
+        return self._empty_ok
+
+    @empty_ok.setter
+    def empty_ok(self, value):
+        self._empty_ok = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True):
+        """
+        Transforms the elements of the object into a dict
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+
+        @return: structure as dict
+        @rtype:  dict
+        """
+
+        res = super(MailAddress, self).as_dict(short=short)
+
+        res['user'] = self.user
+        res['domain'] = self.domain
+        res['verbose'] = self.verbose
+        res['empty_ok'] = self.empty_ok
+
+        return res
 
     # -------------------------------------------------------------------------
     def __str__(self):
@@ -255,9 +323,6 @@ class MailAddress(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __gt__(self, other):
 
-        if not isinstance(other, MailAddress):
-            return NotImplemented
-
         if self < other:
             return False
         return True
@@ -267,8 +332,12 @@ class MailAddress(FbGenericBaseObject):
         "Implementing a wrapper for copy.copy()."
 
         addr = MailAddress()
+
         addr._user = self.user
         addr._domain = self.domain
+        addr.verbose = self.verbose
+        addr.empty_ok = self.empty_ok
+
         return addr
 
 
