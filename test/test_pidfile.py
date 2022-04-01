@@ -82,6 +82,9 @@ class TestPidfileHandler(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_object(self):
 
+        if self.verbose == 1:
+            print()
+
         LOG.info("Testing init of a simple PidFile object.")
 
         from fb_tools.pidfile import PidFile
@@ -91,8 +94,59 @@ class TestPidfileHandler(FbToolsTestcase):
             appname=APPNAME,
             verbose=self.verbose,
         )
-        LOG.debug("PidFile %%r:\n{!r}".format(pidfile))
-        LOG.debug("PidFile %%s:\n{}".format(pidfile))
+        LOG.debug("PidFile %r:\n{!r}".format(pidfile))
+        LOG.debug("PidFile %s:\n{}".format(pidfile))
+
+    # -------------------------------------------------------------------------
+    def test_create_pidfile(self):
+
+        if self.verbose == 1:
+            print()
+
+        LOG.info("Testing init of a simple PidFile object.")
+
+        if self.pidfile.exists():
+            self.skipTest("File {!r} is already existing.".format(str(self.pidfile)))
+
+        from fb_tools.pidfile import PidFile
+
+        pidfile = PidFile(
+            filename=self.pidfile,
+            appname=APPNAME,
+            verbose=self.verbose,
+        )
+        if self.verbose > 2:
+            LOG.debug("PidFile %s:\n{}".format(pidfile))
+
+        if self.pidfile.exists():
+            self.fail("File {!r} may not exists in this moment.".format(str(self.pidfile)))
+        self.assertFalse(pidfile.created)
+        self.assertTrue(pidfile.auto_remove)
+
+        LOG.debug("Creating PID file {!r} ...".format(str(self.pidfile)))
+        pidfile.create()
+
+        self.assertTrue(pidfile.created)
+        if not self.pidfile.exists():
+            self.fail("File {!r} must exists in this moment.".format(str(self.pidfile)))
+        if not self.pidfile.is_file():
+            self.fail("Pidfile {!r} is not a regular file.".format(str(self.pidfile)))
+
+        content = self.pidfile.read_text()
+        pid = os.getpid()
+        exp_content = "{}\n".format(pid)
+
+        if self.verbose > 1:
+            msg = "Expected content of {f!r}: {exp!r},\nRead content: {r!r}."
+            LOG.debug(msg.format(f=str(self.pidfile), exp=exp_content, r=content))
+        self.assertEqual(content, exp_content)
+
+        LOG.debug("Destroying PID file {!r} ...".format(str(self.pidfile)))
+        pidfile = None
+
+        if self.pidfile.exists():
+            self.fail("File {!r} may no more existing after destrying PidFile object.".format(
+                str(self.pidfile)))
 
 
 # =============================================================================
@@ -110,6 +164,7 @@ if __name__ == '__main__':
 
     suite.addTest(TestPidfileHandler('test_import_and_errors', verbose))
     suite.addTest(TestPidfileHandler('test_object', verbose))
+    suite.addTest(TestPidfileHandler('test_create_pidfile', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
