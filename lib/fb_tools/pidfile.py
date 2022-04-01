@@ -19,6 +19,8 @@ import re
 import signal
 import errno
 
+from pathlib import Path
+
 # Third party modules
 import six
 from six import reraise
@@ -30,7 +32,7 @@ from .obj import FbBaseObjectError, FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.3.3'
+__version__ = '0.4.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -174,7 +176,7 @@ class PidFile(FbBaseObject):
             raise ValueError(_(
                 'No filename given on initializing {} object.').format('PidFile'))
 
-        self._filename = os.path.abspath(str(filename))
+        self._filename = Path(filename).resolve()
         """
         @ivar: The filename of the pidfile
         @type: str
@@ -236,7 +238,7 @@ class PidFile(FbBaseObject):
     @property
     def parent_dir(self):
         """The directory containing the pidfile."""
-        return os.path.dirname(self.filename)
+        return self.filename.parent
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -268,14 +270,14 @@ class PidFile(FbBaseObject):
         out = "<%s(" % (self.__class__.__name__)
 
         fields = []
-        fields.append("filename=%r" % (self.filename))
-        fields.append("auto_remove=%r" % (self.auto_remove))
-        fields.append("appname=%r" % (self.appname))
-        fields.append("verbose=%r" % (self.verbose))
-        fields.append("base_dir=%r" % (self.base_dir))
-        fields.append("initialized=%r" % (self.initialized))
-        fields.append("simulate=%r" % (self.simulate))
-        fields.append("timeout=%r" % (self.timeout))
+        fields.append("filename={!r}".format(str(self.filename)))
+        fields.append("auto_remove={!r}".format(self.auto_remove))
+        fields.append("appname={!r}".format(self.appname))
+        fields.append("verbose={!r}".format(self.verbose))
+        fields.append("base_dir={!r}".format(str(self.base_dir)))
+        fields.append("initialized={!r}".format(self.initialized))
+        fields.append("simulate={!r}".format(self.simulate))
+        fields.append("timeout={!r}".format(self.timeout))
 
         out += ", ".join(fields) + ")>"
         return out
@@ -287,26 +289,28 @@ class PidFile(FbBaseObject):
         if not self.created:
             return
 
-        if not os.path.exists(self.filename):
+        if not self.filename.exists():
             if self.verbose > 3:
-                LOG.debug(_("Pidfile {!r} doesn't exists, not removing.").format(self.filename))
+                LOG.debug(_("Pidfile {!r} doesn't exists, not removing.").format(
+                    str(self.filename)))
             return
 
         if not self.auto_remove:
             if self.verbose > 3:
-                LOG.debug(_("Auto removing disabled, don't deleting {!r}.").format(self.filename))
+                LOG.debug(_("Auto removing disabled, don't deleting {!r}.").format(
+                    str(self.filename)))
             return
 
         if self.verbose > 1:
-            LOG.debug(_("Removing pidfile {!r} ...").format(self.filename))
+            LOG.debug(_("Removing pidfile {!r} ...").format(str(self.filename)))
         if self.simulate:
             if self.verbose > 1:
                 LOG.debug(_("Just kidding ..."))
             return
         try:
-            os.remove(self.filename)
+            self.filename.unlink()
         except OSError as e:
-            LOG.err(_("Could not delete pidfile {f!r}: {e}").format(f=self.filename, e=e))
+            LOG.err(_("Could not delete pidfile {f!r}: {e}").format(f=str(self.filename), e=e))
         except Exception as e:
             self.handle_error(str(e), e.__class__.__name__, True)
 
@@ -326,43 +330,44 @@ class PidFile(FbBaseObject):
             pid = int(pid)
             if pid <= 0:
                 msg = _("Invalid PID {p} for creating pidfile {f!r} given.").format(
-                    p=pid, f=self.filename)
+                    p=pid, f=str(self.filename))
                 raise PidFileError(msg)
         else:
             pid = os.getpid()
 
         if self.check():
 
-            LOG.info(_("Deleting pidfile {!r} ...").format(self.filename))
+            LOG.info(_("Deleting pidfile {!r} ...").format(str(self.filename)))
             if self.simulate:
                 LOG.debug(_("Just kidding ..."))
             else:
                 try:
-                    os.remove(self.filename)
+                    self.filename.unlink()
                 except OSError as e:
                     raise InvalidPidFileError(self.filename, str(e))
 
         if self.verbose > 1:
-            LOG.debug(_("Trying opening {!r} exclusive ...").format(self.filename))
+            LOG.debug(_("Trying opening {!r} exclusive ...").format(str(self.filename)))
 
         if self.simulate:
-            LOG.debug(_("Simulation mode - don't real writing in {!r}.").format(self.filename))
+            LOG.debug(_("Simulation mode - don't real writing in {!r}.").format(
+                str(self.filename)))
             self._created = True
             return
 
         fd = None
         try:
             fd = os.open(
-                self.filename, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+                str(self.filename), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
         except OSError as e:
             error_tuple = sys.exc_info()
-            msg = _("Error on creating pidfile {f!r}: {e}").format(f=self.filename, e=e)
+            msg = _("Error on creating pidfile {f!r}: {e}").format(f=str(self.filename), e=e)
             reraise(PidFileError, msg, error_tuple[2])
 
         if self.verbose > 2:
-            LOG.debug(_("Writing {p} into {f!r} ...").format(p=pid, f=self.filename))
+            LOG.debug(_("Writing {p} into {f!r} ...").format(p=pid, str(f=self.filename)))
 
-        out = to_utf8("%d\n" % (pid))
+        out = to_utf8("{}\n".format(pid))
         try:
             os.write(fd, out)
         finally:
@@ -389,33 +394,31 @@ class PidFile(FbBaseObject):
             pid = int(pid)
             if pid <= 0:
                 msg = "Invalid PID {p} for creating pidfile {f!r} given.".format(
-                    p=pid, f=self.filename)
+                    p=pid, f=str(self.filename))
                 raise PidFileError(msg)
         else:
             pid = os.getpid()
 
         if self.verbose > 1:
-            LOG.debug(_("Trying opening {!r} for recreate ...").format(self.filename))
+            LOG.debug(_("Trying opening {!r} for recreate ...").format(str(self.filename)))
 
         if self.simulate:
-            LOG.debug(_("Simulation mode - don't real writing in {!r}.").format(self.filename))
+            LOG.debug(_("Simulation mode - don't real writing in {!r}.").format(
+                str(self.filename)))
             return
 
         fh = None
+        out = to_utf8("{}\n".format(pid))
+        if self.verbose > 2:
+            LOG.debug(_("Writing {p} into {f!r} ...").format(p=pid, f=str(self.filename)))
+
         try:
-            fh = open(self.filename, 'w', **self.open_args)
+            self.filename.write_text(out, **self.open_args)
         except OSError as e:
             error_tuple = sys.exc_info()
-            msg = _("Error on recreating pidfile {f!r}: {e}").format(f=self.filename, e=e)
+            msg = _("Error on recreating pidfile {f!r}: {e}").format(
+                f=str(self.filename), e=e)
             reraise(PidFileError, msg, error_tuple[2])
-
-        if self.verbose > 2:
-            LOG.debug(_("Writing {p} into {f!r} ...").format(p=pid, f=self.filename))
-
-        try:
-            fh.write("%d\n" % (pid))
-        finally:
-            fh.close()
 
     # -------------------------------------------------------------------------
     def check(self):
@@ -437,25 +440,25 @@ class PidFile(FbBaseObject):
 
         """
 
-        if not os.path.exists(self.filename):
-            if not os.path.exists(self.parent_dir):
+        if not self.filename.exists():
+            if not self.parent_dir.exists():
                 reason = _("Pidfile parent directory {!r} doesn't exists.").format(
-                    self.parent_dir)
+                    str(self.parent_dir))
                 raise InvalidPidFileError(self.filename, reason)
-            if not os.path.isdir(self.parent_dir):
+            if not self.parent_dir.is_dir():
                 reason = _("Pidfile parent directory {!r} is not a directory.").format(
-                    self.parent_dir)
+                    str(self.parent_dir))
                 raise InvalidPidFileError(self.filename, reason)
             if not os.access(self.parent_dir, os.X_OK):
                 reason = _("No write access to pidfile parent directory {!r}.").format(
-                    self.parent_dir)
+                    str(self.parent_dir))
                 raise InvalidPidFileError(self.filename, reason)
 
             return False
 
-        if not os.path.isfile(self.filename):
+        if not self.filename.is_file():
             reason = _("It is not a regular file.")
-            raise InvalidPidFileError(self.filename, self.parent_dir)
+            raise InvalidPidFileError(self.filename, reason)
 
         # ---------
         def pidfile_read_alarm_caller(signum, sigframe):
@@ -468,24 +471,20 @@ class PidFile(FbBaseObject):
             @type sigframe: object
             """
 
-            return ReadTimeoutError(self.timeout, self.filename)
+            raise ReadTimeoutError(self.timeout, str(self.filename))
 
         if self.verbose > 1:
-            LOG.debug(_("Reading content of pidfile {!r} ...").format(self.filename))
+            LOG.debug(_("Reading content of pidfile {!r} ...").format(
+                str(self.filename)))
 
         signal.signal(signal.SIGALRM, pidfile_read_alarm_caller)
         signal.alarm(self.timeout)
 
         content = ''
-        fh = None
 
         try:
-            fh = open(self.filename, 'r')
-            for line in fh.readlines():
-                content += line
+            content = self.filename.read_text(**self.open_args)
         finally:
-            if fh:
-                fh.close()
             signal.alarm(0)
 
         # Performing content of pidfile
@@ -497,7 +496,7 @@ class PidFile(FbBaseObject):
             pid = int(match.group(1))
         else:
             msg = _("No useful information found in pidfile {f!r}: {z!r}").format(
-                f=self.filename, z=line)
+                f=str(self.filename), z=line)
             return True
 
         if self.verbose > 1:

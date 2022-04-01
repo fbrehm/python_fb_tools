@@ -79,6 +79,21 @@ class TestPidfileHandler(FbToolsTestcase):
         e = cm.exception
         LOG.debug("{what} raised: {msg}".format(what=e.__class__.__name__, msg=e))
 
+    # -------------------------------------------------------------------------
+    def test_object(self):
+
+        LOG.info("Testing init of a simple PidFile object.")
+
+        from fb_tools.pidfile import PidFile
+
+        pidfile = PidFile(
+            filename=self.pidfile,
+            appname=APPNAME,
+            verbose=self.verbose,
+        )
+        LOG.debug("PidFile %%r:\n{!r}".format(pidfile))
+        LOG.debug("PidFile %%s:\n{}".format(pidfile))
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -94,6 +109,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     suite.addTest(TestPidfileHandler('test_import_and_errors', verbose))
+    suite.addTest(TestPidfileHandler('test_object', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
