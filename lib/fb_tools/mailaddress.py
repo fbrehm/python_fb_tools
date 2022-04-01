@@ -56,8 +56,6 @@ class MailAddress(FbGenericBaseObject):
     re_valid_domain = re.compile(r'^' + pattern_valid_domain, re.IGNORECASE)
     re_valid_address = re.compile(pattern_valid_address, re.IGNORECASE)
 
-    verbose = 0
-
     # -------------------------------------------------------------------------
     @classmethod
     def valid_address(cls, address, raise_on_failure=False):
@@ -66,8 +64,7 @@ class MailAddress(FbGenericBaseObject):
             e = InvalidMailAddressError(address, _("Empty address."))
             if raise_on_failure:
                 raise e
-            elif cls.verbose > 2:
-                LOG.debug(str(e))
+            LOG.debug(str(e))
             return False
 
         addr = to_str(address)
@@ -75,8 +72,7 @@ class MailAddress(FbGenericBaseObject):
             e = InvalidMailAddressError(address, _("Wrong type."))
             if raise_on_failure:
                 raise e
-            elif cls.verbose > 2:
-                LOG.debug(str(e))
+            LOG.debug(str(e))
             return False
 
         if cls.re_valid_address.search(addr):
@@ -85,8 +81,7 @@ class MailAddress(FbGenericBaseObject):
         e = InvalidMailAddressError(address, _("Invalid address."))
         if raise_on_failure:
             raise e
-        elif cls.verbose > 2:
-            LOG.debug(str(e))
+        LOG.debug(str(e))
         return False
 
     # -------------------------------------------------------------------------
@@ -98,6 +93,10 @@ class MailAddress(FbGenericBaseObject):
         self.verbose = verbose
         self._empty_ok = False
         self.empty_ok = empty_ok
+
+        if self.verbose > 2:
+            msg = _("Given user: {u!r}, given domain: {d!r}.")
+            LOG.debug(msg.format(u=user, d=domain))
 
         if not domain:
             if user:
@@ -152,7 +151,8 @@ class MailAddress(FbGenericBaseObject):
         if v >= 0:
             self._verbose = v
         else:
-            LOG.warning(_("Wrong verbose level {!r}, must be >= 0").format(value))
+            msg = _("Wrong verbose level {!r}, must be >= 0").format(value)
+            raise ValueError(msg)
 
     # -----------------------------------------------------------
     @property
@@ -184,6 +184,17 @@ class MailAddress(FbGenericBaseObject):
         res['empty_ok'] = self.empty_ok
 
         return res
+
+    # -------------------------------------------------------------------------
+    def as_tuple(self):
+        """
+        Transforms the elements of the object into a tuple
+
+        @return: structure as tuple
+        @rtype:  tuple
+        """
+
+        return (self.user, self.domain, self.verbose, self.empty_ok)
 
     # -------------------------------------------------------------------------
     def __str__(self):
@@ -331,7 +342,7 @@ class MailAddress(FbGenericBaseObject):
     def __copy__(self):
         "Implementing a wrapper for copy.copy()."
 
-        addr = MailAddress()
+        addr = MailAddress(empty_ok=True)
 
         addr._user = self.user
         addr._domain = self.domain
