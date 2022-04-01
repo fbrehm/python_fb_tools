@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.9.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-03-24 10:39+0100\n"
-"PO-Revision-Date: 2022-03-24 11:00+0100\n"
+"POT-Creation-Date: 2022-03-31 18:27+0200\n"
+"PO-Revision-Date: 2022-03-31 18:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <frank@brehm-online.com>\n"
@@ -180,12 +180,10 @@ msgid "The given directory {!r} is not writeable."
 msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
 
 #: lib/fb_tools/argparse_actions.py:125 lib/fb_tools/cfg_app.py:224
-#, fuzzy
 msgid "Directory {!r} does not exists."
 msgstr "Das Verzeichnis {!r} existiert nicht."
 
 #: lib/fb_tools/argparse_actions.py:128 lib/fb_tools/cfg_app.py:228
-#, fuzzy
 msgid "Path {!r} exists, but is not a directory."
 msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
 
@@ -195,12 +193,10 @@ msgid "File {!r} is not a regular file."
 msgstr "Die Datei {!r} ist keine reguläre Datei."
 
 #: lib/fb_tools/argparse_actions.py:137 lib/fb_tools/cfg_app.py:239
-#, fuzzy
 msgid "File {!r} is not writeable."
 msgstr "Die Datei {!r} ist nicht schreibbar."
 
 #: lib/fb_tools/argparse_actions.py:141 lib/fb_tools/cfg_app.py:244
-#, fuzzy
 msgid "Directory {!r} is not writeable."
 msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
 
@@ -209,7 +205,6 @@ msgid "File {!r} does not exists."
 msgstr "Die Datei {!r} existiert nicht."
 
 #: lib/fb_tools/cfg_app.py:63
-#, fuzzy
 msgid "Parameter {cls!r} must be a subclass of {clinfo!r}."
 msgstr "Der Parameter {cls!r} muss eine von {clinfo!r} abgeleitete Klasse sein."
 
@@ -231,12 +226,10 @@ msgid "Got command line arguments:"
 msgstr "Erhaltene Kommandozeilen-Argumente:"
 
 #: lib/fb_tools/cfg_app.py:202
-#, fuzzy
 msgid "Error on reading configuration:"
 msgstr "Fehler beim Lesen der Konfiguration:"
 
 #: lib/fb_tools/cfg_app.py:248
-#, fuzzy
 msgid "Start logging into file {!r} ..."
 msgstr "Beginne Logging in Datei {!r} …"
 
@@ -677,7 +670,6 @@ msgid "Empty command list given."
 msgstr "Leere Kommando-Liste übergeben."
 
 #: lib/fb_tools/errors.py:352
-#, fuzzy
 msgid "Could not found OS command:"
 msgid_plural "Could not found OS commands:"
 msgstr[0] "Konnte das Betriebssystem-Kommando nicht finden:"
@@ -909,7 +901,6 @@ msgid "None"
 msgstr "Keine"
 
 #: lib/fb_tools/get_vm_hosts.py:51
-#, fuzzy
 msgid "Tries to get a list of all physical hosts in VMWare VSphere and print it out."
 msgstr "Versucht eine Liste aller physischen Hosts in VMWare VSphere zu erhalten und gibt diese aus."
 
@@ -1436,7 +1427,9 @@ msgstr "Fand Konfigurationsdatei {fi!r}, Lademethode {m!r}."
 
 #: lib/fb_tools/multi_config.py:744
 msgid "Did not found file type of additional config file {fn!r}. Available config types are: {list}."
-msgstr "Keinen Dateityp der zusätzlichen Konfigurationsdatei {fn!r} gefunden. Verfügbare Dateitypen sind: {list}."
+msgstr ""
+"Keinen Dateityp der zusätzlichen Konfigurationsdatei {fn!r} gefunden. Verfügbare Dateitypen "
+"sind: {list}."
 
 #: lib/fb_tools/multi_config.py:763
 msgid "Something strange is happend, file type {!r} not found."
@@ -1476,7 +1469,7 @@ msgstr ""
 
 #: lib/fb_tools/multi_config.py:855
 msgid "Trying to detect character set of file {fn!r} ..."
-msgstr "Versuche den Zeichensatz der Datei {!r} zu ernitteln …"
+msgstr "Versuche den Zeichensatz der Datei {fn!r} zu ermitteln …"
 
 #: lib/fb_tools/multi_config.py:866
 #, python-format
@@ -1542,6 +1535,118 @@ msgstr "Das Basis-Verzeichnis {!r} existiert nicht."
 #: lib/fb_tools/obj.py:342
 msgid "Path for base directory {!r} is not a directory."
 msgstr "Der Pfad zum Basis-Verzeichnis {!r} is kein Verzeichnis"
+
+#: lib/fb_tools/pidfile.py:72
+msgid "Invalid pidfile {f!r} given: {r}"
+msgstr "Ungültige PID-Datei {f!r} übergeben: {r}"
+
+#: lib/fb_tools/pidfile.py:75
+msgid "Invalid pidfile {!r} given."
+msgstr "Ungültige PID-Datei {!r} übergeben."
+
+#: lib/fb_tools/pidfile.py:104
+msgid "The pidfile {f!r} is currently in use by the application with the PID {p}."
+msgstr "Die PID-Datei {f!r} wird gegenwärtig von der Anwendung mit der PID {p} verwendet."
+
+#: lib/fb_tools/pidfile.py:174
+msgid "No filename given on initializing {} object."
+msgstr "Kein Dateiname bei der Initialisierung des {}-Ojektes angegeben."
+
+#: lib/fb_tools/pidfile.py:292
+msgid "Pidfile {!r} doesn't exists, not removing."
+msgstr "Die PID-Datei {!r} existiert nicht, und wird deshalb auch nicht gelöscht."
+
+#: lib/fb_tools/pidfile.py:297
+msgid "Auto removing disabled, don't deleting {!r}."
+msgstr "Automatisches Löschen deaktiviert, {!r} wird nicht gelöscht."
+
+#: lib/fb_tools/pidfile.py:301
+msgid "Removing pidfile {!r} ..."
+msgstr "Lösche PID-Datei {!r} …"
+
+#: lib/fb_tools/pidfile.py:304 lib/fb_tools/pidfile.py:338
+msgid "Just kidding ..."
+msgstr "Ich mach doch nur Spaß …"
+
+#: lib/fb_tools/pidfile.py:309
+msgid "Could not delete pidfile {f!r}: {e}"
+msgstr "Konnte PID-Datei {f!r} nicht löschen: {e}"
+
+#: lib/fb_tools/pidfile.py:328
+msgid "Invalid PID {p} for creating pidfile {f!r} given."
+msgstr "Ungültige PID {p} zur Erstellung der PID-Datei {f!r} übergeben."
+
+#: lib/fb_tools/pidfile.py:336
+msgid "Deleting pidfile {!r} ..."
+msgstr "Lösche PID-Datei {!r} …"
+
+#: lib/fb_tools/pidfile.py:346
+msgid "Trying opening {!r} exclusive ..."
+msgstr "Versuche {!r} exklusiv zu öffnen …"
+
+#: lib/fb_tools/pidfile.py:349 lib/fb_tools/pidfile.py:401
+msgid "Simulation mode - don't real writing in {!r}."
+msgstr "Simulationsmodus - es wird nicht wirklich nach {!r} geschrieben."
+
+#: lib/fb_tools/pidfile.py:359
+msgid "Error on creating pidfile {f!r}: {e}"
+msgstr "Fehler beim Erstellen der PID-Datei {f!r}: {e}"
+
+#: lib/fb_tools/pidfile.py:363 lib/fb_tools/pidfile.py:413
+msgid "Writing {p} into {f!r} ..."
+msgstr "Schreibe {p} nach {f!r} …"
+
+#: lib/fb_tools/pidfile.py:385
+msgid "Calling {} on a not self created pidfile."
+msgstr "Aufruf von {} bei einer nicht selbst erstellten PID-Datei."
+
+#: lib/fb_tools/pidfile.py:398
+msgid "Trying opening {!r} for recreate ..."
+msgstr "Versuche {!r} zum Wiedererstellen zu öffnen …"
+
+#: lib/fb_tools/pidfile.py:409
+msgid "Error on recreating pidfile {f!r}: {e}"
+msgstr "Fehler beim Wiedererstellen der PID-Datei {f!r}: {e}"
+
+#: lib/fb_tools/pidfile.py:442
+msgid "Pidfile parent directory {!r} doesn't exists."
+msgstr "Das Eltern-Verzeichnis der PID-Datei {!r} existiert nicht."
+
+#: lib/fb_tools/pidfile.py:446
+msgid "Pidfile parent directory {!r} is not a directory."
+msgstr "Das Eltern-Verzeichnis der PID-Datei {!r} is kein Verzeichnis"
+
+#: lib/fb_tools/pidfile.py:450
+msgid "No write access to pidfile parent directory {!r}."
+msgstr "Kein Schreibzugriff auf das Eltern-Verzeichnis der PID-Datei {!r}."
+
+#: lib/fb_tools/pidfile.py:457
+msgid "It is not a regular file."
+msgstr "Es ist keine reguläre Datei."
+
+#: lib/fb_tools/pidfile.py:474
+msgid "Reading content of pidfile {!r} ..."
+msgstr "Lese Inhalt der PID-Datei {!r} …"
+
+#: lib/fb_tools/pidfile.py:499
+msgid "No useful information found in pidfile {f!r}: {z!r}"
+msgstr "Keine sinnvollen Informationen in der PID-Datei {f!r} gefunden: {z!r}"
+
+#: lib/fb_tools/pidfile.py:504
+msgid "Trying check for process with PID {} ..."
+msgstr "Versuche den Prozess mit der PID {} zu überprüfen …"
+
+#: lib/fb_tools/pidfile.py:510
+msgid "Process with PID {} anonymous died."
+msgstr "Der Prozess mit der PID {} ist anonym verstorben."
+
+#: lib/fb_tools/pidfile.py:514
+msgid "No permission to signal the process {} ..."
+msgstr "Keine Rechte zum Senden von Signalen an Prozess {} …"
+
+#: lib/fb_tools/pidfile.py:518
+msgid "Got a {c}: {e}."
+msgstr "Hab eine(e) {c} erhalten: {e}."
 
 #: lib/fb_tools/vmware_app.py:96
 msgid "Did not found any configured Vsphere environments."

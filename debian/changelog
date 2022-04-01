@@ -1,3 +1,12 @@
+fb-tools (1.9.2) all; urgency=medium
+
+  * Adding lib/fb_tools/pidfile.py for class PidFile.
+  * Adding test/test_pidfile.py for testing class PidFile.
+  * Updating update-env.sh.
+  * Fixing translation fieles.
+
+ -- Frank Brehm <frank@brehm-online.com>  Fri, 01 Apr 2022 13:49:43 +0200
+
 fb-tools (1.9.1) all; urgency=medium
 
   * Adding evaluation of configuration in BaseMultiConfig
