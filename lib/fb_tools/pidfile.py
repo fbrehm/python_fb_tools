@@ -32,7 +32,7 @@ from .obj import FbBaseObjectError, FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -365,7 +365,7 @@ class PidFile(FbBaseObject):
             reraise(PidFileError, msg, error_tuple[2])
 
         if self.verbose > 2:
-            LOG.debug(_("Writing {p} into {f!r} ...").format(p=pid, str(f=self.filename)))
+            LOG.debug(_("Writing {p} into {f!r} ...").format(p=pid, f=str(self.filename)))
 
         out = to_utf8("{}\n".format(pid))
         try:
@@ -407,7 +407,6 @@ class PidFile(FbBaseObject):
                 str(self.filename)))
             return
 
-        fh = None
         out = to_utf8("{}\n".format(pid))
         if self.verbose > 2:
             LOG.debug(_("Writing {p} into {f!r} ...").format(p=pid, f=str(self.filename)))
