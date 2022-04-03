@@ -26,7 +26,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.6.1'
+__version__ = '0.6.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -47,7 +47,7 @@ class MailAddress(FbGenericBaseObject):
 
     pattern_valid_domain = r'@((?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+[a-z][a-z]+)$'
 
-    pattern_valid_user = r'^([a-z0-9][a-z0-9_\-\.\+\&@]*[a-z0-9]'
+    pattern_valid_user = r'^([a-z0-9][a-z0-9_\-\.\+]*[a-z0-9]'
     pattern_valid_user += r'(?:\+[a-z0-9][a-z0-9_\-\.]*[a-z0-9])*)'
 
     pattern_valid_address = pattern_valid_user + pattern_valid_domain
@@ -58,13 +58,14 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     @classmethod
-    def valid_address(cls, address, raise_on_failure=False):
+    def valid_address(cls, address, raise_on_failure=False, verbose=0):
 
         if not address:
             e = InvalidMailAddressError(address, _("Empty address."))
             if raise_on_failure:
                 raise e
-            LOG.debug(str(e))
+            if verbose > 2:
+                LOG.debug(str(e))
             return False
 
         addr = to_str(address)
@@ -72,7 +73,8 @@ class MailAddress(FbGenericBaseObject):
             e = InvalidMailAddressError(address, _("Wrong type."))
             if raise_on_failure:
                 raise e
-            LOG.debug(str(e))
+            if verbose > 2:
+                LOG.debug(str(e))
             return False
 
         if cls.re_valid_address.search(addr):
@@ -81,7 +83,8 @@ class MailAddress(FbGenericBaseObject):
         e = InvalidMailAddressError(address, _("Invalid address."))
         if raise_on_failure:
             raise e
-        LOG.debug(str(e))
+        if verbose > 2:
+            LOG.debug(str(e))
         return False
 
     # -------------------------------------------------------------------------
@@ -98,10 +101,16 @@ class MailAddress(FbGenericBaseObject):
             msg = _("Given user: {u!r}, given domain: {d!r}.")
             LOG.debug(msg.format(u=user, d=domain))
 
+        if user:
+            if not isinstance(user, six.string_types):
+                msg = _("Invalid mail address.")
+                raise InvalidMailAddressError(user, msg)
+            user = to_str(user)
+
         if not domain:
             if user:
                 addr = convert_attr(user)
-                if self.valid_address(addr):
+                if self.valid_address(addr, verbose=self.verbose):
                     match = self.re_valid_address.search(addr)
                     self._user = match.group(1)
                     self._domain = match.group(2)
@@ -110,6 +119,9 @@ class MailAddress(FbGenericBaseObject):
                 if match:
                     self._domain = match.group(1)
                     return
+                if not self.re_valid_user.search(user):
+                    msg = _("Invalid user/mailbox name.")
+                    raise InvalidMailAddressError(user, msg)
                 self._user = addr
                 return
 
@@ -120,8 +132,21 @@ class MailAddress(FbGenericBaseObject):
                 return
             raise e
 
-        self._user = convert_attr(user)
-        self._domain = convert_attr(domain)
+        if user:
+            c_user = convert_attr(user)
+            if not self.re_valid_user.search(c_user):
+                msg = _("Invalid user/mailbox name.")
+                raise InvalidMailAddressError(user, msg)
+        else:
+            c_user = None
+
+        c_domain = convert_attr(domain)
+        if not self.re_valid_domain.search('@' + c_domain):
+            msg = _("Invalid domain.")
+            raise InvalidMailAddressError(domain, msg)
+
+        self._user = c_user
+        self._domain = c_domain
 
     # -----------------------------------------------------------
     @property
@@ -214,7 +239,7 @@ class MailAddress(FbGenericBaseObject):
     def str_for_access(self):
 
         if not self.user and not self.domain:
-            return None
+            return ''
 
         if not self.domain:
             return self.user + '@'
@@ -292,23 +317,14 @@ class MailAddress(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __lt__(self, other):
 
+        if self.verbose > 4:
+            msg = _("Comparing {self!r} with {other!r} ...")
+            LOG.debug(msg.format(self=self, other=other))
+
         if not isinstance(other, MailAddress):
             if other is None:
                 return False
             return str(self).lower() < str(other).lower()
-
-        if not self.user:
-            if not self.domain:
-                if other.domain:
-                    return False
-                return True
-            if not other.domain:
-                return False
-            if self.domain.lower() != other.domain.lower():
-                return self.domain.lower() < other.domain.lower()
-            if other.user:
-                return False
-            return True
 
         if not self.domain:
             if other.domain:
@@ -319,13 +335,27 @@ class MailAddress(FbGenericBaseObject):
                 return self.user.lower() < other.user.lower()
             return False
 
+        if not self.user:
+            if not self.domain:
+                if other.domain:
+                    return False
+                return True
+            if not other.domain:
+                return False
+            if self.domain.lower() != other.domain.lower():
+                return self.domain.lower() < other.domain.lower()
+            return True
+
+        # From here on there are existing both user and domain
         if not other.domain:
             return False
+        if self.domain.lower() != other.domain.lower():
+            return self.domain.lower() < other.domain.lower()
+
+        # Both domains are equal now
         if not other.user:
             return False
 
-        if self.domain.lower() != other.domain.lower():
-            return self.domain.lower() < other.domain.lower()
         if self.user.lower() != other.user.lower():
             return self.user.lower() < other.user.lower()
 

@@ -179,12 +179,12 @@ class TestMailaddress(FbToolsTestcase):
         from fb_tools.errors import BaseMailAddressError
 
         correct_addresses = (
-            ('uhu-banane.de', '@uhu-banane.de'),
+            ('frank.brehm', 'frank.brehm'),
+            ('uhu_banane.de', 'uhu_banane.de'),
             ('@uhu-banane.de', '@uhu-banane.de'),
             ('uhu@banane.de', 'uhu@banane.de'),
             ('Uhu@Banane.de', 'uhu@banane.de'),
             ('ich@mueller.de', 'ich@mueller.de'),
-            ('mueller.de', '@mueller.de'),
             ('root+bla@banane.de', 'root+bla@banane.de'),
             ('root+bla.uhu-banane.de@banane.de', 'root+bla.uhu-banane.de@banane.de'),
             ('root+bla+blub@banane.de', 'root+bla+blub@banane.de'),
@@ -206,11 +206,11 @@ class TestMailaddress(FbToolsTestcase):
 
         wrong_addresses = (
             True, 1, ('uhu@banane.de', ), ['uhu@banane.de'], 'uhu:banane', 'uhu!banane', 'a@b@c',
-            'müller.de', 'ich@Müller.de', 'ich@mueller', 'root+bla', 'root+bla.uhu-banane.de',
-            'uhu_banane.de', 'frank@uhu_banane.de',
+            'müller.de', 'ich@Müller.de', 'ich@mueller', '@uhu_banane.de', 'frank@uhu_banane.de',
         )
 
         for addr in wrong_addresses:
+            LOG.debug("Testing wrong mail address {!r} ...".format(addr))
             with self.assertRaises(BaseMailAddressError) as cm:
                 address = MailAddress(addr, verbose=self.verbose)
                 LOG.error("This should not be visible: {!r}".format(address))
@@ -238,13 +238,15 @@ class TestMailaddress(FbToolsTestcase):
         )
 
         for user in correct_users:
-            address = MailAddress(domain, user=user, verbose=self.verbose)
+            LOG.debug("Testing correct user {!r} ...".format(user))
+            address = MailAddress(user=user, domain=domain, verbose=self.verbose)
             LOG.debug("Successful mail address from {u!r} (@{d}): {a!r} => {r!r}".format(
                 u=user, d=domain, a=str(address), r=address))
 
         for user in wrong_users:
+            LOG.debug("Testing wrong user {!r} ...".format(user))
             with self.assertRaises(BaseMailAddressError) as cm:
-                address = MailAddress(domain, user=user, verbose=self.verbose)
+                address = MailAddress(user=user, domain=domain, verbose=self.verbose)
                 LOG.error("This should not be visible: {!r}".format(address))
             e = cm.exception
             LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
@@ -396,10 +398,10 @@ if __name__ == '__main__':
     suite.addTest(TestMailaddress('test_object', verbose))
     suite.addTest(TestMailaddress('test_empty_address', verbose))
     suite.addTest(TestMailaddress('test_compare', verbose))
-    # suite.addTest(TestMailaddress('test_wrong_addresses', verbose))
-    # suite.addTest(TestMailaddress('test_wrong_user', verbose))
-    # suite.addTest(TestMailaddress('test_to_str', verbose))
-    # suite.addTest(TestMailaddress('test_sorting', verbose))
+    suite.addTest(TestMailaddress('test_wrong_addresses', verbose))
+    suite.addTest(TestMailaddress('test_wrong_user', verbose))
+    suite.addTest(TestMailaddress('test_to_str', verbose))
+    suite.addTest(TestMailaddress('test_sorting', verbose))
     # suite.addTest(TestMailaddress('test_qualified_object', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
