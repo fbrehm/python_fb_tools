@@ -329,6 +329,7 @@ class TestMailaddress(FbToolsTestcase):
         self.assertEqual(expected_list, result_list)
 
     # -------------------------------------------------------------------------
+    @unittest.skip("Still in development")
     def test_qualified_object(self):
 
         if self.verbose == 1:

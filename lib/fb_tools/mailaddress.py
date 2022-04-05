@@ -26,7 +26,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.6.2'
+__version__ = '0.7.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -380,6 +380,13 @@ class MailAddress(FbGenericBaseObject):
         addr.empty_ok = self.empty_ok
 
         return addr
+
+# =============================================================================
+class QualifiedMailAddress(MailAddress):
+    """
+    Class for encapsulating a mail address with an optional Name.
+    """
+    pass
 
 
 # =============================================================================
