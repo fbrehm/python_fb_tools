@@ -402,8 +402,6 @@ jobs:
   deploy_to_pypi:
     runs-on: ubuntu-latest
     name: "Deployment of the Python package to PyPi"
-    env:
-      INPUT_REQUIREMENTS: twine wheel -r requirements.txt
     container: debian:bullseye
     needs:
       - linter
@@ -438,6 +436,7 @@ jobs:
           fi
           locale-gen
           locale -a
+      - uses: ./.github/actions/install-pip-modules
       - uses: actions/setup-python@v2
       - uses: casperdcl/deploy-pypi@v2
         with:
