@@ -11,6 +11,7 @@ on:
       - '!dev/**'
       - '!hf**'
       - '!old**'
+      - '!feature**'
     tags:
       - '**'
 
@@ -100,7 +101,7 @@ jobs:
   build_debian_sources:
     runs-on: ubuntu-latest
     name: Building Debian Source Packages
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
     container: debian:bullseye
     needs:
       - linter
@@ -129,7 +130,7 @@ jobs:
   build_debian_bin:
     runs-on: ubuntu-latest
     name: Building Debian Binary Packages
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
     needs:
       - linter
     strategy:
@@ -208,7 +209,7 @@ jobs:
   build_rpm:
     runs-on: ubuntu-latest
     name: Building RPM packages for Enterprise Linux
-    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/test' || startsWith( github.ref, 'refs/tags/' ) }}
     needs:
       - linter
     strategy:
@@ -401,6 +402,8 @@ jobs:
   deploy_to_pypi:
     runs-on: ubuntu-latest
     name: "Deployment of the Python package to PyPi"
+    env:
+      INPUT_REQUIREMENTS: twine wheel -r requirements.txt
     container: debian:bullseye
     needs:
       - linter
