@@ -436,8 +436,10 @@ jobs:
           fi
           locale-gen
           locale -a
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
       - uses: ./.github/actions/install-pip-modules
-      - uses: actions/setup-python@v2
       - uses: casperdcl/deploy-pypi@v2
         with:
           password: ${{ secrets.PYPI_TOKEN }}
