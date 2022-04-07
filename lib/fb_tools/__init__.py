@@ -6,6 +6,6 @@ VMWARE_CFGFILE_BASENAME = 'vmware.ini'
 __version__ = '1.9.2'
 
 
-from .mailaddress import MailAddress                            # noqa
+from .mailaddress import MailAddress, QualifiedMailAddress      # noqa
 
 # vim: ts=4 et list

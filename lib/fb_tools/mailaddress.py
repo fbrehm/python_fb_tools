@@ -26,7 +26,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -45,16 +45,16 @@ class MailAddress(FbGenericBaseObject):
     Class for encapsulating a mail simple address.
     """
 
-    pat_valid_domain = r'@((?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+[a-z][a-z]+)$'
+    pat_valid_domain = r'@((?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+[a-z][a-z]+)'
 
-    pat_valid_user = r'^([a-z0-9][a-z0-9_\-\.\+]*[a-z0-9]'
+    pat_valid_user = r'([a-z0-9][a-z0-9_\-\.\+]*[a-z0-9]'
     pat_valid_user += r'(?:\+[a-z0-9][a-z0-9_\-\.]*[a-z0-9])*)'
 
     pat_valid_address = pat_valid_user + pat_valid_domain
 
-    re_valid_user = re.compile(pat_valid_user + r'$', re.IGNORECASE)
-    re_valid_domain = re.compile(r'^' + pat_valid_domain, re.IGNORECASE)
-    re_valid_address = re.compile(pat_valid_address, re.IGNORECASE)
+    re_valid_user = re.compile(r'^' + pat_valid_user + r'$', re.IGNORECASE)
+    re_valid_domain = re.compile(r'^' + pat_valid_domain + r'$', re.IGNORECASE)
+    re_valid_address = re.compile(r'^' + pat_valid_address + r'$', re.IGNORECASE)
 
     # -------------------------------------------------------------------------
     @classmethod
@@ -439,14 +439,15 @@ class QualifiedMailAddress(MailAddress):
                 LOG.debug(str(e))
             return False
 
-        if verbose > 2:
-            LOG.debug(_("Search pattern: {!r}").format(cls.pat_valid_address))
+        if verbose > 4:
+            LOG.debug(_("Evaluating address {!r} ...").format(addr))
+            LOG.debug(_("Search pattern simple: {}").format(cls.re_valid_address))
         if cls.re_valid_address.search(addr):
             return True
 
-        if verbose > 2:
-            LOG.debug(_("Search pattern: {!r}").format(cls.pat_valid_full_address))
-        if cls.re_valid_full_address.search(addr):
+        if verbose > 4:
+            LOG.debug(_("Search pattern full: {}").format(cls.re_valid_full_address))
+        if cls.re_valid_full_address.match(addr):
             return True
 
         e = InvalidMailAddressError(address, _("Invalid address."))
@@ -495,7 +496,7 @@ class QualifiedMailAddress(MailAddress):
         domain = None
         name = None
 
-        match = self.re_valid_address.search(address)
+        match = self.re_valid_full_address.search(address)
         if match:
             name = match.group(1).strip()
             user = match.group(2).strip().lower()
