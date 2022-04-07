@@ -329,40 +329,53 @@ class TestMailaddress(FbToolsTestcase):
         self.assertEqual(expected_list, result_list)
 
     # -------------------------------------------------------------------------
-    @unittest.skip("Still in development")
     def test_qualified_object(self):
 
         if self.verbose == 1:
             print()
         LOG.info("Testing init of a qualified mailaddress object.")
 
-        test_address = 'frank@brehm-online.com'
+        test_user = 'frank'
+        test_domain = 'brehm-online.com'
+        test_address = '{u}@{d}'.format(u=test_user, d=test_domain)
         test_name = 'Frank Brehm'
-        expected_str = '{n} <{a}>'.format(n=test_name, a=test_address)
+        test_full_address = '{n} <{a}>'.format(n=test_name, a=test_address)
 
         from fb_tools import QualifiedMailAddress
 
-        address = QualifiedMailAddress(test_address, name=test_name, verbose=self.verbose)
-        LOG.debug("QualifiedMailAddress %r: {!r}".format(address))
-        LOG.debug("QualifiedMailAddress %s: {}".format(address))
+        address1 = QualifiedMailAddress(test_full_address, verbose=self.verbose)
+        LOG.debug("QualifiedMailAddress %r: {!r}".format(address1))
+        LOG.debug("QualifiedMailAddress %s: {!r}".format(str(address1)))
 
-        self.assertEqual(str(address), expected_str)
+        self.assertEqual(address1.user, test_user)
+        self.assertEqual(address1.domain, test_domain)
+        self.assertEqual(address1.name, test_name)
 
-        other_address = QualifiedMailAddress(test_address, name=test_name, verbose=self.verbose)
-        LOG.debug("Other QualifiedMailAddress: {}".format(other_address))
-        self.assertIsNot(address, other_address)
-        self.assertEqual(address, other_address)
+        self.assertEqual(str(address1), test_full_address)
 
-        yet_another_address = copy.copy(address)
-        LOG.debug("Yet Another QualifiedMailAddress: {}".format(yet_another_address))
-        self.assertIsNot(address, yet_another_address)
-        self.assertEqual(address, yet_another_address)
-        self.assertEqual(yet_another_address.verbose, self.verbose)
+        address2 = QualifiedMailAddress(
+            user=test_user, domain=test_domain, name=test_name, verbose=self.verbose)
+        LOG.debug("Other QualifiedMailAddress %r: {!r}".format(address2))
+        LOG.debug("Other QualifiedMailAddress %s: {!r}".format(str(address2)))
+        self.assertIsNot(address1, address2)
+        self.assertEqual(address1, address2)
 
-        still_another_address = QualifiedMailAddress(
-            test_address, name=test_name, verbose=self.verbose)
-        LOG.debug("Still Another QualifiedMailAddress: {}".format(still_another_address))
-        self.assertEqual(address, still_another_address)
+        address3 = copy.copy(address1)
+        LOG.debug("Yet Another QualifiedMailAddress: {!r}".format(str(address3)))
+        self.assertIsNot(address1, address3)
+        self.assertEqual(address1, address3)
+        self.assertEqual(address2, address3)
+        self.assertEqual(address3.verbose, self.verbose)
+
+        test_name4 = 'Brehm, Frank'
+        test_full_address4 = '"{n}" <{a}>'.format(n=test_name4, a=test_address)
+        address4 = QualifiedMailAddress(test_full_address4, verbose=self.verbose)
+        LOG.debug("QualifiedMailAddress %r: {!r}".format(address4))
+        LOG.debug("QualifiedMailAddress %s: {!r}".format(str(address4)))
+        self.assertEqual(address4.user, test_user)
+        self.assertEqual(address4.domain, test_domain)
+        self.assertEqual(address4.name, test_name4)
+        self.assertEqual(str(address4), test_full_address4)
 
         expected_dict = {
             '__class_name__': 'QualifiedMailAddress',
@@ -372,13 +385,13 @@ class TestMailaddress(FbToolsTestcase):
             'user': 'frank',
             'verbose': self.verbose
         }
-        expected_tuple = ('brehm-online.com', 'frank', self.verbose, False, 'Frank Brehm')
+        expected_tuple = ('frank', 'brehm-online.com', 'Frank Brehm', self.verbose, False)
 
-        got_dict = address.as_dict()
+        got_dict = address1.as_dict()
         LOG.debug("MailAddress.as_dict():\n" + pp(got_dict))
         self.assertEqual(got_dict, expected_dict)
 
-        got_tuple = address.as_tuple()
+        got_tuple = address1.as_tuple()
         LOG.debug("MailAddress.as_tuple():\n" + pp(got_tuple))
         self.assertEqual(got_tuple, expected_tuple)
 
