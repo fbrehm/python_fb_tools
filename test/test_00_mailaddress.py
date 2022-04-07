@@ -403,7 +403,7 @@ if __name__ == '__main__':
     suite.addTest(TestMailaddress('test_wrong_user', verbose))
     suite.addTest(TestMailaddress('test_to_str', verbose))
     suite.addTest(TestMailaddress('test_sorting', verbose))
-    # suite.addTest(TestMailaddress('test_qualified_object', verbose))
+    suite.addTest(TestMailaddress('test_qualified_object', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

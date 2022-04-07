@@ -24,7 +24,7 @@ from .common import to_str, to_bool
 
 from .obj import FbGenericBaseObject
 
-from .xlate import XLATOR
+from .xlate import XLATOR, format_list
 
 __version__ = '0.7.0'
 LOG = logging.getLogger(__name__)
@@ -45,16 +45,16 @@ class MailAddress(FbGenericBaseObject):
     Class for encapsulating a mail simple address.
     """
 
-    pattern_valid_domain = r'@((?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+[a-z][a-z]+)$'
+    pat_valid_domain = r'@((?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+[a-z][a-z]+)$'
 
-    pattern_valid_user = r'^([a-z0-9][a-z0-9_\-\.\+]*[a-z0-9]'
-    pattern_valid_user += r'(?:\+[a-z0-9][a-z0-9_\-\.]*[a-z0-9])*)'
+    pat_valid_user = r'^([a-z0-9][a-z0-9_\-\.\+]*[a-z0-9]'
+    pat_valid_user += r'(?:\+[a-z0-9][a-z0-9_\-\.]*[a-z0-9])*)'
 
-    pattern_valid_address = pattern_valid_user + pattern_valid_domain
+    pat_valid_address = pat_valid_user + pat_valid_domain
 
-    re_valid_user = re.compile(pattern_valid_user + r'$', re.IGNORECASE)
-    re_valid_domain = re.compile(r'^' + pattern_valid_domain, re.IGNORECASE)
-    re_valid_address = re.compile(pattern_valid_address, re.IGNORECASE)
+    re_valid_user = re.compile(pat_valid_user + r'$', re.IGNORECASE)
+    re_valid_domain = re.compile(r'^' + pat_valid_domain, re.IGNORECASE)
+    re_valid_address = re.compile(pat_valid_address, re.IGNORECASE)
 
     # -------------------------------------------------------------------------
     @classmethod
@@ -97,7 +97,7 @@ class MailAddress(FbGenericBaseObject):
         self._empty_ok = False
         self.empty_ok = empty_ok
 
-        if self.verbose > 2:
+        if self.verbose > 3:
             msg = _("Given user: {u!r}, given domain: {d!r}.")
             LOG.debug(msg.format(u=user, d=domain))
 
@@ -147,6 +147,26 @@ class MailAddress(FbGenericBaseObject):
 
         self._user = c_user
         self._domain = c_domain
+
+    # -------------------------------------------------------------------------
+    def _short_init(self, user, domain, verbose=0, empty_ok=False):
+
+        self._user = ''
+        self._domain = ''
+        self._verbose = 0
+        self.verbose = verbose
+        self._empty_ok = False
+        self.empty_ok = empty_ok
+
+        if self.verbose > 3:
+            msg = _("Given user: {u!r}, given domain: {d!r}.")
+            LOG.debug(msg.format(u=user, d=domain))
+
+        if user:
+            self._user = str(user).lower().strip()
+
+        if domain:
+            self._domain = str(domain).lower().strip()
 
     # -----------------------------------------------------------
     @property
@@ -270,9 +290,9 @@ class MailAddress(FbGenericBaseObject):
     def __eq__(self, other):
 
         if not isinstance(other, MailAddress):
-            if other is None:
-                return False
-            return str(self).lower() == str(other).lower()
+            msg = _("Object {o!r} for comparing is not a {c}.").format(
+                o=other, c='MailAddress')
+            raise TypeError(msg)
 
         if not self.user:
             if other.user:
@@ -317,14 +337,14 @@ class MailAddress(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __lt__(self, other):
 
-        if self.verbose > 4:
+        if not isinstance(other, MailAddress):
+            msg = _("Object {o!r} for comparing is not a {c}.").format(
+                o=other, c='MailAddress')
+            raise TypeError(msg)
+
+        if self.verbose > 5:
             msg = _("Comparing {self!r} with {other!r} ...")
             LOG.debug(msg.format(self=self, other=other))
-
-        if not isinstance(other, MailAddress):
-            if other is None:
-                return False
-            return str(self).lower() < str(other).lower()
 
         if not self.domain:
             if other.domain:
@@ -364,6 +384,8 @@ class MailAddress(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __gt__(self, other):
 
+        if self == other:
+            return False
         if self < other:
             return False
         return True
@@ -381,12 +403,247 @@ class MailAddress(FbGenericBaseObject):
 
         return addr
 
+
 # =============================================================================
 class QualifiedMailAddress(MailAddress):
     """
     Class for encapsulating a mail address with an optional Name.
     """
-    pass
+
+    pat_valid_name = r'("[^"]*"|[^",;<]*)'
+    pat_valid_full_address = r'^\s*' + pat_valid_name + r'\s*<'
+    pat_valid_full_address += MailAddress.pat_valid_address + r'>\s*$'
+
+    re_valid_full_address = re.compile(pat_valid_full_address, re.IGNORECASE)
+    re_qouting = re.compile(r'^\s*"([^"]*)"\s*$')
+    re_record_seperator = re.compile(r'[,;]')
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def valid_full_address(cls, address, raise_on_failure=False, verbose=0):
+
+        if not address:
+            e = InvalidMailAddressError(address, _("Empty address."))
+            if raise_on_failure:
+                raise e
+            if verbose > 2:
+                LOG.debug(str(e))
+            return False
+
+        addr = to_str(address)
+        if not isinstance(addr, str):
+            e = InvalidMailAddressError(address, _("Wrong type."))
+            if raise_on_failure:
+                raise e
+            if verbose > 2:
+                LOG.debug(str(e))
+            return False
+
+        if verbose > 2:
+            LOG.debug(_("Search pattern: {!r}").format(cls.pat_valid_address))
+        if cls.re_valid_address.search(addr):
+            return True
+
+        if verbose > 2:
+            LOG.debug(_("Search pattern: {!r}").format(cls.pat_valid_full_address))
+        if cls.re_valid_full_address.search(addr):
+            return True
+
+        e = InvalidMailAddressError(address, _("Invalid address."))
+        if raise_on_failure:
+            raise e
+        if verbose > 2:
+            LOG.debug(str(e))
+        return False
+
+    # -------------------------------------------------------------------------
+    def __init__(
+            self, address=None, *, user=None, domain=None, name=None, verbose=0, empty_ok=False):
+
+        self._name = None
+
+        if verbose > 1:
+            msg = "Given - address: {a!r}, user: {u!r}, domain: {d!r}, full name: {n!r}."
+            LOG.debug(msg.format(a=address, u=user, d=domain, n=name))
+
+        if address:
+            if user or domain or name:
+                param_list = ('user', 'domain', 'name')
+                msg = _("Parameters {lst} may not be given, if parameter {a!r} was given.")
+                msg = msg.format(lst=format_list(param_list, do_repr=True), a='address')
+                raise RuntimeError(msg)
+            return self._init_from_address(address, verbose=verbose, empty_ok=empty_ok)
+
+        super(QualifiedMailAddress, self).__init__(
+            user=user, domain=domain, verbose=verbose, empty_ok=empty_ok)
+
+        if name:
+            _name = to_str(name).strip()
+            if not isinstance(_name, six.string_types):
+                msg = _("Invalid full user name.")
+                raise InvalidMailAddressError(name, msg)
+            if _name:
+                self._name = _name
+
+    # -------------------------------------------------------------------------
+    def _init_from_address(self, address, verbose=0, empty_ok=False):
+
+        if not self.valid_full_address(address, raise_on_failure=True, verbose=verbose):
+            raise InvalidMailAddressError(address, _("Invalid address."))
+
+        user = None
+        domain = None
+        name = None
+
+        match = self.re_valid_address.search(address)
+        if match:
+            name = match.group(1).strip()
+            user = match.group(2).strip().lower()
+            domain = match.group(3).strip().lower()
+            super(QualifiedMailAddress, self)._short_init(
+                user=user, domain=domain, verbose=verbose, empty_ok=empty_ok)
+            if name:
+                match_quoting = self.re_qouting.match(name)
+                if match_quoting:
+                    self._name = match_quoting.group(1)
+                else:
+                    self._name = name
+            return
+
+        match = self.re_valid_address.search(address)
+        if not match:
+            raise InvalidMailAddressError(address, _("Invalid address."))
+
+        user = match.group(1).strip().lower()
+        domain = match.group(2).strip().lower()
+        super(QualifiedMailAddress, self)._short_init(
+            user=user, domain=domain, verbose=verbose, empty_ok=empty_ok)
+
+    # -----------------------------------------------------------
+    @property
+    def name(self):
+        """The full and elaborate name of the owner of the mail address."""
+        return self._name
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True):
+        """
+        Transforms the elements of the object into a dict
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+
+        @return: structure as dict
+        @rtype:  dict
+        """
+
+        res = super(QualifiedMailAddress, self).as_dict(short=short)
+
+        res['name'] = self.name
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def as_tuple(self):
+        """
+        Transforms the elements of the object into a tuple
+
+        @return: structure as tuple
+        @rtype:  tuple
+        """
+
+        return (self.user, self.domain, self.name, self.verbose, self.empty_ok)
+
+    # -------------------------------------------------------------------------
+    def simple(self):
+
+        return super(QualifiedMailAddress, self).__copy__()
+
+    # -------------------------------------------------------------------------
+    def __copy__(self):
+        "Implementing a wrapper for copy.copy()."
+
+        addr = self.__class__(empty_ok=True)
+
+        addr._user = self.user
+        addr._domain = self.domain
+        addr._name = self.name
+        addr.verbose = self.verbose
+        addr.empty_ok = self.empty_ok
+
+        return addr
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        no_addr = 'undisclosed recipient'
+
+        address = super(QualifiedMailAddress, self).__str__()
+        show_addr = address
+        if address:
+            if self.name:
+                show_addr = '<{a}>'.format(a=address)
+        else:
+            show_addr = '<{a}>'.format(a=no_addr)
+
+        if not self.name:
+            return show_addr
+
+        show_name = self.name
+        if self.re_record_seperator.search(show_name):
+            show_name = '"' + show_name + '"'
+
+        return show_name + ' {a}'.format(a=show_addr)
+
+    # -------------------------------------------------------------------------
+    def __repr__(self):
+        """Typecasting into a string for reproduction."""
+
+        out = "<%s(" % (self.__class__.__name__)
+
+        fields = []
+        fields.append("user={!r}".format(self.user))
+        fields.append("domain={!r}".format(self.domain))
+        fields.append("name={!r}".format(self.name))
+
+        out += ", ".join(fields) + ")>"
+        return out
+
+    # -------------------------------------------------------------------------
+    def __eq__(self, other):
+
+        if not isinstance(other, QualifiedMailAddress):
+            if other is None:
+                return False
+            return str(self) == str(other)
+
+        if not super(QualifiedMailAddress, self).__eq__(other):
+            return False
+
+        return self.name == other.name
+
+    # -------------------------------------------------------------------------
+    def __lt__(self, other):
+
+        if not isinstance(other, MailAddress):
+            msg = _("Object {o!r} for comparing is not a {c}.").format(
+                o=other, c='MailAddress')
+            raise TypeError(msg)
+
+        if self.verbose > 4:
+            msg = _("Comparing {self!r} with {other!r} ...")
+            LOG.debug(msg.format(self=self, other=other))
+
+        if not isinstance(other, QualifiedMailAddress):
+            return super(QualifiedMailAddress, self).__lt__(other)
+
+        if super(QualifiedMailAddress, self).__eq__(other):
+            if self.name.lower() == other.name.lower():
+                return self.name < other.name
+            else:
+                return self.name.lower() < other.name.lower()
+
+        return super(QualifiedMailAddress, self).__lt__(other)
 
 
 # =============================================================================
