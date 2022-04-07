@@ -395,6 +395,35 @@ class TestMailaddress(FbToolsTestcase):
         LOG.debug("MailAddress.as_tuple():\n" + pp(got_tuple))
         self.assertEqual(got_tuple, expected_tuple)
 
+    # -------------------------------------------------------------------------
+    def test_qual_to_simple(self):
+
+        if self.verbose == 1:
+            print()
+        LOG.info("Testing getting a simple MailAddress from a qualified mailaddress object.")
+
+        test_user = 'frank'
+        test_domain = 'brehm-online.com'
+        test_address = '{u}@{d}'.format(u=test_user, d=test_domain)
+        test_name = 'Frank Brehm'
+        test_full_address = '{n} <{a}>'.format(n=test_name, a=test_address)
+
+        from fb_tools import MailAddress, QualifiedMailAddress
+
+        full_address = QualifiedMailAddress(test_full_address, verbose=self.verbose)
+        LOG.debug("QualifiedMailAddress: {!r}".format(str(full_address)))
+
+        simple_address = full_address.simple()
+        LOG.debug("Simple MailAddress %r: {!r}".format(simple_address))
+        LOG.debug("Simple MailAddress %s: {!r}".format(str(simple_address)))
+
+        self.assertIsInstance(simple_address, MailAddress)
+        self.assertNotIsInstance(simple_address, QualifiedMailAddress)
+        self.assertEqual(simple_address.user, test_user)
+        self.assertEqual(simple_address.domain, test_domain)
+        self.assertEqual(simple_address.verbose, self.verbose)
+        self.assertEqual(str(simple_address), test_address)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -417,6 +446,7 @@ if __name__ == '__main__':
     suite.addTest(TestMailaddress('test_to_str', verbose))
     suite.addTest(TestMailaddress('test_sorting', verbose))
     suite.addTest(TestMailaddress('test_qualified_object', verbose))
+    suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
