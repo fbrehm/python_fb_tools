@@ -1356,7 +1356,7 @@ msgstr "Falscher Typ."
 #: lib/fb_tools/mailaddress.py:83 lib/fb_tools/mailaddress.py:453 lib/fb_tools/mailaddress.py:493
 #: lib/fb_tools/mailaddress.py:516
 msgid "Invalid address."
-msgstr "Ungültige Adrese."
+msgstr "Ungültige Adresse."
 
 #: lib/fb_tools/mailaddress.py:101 lib/fb_tools/mailaddress.py:162
 msgid "Given user: {u!r}, given domain: {d!r}."

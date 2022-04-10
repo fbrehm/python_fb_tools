@@ -419,6 +419,65 @@ class TestMailaddress(FbToolsTestcase):
         self.assertEqual(str(address), '<undisclosed recipient>')
 
     # -------------------------------------------------------------------------
+    def test_wrong_qual_address(self):
+
+        if self.verbose == 1:
+            print()
+        LOG.info("Testing init of correct and wrong  qualified mailaddress objects.")
+
+        from fb_tools import QualifiedMailAddress
+        from fb_tools.errors import BaseMailAddressError
+
+        correct_addresses = (
+            ('uhu@banane.de', 'uhu@banane.de'),
+            ('Uhu@Banane.de', 'uhu@banane.de'),
+            ('ich@mueller.de', 'ich@mueller.de'),
+            ('root+bla@banane.de', 'root+bla@banane.de'),
+            ('root+bla.uhu-banane.de@banane.de', 'root+bla.uhu-banane.de@banane.de'),
+            ('root+bla+blub@banane.de', 'root+bla+blub@banane.de'),
+            ('frank.uwe@banane.de', 'frank.uwe@banane.de'),
+            ('frank.uwe.brehm@banane.de', 'frank.uwe.brehm@banane.de'),
+            ('frank-uwe.61@banane.de', 'frank-uwe.61@banane.de'),
+            ('frank_uwe@banane.de', 'frank_uwe@banane.de'),
+            ('frank_uwe.61@banane.de', 'frank_uwe.61@banane.de'),
+            ('Frank Brehm <frank.uwe@banane.de>', 'Frank Brehm <frank.uwe@banane.de>'),
+            ('Frank Brehm    <frank.uwe@banane.de>', 'Frank Brehm <frank.uwe@banane.de>'),
+            ('Frank Brehm<frank.uwe@banane.de>', 'Frank Brehm <frank.uwe@banane.de>'),
+            ('<frank.uwe@banane.de>', 'frank.uwe@banane.de'),
+            ('"" <frank.uwe@banane.de>', 'frank.uwe@banane.de'),
+            ('" " <frank.uwe@banane.de>', '" " <frank.uwe@banane.de>'),
+            ('"Frank Brehm" <frank.uwe@banane.de>', 'Frank Brehm <frank.uwe@banane.de>'),
+            ('"Frank   Brehm" <frank.uwe@banane.de>', 'Frank   Brehm <frank.uwe@banane.de>'),
+            ('"Brehm, Frank" <frank.uwe@banane.de>', '"Brehm, Frank" <frank.uwe@banane.de>'),
+            ('"Brehm;; Frank" <frank.uwe@banane.de>', '"Brehm;; Frank" <frank.uwe@banane.de>'),
+        )
+
+        for pair in correct_addresses:
+            addr = pair[0]
+            expected = pair[1]
+            LOG.debug("Testing qualified mail address {a!r} => {e!r} ...".format(
+                a=addr, e=expected))
+            address = QualifiedMailAddress(addr, verbose=self.verbose)
+            LOG.debug("Successful qualified mail address from {s!r}: {a!r} => {r!r}".format(
+                s=addr, a=str(address), r=address))
+            self.assertEqual(str(address), expected)
+
+        wrong_addresses = (
+            True, 1, ('uhu@banane.de', ), ['uhu@banane.de'], 'uhu:banane', 'uhu!banane', 'a@b@c',
+            'müller.de', 'ich@Müller.de', 'ich@mueller', '@uhu_banane.de', 'frank@uhu_banane.de',
+            'frank.brehm', 'uhu_banane.de', '@uhu-banane.de', '"Frank Brehm <frank.uwe@banane.de>',
+            'Frank Brehm" <frank.uwe@banane.de>', '<frank.uwe@banane.de> "Frank Brehm"',
+        )
+
+        for addr in wrong_addresses:
+            LOG.debug("Testing wrong mail address {!r} ...".format(addr))
+            with self.assertRaises(BaseMailAddressError) as cm:
+                address = QualifiedMailAddress(addr, verbose=self.verbose)
+                LOG.error("This should not be visible: {!r}".format(address))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+    # -------------------------------------------------------------------------
     def test_qual_to_simple(self):
 
         if self.verbose == 1:
@@ -470,6 +529,7 @@ if __name__ == '__main__':
     suite.addTest(TestMailaddress('test_sorting', verbose))
     suite.addTest(TestMailaddress('test_qualified_address', verbose))
     suite.addTest(TestMailaddress('test_empty_qualified_address', verbose))
+    suite.addTest(TestMailaddress('test_wrong_qual_address', verbose))
     suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)

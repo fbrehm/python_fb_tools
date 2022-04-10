@@ -26,7 +26,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -417,6 +417,7 @@ class QualifiedMailAddress(MailAddress):
     re_valid_full_address = re.compile(pat_valid_full_address, re.IGNORECASE)
     re_qouting = re.compile(r'^\s*"([^"]*)"\s*$')
     re_record_seperator = re.compile(r'[,;]')
+    re_only_whitespace = re.compile(r'^\s+$')
 
     # -------------------------------------------------------------------------
     @classmethod
@@ -591,7 +592,7 @@ class QualifiedMailAddress(MailAddress):
             return show_addr
 
         show_name = self.name
-        if self.re_record_seperator.search(show_name):
+        if self.re_record_seperator.search(show_name) or self.re_only_whitespace.search(show_name):
             show_name = '"' + show_name + '"'
 
         return show_name + ' {a}'.format(a=show_addr)
