@@ -121,7 +121,7 @@ class TestMailaddress(FbToolsTestcase):
 
         if self.verbose == 1:
             print()
-        LOG.info("Testing init of an empty mailaddress objects.")
+        LOG.info("Testing init of an empty mailaddress object.")
 
         from fb_tools import MailAddress
         from fb_tools.errors import BaseMailAddressError
@@ -329,7 +329,7 @@ class TestMailaddress(FbToolsTestcase):
         self.assertEqual(expected_list, result_list)
 
     # -------------------------------------------------------------------------
-    def test_qualified_object(self):
+    def test_qualified_address(self):
 
         if self.verbose == 1:
             print()
@@ -396,6 +396,29 @@ class TestMailaddress(FbToolsTestcase):
         self.assertEqual(got_tuple, expected_tuple)
 
     # -------------------------------------------------------------------------
+    def test_empty_qualified_address(self):
+
+        if self.verbose == 1:
+            print()
+        LOG.info("Testing init of an empty qualified mailaddress object.")
+
+        from fb_tools import QualifiedMailAddress
+        from fb_tools.errors import BaseMailAddressError
+
+        LOG.debug("Testing raise on init empty qualified mail address ...")
+        with self.assertRaises(BaseMailAddressError) as cm:
+            address = QualifiedMailAddress(verbose=self.verbose)
+            LOG.error("This should not be visible: {!r}".format(address))
+        e = cm.exception
+        LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+        LOG.debug("Testing successful init of an empty qualified mail address ...")
+        address = QualifiedMailAddress(empty_ok=True, verbose=self.verbose)
+        LOG.debug("Empty QualifiedMailAddress {a!r}: {s!r}".format(
+            a=address, s=str(address)))
+        self.assertEqual(str(address), '<undisclosed recipient>')
+
+    # -------------------------------------------------------------------------
     def test_qual_to_simple(self):
 
         if self.verbose == 1:
@@ -445,7 +468,8 @@ if __name__ == '__main__':
     suite.addTest(TestMailaddress('test_wrong_user', verbose))
     suite.addTest(TestMailaddress('test_to_str', verbose))
     suite.addTest(TestMailaddress('test_sorting', verbose))
-    suite.addTest(TestMailaddress('test_qualified_object', verbose))
+    suite.addTest(TestMailaddress('test_qualified_address', verbose))
+    suite.addTest(TestMailaddress('test_empty_qualified_address', verbose))
     suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
