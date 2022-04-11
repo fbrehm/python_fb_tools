@@ -450,6 +450,11 @@ class TestMailaddress(FbToolsTestcase):
             ('"Frank   Brehm" <frank.uwe@banane.de>', 'Frank   Brehm <frank.uwe@banane.de>'),
             ('"Brehm, Frank" <frank.uwe@banane.de>', '"Brehm, Frank" <frank.uwe@banane.de>'),
             ('"Brehm;; Frank" <frank.uwe@banane.de>', '"Brehm;; Frank" <frank.uwe@banane.de>'),
+            ('"Brehm < Frank" <frank.uwe@banane.de>', '"Brehm < Frank" <frank.uwe@banane.de>'),
+            ('"Brehm > Frank" <frank.uwe@banane.de>', '"Brehm > Frank" <frank.uwe@banane.de>'),
+            ('"Brehm@Frank" <frank.uwe@banane.de>', '"Brehm@Frank" <frank.uwe@banane.de>'),
+            ('"Brehm|Frank" <frank.uwe@banane.de>', '"Brehm|Frank" <frank.uwe@banane.de>'),
+            ('Jörg Schüßler <jsc@banane.de>', 'Jörg Schüßler <jsc@banane.de>'),
         )
 
         for pair in correct_addresses:
@@ -467,6 +472,8 @@ class TestMailaddress(FbToolsTestcase):
             'müller.de', 'ich@Müller.de', 'ich@mueller', '@uhu_banane.de', 'frank@uhu_banane.de',
             'frank.brehm', 'uhu_banane.de', '@uhu-banane.de', '"Frank Brehm <frank.uwe@banane.de>',
             'Frank Brehm" <frank.uwe@banane.de>', '<frank.uwe@banane.de> "Frank Brehm"',
+            'Brehm < Frank <frank.uwe@banane.de>', 'Brehm < Frank <frank.uwe@banane.de>',
+            'Brehm@Frank <frank.uwe@banane.de>', 'Brehm|Frank <frank.uwe@banane.de>',
         )
 
         for addr in wrong_addresses:
