@@ -1400,7 +1400,7 @@ msgstr "Vollständiges Suchmuster: {}"
 
 #: lib/fb_tools/mailaddress.py:473
 msgid "Parameters {lst} may not be given, if parameter {a!r} was given."
-msgstr "Sie Parameter {lst} dürfen nicht übergeben werden, wenn der Parameter {a!r} amgegeben wurde."
+msgstr "Die Parameter {lst} dürfen nicht übergeben werden, wenn der Parameter {a!r} angegeben wurde."
 
 #: lib/fb_tools/mailaddress.py:484
 msgid "Invalid full user name."

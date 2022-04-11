@@ -464,7 +464,7 @@ class QualifiedMailAddress(MailAddress):
 
         self._name = None
 
-        if verbose > 1:
+        if verbose > 3:
             msg = "Given - address: {a!r}, user: {u!r}, domain: {d!r}, full name: {n!r}."
             LOG.debug(msg.format(a=address, u=user, d=domain, n=name))
 

@@ -419,6 +419,53 @@ class TestMailaddress(FbToolsTestcase):
         self.assertEqual(str(address), '<undisclosed recipient>')
 
     # -------------------------------------------------------------------------
+    def test_wrong_init_full_address(self):
+
+        if self.verbose == 1:
+            print()
+        LOG.info("Testing wrong init of a qualified mailaddress object.")
+
+        name = 'Frank Brehm'
+        user = 'frank.uwe'
+        domain = 'banane.de'
+        addr = '{n} <{u}@{d}>'.format(n=name, u=user, d=domain)
+
+        from fb_tools import QualifiedMailAddress
+
+        LOG.debug(
+            "Testing raise on init qualified mail address with wrong positional arguments ...")
+        with self.assertRaises(TypeError) as cm:
+            address = QualifiedMailAddress(addr, user, domain, verbose=self.verbose)
+            LOG.error("This should not be visible: {!r}".format(address))
+        e = cm.exception
+        LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+        LOG.debug("Testing init qualified mail address only with keyword arguments ...")
+        address = QualifiedMailAddress(user=user, domain=domain, name=name, verbose=self.verbose)
+        msg = "Successful qualified mail address from user {u!r}, domain {d!r} and "
+        msg += "name {n!r}: {a!r}."
+        LOG.debug(msg.format(u=user, d=domain, n=name, a=str(address)))
+        self.assertEqual(str(address), addr)
+
+        LOG.debug(
+            "Testing raise on init qualified mail address with wrong keyword arguments ...")
+        with self.assertRaises(RuntimeError) as cm:
+            address = QualifiedMailAddress(addr, user=user, verbose=self.verbose)
+            LOG.error("This should not be visible: {!r}".format(address))
+        e = cm.exception
+        LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+        with self.assertRaises(RuntimeError) as cm:
+            address = QualifiedMailAddress(addr, domain=domain, verbose=self.verbose)
+            LOG.error("This should not be visible: {!r}".format(address))
+        e = cm.exception
+        LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+        with self.assertRaises(RuntimeError) as cm:
+            address = QualifiedMailAddress(addr, name=name, verbose=self.verbose)
+            LOG.error("This should not be visible: {!r}".format(address))
+        e = cm.exception
+        LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+    # -------------------------------------------------------------------------
     def test_wrong_qual_address(self):
 
         if self.verbose == 1:
@@ -536,6 +583,7 @@ if __name__ == '__main__':
     suite.addTest(TestMailaddress('test_sorting', verbose))
     suite.addTest(TestMailaddress('test_qualified_address', verbose))
     suite.addTest(TestMailaddress('test_empty_qualified_address', verbose))
+    suite.addTest(TestMailaddress('test_wrong_init_full_address', verbose))
     suite.addTest(TestMailaddress('test_wrong_qual_address', verbose))
     suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
 
