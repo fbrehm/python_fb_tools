@@ -560,6 +560,58 @@ class TestMailaddress(FbToolsTestcase):
         self.assertEqual(simple_address.verbose, self.verbose)
         self.assertEqual(str(simple_address), test_address)
 
+    # -------------------------------------------------------------------------
+    def test_equality(self):
+
+        if self.verbose == 1:
+            print()
+        LOG.info("Testing equality of MailAddress and QualifiedMailAddress objects.")
+
+        from fb_tools import MailAddress as MA
+        from fb_tools import QualifiedMailAddress as QMA
+
+        test_data = (
+            (MA('frank@brehm-online.com'), MA('frank@brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), MA('Frank@Brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), QMA('frank@brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), QMA('Frank@Brehm-online.com'), True),
+            (QMA('frank@brehm-online.com'), MA('frank@brehm-online.com'), True),
+            (QMA('frank@brehm-online.com'), MA('Frank@Brehm-online.com'), True),
+            (QMA('frank@brehm-online.com'), QMA('frank@brehm-online.com'), True),
+            (QMA('frank@brehm-online.com'), QMA('Frank@Brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), None, False),
+            (QMA('frank@brehm-online.com'), None, False),
+            (MA('frank@brehm-online.com'), True, False),
+            (QMA('frank@brehm-online.com'), True, False),
+            (MA('frank@brehm-online.com'), 1, False),
+            (QMA('frank@brehm-online.com'), 2, False),
+            (MA('frank@brehm-online.com'), 'frank@brehm-online.com', False),
+            (QMA('frank@brehm-online.com'), 'frank@brehm-online.com', False),
+            (MA('frank@brehm-online.com'), [MA('frank@brehm-online.com')], False),
+            (QMA('frank@brehm-online.com'), [QMA('frank@brehm-online.com')], False),
+            (QMA('frank@brehm-online.com'), QMA('<Frank@Brehm-online.com>'), True),
+            (QMA('frank@brehm-online.com'), QMA('"" <Frank@Brehm-online.com>'), False),
+            (MA('frank@brehm-online.com'), QMA('"" <Frank@Brehm-online.com>'), False),
+            (QMA('"Frank Brehm" <frank@brehm-online.com>'),
+                QMA('"Frank Brehm" <Frank@Brehm-online.com>'), True),
+            (QMA('"Frank Brehm" <frank@brehm-online.com>'),
+                QMA('"frank brehm" <frank@brehm-online.com>'), False),
+        )
+
+        for test_tuple in test_data:
+            addr1 = test_tuple[0]
+            addr2 = test_tuple[1]
+            expected = test_tuple[2]
+
+            msg = "Testing {a1!r} == {a2!r}, expected: {ex}."
+            LOG.debug(msg.format(a1=addr1, a2=addr2, ex=expected))
+
+            result = False
+            if addr1 == addr2:
+                result = True
+            LOG.debug("Got as result: {}.".format(result))
+            self.assertEqual(result, expected)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -586,6 +638,7 @@ if __name__ == '__main__':
     suite.addTest(TestMailaddress('test_wrong_init_full_address', verbose))
     suite.addTest(TestMailaddress('test_wrong_qual_address', verbose))
     suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
+    suite.addTest(TestMailaddress('test_equality', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

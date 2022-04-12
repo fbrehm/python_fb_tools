@@ -26,7 +26,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.7.3'
+__version__ = '0.7.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -290,9 +290,13 @@ class MailAddress(FbGenericBaseObject):
     def __eq__(self, other):
 
         if not isinstance(other, MailAddress):
-            msg = _("Object {o!r} for comparing is not a {c}.").format(
-                o=other, c='MailAddress')
-            raise TypeError(msg)
+            return False
+
+        if MailAddress is not other.__class__.__mro__[0]:
+            if isinstance(other, QualifiedMailAddress):
+                if other.name is None and self == other.simple():
+                    return True
+            return False
 
         if not self.user:
             if other.user:
@@ -615,12 +619,19 @@ class QualifiedMailAddress(MailAddress):
     # -------------------------------------------------------------------------
     def __eq__(self, other):
 
-        if not isinstance(other, QualifiedMailAddress):
-            if other is None:
-                return False
-            return str(self) == str(other)
+        if not isinstance(other, MailAddress):
+            return False
 
-        if not super(QualifiedMailAddress, self).__eq__(other):
+        if not isinstance(other, QualifiedMailAddress):
+            # Other must be a simple MailAddress
+            if self.name is None and self.simple() == other:
+                return True
+            return False
+
+        if QualifiedMailAddress is not other.__class__.__mro__[0]:
+            return False
+
+        if self.simple() != other.simple():
             return False
 
         return self.name == other.name
