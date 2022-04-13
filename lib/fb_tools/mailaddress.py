@@ -26,7 +26,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.7.4'
+__version__ = '0.7.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -47,7 +47,7 @@ class MailAddress(FbGenericBaseObject):
 
     pat_valid_domain = r'@((?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+[a-z][a-z]+)'
 
-    pat_valid_user = r'([a-z0-9][a-z0-9_\-\.\+]*[a-z0-9]'
+    pat_valid_user = r'([a-z0-9](?:[a-z0-9_\-\.\+]*[a-z0-9])?'
     pat_valid_user += r'(?:\+[a-z0-9][a-z0-9_\-\.]*[a-z0-9])*)'
 
     pat_valid_address = pat_valid_user + pat_valid_domain
@@ -289,6 +289,10 @@ class MailAddress(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __eq__(self, other):
 
+        if self.verbose > 5:
+            msg = _("Checking equality {self!r} with {other!r} ...")
+            LOG.debug(msg.format(self=self, other=other))
+
         if not isinstance(other, MailAddress):
             return False
 
@@ -342,13 +346,28 @@ class MailAddress(FbGenericBaseObject):
     def __lt__(self, other):
 
         if not isinstance(other, MailAddress):
-            msg = _("Object {o!r} for comparing is not a {c}.").format(
+            msg = _("Object {o!r} for comparing is not a {c} object.").format(
                 o=other, c='MailAddress')
             raise TypeError(msg)
 
         if self.verbose > 5:
             msg = _("Comparing {self!r} with {other!r} ...")
             LOG.debug(msg.format(self=self, other=other))
+
+        if MailAddress is not other.__class__.__mro__[0]:
+            if isinstance(other, QualifiedMailAddress):
+                other_simple = other.simple()
+                if self == other_simple:
+                    if other.name is None:
+                        return False
+                    else:
+                        return True
+                else:
+                    return self < other_simple
+            else:
+                return True
+
+        # At this point both self and other are pure MailAddress objects
 
         if not self.domain:
             if other.domain:
@@ -619,6 +638,10 @@ class QualifiedMailAddress(MailAddress):
     # -------------------------------------------------------------------------
     def __eq__(self, other):
 
+        if self.verbose > 5:
+            msg = _("Checking equality {self!r} with {other!r} ...")
+            LOG.debug(msg.format(self=self, other=other))
+
         if not isinstance(other, MailAddress):
             return False
 
@@ -640,24 +663,32 @@ class QualifiedMailAddress(MailAddress):
     def __lt__(self, other):
 
         if not isinstance(other, MailAddress):
-            msg = _("Object {o!r} for comparing is not a {c}.").format(
+            msg = _("Object {o!r} for comparing is not a {c} object.").format(
                 o=other, c='MailAddress')
             raise TypeError(msg)
 
-        if self.verbose > 4:
+        if self.verbose > 5:
             msg = _("Comparing {self!r} with {other!r} ...")
             LOG.debug(msg.format(self=self, other=other))
 
-        if not isinstance(other, QualifiedMailAddress):
-            return super(QualifiedMailAddress, self).__lt__(other)
+        self_simple = self.simple()
 
-        if super(QualifiedMailAddress, self).__eq__(other):
+        if not isinstance(other, QualifiedMailAddress):
+            if self_simple == other:
+                return False
+            return self_simple < other
+
+        # At this point both self and other are QualifiedMailAddress objects
+
+        other_simple = other.simple()
+
+        if self_simple == other_simple:
             if self.name.lower() == other.name.lower():
                 return self.name < other.name
             else:
                 return self.name.lower() < other.name.lower()
 
-        return super(QualifiedMailAddress, self).__lt__(other)
+        return self_simple < other_simple
 
 
 # =============================================================================

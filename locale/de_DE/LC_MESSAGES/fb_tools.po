@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.9.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-04-10 09:49+0200\n"
+"POT-Creation-Date: 2022-04-12 15:56+0200\n"
 "PO-Revision-Date: 2022-04-10 09:55+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
@@ -1345,16 +1345,16 @@ msgstr "Der Parameter {t!r} muss ein {e} ein, statt dessen wurde {v!r} übergebe
 msgid "Completed process"
 msgstr "Fertiggestellter Prozess"
 
-#: lib/fb_tools/mailaddress.py:64 lib/fb_tools/mailaddress.py:426
+#: lib/fb_tools/mailaddress.py:64 lib/fb_tools/mailaddress.py:450
 msgid "Empty address."
 msgstr "Leere Adresse."
 
-#: lib/fb_tools/mailaddress.py:73 lib/fb_tools/mailaddress.py:435
+#: lib/fb_tools/mailaddress.py:73 lib/fb_tools/mailaddress.py:459
 msgid "Wrong type."
 msgstr "Falscher Typ."
 
-#: lib/fb_tools/mailaddress.py:83 lib/fb_tools/mailaddress.py:453 lib/fb_tools/mailaddress.py:493
-#: lib/fb_tools/mailaddress.py:516
+#: lib/fb_tools/mailaddress.py:83 lib/fb_tools/mailaddress.py:477 lib/fb_tools/mailaddress.py:517
+#: lib/fb_tools/mailaddress.py:540
 msgid "Invalid address."
 msgstr "Ungültige Adresse."
 
@@ -1378,31 +1378,35 @@ msgstr "Ungültige Domäne."
 msgid "Wrong verbose level {!r}, must be >= 0"
 msgstr "Falsches Ausführlichkeits-Niveau, muss größer als oder gleich Null sein"
 
-#: lib/fb_tools/mailaddress.py:293 lib/fb_tools/mailaddress.py:341 lib/fb_tools/mailaddress.py:630
-msgid "Object {o!r} for comparing is not a {c}."
-msgstr "Das Vergleichsobjekt {o!r} ist kein {c}."
+#: lib/fb_tools/mailaddress.py:293 lib/fb_tools/mailaddress.py:642
+msgid "Checking equality {self!r} with {other!r} ..."
+msgstr "Vergleiche Gleichheit von {self!r} mit {other!r} …"
 
-#: lib/fb_tools/mailaddress.py:346 lib/fb_tools/mailaddress.py:635
+#: lib/fb_tools/mailaddress.py:349 lib/fb_tools/mailaddress.py:666
+msgid "Object {o!r} for comparing is not a {c} object."
+msgstr "Das Vergleichsobjekt {o!r} ist kein {c}-Objekt."
+
+#: lib/fb_tools/mailaddress.py:354 lib/fb_tools/mailaddress.py:671
 msgid "Comparing {self!r} with {other!r} ..."
 msgstr "Vergleiche {self!r} mit {other!r} …"
 
-#: lib/fb_tools/mailaddress.py:443
+#: lib/fb_tools/mailaddress.py:467
 msgid "Evaluating address {!r} ..."
 msgstr "Untersuche Adresse {!r} …"
 
-#: lib/fb_tools/mailaddress.py:444
+#: lib/fb_tools/mailaddress.py:468
 msgid "Search pattern simple: {}"
 msgstr "Einfaches Suchmuster: {}"
 
-#: lib/fb_tools/mailaddress.py:449
+#: lib/fb_tools/mailaddress.py:473
 msgid "Search pattern full: {}"
 msgstr "Vollständiges Suchmuster: {}"
 
-#: lib/fb_tools/mailaddress.py:473
+#: lib/fb_tools/mailaddress.py:497
 msgid "Parameters {lst} may not be given, if parameter {a!r} was given."
 msgstr "Die Parameter {lst} dürfen nicht übergeben werden, wenn der Parameter {a!r} angegeben wurde."
 
-#: lib/fb_tools/mailaddress.py:484
+#: lib/fb_tools/mailaddress.py:508
 msgid "Invalid full user name."
 msgstr "Ungültiger vollständiger Nutzername."
 
