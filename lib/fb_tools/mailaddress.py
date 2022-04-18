@@ -31,7 +31,7 @@ from .obj import FbGenericBaseObject, FbBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.8.0'
+__version__ = '0.8.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -781,7 +781,7 @@ class MailAddressList(FbBaseObject, MutableSequence):
         res['empty_ok'] = self.empty_ok
         res['may_simple'] = self.may_simple
 
-        for address in self._addresses:
+        for address in self:
             res['_addresses'].append(address.as_dict(short=short))
 
         return res
@@ -799,7 +799,7 @@ class MailAddressList(FbBaseObject, MutableSequence):
         fields.append("empty_ok={!r}".format(self.empty_ok))
         fields.append("may_simple={!r}".format(self.may_simple))
 
-        for address in self._addresses:
+        for address in self:
             fields.append("{!r}".format(address))
 
         out += ", ".join(fields) + ")>"
@@ -831,17 +831,81 @@ class MailAddressList(FbBaseObject, MutableSequence):
     # -------------------------------------------------------------------------
     def index(self, address, *args):
 
-        raise FunctionNotImplementedError('index', 'MailAddressList')
+        i = None
+        j = None
+        addr = self._to_address(address)
+
+        if len(args) > 0:
+            if len(args) > 2:
+                raise TypeError(_("{m} takes at most {max} arguments ({n} given).").format(
+                    m='index()', max=3, n=len(args) + 1))
+            i = int(args[0])
+            if len(args) > 1:
+                j = int(args[1])
+
+        index = 0
+        start = 0
+        if i is not None:
+            start = i
+            if i < 0:
+                start = len(self) + i
+
+        wrap = False
+        end = len(self)
+        if j is not None:
+            if j < 0:
+                end = len(self) + j
+                if end < index:
+                    wrap = True
+            else:
+                end = j
+
+        for index in list(range(len(self))):
+            item = self._addresses[index]
+            if index < start:
+                continue
+            if index >= end and not wrap:
+                break
+            if item == addr:
+                return index
+
+        if wrap:
+            for index in list(range(len(self))):
+                item = self._addresses[index]
+                if index >= end:
+                    break
+            if item == addr:
+                return index
+
+        msg = _("Mail address {} is not in address list.").format(addr)
+        raise ValueError(msg)
 
     # -------------------------------------------------------------------------
     def __contains__(self, address):
 
-        raise FunctionNotImplementedError('__contains__', 'MailAddressList')
+        if not self._addresses:
+            return False
+
+        addr = self._to_address(address)
+        for item in self._addresses:
+            if item == addr:
+                return True
+
+        return False
 
     # -------------------------------------------------------------------------
     def count(self, address):
 
-        raise FunctionNotImplementedError('count', 'MailAddressList')
+        if not self._addresses:
+            return 0
+
+        addr = self._to_address(address)
+
+        num = 0
+        for item in self._addresses:
+            if item == addr:
+                num += 1
+        return num
 
     # -------------------------------------------------------------------------
     def __len__(self):
@@ -854,7 +918,8 @@ class MailAddressList(FbBaseObject, MutableSequence):
     # -------------------------------------------------------------------------
     def __setitem__(self, key, address):
 
-        raise FunctionNotImplementedError('__setitem__', 'MailAddressList')
+        addr = self._to_address(address)
+        self._addresses.__setitem__(key, addr)
 
     # -------------------------------------------------------------------------
     def __delitem__(self, key):
@@ -862,9 +927,10 @@ class MailAddressList(FbBaseObject, MutableSequence):
         del self._addresses[key]
 
     # -------------------------------------------------------------------------
-    def insert(self, index, disk):
+    def insert(self, index, address):
 
-        raise FunctionNotImplementedError('insert', 'MailAddressList')
+        addr = self._to_address(address)
+        self._addresses.insert(index, addr)
 
     # -------------------------------------------------------------------------
     def clear(self):
