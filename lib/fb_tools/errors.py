@@ -13,7 +13,7 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '1.2.8'
+__version__ = '1.2.9'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -224,7 +224,7 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
     """
 
     # -------------------------------------------------------------------------
-    def __init__(self, function_name, class_name):
+    def __init__(self, function_name, class_name=None):
         """
         Constructor.
 

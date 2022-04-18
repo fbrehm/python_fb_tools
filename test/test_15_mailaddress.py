@@ -968,6 +968,22 @@ class TestMailaddress(FbToolsTestcase):
                 LOG.debug("Got as result: {}.".format(result))
             self.assertEqual(result, expected)
 
+    # -------------------------------------------------------------------------
+    def test_init_mailaddresslist(self):
+
+        if self.verbose == 1:
+            print()
+        LOG.info("Testing of a MailAddressList object.")
+
+        # from fb_tools import MailAddress
+        # from fb_tools import QualifiedMailAddress
+        from fb_tools import MailAddressList
+
+        LOG.debug("Testing init of an empty list.")
+        address_list = MailAddressList(verbose=self.verbose)
+        LOG.debug("MailAddressList %r: {!r}".format(address_list))
+        LOG.debug("MailAddressList %s: {}".format(address_list))
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -999,6 +1015,7 @@ if __name__ == '__main__':
     suite.addTest(TestMailaddress('test_gt', verbose))
     suite.addTest(TestMailaddress('test_le', verbose))
     suite.addTest(TestMailaddress('test_ge', verbose))
+    suite.addTest(TestMailaddress('test_init_mailaddresslist', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

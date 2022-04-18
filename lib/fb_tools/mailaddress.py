@@ -12,21 +12,26 @@ from __future__ import absolute_import
 import logging
 import re
 
+try:
+    from collections.abc import MutableSequence
+except ImportError:
+    from collections import MutableSequence
+
 # Third party modules
 import six
 
 # Own modules
 from .errors import InvalidMailAddressError
-# from .errors import GeneralMailAddressError, EmptyMailAddressError
+from .errors import FunctionNotImplementedError
 from .errors import EmptyMailAddressError
 
 from .common import to_str, to_bool
 
-from .obj import FbGenericBaseObject
+from .obj import FbGenericBaseObject, FbBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.7.6'
+__version__ = '0.8.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -707,6 +712,165 @@ class QualifiedMailAddress(MailAddress):
                 return self.name.lower() < other.name.lower()
 
         return self_simple < other_simple
+
+
+# =============================================================================
+class MailAddressList(FbBaseObject, MutableSequence):
+    """
+    A list containing MailAddress or QualifiedMailAddress objects.
+    """
+
+    # -------------------------------------------------------------------------
+    def __init__(
+        self, appname=None, verbose=0, version=__version__, base_dir=None, empty_ok=False,
+            may_simple=True, initialized=None, *addresses):
+
+        self._addresses = []
+        self._empty_ok = False
+        self._may_simple = True
+
+        super(MailAddressList, self).__init__(
+            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
+            initialized=False)
+
+        self.empty_ok = empty_ok
+        self.may_simple = may_simple
+
+        for address in addresses:
+            self.append(address)
+
+        if initialized is not None:
+            self.initialized = initialized
+
+    # -----------------------------------------------------------
+    @property
+    def empty_ok(self):
+        """Is an empty mail address valid or should there be raised an exceptiom."""
+        return self._empty_ok
+
+    @empty_ok.setter
+    def empty_ok(self, value):
+        self._empty_ok = to_bool(value)
+
+    # -----------------------------------------------------------
+    @property
+    def may_simple(self):
+        """May an address be inserted/appanded as a simple MailAddress, if there is
+        no explicit verbose user name, or should it be always as a QualifiedMailAddress
+        object."""
+        return self._may_simple
+
+    @may_simple.setter
+    def may_simple(self, value):
+        self._may_simple = to_bool(value)
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True):
+        """
+        Transforms the elements of the object into a dict
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+
+        @return: structure as dict or list
+        @rtype:  dict or list
+        """
+
+        res = super(MailAddressList, self).as_dict(short=short)
+        res['_addresses'] = []
+        res['empty_ok'] = self.empty_ok
+        res['may_simple'] = self.may_simple
+
+        for address in self._addresses:
+            res['_addresses'].append(address.as_dict(short=short))
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def __repr__(self):
+        """Typecasting into a string for reproduction."""
+
+        out = "<%s(" % (self.__class__.__name__)
+
+        fields = []
+        fields.append("appname={!r}".format(self.appname))
+        fields.append("verbose={!r}".format(self.verbose))
+        fields.append("version={!r}".format(self.version))
+        fields.append("empty_ok={!r}".format(self.empty_ok))
+        fields.append("may_simple={!r}".format(self.may_simple))
+
+        for address in self._addresses:
+            fields.append("{!r}".format(address))
+
+        out += ", ".join(fields) + ")>"
+        return out
+
+    # -------------------------------------------------------------------------
+    def _to_address(self, address):
+        """Converting given address into a usable MailAddress or QualifiedMailAddress object."""
+
+        if isinstance(address, MailAddress):
+            return address
+
+        addr = QualifiedMailAddress(address, verbose=self.verbose, empty_ok=self.empty_ok)
+        if self.may_simple and addr.name is None:
+            return addr.simple()
+        return addr
+
+    # -------------------------------------------------------------------------
+    def append(self, address):
+
+        addr = self._to_address(address)
+        self._addresses.append(addr)
+
+    # -------------------------------------------------------------------------
+    def __copy__(self):
+
+        raise FunctionNotImplementedError('__copy__', 'MailAddressList')
+
+    # -------------------------------------------------------------------------
+    def index(self, address, *args):
+
+        raise FunctionNotImplementedError('index', 'MailAddressList')
+
+    # -------------------------------------------------------------------------
+    def __contains__(self, address):
+
+        raise FunctionNotImplementedError('__contains__', 'MailAddressList')
+
+    # -------------------------------------------------------------------------
+    def count(self, address):
+
+        raise FunctionNotImplementedError('count', 'MailAddressList')
+
+    # -------------------------------------------------------------------------
+    def __len__(self):
+        return len(self._addresses)
+
+    # -------------------------------------------------------------------------
+    def __getitem__(self, key):
+        return self._addresses.__getitem__(key)
+
+    # -------------------------------------------------------------------------
+    def __setitem__(self, key, address):
+
+        raise FunctionNotImplementedError('__setitem__', 'MailAddressList')
+
+    # -------------------------------------------------------------------------
+    def __delitem__(self, key):
+
+        del self._addresses[key]
+
+    # -------------------------------------------------------------------------
+    def insert(self, index, disk):
+
+        raise FunctionNotImplementedError('insert', 'MailAddressList')
+
+    # -------------------------------------------------------------------------
+    def clear(self):
+        "Remove all items from the MailAddressList."
+
+        self._addresses = []
 
 
 # =============================================================================
