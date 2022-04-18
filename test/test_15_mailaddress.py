@@ -636,14 +636,26 @@ class TestMailaddress(FbToolsTestcase):
         for addr in test_data:
             LOG.debug("Testing wrong mail address {!r} ...".format(addr))
 
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} < {a2!r}.".format(a1=addr1, a2=addr))
             with self.assertRaises(TypeError) as cm:
                 if addr1 < addr:
                     LOG.error("This should not be visible: {!r}".format(addr))
             e = cm.exception
             LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
 
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} < {a2!r}.".format(a1=addr2, a2=addr))
             with self.assertRaises(TypeError) as cm:
                 if addr2 < addr:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} < {a2!r}.".format(a1=addr, a2=addr2))
+            with self.assertRaises(TypeError) as cm:
+                if addr < addr2:
                     LOG.error("This should not be visible: {!r}".format(addr))
             e = cm.exception
             LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
@@ -688,7 +700,272 @@ class TestMailaddress(FbToolsTestcase):
             result = False
             if addr1 < addr2:
                 result = True
-            LOG.debug("Got as result: {}.".format(result))
+            if self.verbose > 2:
+                LOG.debug("Got as result: {}.".format(result))
+            self.assertEqual(result, expected)
+
+    # -------------------------------------------------------------------------
+    def test_gt(self):
+
+        if self.verbose == 1:
+            print()
+        LOG.info("Testing '>'-operator of MailAddress and QualifiedMailAddress objects.")
+
+        from fb_tools import MailAddress as MA
+        from fb_tools import QualifiedMailAddress as QMA
+
+        addr1 = MA('frank@brehm-online.com', verbose=self.verbose)
+        addr2 = QMA('frank@brehm-online.com', verbose=self.verbose)
+
+        test_data = (None, True, 1, 'frank@brehm-online.com', [addr1])
+
+        LOG.debug("Testing '>'-operator whith a wrong comparition partner.")
+
+        for addr in test_data:
+            LOG.debug("Testing wrong mail address {!r} ...".format(addr))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} > {a2!r}.".format(a1=addr1, a2=addr))
+            with self.assertRaises(TypeError) as cm:
+                if addr1 > addr:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} > {a2!r}.".format(a1=addr2, a2=addr))
+            with self.assertRaises(TypeError) as cm:
+                if addr2 > addr:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} > {a2!r}.".format(a1=addr, a2=addr2))
+            with self.assertRaises(TypeError) as cm:
+                if addr > addr2:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+        test_data = (
+            (MA('frank@brehm-online.com'), MA('frank@brehm-online.com'), False),
+            (MA('frank@brehm-online.com'), MA('Frank@Brehm-online.com'), False),
+            (MA('frank@brehm-online.com'), QMA('frank@brehm-online.com'), False),
+            (QMA('frank@brehm-online.com'), MA('frank@brehm-online.com'), False),
+            (MA('frank@brehm-online.com'), QMA('"Frank" <frank@brehm-online.com>'), False),
+            (QMA('"Frank" <frank@brehm-online.com>'), MA('frank@brehm-online.com'), True),
+            (MA('a@brehm-online.com'), MA('b@brehm-online.com'), False),
+            (MA('b@brehm-online.com'), MA('a@brehm-online.com'), True),
+            (MA('a@brehm-online.com'), QMA('b@brehm-online.com'), False),
+            (MA('b@brehm-online.com'), QMA('a@brehm-online.com'), True),
+            (QMA('a@brehm-online.com'), MA('b@brehm-online.com'), False),
+            (QMA('b@brehm-online.com'), MA('a@brehm-online.com'), True),
+            (QMA('a@brehm-online.com'), QMA('b@brehm-online.com'), False),
+            (QMA('b@brehm-online.com'), QMA('a@brehm-online.com'), True),
+            (MA('a@brehm-online.com'), QMA('"b" <b@brehm-online.com>'), False),
+            (MA('b@brehm-online.com'), QMA('"a" <a@brehm-online.com>'), True),
+            (QMA('"a" <a@brehm-online.com>'), MA('b@brehm-online.com'), False),
+            (QMA('"b" <b@brehm-online.com>'), MA('a@brehm-online.com'), True),
+            (QMA('"a" <uhu@brehm-online.com>'), QMA('"b" <uhu@brehm-online.com>'), False),
+            (QMA('"b" <uhu@brehm-online.com>'), QMA('"a" <uhu@brehm-online.com>'), True),
+            (QMA('"A" <uhu@brehm-online.com>'), QMA('"a" <uhu@brehm-online.com>'), False),
+            (QMA('"a" <uhu@brehm-online.com>'), QMA('"B" <uhu@brehm-online.com>'), False),
+        )
+
+        for test_tuple in test_data:
+            addr1 = test_tuple[0]
+            if isinstance(addr1, MA):
+                addr1.verbose = self.verbose
+            addr2 = test_tuple[1]
+            if isinstance(addr2, MA):
+                addr2.verbose = self.verbose
+            expected = test_tuple[2]
+
+            msg = "Testing {a1!r} > {a2!r}, expected: {ex}."
+            LOG.debug(msg.format(a1=addr1, a2=addr2, ex=expected))
+
+            result = False
+            if addr1 > addr2:
+                result = True
+            if self.verbose > 2:
+                LOG.debug("Got as result: {}.".format(result))
+            self.assertEqual(result, expected)
+
+    # -------------------------------------------------------------------------
+    def test_le(self):
+
+        if self.verbose == 1:
+            print()
+        LOG.info("Testing '<='-operator of MailAddress and QualifiedMailAddress objects.")
+
+        from fb_tools import MailAddress as MA
+        from fb_tools import QualifiedMailAddress as QMA
+
+        addr1 = MA('frank@brehm-online.com', verbose=self.verbose)
+        addr2 = QMA('frank@brehm-online.com', verbose=self.verbose)
+
+        test_data = (None, True, 1, 'frank@brehm-online.com', [addr1])
+
+        LOG.debug("Testing '<='-operator whith a wrong comparition partner.")
+
+        for addr in test_data:
+            LOG.debug("Testing wrong mail address {!r} ...".format(addr))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} <= {a2!r}.".format(a1=addr1, a2=addr))
+            with self.assertRaises(TypeError) as cm:
+                if addr1 <= addr:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} <= {a2!r}.".format(a1=addr2, a2=addr))
+            with self.assertRaises(TypeError) as cm:
+                if addr2 <= addr:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} <= {a2!r}.".format(a1=addr, a2=addr2))
+            with self.assertRaises(TypeError) as cm:
+                if addr <= addr2:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+        test_data = (
+            (MA('frank@brehm-online.com'), MA('frank@brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), MA('Frank@Brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), QMA('frank@brehm-online.com'), True),
+            (QMA('frank@brehm-online.com'), MA('frank@brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), QMA('"Frank" <frank@brehm-online.com>'), True),
+            (QMA('"Frank" <frank@brehm-online.com>'), MA('frank@brehm-online.com'), False),
+            (MA('a@brehm-online.com'), MA('b@brehm-online.com'), True),
+            (MA('b@brehm-online.com'), MA('a@brehm-online.com'), False),
+            (MA('a@brehm-online.com'), QMA('b@brehm-online.com'), True),
+            (MA('b@brehm-online.com'), QMA('a@brehm-online.com'), False),
+            (QMA('a@brehm-online.com'), MA('b@brehm-online.com'), True),
+            (QMA('b@brehm-online.com'), MA('a@brehm-online.com'), False),
+            (QMA('a@brehm-online.com'), QMA('b@brehm-online.com'), True),
+            (QMA('b@brehm-online.com'), QMA('a@brehm-online.com'), False),
+            (MA('a@brehm-online.com'), QMA('"b" <b@brehm-online.com>'), True),
+            (MA('b@brehm-online.com'), QMA('"a" <a@brehm-online.com>'), False),
+            (QMA('"a" <a@brehm-online.com>'), MA('b@brehm-online.com'), True),
+            (QMA('"b" <b@brehm-online.com>'), MA('a@brehm-online.com'), False),
+            (QMA('"a" <uhu@brehm-online.com>'), QMA('"b" <uhu@brehm-online.com>'), True),
+            (QMA('"b" <uhu@brehm-online.com>'), QMA('"a" <uhu@brehm-online.com>'), False),
+            (QMA('"A" <uhu@brehm-online.com>'), QMA('"a" <uhu@brehm-online.com>'), True),
+            (QMA('"a" <uhu@brehm-online.com>'), QMA('"B" <uhu@brehm-online.com>'), True),
+        )
+
+        for test_tuple in test_data:
+            addr1 = test_tuple[0]
+            if isinstance(addr1, MA):
+                addr1.verbose = self.verbose
+            addr2 = test_tuple[1]
+            if isinstance(addr2, MA):
+                addr2.verbose = self.verbose
+            expected = test_tuple[2]
+
+            msg = "Testing {a1!r} <= {a2!r}, expected: {ex}."
+            LOG.debug(msg.format(a1=addr1, a2=addr2, ex=expected))
+
+            result = False
+            if addr1 <= addr2:
+                result = True
+            if self.verbose > 2:
+                LOG.debug("Got as result: {}.".format(result))
+            self.assertEqual(result, expected)
+
+    # -------------------------------------------------------------------------
+    def test_ge(self):
+
+        if self.verbose == 1:
+            print()
+        LOG.info("Testing '>='-operator of MailAddress and QualifiedMailAddress objects.")
+
+        from fb_tools import MailAddress as MA
+        from fb_tools import QualifiedMailAddress as QMA
+
+        addr1 = MA('frank@brehm-online.com', verbose=self.verbose)
+        addr2 = QMA('frank@brehm-online.com', verbose=self.verbose)
+
+        test_data = (None, True, 1, 'frank@brehm-online.com', [addr1])
+
+        LOG.debug("Testing '>='-operator whith a wrong comparition partner.")
+
+        for addr in test_data:
+            LOG.debug("Testing wrong mail address {!r} ...".format(addr))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} >= {a2!r}.".format(a1=addr1, a2=addr))
+            with self.assertRaises(TypeError) as cm:
+                if addr1 >= addr:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} >= {a2!r}.".format(a1=addr2, a2=addr))
+            with self.assertRaises(TypeError) as cm:
+                if addr2 >= addr:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+            if self.verbose > 2:
+                LOG.debug("Testing {a1!r} >= {a2!r}.".format(a1=addr, a2=addr2))
+            with self.assertRaises(TypeError) as cm:
+                if addr >= addr2:
+                    LOG.error("This should not be visible: {!r}".format(addr))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+        test_data = (
+            (MA('frank@brehm-online.com'), MA('frank@brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), MA('Frank@Brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), QMA('frank@brehm-online.com'), True),
+            (QMA('frank@brehm-online.com'), MA('frank@brehm-online.com'), True),
+            (MA('frank@brehm-online.com'), QMA('"Frank" <frank@brehm-online.com>'), False),
+            (QMA('"Frank" <frank@brehm-online.com>'), MA('frank@brehm-online.com'), True),
+            (MA('a@brehm-online.com'), MA('b@brehm-online.com'), False),
+            (MA('b@brehm-online.com'), MA('a@brehm-online.com'), True),
+            (MA('a@brehm-online.com'), QMA('b@brehm-online.com'), False),
+            (MA('b@brehm-online.com'), QMA('a@brehm-online.com'), True),
+            (QMA('a@brehm-online.com'), MA('b@brehm-online.com'), False),
+            (QMA('b@brehm-online.com'), MA('a@brehm-online.com'), True),
+            (QMA('a@brehm-online.com'), QMA('b@brehm-online.com'), False),
+            (QMA('b@brehm-online.com'), QMA('a@brehm-online.com'), True),
+            (MA('a@brehm-online.com'), QMA('"b" <b@brehm-online.com>'), False),
+            (MA('b@brehm-online.com'), QMA('"a" <a@brehm-online.com>'), True),
+            (QMA('"a" <a@brehm-online.com>'), MA('b@brehm-online.com'), False),
+            (QMA('"b" <b@brehm-online.com>'), MA('a@brehm-online.com'), True),
+            (QMA('"a" <uhu@brehm-online.com>'), QMA('"b" <uhu@brehm-online.com>'), False),
+            (QMA('"b" <uhu@brehm-online.com>'), QMA('"a" <uhu@brehm-online.com>'), True),
+            (QMA('"A" <uhu@brehm-online.com>'), QMA('"a" <uhu@brehm-online.com>'), False),
+            (QMA('"a" <uhu@brehm-online.com>'), QMA('"B" <uhu@brehm-online.com>'), False),
+        )
+
+        for test_tuple in test_data:
+            addr1 = test_tuple[0]
+            if isinstance(addr1, MA):
+                addr1.verbose = self.verbose
+            addr2 = test_tuple[1]
+            if isinstance(addr2, MA):
+                addr2.verbose = self.verbose
+            expected = test_tuple[2]
+
+            msg = "Testing {a1!r} >= {a2!r}, expected: {ex}."
+            LOG.debug(msg.format(a1=addr1, a2=addr2, ex=expected))
+
+            result = False
+            if addr1 >= addr2:
+                result = True
+            if self.verbose > 2:
+                LOG.debug("Got as result: {}.".format(result))
             self.assertEqual(result, expected)
 
 
@@ -719,6 +996,9 @@ if __name__ == '__main__':
     suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
     suite.addTest(TestMailaddress('test_equality', verbose))
     suite.addTest(TestMailaddress('test_lt', verbose))
+    suite.addTest(TestMailaddress('test_gt', verbose))
+    suite.addTest(TestMailaddress('test_le', verbose))
+    suite.addTest(TestMailaddress('test_ge', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
