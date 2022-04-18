@@ -26,7 +26,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.7.5'
+__version__ = '0.7.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -409,6 +409,24 @@ class MailAddress(FbGenericBaseObject):
 
         if self == other:
             return False
+        if self < other:
+            return False
+        return True
+
+    # -------------------------------------------------------------------------
+    def __le__(self, other):
+
+        if self == other:
+            return True
+        if self < other:
+            return True
+        return False
+
+    # -------------------------------------------------------------------------
+    def __ge__(self, other):
+
+        if self == other:
+            return True
         if self < other:
             return False
         return True
