@@ -31,7 +31,7 @@ from .obj import FbGenericBaseObject, FbBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.8.3'
+__version__ = '0.8.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -883,10 +883,24 @@ class MailAddressList(FbBaseObject, MutableSequence):
         return new_list
 
     # -------------------------------------------------------------------------
+    def __add__(self, other):
+
+        if not is_sequence(other):
+            msg = _("Given object {o!r} is not a sequence type, but a {t!r} type instead.")
+            raise TypeError(msg.format(o=other, t=other.__class__.__qualname__))
+
+        result = self.__copy__()
+
+        for addr in other:
+            result.append(addr)
+
+        return result
+
+    # -------------------------------------------------------------------------
     def __iadd__(self, other):
 
         if not is_sequence(other):
-            msg = _("Given obejct {o!r} is not a sequence type, but a {t!r} type instead.")
+            msg = _("Given object {o!r} is not a sequence type, but a {t!r} type instead.")
             raise TypeError(msg.format(o=other, t=other.__class__.__qualname__))
 
         for addr in other:
