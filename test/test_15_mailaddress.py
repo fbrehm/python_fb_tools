@@ -981,6 +981,8 @@ class TestMailaddress(FbToolsTestcase):
 
         saddr1 = 'frank@brehm-online.com'
         qaddr1 = '"Frank Brehm" <frank@brehm-online.com>'
+        saddr2 = 'a@test.com'
+        saddr3 = 'b@test.com'
 
         sma1 = MailAddress(saddr1, verbose=self.verbose)
         qma1 = QualifiedMailAddress(qaddr1, verbose=self.verbose)
@@ -1030,7 +1032,7 @@ class TestMailaddress(FbToolsTestcase):
         self.assertIsInstance(address_list[0], QualifiedMailAddress)
         self.assertIsInstance(address_list[1], QualifiedMailAddress)
 
-        LOG.debug("Testing copying of a MalAddressList.")
+        LOG.debug("Testing copying of a MailAddressList.")
 
         address_list = MailAddressList(verbose=self.verbose, initialized=True, *src)
         copy_list = copy.copy(address_list)
@@ -1052,7 +1054,7 @@ class TestMailaddress(FbToolsTestcase):
         self.assertIsNot(address_list[1], copy_list[1])
         self.assertEqual(address_list[1], copy_list[1])
 
-        LOG.debug("Testing reversing of a MalAddressList.")
+        LOG.debug("Testing reversing of a MailAddressList.")
 
         address_list = MailAddressList(verbose=self.verbose, initialized=True, *src)
         reverse_list = reversed(address_list)
@@ -1061,6 +1063,44 @@ class TestMailaddress(FbToolsTestcase):
         LOG.debug("Reversed MailAddressList as dict:\n{}".format(pp(reverse_list.as_dict())))
         self.assertEqual(address_list[0], reverse_list[1])
         self.assertEqual(address_list[1], reverse_list[0])
+
+        LOG.debug("Testing extending of a MailAddressList.")
+
+        src1 = [saddr1, saddr2]
+        src2 = [saddr3]
+        alist1 = MailAddressList(verbose=self.verbose, initialized=True, *src1)
+        wrong_appenders = (None, 1, 'uhu')
+
+        for appender in wrong_appenders:
+            with self.assertRaises(TypeError) as cm:
+                alist2 = alist1 + appender
+                LOG.debug("Extended MailAddressList %r: {!r}".format(alist2))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+        for appender in wrong_appenders:
+            with self.assertRaises(TypeError) as cm:
+                alist2 = appender + alist1
+                LOG.debug("Extended MailAddressList %r: {!r}".format(alist2))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+        for appender in wrong_appenders:
+            with self.assertRaises(TypeError) as cm:
+                alist1 += appender
+                LOG.debug("Extended MailAddressList %r: {!r}".format(alist1))
+            e = cm.exception
+            LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
+
+        alist_extended = alist1 + src2
+        LOG.debug("Extended MailAddressList %r: {!r}".format(alist_extended))
+        self.assertEqual(len(alist_extended), 3)
+
+        alist2 = MailAddressList(verbose=self.verbose, initialized=True, *src2)
+
+        alist_extended = alist1 + alist2
+        LOG.debug("Extended MailAddressList %r: {!r}".format(alist_extended))
+        self.assertEqual(len(alist_extended), 3)
 
 
 # =============================================================================
