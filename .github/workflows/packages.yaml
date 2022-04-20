@@ -301,8 +301,13 @@ jobs:
         env:
           LC_ALL: "en_US.utf8"
         run: |
-          echo "Installing Python ${PY_VERSION_NODOT} ..."
-          yum --assumeyes install tzdata || true
+          if rpm -qa | grep '^tzdata-' >/dev/null ; then
+            echo "Reinstalling tzdata ..."
+            yum --assumeyes reinstall tzdata || true
+          else
+            echo "Installing tzdata ..."
+            yum --assumeyes install tzdata || true
+          fi
           echo
           ls -l --color=always /usr/share/zoneinfo/zone.tab
       - name: Install Python 3
