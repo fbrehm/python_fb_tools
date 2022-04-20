@@ -975,20 +975,92 @@ class TestMailaddress(FbToolsTestcase):
             print()
         LOG.info("Testing of a MailAddressList object.")
 
-        # from fb_tools import MailAddress
-        # from fb_tools import QualifiedMailAddress
+        from fb_tools import MailAddress
+        from fb_tools import QualifiedMailAddress
         from fb_tools import MailAddressList
 
+        saddr1 = 'frank@brehm-online.com'
+        qaddr1 = '"Frank Brehm" <frank@brehm-online.com>'
+
+        sma1 = MailAddress(saddr1, verbose=self.verbose)
+        qma1 = QualifiedMailAddress(qaddr1, verbose=self.verbose)
+
         LOG.debug("Testing init of an empty list.")
-        address_list = MailAddressList(verbose=self.verbose)
+        address_list = MailAddressList(verbose=self.verbose, initialized=True)
         LOG.debug("MailAddressList %r: {!r}".format(address_list))
         LOG.debug("MailAddressList %s: {}".format(address_list))
+        LOG.debug("MailAddressList as dict:\n{}".format(pp(address_list.as_dict())))
+        self.assertEqual(len(address_list), 0)
 
         LOG.debug("Testing init with a non empty list.")
-        src = ['frank@brehm-online.com', '"Frank Brehm" <frank@brehm-online.com>']
-        address_list = MailAddressList(*src, verbose=self.verbose)
+        src = [saddr1, qaddr1]
+
+        address_list = MailAddressList(*src, verbose=self.verbose, initialized=True)
         LOG.debug("MailAddressList %r: {!r}".format(address_list))
         LOG.debug("MailAddressList %s: {}".format(address_list))
+        LOG.debug("MailAddressList as dict:\n{}".format(pp(address_list.as_dict())))
+        self.assertEqual(len(address_list), 2)
+        self.assertIsInstance(address_list[0], MailAddress)
+        self.assertNotIsInstance(address_list[0], QualifiedMailAddress)
+        self.assertIsInstance(address_list[1], QualifiedMailAddress)
+
+        address_list = MailAddressList(
+            *src, verbose=self.verbose, may_simple=False, initialized=True)
+        LOG.debug("MailAddressList %r: {!r}".format(address_list))
+        LOG.debug("MailAddressList %s: {}".format(address_list))
+        self.assertEqual(len(address_list), 2)
+        self.assertIsInstance(address_list[0], QualifiedMailAddress)
+        self.assertIsInstance(address_list[1], QualifiedMailAddress)
+
+        src = [sma1, qma1]
+
+        address_list = MailAddressList(*src, verbose=self.verbose, initialized=True)
+        LOG.debug("MailAddressList %r: {!r}".format(address_list))
+        LOG.debug("MailAddressList %s: {}".format(address_list))
+        self.assertEqual(len(address_list), 2)
+        self.assertIsInstance(address_list[0], MailAddress)
+        self.assertNotIsInstance(address_list[0], QualifiedMailAddress)
+        self.assertIsInstance(address_list[1], QualifiedMailAddress)
+
+        address_list = MailAddressList(
+            *src, verbose=self.verbose, may_simple=False, initialized=True)
+        LOG.debug("MailAddressList %r: {!r}".format(address_list))
+        LOG.debug("MailAddressList %s: {}".format(address_list))
+        self.assertEqual(len(address_list), 2)
+        self.assertIsInstance(address_list[0], QualifiedMailAddress)
+        self.assertIsInstance(address_list[1], QualifiedMailAddress)
+
+        LOG.debug("Testing copying of a MalAddressList.")
+
+        address_list = MailAddressList(verbose=self.verbose, initialized=True, *src)
+        copy_list = copy.copy(address_list)
+        LOG.debug("Copied MailAddressList %r: {!r}".format(copy_list))
+        LOG.debug("Copied MailAddressList %s: {}".format(copy_list))
+        self.assertEqual(len(copy_list), 2)
+        self.assertIsInstance(copy_list[0], MailAddress)
+        self.assertNotIsInstance(copy_list[0], QualifiedMailAddress)
+        self.assertIsInstance(copy_list[1], QualifiedMailAddress)
+        self.assertIsNot(address_list, copy_list)
+        self.assertEqual(address_list.appname, copy_list.appname)
+        self.assertEqual(address_list.verbose, copy_list.verbose)
+        self.assertEqual(address_list.base_dir, copy_list.base_dir)
+        self.assertEqual(address_list.empty_ok, copy_list.empty_ok)
+        self.assertEqual(address_list.may_simple, copy_list.may_simple)
+        self.assertEqual(address_list.initialized, copy_list.initialized)
+        self.assertIsNot(address_list[0], copy_list[0])
+        self.assertEqual(address_list[0], copy_list[0])
+        self.assertIsNot(address_list[1], copy_list[1])
+        self.assertEqual(address_list[1], copy_list[1])
+
+        LOG.debug("Testing reversing of a MalAddressList.")
+
+        address_list = MailAddressList(verbose=self.verbose, initialized=True, *src)
+        reverse_list = reversed(address_list)
+        LOG.debug("Reversed MailAddressList %r: {!r}".format(reverse_list))
+        LOG.debug("Reversed MailAddressList %s: {}".format(reverse_list))
+        LOG.debug("Reversed MailAddressList as dict:\n{}".format(pp(reverse_list.as_dict())))
+        self.assertEqual(address_list[0], reverse_list[1])
+        self.assertEqual(address_list[1], reverse_list[0])
 
 
 # =============================================================================
