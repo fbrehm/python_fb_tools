@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.9.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-04-12 15:56+0200\n"
-"PO-Revision-Date: 2022-04-10 09:50+0100\n"
+"POT-Creation-Date: 2022-04-20 12:42+0200\n"
+"PO-Revision-Date: 2022-04-20 12:45+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
 "Language-Team: en_US <frank@brehm-online.com>\n"
@@ -1307,70 +1307,84 @@ msgstr ""
 msgid "Completed process"
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:64 lib/fb_tools/mailaddress.py:450
+#: lib/fb_tools/mailaddress.py:69 lib/fb_tools/mailaddress.py:473
 msgid "Empty address."
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:73 lib/fb_tools/mailaddress.py:459
+#: lib/fb_tools/mailaddress.py:78 lib/fb_tools/mailaddress.py:482
 msgid "Wrong type."
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:83 lib/fb_tools/mailaddress.py:477 lib/fb_tools/mailaddress.py:517
-#: lib/fb_tools/mailaddress.py:540
+#: lib/fb_tools/mailaddress.py:88 lib/fb_tools/mailaddress.py:500 lib/fb_tools/mailaddress.py:540
+#: lib/fb_tools/mailaddress.py:563
 msgid "Invalid address."
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:101 lib/fb_tools/mailaddress.py:162
+#: lib/fb_tools/mailaddress.py:106 lib/fb_tools/mailaddress.py:167
 msgid "Given user: {u!r}, given domain: {d!r}."
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:106
+#: lib/fb_tools/mailaddress.py:111
 msgid "Invalid mail address."
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:123 lib/fb_tools/mailaddress.py:138
+#: lib/fb_tools/mailaddress.py:128 lib/fb_tools/mailaddress.py:143
 msgid "Invalid user/mailbox name."
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:145
+#: lib/fb_tools/mailaddress.py:150
 msgid "Invalid domain."
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:199 lib/fb_tools/obj.py:259 lib/fb_tools/obj.py:315
+#: lib/fb_tools/mailaddress.py:204 lib/fb_tools/obj.py:259 lib/fb_tools/obj.py:315
 msgid "Wrong verbose level {!r}, must be >= 0"
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:293 lib/fb_tools/mailaddress.py:642
+#: lib/fb_tools/mailaddress.py:298 lib/fb_tools/mailaddress.py:665
 #, fuzzy
 msgid "Checking equality {self!r} with {other!r} ..."
 msgstr "Comparing {self!r} with {other!r} …"
 
-#: lib/fb_tools/mailaddress.py:349 lib/fb_tools/mailaddress.py:666
+#: lib/fb_tools/mailaddress.py:354 lib/fb_tools/mailaddress.py:689
 msgid "Object {o!r} for comparing is not a {c} object."
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:354 lib/fb_tools/mailaddress.py:671
+#: lib/fb_tools/mailaddress.py:359 lib/fb_tools/mailaddress.py:694
 msgid "Comparing {self!r} with {other!r} ..."
 msgstr "Comparing {self!r} with {other!r} …"
 
-#: lib/fb_tools/mailaddress.py:467
+#: lib/fb_tools/mailaddress.py:490
 msgid "Evaluating address {!r} ..."
 msgstr "Evaluating address {!r} …"
 
-#: lib/fb_tools/mailaddress.py:468
+#: lib/fb_tools/mailaddress.py:491
 msgid "Search pattern simple: {}"
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:473
+#: lib/fb_tools/mailaddress.py:496
 msgid "Search pattern full: {}"
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:497
+#: lib/fb_tools/mailaddress.py:520
 msgid "Parameters {lst} may not be given, if parameter {a!r} was given."
 msgstr ""
 
-#: lib/fb_tools/mailaddress.py:508
+#: lib/fb_tools/mailaddress.py:531
 msgid "Invalid full user name."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:889 lib/fb_tools/mailaddress.py:903
+msgid "Given object {o!r} is not a sequence type, but a {t!r} type instead."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:918 lib/fb_tools/vsphere/controller.py:358
+#: lib/fb_tools/vsphere/disk.py:470 lib/fb_tools/vsphere/ether.py:547
+#: lib/fb_tools/vsphere/host_port_group.py:309 lib/fb_tools/vsphere/vm.py:655
+msgid "{m} takes at most {max} arguments ({n} given)."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:958
+msgid "Mail address {} is not in address list."
 msgstr ""
 
 #: lib/fb_tools/multi_config.py:98
@@ -1774,17 +1788,11 @@ msgstr ""
 msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
 msgstr ""
 
-#: lib/fb_tools/vsphere/controller.py:358 lib/fb_tools/vsphere/disk.py:470
-#: lib/fb_tools/vsphere/ether.py:547 lib/fb_tools/vsphere/host_port_group.py:309
-#: lib/fb_tools/vsphere/vm.py:655
-msgid "{m} takes at most {max} arguments ({n} given)."
-msgstr ""
-
 #: lib/fb_tools/vsphere/controller.py:397
 msgid "Controller is not in controller list."
 msgstr ""
 
-#: lib/fb_tools/vsphere/disk.py:509
+#: lib/fb_tools/vsphere/disk.py:510
 msgid "Disk is not in disk list."
 msgstr ""
 

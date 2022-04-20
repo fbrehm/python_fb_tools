@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 1.9.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-04-12 15:56+0200\n"
-"PO-Revision-Date: 2022-04-10 09:55+0100\n"
+"POT-Creation-Date: 2022-04-20 12:42+0200\n"
+"PO-Revision-Date: 2022-04-20 12:50+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <frank@brehm-online.com>\n"
@@ -261,7 +261,7 @@ msgstr "Konnte {ex} nicht mit {i!r} updaten: {m}"
 
 #: lib/fb_tools/collections.py:190
 msgid "Parameter {p!r} is not a sequence type, but a {c!r} object instead."
-msgstr "DerParameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Typ {c!r}."
+msgstr "Der Parameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Typ {c!r}."
 
 #: lib/fb_tools/collections.py:999
 msgid "The method {met}() expected at most {max} arguments, got {got}."
@@ -1345,70 +1345,84 @@ msgstr "Der Parameter {t!r} muss ein {e} ein, statt dessen wurde {v!r} übergebe
 msgid "Completed process"
 msgstr "Fertiggestellter Prozess"
 
-#: lib/fb_tools/mailaddress.py:64 lib/fb_tools/mailaddress.py:450
+#: lib/fb_tools/mailaddress.py:69 lib/fb_tools/mailaddress.py:473
 msgid "Empty address."
 msgstr "Leere Adresse."
 
-#: lib/fb_tools/mailaddress.py:73 lib/fb_tools/mailaddress.py:459
+#: lib/fb_tools/mailaddress.py:78 lib/fb_tools/mailaddress.py:482
 msgid "Wrong type."
 msgstr "Falscher Typ."
 
-#: lib/fb_tools/mailaddress.py:83 lib/fb_tools/mailaddress.py:477 lib/fb_tools/mailaddress.py:517
-#: lib/fb_tools/mailaddress.py:540
+#: lib/fb_tools/mailaddress.py:88 lib/fb_tools/mailaddress.py:500 lib/fb_tools/mailaddress.py:540
+#: lib/fb_tools/mailaddress.py:563
 msgid "Invalid address."
 msgstr "Ungültige Adresse."
 
-#: lib/fb_tools/mailaddress.py:101 lib/fb_tools/mailaddress.py:162
+#: lib/fb_tools/mailaddress.py:106 lib/fb_tools/mailaddress.py:167
 msgid "Given user: {u!r}, given domain: {d!r}."
 msgstr "Gegebener Nutzer: {u!r}, gegebene Domäne: {d!r}."
 
-#: lib/fb_tools/mailaddress.py:106
+#: lib/fb_tools/mailaddress.py:111
 msgid "Invalid mail address."
 msgstr "Ungültige Mailadresse."
 
-#: lib/fb_tools/mailaddress.py:123 lib/fb_tools/mailaddress.py:138
+#: lib/fb_tools/mailaddress.py:128 lib/fb_tools/mailaddress.py:143
 msgid "Invalid user/mailbox name."
 msgstr "Ungültiger Nutzer- bzw. Postfachname."
 
-#: lib/fb_tools/mailaddress.py:145
+#: lib/fb_tools/mailaddress.py:150
 msgid "Invalid domain."
 msgstr "Ungültige Domäne."
 
-#: lib/fb_tools/mailaddress.py:199 lib/fb_tools/obj.py:259 lib/fb_tools/obj.py:315
+#: lib/fb_tools/mailaddress.py:204 lib/fb_tools/obj.py:259 lib/fb_tools/obj.py:315
 msgid "Wrong verbose level {!r}, must be >= 0"
 msgstr "Falsches Ausführlichkeits-Niveau, muss größer als oder gleich Null sein"
 
-#: lib/fb_tools/mailaddress.py:293 lib/fb_tools/mailaddress.py:642
+#: lib/fb_tools/mailaddress.py:298 lib/fb_tools/mailaddress.py:665
 msgid "Checking equality {self!r} with {other!r} ..."
 msgstr "Vergleiche Gleichheit von {self!r} mit {other!r} …"
 
-#: lib/fb_tools/mailaddress.py:349 lib/fb_tools/mailaddress.py:666
+#: lib/fb_tools/mailaddress.py:354 lib/fb_tools/mailaddress.py:689
 msgid "Object {o!r} for comparing is not a {c} object."
 msgstr "Das Vergleichsobjekt {o!r} ist kein {c}-Objekt."
 
-#: lib/fb_tools/mailaddress.py:354 lib/fb_tools/mailaddress.py:671
+#: lib/fb_tools/mailaddress.py:359 lib/fb_tools/mailaddress.py:694
 msgid "Comparing {self!r} with {other!r} ..."
 msgstr "Vergleiche {self!r} mit {other!r} …"
 
-#: lib/fb_tools/mailaddress.py:467
+#: lib/fb_tools/mailaddress.py:490
 msgid "Evaluating address {!r} ..."
 msgstr "Untersuche Adresse {!r} …"
 
-#: lib/fb_tools/mailaddress.py:468
+#: lib/fb_tools/mailaddress.py:491
 msgid "Search pattern simple: {}"
 msgstr "Einfaches Suchmuster: {}"
 
-#: lib/fb_tools/mailaddress.py:473
+#: lib/fb_tools/mailaddress.py:496
 msgid "Search pattern full: {}"
 msgstr "Vollständiges Suchmuster: {}"
 
-#: lib/fb_tools/mailaddress.py:497
+#: lib/fb_tools/mailaddress.py:520
 msgid "Parameters {lst} may not be given, if parameter {a!r} was given."
 msgstr "Die Parameter {lst} dürfen nicht übergeben werden, wenn der Parameter {a!r} angegeben wurde."
 
-#: lib/fb_tools/mailaddress.py:508
+#: lib/fb_tools/mailaddress.py:531
 msgid "Invalid full user name."
 msgstr "Ungültiger vollständiger Nutzername."
+
+#: lib/fb_tools/mailaddress.py:889 lib/fb_tools/mailaddress.py:903
+msgid "Given object {o!r} is not a sequence type, but a {t!r} type instead."
+msgstr "Das übergebene Objekt {o!r} ist kein sequentieller Typ, aber statt dessen vom Typ {t!r}."
+
+#: lib/fb_tools/mailaddress.py:918 lib/fb_tools/vsphere/controller.py:358
+#: lib/fb_tools/vsphere/disk.py:470 lib/fb_tools/vsphere/ether.py:547
+#: lib/fb_tools/vsphere/host_port_group.py:309 lib/fb_tools/vsphere/vm.py:655
+msgid "{m} takes at most {max} arguments ({n} given)."
+msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
+
+#: lib/fb_tools/mailaddress.py:958
+msgid "Mail address {} is not in address list."
+msgstr "Die Mailadresse {} ist nicht in der Adressliste."
 
 #: lib/fb_tools/multi_config.py:98
 msgid "Config loader method {!r} was not found."
@@ -1817,17 +1831,11 @@ msgstr "Überprüfe Klasse für Controller: {!r}"
 msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
 msgstr "Ungültiger Typ {t!r} als ein Eintrag von {c}, nor {o}-Objekte sind erlaubt."
 
-#: lib/fb_tools/vsphere/controller.py:358 lib/fb_tools/vsphere/disk.py:470
-#: lib/fb_tools/vsphere/ether.py:547 lib/fb_tools/vsphere/host_port_group.py:309
-#: lib/fb_tools/vsphere/vm.py:655
-msgid "{m} takes at most {max} arguments ({n} given)."
-msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
-
 #: lib/fb_tools/vsphere/controller.py:397
 msgid "Controller is not in controller list."
 msgstr "Der Controller ist nicht in der Controller-Liste."
 
-#: lib/fb_tools/vsphere/disk.py:509
+#: lib/fb_tools/vsphere/disk.py:510
 msgid "Disk is not in disk list."
 msgstr "Die Platte ist nicht in der Liste der Disks."
 
