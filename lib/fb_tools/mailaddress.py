@@ -31,7 +31,7 @@ from .obj import FbGenericBaseObject, FbBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.8.2'
+__version__ = '0.8.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -829,6 +829,17 @@ class MailAddressList(FbBaseObject, MutableSequence):
         """Converting given address into a usable MailAddress or QualifiedMailAddress object."""
 
         if isinstance(address, MailAddress):
+            if self.verbose > 5:
+                LOG.debug("Trying to use address {!r} ...".format(address))
+            if not self.may_simple and not isinstance(address, QualifiedMailAddress):
+                addr = QualifiedMailAddress(
+                    user=address.user, domain=address.domain,
+                    verbose=self.verbose, empty_ok=self.empty_ok)
+                if self.verbose > 4:
+                    LOG.debug("Using qualified address {!r} ...".format(addr))
+                return addr
+            if self.verbose > 4:
+                LOG.debug("Using address {!r} ...".format(address))
             return address
 
         addr = QualifiedMailAddress(address, verbose=self.verbose, empty_ok=self.empty_ok)
@@ -844,6 +855,9 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def __copy__(self):
+
+        if self.verbose > 1:
+            LOG.debug("Copying myself ...")
 
         new_list = self.__class__(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
