@@ -1,3 +1,19 @@
+fb-tools (1.9.3) all; urgency=medium
+
+  * Adding exception classes BaseMailAddressError,
+    GeneralMailAddressError and EmptyMailAddressError to module
+    fb_tools.errors.
+  * Adding module fb_tools.mailaddress for classes MailAddress,
+    QualifiedMailAddress and MailAddressList
+  * Changing .github/workflows/packages.yaml for ignoring feature*
+    branches and fixing job deploy_to_pypi
+  * Renaming test scripts for ensuring correct order of executing test
+    scripts
+  * Adding script test/test_15_mailaddress.py for testing all classes in
+    module fb_tools.mailaddress
+
+ -- Frank Brehm <frank@brehm-online.com>  Wed, 20 Apr 2022 12:58:19 +0200
+
 fb-tools (1.9.2) all; urgency=medium
 
   * Adding lib/fb_tools/pidfile.py for class PidFile.

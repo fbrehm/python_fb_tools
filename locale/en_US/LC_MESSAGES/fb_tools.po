@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.9.1\n"
+"Project-Id-Version: fb_tools 1.9.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-03-31 18:27+0200\n"
-"PO-Revision-Date: 2022-03-31 18:30+0100\n"
+"POT-Creation-Date: 2022-04-20 12:42+0200\n"
+"PO-Revision-Date: 2022-04-20 12:45+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
 "Language-Team: en_US <frank@brehm-online.com>\n"
@@ -603,58 +603,62 @@ msgstr ""
 msgid "Updating DNS records to IPv{p} address {a!r} ..."
 msgstr "Updating DNS records to IPv{p} address {a!r} …"
 
-#: lib/fb_tools/errors.py:44
+#: lib/fb_tools/errors.py:50
+msgid "Empty mail address."
+msgstr ""
+
+#: lib/fb_tools/errors.py:66
 msgid "Wrong mail address {a!r} ({c})"
 msgstr ""
 
-#: lib/fb_tools/errors.py:113
+#: lib/fb_tools/errors.py:135
 msgid "Process with PID {pid} got signal {signal}."
 msgstr ""
 
-#: lib/fb_tools/errors.py:152 lib/fb_tools/vsphere/errors.py:139
+#: lib/fb_tools/errors.py:174 lib/fb_tools/vsphere/errors.py:139
 msgid "The network {!r} is not existing."
 msgstr ""
 
-#: lib/fb_tools/errors.py:171 lib/fb_tools/vsphere/errors.py:158
+#: lib/fb_tools/errors.py:193 lib/fb_tools/vsphere/errors.py:158
 msgid "Could not connect to the vSphere host {h}:{p} as user {u!r}."
 msgstr ""
 
-#: lib/fb_tools/errors.py:192
+#: lib/fb_tools/errors.py:214
 msgid "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB available space."
 msgstr ""
 
-#: lib/fb_tools/errors.py:230
+#: lib/fb_tools/errors.py:252
 msgid "Method {func}() has to be overridden in class {cls!r}."
 msgstr ""
 
-#: lib/fb_tools/errors.py:262
+#: lib/fb_tools/errors.py:284
 msgid " (timeout after {:0.1f} secs)"
 msgstr ""
 
-#: lib/fb_tools/errors.py:289
+#: lib/fb_tools/errors.py:311
 msgid "Timeout error on reading"
 msgstr ""
 
-#: lib/fb_tools/errors.py:311
+#: lib/fb_tools/errors.py:333
 msgid "Timeout error on writing"
 msgstr ""
 
-#: lib/fb_tools/errors.py:334
+#: lib/fb_tools/errors.py:356
 msgid "Unknown OS command."
 msgstr ""
 
-#: lib/fb_tools/errors.py:341
+#: lib/fb_tools/errors.py:363
 msgid "Empty command list given."
 msgstr ""
 
-#: lib/fb_tools/errors.py:352
+#: lib/fb_tools/errors.py:374
 #, fuzzy
 msgid "Could not found OS command:"
 msgid_plural "Could not found OS commands:"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/errors.py:385
+#: lib/fb_tools/errors.py:407
 msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
 msgstr ""
 
@@ -1303,6 +1307,86 @@ msgstr ""
 msgid "Completed process"
 msgstr ""
 
+#: lib/fb_tools/mailaddress.py:69 lib/fb_tools/mailaddress.py:473
+msgid "Empty address."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:78 lib/fb_tools/mailaddress.py:482
+msgid "Wrong type."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:88 lib/fb_tools/mailaddress.py:500 lib/fb_tools/mailaddress.py:540
+#: lib/fb_tools/mailaddress.py:563
+msgid "Invalid address."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:106 lib/fb_tools/mailaddress.py:167
+msgid "Given user: {u!r}, given domain: {d!r}."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:111
+msgid "Invalid mail address."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:128 lib/fb_tools/mailaddress.py:143
+msgid "Invalid user/mailbox name."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:150
+msgid "Invalid domain."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:204 lib/fb_tools/obj.py:259 lib/fb_tools/obj.py:315
+msgid "Wrong verbose level {!r}, must be >= 0"
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:298 lib/fb_tools/mailaddress.py:665
+#, fuzzy
+msgid "Checking equality {self!r} with {other!r} ..."
+msgstr "Comparing {self!r} with {other!r} …"
+
+#: lib/fb_tools/mailaddress.py:354 lib/fb_tools/mailaddress.py:689
+msgid "Object {o!r} for comparing is not a {c} object."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:359 lib/fb_tools/mailaddress.py:694
+msgid "Comparing {self!r} with {other!r} ..."
+msgstr "Comparing {self!r} with {other!r} …"
+
+#: lib/fb_tools/mailaddress.py:490
+msgid "Evaluating address {!r} ..."
+msgstr "Evaluating address {!r} …"
+
+#: lib/fb_tools/mailaddress.py:491
+msgid "Search pattern simple: {}"
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:496
+msgid "Search pattern full: {}"
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:520
+msgid "Parameters {lst} may not be given, if parameter {a!r} was given."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:531
+msgid "Invalid full user name."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:889 lib/fb_tools/mailaddress.py:903
+msgid "Given object {o!r} is not a sequence type, but a {t!r} type instead."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:918 lib/fb_tools/vsphere/controller.py:358
+#: lib/fb_tools/vsphere/disk.py:470 lib/fb_tools/vsphere/ether.py:547
+#: lib/fb_tools/vsphere/host_port_group.py:309 lib/fb_tools/vsphere/vm.py:655
+msgid "{m} takes at most {max} arguments ({n} given)."
+msgstr ""
+
+#: lib/fb_tools/mailaddress.py:958
+msgid "Mail address {} is not in address list."
+msgstr ""
+
 #: lib/fb_tools/multi_config.py:98
 msgid "Config loader method {!r} was not found."
 msgstr ""
@@ -1480,10 +1564,6 @@ msgstr ""
 msgid "Exception happened"
 msgstr ""
 
-#: lib/fb_tools/obj.py:259 lib/fb_tools/obj.py:315
-msgid "Wrong verbose level {!r}, must be >= 0"
-msgstr ""
-
 #: lib/fb_tools/obj.py:339
 msgid "Base directory {!r} does not exists."
 msgstr ""
@@ -1492,115 +1572,115 @@ msgstr ""
 msgid "Path for base directory {!r} is not a directory."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:72
+#: lib/fb_tools/pidfile.py:74
 msgid "Invalid pidfile {f!r} given: {r}"
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:75
+#: lib/fb_tools/pidfile.py:77
 msgid "Invalid pidfile {!r} given."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:104
+#: lib/fb_tools/pidfile.py:106
 msgid "The pidfile {f!r} is currently in use by the application with the PID {p}."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:174
+#: lib/fb_tools/pidfile.py:176
 msgid "No filename given on initializing {} object."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:292
+#: lib/fb_tools/pidfile.py:294
 msgid "Pidfile {!r} doesn't exists, not removing."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:297
+#: lib/fb_tools/pidfile.py:300
 msgid "Auto removing disabled, don't deleting {!r}."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:301
+#: lib/fb_tools/pidfile.py:305
 msgid "Removing pidfile {!r} ..."
 msgstr "Removing lockfile {!r} …"
 
-#: lib/fb_tools/pidfile.py:304 lib/fb_tools/pidfile.py:338
+#: lib/fb_tools/pidfile.py:308 lib/fb_tools/pidfile.py:342
 msgid "Just kidding ..."
 msgstr "Just kidding …"
 
-#: lib/fb_tools/pidfile.py:309
+#: lib/fb_tools/pidfile.py:313
 msgid "Could not delete pidfile {f!r}: {e}"
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:328
+#: lib/fb_tools/pidfile.py:332
 msgid "Invalid PID {p} for creating pidfile {f!r} given."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:336
+#: lib/fb_tools/pidfile.py:340
 msgid "Deleting pidfile {!r} ..."
 msgstr "Deleting pidfile {!r}  …"
 
-#: lib/fb_tools/pidfile.py:346
+#: lib/fb_tools/pidfile.py:350
 msgid "Trying opening {!r} exclusive ..."
 msgstr "Trying opening {!r} exclusive …"
 
-#: lib/fb_tools/pidfile.py:349 lib/fb_tools/pidfile.py:401
+#: lib/fb_tools/pidfile.py:353 lib/fb_tools/pidfile.py:406
 msgid "Simulation mode - don't real writing in {!r}."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:359
+#: lib/fb_tools/pidfile.py:364
 msgid "Error on creating pidfile {f!r}: {e}"
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:363 lib/fb_tools/pidfile.py:413
+#: lib/fb_tools/pidfile.py:368 lib/fb_tools/pidfile.py:412
 msgid "Writing {p} into {f!r} ..."
 msgstr "Writing {p} into {f!r} …"
 
-#: lib/fb_tools/pidfile.py:385
+#: lib/fb_tools/pidfile.py:390
 msgid "Calling {} on a not self created pidfile."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:398
+#: lib/fb_tools/pidfile.py:403
 msgid "Trying opening {!r} for recreate ..."
 msgstr "Trying opening {!r} for recreate …"
 
-#: lib/fb_tools/pidfile.py:409
+#: lib/fb_tools/pidfile.py:418
 msgid "Error on recreating pidfile {f!r}: {e}"
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:442
+#: lib/fb_tools/pidfile.py:444
 msgid "Pidfile parent directory {!r} doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:446
+#: lib/fb_tools/pidfile.py:448
 msgid "Pidfile parent directory {!r} is not a directory."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:450
+#: lib/fb_tools/pidfile.py:452
 msgid "No write access to pidfile parent directory {!r}."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:457
+#: lib/fb_tools/pidfile.py:459
 msgid "It is not a regular file."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:474
+#: lib/fb_tools/pidfile.py:476
 msgid "Reading content of pidfile {!r} ..."
 msgstr "Reading content of pidfile {!r} …"
 
-#: lib/fb_tools/pidfile.py:499
+#: lib/fb_tools/pidfile.py:497
 msgid "No useful information found in pidfile {f!r}: {z!r}"
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:504
+#: lib/fb_tools/pidfile.py:502
 msgid "Trying check for process with PID {} ..."
 msgstr "Trying check for process with PID {} …"
 
-#: lib/fb_tools/pidfile.py:510
+#: lib/fb_tools/pidfile.py:508
 msgid "Process with PID {} anonymous died."
 msgstr ""
 
-#: lib/fb_tools/pidfile.py:514
+#: lib/fb_tools/pidfile.py:512
 msgid "No permission to signal the process {} ..."
 msgstr "No permission to signal the process {} …"
 
-#: lib/fb_tools/pidfile.py:518
+#: lib/fb_tools/pidfile.py:516
 msgid "Got a {c}: {e}."
 msgstr ""
 
@@ -1708,17 +1788,11 @@ msgstr ""
 msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
 msgstr ""
 
-#: lib/fb_tools/vsphere/controller.py:358 lib/fb_tools/vsphere/disk.py:470
-#: lib/fb_tools/vsphere/ether.py:547 lib/fb_tools/vsphere/host_port_group.py:309
-#: lib/fb_tools/vsphere/vm.py:655
-msgid "{m} takes at most {max} arguments ({n} given)."
-msgstr ""
-
 #: lib/fb_tools/vsphere/controller.py:397
 msgid "Controller is not in controller list."
 msgstr ""
 
-#: lib/fb_tools/vsphere/disk.py:509
+#: lib/fb_tools/vsphere/disk.py:510
 msgid "Disk is not in disk list."
 msgstr ""
 
