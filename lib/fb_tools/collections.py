@@ -188,7 +188,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
                 ok = True
             if not ok:
                 msg = _("Parameter {p!r} is not a sequence type, but a {c!r} object instead.")
-                msg = msg.format(p='iterable', c=iterable.__class__.__name__)
+                msg = msg.format(p='iterable', c=iterable.__class__.__qualname__)
                 raise TypeError(msg)
 
             for item in iterable:

@@ -13,7 +13,7 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '1.2.7'
+__version__ = '1.2.9'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -29,7 +29,29 @@ class FbError(Exception):
 
 
 # =============================================================================
-class InvalidMailAddressError(FbError):
+class BaseMailAddressError(FbError, ValueError):
+    """Base Exception class for Mail address errors."""
+    pass
+
+
+# =============================================================================
+class GeneralMailAddressError(BaseMailAddressError):
+    """Class for a exception bcause of general mail address errors."""
+    pass
+
+
+# =============================================================================
+class EmptyMailAddressError(BaseMailAddressError):
+    """Class for a exception in case of an empty mail address."""
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+
+        return _("Empty mail address.")
+
+
+# =============================================================================
+class InvalidMailAddressError(BaseMailAddressError):
     """Class for a exception in case of a malformed mail address."""
 
     # -------------------------------------------------------------------------
@@ -202,7 +224,7 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
     """
 
     # -------------------------------------------------------------------------
-    def __init__(self, function_name, class_name):
+    def __init__(self, function_name, class_name=None):
         """
         Constructor.
 
