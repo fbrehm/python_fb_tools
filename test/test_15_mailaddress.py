@@ -984,6 +984,12 @@ class TestMailaddress(FbToolsTestcase):
         LOG.debug("MailAddressList %r: {!r}".format(address_list))
         LOG.debug("MailAddressList %s: {}".format(address_list))
 
+        LOG.debug("Testing init with a non empty list.")
+        src = ['frank@brehm-online.com', '"Frank Brehm" <frank@brehm-online.com>']
+        address_list = MailAddressList(*src, verbose=self.verbose)
+        LOG.debug("MailAddressList %r: {!r}".format(address_list))
+        LOG.debug("MailAddressList %s: {}".format(address_list))
+
 
 # =============================================================================
 if __name__ == '__main__':

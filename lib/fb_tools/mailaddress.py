@@ -11,6 +11,7 @@ from __future__ import absolute_import
 # Standard modules
 import logging
 import re
+import copy
 
 try:
     from collections.abc import MutableSequence
@@ -22,16 +23,15 @@ import six
 
 # Own modules
 from .errors import InvalidMailAddressError
-from .errors import FunctionNotImplementedError
 from .errors import EmptyMailAddressError
 
-from .common import to_str, to_bool
+from .common import to_str, to_bool, is_sequence, pp
 
 from .obj import FbGenericBaseObject, FbBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.8.1'
+__version__ = '0.8.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -722,8 +722,8 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None, empty_ok=False,
-            may_simple=True, initialized=None, *addresses):
+        self, *addresses, appname=None, verbose=0, version=__version__, base_dir=None,
+            empty_ok=False, may_simple=True, initialized=None):
 
         self._addresses = []
         self._empty_ok = False
@@ -787,6 +787,25 @@ class MailAddressList(FbBaseObject, MutableSequence):
         return res
 
     # -------------------------------------------------------------------------
+    def as_list(self, as_str=False):
+        """Typecasting into a list object."""
+
+        res = []
+        for address in self:
+            if as_str:
+                res.append(str(address))
+            else:
+                res.append(copy.copy(address))
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """Typecasting into a str object."""
+
+        return pp(self.as_list(True))
+
+    # -------------------------------------------------------------------------
     def __repr__(self):
         """Typecasting into a string for reproduction."""
 
@@ -826,7 +845,38 @@ class MailAddressList(FbBaseObject, MutableSequence):
     # -------------------------------------------------------------------------
     def __copy__(self):
 
-        raise FunctionNotImplementedError('__copy__', 'MailAddressList')
+        new_list = self.__class__(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            empty_ok=self.empty_ok, may_simple=self.may_simple, initialized=False)
+
+        for addr in self:
+            new_list.append(copy.copy(addr))
+
+        new_list.initialized = self.initialized
+        return new_list
+
+    # -------------------------------------------------------------------------
+    def __reversed__(self):
+
+        new_list = self.__class__(
+            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
+            empty_ok=self.empty_ok, may_simple=self.may_simple, initialized=False)
+
+        for addr in reversed(self._addresses):
+            new_list.append(copy.copy(addr))
+
+        new_list.initialized = self.initialized
+        return new_list
+
+    # -------------------------------------------------------------------------
+    def __iadd__(self, other):
+
+        if not is_sequence(other):
+            msg = _("Given obejct {o!r} is not a sequence type, but a {t!r} type instead.")
+            raise TypeError(msg.format(o=other, t=other.__class__.__qualname__))
+
+        for addr in other:
+            self.append(addr)
 
     # -------------------------------------------------------------------------
     def index(self, address, *args):
@@ -887,8 +937,8 @@ class MailAddressList(FbBaseObject, MutableSequence):
             return False
 
         addr = self._to_address(address)
-        for item in self._addresses:
-            if item == addr:
+        for my_addr in self:
+            if my_addr == addr:
                 return True
 
         return False
@@ -902,8 +952,8 @@ class MailAddressList(FbBaseObject, MutableSequence):
         addr = self._to_address(address)
 
         num = 0
-        for item in self._addresses:
-            if item == addr:
+        for my_addr in self:
+            if my_addr == addr:
                 num += 1
         return num
 
@@ -925,6 +975,12 @@ class MailAddressList(FbBaseObject, MutableSequence):
     def __delitem__(self, key):
 
         del self._addresses[key]
+
+    # -------------------------------------------------------------------------
+    def __iter__(self):
+
+        for addr in self._addresses:
+            yield addr
 
     # -------------------------------------------------------------------------
     def insert(self, index, address):
