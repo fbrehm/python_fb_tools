@@ -296,6 +296,15 @@ jobs:
           echo
           echo "Upgrading all packages"
           ${YUM} --assumeyes upgrade
+      - name: Install TZdata
+        shell: bash
+        env:
+          LC_ALL: "en_US.utf8"
+        run: |
+          echo "Installing Python ${PY_VERSION_NODOT} ..."
+          yum --assumeyes install tzdata || true
+          echo
+          ls -l --color=always /usr/share/zoneinfo/zone.tab
       - name: Install Python 3
         shell: bash
         env:
