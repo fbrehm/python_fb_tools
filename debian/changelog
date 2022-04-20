@@ -1,4 +1,4 @@
-fb-tools (1.9.3) UNRELEASED; urgency=medium
+fb-tools (1.9.3) all; urgency=medium
 
   * Adding exception classes BaseMailAddressError,
     GeneralMailAddressError and EmptyMailAddressError to module
