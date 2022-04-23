@@ -1,3 +1,9 @@
+fb-tools (1.9.4) all; urgency=medium
+
+  * Supporting Ubuntu 22.04 Jammy Jellyfish
+
+ -- Frank Brehm <frank@brehm-online.com>  Sat, 23 Apr 2022 08:37:11 +0200
+
 fb-tools (1.9.3) all; urgency=medium
 
   * Adding exception classes BaseMailAddressError,
