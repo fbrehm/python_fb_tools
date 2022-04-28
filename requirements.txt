@@ -3,6 +3,7 @@ fb_logging
 requests
 six
 pytz
+packaging
 setuptools
 wheel
 Babel
