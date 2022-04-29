@@ -13,7 +13,7 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '1.2.9'
+__version__ = '1.3.0'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -172,48 +172,6 @@ class NetworkNotExistingError(ExpectedHandlerError):
     def __str__(self):
 
         msg = _("The network {!r} is not existing.").format(self.net_name)
-        return msg
-
-
-# =============================================================================
-class CannotConnectVsphereError(ExpectedHandlerError):
-    """Special error class for the case, it cannot connect
-        to the given vSphere server."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, host, port, user):
-
-        self.host = host
-        self.port = port
-        self.user = user
-
-    # -------------------------------------------------------------------------
-    def __str__(self):
-
-        msg = _("Could not connect to the vSphere host {h}:{p} as user {u!r}.").format(
-            h=self.host, p=self.port, u=self.user)
-        return msg
-
-
-# =============================================================================
-class NoDatastoreFoundError(ExpectedHandlerError):
-    """Special error class for the case, that no SAN based data store was with
-        enogh free space was found."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, needed_bytes):
-
-        self.needed_bytes = int(needed_bytes)
-
-    # -------------------------------------------------------------------------
-    def __str__(self):
-
-        mb = float(self.needed_bytes) / 1024.0 / 1024.0
-        gb = mb / 1024.0
-
-        msg = _(
-            "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB "
-            "available space.").format(m=mb, g=gb)
         return msg
 
 
