@@ -50,6 +50,7 @@ yum --assumeyes install \
     python36-pip \
     python36-devel \
     python36-pytz \
+    python36-packaging \
     python36-babel \
     python36-six \
     gnupg2 \

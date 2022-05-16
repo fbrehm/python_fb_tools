@@ -322,7 +322,9 @@ jobs:
           LC_ALL: "en_US.utf8"
         run: |
           echo "Installing Python ${PY_VERSION_NODOT} ..."
+          if [[ "${EL_VERSION}" == "7" ]] ; then PYTHON_PACKAGING="${PYTHON}-packaging" ; else PYTHON_PACKAGING=python3-packaging ; fi
           yum --assumeyes install ${PYTHON} \
+                                  ${PYTHON_PACKAGING} \
                                   ${PYTHON}-setuptools \
                                   ${PYTHON}-pip \
                                   ${PYTHON}-devel \
@@ -381,11 +383,13 @@ jobs:
           cd "${ODIR}"
           echo
           echo "Generating spec file 'fb_logging.spec' ..."
+          if [[ "${EL_VERSION}" == "7" ]] ; then PYTHON_PACKAGING="${PYTHON}-packaging" ; else PYTHON_PACKAGING=python3-packaging ; fi
           cat specs/fb-tools.spec.template | tail -n +3 | \
                               sed -e "s/@@@Version@@@/${PKG_VERSION}/gi" \
                                   -e "s/@@@Release@@@/${PKG_RELEASE}/gi" \
                                   -e "s/@@@py_version_nodot@@@/${PY_VERSION_NODOT}/gi" \
                                   -e "s/@@@py_version_dot@@@/${PY_VERSION_DOT}/gi" \
+                                  -e "s/@@@python_packaging@@@/${PYTHON_PACKAGING}/gi" \
                                   > fb-tools.spec
           if [[ "${EL_VERSION}" -lt "8" ]] ; then
               sed -i '/^Recommends/d' fb-tools.spec

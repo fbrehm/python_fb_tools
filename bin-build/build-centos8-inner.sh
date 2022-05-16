@@ -25,6 +25,7 @@ dnf --assumeyes install \
     python3-debian \
     python36 \
     python38 \
+    python3-packaging \
     python38-setuptools \
     python38-pip \
     python38-devel \
