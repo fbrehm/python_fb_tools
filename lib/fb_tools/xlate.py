@@ -25,13 +25,16 @@ import babel
 import babel.lists
 from babel.support import Translations
 
-from packaging.version import Version
+try:
+    from packaging.version import Version
+except ImportError:
+    from distutils.version import LooseVersion as Version
 
 DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.2.5'
+__version__ = '1.2.6'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
