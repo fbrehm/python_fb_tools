@@ -2,14 +2,14 @@
 host = vcs01.ppbrln.internal
 port = 443
 user = Administrator@vsphere.local
-;password = 
+;password =
 dc = vmcc
 
 [vSphere:test]
 host = test-vcsa01.pixelpark.net
 port = 443
 user = Administrator@vsphere.local
-;password = 
+;password =
 dc = test-vmcc
 
 # vim: filetype=dosini

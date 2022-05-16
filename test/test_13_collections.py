@@ -71,8 +71,9 @@ class TestFbCollections(FbToolsTestcase):
         with self.assertRaises(AttributeError) as cm:
             my_set.add('bla')
         e = cm.exception
-        msg = ("AttributeError raised on trying to add a value to a "
-                "FrozenCIStringSet object: {}").format(e)
+        msg = (
+            "AttributeError raised on trying to add a value to a "
+            "FrozenCIStringSet object: {}").format(e)
         LOG.debug(msg)
 
         correct_iterables = (
@@ -117,12 +118,11 @@ class TestFbCollections(FbToolsTestcase):
             with self.assertRaises(TypeError) as cm:
                 my_set = FrozenCIStringSet(obj)
             e = cm.exception
-            msg = ("TypeError raised on init of a "
-                    "FrozenCIStringSet object: {}").format(e)
+            msg = ("TypeError raised on init of a FrozenCIStringSet object: {}").format(e)
             LOG.debug(msg)
 
         iterables_with_wrong_values = (
-                [None], [1], ['a', 1], [{'uhu': 'banane'}], [tobj], [tobj.uhu])
+            [None], [1], ['a', 1], [{'uhu': 'banane'}], [tobj], [tobj.uhu])
 
         for obj in iterables_with_wrong_values:
 
@@ -131,8 +131,7 @@ class TestFbCollections(FbToolsTestcase):
             with self.assertRaises(WrongItemTypeError) as cm:
                 my_set = FrozenCIStringSet(obj)
             e = cm.exception
-            msg = ("WrongItemTypeError raised on init of a "
-                    "FrozenCIStringSet object: {}").format(e)
+            msg = ("WrongItemTypeError raised on init of a FrozenCIStringSet object: {}").format(e)
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
@@ -172,8 +171,9 @@ class TestFbCollections(FbToolsTestcase):
             value = my_set.real_value(1)
             LOG.debug("Got a value {!r}.".format(value))
         e = cm.exception
-        msg = ("WrongItemTypeError raised on real_value() of a "
-                "FrozenCIStringSet object: {}").format(e)
+        msg = (
+            "WrongItemTypeError raised on real_value() of a "
+            "FrozenCIStringSet object: {}").format(e)
         LOG.debug(msg)
 
         LOG.debug("Testing real_value() with a not existing key.")
@@ -181,8 +181,8 @@ class TestFbCollections(FbToolsTestcase):
             value = my_set.real_value('c')
             LOG.debug("Got a value {!r}.".format(value))
         e = cm.exception
-        msg = ("KeyError raised on real_value() of a "
-                "FrozenCIStringSet object: {}").format(e)
+        msg = (
+            "KeyError raised on real_value() of a FrozenCIStringSet object: {}").format(e)
         LOG.debug(msg)
 
     # -------------------------------------------------------------------------
@@ -355,7 +355,7 @@ class TestFbCollections(FbToolsTestcase):
         LOG.info("Testing operator eq ('==') of a FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
-        from fb_tools.collections import WrongCompareSetClassError
+        from fb_tools.collections import WrongCompareSetClassError          # noqa
 
         my_set = FrozenCIStringSet(['a', 'b'])
 
@@ -394,7 +394,7 @@ class TestFbCollections(FbToolsTestcase):
         LOG.info("Testing operator ne ('!=') of a FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
-        from fb_tools.collections import WrongCompareSetClassError
+        from fb_tools.collections import WrongCompareSetClassError          # noqa
 
         my_set = FrozenCIStringSet(['a', 'b'])
 
@@ -523,7 +523,7 @@ class TestFbCollections(FbToolsTestcase):
 
         LOG.debug("Trying to union with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
-            my_set = set_one | ['a']
+            my_set = set_one | ['a']                                        # noqa
             LOG.debug('bla')
         e = cm.exception
         msg = "WrongCompareSetClassError on a union with a wrong object: {}".format(e)
@@ -544,7 +544,7 @@ class TestFbCollections(FbToolsTestcase):
         LOG.info("Testing operator and ('&', intersection()) of a FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
-        from fb_tools.collections import WrongCompareSetClassError
+        from fb_tools.collections import WrongCompareSetClassError          # noqa
 
         set_one = FrozenCIStringSet(['a', 'B', 'c', 'd', 'E', 'f', 'G'])
         set_two = FrozenCIStringSet(['a', 'b', 'd', 'e', 'h'])
@@ -554,7 +554,7 @@ class TestFbCollections(FbToolsTestcase):
 
         LOG.debug("Trying to intersection with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
-            my_set = set_one & ['a']
+            my_set = set_one & ['a']                                        # noqa
             LOG.debug('bla')
         e = cm.exception
         msg = "WrongCompareSetClassError on a intersection with a wrong object: {}".format(e)
@@ -578,14 +578,14 @@ class TestFbCollections(FbToolsTestcase):
         from fb_tools.collections import WrongCompareSetClassError
 
         set_src = FrozenCIStringSet(['a', 'B', 'c', 'd', 'E', 'f', 'G'])
-        set_one = FrozenCIStringSet(['a', 'd',])
+        set_one = FrozenCIStringSet(['a', 'd', ])
         set_two = FrozenCIStringSet(['e', 'f', 'H'])
 
         set_expected = FrozenCIStringSet(['B', 'c', 'G'])
 
         LOG.debug("Trying to make a difference with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
-            my_set = set_one - ['a']
+            my_set = set_one - ['a']                                        # noqa
             LOG.debug('bla')
         e = cm.exception
         msg = "WrongCompareSetClassError on a difference with a wrong object: {}".format(e)
@@ -603,7 +603,8 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_xor(self):
 
-        LOG.info("Testing operator xor ('^', symmetric_difference()) of a "
+        LOG.info(
+            "Testing operator xor ('^', symmetric_difference()) of a "
             "FrozenCIStringSet object.")
 
         from fb_tools.collections import FrozenCIStringSet
@@ -616,10 +617,12 @@ class TestFbCollections(FbToolsTestcase):
 
         LOG.debug("Trying to make a symmetric difference with a wrong partner ...")
         with self.assertRaises(WrongCompareSetClassError) as cm:
-            my_set = set_one ^ ['a']
+            my_set = set_one ^ ['a']                                        # noqa
             LOG.debug('bla')
         e = cm.exception
-        msg = "WrongCompareSetClassError on a symmetric difference with a wrong object: {}".format(e)
+        msg = (
+            "WrongCompareSetClassError on a symmetric "
+            "difference with a wrong object: {}").format(e)
         LOG.debug(msg)
 
         msg = "Making a symmetric difference of frozen set {one!r} and {two!r}."
@@ -737,12 +740,11 @@ class TestFbCollections(FbToolsTestcase):
             with self.assertRaises(TypeError) as cm:
                 my_set = CIStringSet(obj)
             e = cm.exception
-            msg = ("TypeError raised on init of a "
-                    "CIStringSet object: {}").format(e)
+            msg = ("TypeError raised on init of a CIStringSet object: {}").format(e)
             LOG.debug(msg)
 
         iterables_with_wrong_values = (
-                [None], [1], ['a', 1], [{'uhu': 'banane'}], [tobj], [tobj.uhu])
+            [None], [1], ['a', 1], [{'uhu': 'banane'}], [tobj], [tobj.uhu])
 
         for obj in iterables_with_wrong_values:
 
@@ -751,8 +753,7 @@ class TestFbCollections(FbToolsTestcase):
             with self.assertRaises(WrongItemTypeError) as cm:
                 my_set = CIStringSet(obj)
             e = cm.exception
-            msg = ("WrongItemTypeError raised on init of a "
-                    "CIStringSet object: {}").format(e)
+            msg = ("WrongItemTypeError raised on init of a CIStringSet object: {}").format(e)
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
@@ -805,8 +806,9 @@ class TestFbCollections(FbToolsTestcase):
             with self.assertRaises(WrongItemTypeError) as cm:
                 set_test.add(value)
             e = cm.exception
-            msg = ("WrongItemTypeError raised on adding an invalid value to a "
-                    "CIStringSet object: {}").format(e)
+            msg = (
+                "WrongItemTypeError raised on adding an invalid value to a "
+                "CIStringSet object: {}").format(e)
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
@@ -1013,14 +1015,14 @@ class TestFbCollections(FbToolsTestcase):
         from fb_tools.collections import FbCollectionsError
 
         test_tuples = (
-                ({'a': 1, 'b': 2}, 'a', 1),
-                ({'a': 1, 'b': 2}, 'b', 2),
-                ({'a': 1, 'b': 2}, 'A', 1),
-                ({'a': 1, 'b': 2}, 'B', 2),
-                ({'A': 1, 'b': 2}, 'a', 1),
-                ({'a': 1, 'B': 2}, 'b', 2),
-                ({'A': 1, 'b': 2}, 'A', 1),
-                ({'a': 1, 'B': 2}, 'B', 2),
+            ({'a': 1, 'b': 2}, 'a', 1),
+            ({'a': 1, 'b': 2}, 'b', 2),
+            ({'a': 1, 'b': 2}, 'A', 1),
+            ({'a': 1, 'b': 2}, 'B', 2),
+            ({'A': 1, 'b': 2}, 'a', 1),
+            ({'a': 1, 'B': 2}, 'b', 2),
+            ({'A': 1, 'b': 2}, 'A', 1),
+            ({'a': 1, 'B': 2}, 'B', 2),
         )
 
         LOG.debug("Testing get() with correct parameters.")
@@ -1039,8 +1041,9 @@ class TestFbCollections(FbToolsTestcase):
             self.assertEqual(result, expected)
 
             if self.verbose > 2:
-                LOG.debug("Testing to get the value of key {v!r} of {s} with my_dict.get(key).".format(
-                    v=key, s=my_dict.dict()))
+                LOG.debug((
+                    "Testing to get the value of key {v!r} of {s} with "
+                    "my_dict.get(key).").format(v=key, s=my_dict.dict()))
             result = my_dict.get(key)
             if self.verbose > 2:
                 LOG.debug("Got {res!r} - expected {ex!r}.".format(res=result, ex=expected))
@@ -1054,7 +1057,8 @@ class TestFbCollections(FbToolsTestcase):
         for key in wrong_keys:
 
             if self.verbose > 2:
-                msg = ("Trying to get a value from FrozenCIDict {d} "
+                msg = (
+                    "Trying to get a value from FrozenCIDict {d} "
                     "for key {k!r} by src_dict[key] ...")
                 LOG.debug(msg.format(d=pp(src), k=key))
             with self.assertRaises(FbCollectionsError) as cm:
@@ -1066,7 +1070,8 @@ class TestFbCollections(FbToolsTestcase):
                 LOG.debug(msg)
 
             if self.verbose > 2:
-                msg = ("Trying to get a value from FrozenCIDict {d} "
+                msg = (
+                    "Trying to get a value from FrozenCIDict {d} "
                     "for key {k!r} by src_dict.get(key) ...")
                 LOG.debug(msg.format(d=pp(src), k=key))
             with self.assertRaises(FbCollectionsError) as cm:
@@ -1152,8 +1157,9 @@ class TestFbCollections(FbToolsTestcase):
                     LOG.debug("Bla with {!r}".format(key))
             e = cm.exception
             if self.verbose > 2:
-                msg = "{n} raised on key \"{k!r} in src_dict\" of a FrozenCIDict object: {e}".format(
-                    n=e.__class__.__name__, k=key, e=e)
+                msg = (
+                    "{n} raised on key \"{k!r} in src_dict\" of a FrozenCIDict "
+                    "object: {e}").format(n=e.__class__.__name__, k=key, e=e)
                 LOG.debug(msg)
 
     # -------------------------------------------------------------------------
@@ -1220,7 +1226,8 @@ class TestFbCollections(FbToolsTestcase):
                 self.assertEqual(src_dict, comp_object)
             else:
                 if self.verbose > 2:
-                    LOG.debug("Testing, that {!r} is NOT equal to src_dict ...".format(comp_object))
+                    LOG.debug("Testing, that {!r} is NOT equal to src_dict ...".format(
+                        comp_object))
                 self.assertNotEqual(src_dict, comp_object)
 
     # -------------------------------------------------------------------------
@@ -1355,9 +1362,9 @@ class TestFbCollections(FbToolsTestcase):
         from fb_tools.collections import FbCollectionsError
 
         test_tuples = (
-                ({'a': 1, 'b': 2}, 'a', 1, {'a': 1, 'b': 2},),
-                ({'a': 1, 'b': 2}, 'c', 3, {'a': 1, 'b': 2, 'c': 3},),
-                ({'a': 1, 'b': 2}, 'A', 1, {'A': 1, 'b': 2},),
+            ({'a': 1, 'b': 2}, 'a', 1, {'a': 1, 'b': 2},),
+            ({'a': 1, 'b': 2}, 'c', 3, {'a': 1, 'b': 2, 'c': 3},),
+            ({'a': 1, 'b': 2}, 'A', 1, {'A': 1, 'b': 2},),
         )
 
         LOG.debug("Testing set() with correct parameters.")
@@ -1369,7 +1376,8 @@ class TestFbCollections(FbToolsTestcase):
             expected = test_tuple[3]
 
             if self.verbose > 2:
-                LOG.debug("Testing to set key {k!r} to value {v!r} in {s} with my_dict[key].".format(
+                LOG.debug((
+                    "Testing to set key {k!r} to value {v!r} in {s} with my_dict[key].").format(
                     k=key, v=value, s=src))
 
             my_dict = CIDict(src)
@@ -1408,7 +1416,8 @@ class TestFbCollections(FbToolsTestcase):
         for key in wrong_keys:
 
             if self.verbose > 2:
-                msg = ("Trying to set key {k!r} to value {v!r} in {s} with "
+                msg = (
+                    "Trying to set key {k!r} to value {v!r} in {s} with "
                     "src_dict[key] ...").format(k=key, v=value, s=src)
                 LOG.debug(msg)
             with self.assertRaises(FbCollectionsError) as cm:
@@ -1420,7 +1429,8 @@ class TestFbCollections(FbToolsTestcase):
                 LOG.debug(msg)
 
             if self.verbose > 2:
-                msg = ("Trying to set key {k!r} to value {v!r} in {s} with "
+                msg = (
+                    "Trying to set key {k!r} to value {v!r} in {s} with "
                     "src_dict.set(key, value) ...").format(k=key, v=value, s=my_dict.dict())
                 LOG.debug(msg)
             with self.assertRaises(FbCollectionsError) as cm:

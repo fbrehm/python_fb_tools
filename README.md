@@ -15,5 +15,3 @@ Liste ce VMWare Virtual Hardware Versions:
 ------------------------------------------
 
 https://kb.vmware.com/s/article/1003746
-
-

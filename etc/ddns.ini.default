@@ -1,13 +1,13 @@
 [ddns]
 
 ; The username taken to access ddns.de
-;user = 
+;user =
 
 ; The password of the latter user at ddns.de
 ;password =
 
 ; A comma or whitespace separated list of domainnames to update
-;domains = 
+;domains =
 
 ; A boolean flag to update all registred domains independent of the latter domain list
 ;all_domains = false

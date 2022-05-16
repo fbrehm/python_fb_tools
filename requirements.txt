@@ -1,9 +1,14 @@
 pyvmomi>=v6.5.0.2017.5-1
 fb_logging
+packaging
 requests
 six
 pytz
 setuptools
 wheel
 Babel
+PyYAML
+toml
+hjson
+chardet
 requests_mock

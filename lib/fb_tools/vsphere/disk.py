@@ -489,6 +489,7 @@ class VsphereDiskList(FbBaseObject, MutableSequence):
                     wrap = True
             else:
                 end = j
+
         for index in list(range(len(self._list))):
             item = self._list[index]
             if index < start:
