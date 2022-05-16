@@ -286,6 +286,18 @@ jobs:
       - uses: ./.github/actions/add-fb-yum-repo
         with:
           el_major_version: ${{ matrix.el_version }}
+      - name: Enabling PowerTools YUM repo
+        shell: bash
+        run: |
+          if [[ -f /etc/yum.repos.d/CentOS-Stream-PowerTools.repo ]] ; then
+            echo "Enabling powertools YUM repo ..."
+            echo
+            sed -i -e 's/^enabled=.*/enabled=1/' /etc/yum.repos.d/CentOS-Stream-PowerTools.repo
+            echo
+            echo "Content of /etc/yum.repos.d/CentOS-Stream-PowerTools.repo:"
+            cat /etc/yum.repos.d/CentOS-Stream-PowerTools.repo
+            echo
+          fi
       - name: Install EPEL repo
         shell: bash
         run: ${YUM} --assumeyes install "${EPEL_PACKAGE}"
