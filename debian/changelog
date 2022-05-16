@@ -1,4 +1,4 @@
-fb-tools (1.9.5) UNRELEASED; urgency=medium
+fb-tools (1.9.5) all; urgency=medium
 
   * Substituting distutils.version.LooseVersion by
     packaging.version.Version
