@@ -322,7 +322,9 @@ jobs:
           LC_ALL: "en_US.utf8"
         run: |
           echo "Installing Python ${PY_VERSION_NODOT} ..."
+          if [[ "${EL_VERSION}" == "7" ]] ; then PYTHON_PACKAGING="${PYTHON}-packaging" ; else PYTHON_PACKAGING=python3-packaging ; fi
           yum --assumeyes install ${PYTHON} \
+                                  ${PYTHON_PACKAGING} \
                                   ${PYTHON}-setuptools \
                                   ${PYTHON}-pip \
                                   ${PYTHON}-devel \
@@ -381,11 +383,13 @@ jobs:
           cd "${ODIR}"
           echo
           echo "Generating spec file 'fb_logging.spec' ..."
+          if [[ "${EL_VERSION}" == "7" ]] ; then PYTHON_PACKAGING="${PYTHON}-packaging" ; else PYTHON_PACKAGING=python3-packaging ; fi
           cat specs/fb-tools.spec.template | tail -n +3 | \
                               sed -e "s/@@@Version@@@/${PKG_VERSION}/gi" \
                                   -e "s/@@@Release@@@/${PKG_RELEASE}/gi" \
                                   -e "s/@@@py_version_nodot@@@/${PY_VERSION_NODOT}/gi" \
                                   -e "s/@@@py_version_dot@@@/${PY_VERSION_DOT}/gi" \
+                                  -e "s/@@@python_packaging@@@/${PYTHON_PACKAGING}/gi" \
                                   > fb-tools.spec
           if [[ "${EL_VERSION}" -lt "8" ]] ; then
               sed -i '/^Recommends/d' fb-tools.spec
@@ -474,9 +478,10 @@ jobs:
           mv -vi artifacts/debian_bin_pkgs_*/* artifacts/
           mv -vi artifacts/debian_sources/src artifacts/
           rmdir -v artifacts/debian_bin_pkgs_* artifacts/debian_sources
-          mkdir -pv artifacts/el-7 artifacts/el-8
+          mkdir -pv artifacts/el-7 artifacts/el-8 artifacts/el-9
           mv -vi artifacts/rpm_pkgs_el7/*/*/*.rpm artifacts/rpm_pkgs_el7/*/*.rpm artifacts/el-7/
           mv -vi artifacts/rpm_pkgs_el8/*/*/*.rpm artifacts/rpm_pkgs_el8/*/*.rpm artifacts/el-8/
+          mv -vi artifacts/rpm_pkgs_el9/*/*/*.rpm artifacts/rpm_pkgs_el9/*/*.rpm artifacts/el-9/
           rm -rv artifacts/rpm_pkgs_el*
       - name: Show all artifacts
         run: |

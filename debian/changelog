@@ -1,3 +1,11 @@
+fb-tools (1.9.5) UNRELEASED; urgency=medium
+
+  * Substituting distutils.version.LooseVersion by
+    packaging.version.Version
+  * Adding Python module 'packaging' as a dependency.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 16 May 2022 17:11:56 +0200
+
 fb-tools (1.9.4) all; urgency=medium
 
   * Supporting Ubuntu 22.04 Jammy Jellyfish
