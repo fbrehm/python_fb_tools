@@ -1,4 +1,4 @@
-fb-tools (1.9.6) UNRELEASED; urgency=medium
+fb-tools (1.9.6) all; urgency=medium
 
   * Fixing typo in locale/de_DE/LC_MESSAGES/fb_tools.po.
   * Removing dependency to Python module packaging on EL
