@@ -1,3 +1,10 @@
+fb-tools (1.9.6) UNRELEASED; urgency=medium
+
+  * Fixing typo in locale/de_DE/LC_MESSAGES/fb_tools.po.
+  * Removing dependency to Python module packaging on EL
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 11 Jul 2022 15:01:03 +0200
+
 fb-tools (1.9.5) all; urgency=medium
 
   * Substituting distutils.version.LooseVersion by
