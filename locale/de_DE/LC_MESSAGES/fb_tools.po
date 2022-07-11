@@ -1502,7 +1502,7 @@ msgstr "Versuche den Dateityp der zusätzlichen Konfigurationsdatei {!r} zu ermi
 
 #: lib/fb_tools/multi_config.py:724 lib/fb_tools/multi_config.py:789
 msgid "Checking file {fn!r} for pattern {pat!r}."
-msgstr "Überprüfe Datei {!r} nach Muster {pat!r}."
+msgstr "Überprüfe Datei {fn!r} nach Muster {pat!r}."
 
 #: lib/fb_tools/multi_config.py:730 lib/fb_tools/multi_config.py:795
 msgid "Found config file {fi!r}, loader method {m!r}."
