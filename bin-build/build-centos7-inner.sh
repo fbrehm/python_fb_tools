@@ -71,20 +71,21 @@ echo "--------------------------------------"
 mkdir -pv rpmdir
 mkdir -pv rpmdir/SOURCES
 ODIR=$(pwd)
-ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )
+ROOT_OBJECTS=$( find ./.[^.]* ./* -maxdepth 0 | grep -E -vw ".git|rpmdir" | sed -e 's|^\./||' )
 PKG_VERSION=$( ./get-rpm-version )
 PKG_RELEASE=$( ./get-rpm-release )
 echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"
 mkdir -pv "rpmdir/SOURCES/python_fb_tools-${PKG_VERSION}"
 
-tar cf - ${ROOT_OBJECTS} | (cd "rpmdir/SOURCES/python_fb_tools-${PKG_VERSION}" ; tar xf -)
+tar cf - "${ROOT_OBJECTS}" | (cd "rpmdir/SOURCES/python_fb_tools-${PKG_VERSION}" ; tar xf -)
 cd rpmdir/SOURCES && tar cfz "fb_tools.${PKG_VERSION}.tar.gz" "python_fb_tools-${PKG_VERSION}"
 ls -lA --color=always
 cd "${ODIR}"
 
-cat specs/fb_tools.el7.template.spec | \
-    sed -e "s/@@@Version@@@/$PKG_VERSION/gi" \
-        -e "s/@@@Release@@@/${PKG_RELEASE}/gi" > specs/fb_tools.spec
+# cat specs/fb_tools.el7.template.spec | \
+sed -e "s/@@@Version@@@/$PKG_VERSION/gi" \
+    -e "s/@@@Release@@@/${PKG_RELEASE}/gi" \
+    specs/fb_tools.el7.template.spec > specs/fb_tools.spec
 
 python2 bin-build/changelog-deb2rpm.py debian/changelog >>specs/fb_tools.spec
 
