@@ -20,18 +20,21 @@ try:
 except ImportError:
     from pathlib2 import Path
 
-from distutils.version import LooseVersion
-
 # Third party modules
 import babel
 import babel.lists
 from babel.support import Translations
 
+try:
+    from packaging.version import Version
+except ImportError:
+    from distutils.version import LooseVersion as Version
+
 DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.2.4'
+__version__ = '1.2.6'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
@@ -58,8 +61,8 @@ if __mo_file__:
 else:
     XLATOR = gettext.NullTranslations()
 
-CUR_BABEL_VERSION = LooseVersion(babel.__version__)
-NEWER_BABEL_VERSION = LooseVersion('2.6.0')
+CUR_BABEL_VERSION = Version(babel.__version__)
+NEWER_BABEL_VERSION = Version('2.6.0')
 
 SUPPORTED_LANGS = (
     'de_DE',
@@ -67,27 +70,6 @@ SUPPORTED_LANGS = (
 )
 
 _ = XLATOR.gettext
-
-
-# =============================================================================
-def format_list(lst, do_repr=False, style='standard', locale=DEFAULT_LOCALE):
-    """
-    Format the items in `lst` as a list.
-    :param lst: a sequence of items to format in to a list
-    :param locale: the locale
-    """
-    if not lst:
-        return ''
-
-    my_list = copy.copy(lst)
-    if do_repr:
-        my_list = []
-        for item in lst:
-            my_list.append('{!r}'.format(item))
-
-    if CUR_BABEL_VERSION < NEWER_BABEL_VERSION:
-        return babel.lists.format_list(my_list, locale=locale)
-    return babel.lists.format_list(my_list, style=style, locale=locale)
 
 
 # =============================================================================

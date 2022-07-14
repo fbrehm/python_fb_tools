@@ -15,4 +15,3 @@ locale_domain="fb_tools"
 pybabel compile --domain "${locale_domain}" \
     --directory "${locale_dir}" \
     --statistics
-

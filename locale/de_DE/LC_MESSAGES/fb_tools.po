@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.8.6\n"
+"Project-Id-Version: fb_tools 1.9.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-03-03 23:18+0100\n"
-"PO-Revision-Date: 2021-11-17 11:30+0100\n"
+"POT-Creation-Date: 2022-04-20 12:42+0200\n"
+"PO-Revision-Date: 2022-04-20 12:50+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <frank@brehm-online.com>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: bin/get-file-to-remove:84
 msgid ""
@@ -26,39 +26,15 @@ msgstr ""
 "{c}-Objekt:\n"
 "{a}"
 
-#: lib/fb_tools/app.py:86 lib/fb_tools/get_vm_list_app.py:338
-msgid "Got a {c} for pattern {p!r}: {e}"
-msgstr "Habe ein(e) {c} zum Suchmuster {p!r} erhalten: {e}"
-
-#: lib/fb_tools/app.py:111
-msgid "The path {!r} must be an absolute path."
-msgstr "Der Pfad muss ein absoluter Pfad sein."
-
-#: lib/fb_tools/app.py:117
-msgid "The directory {!r} does not exists."
-msgstr "Das Verzeichnis {!r} existiert nicht."
-
-#: lib/fb_tools/app.py:121
-msgid "The given path {!r} exists, but is not a directory."
-msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
-
-#: lib/fb_tools/app.py:125
-msgid "The given directory {!r} is not readable."
-msgstr "Das angegebene Verzeichnis {!r} ist nicht lesbar."
-
-#: lib/fb_tools/app.py:129
-msgid "The given directory {!r} is not writeable."
-msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
-
-#: lib/fb_tools/app.py:144
+#: lib/fb_tools/app.py:67
 msgid "Forced execution - whatever it means."
 msgstr "Forcierte Ausführung, was auch immer das bedeuten mag."
 
-#: lib/fb_tools/app.py:223
+#: lib/fb_tools/app.py:146
 msgid "Invalid env_prefix {!r} given - it may not be empty."
 msgstr "Ungültiger env_prefix {!r} übergeben - er darf nicht leer sein."
 
-#: lib/fb_tools/app.py:227
+#: lib/fb_tools/app.py:150
 msgid ""
 "Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
 "underscore (this not as the first character) are allowed."
@@ -66,116 +42,116 @@ msgstr ""
 "Ungültige Zeichen in env_prefix {!r} gefunden, nur alphanumerische Zeichen und Unterstriche "
 "(diese aber nicht als erstes Zeichen) sind erlaubt."
 
-#: lib/fb_tools/app.py:238
+#: lib/fb_tools/app.py:161
 msgid "Unknown and undescriped application."
 msgstr "Unbekannte und nicht beschriebene Anwendung."
 
-#: lib/fb_tools/app.py:263
+#: lib/fb_tools/app.py:186
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr "Falscher Wert für exit_value {!r}, muss größer als oder gleich Null sein."
 
-#: lib/fb_tools/app.py:493
+#: lib/fb_tools/app.py:417
 msgid "Trying to get {} via console ..."
 msgstr "Versuche {} über die Konsole zu bekommen …"
 
-#: lib/fb_tools/app.py:508
+#: lib/fb_tools/app.py:432
 msgid "Got a signal {}."
 msgstr "Erhielt ein Signal {}."
 
-#: lib/fb_tools/app.py:511
+#: lib/fb_tools/app.py:435
 msgid "Got a signal {n!r} ({s})."
 msgstr "Erhielt ein Signal {n!r} ({s})."
 
-#: lib/fb_tools/app.py:518
+#: lib/fb_tools/app.py:442
 msgid "Exit on signal {n!r} ({s})."
 msgstr "Beendigung auf Signal {n!r} ({s})."
 
-#: lib/fb_tools/app.py:526
+#: lib/fb_tools/app.py:450
 msgid "Tweaking signal handlers."
 msgstr "Schraube an den Signalhandlern."
 
-#: lib/fb_tools/app.py:532
+#: lib/fb_tools/app.py:456
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr "Setze Signalhandler für {n!r} ({s})."
 
-#: lib/fb_tools/app.py:543
+#: lib/fb_tools/app.py:467
 msgid "Enter "
 msgstr "Eingabe von "
 
-#: lib/fb_tools/app.py:550
+#: lib/fb_tools/app.py:474
 msgid "Repeat enter "
 msgstr "Wiederholen der Eingabe von "
 
-#: lib/fb_tools/app.py:560
+#: lib/fb_tools/app.py:484
 msgid "{n} and repeated {n} did not match."
 msgstr "{n} und das wiederholte {n} stimmen nicht überein."
 
-#: lib/fb_tools/app.py:564
+#: lib/fb_tools/app.py:488
 msgid "Restoring original signal handlers."
 msgstr "Stelle original Signalhandler wieder her."
 
-#: lib/fb_tools/app.py:569
+#: lib/fb_tools/app.py:493
 msgid "Got {n!r}: {s!r}"
 msgstr "Erhielt {n!r}: {s!r}"
 
-#: lib/fb_tools/app.py:619
+#: lib/fb_tools/app.py:543
 msgid "The application is not completely initialized."
 msgstr "Die Anwendung ist nicht vollständig initialisiert."
 
-#: lib/fb_tools/app.py:630
+#: lib/fb_tools/app.py:554
 msgid "Object {!r} seems not to be completely initialized."
 msgstr "Das {!r}-Objekt scheit noch nicht vollständig initialisiert zu sein."
 
-#: lib/fb_tools/app.py:640
+#: lib/fb_tools/app.py:564
 msgid "Ending."
 msgstr "Beenden."
 
-#: lib/fb_tools/app.py:659
+#: lib/fb_tools/app.py:583
 msgid "Executing {} ..."
 msgstr "Führe {} aus …"
 
-#: lib/fb_tools/app.py:681
+#: lib/fb_tools/app.py:605
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
-#: lib/fb_tools/app.py:685
+#: lib/fb_tools/app.py:609
 msgid "Simulation mode, nothing is really done."
 msgstr "Simulations-Modus, es wird nichts wirklich verändert."
 
-#: lib/fb_tools/app.py:696
+#: lib/fb_tools/app.py:620
 msgid "Use colored output for messages."
 msgstr "Verwenden kolorierter Ausgabe für Mitteilungen."
 
-#: lib/fb_tools/app.py:703
+#: lib/fb_tools/app.py:627
 msgid "Increase the verbosity level"
 msgstr "Erhöhen des Ausführichkeits-Niveaus"
 
-#: lib/fb_tools/app.py:708
+#: lib/fb_tools/app.py:632
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr "Stillschweigende Ausführung, nur Warnungen und Fehler werden ausgegeben."
 
-#: lib/fb_tools/app.py:713
+#: lib/fb_tools/app.py:637
 msgid "Show this help message and exit."
 msgstr "Zeigt diesen Hilfe-Bildschirm und beendet sich."
 
-#: lib/fb_tools/app.py:717
+#: lib/fb_tools/app.py:641
 msgid "Display brief usage message and exit."
 msgstr "Zeigt eine kurze Darstellug zur Verwendung und beendet sich."
 
-#: lib/fb_tools/app.py:719
+#: lib/fb_tools/app.py:643
 #, python-format
 msgid "Version of %(prog)s: {}"
 msgstr "Version von %(prog)s: {}"
 
-#: lib/fb_tools/app.py:722
+#: lib/fb_tools/app.py:646
 msgid "Show program's version number and exit."
 msgstr "Stellt die Programm-Version dar und beendet sich."
 
-#: lib/fb_tools/app.py:856
+#: lib/fb_tools/app.py:780
 msgid "Starting in:"
 msgstr "Start in:"
 
-#: lib/fb_tools/app.py:878
+#: lib/fb_tools/app.py:802
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
 
@@ -381,6 +357,84 @@ msgstr "Generierte Ausgabe:"
 msgid "Dumping content to {!r} format."
 msgstr "Gebe Inhalt in {!r}-Format aus."
 
+#: lib/fb_tools/argparse_actions.py:55 lib/fb_tools/get_vm_list_app.py:205
+msgid "Got a {c} for pattern {p!r}: {e}"
+msgstr "Habe ein(e) {c} zum Suchmuster {p!r} erhalten: {e}"
+
+#: lib/fb_tools/argparse_actions.py:80
+msgid "The path {!r} must be an absolute path."
+msgstr "Der Pfad muss ein absoluter Pfad sein."
+
+#: lib/fb_tools/argparse_actions.py:86
+msgid "The directory {!r} does not exists."
+msgstr "Das Verzeichnis {!r} existiert nicht."
+
+#: lib/fb_tools/argparse_actions.py:90
+msgid "The given path {!r} exists, but is not a directory."
+msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
+
+#: lib/fb_tools/argparse_actions.py:94
+msgid "The given directory {!r} is not readable."
+msgstr "Das angegebene Verzeichnis {!r} ist nicht lesbar."
+
+#: lib/fb_tools/argparse_actions.py:98
+msgid "The given directory {!r} is not writeable."
+msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
+
+#: lib/fb_tools/argparse_actions.py:125 lib/fb_tools/cfg_app.py:224
+msgid "Directory {!r} does not exists."
+msgstr "Das Verzeichnis {!r} existiert nicht."
+
+#: lib/fb_tools/argparse_actions.py:128 lib/fb_tools/cfg_app.py:228
+msgid "Path {!r} exists, but is not a directory."
+msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
+
+#: lib/fb_tools/argparse_actions.py:134 lib/fb_tools/argparse_actions.py:168
+#: lib/fb_tools/cfg_app.py:235 lib/fb_tools/get_file_rm_app.py:401
+msgid "File {!r} is not a regular file."
+msgstr "Die Datei {!r} ist keine reguläre Datei."
+
+#: lib/fb_tools/argparse_actions.py:137 lib/fb_tools/cfg_app.py:239
+msgid "File {!r} is not writeable."
+msgstr "Die Datei {!r} ist nicht schreibbar."
+
+#: lib/fb_tools/argparse_actions.py:141 lib/fb_tools/cfg_app.py:244
+msgid "Directory {!r} is not writeable."
+msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
+
+#: lib/fb_tools/argparse_actions.py:165 lib/fb_tools/get_file_rm_app.py:392
+msgid "File {!r} does not exists."
+msgstr "Die Datei {!r} existiert nicht."
+
+#: lib/fb_tools/cfg_app.py:63
+msgid "Parameter {cls!r} must be a subclass of {clinfo!r}."
+msgstr "Der Parameter {cls!r} muss eine von {clinfo!r} abgeleitete Klasse sein."
+
+#: lib/fb_tools/cfg_app.py:150 lib/fb_tools/cfg_app.py:156 lib/fb_tools/ddns/__init__.py:258
+#: lib/fb_tools/get_file_rm_app.py:316
+msgid "FILE"
+msgstr "DATEI"
+
+#: lib/fb_tools/cfg_app.py:151
+msgid "Configuration files to use additional to the standard configuration files."
+msgstr "Zusätzlich zu den Standard-Konfigurationsdateien zu benutzende Dateien."
+
+#: lib/fb_tools/cfg_app.py:157
+msgid "A logfile for storing all logging output."
+msgstr "Eine Logdatei, um alle Log-Ausgaben hineinzuschreiben."
+
+#: lib/fb_tools/cfg_app.py:164 lib/fb_tools/vmware_app.py:155
+msgid "Got command line arguments:"
+msgstr "Erhaltene Kommandozeilen-Argumente:"
+
+#: lib/fb_tools/cfg_app.py:202
+msgid "Error on reading configuration:"
+msgstr "Fehler beim Lesen der Konfiguration:"
+
+#: lib/fb_tools/cfg_app.py:248
+msgid "Start logging into file {!r} ..."
+msgstr "Beginne Logging in Datei {!r} …"
+
 #: lib/fb_tools/collections.py:61
 msgid "Item {item!r} must be of type {must!r}, but is of type {cls!r} instead."
 msgstr "Der Eintrag {item!r} muss vom Typ {must!r} sein, ist aber statt dessen vom Typ {cls!r}."
@@ -409,7 +463,7 @@ msgstr "Konnte {ex} nicht mit {i!r} updaten: {m}"
 
 #: lib/fb_tools/collections.py:190
 msgid "Parameter {p!r} is not a sequence type, but a {c!r} object instead."
-msgstr "DerParameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Typ {c!r}."
+msgstr "Der Parameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Typ {c!r}."
 
 #: lib/fb_tools/collections.py:999
 msgid "The method {met}() expected at most {max} arguments, got {got}."
@@ -443,103 +497,95 @@ msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
 
-#: lib/fb_tools/config.py:69 lib/fb_tools/get_file_rm_app.py:392
-msgid "File {!r} does not exists."
-msgstr "Die Datei {!r} existiert nicht."
-
-#: lib/fb_tools/config.py:72 lib/fb_tools/get_file_rm_app.py:401
-msgid "File {!r} is not a regular file."
-msgstr "Die Datei {!r} ist keine reguläre Datei."
-
-#: lib/fb_tools/config.py:128
+#: lib/fb_tools/config.py:100 lib/fb_tools/multi_config.py:235
 msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
 msgstr "Die Kodierung {v!r} muss ein {s!r}-Objekt sein, ist aber statt dessen ein {c!r}-Objekt."
 
-#: lib/fb_tools/config.py:146
+#: lib/fb_tools/config.py:118 lib/fb_tools/multi_config.py:290
 msgid "A configuration directory may not be None."
 msgstr "Ein Konfigurations-Verzeichnis darf nicht None sein."
 
-#: lib/fb_tools/config.py:162
+#: lib/fb_tools/config.py:134
 msgid "A configuration file may not be None."
 msgstr "Eine Konfigurations-Datei darf nicht None sein."
 
-#: lib/fb_tools/config.py:167 lib/fb_tools/config.py:175
+#: lib/fb_tools/config.py:139 lib/fb_tools/config.py:147 lib/fb_tools/multi_config.py:265
 msgid "Configuration file {!r} exists, but is not a regular file."
 msgstr "Die Konfigurations-Datei {!r} existiert, ist aber keine reguläre Datei."
 
-#: lib/fb_tools/config.py:207
+#: lib/fb_tools/config.py:179
 msgid "Searching for {!r} ..."
 msgstr "Suche nach {!r} …"
 
-#: lib/fb_tools/config.py:209
+#: lib/fb_tools/config.py:181
 msgid "Configuration file {!r} not found."
 msgstr "Die Konfigurations-Datei {!r} wurde nicht gefunden."
 
-#: lib/fb_tools/config.py:211
+#: lib/fb_tools/config.py:183
 msgid "Configuration file error"
 msgstr "Konfigurationsdatei-Fehler"
 
-#: lib/fb_tools/config.py:222
+#: lib/fb_tools/config.py:194
 msgid "Reading {!r} ..."
 msgstr "Lese {!r} …"
 
-#: lib/fb_tools/config.py:233
+#: lib/fb_tools/config.py:205
 msgid "Wrong configuration in {!r} found"
 msgstr "Falsche Konfiguration in {!r} gefunden"
 
-#: lib/fb_tools/config.py:235
+#: lib/fb_tools/config.py:207
 msgid "Configuration parse error"
 msgstr "Fehler beim Parsen der Konfiguration"
 
-#: lib/fb_tools/config.py:258
+#: lib/fb_tools/config.py:230 lib/fb_tools/multi_config.py:1093
 msgid "Checking config section {!r} ..."
 msgstr "Überprüfe Konfigurationsabschnitt {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:69
+#: lib/fb_tools/ddns/__init__.py:71
 msgid "Got an error {c} on requesting {u!r}: {m}"
 msgstr "Habe einen Fehler {c} beim Abfrage der URL {u!r} erhalten: {m}"
 
-#: lib/fb_tools/ddns/__init__.py:88
+#: lib/fb_tools/ddns/__init__.py:90
 msgid "Directory does not exists"
 msgstr "Das Verzwichnis existiert nicht"
 
-#: lib/fb_tools/ddns/__init__.py:99
+#: lib/fb_tools/ddns/__init__.py:101
 msgid "Path is not a directory"
 msgstr "Der Pfad ist kein Verzeichnis"
 
-#: lib/fb_tools/ddns/__init__.py:110
+#: lib/fb_tools/ddns/__init__.py:112
 msgid "Invalid permissions"
 msgstr "Ungültige Zugriffsrechte"
 
-#: lib/fb_tools/ddns/__init__.py:131
+#: lib/fb_tools/ddns/__init__.py:133
 msgid "This is a base DDNS related application."
 msgstr "Das ist eine DDNS-bezogene Basisanwendung."
 
-#: lib/fb_tools/ddns/__init__.py:167
+#: lib/fb_tools/ddns/__init__.py:169
 msgid "Invalid user agent {!r} given."
 msgstr "Ungültiger User-Agent {!r} übergeben."
 
-#: lib/fb_tools/ddns/__init__.py:197
+#: lib/fb_tools/ddns/__init__.py:199
 msgid "DDNS options"
 msgstr "DDNS-Optionen"
 
-#: lib/fb_tools/ddns/__init__.py:211 lib/fb_tools/ddns/__init__.py:214
+#: lib/fb_tools/ddns/__init__.py:213 lib/fb_tools/ddns/__init__.py:216
 msgid "Perform action only for {}."
 msgstr "Führe die Aktion nur für {} aus."
 
-#: lib/fb_tools/ddns/__init__.py:217
+#: lib/fb_tools/ddns/__init__.py:219
 msgid "The IP protocol, for which the action should be performed (one of {c}, default {d!r})."
 msgstr "Das IP-Protokoll, für das die Aktion ausgeführt werden soll (eins ais {c}, Vorgabe {d!r})."
 
-#: lib/fb_tools/ddns/__init__.py:231
+#: lib/fb_tools/ddns/__init__.py:233
 msgid "PROTOCOL"
 msgstr "PROTOKOLL"
 
-#: lib/fb_tools/ddns/__init__.py:241
+#: lib/fb_tools/ddns/__init__.py:243
 msgid "DIRECTORY"
 msgstr "VERZEICHNIS"
 
-#: lib/fb_tools/ddns/__init__.py:243
+#: lib/fb_tools/ddns/__init__.py:245
 msgid ""
 "The directory, where to read and write the cache files of the evaluated IP addresses (default: "
 "{!r})."
@@ -547,71 +593,75 @@ msgstr ""
 "Das Verzeichnis, von wo Cache-Dateien mit den ermittelten IP-Adresses und wohin sie auch "
 "geschrieben werden (Vorgane: {!r})."
 
-#: lib/fb_tools/ddns/__init__.py:250
+#: lib/fb_tools/ddns/__init__.py:252
 msgid "SECONDS"
 msgstr "SEKUNDEN"
 
-#: lib/fb_tools/ddns/__init__.py:251
+#: lib/fb_tools/ddns/__init__.py:253
 msgid "The timeout in seconds for Web requests (default: {})."
 msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Web-Abfragen (Vorgabe: {})."
 
-#: lib/fb_tools/ddns/__init__.py:310 lib/fb_tools/ddns/config.py:214
+#: lib/fb_tools/ddns/__init__.py:260
+msgid "Configuration file (default: {!r})"
+msgstr "Konfigurationsdatei (Vorgabe: {!r})"
+
+#: lib/fb_tools/ddns/__init__.py:312 lib/fb_tools/ddns/config.py:214
 msgid "Invalid value {!r} as timeout:"
 msgstr "Ungültiger Wert {!r} für die Zeit der Zeitüberschreitung:"
 
-#: lib/fb_tools/ddns/__init__.py:320
+#: lib/fb_tools/ddns/__init__.py:322
 msgid "Setting Loglevel of the {m} module to {ll}."
 msgstr "Setze Loglevel des {m}-Moduls auf {ll}."
 
-#: lib/fb_tools/ddns/__init__.py:331
+#: lib/fb_tools/ddns/__init__.py:333
 msgid "Trying to get my public IPv{} address."
 msgstr "Versuche meine öffentliche IPv{}-Adresse zu ermitteln."
 
-#: lib/fb_tools/ddns/__init__.py:343
+#: lib/fb_tools/ddns/__init__.py:345
 msgid "Got a response:"
 msgstr "Erhaltene Antwort:"
 
-#: lib/fb_tools/ddns/__init__.py:355
+#: lib/fb_tools/ddns/__init__.py:357
 msgid "Request method: {!r}"
 msgstr "Request-Methode: {!r}"
 
-#: lib/fb_tools/ddns/__init__.py:375
+#: lib/fb_tools/ddns/__init__.py:377
 msgid "Simulation mode, Request will not be sent."
 msgstr "Simulationsmodus, der Request wird nicht gesendet."
 
-#: lib/fb_tools/ddns/__init__.py:388
+#: lib/fb_tools/ddns/__init__.py:390
 msgid "Got a {c} on requesting {u!r}: {e}."
 msgstr "Habe ein {c} bei der Abfrage von {u!r} erhalten: {e}."
 
-#: lib/fb_tools/ddns/__init__.py:395
+#: lib/fb_tools/ddns/__init__.py:397
 msgid "Failed to parse the response"
 msgstr "Konnte Rückgabe nicht auswerten"
 
-#: lib/fb_tools/ddns/__init__.py:424
+#: lib/fb_tools/ddns/__init__.py:426
 msgid "Checking existence and accessibility of working directory {!r} ..."
 msgstr "Überprüfe Existenz und Verfügbarkeit des Arbeitverzeichnisses {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:436 lib/fb_tools/ddns/update_app.py:166
+#: lib/fb_tools/ddns/__init__.py:438 lib/fb_tools/ddns/update_app.py:166
 msgid "No read access"
 msgstr "Kein Lesezugriff"
 
-#: lib/fb_tools/ddns/__init__.py:440 lib/fb_tools/ddns/update_app.py:169
+#: lib/fb_tools/ddns/__init__.py:442 lib/fb_tools/ddns/update_app.py:169
 msgid "No write access"
 msgstr "Kein Schreinzugriff"
 
-#: lib/fb_tools/ddns/__init__.py:453
+#: lib/fb_tools/ddns/__init__.py:455
 msgid "Writing IP address {a!r} into {f!r} ..."
 msgstr "Schreibe IP-Adresse {a!r} nach {f!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:479
+#: lib/fb_tools/ddns/__init__.py:481
 msgid "File {!r} not found."
 msgstr "Datei {!r} nicht gefunden."
 
-#: lib/fb_tools/ddns/__init__.py:482
+#: lib/fb_tools/ddns/__init__.py:484
 msgid "Reading IP address from {!r}..."
 msgstr "Lese IP-Adresse aus {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:502
+#: lib/fb_tools/ddns/__init__.py:504
 msgid "Line {li!r} in {f!r} is not a valid IP address:"
 msgstr "Zeile {li!r} in {f!r} ist keine gültige IP-Adresse:"
 
@@ -775,60 +825,63 @@ msgstr "Keine öffentliche IPv6-Adresse gefunden."
 msgid "Updating DNS records to IPv{p} address {a!r} ..."
 msgstr "Aktualisier DNS-Einträge zu IPv{p}-Adresse {a!r} …"
 
-#: lib/fb_tools/errors.py:44
+#: lib/fb_tools/errors.py:50
+msgid "Empty mail address."
+msgstr "Leere Mailadresse."
+
+#: lib/fb_tools/errors.py:66
 msgid "Wrong mail address {a!r} ({c})"
 msgstr "Ungültige Mailadresse {a!r} ({c})"
 
-#: lib/fb_tools/errors.py:107
+#: lib/fb_tools/errors.py:135
 msgid "Process with PID {pid} got signal {signal}."
 msgstr "Der Prozess mit der PID {pid} hat das Signal {signal} erhalten."
 
-#: lib/fb_tools/errors.py:146 lib/fb_tools/vsphere/errors.py:139
+#: lib/fb_tools/errors.py:174 lib/fb_tools/vsphere/errors.py:139
 msgid "The network {!r} is not existing."
 msgstr "Das Netzerk {!r} existiert nicht."
 
-#: lib/fb_tools/errors.py:165 lib/fb_tools/vsphere/errors.py:158
+#: lib/fb_tools/errors.py:193 lib/fb_tools/vsphere/errors.py:158
 msgid "Could not connect to the vSphere host {h}:{p} as user {u!r}."
 msgstr "Konnte mich nicht zum vSphere-Host {h}:{p} als Nutzer {u!r} verbinden."
 
-#: lib/fb_tools/errors.py:186
+#: lib/fb_tools/errors.py:214
 msgid "No SAN based datastore found with at least {m:0.0f} MiB == {g:0.1f} GiB available space."
 msgstr ""
 "Keinen SAN-basierten Datastore mit wenigstens {m:0.0f} MiB == {g:0.1f} GiB verfügbaren Platz "
 "gefunden."
 
-#: lib/fb_tools/errors.py:224
+#: lib/fb_tools/errors.py:252
 msgid "Method {func}() has to be overridden in class {cls!r}."
 msgstr "Die Methode {func}() der Klasse {cls!r} muss überschrieben werden."
 
-#: lib/fb_tools/errors.py:256
+#: lib/fb_tools/errors.py:284
 msgid " (timeout after {:0.1f} secs)"
 msgstr " (Timeout nach {:0.1f} Sekunden)"
 
-#: lib/fb_tools/errors.py:283
+#: lib/fb_tools/errors.py:311
 msgid "Timeout error on reading"
 msgstr "Timeout-Fehler beim Lesen"
 
-#: lib/fb_tools/errors.py:305
+#: lib/fb_tools/errors.py:333
 msgid "Timeout error on writing"
 msgstr "Timeout-Fehler beim Schreiben"
 
-#: lib/fb_tools/errors.py:328
+#: lib/fb_tools/errors.py:356
 msgid "Unknown OS command."
 msgstr "Unbekanntes Betriebssystem-Kommando."
 
-#: lib/fb_tools/errors.py:335
+#: lib/fb_tools/errors.py:363
 msgid "Empty command list given."
 msgstr "Leere Kommando-Liste übergeben."
 
-#: lib/fb_tools/errors.py:346
-#, fuzzy
+#: lib/fb_tools/errors.py:374
 msgid "Could not found OS command:"
 msgid_plural "Could not found OS commands:"
 msgstr[0] "Konnte das Betriebssystem-Kommando nicht finden:"
 msgstr[1] "Konnte die Betriebssystem-Kommandos nicht finden:"
 
-#: lib/fb_tools/errors.py:379
+#: lib/fb_tools/errors.py:407
 msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
 msgstr "Konnte die Lock-Datei {lf!r} nicht in {d:0.1f} Sekunden mit {tries} Versuchen vereinnahmen."
 
@@ -1014,34 +1067,13 @@ msgstr "Versuche das Datum aus der Datei {!r} zu entnehmen."
 msgid "Explored and assigned files:"
 msgstr "Ermittelte und zugewiesene Dateien:"
 
-#: lib/fb_tools/get_vm_app.py:68
+#: lib/fb_tools/get_vm_app.py:56
 msgid "Tries to get information about the given virtual machines in VMWare VSphere and print it out."
 msgstr ""
 "Versucht, Informationen über Virtuelle Maschinen in VMWare VSphere zu ermitteln und gibt diese "
 "aus."
 
-#: lib/fb_tools/get_vm_app.py:148 lib/fb_tools/get_vm_list_app.py:175
-msgid ""
-"Configuration file {f!r} does not exists. Please copy {d!r} to {f!r} and fill out all necessary "
-"entries, e.g. the passwords."
-msgstr ""
-"Die Konfigurationsdatei {f!r} existiert nicht. Bitte kopiere {d!r} nach {f!r} und fülle alle "
-"notwendigen Einträge, z.Bsp. die Passwörter, aus."
-
-#: lib/fb_tools/get_vm_app.py:168 lib/fb_tools/get_vm_list_app.py:221
-msgid "Did not found any valid VSphere definition in {!r}."
-msgstr "Keine gültige VSPhere Definition in {!r} gefunden."
-
-#: lib/fb_tools/get_vm_app.py:180 lib/fb_tools/get_vm_list_app.py:233
-msgid "Enter password for {n} VSPhere user {u!r} on host {h!r}:"
-msgstr "Geben Sie das Passwort für den {n}-VSPhere-Nutzer {u!r} auf Host {h!r} ein:"
-
-#: lib/fb_tools/ddns/__init__.py:258 lib/fb_tools/get_vm_app.py:203
-#: lib/fb_tools/get_vm_list_app.py:317
-msgid "Configuration file (default: {!r})"
-msgstr "Konfigurationsdatei (Vorgabe: {!r})"
-
-#: lib/fb_tools/get_vm_app.py:208
+#: lib/fb_tools/get_vm_app.py:79
 msgid "Names of the VM to get information."
 msgstr "Die Namen der VMs, über die Informationen ermittelt werden sollen."
 
@@ -1057,75 +1089,84 @@ msgstr "Konnte kein {}-Objekt initialisieren aus:"
 msgid "Closing VSPhere object {!r} ..."
 msgstr "Schließe VSPhere-Objekt {!r} …"
 
-#: lib/fb_tools/get_vm_app.py:300
+#: lib/fb_tools/ddns/myip_app.py:139 lib/fb_tools/ddns/update_app.py:278 lib/fb_tools/get_vm_app.py:93
+#: lib/fb_tools/get_vm_hosts.py:119 lib/fb_tools/get_vm_list_app.py:223
+msgid "Starting {a!r}, version {v!r} ..."
+msgstr "Starte {a!r}, Version {v!r} …"
+
+#: lib/fb_tools/get_vm_app.py:133
 msgid "NOT FOUND"
 msgstr "NICHT GEFUNDEN"
 
-#: lib/fb_tools/get_vm_app.py:327 lib/fb_tools/get_vm_app.py:361
+#: lib/fb_tools/get_vm_app.py:160 lib/fb_tools/get_vm_app.py:197
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: lib/fb_tools/get_vm_app.py:330
-msgid " 1 disk "
-msgid_plural "{>2} disks"
-msgstr[0] " 1 Platte"
-msgstr[1] "{>2} Platten"
+#: lib/fb_tools/get_vm_app.py:163
+msgid " {nr:>2} disk "
+msgid_plural "{nr:>2} disks"
+msgstr[0] " {nr:>2} Platte "
+msgstr[1] " {nr:>2} Platten"
 
-#: lib/fb_tools/get_vm_app.py:341
+#: lib/fb_tools/get_vm_app.py:177
 msgid "Disk"
 msgid_plural "Disks"
 msgstr[0] "Platte"
 msgstr[1] "Platten"
 
-#: lib/fb_tools/get_vm_app.py:352 lib/fb_tools/get_vm_app.py:368
+#: lib/fb_tools/get_vm_app.py:188 lib/fb_tools/get_vm_app.py:204
 msgid "None"
 msgstr "Keine"
 
-#: lib/fb_tools/get_vm_list_app.py:69
+#: lib/fb_tools/get_vm_hosts.py:51
+msgid "Tries to get a list of all physical hosts in VMWare VSphere and print it out."
+msgstr "Versucht eine Liste aller physischen Hosts in VMWare VSphere zu erhalten und gibt diese aus."
+
+#: lib/fb_tools/get_vm_hosts.py:101 lib/fb_tools/get_vm_list_app.py:184
+msgid "Output options"
+msgstr "Ausgabeoptionen"
+
+#: lib/fb_tools/get_vm_hosts.py:105 lib/fb_tools/get_vm_list_app.py:188
+msgid "Detailed output list (quering data needs some time longer)."
+msgstr "Detaillierte Ausgabeliste (die Abfrage der Daten benötigt signifikant mehr Zeit)."
+
+#: lib/fb_tools/get_vm_list_app.py:59
 msgid "Tries to get a list of all virtual machines in VMWare VSphere and print it out."
 msgstr "Versucht eine Liste aller virtuellen Maschinen in VMWare VSphere zu erhalten und gibt diese aus."
 
-#: lib/fb_tools/get_vm_list_app.py:198
-msgid "Checking for configured VSPhere instance {!r} ..."
-msgstr "Überprüfe die konfigurierte VSPhere-Instanz {!r} …"
-
-#: lib/fb_tools/get_vm_list_app.py:202
-msgid "VSPhere {!r} not found in list of configured VSPhere instances."
-msgstr "VSPhere {!r} wurde nicht in der Liste der konfigurierten VSPhere-Instanzen gefunden."
-
-#: lib/fb_tools/get_vm_list_app.py:253
+#: lib/fb_tools/get_vm_list_app.py:138
 msgid "Filter options"
 msgstr "Filteroptionen"
 
-#: lib/fb_tools/get_vm_list_app.py:258
+#: lib/fb_tools/get_vm_list_app.py:143
 msgid "for names of VMs"
 msgstr "für Name von VMs"
 
-#: lib/fb_tools/get_vm_list_app.py:259
+#: lib/fb_tools/get_vm_list_app.py:144
 msgid "A regular expression to filter the output list of VMs by their name (Default: {!r})."
 msgstr "Ein regulärer Ausdruck, um die Ausgabeliste der VMs nach ihrem Namen zu filtern(Vorgabe: {!r})."
 
-#: lib/fb_tools/get_vm_list_app.py:266
+#: lib/fb_tools/get_vm_list_app.py:151
 msgid "TYPE"
 msgstr "TYP"
 
-#: lib/fb_tools/get_vm_list_app.py:267
+#: lib/fb_tools/get_vm_list_app.py:152
 msgid "Filter output for the type of the VM. Valid values are {li} (Default: {dflt!r})."
 msgstr "Filtern der Ausgabeliste nach dem Typ. Gültige Werte sind {li} (Vorgabe: {dflt!r})."
 
-#: lib/fb_tools/get_vm_list_app.py:276
+#: lib/fb_tools/get_vm_list_app.py:161
 msgid "Filter output for online VMs."
 msgstr "Filtern der Ausgabeliste nach eingeschalteten VMs."
 
-#: lib/fb_tools/get_vm_list_app.py:280
+#: lib/fb_tools/get_vm_list_app.py:165
 msgid "Filter output for offline VMs and templates."
 msgstr "Filtern der Ausgabeliste nach ausgeschalteten VMs und Vorlagen."
 
-#: lib/fb_tools/get_vm_list_app.py:285
+#: lib/fb_tools/get_vm_list_app.py:170
 msgid "for VMWare hardware config version"
 msgstr "für die VMWare-Hardwarekonfigurationsversion"
 
-#: lib/fb_tools/get_vm_list_app.py:286
+#: lib/fb_tools/get_vm_list_app.py:171
 msgid ""
 "A regular expression to filter the output list of VMs by the VMWare hardware configuration "
 "version (e.g. '{}')."
@@ -1133,11 +1174,11 @@ msgstr ""
 "Ein regulärer Ausdruck, um die Ausgabeliste der VMs nach ihrer VMWare-"
 "Hardwarekonfigurationsversion zu filtern (z.Bsp. '{}')."
 
-#: lib/fb_tools/get_vm_list_app.py:293
+#: lib/fb_tools/get_vm_list_app.py:178
 msgid "for the Operating System version"
 msgstr "für die Betriebssystemversion"
 
-#: lib/fb_tools/get_vm_list_app.py:294
+#: lib/fb_tools/get_vm_list_app.py:179
 msgid ""
 "A regular expression to filter the output list of VMs by their Operating System version, e.g. "
 "'{}'."
@@ -1145,41 +1186,25 @@ msgstr ""
 "Ein regulärer Ausdruck, um die Ausgabeliste der VMs nach ihrem Betriebssystem zu filtern, z.Bsp."
 " '{}'."
 
-#: lib/fb_tools/get_vm_list_app.py:301
-msgid "The VSPhere names from configuration, in which the VMs should be searched."
-msgstr "Die Namen der VSPheres aus der Konfiguration, in denen die VMs gesucht werden sollen."
-
-#: lib/fb_tools/get_vm_list_app.py:305
-msgid "Output options"
-msgstr "Ausgabeoptionen"
-
-#: lib/fb_tools/get_vm_list_app.py:309
-msgid "Detailed output list (quering data needs some time longer)."
-msgstr "Detaillierte Ausgabeliste (die Abfrage der Daten benötigt signifikant mehr Zeit)."
-
-#: lib/fb_tools/get_vm_list_app.py:312
-msgid "Additional options"
-msgstr "Zusätzliche Optionen"
-
-#: lib/fb_tools/get_vm_list_app.py:335
+#: lib/fb_tools/get_vm_list_app.py:202
 msgid "Regular expression for filtering: {!r}"
 msgstr "Regulärer Ausdruck als Filter: {!r}"
 
-#: lib/fb_tools/get_vm_list_app.py:345
+#: lib/fb_tools/get_vm_list_app.py:212
 msgid "Detailed output is required because of your given options."
 msgstr "Eine detaillierte Ausgabe is wegen der von Ihnen gewählten Optionen notwendig."
 
-#: lib/fb_tools/get_vm_list_app.py:496
+#: lib/fb_tools/get_vm_list_app.py:329
 msgid "Found no VMWare VMs."
 msgstr "Fand keine VMWare VMs."
 
-#: lib/fb_tools/get_vm_list_app.py:498
+#: lib/fb_tools/get_vm_list_app.py:331
 msgid "Found one VMWare VM."
 msgid_plural "Found {} VMWare VMs."
 msgstr[0] "Fand eine VMWare VM."
 msgstr[1] "Fand {} VMWare VMs."
 
-#: lib/fb_tools/get_vm_list_app.py:555
+#: lib/fb_tools/get_vm_list_app.py:388
 msgid "Found a {} object:"
 msgstr "Fand ein {}-Objekt:"
 
@@ -1534,6 +1559,256 @@ msgstr "Der Parameter {t!r} muss ein {e} ein, statt dessen wurde {v!r} übergebe
 msgid "Completed process"
 msgstr "Fertiggestellter Prozess"
 
+#: lib/fb_tools/mailaddress.py:69 lib/fb_tools/mailaddress.py:473
+msgid "Empty address."
+msgstr "Leere Adresse."
+
+#: lib/fb_tools/mailaddress.py:78 lib/fb_tools/mailaddress.py:482
+msgid "Wrong type."
+msgstr "Falscher Typ."
+
+#: lib/fb_tools/mailaddress.py:88 lib/fb_tools/mailaddress.py:500 lib/fb_tools/mailaddress.py:540
+#: lib/fb_tools/mailaddress.py:563
+msgid "Invalid address."
+msgstr "Ungültige Adresse."
+
+#: lib/fb_tools/mailaddress.py:106 lib/fb_tools/mailaddress.py:167
+msgid "Given user: {u!r}, given domain: {d!r}."
+msgstr "Gegebener Nutzer: {u!r}, gegebene Domäne: {d!r}."
+
+#: lib/fb_tools/mailaddress.py:111
+msgid "Invalid mail address."
+msgstr "Ungültige Mailadresse."
+
+#: lib/fb_tools/mailaddress.py:128 lib/fb_tools/mailaddress.py:143
+msgid "Invalid user/mailbox name."
+msgstr "Ungültiger Nutzer- bzw. Postfachname."
+
+#: lib/fb_tools/mailaddress.py:150
+msgid "Invalid domain."
+msgstr "Ungültige Domäne."
+
+#: lib/fb_tools/mailaddress.py:204 lib/fb_tools/obj.py:259 lib/fb_tools/obj.py:315
+msgid "Wrong verbose level {!r}, must be >= 0"
+msgstr "Falsches Ausführlichkeits-Niveau, muss größer als oder gleich Null sein"
+
+#: lib/fb_tools/mailaddress.py:298 lib/fb_tools/mailaddress.py:665
+msgid "Checking equality {self!r} with {other!r} ..."
+msgstr "Vergleiche Gleichheit von {self!r} mit {other!r} …"
+
+#: lib/fb_tools/mailaddress.py:354 lib/fb_tools/mailaddress.py:689
+msgid "Object {o!r} for comparing is not a {c} object."
+msgstr "Das Vergleichsobjekt {o!r} ist kein {c}-Objekt."
+
+#: lib/fb_tools/mailaddress.py:359 lib/fb_tools/mailaddress.py:694
+msgid "Comparing {self!r} with {other!r} ..."
+msgstr "Vergleiche {self!r} mit {other!r} …"
+
+#: lib/fb_tools/mailaddress.py:490
+msgid "Evaluating address {!r} ..."
+msgstr "Untersuche Adresse {!r} …"
+
+#: lib/fb_tools/mailaddress.py:491
+msgid "Search pattern simple: {}"
+msgstr "Einfaches Suchmuster: {}"
+
+#: lib/fb_tools/mailaddress.py:496
+msgid "Search pattern full: {}"
+msgstr "Vollständiges Suchmuster: {}"
+
+#: lib/fb_tools/mailaddress.py:520
+msgid "Parameters {lst} may not be given, if parameter {a!r} was given."
+msgstr "Die Parameter {lst} dürfen nicht übergeben werden, wenn der Parameter {a!r} angegeben wurde."
+
+#: lib/fb_tools/mailaddress.py:531
+msgid "Invalid full user name."
+msgstr "Ungültiger vollständiger Nutzername."
+
+#: lib/fb_tools/mailaddress.py:889 lib/fb_tools/mailaddress.py:903
+msgid "Given object {o!r} is not a sequence type, but a {t!r} type instead."
+msgstr "Das übergebene Objekt {o!r} ist kein sequentieller Typ, aber statt dessen vom Typ {t!r}."
+
+#: lib/fb_tools/mailaddress.py:918 lib/fb_tools/vsphere/controller.py:358
+#: lib/fb_tools/vsphere/disk.py:470 lib/fb_tools/vsphere/ether.py:547
+#: lib/fb_tools/vsphere/host_port_group.py:309 lib/fb_tools/vsphere/vm.py:655
+msgid "{m} takes at most {max} arguments ({n} given)."
+msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
+
+#: lib/fb_tools/mailaddress.py:958
+msgid "Mail address {} is not in address list."
+msgstr "Die Mailadresse {} ist nicht in der Adressliste."
+
+#: lib/fb_tools/multi_config.py:98
+msgid "Config loader method {!r} was not found."
+msgstr "Die Konfigurations-Lade-Methode {!r} wurde nicht gefunden."
+
+#: lib/fb_tools/multi_config.py:201 lib/fb_tools/multi_config.py:203 lib/fb_tools/multi_config.py:205
+msgid "{} configuration is not supported."
+msgstr "{}-Konfiguration wird nicht unterstützt."
+
+#: lib/fb_tools/multi_config.py:258
+msgid "Additional config file {!r} does not exists."
+msgstr "Die zusätzliche Konfigurationsdatei {!r} existiert nicht."
+
+#: lib/fb_tools/multi_config.py:272
+msgid "Configuration file {!r} is not readable."
+msgstr "Die Konfigurations-Datei {!r} ist nicht lesbar."
+
+#: lib/fb_tools/multi_config.py:293
+msgid "Configuration directory {!r} may not be absolute."
+msgstr "Das Konfigurations-Verzeichnis {!r} darf nicht absolut sein."
+
+#: lib/fb_tools/multi_config.py:360
+msgid "Cannot use {!r} as delimiters for ini-files."
+msgstr "Kann {!r} nicht als Trennzeichen für ini-Dateien verwenden."
+
+#: lib/fb_tools/multi_config.py:382
+msgid "Cannot use {!r} as comment prefixes for ini-files."
+msgstr "Kann {!r} nicht als Kommentar-Präfix für ini-Dateien verwenden."
+
+#: lib/fb_tools/multi_config.py:404
+msgid "Cannot use {!r} as inline comment prefixes for ini-files."
+msgstr "Kann {!r} nicht als Inline-Kommentar-Präfix für ini-Dateien verwenden."
+
+#: lib/fb_tools/multi_config.py:583 lib/fb_tools/multi_config.py:594
+msgid "Stem {!r} is not a String type."
+msgstr "Der Konfigurations-Namens-Stamm {!r} ist kein String-Typ."
+
+#: lib/fb_tools/multi_config.py:587 lib/fb_tools/multi_config.py:598 lib/fb_tools/multi_config.py:605
+msgid "File name stem {!r} is invalid."
+msgstr "der Konfigurations-Namens-Stamm {!r} ist ungültig."
+
+#: lib/fb_tools/multi_config.py:614
+msgid "Invalid configuration type {t!r} - not found in {w!r}."
+msgstr "Ungültiger Konfigurationstyp {t!r} - wurde nicht in {w!r} gefunden."
+
+#: lib/fb_tools/multi_config.py:654
+msgid "Collecting all configuration files."
+msgstr "Sammle alle Konfigurationsdateien."
+
+#: lib/fb_tools/multi_config.py:661
+msgid "Discovering config directory {!r} ..."
+msgstr "Untersuche Konfigurations-Verzeichnis {!r} …"
+
+#: lib/fb_tools/multi_config.py:670
+msgid "Collected config files:"
+msgstr "Gesammelte Konfigurationsdateien:"
+
+#: lib/fb_tools/multi_config.py:680
+msgid "Checking permissions of config files ..."
+msgstr "Überprüfe Rechte auf Konfigurationsdateien …"
+
+#: lib/fb_tools/multi_config.py:696
+msgid "Checking permissions of {!r} ..."
+msgstr "Überprüfe Rechte auf {!r} …"
+
+#: lib/fb_tools/multi_config.py:700
+msgid "Found file permissions of {fn!r}: {mode:04o}"
+msgstr "Fand Datei-Rechte auf {fn!r}: {mode:04o}"
+
+#: lib/fb_tools/multi_config.py:703
+msgid "File {fn!r} is readable by group or by others, found mode {mode:04o}."
+msgstr "Die Datei {fn!r} ist für die Gruppe oder für andere lesbar, gefundener Modus {mode:04o}."
+
+#: lib/fb_tools/multi_config.py:715
+msgid "Trying to detect file type of additional config file {!r}."
+msgstr "Versuche den Dateityp der zusätzlichen Konfigurationsdatei {!r} zu ermitteln."
+
+#: lib/fb_tools/multi_config.py:724 lib/fb_tools/multi_config.py:789
+msgid "Checking file {fn!r} for pattern {pat!r}."
+msgstr "Überprüfe Datei {fn!r} nach Muster {pat!r}."
+
+#: lib/fb_tools/multi_config.py:730 lib/fb_tools/multi_config.py:795
+msgid "Found config file {fi!r}, loader method {m!r}."
+msgstr "Fand Konfigurationsdatei {fi!r}, Lademethode {m!r}."
+
+#: lib/fb_tools/multi_config.py:744
+msgid "Did not found file type of additional config file {fn!r}. Available config types are: {list}."
+msgstr ""
+"Keinen Dateityp der zusätzlichen Konfigurationsdatei {fn!r} gefunden. Verfügbare Dateitypen "
+"sind: {list}."
+
+#: lib/fb_tools/multi_config.py:763
+msgid "Something strange is happend, file type {!r} not found."
+msgstr "Irgendwas komisches ist passiert, der Dateityp {!r} wurde nicht gefunden."
+
+#: lib/fb_tools/multi_config.py:773
+msgid "Checking, whether {!r} is a possible config file."
+msgstr "Teste, ob {!r} möglicherweise eine Konfigurationsdatei ist."
+
+#: lib/fb_tools/multi_config.py:778
+msgid "Path {!r} is not a regular file."
+msgstr "Der Pfad {!r} ist keine reguläre Datei."
+
+#: lib/fb_tools/multi_config.py:818
+msgid "Reading configuration file {!r} ..."
+msgstr "Lese Konfigurationsdatei {!r} …"
+
+#: lib/fb_tools/multi_config.py:822
+msgid "Using loading method {!r}."
+msgstr "Verwende Lade-Methode {!r}."
+
+#: lib/fb_tools/multi_config.py:830
+msgid "Read config from {fn!r}:"
+msgstr "Von {fn!r} gelesene Konfiguration:"
+
+#: lib/fb_tools/multi_config.py:841
+msgid "Read merged config:"
+msgstr "Gelesene und zusammengeführte Konfiguration:"
+
+#: lib/fb_tools/multi_config.py:848
+msgid ""
+"Character set detection by module {mod!r} for file {fn!r} should not be used, using character "
+"set {enc!r}."
+msgstr ""
+"Die Zeichesatzerkennung durch das Modul {mod!r} für die Datei {fn!r} soll nicht verwendet "
+"werden, verwende Zeichensatz {enc!r}."
+
+#: lib/fb_tools/multi_config.py:855
+msgid "Trying to detect character set of file {fn!r} ..."
+msgstr "Versuche den Zeichensatz der Datei {fn!r} zu ermitteln …"
+
+#: lib/fb_tools/multi_config.py:866
+#, python-format
+msgid ""
+"The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, using character set "
+"{cs_def!r} instead of {cs_found!r}."
+msgstr ""
+"Die Zuverlässigkeit von {con:0.1f}% ist kleiner als das Limit von {lim:0.1f}%, verwende den "
+"Zeichensatz {cs_def!r} anstelle von {cs_found!r}."
+
+#: lib/fb_tools/multi_config.py:876
+msgid "Got {what} on detecting cheracter set of {fn!r}: {e}"
+msgstr "Erhielt {what} bei der Zeichensatzerkennung von {fn!r}: {e}."
+
+#: lib/fb_tools/multi_config.py:881
+msgid "Found character set {cs!r} for file {fn!r} with a confidence of {con:0.1f}%."
+msgstr "Fand Zeichensatz {cs!r} für die Datei {fn!r} mit einer Zuverlässigkeit von {con:0.1f}%."
+
+#: lib/fb_tools/multi_config.py:891 lib/fb_tools/multi_config.py:921 lib/fb_tools/multi_config.py:955
+#: lib/fb_tools/multi_config.py:1012 lib/fb_tools/multi_config.py:1038
+msgid "Reading {tp} file {fn!r} ..."
+msgstr "Lese {tp}-Datei {fn!r} …"
+
+#: lib/fb_tools/multi_config.py:902 lib/fb_tools/multi_config.py:936 lib/fb_tools/multi_config.py:1019
+#: lib/fb_tools/multi_config.py:1052
+msgid "{what} parse error in {fn!r}, line {line}, column {col}: {msg}"
+msgstr "{what} Parse-Fehler in {fn!r}, Zeine {line}, Spalte {col}: {msg}"
+
+#: lib/fb_tools/multi_config.py:909 lib/fb_tools/multi_config.py:943 lib/fb_tools/multi_config.py:990
+#: lib/fb_tools/multi_config.py:1026 lib/fb_tools/multi_config.py:1056
+#: lib/fb_tools/multi_config.py:1063
+msgid "Got {what} on reading and parsing {fn!r}: {e}"
+msgstr "Habe {what} beim Lesen und Parsen von {fn!r} erhalten: {e}."
+
+#: lib/fb_tools/multi_config.py:972
+msgid "Arguments on initializing {}:"
+msgstr "Argumente zur Initialisierung von {}:"
+
+#: lib/fb_tools/multi_config.py:1077
+msgid "Evaluation of configuration could only be happen after reading it."
+msgstr "Die Evaluierung der Konfiguration kann erst erfolgen, nachdem die gelesen wurde."
+
 #: lib/fb_tools/obj.py:63
 msgid "The base directory {!r} is not existing or not a directory."
 msgstr "Das Basis-Verzeichnis {!r} existiert nicht oder ist kein Verzeichnis."
@@ -1546,10 +1821,6 @@ msgstr "unbestimmter Fehler."
 msgid "Exception happened"
 msgstr "Aufgetretene Ausnahme"
 
-#: lib/fb_tools/obj.py:259 lib/fb_tools/obj.py:315
-msgid "Wrong verbose level {!r}, must be >= 0"
-msgstr "Falsches Ausführlichkeits-Niveau, muss größer als oder gleich Null sein"
-
 #: lib/fb_tools/obj.py:339
 msgid "Base directory {!r} does not exists."
 msgstr "Das Basis-Verzeichnis {!r} existiert nicht."
@@ -1558,15 +1829,159 @@ msgstr "Das Basis-Verzeichnis {!r} existiert nicht."
 msgid "Path for base directory {!r} is not a directory."
 msgstr "Der Pfad zum Basis-Verzeichnis {!r} is kein Verzeichnis"
 
-#: lib/fb_tools/vmware_config.py:107
-msgid "Empty VSpehre name found."
-msgstr "Lerer VSPhere-Name gefunden."
+#: lib/fb_tools/pidfile.py:74
+msgid "Invalid pidfile {f!r} given: {r}"
+msgstr "Ungültige PID-Datei {f!r} übergeben: {r}"
 
-#: lib/fb_tools/vmware_config.py:134
-msgid "Unknown key {k!r} with value {v!r} for VSphere {vs!r} found."
-msgstr "Unbekannten Schlüssel {k!r} mit Wert {v!r} für VSphere {vs!r} gefunden."
+#: lib/fb_tools/pidfile.py:77
+msgid "Invalid pidfile {!r} given."
+msgstr "Ungültige PID-Datei {!r} übergeben."
+
+#: lib/fb_tools/pidfile.py:106
+msgid "The pidfile {f!r} is currently in use by the application with the PID {p}."
+msgstr "Die PID-Datei {f!r} wird gegenwärtig von der Anwendung mit der PID {p} verwendet."
+
+#: lib/fb_tools/pidfile.py:176
+msgid "No filename given on initializing {} object."
+msgstr "Kein Dateiname bei der Initialisierung des {}-Ojektes angegeben."
+
+#: lib/fb_tools/pidfile.py:294
+msgid "Pidfile {!r} doesn't exists, not removing."
+msgstr "Die PID-Datei {!r} existiert nicht, und wird deshalb auch nicht gelöscht."
+
+#: lib/fb_tools/pidfile.py:300
+msgid "Auto removing disabled, don't deleting {!r}."
+msgstr "Automatisches Löschen deaktiviert, {!r} wird nicht gelöscht."
+
+#: lib/fb_tools/pidfile.py:305
+msgid "Removing pidfile {!r} ..."
+msgstr "Lösche PID-Datei {!r} …"
+
+#: lib/fb_tools/pidfile.py:308 lib/fb_tools/pidfile.py:342
+msgid "Just kidding ..."
+msgstr "Ich mach doch nur Spaß …"
+
+#: lib/fb_tools/pidfile.py:313
+msgid "Could not delete pidfile {f!r}: {e}"
+msgstr "Konnte PID-Datei {f!r} nicht löschen: {e}"
+
+#: lib/fb_tools/pidfile.py:332
+msgid "Invalid PID {p} for creating pidfile {f!r} given."
+msgstr "Ungültige PID {p} zur Erstellung der PID-Datei {f!r} übergeben."
+
+#: lib/fb_tools/pidfile.py:340
+msgid "Deleting pidfile {!r} ..."
+msgstr "Lösche PID-Datei {!r} …"
+
+#: lib/fb_tools/pidfile.py:350
+msgid "Trying opening {!r} exclusive ..."
+msgstr "Versuche {!r} exklusiv zu öffnen …"
+
+#: lib/fb_tools/pidfile.py:353 lib/fb_tools/pidfile.py:406
+msgid "Simulation mode - don't real writing in {!r}."
+msgstr "Simulationsmodus - es wird nicht wirklich nach {!r} geschrieben."
+
+#: lib/fb_tools/pidfile.py:364
+msgid "Error on creating pidfile {f!r}: {e}"
+msgstr "Fehler beim Erstellen der PID-Datei {f!r}: {e}"
+
+#: lib/fb_tools/pidfile.py:368 lib/fb_tools/pidfile.py:412
+msgid "Writing {p} into {f!r} ..."
+msgstr "Schreibe {p} nach {f!r} …"
+
+#: lib/fb_tools/pidfile.py:390
+msgid "Calling {} on a not self created pidfile."
+msgstr "Aufruf von {} bei einer nicht selbst erstellten PID-Datei."
+
+#: lib/fb_tools/pidfile.py:403
+msgid "Trying opening {!r} for recreate ..."
+msgstr "Versuche {!r} zum Wiedererstellen zu öffnen …"
+
+#: lib/fb_tools/pidfile.py:418
+msgid "Error on recreating pidfile {f!r}: {e}"
+msgstr "Fehler beim Wiedererstellen der PID-Datei {f!r}: {e}"
+
+#: lib/fb_tools/pidfile.py:444
+msgid "Pidfile parent directory {!r} doesn't exists."
+msgstr "Das Eltern-Verzeichnis der PID-Datei {!r} existiert nicht."
+
+#: lib/fb_tools/pidfile.py:448
+msgid "Pidfile parent directory {!r} is not a directory."
+msgstr "Das Eltern-Verzeichnis der PID-Datei {!r} is kein Verzeichnis"
+
+#: lib/fb_tools/pidfile.py:452
+msgid "No write access to pidfile parent directory {!r}."
+msgstr "Kein Schreibzugriff auf das Eltern-Verzeichnis der PID-Datei {!r}."
+
+#: lib/fb_tools/pidfile.py:459
+msgid "It is not a regular file."
+msgstr "Es ist keine reguläre Datei."
+
+#: lib/fb_tools/pidfile.py:476
+msgid "Reading content of pidfile {!r} ..."
+msgstr "Lese Inhalt der PID-Datei {!r} …"
+
+#: lib/fb_tools/pidfile.py:497
+msgid "No useful information found in pidfile {f!r}: {z!r}"
+msgstr "Keine sinnvollen Informationen in der PID-Datei {f!r} gefunden: {z!r}"
+
+#: lib/fb_tools/pidfile.py:502
+msgid "Trying check for process with PID {} ..."
+msgstr "Versuche den Prozess mit der PID {} zu überprüfen …"
+
+#: lib/fb_tools/pidfile.py:508
+msgid "Process with PID {} anonymous died."
+msgstr "Der Prozess mit der PID {} ist anonym verstorben."
+
+#: lib/fb_tools/pidfile.py:512
+msgid "No permission to signal the process {} ..."
+msgstr "Keine Rechte zum Senden von Signalen an Prozess {} …"
+
+#: lib/fb_tools/pidfile.py:516
+msgid "Got a {c}: {e}."
+msgstr "Hab eine(e) {c} erhalten: {e}."
+
+#: lib/fb_tools/vmware_app.py:96
+msgid "Did not found any configured Vsphere environments."
+msgstr "Keine VSPhere-Umgebung in der Konfiguration gefunden."
+
+#: lib/fb_tools/vmware_app.py:104
+msgid "Checking for configured VSPhere instance {!r} ..."
+msgstr "Überprüfe die konfigurierte VSPhere-Instanz {!r} …"
+
+#: lib/fb_tools/vmware_app.py:108
+msgid "VSPhere {!r} not found in list of configured VSPhere instances."
+msgstr "VSPhere {!r} wurde nicht in der Liste der konfigurierten VSPhere-Instanzen gefunden."
+
+#: lib/fb_tools/vmware_app.py:131
+msgid "Enter password for {n} VSPhere user {u!r} on host {h!r}:"
+msgstr "Geben Sie das Passwort für den {n}-VSPhere-Nutzer {u!r} auf Host {h!r} ein:"
+
+#: lib/fb_tools/vmware_app.py:147
+msgid "The VSPhere names from configuration, in which the VMs should be searched."
+msgstr "Die Namen der VSPheres aus der Konfiguration, in denen die VMs gesucht werden sollen."
+
+#: lib/fb_tools/vmware_app.py:183
+msgid "Could not initialize {} object from:"
+msgstr "Konnte kein {}-Objekt initialisieren aus:"
+
+#: lib/fb_tools/vmware_app.py:191
+msgid "Cleaning up ..."
+msgstr "Aufräumen …"
+
+#: lib/fb_tools/vmware_app.py:194
+msgid "Closing VSPhere object {!r} ..."
+msgstr "Schließe VSPhere-Objekt {!r} …"
 
 #: lib/fb_tools/vmware_config.py:138
+msgid "Empty VSphere name found."
+msgstr "Leerer VSPhere-Name gefunden."
+
+#: lib/fb_tools/vmware_config.py:173
+msgid "Unknown key {k!r} with value {v!r} for VSphere {vs!r} in section {sec!r} found."
+msgstr "Unbekannten Schlüssel {k!r} mit Wert {v!r} für VSphere {vs!r} in Abschnitt {sec!r} gefunden."
+
+#: lib/fb_tools/vmware_config.py:179
 msgid "There must be a Host definition for VSphere {!r}."
 msgstr "Es muss ein Host für VSphere {!r} definiert werden."
 
@@ -1586,20 +2001,23 @@ msgstr "Trenne Verbindung zu vSphere-Host {}."
 #: lib/fb_tools/vsphere/controller.py:274 lib/fb_tools/vsphere/dc.py:154
 #: lib/fb_tools/vsphere/disk.py:386 lib/fb_tools/vsphere/ds.py:237
 #: lib/fb_tools/vsphere/ds_cluster.py:127 lib/fb_tools/vsphere/ether.py:463
-#: lib/fb_tools/vsphere/host.py:255 lib/fb_tools/vsphere/host.py:524
-#: lib/fb_tools/vsphere/network.py:148 lib/fb_tools/vsphere/vm.py:506
+#: lib/fb_tools/vsphere/host.py:257 lib/fb_tools/vsphere/host.py:533
+#: lib/fb_tools/vsphere/host_port_group.py:204 lib/fb_tools/vsphere/network.py:148
+#: lib/fb_tools/vsphere/vm.py:506
 msgid "Creating {} object from:"
 msgstr "Erstelle {}-Objekt aus:"
 
 #: lib/fb_tools/vsphere/about.py:319 lib/fb_tools/vsphere/controller.py:279
-#: lib/fb_tools/vsphere/disk.py:391 lib/fb_tools/vsphere/ether.py:468 lib/fb_tools/vsphere/vm.py:577
+#: lib/fb_tools/vsphere/disk.py:391 lib/fb_tools/vsphere/ether.py:468
+#: lib/fb_tools/vsphere/host_port_group.py:209 lib/fb_tools/vsphere/vm.py:577
 msgid "Created {} object:"
 msgstr "Erstelltes {}-Objekt:"
 
 #: lib/fb_tools/vsphere/cluster.py:261 lib/fb_tools/vsphere/controller.py:175
 #: lib/fb_tools/vsphere/dc.py:120 lib/fb_tools/vsphere/disk.py:273 lib/fb_tools/vsphere/ds.py:324
 #: lib/fb_tools/vsphere/ds_cluster.py:166 lib/fb_tools/vsphere/ether.py:305
-#: lib/fb_tools/vsphere/host.py:490 lib/fb_tools/vsphere/network.py:187 lib/fb_tools/vsphere/vm.py:471
+#: lib/fb_tools/vsphere/host.py:499 lib/fb_tools/vsphere/host_port_group.py:161
+#: lib/fb_tools/vsphere/network.py:187 lib/fb_tools/vsphere/vm.py:471
 msgid "Comparing {} objects ..."
 msgstr "Vergleiche {}-Objekte …"
 
@@ -1612,30 +2030,26 @@ msgid "Cluster {c!r} has datastore {d!r}."
 msgstr "Der Cluster {c!r} hat den Datastore {d!r}."
 
 #: lib/fb_tools/vsphere/controller.py:242 lib/fb_tools/vsphere/disk.py:366
-#: lib/fb_tools/vsphere/ether.py:412 lib/fb_tools/vsphere/host.py:231 lib/fb_tools/vsphere/host.py:505
-#: lib/fb_tools/vsphere/vm.py:490
+#: lib/fb_tools/vsphere/ether.py:412 lib/fb_tools/vsphere/host.py:233 lib/fb_tools/vsphere/host.py:514
+#: lib/fb_tools/vsphere/host_port_group.py:188 lib/fb_tools/vsphere/vm.py:490
 msgid "Parameter {t!r} must be a {e}, {v!r} ({vt}) was given."
-msgstr "Der Parameter {t!r} muss ein {e} sein, v!r} ({vt}) wurde gegeben."
+msgstr "Der Parameter {t!r} muss ein {e} sein, {v!r} ({vt}) wurde gegeben."
 
 #: lib/fb_tools/vsphere/controller.py:263
 msgid "Checking class of controller: {!r}"
 msgstr "Überprüfe Klasse für Controller: {!r}"
 
 #: lib/fb_tools/vsphere/controller.py:290 lib/fb_tools/vsphere/disk.py:402
-#: lib/fb_tools/vsphere/ether.py:479 lib/fb_tools/vsphere/vm.py:587
+#: lib/fb_tools/vsphere/ether.py:479 lib/fb_tools/vsphere/host_port_group.py:220
+#: lib/fb_tools/vsphere/vm.py:587
 msgid "Invalid type {t!r} as an item of a {c}, only {o} objects are allowed."
 msgstr "Ungültiger Typ {t!r} als ein Eintrag von {c}, nor {o}-Objekte sind erlaubt."
-
-#: lib/fb_tools/vsphere/controller.py:358 lib/fb_tools/vsphere/disk.py:470
-#: lib/fb_tools/vsphere/ether.py:547 lib/fb_tools/vsphere/vm.py:655
-msgid "{m} takes at most {max} arguments ({n} given)."
-msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
 
 #: lib/fb_tools/vsphere/controller.py:397
 msgid "Controller is not in controller list."
 msgstr "Der Controller ist nicht in der Controller-Liste."
 
-#: lib/fb_tools/vsphere/disk.py:509
+#: lib/fb_tools/vsphere/disk.py:510
 msgid "Disk is not in disk list."
 msgstr "Die Platte ist nicht in der Liste der Disks."
 
@@ -1717,9 +2131,13 @@ msgstr "Überprüfe die Klasse der Ethernet-Karte: {!r}"
 msgid "card is not in card list."
 msgstr "Die Karte ist nicht in der Liste der Ethernet-Karten."
 
-#: lib/fb_tools/vsphere/host.py:510
+#: lib/fb_tools/vsphere/host.py:519
 msgid "Host {!r} seems to be offline!"
 msgstr "Der Host {!r} scheint offline zu sein!"
+
+#: lib/fb_tools/vsphere/host_port_group.py:348
+msgid "group is not in group list."
+msgstr "Gruppe ist nich in der Gruppenliste."
 
 #: lib/fb_tools/vsphere/iface.py:122
 msgid "Invalid MAC address {!r} for interface given."

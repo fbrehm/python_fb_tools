@@ -11,7 +11,6 @@ from __future__ import absolute_import, print_function
 # Standard modules
 import logging
 import argparse
-import pathlib
 import errno
 import os
 import importlib
@@ -21,8 +20,6 @@ import copy
 from pathlib import Path
 
 # Third party modules
-
-import babel
 
 # Own modules
 from . import __version__ as GLOBAL_VERSION
@@ -114,8 +111,8 @@ class CfgTypeOptionAction(argparse.Action):
         cfg_type_clean = cfg_type.strip().lower()
         if cfg_type_clean not in self.supported_types:
             msg = _(
-                "The configuration file type must be one of {l}, given {g!r}.").format(
-                    l=format_list(self.supported_types, do_repr=True, locale=DEFAULT_LOCALE),
+                "The configuration file type must be one of {lst}, given {g!r}.").format(
+                    lst=format_list(self.supported_types, do_repr=True, locale=DEFAULT_LOCALE),
                     g=cfg_type)
             raise argparse.ArgumentError(self, msg)
 
@@ -183,13 +180,13 @@ class RangeOptionAction(argparse.Action):
     def __call__(self, parser, namespace, value, option_string=None):
 
         if value < self._min_val:
-            msg = _("The value for {l!r} may be at least {m}, {v} were given.").format(
-                l=option_string, m=self._min_val, v=value)
+            msg = _("The value for {opt!r} may be at least {m}, {v} were given.").format(
+                opt=option_string, m=self._min_val, v=value)
             raise argparse.ArgumentError(self, msg)
 
         if value > self._max_val:
-            msg = _("The value for {l!r} may be at most {m}, {v} were given.").format(
-                l=option_string, m=self._max_val, v=value)
+            msg = _("The value for {opt!r} may be at most {m}, {v} were given.").format(
+                opt=option_string, m=self._max_val, v=value)
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, value)
@@ -215,10 +212,9 @@ class YamlStyleOptionAction(argparse.Action):
 
         style_clean = style.strip()
         if style_clean not in self.supported_styles:
-            msg = _(
-                "The YAML style type must be one of {l}, given {g!r}.").format(
-                    l=format_list(self.supported_styles, do_repr=True,
-                    locale=DEFAULT_LOCALE), g=style)
+            msg = _("The YAML style type must be one of {opt}, given {g!r}.").format(
+                opt=format_list(self.supported_styles, do_repr=True, locale=DEFAULT_LOCALE),
+                g=style)
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, style_clean)
@@ -470,8 +466,8 @@ class CfgConvertApplication(BaseApplication):
         if v not in self.yaml_avail_styles:
             style_list = format_list(self.yaml_avail_styles, do_repr=True, locale=DEFAULT_LOCALE)
             msg = _(
-                "The default style on ouput YAML must be one of {l}, "
-                "but {v!r} was given.").format(l=style_list, v=value)
+                "The default style on ouput YAML must be one of {lst}, "
+                "but {v!r} was given.").format(lst=style_list, v=value)
             raise ValueError(msg)
 
         self._yaml_default_style = v
@@ -521,8 +517,8 @@ class CfgConvertApplication(BaseApplication):
         if v not in self.yaml_avail_linebreaks:
             lb_list = format_list(self.yaml_avail_linebreaks, do_repr=True, locale=DEFAULT_LOCALE)
             msg = _(
-                "The linebreak used in ouput YAML must be one of {l}, "
-                "but {v!r} was given.").format(l=lb_list, v=value)
+                "The linebreak used in ouput YAML must be one of {lst}, "
+                "but {v!r} was given.").format(lst=lb_list, v=value)
             raise ValueError(msg)
 
         self._yaml_line_break = v
@@ -643,8 +639,6 @@ class CfgConvertApplication(BaseApplication):
         """
         Public available method to initiate the argument parser.
         """
-
-
 
         super(CfgConvertApplication, self).init_arg_parser()
 
@@ -891,7 +885,8 @@ class CfgConvertApplication(BaseApplication):
         lmethod(self, content)
 
         if self.verbose > 1:
-            LOG.debug(_("Interpreted content of {!r}:").format(self.input) + '\n' + pp(self.cfg_content))
+            msg = _("Interpreted content of {!r}:").format(self.input)
+            LOG.debug(msg + '\n' + pp(self.cfg_content))
 
     # -------------------------------------------------------------------------
     def load_yaml(self, content):
