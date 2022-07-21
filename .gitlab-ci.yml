@@ -149,4 +149,170 @@ Linter:
     - 'test Python 3.9'
     - 'test Python 3.10'
 
+# ---------------------------
+.pkg-build-rules:
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
+    - if: $CI_COMMIT_BRANCH =~ /test-.*/
+    - if: $CI_COMMIT_BRANCH =~ /build.*/
+  tags:
+    - docker
+  needs:
+    - 'Linter'
+  variables:
+    USED_CHARSET: 'utf8'
+    USED_LOCALE: 'en_US'
+    USED_LC: 'en_US.utf8'
+    PKG_NAME: 'fb_tools'
+    SRC_SPEC_FILE: 'template.spec'
+    TGT_SPEC_FILE: "${PKG_NAME}.spec"
+  cache:
+    key: ${CI_JOB_NAME}
+    paths:
+      - .rpm-version
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+      - rpmdir/RPMS/*/*.rpm
+      - rpmdir/SRPMS/*.src.rpm
+    expire_in: '1 week'
+  before_script:
+    - ls -lA --color=always /etc/yum.repos.d
+    - ${YUM} clean all
+    - ${YUM} makecache
+    - |
+      echo "All locales"
+      locale -a
+    - |
+      echo "Installing locales ..."
+      if [[ "${EL_MAJOR_VERSION}" == "7" ]] ; then
+        echo "${USED_LOCALE}.${USED_CHARSET}"
+        localedef --charmap UTF-8 --inputfile "${USED_LOCALE}" "${USED_LC}"
+      else
+        dnf --assumeyes install langpacks-en glibc-all-langpacks
+      fi
+    - |
+      echo "All locales"
+      locale -a
+      echo
+      echo "locales:"
+      locale
+    - |
+      echo "Exporting LC_ALL ..."
+      export LC_ALL="${USED_LC}"
+      echo
+      echo "locales:"
+      locale
+    - |
+      echo "Installing epel-release  ..."
+      ${YUM} --assumeyes install epel-release
+    - |
+      echo "Adding Pixelpark YUM repo ..."
+      echo "[pixelpark]"                                                                > /etc/yum.repos.d/pixelpark.repo
+      echo "name=pixelpark"                                                            >> /etc/yum.repos.d/pixelpark.repo
+      echo "baseurl=https://${YUM_REPO_HOST}${YUM_REPO_DIR_HTTP}/${EL_MAJOR_VERSION}/" >> /etc/yum.repos.d/pixelpark.repo
+      echo "enabled=1"                                                                 >> /etc/yum.repos.d/pixelpark.repo
+      echo "gpgcheck=1"                                                                >> /etc/yum.repos.d/pixelpark.repo
+      echo "gpgkey=https://${YUM_REPO_HOST}/gpg/pixelpark.gpg"                         >> /etc/yum.repos.d/pixelpark.repo
+      echo                                                                             >> /etc/yum.repos.d/pixelpark.repo
+      echo
+      echo "Generated /etc/yum.repos.d/pixelpark.repo:"
+      cat /etc/yum.repos.d/pixelpark.repo
+    - ${YUM} makecache
+    - ${YUM} --assumeyes upgrade
+    - ${YUM} --assumeyes install ${PYTHON_PACKAGES} gnupg2 rpm-build gettext 
+    - ls -l --color=always /bin/python* /bin/pip* || true
+    - pip3 list --format columns
+  script:
+    - mkdir -pv rpmdir
+    - mkdir -pv rpmdir/SOURCES
+    - |
+      echo "Creating source tar file ..."
+      ODIR=$(pwd)
+      ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )
+      PKG_VERSION=$( ./get-rpm-version )
+      PKG_RELEASE=$( ./get-rpm-release )
+      SRC_BASE="python${PYTHON_VERSION_NODOT}_${PKG_NAME}-${PKG_VERSION}"
+      SRC_DIR="rpmdir/SOURCES/${SRC_BASE}"
+      TAR_BASE="${PKG_NAME}.${PKG_VERSION}.tar.gz"
+      SRC_TARBALL="rpmdir/SOURCES/${TAR_BASE}"
+      echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"
+      echo "Sources directory: '${SRC_DIR}'"
+      mkdir -pv "${SRC_DIR}"
+      tar cf - ${ROOT_OBJECTS} | (cd "${SRC_DIR}" ; tar xf -)
+      echo "Creating ${SRC_TARBALL} ..."
+      cd rpmdir/SOURCES && tar cfz "${TAR_BASE}" "${SRC_BASE}"
+      ls -lA --color=always
+      cd "${ODIR}"
+    - |
+      echo "Generating '${TGT_SPEC_FILE}' ..."
+      PKG_VERSION=$( ./get-rpm-version )
+      PKG_RELEASE=$( ./get-rpm-release )
+      cat "${SRC_SPEC_FILE}" | \
+          sed -e "s/@@@Version@@@/$PKG_VERSION/gi" \
+              -e "s/@@@Release@@@/${PKG_RELEASE}/gi" \
+              -e "s/@@@py_version_dot@@@/${PYTHON_VERSION_DOT}/gi" \
+              -e "s/@@@py_version_nodot@@@/${PYTHON_VERSION_NODOT}/gi" > "${TGT_SPEC_FILE}"
+      dch2speclog debian/changelog >>"${TGT_SPEC_FILE}"
+      echo "Generated spec-file:"
+      cat "${TGT_SPEC_FILE}"
+      echo "${PKG_VERSION}-${PKG_RELEASE}" > .rpm-version
+    - |
+      echo "Creating ${HOME}/.rpmmacros ..."
+      echo "%__python3 /bin/python${PYTHON_VERSION_DOT}" > "${HOME}/.rpmmacros"
+      echo "%_signature gpg" >> "${HOME}/.rpmmacros"
+      echo "Generated ${HOME}/.rpmmacros:"
+      cat "${HOME}/.rpmmacros"
+    - |
+      echo "Building RPM packages:"
+      rpmbuild -ba --nocheck --verbose --define "_topdir $(pwd)/rpmdir" --define "version ${PKG_VERSION}" "${TGT_SPEC_FILE}"
+    - |
+      echo "Results:"
+      find rpmdir/*RPMS -type f -print0 | xargs --null --no-run-if-empty ls -l -d --color=always
+
+# ---------------------------
+build CentOS 7 with Python 3.6:
+  variables:
+    EL_MAJOR_VERSION: '7'
+    YUM: yum
+    PYTHON_PACKAGES: >
+      python36 python36-six python36-pip python36-devel python3-setuptools
+      python36-fb-logging
+    PYTHON_VERSION_DOT: '3.6'
+    PYTHON_VERSION_NODOT: '36'
+  extends:
+    - '.pkg-build-rules'
+  image: centos:7
+
+# ---------------------------
+build CentOS 8 with Python 3.8:
+  variables:
+    EL_MAJOR_VERSION: '8'
+    YUM: dnf
+    PYTHON_PACKAGES: >
+      python38 python38-six python38-pip python38-devel python38-setuptools
+      platform-python-devel python38-fb-logging
+    PYTHON_VERSION_DOT: '3.8'
+    PYTHON_VERSION_NODOT: '38'
+  extends:
+    - '.pkg-build-rules'
+  image: dokken/centos-stream-8
+
+# ---------------------------
+build CentOS 9 with Python 3:
+  variables:
+    EL_MAJOR_VERSION: '9'
+    YUM: dnf
+    PYTHON_PACKAGES: >
+      python3 python3-six python3-pip python3-devel python3-setuptools python3-fb-logging
+    PYTHON_VERSION_DOT: '3'
+    PYTHON_VERSION_NODOT: '3'
+  extends:
+    - '.pkg-build-rules'
+  image: dokken/centos-stream-9
+
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list

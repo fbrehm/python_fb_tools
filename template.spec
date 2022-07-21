@@ -1,7 +1,5 @@
-# vim: filetype=spec
-
 %define version @@@Version@@@
-%define builddir python@@@py_version_nodot@@@_fb-tools-%{version}
+%define builddir python@@@py_version_nodot@@@_fb_tools-%{version}
 
 Name:           python@@@py_version_nodot@@@-fb-tools
 Version:        %{version}
@@ -12,7 +10,7 @@ Group:          Development/Languages/Python
 License:        LGPL-3
 Distribution:   Frank Brehm
 URL:            https://github.com/fbrehm/python_fb_tools
-Source0:        fb-tools.%{version}.tar.gz
+Source0:        fb_tools.%{version}.tar.gz
 
 BuildRequires:  gettext
 BuildRequires:  python@@@py_version_nodot@@@
@@ -31,7 +29,6 @@ Requires:       python@@@py_version_nodot@@@-requests
 Requires:       python@@@py_version_nodot@@@-six
 Requires:       python@@@py_version_nodot@@@-fb-logging
 Requires:       python@@@py_version_nodot@@@-chardet
-Recommends:     python@@@py_version_nodot@@@-pyvmomi
 Recommends:     python@@@py_version_nodot@@@-pyyaml
 BuildArch:      noarch
 

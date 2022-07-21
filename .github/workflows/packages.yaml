@@ -258,6 +258,7 @@ jobs:
     env:
       EL_VERSION: ${{ matrix.el_version }}
       EPEL_PACKAGE: ${{ matrix.epel_package }}
+      PKG_NAME: 'fb_tools'
       PY_VERSION_DOT: ${{ matrix.py_version_dot}}
       PY_VERSION_NODOT: ${{ matrix.py_version_nodot}}
       PYTHON: "python${{ matrix.py_version_nodot}}"
@@ -398,19 +399,16 @@ jobs:
           ls -lA --color=always *.tar.gz
           cd "${ODIR}"
           echo
-          echo "Generating spec file 'fb_logging.spec' ..."
-          cat specs/fb-tools.spec.template | tail -n +3 | \
-                              sed -e "s/@@@Version@@@/${PKG_VERSION}/gi" \
+          echo "Generating spec file 'fb-tools.spec' ..."
+          cat template.spec | sed -e "s/@@@Version@@@/${PKG_VERSION}/gi" \
                                   -e "s/@@@Release@@@/${PKG_RELEASE}/gi" \
                                   -e "s/@@@py_version_nodot@@@/${PY_VERSION_NODOT}/gi" \
                                   -e "s/@@@py_version_dot@@@/${PY_VERSION_DOT}/gi" \
                                   > fb-tools.spec
           if [[ "${EL_VERSION}" -lt "8" ]] ; then
               sed -i '/^Recommends/d' fb-tools.spec
-          elif [[ "${EL_VERSION}" == "9" ]] ; then
-              sed -i '/pyvmomi/d' fb-tools.spec
           fi
-          python${PY_VERSION_DOT} bin-build/changelog-deb2rpm.py debian/changelog >>fb-tools.spec
+          dch2speclog debian/changelog >>fb-tools.spec
           echo
           echo "Generated Spec file:"
           cat fb-tools.spec
