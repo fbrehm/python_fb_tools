@@ -132,8 +132,8 @@ Linter:
       shellcheck -x ${shellscripts}
     - |
       echo
-      echo -e "yamllint .gitlab-ci.yml"
-      yamllint .gitlab-ci.yml
+      echo -e "yamllint .gitlab-ci.yml .github"
+      yamllint .gitlab-ci.yml .github
   rules:
     - if: '$CI_COMMIT_TAG'
     - if: $CI_COMMIT_BRANCH == "master"
@@ -224,7 +224,7 @@ Linter:
       cat /etc/yum.repos.d/pixelpark.repo
     - ${YUM} makecache
     - ${YUM} --assumeyes upgrade
-    - ${YUM} --assumeyes install ${PYTHON_PACKAGES} gnupg2 rpm-build gettext 
+    - ${YUM} --assumeyes install ${PYTHON_PACKAGES} gnupg2 rpm-build gettext
     - ls -l --color=always /bin/python* /bin/pip* || true
     - pip3 list --format columns
   script:

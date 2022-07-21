@@ -104,7 +104,7 @@ jobs:
           shellcheck -x ${shellscripts}
       - name: Execute Yamllint
         shell: bash
-        run: yamllint .gitlab-ci.yml
+        run: yamllint .gitlab-ci.yml .github
 
   ###########################
   build_debian_sources:
