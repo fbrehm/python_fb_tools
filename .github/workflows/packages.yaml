@@ -91,14 +91,20 @@ jobs:
       - name: Execute Flake 8
         shell: bash
         run: |
-          flake8 --max-line-length=$FLAKE8_MAX_LINE_LENGTH --max-complexity=$FLAKE8_MAX_COMPLEXITY --ignore=$FLAKE8_IGNORE_ERRORS bin lib
+          echo
+          echo -e "flake8 bin lib setup.py"
+          flake8 bin lib setup.py
       - name: Execute Shellcheck
         shell: bash
-        run: >
-          shellcheck -x compile-xlate-msgs.sh test.py-*.sh test.rc test/call_script.sh test/call_sleep.sh update-env.sh xtract-xlate-msgs.sh
+        run: |
+          echo
+          shellscripts="compile-xlate-msgs.sh test/call_script.sh test/call_sleep.sh"
+          shellscripts+=" update-env.sh xtract-xlate-msgs.sh"
+          echo -e "shellcheck -x ${shellscripts}"
+          shellcheck -x ${shellscripts}
       - name: Execute Yamllint
         shell: bash
-        run: yamllint -c yamllint.yaml .gitlab-ci.yml
+        run: yamllint .gitlab-ci.yml
 
   ###########################
   build_debian_sources:
