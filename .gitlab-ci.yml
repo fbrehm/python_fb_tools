@@ -1,0 +1,152 @@
+---
+
+stages:
+  - test
+  - linter
+  - build
+  - sign
+  - deploy
+
+variables:
+  DEBFULLNAME: 'Frank Brehm'
+  DEBEMAIL: 'frank@brehm-online.com'
+  EXPIRE_ARTIFACTS_IN: '1 week'
+  FB_REPOSERVER_URL: 'http://repo.uhu-banane.de'
+  FB_REPOSERVER_GPGKEY_URL: 'http://repo.uhu-banane.de/public/repo.uhu-banane.de.gpg-key2.asc'
+  NOTIFY_ADDRESS: 'frank.brehm@pixelpark.com'
+  SENDER_ADDRESS: 'gitlab-ci@pixelpark.com'
+  SSH_PRIV_KEY_YUM_REPO: 'nada'
+  USED_TIMEZONE: 'Europe/Berlin'
+  VERSION_PREFIX: 'unknown'
+  YUM_REPO_GPG_ID: 'C0E73F70'
+  YUM_REPO_GPG_PASSWD: ''
+  YUM_REPO_HOST: 'repo02.pixelpark.com'
+  YUM_REPO_USER: 'rpm-repo'
+  YUM_REPO_DIR_HTTP: '/Linux/yum/pixelpark'
+  YUM_REPO_DIR: "/srv/www/repo${YUM_REPO_DIR_HTTP}"
+  YUM_REPO_GPG_KEY_PUB: 'nada'
+  YUM_REPO_GPG_KEY_SEC: ''
+
+# ---------------------------
+.docker_job_definition:
+  before_script:
+    - locale -a
+    - apt update && apt install --yes sudo locales gettext
+    - >
+      if test -f /etc/locale.gen; then
+        echo "/etc/locale.gen:"
+        grep -P -v '^\s*(#.*)?$' /etc/locale.gen || true
+        echo "<-- EOF"
+      fi
+    - >
+      if grep 'en_US.UTF-8' /etc/locale.gen; then
+        sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+      else
+        echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+      fi
+    - >
+      if grep 'de_DE.UTF-8' /etc/locale.gen; then
+        sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen
+      else
+        echo 'de_DE.UTF-8 UTF-8' >> /etc/locale.gen
+      fi
+    - locale-gen
+    - locale -a
+    - pip install --upgrade pip
+    - pip install -r requirements.txt --upgrade --upgrade-strategy eager
+
+# ---------------------------
+.test-rules:
+  stage: test
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
+    - if: $CI_COMMIT_BRANCH =~ /test-.*/
+    - if: $CI_COMMIT_BRANCH =~ /build.*/
+    - if: $CI_COMMIT_BRANCH == "develop"
+  tags:
+    - docker
+  script:
+    - pip install --upgrade --upgrade-strategy eager pytest
+    - pip list --format columns
+    - pytest --verbose
+
+# ---------------------------
+test Python 3.6:
+  extends:
+    - .docker_job_definition
+    - .test-rules
+  image: python:3.6
+
+# ---------------------------
+test Python 3.7:
+  extends:
+    - .docker_job_definition
+    - .test-rules
+  image: python:3.7
+
+# ---------------------------
+test Python 3.8:
+  extends:
+    - .docker_job_definition
+    - .test-rules
+  image: python:3.8
+
+# ---------------------------
+test Python 3.9:
+  extends:
+    - .docker_job_definition
+    - .test-rules
+  image: python:3.9
+
+# ---------------------------
+test Python 3.10:
+  extends:
+    - .docker_job_definition
+    - .test-rules
+  image: python:3.10
+
+# ---------------------------
+Linter:
+  stage: linter
+  extends:
+    - .docker_job_definition
+  image: python:3.10
+  tags:
+    - docker
+  script:
+    - apt install --yes shellcheck yamllint
+    - pip install --upgrade --upgrade-strategy eager flake8 pylint
+    - pip list --format columns
+    - |
+      echo
+      echo -e "flake8 bin lib setup.py"
+      flake8 bin lib setup.py
+    - |
+      echo
+      shellscripts="compile-xlate-msgs.sh test/call_script.sh test/call_sleep.sh"
+      shellscripts+=" update-env.sh xtract-xlate-msgs.sh"
+      echo -e "shellcheck -x ${shellscripts}"
+      shellcheck -x ${shellscripts}
+    - |
+      echo
+      echo -e "yamllint .gitlab-ci.yml"
+      yamllint .gitlab-ci.yml
+  rules:
+    - if: '$CI_COMMIT_TAG'
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "test"
+    - if: $CI_COMMIT_BRANCH =~ /test-.*/
+    - if: $CI_COMMIT_BRANCH =~ /build.*/
+    - if: $CI_COMMIT_BRANCH == "develop"
+  needs:
+    - 'test Python 3.6'
+    - 'test Python 3.7'
+    - 'test Python 3.8'
+    - 'test Python 3.9'
+    - 'test Python 3.10'
+
+# vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
