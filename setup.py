@@ -17,8 +17,9 @@ import pprint
 import datetime
 import textwrap
 import glob
-import pathlib
 import subprocess
+
+from pathlib import Path
 
 # Third party modules
 from setuptools import setup
@@ -29,6 +30,7 @@ __bin_dir__ = os.path.join(__base_dir__, 'bin')
 __lib_dir__ = os.path.join(__base_dir__, 'lib')
 __module_dir__ = os.path.join(__lib_dir__, 'fb_tools')
 __init_py__ = os.path.join(__module_dir__, '__init__.py')
+__local_usr_dir__ = Path(__base_dir__) / 'usr'
 
 PATHS = {
     '__base_dir__': __base_dir__,
@@ -219,13 +221,32 @@ def get_scripts():
 get_scripts()
 
 # -----------------------------------
+__data_files__ = []
+
+re_usr = re.compile(r'^usr/')
+if __local_usr_dir__.is_dir():
+    usr_files = {}
+    for f in __local_usr_dir__.glob('**/*'):
+        if f.is_file():
+            relpath = Path(os.path.relpath(str(f), __base_dir__))
+            reldir = re_usr.sub('', str(relpath.parent))
+            if reldir not in usr_files:
+                usr_files[reldir] = []
+            usr_files[reldir].append(str(relpath))
+    for udir in usr_files.keys():
+        __data_files__.append((udir, usr_files[udir]))
+
+# print("Found data files:\n" + pp(__data_files__) + "\n")
+
+
+# -----------------------------------
 MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
 PO_FILES = 'locale/*/LC_MESSAGES/*.po'
 
 def create_mo_files():
     mo_files = []
     for po_path in glob.glob(PO_FILES):
-        mo = pathlib.Path(po_path.replace('.po', '.mo'))
+        mo = Path(po_path.replace('.po', '.mo'))
         if not mo.exists():
             subprocess.call(['msgfmt', '-o', str(mo), po_path])
         mo_files.append(str(mo))
@@ -244,6 +265,7 @@ setup(
     package_data={
         '': create_mo_files(),
     },
+    data_files=__data_files__,
 )
 
 
