@@ -276,10 +276,18 @@ jobs:
           echo
           echo "Installing locales ..."
           if [[ "${EL_VERSION}" == "7" ]] ; then
-            echo "${USED_LOCALE}.${USED_CHARSET}"
-            localedef --charmap UTF-8 --inputfile "${USED_LOCALE}" "${USED_LC}"
+              echo "${USED_LOCALE}.${USED_CHARSET}"
+              localedef --charmap UTF-8 --inputfile "${USED_LOCALE}" "${USED_LC}"
+              for my_locale in de_DE en_US ; do
+                  if [[ "${my_locale}" == "${USED_LOCALE}" ]] ; then
+                      continue
+                  fi
+                  my_lc="${my_locale}.${USED_CHARSET}"
+                  echo "${my_lc}"
+                  localedef --charmap UTF-8 --inputfile "${my_locale}" "${my_lc}"
+              done
           else
-            yum --assumeyes install langpacks-en glibc-all-langpacks
+              yum --assumeyes install langpacks-en langpacks-de glibc-all-langpacks
           fi
           echo
           echo "All locales"

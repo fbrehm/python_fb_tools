@@ -195,6 +195,15 @@ Linter:
     expire_in: '1 week'
   before_script:
     - ls -lA --color=always /etc/yum.repos.d
+    - |
+      repo_file="/etc/yum.repos.d/CentOS-Stream-PowerTools.repo"
+      if [[ -f "${repo_file}" ]] ; then
+          echo
+          echo "Enabling CentOS 8 PowerTools ..."
+          sed -i -e 's/enabled=.*/enabled=1/' "${repo_file}"
+          echo "Content of ${repo_file}:"
+          cat "${repo_file}"
+      fi
     - ${YUM} clean all
     - ${YUM} makecache
     - |
@@ -315,8 +324,12 @@ Linter:
             script_base=$( basename "${script}" )
             man_file="${man_dir}/${script_base}.${man_section}"
             echo "    * ${script_base}.${man_section}"
-            echo "      Executing: help2man --no-info --version-string \"${PKG_VERSION}\" --section ${man_section} \"${script}\" > \"${man_file}\""
-            help2man --no-info --version-string "${PKG_VERSION}" --section ${man_section} "${script}" > "${man_file}"
+            cmd="help2man --no-info --no-discard-stderr"
+            cmd+=" --version-string \"${PKG_VERSION}\""
+            cmd+=" --section ${man_section}"
+            cmd+=" \"${script}\""
+            echo "      Executing: ${cmd} > \"${man_file}\""
+            eval ${cmd} > "${man_file}"
           done
       done
       echo
