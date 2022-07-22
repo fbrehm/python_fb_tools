@@ -245,6 +245,21 @@ Linter:
       ${YUM} --assumeyes upgrade
     - |
       echo
+      echo "Installing or upgrading TZdata ..."
+      if rpm -qa | grep '^tzdata-' >/dev/null ; then
+        echo "Reinstalling tzdata ..."
+        echo "Executing: ${YUM} --assumeyes reinstall tzdata || true"
+        ${YUM} --assumeyes reinstall tzdata || true
+      else
+        echo "Installing tzdata ..."
+        echo "Executing: ${YUM} --assumeyes install tzdata || true"
+        ${YUM} --assumeyes install tzdata || true
+      fi
+      echo
+      echo "Timezone database:"
+      ls -l --color=always /usr/share/zoneinfo/zone.tab
+    - |
+      echo
       echo "Executing: ${YUM} --assumeyes install ${PYTHON_PACKAGES} gnupg2 rpm-build gettext"
       ${YUM} --assumeyes install ${PYTHON_PACKAGES} gnupg2 rpm-build gettext
     - |
@@ -275,7 +290,7 @@ Linter:
       cd "${ODIR}"
     - |
       echo
-      echo "Generating '${TGT_SPEC_FILE}' => '${TGT_SPEC_FILE}' ..."
+      echo "Generating '${SRC_SPEC_FILE}' => '${TGT_SPEC_FILE}' ..."
       PKG_VERSION=$( ./get-rpm-version )
       PKG_RELEASE=$( ./get-rpm-release )
       cat "${SRC_SPEC_FILE}" | \
@@ -284,9 +299,11 @@ Linter:
               -e "s/@@@py_version_dot@@@/${PYTHON_VERSION_DOT}/gi" \
               -e "s/@@@py_version_nodot@@@/${PYTHON_VERSION_NODOT}/gi" > "${TGT_SPEC_FILE}"
       if [[ "${EL_MAJOR_VERSION}" -lt "8" ]] ; then
+          echo
           echo "Removing 'Recommends' lines from '${TGT_SPEC_FILE}' ..."
           sed -i '/^Recommends/d' "${TGT_SPEC_FILE}"
       fi
+      echo
       echo "Adding Changelog to '${TGT_SPEC_FILE}' ..."
       dch2speclog debian/changelog >>"${TGT_SPEC_FILE}"
       echo
