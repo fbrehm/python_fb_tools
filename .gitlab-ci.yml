@@ -317,8 +317,9 @@ Linter:
               man_dir="${SRC_DIR}/usr/share/man/${short_locale}/man${man_section}"
           fi
           mkdir -pv "${man_dir}"
-          LC_ALL="${my_lc}"
-          LANG="${my_lc}"
+          export LC_ALL="${my_lc}"
+          export LANG="${my_lc}"
+          locale
           for script in bin/* ; do
             if [[ ! -x "${script}" ]] ; then
                 continue
