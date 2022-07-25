@@ -200,6 +200,7 @@ jobs:
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/debian-install-buildenv
       - name: Creating man pages
+        shell: bash
         run: |
           echo
           export PKG_VERSION=$( ./get-debian-version )
