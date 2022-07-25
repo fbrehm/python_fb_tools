@@ -216,7 +216,7 @@ jobs:
               echo "  * ${script_base}.${MAN_SECTION}.gz"
               cmd="help2man --no-info --no-discard-stderr"
               cmd+=" --version-string \"${PKG_VERSION}\""
-              cmd+=" --section ${man_section}"
+              cmd+=" --section ${MAN_SECTION}"
               cmd+=" \"${script}\" | gzip -v9"
               echo "      Executing: ${cmd} > \"${man_file}\""
               eval ${cmd} > "${man_file}"
