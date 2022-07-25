@@ -306,42 +306,23 @@ Linter:
       echo
       PKG_VERSION=$( ./get-rpm-version )
       man_section=1
+      man_dir="${SRC_DIR}/usr/share/man/man${man_section}"
       echo "Generating man pages ..."
-      for my_locale in de_DE en_US ; do
-          short_locale=$( echo "${my_locale}" | sed -e 's/_.*//' )
-          my_lc="${my_locale}.${USED_CHARSET}"
-          echo "  * ${my_lc}"
-          if [[ "${my_locale}" == "${USED_LOCALE}" ]] ; then
-              man_dir="${SRC_DIR}/usr/share/man/man${man_section}"
-          else
-              man_dir="${SRC_DIR}/usr/share/man/${short_locale}/man${man_section}"
-          fi
-          mkdir -pv "${man_dir}"
-          export LC_ALL="${my_lc}"
-          export LANG="${my_lc}"
-          locale
-          for script in bin/* ; do
-            if [[ ! -x "${script}" ]] ; then
-                continue
-            fi
-            script_base=$( basename "${script}" )
-            man_file="${man_dir}/${script_base}.${man_section}"
-            echo "    * ${script_base}.${man_section}"
-            cmd="help2man --no-info --no-discard-stderr"
-            cmd+=" --version-string \"${PKG_VERSION}\""
-            cmd+=" --section ${man_section}"
-            cmd+=" \"${script}\" | gzip -v9"
-            echo "      Executing: ${cmd} > \"${man_file}.gz\""
-            eval ${cmd} > "${man_file}.gz"
-          done
+      mkdir -pv "${man_dir}"
+      for script in bin/* ; do
+        if [[ ! -x "${script}" ]] ; then
+            continue
+        fi
+        script_base=$( basename "${script}" )
+        man_file="${man_dir}/${script_base}.${man_section}"
+        echo "  * ${script_base}.${man_section}"
+        cmd="help2man --no-info --no-discard-stderr"
+        cmd+=" --version-string \"${PKG_VERSION}\""
+        cmd+=" --section ${man_section}"
+        cmd+=" \"${script}\" | gzip -v9"
+        echo "      Executing: ${cmd} > \"${man_file}.gz\""
+        eval ${cmd} > "${man_file}.gz"
       done
-      echo
-      echo "Resetting LC_ALL to ${USED_LC} ..."
-      export LC_ALL="${USED_LC}"
-      export LANG="${USED_LC}"
-      echo
-      echo "locales:"
-      locale
     - |
       echo
       PKG_VERSION=$( ./get-rpm-version )
