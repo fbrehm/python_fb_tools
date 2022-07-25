@@ -291,20 +291,12 @@ Linter:
     - mkdir -pv rpmdir/SOURCES
     - |
       echo
-      echo "Creating source tree for tar file ..."
-      ODIR=$(pwd)
-      ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )
       PKG_VERSION=$( ./get-rpm-version )
-      PKG_RELEASE=$( ./get-rpm-release )
       SRC_BASE="python${PYTHON_VERSION_NODOT}_${PKG_NAME}-${PKG_VERSION}"
       SRC_DIR="rpmdir/SOURCES/${SRC_BASE}"
-      echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"
       echo "Sources directory: '${SRC_DIR}'"
       mkdir -pv "${SRC_DIR}"
-      tar cf - ${ROOT_OBJECTS} | (cd "${SRC_DIR}" ; tar xf -)
-    - |
       echo
-      PKG_VERSION=$( ./get-rpm-version )
       man_section=1
       man_dir="${SRC_DIR}/usr/share/man/man${man_section}"
       echo "Generating man pages ..."
@@ -323,6 +315,17 @@ Linter:
         echo "      Executing: ${cmd} > \"${man_file}.gz\""
         eval ${cmd} > "${man_file}.gz"
       done
+    - |
+      echo
+      echo "Creating source tree for tar file ..."
+      ODIR=$(pwd)
+      ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )
+      PKG_VERSION=$( ./get-rpm-version )
+      PKG_RELEASE=$( ./get-rpm-release )
+      SRC_BASE="python${PYTHON_VERSION_NODOT}_${PKG_NAME}-${PKG_VERSION}"
+      SRC_DIR="rpmdir/SOURCES/${SRC_BASE}"
+      echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"
+      tar cf - ${ROOT_OBJECTS} | (cd "${SRC_DIR}" ; tar xf -)
     - |
       echo
       PKG_VERSION=$( ./get-rpm-version )
