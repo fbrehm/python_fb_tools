@@ -205,7 +205,7 @@ jobs:
           export PKG_VERSION=$( ./get-debian-version )
           man_dir="usr/share/man/man${MAN_SECTION}"
           echo "Generating man pages ..."
-          mkdir -p -v "${man_di}"
+          mkdir -p -v "${man_dir}"
           for script in bin/* ; do
               if [[ ! -x "${script}" ]] ; then
                   continue
