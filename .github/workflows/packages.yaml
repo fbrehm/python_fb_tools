@@ -394,7 +394,7 @@ jobs:
           mkdir -pv "rpmdir/SOURCES/${RPM_SRC_DIR}"
           echo
           man_section=1
-          man_dir="rpmdir/SOURCES/usr/share/man/man${man_section}"
+          man_dir="rpmdir/SOURCES/${RPM_SRC_DIR}/usr/share/man/man${man_section}"
           echo "Generating man pages ..."
           mkdir -pv "${man_dir}"
           for script in bin/* ; do
