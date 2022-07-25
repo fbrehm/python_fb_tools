@@ -183,6 +183,7 @@ jobs:
       OS_CODENAME: ${{ matrix.os_codename }}
       OS_RELEASE: ${{ matrix.os_release }}
       VERSION_PREFIX: ${{ matrix.version_prefix }}
+      MAN_SECTION: 1
     container: ${{ matrix.container }}
     steps:
       - uses: actions/checkout@v2
@@ -198,8 +199,30 @@ jobs:
           distro: ${{ matrix.os_codename }}
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/debian-install-buildenv
+      - name: Creating man pages
+        run: |
+          echo
+          export PKG_VERSION=$( ./get-debian-version )
+          man_dir="usr/share/man/man${MAN_SECTION}"
+          echo "Generating man pages ..."
+          mkdir -p -v "${man_di}"
+          for script in bin/* ; do
+              if [[ ! -x "${script}" ]] ; then
+                  continue
+              fi
+              script_base=$( basename "${script}" )
+              man_file="${man_dir}/${script_base}.${MAN_SECTION}.gz"
+              echo "  * ${script_base}.${MAN_SECTION}.gz"
+              cmd="help2man --no-info --no-discard-stderr"
+              cmd+=" --version-string \"${PKG_VERSION}\""
+              cmd+=" --section ${man_section}"
+              cmd+=" \"${script}\" | gzip -v9"
+              echo "      Executing: ${cmd} > \"${man_file}\""
+              eval ${cmd} > "${man_file}"
+          done
       - name: Updating Changelog
         run: |
+          echo
           export PKG_VERSION=$( ./get-debian-version )
           export BUILD_VERSION="${PKG_VERSION}+${VERSION_PREFIX}"
           BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
