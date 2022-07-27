@@ -183,6 +183,7 @@ jobs:
       OS_CODENAME: ${{ matrix.os_codename }}
       OS_RELEASE: ${{ matrix.os_release }}
       VERSION_PREFIX: ${{ matrix.version_prefix }}
+      MAN_SECTION: 1
     container: ${{ matrix.container }}
     steps:
       - uses: actions/checkout@v2
@@ -198,8 +199,31 @@ jobs:
           distro: ${{ matrix.os_codename }}
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/debian-install-buildenv
+      - name: Creating man pages
+        shell: bash
+        run: |
+          echo
+          export PKG_VERSION=$( ./get-debian-version )
+          man_dir="usr/share/man/man${MAN_SECTION}"
+          echo "Generating man pages ..."
+          mkdir -p -v "${man_dir}"
+          for script in bin/* ; do
+              if [[ ! -x "${script}" ]] ; then
+                  continue
+              fi
+              script_base=$( basename "${script}" )
+              man_file="${man_dir}/${script_base}.${MAN_SECTION}.gz"
+              echo "  * ${script_base}.${MAN_SECTION}.gz"
+              cmd="help2man --no-info --no-discard-stderr"
+              cmd+=" --version-string \"${PKG_VERSION}\""
+              cmd+=" --section ${MAN_SECTION}"
+              cmd+=" \"${script}\" | gzip -v9"
+              echo "      Executing: ${cmd} > \"${man_file}\""
+              eval ${cmd} > "${man_file}"
+          done
       - name: Updating Changelog
         run: |
+          echo
           export PKG_VERSION=$( ./get-debian-version )
           export BUILD_VERSION="${PKG_VERSION}+${VERSION_PREFIX}"
           BUILDER="${DEBFULLNAME} <${DEBEMAIL}>"
@@ -276,10 +300,18 @@ jobs:
           echo
           echo "Installing locales ..."
           if [[ "${EL_VERSION}" == "7" ]] ; then
-            echo "${USED_LOCALE}.${USED_CHARSET}"
-            localedef --charmap UTF-8 --inputfile "${USED_LOCALE}" "${USED_LC}"
+              echo "${USED_LOCALE}.${USED_CHARSET}"
+              localedef --charmap UTF-8 --inputfile "${USED_LOCALE}" "${USED_LC}"
+              for my_locale in de_DE en_US ; do
+                  if [[ "${my_locale}" == "${USED_LOCALE}" ]] ; then
+                      continue
+                  fi
+                  my_lc="${my_locale}.${USED_CHARSET}"
+                  echo "${my_lc}"
+                  localedef --charmap UTF-8 --inputfile "${my_locale}" "${my_lc}"
+              done
           else
-            yum --assumeyes install langpacks-en glibc-all-langpacks
+              yum --assumeyes install langpacks-en langpacks-de glibc-all-langpacks
           fi
           echo
           echo "All locales"
@@ -364,29 +396,45 @@ jobs:
           LC_ALL: "en_US.utf8"
         run: |
           echo "Installing build tools"
-          yum --assumeyes install gnupg2 rpm-build gettext
+          yum --assumeyes install gnupg2 rpm-build gettext help2man
       - name: Create build environment
         shell: bash
         env:
           LC_ALL: "en_US.utf8"
         run: |
-          echo "Creating directories ..."
+          echo
+          PKG_VERSION=$( ./get-rpm-version )
+          PKG_RELEASE=$( ./get-rpm-release )
+          echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"
+          echo
           mkdir -pv rpmdir
           mkdir -pv rpmdir/SOURCES
           ODIR=$(pwd)
           ROOT_OBJECTS=$( ls -A1 | egrep -vw ".git|rpmdir" )
           echo
           echo "Root objects:"; for o in ${ROOT_OBJECTS}; do echo " * ${o}"; done
-          PKG_VERSION=$( ./get-rpm-version )
-          PKG_RELEASE=$( ./get-rpm-release )
-          echo
-          echo "Version to build: ${PKG_VERSION}-${PKG_RELEASE}"
-          echo
-          echo "Tweaking setup.cfg ..."
-          sed -i '/pyvmomi/d' setup.cfg
           echo
           RPM_SRC_DIR="python${PY_VERSION_NODOT}_${PKG_NAME}-${PKG_VERSION}"
           mkdir -pv "rpmdir/SOURCES/${RPM_SRC_DIR}"
+          echo
+          man_section=1
+          man_dir="rpmdir/SOURCES/${RPM_SRC_DIR}/usr/share/man/man${man_section}"
+          echo "Generating man pages ..."
+          mkdir -pv "${man_dir}"
+          for script in bin/* ; do
+            if [[ ! -x "${script}" ]] ; then
+                continue
+            fi
+            script_base=$( basename "${script}" )
+            man_file="${man_dir}/${script_base}.${man_section}"
+            echo "  * ${script_base}.${man_section}"
+            cmd="help2man --no-info --no-discard-stderr"
+            cmd+=" --version-string \"${PKG_VERSION}\""
+            cmd+=" --section ${man_section}"
+            cmd+=" \"${script}\" | gzip -v9"
+            echo "      Executing: ${cmd} > \"${man_file}.gz\""
+            eval ${cmd} > "${man_file}.gz"
+          done
           echo
           echo "Copying sources recursive into rpmdir/SOURCES/${RPM_SRC_DIR} ..."
           tar cf - ${ROOT_OBJECTS} | (cd "rpmdir/SOURCES/${RPM_SRC_DIR}" ; tar xf -)
