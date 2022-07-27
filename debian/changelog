@@ -1,4 +1,4 @@
-fb-tools (2.0.0) UNRELEASED; urgency=medium
+fb-tools (2.0.0) all; urgency=medium
 
   * Removing all VSpere modules and applications in favor of the
     separate Python package fb_vmware
