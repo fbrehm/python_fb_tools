@@ -1,3 +1,9 @@
+fb-tools (2.0.1) all; urgency=medium
+
+  * Refactoring .gitlab-ci.yml
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 27 Jul 2022 14:46:00 +0200
+
 fb-tools (2.0.0) all; urgency=medium
 
   * Removing all VSpere modules and applications in favor of the
