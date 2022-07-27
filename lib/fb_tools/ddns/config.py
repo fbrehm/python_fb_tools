@@ -26,7 +26,7 @@ from ..config import ConfigError, BaseConfiguration
 
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.4.4'
+__version__ = '2.0.0'
 
 LOG = logging.getLogger(__name__)
 

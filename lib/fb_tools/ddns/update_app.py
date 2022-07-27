@@ -35,7 +35,7 @@ from . import WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.2.4'
+__version__ = '2.0.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext

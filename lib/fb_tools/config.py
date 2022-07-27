@@ -32,7 +32,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '1.3.0'
+__version__ = '2.0.0'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 

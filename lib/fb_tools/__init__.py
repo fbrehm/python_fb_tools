@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 DDNS_CFG_BASENAME = 'ddns.ini'
-__version__ = '1.9.6'
+__version__ = '2.0.0'
 
 from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList      # noqa
 

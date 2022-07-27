@@ -23,7 +23,7 @@ except ImportError:
 
 from .xlate import XLATOR
 
-__version__ = '0.1.0'
+__version__ = '2.0.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
