@@ -34,7 +34,7 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.2.6'
+__version__ = '2.0.0'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent

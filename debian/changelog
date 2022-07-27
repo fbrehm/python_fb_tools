@@ -1,3 +1,18 @@
+fb-tools (2.0.1) all; urgency=medium
+
+  * Refactoring .gitlab-ci.yml
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 27 Jul 2022 14:46:00 +0200
+
+fb-tools (2.0.0) all; urgency=medium
+
+  * Removing all VSpere modules and applications in favor of the
+    separate Python package fb_vmware
+  * Applying flake8 rules to setup.py
+  * Generating man pages of scripts in bin/ in all CI environments
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 27 Jul 2022 10:01:42 +0200
+
 fb-tools (1.9.6) all; urgency=medium
 
   * Fixing typo in locale/de_DE/LC_MESSAGES/fb_tools.po.

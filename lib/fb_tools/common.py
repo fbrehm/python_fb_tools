@@ -36,7 +36,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '1.4.8'
+__version__ = '2.0.0'
 
 _ = XLATOR.gettext
 

@@ -1,7 +1,5 @@
-# vim: filetype=spec
-
 %define version @@@Version@@@
-%define builddir python@@@py_version_nodot@@@_fb-tools-%{version}
+%define builddir python@@@py_version_nodot@@@_fb_tools-%{version}
 
 Name:           python@@@py_version_nodot@@@-fb-tools
 Version:        %{version}
@@ -12,7 +10,7 @@ Group:          Development/Languages/Python
 License:        LGPL-3
 Distribution:   Frank Brehm
 URL:            https://github.com/fbrehm/python_fb_tools
-Source0:        fb-tools.%{version}.tar.gz
+Source0:        fb_tools.%{version}.tar.gz
 
 BuildRequires:  gettext
 BuildRequires:  python@@@py_version_nodot@@@
@@ -31,7 +29,6 @@ Requires:       python@@@py_version_nodot@@@-requests
 Requires:       python@@@py_version_nodot@@@-six
 Requires:       python@@@py_version_nodot@@@-fb-logging
 Requires:       python@@@py_version_nodot@@@-chardet
-Recommends:     python@@@py_version_nodot@@@-pyvmomi
 Recommends:     python@@@py_version_nodot@@@-pyyaml
 BuildArch:      noarch
 
@@ -42,9 +39,6 @@ This is the Python@@@py_version_nodot@@@ version.
 
 In this package are contained the following scripts:
  * get-file-to-remove
- * get-vmware-hosts
- * get-vmware-vm-info
- * get-vmware-vm-list
  * myip
  * update-ddns
 
@@ -64,12 +58,8 @@ python@@@py_version_dot@@@ setup.py install --prefix=%{_prefix} --root=%{buildro
 %defattr(-,root,root,-)
 %license LICENSE
 %doc LICENSE README.md requirements.txt debian/changelog
-%{_bindir}/get-file-to-remove
-%{_bindir}/get-vmware-hosts
-%{_bindir}/get-vmware-vm-info
-%{_bindir}/get-vmware-vm-list
-%{_bindir}/myip
-%{_bindir}/update-ddns
+%{_bindir}/*
+%{_datadir}/*
 %{python3_sitelib}/*
 
 %changelog

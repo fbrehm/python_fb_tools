@@ -36,7 +36,7 @@ from ..obj import FbBaseObject
 from ..xlate import XLATOR
 from . import BaseHandler
 
-__version__ = '0.7.8'
+__version__ = '2.0.0'
 
 LOG = logging.getLogger(__name__)
 

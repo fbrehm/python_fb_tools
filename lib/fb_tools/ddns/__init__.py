@@ -43,7 +43,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '0.4.5'
+__version__ = '2.0.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
