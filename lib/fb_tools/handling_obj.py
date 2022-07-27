@@ -49,7 +49,7 @@ from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeo
 
 from .obj import FbBaseObject
 
-__version__ = '1.6.3'
+__version__ = '2.0.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext

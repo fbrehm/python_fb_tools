@@ -32,7 +32,7 @@ from .obj import FbBaseObjectError, FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '0.4.2'
+__version__ = '2.0.0'
 
 LOG = logging.getLogger(__name__)
 

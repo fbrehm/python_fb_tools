@@ -38,7 +38,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '1.6.0'
+__version__ = '2.0.0'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {

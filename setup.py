@@ -17,12 +17,12 @@ import pprint
 import datetime
 import textwrap
 import glob
-import pathlib
 import subprocess
+
+from pathlib import Path
 
 # Third party modules
 from setuptools import setup
-from setuptools.command.install import install
 
 # own modules:
 __base_dir__ = os.path.abspath(os.path.dirname(__file__))
@@ -30,6 +30,7 @@ __bin_dir__ = os.path.join(__base_dir__, 'bin')
 __lib_dir__ = os.path.join(__base_dir__, 'lib')
 __module_dir__ = os.path.join(__lib_dir__, 'fb_tools')
 __init_py__ = os.path.join(__module_dir__, '__init__.py')
+__local_usr_dir__ = Path(__base_dir__) / 'usr'
 
 PATHS = {
     '__base_dir__': __base_dir__,
@@ -44,14 +45,15 @@ def pp(obj):
     pprinter = pprint.PrettyPrinter(indent=4)
     return pprinter.pformat(obj)
 
-#print("Paths:\n{}".format(pp(PATHS)))
+
+# print("Paths:\n{}".format(pp(PATHS)))
 
 if os.path.exists(__module_dir__) and os.path.isfile(__init_py__):
     sys.path.insert(0, os.path.abspath(__lib_dir__))
 
 import fb_tools
 
-#from fb_tools.common import pp
+# from fb_tools.common import pp
 
 ENCODING = "utf-8"
 
@@ -113,6 +115,7 @@ def get_debian_version():
     if not match:
         return None
     return match.group(1).strip()
+
 
 __debian_version__ = get_debian_version()
 
@@ -218,13 +221,32 @@ def get_scripts():
 get_scripts()
 
 # -----------------------------------
+__data_files__ = []
+
+re_usr = re.compile(r'^usr/')
+if __local_usr_dir__.is_dir():
+    usr_files = {}
+    for f in __local_usr_dir__.glob('**/*'):
+        if f.is_file():
+            relpath = Path(os.path.relpath(str(f), __base_dir__))
+            reldir = re_usr.sub('', str(relpath.parent))
+            if reldir not in usr_files:
+                usr_files[reldir] = []
+            usr_files[reldir].append(str(relpath))
+    for udir in usr_files.keys():
+        __data_files__.append((udir, usr_files[udir]))
+
+# print("Found data files:\n" + pp(__data_files__) + "\n")
+
+
+# -----------------------------------
 MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
 PO_FILES = 'locale/*/LC_MESSAGES/*.po'
 
 def create_mo_files():
     mo_files = []
     for po_path in glob.glob(PO_FILES):
-        mo = pathlib.Path(po_path.replace('.po', '.mo'))
+        mo = Path(po_path.replace('.po', '.mo'))
         if not mo.exists():
             subprocess.call(['msgfmt', '-o', str(mo), po_path])
         mo_files.append(str(mo))
@@ -240,9 +262,10 @@ setup(
     scripts=__scripts__,
     requires=__requirements__,
     package_dir={'': 'lib'},
-    package_data = {
+    package_data={
         '': create_mo_files(),
     },
+    data_files=__data_files__,
 )
 
 

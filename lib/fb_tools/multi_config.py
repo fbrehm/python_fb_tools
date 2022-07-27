@@ -66,7 +66,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.6.3'
+__version__ = '2.0.0'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'

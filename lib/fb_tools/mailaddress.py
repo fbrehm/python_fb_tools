@@ -31,7 +31,7 @@ from .obj import FbGenericBaseObject, FbBaseObject
 
 from .xlate import XLATOR, format_list
 
-__version__ = '0.8.4'
+__version__ = '2.0.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
