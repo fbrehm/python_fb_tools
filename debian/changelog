@@ -1,3 +1,9 @@
+fb-tools (2.0.2) all; urgency=medium
+
+  * Removing last dependencies to pyvmomi
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 30 Aug 2022 09:47:22 +0200
+
 fb-tools (2.0.1) all; urgency=medium
 
   * Refactoring .gitlab-ci.yml
