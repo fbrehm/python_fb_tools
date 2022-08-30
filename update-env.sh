@@ -22,7 +22,7 @@ BASE_DIR=$( dirname "$0" )
 cd "${BASE_DIR}"
 BASE_DIR=$( readlink -f . )
 
-declare -a VALID_PY_VERSIONS=("3.10" "3.9" "3.8" "3.7" "3.6")
+declare -a VALID_PY_VERSIONS=("3.11" "3.10" "3.9" "3.8" "3.7" "3.6")
 
 PIP_OPTIONS=
 export VIRTUAL_ENV_DISABLE_PROMPT=y
