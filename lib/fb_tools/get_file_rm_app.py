@@ -32,7 +32,7 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -265,6 +265,13 @@ class GetFileRmApplication(BaseApplication):
 
         super(GetFileRmApplication, self).init_arg_parser()
 
+        file_group = self.arg_parser.add_argument_group(_('File options'))
+
+        file_group.add_argument(
+            'files', metavar=_('FILE'), type=str, nargs='+',
+            help=_('File pattern to generate list of files to remove.'),
+        )
+
         keep_group = self.arg_parser.add_argument_group(_('Keep options'))
 
         keep_group.add_argument(
@@ -310,11 +317,6 @@ class GetFileRmApplication(BaseApplication):
                 "How many files one per year from today on should be kept "
                 "(default: {default}, minimum: {min})?").format(
                 default=self.default_keep_years, min=self.min_keep_years),
-        )
-
-        self.arg_parser.add_argument(
-            'files', metavar=_('FILE'), type=str, nargs='+',
-            help=_('File pattern to generate list of files to remove.'),
         )
 
     # -------------------------------------------------------------------------

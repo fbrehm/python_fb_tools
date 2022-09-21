@@ -1,3 +1,9 @@
+fb-tools (2.0.3) UNRELEASED; urgency=medium
+
+  * Changes on help display of command line options.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 21 Sep 2022 12:21:49 +0200
+
 fb-tools (2.0.2) all; urgency=medium
 
   * Removing last dependencies to pyvmomi
