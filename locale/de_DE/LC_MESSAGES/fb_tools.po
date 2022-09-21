@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.0.2\n"
+"Project-Id-Version: fb_tools 2.0.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-09-21 12:18+0200\n"
-"PO-Revision-Date: 2022-07-21 16:55+0100\n"
+"POT-Creation-Date: 2022-09-21 12:59+0200\n"
+"PO-Revision-Date: 2022-09-21 13:00+0200\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <frank@brehm-online.com>\n"
@@ -209,8 +209,8 @@ msgid "Parameter {cls!r} must be a subclass of {clinfo!r}."
 msgstr "Der Parameter {cls!r} muss eine von {clinfo!r} abgeleitete Klasse sein."
 
 #: lib/fb_tools/cfg_app.py:148
-msgid "Config options and options for logging."
-msgstr "Konfigurations- und Logging-Optionen."
+msgid "Config options and options for logging"
+msgstr "Konfigurations- und Logging-Optionen"
 
 #: lib/fb_tools/cfg_app.py:153 lib/fb_tools/cfg_app.py:159 lib/fb_tools/ddns/__init__.py:258
 #: lib/fb_tools/get_file_rm_app.py:271

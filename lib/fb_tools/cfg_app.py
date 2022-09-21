@@ -145,7 +145,7 @@ class FbConfigApplication(BaseApplication):
         methods in descendant classes.
         """
 
-        title = _("Config options and options for logging.")
+        title = _("Config options and options for logging")
         cfg_options = self.arg_parser.add_argument_group(title)
 
         cfg_options.add_argument(
