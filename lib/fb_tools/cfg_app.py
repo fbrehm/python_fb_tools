@@ -37,7 +37,7 @@ from .multi_config import MultiConfigError, BaseMultiConfig
 
 from .xlate import XLATOR
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -145,13 +145,16 @@ class FbConfigApplication(BaseApplication):
         methods in descendant classes.
         """
 
-        self.arg_parser.add_argument(
+        title = _("Config options and options for logging.")
+        cfg_options = self.arg_parser.add_argument_group(title)
+
+        cfg_options.add_argument(
             "-C", "--cfgfile", "--cfg-file", "--config",
             metavar=_("FILE"), dest="cfg_file", action=CfgFileOptionAction,
             help=_("Configuration files to use additional to the standard configuration files."),
         )
 
-        self.arg_parser.add_argument(
+        cfg_options.add_argument(
             "--logfile", "--log",
             metavar=_("FILE"), dest="logfile", action=LogFileOptionAction,
             help=_("A logfile for storing all logging output."),
