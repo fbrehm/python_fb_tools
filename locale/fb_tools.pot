@@ -1,21 +1,21 @@
 # Translations template for fb_tools.
 # Copyright (C) 2022 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank@brehm-online.com>, 2022.
+# Frank Brehm <frank.brehm@pixelpark.com>, 2022.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 1.9.6\n"
-"Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-07-21 16:47+0200\n"
+"Project-Id-Version: fb_tools 2.0.2\n"
+"Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
+"POT-Creation-Date: 2022-09-21 12:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <frank@brehm-online.com>\n"
+"Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.9.1\n"
+"Generated-By: Babel 2.10.3\n"
 
 #: bin/get-file-to-remove:84
 msgid ""
@@ -174,28 +174,28 @@ msgstr ""
 msgid "The given directory {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:125 lib/fb_tools/cfg_app.py:224
+#: lib/fb_tools/argparse_actions.py:125 lib/fb_tools/cfg_app.py:227
 msgid "Directory {!r} does not exists."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:128 lib/fb_tools/cfg_app.py:228
+#: lib/fb_tools/argparse_actions.py:128 lib/fb_tools/cfg_app.py:231
 msgid "Path {!r} exists, but is not a directory."
 msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:134 lib/fb_tools/argparse_actions.py:168
-#: lib/fb_tools/cfg_app.py:235 lib/fb_tools/get_file_rm_app.py:401
+#: lib/fb_tools/cfg_app.py:238 lib/fb_tools/get_file_rm_app.py:403
 msgid "File {!r} is not a regular file."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:137 lib/fb_tools/cfg_app.py:239
+#: lib/fb_tools/argparse_actions.py:137 lib/fb_tools/cfg_app.py:242
 msgid "File {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:141 lib/fb_tools/cfg_app.py:244
+#: lib/fb_tools/argparse_actions.py:141 lib/fb_tools/cfg_app.py:247
 msgid "Directory {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:165 lib/fb_tools/get_file_rm_app.py:392
+#: lib/fb_tools/argparse_actions.py:165 lib/fb_tools/get_file_rm_app.py:394
 msgid "File {!r} does not exists."
 msgstr ""
 
@@ -203,28 +203,32 @@ msgstr ""
 msgid "Parameter {cls!r} must be a subclass of {clinfo!r}."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:150 lib/fb_tools/cfg_app.py:156 lib/fb_tools/ddns/__init__.py:258
-#: lib/fb_tools/get_file_rm_app.py:316
+#: lib/fb_tools/cfg_app.py:148
+msgid "Config options and options for logging."
+msgstr ""
+
+#: lib/fb_tools/cfg_app.py:153 lib/fb_tools/cfg_app.py:159 lib/fb_tools/ddns/__init__.py:258
+#: lib/fb_tools/get_file_rm_app.py:271
 msgid "FILE"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:151
+#: lib/fb_tools/cfg_app.py:154
 msgid "Configuration files to use additional to the standard configuration files."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:157
+#: lib/fb_tools/cfg_app.py:160
 msgid "A logfile for storing all logging output."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:164
+#: lib/fb_tools/cfg_app.py:167
 msgid "Got command line arguments:"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:202
+#: lib/fb_tools/cfg_app.py:205
 msgid "Error on reading configuration:"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:248
+#: lib/fb_tools/cfg_app.py:251
 msgid "Start logging into file {!r} ..."
 msgstr ""
 
@@ -682,148 +686,152 @@ msgid "Wrong value {v!r} for {n}, must be >= {m}"
 msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:268
-msgid "Keep options"
+msgid "File options"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:271
-msgid "NR_FILES"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:273
-msgid "How many of the last files should be kept (default: {default}, minimum: {min})?"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:280
-msgid "DAYS"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:282
-msgid "How many files one per day from today on should be kept (default: {default}, minimum: {min})?"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:289
-msgid "WEEKS"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:291
-msgid "How many files one per week from today on should be kept (default: {default}, minimum: {min})?"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:298
-msgid "MONTHS"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:300
-msgid "How many files one per month from today on should be kept (default: {default}, minimum: {min})?"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:307
-msgid "YEARS"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:309
-msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
-msgstr ""
-
-#: lib/fb_tools/get_file_rm_app.py:317
+#: lib/fb_tools/get_file_rm_app.py:272
 msgid "File pattern to generate list of files to remove."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:345
+#: lib/fb_tools/get_file_rm_app.py:275
+msgid "Keep options"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:278
+msgid "NR_FILES"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:280
+msgid "How many of the last files should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:287
+msgid "DAYS"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:289
+msgid "How many files one per day from today on should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:296
+msgid "WEEKS"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:298
+msgid "How many files one per week from today on should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:305
+msgid "MONTHS"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:307
+msgid "How many files one per month from today on should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:314
+msgid "YEARS"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:316
+msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
+msgstr ""
+
+#: lib/fb_tools/get_file_rm_app.py:347
 msgid "Resolving date pattern {!r}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:369
+#: lib/fb_tools/get_file_rm_app.py:371
 msgid "Checking given files..."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:374
+#: lib/fb_tools/get_file_rm_app.py:376
 msgid "Checking given file {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:383
+#: lib/fb_tools/get_file_rm_app.py:385
 msgid "Resolved paths:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:385
+#: lib/fb_tools/get_file_rm_app.py:387
 msgid "File pattern {!r} does not match any files."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:390
+#: lib/fb_tools/get_file_rm_app.py:392
 msgid "Checking {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:396
+#: lib/fb_tools/get_file_rm_app.py:398
 msgid "File {!r} is a regular file."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:399
+#: lib/fb_tools/get_file_rm_app.py:401
 msgid "Path {!r} is a directory."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:406
+#: lib/fb_tools/get_file_rm_app.py:408
 msgid "File {fi!r} does not match pattern {pa!r}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:416
+#: lib/fb_tools/get_file_rm_app.py:418
 msgid "Date in file {fi!r} is not a valid date: {e}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:468
+#: lib/fb_tools/get_file_rm_app.py:470
 msgid "Did not found any files to evaluate."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:501
+#: lib/fb_tools/get_file_rm_app.py:503
 msgid "Keeping last file ..."
 msgid_plural "Keeping last {} files ..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/get_file_rm_app.py:507
+#: lib/fb_tools/get_file_rm_app.py:509
 msgid "Keep last file {!r}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:512
+#: lib/fb_tools/get_file_rm_app.py:514
 msgid "Files to keep:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:533
+#: lib/fb_tools/get_file_rm_app.py:535
 msgid "Files to keep for year:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:555
+#: lib/fb_tools/get_file_rm_app.py:557
 msgid "Got last month: {!r}"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:569
+#: lib/fb_tools/get_file_rm_app.py:571
 msgid "Files to keep for month:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:583
+#: lib/fb_tools/get_file_rm_app.py:585
 msgid "Got last Monday: {!r}"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:596
+#: lib/fb_tools/get_file_rm_app.py:598
 msgid "Files to keep for week:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:609
+#: lib/fb_tools/get_file_rm_app.py:611
 msgid "Got last day: {!r}"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:620
+#: lib/fb_tools/get_file_rm_app.py:622
 msgid "Keeping all files from today."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:627
+#: lib/fb_tools/get_file_rm_app.py:629
 msgid "Files to keep for day:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:644
+#: lib/fb_tools/get_file_rm_app.py:646
 msgid "Trying to get date of file {!r}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:683
+#: lib/fb_tools/get_file_rm_app.py:685
 msgid "Explored and assigned files:"
 msgstr ""
 
