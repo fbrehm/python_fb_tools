@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for a base object with extended handling.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: The module for a base object with extended handling.
 """
 from __future__ import absolute_import
 
@@ -19,6 +20,7 @@ import locale
 import datetime
 import copy
 import re
+import getpass
 
 try:
     import pathlib
@@ -30,9 +32,13 @@ if sys.version_info[0] >= 3:
     from subprocess import SubprocessError, TimeoutExpired
 else:
     class SubprocessError(Exception):
+        """Dummy exception for Python 2."""
+
         pass
 
     class TimeoutExpired(SubprocessError):
+        """Dummy exception for Python 2."""
+
         pass
 
 # Third party modules
@@ -47,11 +53,11 @@ from .common import indent, is_sequence
 from .xlate import XLATOR
 
 from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
-from .errors import TimeoutOnPromptError
+from .errors import AbortAppError, TimeoutOnPromptError
 
 from .obj import FbBaseObject
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -64,10 +70,11 @@ DEFAULT_MAX_PROMPT_TIMEOUT = 600
 
 # =============================================================================
 class ProcessCommunicationTimeout(IoTimeoutError, SubprocessError):
+    """Special exception class for process communication errors."""
 
     # -------------------------------------------------------------------------
     def __init__(self, timeout):
-
+        """Initialise a ProcessCommunicationTimeout exception."""
         msg = _("Timeout on communicating with process.")
         super(ProcessCommunicationTimeout, self).__init__(msg, timeout)
 
@@ -75,8 +82,7 @@ class ProcessCommunicationTimeout(IoTimeoutError, SubprocessError):
 # =============================================================================
 class CalledProcessError(SubprocessError):
     """
-    Raised when run() is called with check=True and the process
-    returns a non-zero exit status.
+    Raised when run() is called with check=True and the process returns a non-zero exit status.
 
     Attributes:
       cmd, returncode, stdout, stderr, output
@@ -86,6 +92,7 @@ class CalledProcessError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __init__(self, returncode, cmd, output=None, stderr=None):
+        """Initialise a CalledProcessError exception."""
         self.returncode = returncode
         self.cmd = cmd
         self.output = output
@@ -93,13 +100,14 @@ class CalledProcessError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
+        """Typecast into string."""
         return _("Command {c!r} returned non-zero exit status {rc}.").format(
             c=self.cmd, rc=self.returncode)
 
     # -------------------------------------------------------------------------
     @property
     def stdout(self):
-        """Alias for output attribute, to match stderr"""
+        """Alias for output attribute, to match stderr."""
         return self.output
 
     @stdout.setter
@@ -112,8 +120,7 @@ class CalledProcessError(SubprocessError):
 # =============================================================================
 class TimeoutExpiredError(SubprocessError):
     """
-    This exception is raised when the timeout expires while waiting for a
-    child process.
+    This exception is raised when the timeout expires while waiting for a child process.
 
     Attributes:
         cmd, output, stdout, stderr, timeout
@@ -123,6 +130,7 @@ class TimeoutExpiredError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __init__(self, cmd, timeout, output=None, stderr=None):
+        """Initialise a TimeoutExpiredError exception."""
         self.cmd = cmd
         self.timeout = timeout
         self.output = output
@@ -130,6 +138,7 @@ class TimeoutExpiredError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
+        """Typecast into string."""
         msg = ngettext(
             "Command {c!r} timed out after {s} second.",
             "Command {c!r} timed out after {s} seconds.", self.timeout)
@@ -138,6 +147,7 @@ class TimeoutExpiredError(SubprocessError):
     # -------------------------------------------------------------------------
     @property
     def stdout(self):
+        """Return self.output."""
         return self.output
 
     @stdout.setter
@@ -149,9 +159,7 @@ class TimeoutExpiredError(SubprocessError):
 
 # =============================================================================
 class HandlingObject(FbBaseObject):
-    """
-    Base class for an object with extend handling possibilities.
-    """
+    """Base class for an object with extend handling possibilities."""
 
     fileio_timeout = DEFAULT_FILEIO_TIMEOUT
     default_prompt_timeout = DEFAULT_PROMPT_TIMEOUT
@@ -163,13 +171,12 @@ class HandlingObject(FbBaseObject):
     pattern_yes_no = r'^\s*(' + '|'.join(yes_list) + '|' + '|'.join(no_list) + r')?\s*$'
     re_yes_no = re.compile(pattern_yes_no, re.IGNORECASE)
 
-
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, quiet=False,
             terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
             initialized=None):
-
+        """Initialise a HandlingObject."""
         self._simulate = False
 
         self._force = False
@@ -213,7 +220,7 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def simulate(self):
-        """A flag describing, that all should be simulated."""
+        """Return whether simulation mode is enabled."""
         return self._simulate
 
     @simulate.setter
@@ -223,7 +230,7 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def force(self):
-        """Forced execution of some actions."""
+        """Return whether some actions should be executed forced."""
         return self._force
 
     @force.setter
@@ -233,8 +240,10 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def quiet(self):
-        """Quiet execution of the application,
-            only warnings and errors are emitted."""
+        """Return whether the application should be executed quietly.
+
+        Only warnings and errors are emitted.
+        """
         return self._quiet
 
     @quiet.setter
@@ -244,8 +253,11 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def assumed_answer(self):
-        """Assume an answer to all questions. If None, no answer is assumed.
-           If True, then assuming 'yes', if False, then assuming 'no'."""
+        """Return the assuming of the answer to all questions.
+
+        If None, no answer is assumed.
+        If True, then assuming 'yes', if False, then assuming 'no'.
+        """
         return getattr(self, '_assumed_answer', None)
 
     @assumed_answer.setter
@@ -258,9 +270,7 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def is_venv(self):
-        """Flag showing, that the current application is running
-            inside a virtual environment."""
-
+        """Return whether the current application is running inside a virtual environment."""
         if hasattr(sys, 'real_prefix'):
             return True
         return (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
@@ -268,13 +278,13 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def interrupted(self):
-        """Flag indicating, that the current process was interrupted."""
+        """Return the flag indicating, that the current process was interrupted."""
         return self._interrupted
 
     # -----------------------------------------------------------
     @property
     def terminal_has_colors(self):
-        """A flag, that the current terminal understands color ANSI codes."""
+        """Return whether the current terminal understands color ANSI codes."""
         return self._terminal_has_colors
 
     @terminal_has_colors.setter
@@ -284,7 +294,7 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def prompt_timeout(self):
-        """The timeout in seconds for waiting for an answer on a prompt."""
+        """Return the timeout in seconds for waiting for an answer on a prompt."""
         return getattr(self, '_prompt_timeout', self.default_prompt_timeout)
 
     @prompt_timeout.setter
@@ -301,7 +311,7 @@ class HandlingObject(FbBaseObject):
     # -------------------------------------------------------------------------
     @classmethod
     def init_yes_no_lists(cls):
-
+        """Initialise the lists for 'yes'- and 'no'-values by localized values."""
         yes = _('yes')
         if yes not in cls.yes_list:
             cls.yes_list.append(yes)
@@ -323,7 +333,7 @@ class HandlingObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -331,7 +341,6 @@ class HandlingObject(FbBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(HandlingObject, self).as_dict(short=short)
         res['assumed_answer'] = self.assumed_answer
         res['fileio_timeout'] = self.fileio_timeout
@@ -350,14 +359,15 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def get_cmd(self, cmd, quiet=False):
-
+        """Search the OS search path for the given command."""
         return self.get_command(cmd, quiet=quiet)
 
     # -------------------------------------------------------------------------
     def get_command(self, cmd, quiet=False, resolve=False):
         """
-        Searches the OS search path for the given command and gives back the
-        normalized position of this command.
+        Search the OS search path for the given command.
+
+        Gives back the normalized position of this command.
         If the command is given as an absolute path, it check the existence
         of this command.
 
@@ -374,7 +384,6 @@ class HandlingObject(FbBaseObject):
         @rtype: str or None
 
         """
-
         cmd = pathlib.Path(cmd)
 
         if self.verbose > 2:
@@ -452,7 +461,6 @@ class HandlingObject(FbBaseObject):
 
         This method was taken from subprocess.py of the standard library of Python 3.5.
         """
-
         input = None
         if 'input' in kwargs:
             input = kwargs['input']
@@ -581,6 +589,8 @@ class HandlingObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def colored(self, msg, color):
         """
+        Colorize the given string somehow.
+
         Wrapper function to colorize the message. Depending, whether the current
         terminal can display ANSI colors, the message is colorized or not.
 
@@ -593,7 +603,6 @@ class HandlingObject(FbBaseObject):
         @rtype: str
 
         """
-
         if not self.terminal_has_colors:
             return msg
         return colorstr(msg, color)
@@ -601,6 +610,8 @@ class HandlingObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def signal_handler(self, signum, frame):
         """
+        Do some actions on a signal.
+
         Handler as a callback function for getting a signal from somewhere.
 
         @param signum: the gotten signal number
@@ -609,7 +620,6 @@ class HandlingObject(FbBaseObject):
         @type frame: None or a frame object
 
         """
-
         err = InterruptError(signum)
 
         if signum in self.signals_dont_interrupt:
@@ -624,7 +634,7 @@ class HandlingObject(FbBaseObject):
     def read_file(
             self, filename, timeout=None, binary=False, quiet=False, encoding='utf-8'):
         """
-        Reads the content of the given filename.
+        Read the content of the given filename.
 
         @raise IOError: if file doesn't exists or isn't readable
         @raise PbReadTimeoutError: on timeout reading the file
@@ -643,21 +653,21 @@ class HandlingObject(FbBaseObject):
         @rtype:  str
 
         """
-
         needed_verbose_level = 1
         if quiet:
             needed_verbose_level = 3
 
         def read_alarm_caller(signum, sigframe):
-            '''
-            This nested function will be called in event of a timeout
+            """
+            Raise a ReadTimeoutError on an alarm event.
+
+            This nested function will be called in event of a timeout.
 
             @param signum:   the signal number (POSIX) which happend
             @type signum:    int
             @param sigframe: the frame of the signal
             @type sigframe:  object
-            '''
-
+            """
             raise ReadTimeoutError(timeout, filename)
 
         if timeout is None:
@@ -707,7 +717,8 @@ class HandlingObject(FbBaseObject):
             self, filename, content, timeout=None, must_exists=True,
             quiet=False, encoding='utf-8'):
         """
-        Writes the given content into the given filename.
+        Write the given content into the given filename.
+
         It should only be used for small things, because it writes unbuffered.
 
         @raise IOError: if file doesn't exists or isn't writeable
@@ -726,19 +737,19 @@ class HandlingObject(FbBaseObject):
         @type quiet: bool
 
         @return: None
-
         """
 
         def write_alarm_caller(signum, sigframe):
-            '''
+            """
+            Raise a WriteTimeoutError on a alarm event.
+
             This nested function will be called in event of a timeout
 
             @param signum:   the signal number (POSIX) which happend
             @type signum:    int
             @param sigframe: the frame of the signal
             @type sigframe:  object
-            '''
-
+            """
             raise WriteTimeoutError(timeout, filename)
 
         verb_level1 = 0
@@ -806,135 +817,6 @@ class HandlingObject(FbBaseObject):
 
         return
 
-
-# =============================================================================
-class CompletedProcess(object):
-    """
-    A process that has finished running.
-
-    This is returned by run().
-
-    Attributes:
-      args: The list or str args passed to run().
-      returncode: The exit code of the process, negative for signals.
-      stdout: The standard output (None if not captured).
-      stderr: The standard error (None if not captured).
-
-    This class was taken from subprocess.py of the standard library of Python 3.5.
-    """
-
-    # -------------------------------------------------------------------------
-    def __init__(
-            self, args, returncode, stdout=None, stderr=None, encoding=None,
-            start_dt=None, end_dt=None):
-
-        self.args = args
-        self.returncode = returncode
-        self.encoding = encoding
-        if encoding is None:
-            if locale.getpreferredencoding():
-                self.encoding = locale.getpreferredencoding()
-            else:
-                self.encoding = 'utf-8'
-
-        self._start_dt = None
-        self._end_dt = None
-        if start_dt is not None:
-            if not isinstance(start_dt, datetime.datetime):
-                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
-                    t='start_dt', e='datetime.datetime', v=start_dt)
-                raise TypeError(msg)
-            self._start_dt = start_dt
-        if end_dt is not None:
-            if not isinstance(end_dt, datetime.datetime):
-                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
-                    t='end_dt', e='datetime.datetime', v=end_dt)
-                raise TypeError(msg)
-            self._end_dt = end_dt
-
-        self.stdout = stdout
-        if stdout is not None:
-            stdout = to_str(stdout, self.encoding)
-            if stdout.strip() == '':
-                self.stdout = None
-            else:
-                self.stdout = stdout
-
-        self.stderr = stderr
-        if stderr is not None:
-            stderr = to_str(stderr, self.encoding)
-            if stderr.strip() == '':
-                self.stderr = None
-            else:
-                self.stderr = stderr
-
-    # -------------------------------------------------------------------------
-    @property
-    def start_dt(self):
-        "The timestamp of starting the process."
-        return self._start_dt
-
-    # -------------------------------------------------------------------------
-    @property
-    def end_dt(self):
-        "The timestamp of ending the process."
-        return self._end_dt
-
-    # -------------------------------------------------------------------------
-    @property
-    def duration(self):
-        "The duration of executing the process."
-        if self.start_dt is None:
-            return None
-        if self.end_dt is None:
-            return None
-        return self.end_dt - self.start_dt
-
-    # -------------------------------------------------------------------------
-    def __repr__(self):
-        args = ['args={!r}'.format(self.args),
-                'returncode={!r}'.format(self.returncode)]
-        if self.start_dt is not None:
-            args.append('start_dt={!r}'.format(self.start_dt))
-        if self.end_dt is not None:
-            args.append('end_dt={!r}'.format(self.end_dt))
-        if self.stdout is not None or self.stderr is not None:
-            args.append('encoding={!r}'.format(self.encoding))
-        if self.stdout is not None:
-            args.append('stdout={!r}'.format(self.stdout))
-        if self.stderr is not None:
-            args.append('stderr={!r}'.format(self.stderr))
-        return "{}({})".format(type(self).__name__, ', '.join(args))
-
-    # -------------------------------------------------------------------------
-    def __str__(self):
-        out = _('Completed process') + ':\n'
-        out += '  args:       {!r}\n'.format(self.args)
-        out += '  returncode: {}\n'.format(self.returncode)
-        if self.start_dt is not None:
-            out += '  started:    {}\n'.format(self.start_dt.isoformat(' '))
-        if self.end_dt is not None:
-            out += '  ended:      {}\n'.format(self.end_dt.isoformat(' '))
-        if self.duration is not None:
-            out += '  duration:   {}\n'.format(self.duration)
-        if self.stdout is not None or self.stderr is not None:
-            out += '  encoding:   {!r}\n'.format(self.encoding)
-        iind = '     '
-        ind = '              '
-        if self.stdout is not None:
-            o = indent(self.stdout.rstrip(), ind, iind)
-            out += '  stdout:{}\n'.format(o)
-        if self.stderr is not None:
-            o = indent(self.stderr.rstrip(), ind, iind)
-            out += '  stderr:{}\n'.format(o)
-        return out
-
-    # -------------------------------------------------------------------------
-    def check_returncode(self):
-        """Raise CalledProcessError if the exit code is non-zero."""
-        if self.returncode:
-            raise CalledProcessError(self.returncode, self.args, self.stdout, self.stderr)
-
     # -------------------------------------------------------------------------
     def get_password(self, first_prompt=None, second_prompt=None, may_empty=True, repeat=True):
         """
@@ -959,7 +841,6 @@ class CompletedProcess(object):
         @rtype: str
 
         """
-
         if not first_prompt:
             first_prompt = _('Password:') + ' '
 
@@ -1050,7 +931,6 @@ class CompletedProcess(object):
         @rtype: bool
 
         """
-
         if not prompt:
             prompt = _('Yes/No') + ' '
 
@@ -1103,6 +983,137 @@ class CompletedProcess(object):
 
         finally:
             signal.alarm(0)
+
+
+# =============================================================================
+class CompletedProcess(object):
+    """
+    A process that has finished running.
+
+    This is returned by run().
+
+    Attributes:
+      args: The list or str args passed to run().
+      returncode: The exit code of the process, negative for signals.
+      stdout: The standard output (None if not captured).
+      stderr: The standard error (None if not captured).
+
+    This class was taken from subprocess.py of the standard library of Python 3.5.
+    """
+
+    # -------------------------------------------------------------------------
+    def __init__(
+            self, args, returncode, stdout=None, stderr=None, encoding=None,
+            start_dt=None, end_dt=None):
+        """Initialize a CompletedProcess object."""
+        self.args = args
+        self.returncode = returncode
+        self.encoding = encoding
+        if encoding is None:
+            if locale.getpreferredencoding():
+                self.encoding = locale.getpreferredencoding()
+            else:
+                self.encoding = 'utf-8'
+
+        self._start_dt = None
+        self._end_dt = None
+        if start_dt is not None:
+            if not isinstance(start_dt, datetime.datetime):
+                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='start_dt', e='datetime.datetime', v=start_dt)
+                raise TypeError(msg)
+            self._start_dt = start_dt
+        if end_dt is not None:
+            if not isinstance(end_dt, datetime.datetime):
+                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t='end_dt', e='datetime.datetime', v=end_dt)
+                raise TypeError(msg)
+            self._end_dt = end_dt
+
+        self.stdout = stdout
+        if stdout is not None:
+            stdout = to_str(stdout, self.encoding)
+            if stdout.strip() == '':
+                self.stdout = None
+            else:
+                self.stdout = stdout
+
+        self.stderr = stderr
+        if stderr is not None:
+            stderr = to_str(stderr, self.encoding)
+            if stderr.strip() == '':
+                self.stderr = None
+            else:
+                self.stderr = stderr
+
+    # -------------------------------------------------------------------------
+    @property
+    def start_dt(self):
+        """Return the timestamp of starting the process."""
+        return self._start_dt
+
+    # -------------------------------------------------------------------------
+    @property
+    def end_dt(self):
+        """Return the timestamp of ending the process."""
+        return self._end_dt
+
+    # -------------------------------------------------------------------------
+    @property
+    def duration(self):
+        """Return the duration of executing the process."""
+        if self.start_dt is None:
+            return None
+        if self.end_dt is None:
+            return None
+        return self.end_dt - self.start_dt
+
+    # -------------------------------------------------------------------------
+    def __repr__(self):
+        """Typecast into a string for reproduction."""
+        args = ['args={!r}'.format(self.args),
+                'returncode={!r}'.format(self.returncode)]
+        if self.start_dt is not None:
+            args.append('start_dt={!r}'.format(self.start_dt))
+        if self.end_dt is not None:
+            args.append('end_dt={!r}'.format(self.end_dt))
+        if self.stdout is not None or self.stderr is not None:
+            args.append('encoding={!r}'.format(self.encoding))
+        if self.stdout is not None:
+            args.append('stdout={!r}'.format(self.stdout))
+        if self.stderr is not None:
+            args.append('stderr={!r}'.format(self.stderr))
+        return "{}({})".format(type(self).__name__, ', '.join(args))
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """Typecast into a string."""
+        out = _('Completed process') + ':\n'
+        out += '  args:       {!r}\n'.format(self.args)
+        out += '  returncode: {}\n'.format(self.returncode)
+        if self.start_dt is not None:
+            out += '  started:    {}\n'.format(self.start_dt.isoformat(' '))
+        if self.end_dt is not None:
+            out += '  ended:      {}\n'.format(self.end_dt.isoformat(' '))
+        if self.duration is not None:
+            out += '  duration:   {}\n'.format(self.duration)
+        if self.stdout is not None or self.stderr is not None:
+            out += '  encoding:   {!r}\n'.format(self.encoding)
+        iind = '     '
+        ind = '              '
+        if self.stdout is not None:
+            o = indent(self.stdout.rstrip(), ind, iind)
+            out += '  stdout:{}\n'.format(o)
+        if self.stderr is not None:
+            o = indent(self.stderr.rstrip(), ind, iind)
+            out += '  stderr:{}\n'.format(o)
+        return out
+
+    # -------------------------------------------------------------------------
+    def check_returncode(self):
+        """Raise CalledProcessError if the exit code is non-zero."""
+        if self.returncode:
+            raise CalledProcessError(self.returncode, self.args, self.stdout, self.stderr)
 
 
 # =============================================================================

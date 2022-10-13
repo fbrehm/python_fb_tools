@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for the application object with support for configuration files.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2022 by Frank Brehm, Berlin
-@summary: The module for the application object with support
-          for configuration files.
 """
 from __future__ import absolute_import
 
@@ -37,7 +37,7 @@ from .multi_config import MultiConfigError, BaseMultiConfig
 
 from .xlate import XLATOR
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -46,9 +46,7 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class FbConfigApplication(BaseApplication):
-    """
-    Class for configured application objects.
-    """
+    """Class for configured application objects."""
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -59,7 +57,7 @@ class FbConfigApplication(BaseApplication):
             append_appname_to_stems=True, config_dir=None, additional_stems=None,
             additional_cfgdirs=None, cfg_encoding=DEFAULT_ENCODING,
             use_chardet=True, initialized=False):
-
+        """Initialise a FbConfigApplication object."""
         if not issubclass(cfg_class, BaseMultiConfig):
             msg = _("Parameter {cls!r} must be a subclass of {clinfo!r}.").format(
                 cls='cfg_class', clinfo='BaseMultiConfig')
@@ -91,8 +89,7 @@ class FbConfigApplication(BaseApplication):
     # -------------------------------------------------------------------------
     @property
     def use_chardet(self):
-        """Flag, whether to use the chardet module to detect the
-           character set of files."""
+        """Return whether to use the chardet module to detect the character set of files."""
         return self._use_chardet
 
     @use_chardet.setter
@@ -102,14 +99,13 @@ class FbConfigApplication(BaseApplication):
     # -------------------------------------------------------------------------
     @property
     def additional_cfg_file(self):
-        """Configuration file."""
+        """Return an additional Configuration file."""
         return self._additional_cfg_file
 
     # -------------------------------------------------------------------------
     @property
     def logfile(self):
-        """A possible log file, which can be used as a FileAppender target
-        in logging."""
+        """Return a possible log file, which can be used as a FileAppender target in logging."""
         return self._logfile
 
     @logfile.setter
@@ -122,7 +118,7 @@ class FbConfigApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -130,7 +126,6 @@ class FbConfigApplication(BaseApplication):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(FbConfigApplication, self).as_dict(short=short)
 
         res['additional_cfg_file'] = self.additional_cfg_file
@@ -141,12 +136,11 @@ class FbConfigApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """
-        Method to initiate the argument parser.
+        Initiate the argument parser.
 
         This method should be explicitely called by all init_arg_parser()
         methods in descendant classes.
         """
-
         title = _("Config options and options for logging")
         cfg_options = self.arg_parser.add_argument_group(title)
 
@@ -164,7 +158,7 @@ class FbConfigApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
-
+        """Parse the commnd line parameters."""
         if self.verbose > 2:
             LOG.debug(_("Got command line arguments:") + '\n' + pp(self.args))
 
@@ -179,16 +173,16 @@ class FbConfigApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def post_init(self):
         """
-        Method to execute before calling run(). Here could be done some
-        finishing actions after reading in commandline parameters,
-        configuration a.s.o.
+        Execute some actions after initialising the application object.
+
+        Here could be done some finishing actions after reading in commandline
+        parameters, configuration a.s.o.
 
         This method could be overwritten by descendant classes, these
         methhods should allways include a call to post_init() of the
         parent class.
 
         """
-
         self.initialized = False
 
         self.init_logging()
@@ -218,7 +212,7 @@ class FbConfigApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def init_file_logging(self):
-
+        """Initialise logging into a logfile."""
         if not self.logfile:
             return
 

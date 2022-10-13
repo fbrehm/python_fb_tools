@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for a base application object.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @copyright: © 2022 by Frank Brehm, Berlin
-@summary: The module for a base application object.
 """
 from __future__ import absolute_import
 
@@ -38,7 +39,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -57,9 +58,7 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class BaseApplication(HandlingObject):
-    """
-    Class for the base application objects.
-    """
+    """Class for the base application objects."""
 
     re_prefix = re.compile(r'^[a-z0-9][a-z0-9_]*$', re.IGNORECASE)
     re_anum = re.compile(r'[^A-Z0-9_]+', re.IGNORECASE)
@@ -76,7 +75,7 @@ class BaseApplication(HandlingObject):
             terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
-
+        """Initialise a BaseApplication object."""
         self.arg_parser = None
         """
         @ivar: argparser object to parse commandline parameters
@@ -176,7 +175,7 @@ class BaseApplication(HandlingObject):
     # -----------------------------------------------------------
     @property
     def exit_value(self):
-        """The return value of the application for exiting with sys.exit()."""
+        """Get the return value of the application for exiting with sys.exit()."""
         return self._exit_value
 
     @exit_value.setter
@@ -190,6 +189,7 @@ class BaseApplication(HandlingObject):
     # -----------------------------------------------------------
     @property
     def force_desc_msg(self):
+        """Get the help text for the --force command line option."""
         msg = getattr(self, '_force_desc_msg', None)
         if not msg:
             msg = self.default_force_desc_msg
@@ -198,7 +198,7 @@ class BaseApplication(HandlingObject):
     # -----------------------------------------------------------
     @property
     def exitvalue(self):
-        """The return value of the application for exiting with sys.exit()."""
+        """Get the return value of the application for exiting with sys.exit()."""
         return self._exit_value
 
     @exitvalue.setter
@@ -208,48 +208,50 @@ class BaseApplication(HandlingObject):
     # -----------------------------------------------------------
     @property
     def usage(self):
-        """The usage text used on argparse."""
+        """Get the usage text used on argparse."""
         return self._usage
 
     # -----------------------------------------------------------
     @property
     def description(self):
-        """A short text describing the application."""
+        """Get a short text describing the application."""
         return self._description
 
     # -----------------------------------------------------------
     @property
     def argparse_epilog(self):
-        """An epilog displayed at the end of the argparse help screen."""
+        """Get the epilog displayed at the end of the argparse help screen."""
         return self._argparse_epilog
 
     # -----------------------------------------------------------
     @property
     def argparse_prefix_chars(self):
-        """The set of characters that prefix optional arguments."""
+        """Get the set of characters that prefix optional arguments."""
         return self._argparse_prefix_chars
 
     # -----------------------------------------------------------
     @property
     def env_prefix(self):
-        """A prefix for environment variables to detect them."""
+        """Get a prefix for environment variables to detect them."""
         return self._env_prefix
 
     # -----------------------------------------------------------
     @property
     def usage_term(self):
-        """The localized version of 'usage: '"""
+        """Get the localized version of 'usage: '."""
         return 'Usage: '
 
     # -----------------------------------------------------------
     @property
     def usage_term_len(self):
-        """The length of the localized version of 'usage: '"""
+        """Get the length of the localized version of 'usage: '."""
         return len(self.usage_term)
 
     # -------------------------------------------------------------------------
     def exit(self, retval=-1, msg=None, trace=False):
         """
+        Exit the current application.
+
         Universal method to call sys.exit(). If fake_exit is set, a
         FakeExitError exception is raised instead (useful for unittests.)
 
@@ -263,7 +265,6 @@ class BaseApplication(HandlingObject):
         @return: None
 
         """
-
         retval = int(retval)
         trace = bool(trace)
 
@@ -298,7 +299,7 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -306,7 +307,6 @@ class BaseApplication(HandlingObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(BaseApplication, self).as_dict(short=short)
         res['argparse_epilog'] = self.argparse_epilog
         res['argparse_prefix_chars'] = self.argparse_prefix_chars
@@ -334,12 +334,12 @@ class BaseApplication(HandlingObject):
     def init_logging(self):
         """
         Initialize the logger object.
+
         It creates a colored loghandler with all output to STDERR.
         Maybe overridden in descendant classes.
 
         @return: None
         """
-
         log_level = logging.INFO
         if self.verbose:
             log_level = logging.DEBUG
@@ -386,14 +386,14 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def terminal_can_color(self):
         """
-        Method to detect, whether the current terminal (stdout and stderr)
-        is able to perform ANSI color sequences.
+        Detect, whether the current terminal is able to perform ANSI color sequences.
+
+        This will be done for both stdout and stderr.
 
         @return: both stdout and stderr can perform ANSI color sequences
         @rtype: bool
 
         """
-
         term_debug = False
         if self.verbose > 3:
             term_debug = True
@@ -402,28 +402,30 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def post_init(self):
         """
-        Method to execute before calling run(). Here could be done some
-        finishing actions after reading in commandline parameters,
-        configuration a.s.o.
+        Execute some actions after initialising.
+
+        Here could be done some finishing actions after reading in
+        commandline parameters, configuration a.s.o.
 
         This method could be overwritten by descendant classes, these
         methhods should allways include a call to post_init() of the
         parent class.
 
         """
-
         self.init_logging()
 
         self.perform_arg_parser()
 
     # -------------------------------------------------------------------------
     def get_secret(self, prompt, item_name):
-
+        """Get a secret as input from console."""
         LOG.debug(_("Trying to get {} via console ...").format(item_name))
 
         # ------------------------
         def signal_handler(signum, frame):
             """
+            React to an alarm signal.
+
             Handler as a callback function for getting a signal from somewhere.
 
             @param signum: the gotten signal number
@@ -432,7 +434,6 @@ class BaseApplication(HandlingObject):
             @type frame: None or a frame object
 
             """
-
             signame = "{}".format(signum)
             msg = _("Got a signal {}.").format(signum)
             if signum in SIGNAL_NAMES:
@@ -502,27 +503,28 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def pre_run(self):
         """
-        Dummy function to run before the main routine.
-        Could be overwritten by descendant classes.
+        Execute some actions before the main routine.
 
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def _run(self):
         """
+        Execute the main actions of the application.
+
         Dummy function as main routine.
 
         MUST be overwritten by descendant classes.
-
         """
-
         raise FunctionNotImplementedError('_run()', self.__class__.__name__)
 
     # -------------------------------------------------------------------------
     def __call__(self):
         """
+        Call the main run method.
+
         Helper method to make the resulting object callable, e.g.::
 
             app = PBApplication(...)
@@ -531,18 +533,17 @@ class BaseApplication(HandlingObject):
         @return: None
 
         """
-
         self.run()
 
     # -------------------------------------------------------------------------
     def run(self):
         """
+        Execute the main actions of the application.
+
         The visible start point of this object.
 
         @return: None
-
         """
-
         if not self.initialized:
             self.handle_error(
                 _("The application is not completely initialized."), '', True)
@@ -579,23 +580,22 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def post_run(self):
         """
-        Dummy function to run after the main routine.
-        Could be overwritten by descendant classes.
+        Execute some actions after the main routine.
 
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         if self.verbose > 1:
             LOG.info(_("Executing {} ...").format('post_run()'))
 
     # -------------------------------------------------------------------------
     def _init_arg_parser(self):
         """
+        Initialise the argument parser.
+
         Local called method to initiate the argument parser.
 
         @raise PBApplicationError: on some errors
-
         """
-
         self.arg_parser = argparse.ArgumentParser(
             prog=self.appname,
             description=self.description,
@@ -671,25 +671,20 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """
-        Public available method to initiate the argument parser.
+        Initialise the argument parser - the public available method.
 
         Note::
              avoid adding the general options '--verbose', '--help', '--usage'
              and '--version'. These options are allways added after executing
              this method.
 
-        Descendant classes may override this method.
-
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def _perform_arg_parser(self):
-        """
-        Underlaying method for parsing arguments.
-        """
-
+        """Parse the command line options."""
         self.args = self.arg_parser.parse_args()
 
         if hasattr(self.args, 'simulate'):
@@ -725,24 +720,19 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
         """
-        Public available method to execute some actions after parsing
-        the command line parameters.
+        Parse the command line options - public available method.
 
-        Descendant classes may override this method.
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def _init_env(self):
         """
-        Initialization of self.env by application specific environment
-        variables.
+        Initialise self.env by application specific environment variables.
 
         It calls self.init_env(), after it has done his job.
-
         """
-
         for (key, value) in list(os.environ.items()):
 
             if not key.startswith(self.env_prefix):
@@ -756,26 +746,24 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def init_env(self):
         """
+        Initialise self.env by application specific environment variables.
+
         Public available method to initiate self.env additional to the implicit
         initialization done by this module.
         Maybe it can be used to import environment variables, their
         names not starting with self.env_prefix.
 
         Currently a dummy method, which ca be overriden by descendant classes.
-
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def _perform_env(self):
         """
-        Method to do some useful things with the found environment.
+        Do some useful things with the found environment.
 
         It calls self.perform_env(), after it has done his job.
-
         """
-
         # try to detect verbosity level from environment
         if 'VERBOSE' in self.env and self.env['VERBOSE']:
             v = 0
@@ -791,18 +779,15 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def perform_env(self):
         """
-        Public available method to perform found environment variables after
-        initialization of self.env.
+        Do some useful things with the found environment - public available method.
 
-        Currently a dummy method, which ca be overriden by descendant classes.
-
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def countdown(self, number=5, delay=1, prompt=None):
-
+        """Perform a countdown at the console."""
         if prompt:
             prompt = str(prompt).strip()
         if not prompt:

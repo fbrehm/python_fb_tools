@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for the get-file-to-remove application object.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: The module for the get-file-to-remove application object.
 """
 from __future__ import absolute_import
 
@@ -32,7 +33,7 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -41,18 +42,18 @@ ngettext = XLATOR.ngettext
 
 # =============================================================================
 class GetFileRmError(FbAppError):
-    """Base error class for all exceptions happened during
-    execution this application"""
+    """Base error class for all exceptions happened during execution this application."""
 
     pass
 
 
 # =============================================================================
 class KeepOptionAction(argparse.Action):
+    """An action for Argparse for keep-paraeters."""
 
     # -------------------------------------------------------------------------
     def __init__(self, option_strings, min_val, *args, **kwargs):
-
+        """Initialise a KeepOptionAction object."""
         self._min = min_val
 
         super(KeepOptionAction, self).__init__(
@@ -60,7 +61,7 @@ class KeepOptionAction(argparse.Action):
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, values, option_string=None):
-
+        """Call method on parsing the option."""
         if values < self._min:
             msg = _("Value must be at least {m} - {v} was given.").format(
                 m=self._min, v=values)
@@ -71,9 +72,7 @@ class KeepOptionAction(argparse.Action):
 
 # =============================================================================
 def check_date_pattern(pattern):
-    """Function to check, whether the given pattern is a valid pattern for
-        files with an timestamp in it."""
-
+    """Check, whether the pattern is a valid for files with an timestamp in it."""
     if not pattern:
         return False
 
@@ -95,15 +94,17 @@ def check_date_pattern(pattern):
 
 # =============================================================================
 class WrongDatePattern(GetFileRmError):
+    """Special exception for wrong pattern."""
 
     # -------------------------------------------------------------------------
     def __init__(self, pattern, add_info=None):
+        """Initialise a WrongDatePattern exception."""
         self.pattern = pattern
         self.add_info = add_info
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string."""
         msg = _("The given pattern {!r} is not a valid date pattern").format(self.pattern)
         if self.add_info:
             msg += ': ' + self.add_info
@@ -133,10 +134,7 @@ class GetFileRmApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def __init__(
             self, verbose=0, version=__version__, *arg, **kwargs):
-        """
-        Initialisation of the get-file-to-remove application object.
-        """
-
+        """Initialise of the get-file-to-remove application object."""
         desc = _(
             "Returns a newline separated list of files generated from file globbing patterns "
             "given as arguments to this application, where all files are omitted, which "
@@ -171,7 +169,7 @@ class GetFileRmApplication(BaseApplication):
     # -----------------------------------------------------------
     @property
     def keep_days(self):
-        """The number of last days to keep a file."""
+        """Return the number of last days to keep a file."""
         return self._keep_days
 
     @keep_days.setter
@@ -187,7 +185,7 @@ class GetFileRmApplication(BaseApplication):
     # -----------------------------------------------------------
     @property
     def keep_weeks(self):
-        """The number of last weeks to keep a file."""
+        """Return the number of last weeks to keep a file."""
         return self._keep_weeks
 
     @keep_weeks.setter
@@ -203,7 +201,7 @@ class GetFileRmApplication(BaseApplication):
     # -----------------------------------------------------------
     @property
     def keep_months(self):
-        """The number of last months to keep a file."""
+        """Return the number of last months to keep a file."""
         return self._keep_months
 
     @keep_months.setter
@@ -219,7 +217,7 @@ class GetFileRmApplication(BaseApplication):
     # -----------------------------------------------------------
     @property
     def keep_years(self):
-        """The number of last years to keep a file."""
+        """Return the number of last years to keep a file."""
         return self._keep_years
 
     @keep_years.setter
@@ -235,7 +233,7 @@ class GetFileRmApplication(BaseApplication):
     # -----------------------------------------------------------
     @property
     def keep_last(self):
-        """The number of last files to keep."""
+        """Return the number of last files to keep."""
         return self._keep_last
 
     @keep_last.setter
@@ -251,22 +249,18 @@ class GetFileRmApplication(BaseApplication):
     # -----------------------------------------------------------
     @property
     def date_pattern(self):
-        """The pattern to extract the date from filename before transition to
-            a regular expression pattern."""
+        """Return the pattern to extract the date from filename."""
         return self._date_pattern
 
     # -----------------------------------------------------------
     @property
     def pattern(self):
-        """The translated pattern to extract the date from filename."""
+        """Return the translated pattern to extract the date from filename."""
         return self._pattern
 
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
-        """
-        Method to initiate the argument parser.
-        """
-
+        """Initialise the argument parser."""
         super(GetFileRmApplication, self).init_arg_parser()
 
         file_group = self.arg_parser.add_argument_group(_('File options'))
@@ -325,7 +319,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
-
+        """Parse the command line options."""
         if self.args.days is not None:
             self.keep_days = self.args.days
 
@@ -362,10 +356,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def post_init(self):
-        """
-        Method to execute before calling run().
-        """
-
+        """Execute some actions ath the end of the initialisation.."""
         super(GetFileRmApplication, self).post_init()
         self.initialized = False
 
@@ -433,7 +424,7 @@ class GetFileRmApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -441,7 +432,6 @@ class GetFileRmApplication(BaseApplication):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(GetFileRmApplication, self).as_dict(short=short)
 
         res['default_keep_days'] = self.default_keep_days
@@ -469,7 +459,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def pre_run(self):
-
+        """Execute some actions before calling run()."""
         if not self.files_given:
             msg = _("Did not found any files to evaluate.")
             LOG.info(msg)
@@ -477,8 +467,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def _run(self):
-        """The underlaying startpoint of the application."""
-
+        """Run the application."""
         files_assigned = self.get_date_from_filenames()
         files_to_keep = self.get_files_to_keep(files_assigned)
 
@@ -488,7 +477,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def get_files_to_keep(self, files_assigned):
-
+        """Get all file to keep."""
         files_to_keep = []
         for f in self.get_files_to_keep_year(files_assigned['year']):
             if f not in files_to_keep:
@@ -520,7 +509,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def get_files_to_keep_year(self, files_assigned):
-
+        """Get all yearly files to keep."""
         files_to_keep = []
 
         this_year = datetime.date.today().year
@@ -542,7 +531,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def get_files_to_keep_month(self, files_assigned):
-
+        """Get all monthly files to keep."""
         files_to_keep = []
         i = 0
 
@@ -578,7 +567,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def get_files_to_keep_week(self, files_assigned):
-
+        """Get all weekly files to keep."""
         files_to_keep = []
 
         today = datetime.date.today()
@@ -605,7 +594,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def get_files_to_keep_day(self, files_assigned):
-
+        """Get all daily files to keep."""
         files_to_keep = []
 
         today = datetime.date.today()
@@ -636,7 +625,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def get_date_from_filenames(self):
-
+        """Evaluate the timestamp from filename."""
         files = {}
         files['year'] = {}
         files['month'] = {}
