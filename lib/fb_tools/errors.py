@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: Module for some common used error classes.
+
 @author: Frank Brehm
-@summary: module for some common used error classes
 """
 
 # Standard modules
@@ -13,7 +14,7 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -21,9 +22,7 @@ ngettext = XLATOR.ngettext
 
 # =============================================================================
 class FbError(Exception):
-    """
-    Base error class for all other self defined exceptions.
-    """
+    """Base error class for all other self defined exceptions."""
 
     pass
 
@@ -31,12 +30,14 @@ class FbError(Exception):
 # =============================================================================
 class BaseMailAddressError(FbError, ValueError):
     """Base Exception class for Mail address errors."""
+
     pass
 
 
 # =============================================================================
 class GeneralMailAddressError(BaseMailAddressError):
     """Class for a exception bcause of general mail address errors."""
+
     pass
 
 
@@ -46,7 +47,7 @@ class EmptyMailAddressError(BaseMailAddressError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string."""
         return _("Empty mail address.")
 
 
@@ -56,13 +57,13 @@ class InvalidMailAddressError(BaseMailAddressError):
 
     # -------------------------------------------------------------------------
     def __init__(self, address, msg=None):
-
+        """Initialise a InvalidMailAddressError exception."""
         self.address = address
         self.msg = msg
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string."""
         msg = _("Wrong mail address {a!r} ({c})").format(
             a=self.address, c=self.address.__class__.__name__)
         if self.msg:
@@ -74,12 +75,14 @@ class InvalidMailAddressError(BaseMailAddressError):
 
 # =============================================================================
 class FbHandlerError(FbError):
+    """Generic exception class for all handler classes."""
 
     pass
 
 
 # =============================================================================
 class FbAppError(FbHandlerError):
+    """Generic exception class for all application classes."""
 
     pass
 
@@ -87,27 +90,30 @@ class FbAppError(FbHandlerError):
 # =============================================================================
 class AbortAppError(FbAppError):
     """Special exception class interrupting the application."""
+
     pass
 
 
 # =============================================================================
 class FbCfgAppError(FbAppError):
+    """Generic exception class for all configured application classes."""
 
     pass
 
 
 # =============================================================================
 class HandlerError(FbHandlerError, RuntimeError):
-    """Base error class for all exceptions happened during
-    execution this handler"""
+    """Base error class for all exceptions happened during execution this handler."""
 
     pass
 
 
 # =============================================================================
 class ExpectedHandlerError(HandlerError):
-    """Base class for all errors, which could be expected in application object
-        and displayed without stack trace."""
+    """Generic exception class for expected exception in all application classes.
+
+    They should be displayed without stack trace.
+    """
 
     pass
 
@@ -128,12 +134,12 @@ class InterruptError(ExpectedHandlerError):
 
     # -------------------------------------------------------------------------
     def __init__(self, signum):
-
+        """Initialise a InterruptError exception."""
         self.signum = signum
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string."""
         signame = "{}".format(self.signum)
         if self.signum in self.signal_names:
             signame = self.signal_names[self.signum] + '(' + signame + ')'
@@ -171,26 +177,24 @@ class NetworkNotExistingError(ExpectedHandlerError):
 
     # -------------------------------------------------------------------------
     def __init__(self, net_name):
-
+        """Initialise a NetworkNotExistingError exception."""
         self.net_name = net_name
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string."""
         msg = _("The network {!r} is not existing.").format(self.net_name)
         return msg
 
 
 # =============================================================================
 class FunctionNotImplementedError(FbError, NotImplementedError):
-    """
-    Error class for not implemented functions.
-    """
+    """Error class for not implemented functions."""
 
     # -------------------------------------------------------------------------
     def __init__(self, function_name, class_name=None):
         """
-        Constructor.
+        Initialise a FunctionNotImplementedError exception.
 
         @param function_name: the name of the not implemented function
         @type function_name: str
@@ -198,7 +202,6 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
         @type class_name: str
 
         """
-
         self.function_name = function_name
         if not function_name:
             self.function_name = '__unkown_function__'
@@ -209,24 +212,19 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """
-        Typecasting into a string for error output.
-        """
-
+        """Typecast into a string for error output."""
         msg = _("Method {func}() has to be overridden in class {cls!r}.")
         return msg.format(func=self.function_name, cls=self.class_name)
 
 
 # =============================================================================
 class IoTimeoutError(FbError, IOError):
-    """
-    Special error class indicating a timout error on a read/write operation
-    """
+    """Special error class indicating a timout error on a read/write operation."""
 
     # -------------------------------------------------------------------------
     def __init__(self, strerror, timeout, filename=None):
         """
-        Constructor.
+        Initialise an IoTimeoutError exception.
 
         @param strerror: the error message about the operation
         @type strerror: str
@@ -236,7 +234,6 @@ class IoTimeoutError(FbError, IOError):
         @type filename: str
 
         """
-
         t_o = None
         try:
             t_o = float(timeout)
@@ -256,14 +253,12 @@ class IoTimeoutError(FbError, IOError):
 
 # =============================================================================
 class ReadTimeoutError(IoTimeoutError):
-    """
-    Special error class indicating a timout error on reading of a file.
-    """
+    """Special error class indicating a timout error on reading of a file."""
 
     # -------------------------------------------------------------------------
     def __init__(self, timeout, filename):
         """
-        Constructor.
+        Initialise a ReadTimeoutError exception.
 
         @param timeout: the timout in seconds leading to the error
         @type timeout: float
@@ -271,21 +266,18 @@ class ReadTimeoutError(IoTimeoutError):
         @type filename: str
 
         """
-
         strerror = _("Timeout error on reading")
         super(ReadTimeoutError, self).__init__(strerror, timeout, filename)
 
 
 # =============================================================================
 class WriteTimeoutError(IoTimeoutError):
-    """
-    Special error class indicating a timout error on a writing into a file.
-    """
+    """Special error class indicating a timout error on a writing into a file."""
 
     # -------------------------------------------------------------------------
     def __init__(self, timeout, filename):
         """
-        Constructor.
+        Initialise a WriteTimeoutError exception.
 
         @param timeout: the timout in seconds leading to the error
         @type timeout: float
@@ -293,7 +285,6 @@ class WriteTimeoutError(IoTimeoutError):
         @type filename: str
 
         """
-
         strerror = _("Timeout error on writing")
         super(WriteTimeoutError, self).__init__(strerror, timeout, filename)
 
@@ -304,28 +295,24 @@ class TimeoutOnPromptError(AbortAppError, IoTimeoutError):
 
     # -------------------------------------------------------------------------
     def __init__(self, timeout):
-
+        """Initialise a TimeoutOnPromptError exception."""
         strerror = _("Timeout on answering on the console.")
         super(TimeoutOnPromptError, self).__init__(strerror, timeout)
 
 
 # =============================================================================
 class CommandNotFoundError(HandlerError):
-    """
-    Special exception, if one ore more OS commands were not found.
-
-    """
+    """Special exception, if one ore more OS commands were not found."""
 
     # -------------------------------------------------------------------------
     def __init__(self, cmd_list):
         """
-        Constructor.
+        Initialise a CommandNotFoundError exception.
 
         @param cmd_list: all not found OS commands.
         @type cmd_list: list
 
         """
-
         self.cmd_list = None
         if cmd_list is None:
             self.cmd_list = [_("Unknown OS command.")]
@@ -339,10 +326,7 @@ class CommandNotFoundError(HandlerError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """
-        Typecasting into a string for error output.
-        """
-
+        """Typecast into a string for error output."""
         cmds = ', '.join(map(lambda x: ("'" + str(x) + "'"), self.cmd_list))
         msg = ngettext(
             'Could not found OS command:', 'Could not found OS commands:',
@@ -353,15 +337,12 @@ class CommandNotFoundError(HandlerError):
 
 # =============================================================================
 class CouldntOccupyLockfileError(FbError):
-    """
-    Special error class indicating, that a lockfile couldn't coccupied
-    after a defined time.
-    """
+    """Special error class indicating, that a lockfile couldn't coccupied after a defined time."""
 
     # -----------------------------------------------------
     def __init__(self, lockfile, duration, tries):
         """
-        Constructor.
+        Initialise a CouldntOccupyLockfileError exception.
 
         @param lockfile: the lockfile, which could't be occupied.
         @type lockfile: str
@@ -371,14 +352,13 @@ class CouldntOccupyLockfileError(FbError):
         @type tries: int
 
         """
-
         self.lockfile = str(lockfile)
         self.duration = float(duration)
         self.tries = int(tries)
 
     # -----------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string for error output."""
         return _("Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries.").format(
             lf=self.lockfile, d=self.duration, tries=self.tries)
 
