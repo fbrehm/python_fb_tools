@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: A base handler module for underlaying actions.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: A base handler module for underlaying actions
+
 """
 from __future__ import absolute_import, print_function
 
@@ -42,7 +44,7 @@ from ..errors import HandlerError
 
 from ..handling_obj import HandlingObject, CompletedProcess
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -56,9 +58,7 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class BaseHandler(HandlingObject):
-    """
-    A base handler class for creating the terraform environment
-    """
+    """A base handler class for creating the terraform environment."""
 
     std_file_permissions = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH
     std_secure_file_permissions = stat.S_IRUSR | stat.S_IWUSR
@@ -78,7 +78,7 @@ class BaseHandler(HandlingObject):
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, sudo=False,
             quiet=False, terminal_has_colors=False, simulate=None, force=None, initialized=None):
-
+        """Construct the object."""
         self._chown_cmd = CHOWN_CMD
         self._echo_cmd = ECHO_CMD
         self._sudo_cmd = SUDO_CMD
@@ -103,25 +103,25 @@ class BaseHandler(HandlingObject):
     # -----------------------------------------------------------
     @property
     def chown_cmd(self):
-        """The absolute path to the OS command 'chown'."""
+        """Return the absolute path to the OS command 'chown'."""
         return self._chown_cmd
 
     # -----------------------------------------------------------
     @property
     def echo_cmd(self):
-        """The absolute path to the OS command 'echo'."""
+        """Set the absolute path to the OS command 'echo'."""
         return self._echo_cmd
 
     # -----------------------------------------------------------
     @property
     def sudo_cmd(self):
-        """The absolute path to the OS command 'sudo'."""
+        """Return the absolute path to the OS command 'sudo'."""
         return self._sudo_cmd
 
     # -----------------------------------------------------------
     @property
     def sudo(self):
-        """Should the command executed by sudo by default."""
+        """Return, whiether the command should be executed by sudo by default."""
         return self._sudo
 
     @sudo.setter
@@ -130,8 +130,7 @@ class BaseHandler(HandlingObject):
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
-        """
-        Transforms the elements of the object into a dict
+        """Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -139,7 +138,6 @@ class BaseHandler(HandlingObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(BaseHandler, self).as_dict(short=short)
         res['std_file_permissions'] = "{:04o}".format(self.std_file_permissions)
         res['std_secure_file_permissions'] = "{:04o}".format(self.std_secure_file_permissions)
@@ -156,7 +154,7 @@ class BaseHandler(HandlingObject):
     # -------------------------------------------------------------------------
     @classmethod
     def set_tz(cls, tz_name):
-
+        """Set the timezone to the given name."""
         if not tz_name.strip():
             raise ValueError(_("Invalid time zone name {!r}.").format(tz_name))
         tz_name = tz_name.strip()
@@ -168,8 +166,7 @@ class BaseHandler(HandlingObject):
 
     # -------------------------------------------------------------------------
     def __call__(self, yaml_file):
-        """Executing the underlying action."""
-
+        """Execute the underlying action."""
         if not self.initialized:
             raise HandlerError(_("{}-object not initialized.").format(self.__class__.__name__))
 
@@ -183,7 +180,7 @@ class BaseHandler(HandlingObject):
             close_fds=False, hb_handler=None, hb_interval=2.0,
             poll_interval=0.2, log_output=True, **kwargs):
         """
-        Executing a OS command.
+        Execute a OS command.
 
         @param cmd: the cmd you wanne call
         @type cmd: list of strings or str
@@ -220,7 +217,6 @@ class BaseHandler(HandlingObject):
             - output on STDERR
 
         """
-
         cmd_list = cmd
         if isinstance(cmd, str):
             cmd_list = [cmd]
