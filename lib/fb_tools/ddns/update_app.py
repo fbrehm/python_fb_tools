@@ -53,6 +53,10 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
+        self.show_assume_options = False
+        self.show_force_option = True
+        self.show_simulate_option = True
+
         self.last_ipv4_address = None
         self.last_ipv6_address = None
         self.current_ipv4_address = None

@@ -142,6 +142,10 @@ class GetFileRmApplication(BaseApplication):
             "given as arguments to this application, where all files are omitted, which "
             "should not be removed.")
 
+        self.show_assume_options = False
+        self.show_force_option = False
+        self.show_simulate_option = False
+
         self._keep_days = self.default_keep_days
         self._keep_weeks = self.default_keep_weeks
         self._keep_months = self.default_keep_months

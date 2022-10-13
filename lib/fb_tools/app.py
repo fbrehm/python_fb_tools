@@ -38,7 +38,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '2.0.0'
+__version__ = '2.1.0'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -66,10 +66,15 @@ class BaseApplication(HandlingObject):
 
     default_force_desc_msg = _("Forced execution - whatever it means.")
 
+    show_assume_options = True
+    show_force_option = False
+    show_simulate_option = True
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__pkg_version__, base_dir=None,
-            terminal_has_colors=False, initialized=False, usage=None, description=None,
+            terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
+            initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
         self.arg_parser = None
@@ -132,12 +137,9 @@ class BaseApplication(HandlingObject):
         """
 
         super(BaseApplication, self).__init__(
-            appname=appname,
-            verbose=verbose,
-            version=version,
-            base_dir=base_dir,
-            terminal_has_colors=terminal_has_colors,
-            initialized=False,
+            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
+            simulate=simulate, force=force, assumed_answer=assumed_answer,
+            terminal_has_colors=terminal_has_colors, initialized=False,
         )
 
         if env_prefix:
@@ -311,8 +313,11 @@ class BaseApplication(HandlingObject):
         res['description'] = self.description
         res['env_prefix'] = self.env_prefix
         res['exit_value'] = self.exit_value
-        res['usage'] = self.usage
         res['force_desc_msg'] = self.force_desc_msg
+        res['show_assume_options'] = self.show_assume_options
+        res['show_force_option'] = self.show_force_option
+        res['show_simulate_option'] = self.show_simulate_option
+        res['usage'] = self.usage
         if 'xlate' not in res:
             res['xlate'] = {}
         res['xlate']['fb_tools'] = {
@@ -604,15 +609,32 @@ class BaseApplication(HandlingObject):
 
         general_group = self.arg_parser.add_argument_group(_('General options'))
 
-        general_group.add_argument(
-            '-s', "--simulate", action="store_true", dest="simulate",
-            help=_("Simulation mode, nothing is really done.")
-        )
+        if self.show_simulate_option:
+            general_group.add_argument(
+                '-s', "--simulate", action="store_true", dest="simulate",
+                help=_("Simulation mode, nothing is really done.")
+            )
 
-        general_group.add_argument(
-            '-f', "--force", action="store_true", dest="force",
-            help=self.force_desc_msg,
-        )
+        if self.show_force_option:
+            general_group.add_argument(
+                '-f', "--force", action="store_true", dest="force",
+                help=self.force_desc_msg,
+            )
+
+        if self.show_assume_options:
+            assume_group = general_group.add_mutually_exclusive_group()
+
+            assume_group.add_argument(
+                '--yes', '--assume-yes', action="store_true", dest="assume_yes",
+                help=_("Automatically answer '{}' for all questions.").format(
+                    self.colored(_('Yes'), 'CYAN'))
+            )
+
+            assume_group.add_argument(
+                '--no', '--assume-no', action="store_true", dest="assume_no",
+                help=_("Automatically answer '{}' for all questions.").format(
+                    self.colored(_('No'), 'CYAN'))
+            )
 
         general_group.add_argument(
             '--color', action="store", dest='color', const='yes',
@@ -670,8 +692,8 @@ class BaseApplication(HandlingObject):
 
         self.args = self.arg_parser.parse_args()
 
-        if self.args.simulate:
-            self.simulate = True
+        if hasattr(self.args, 'simulate'):
+            self.simulate = getattr(self.args, 'simulate', True)
 
         if self.args.usage:
             self.arg_parser.print_usage(sys.stdout)
@@ -680,8 +702,15 @@ class BaseApplication(HandlingObject):
         if self.args.verbose is not None and self.args.verbose > self.verbose:
             self.verbose = self.args.verbose
 
-        if self.args.force:
-            self.force = self.args.force
+        if hasattr(self.args, 'force'):
+            self.force = getattr(self.args, 'force', False)
+
+        if hasattr(self.args, 'assume_yes'):
+            if self.args.assume_yes:
+                self.assumed_answer = True
+        elif hasattr(self.args, 'assume_no'):
+            if self.args.assume_no:
+                self.assumed_answer = False
 
         if self.args.quiet:
             self.quiet = self.args.quiet

@@ -23,7 +23,7 @@ from . import BaseDdnsApplication, WorkDirError
 
 from .config import DdnsConfiguration
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -41,6 +41,10 @@ class MyIpApplication(BaseDdnsApplication):
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
 
         self._write_ips = False
+
+        self.show_assume_options = False
+        self.show_force_option = False
+        self.show_simulate_option = False
 
         if description is None:
             description = _(

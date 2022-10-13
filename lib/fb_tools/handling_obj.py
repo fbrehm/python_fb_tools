@@ -49,7 +49,7 @@ from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeo
 
 from .obj import FbBaseObject
 
-__version__ = '2.0.0'
+__version__ = '2.1.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -154,13 +154,16 @@ class HandlingObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, quiet=False,
-            terminal_has_colors=False, simulate=None, force=None, initialized=None):
+            terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
+            initialized=None):
 
         self._simulate = False
 
         self._force = False
 
         self._quiet = quiet
+
+        self._assumed_answer = None
 
         self.add_search_paths = []
 
@@ -187,6 +190,10 @@ class HandlingObject(FbBaseObject):
 
         if simulate is not None:
             self.simulate = simulate
+        if force is not None:
+            self.force = force
+        if assumed_answer is not None:
+            self.assumed_answer = assumed_answer
 
     # -----------------------------------------------------------
     @property
@@ -218,6 +225,20 @@ class HandlingObject(FbBaseObject):
     @quiet.setter
     def quiet(self, value):
         self._quiet = bool(value)
+
+    # -----------------------------------------------------------
+    @property
+    def assumed_answer(self):
+        """Assume an answer to all questions. If None, no answer is assumed.
+           If True, then assuming 'yes', if False, then assuming 'no'."""
+        return getattr(self, '_assumed_answer', None)
+
+    @assumed_answer.setter
+    def assumed_answer(self, value):
+        if value is None:
+            self._assumed_answer = None
+        else:
+            self._assumed_answer = bool(value)
 
     # -----------------------------------------------------------
     @property
@@ -258,6 +279,7 @@ class HandlingObject(FbBaseObject):
         """
 
         res = super(HandlingObject, self).as_dict(short=short)
+        res['assumed_answer'] = self.assumed_answer
         res['fileio_timeout'] = self.fileio_timeout
         res['force'] = self.force
         res['interrupted'] = self.interrupted
