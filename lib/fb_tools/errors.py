@@ -13,7 +13,7 @@ import os
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.0.0'
+__version__ = '2.1.0'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -81,6 +81,12 @@ class FbHandlerError(FbError):
 # =============================================================================
 class FbAppError(FbHandlerError):
 
+    pass
+
+
+# =============================================================================
+class AbortAppError(FbAppError):
+    """Special exception class interrupting the application."""
     pass
 
 
@@ -290,6 +296,17 @@ class WriteTimeoutError(IoTimeoutError):
 
         strerror = _("Timeout error on writing")
         super(WriteTimeoutError, self).__init__(strerror, timeout, filename)
+
+
+# =============================================================================
+class TimeoutOnPromptError(AbortAppError, IoTimeoutError):
+    """Special exception class on timout on a prompt."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, timeout):
+
+        strerror = _("Timeout on answering on the console.")
+        super(TimeoutOnPromptError, self).__init__(strerror, timeout)
 
 
 # =============================================================================

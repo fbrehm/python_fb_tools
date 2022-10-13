@@ -18,6 +18,7 @@ import sys
 import locale
 import datetime
 import copy
+import re
 
 try:
     import pathlib
@@ -46,6 +47,7 @@ from .common import indent, is_sequence
 from .xlate import XLATOR
 
 from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
+from .errors import TimeoutOnPromptError
 
 from .obj import FbBaseObject
 
@@ -56,6 +58,8 @@ _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
 
 DEFAULT_FILEIO_TIMEOUT = 2
+DEFAULT_PROMPT_TIMEOUT = 30
+DEFAULT_MAX_PROMPT_TIMEOUT = 600
 
 
 # =============================================================================
@@ -150,6 +154,15 @@ class HandlingObject(FbBaseObject):
     """
 
     fileio_timeout = DEFAULT_FILEIO_TIMEOUT
+    default_prompt_timeout = DEFAULT_PROMPT_TIMEOUT
+    max_prompt_timeout = DEFAULT_MAX_PROMPT_TIMEOUT
+
+    yes_list = ['y', 'yes']
+    no_list = ['n', 'no']
+
+    pattern_yes_no = r'^\s*(' + '|'.join(yes_list) + '|' + '|'.join(no_list) + r')?\s*$'
+    re_yes_no = re.compile(pattern_yes_no, re.IGNORECASE)
+
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -166,6 +179,8 @@ class HandlingObject(FbBaseObject):
         self._assumed_answer = None
 
         self.add_search_paths = []
+
+        self._prompt_timeout = self.default_prompt_timeout
 
         self._terminal_has_colors = bool(terminal_has_colors)
         """
@@ -266,6 +281,45 @@ class HandlingObject(FbBaseObject):
     def terminal_has_colors(self, value):
         self._terminal_has_colors = bool(value)
 
+    # -----------------------------------------------------------
+    @property
+    def prompt_timeout(self):
+        """The timeout in seconds for waiting for an answer on a prompt."""
+        return getattr(self, '_prompt_timeout', self.default_prompt_timeout)
+
+    @prompt_timeout.setter
+    def prompt_timeout(self, value):
+        v = int(value)
+        if v < 0 or v > self.max_prompt_timeout:
+            msg = _(
+                "Wrong prompt timeout {v!r}, must be greater or equal to Null "
+                "and less or equal to {max}.").format(v=value, max=self.max_prompt_timeout)
+            LOG.warning(msg)
+        else:
+            self._prompt_timeout = v
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def init_yes_no_lists(cls):
+
+        yes = _('yes')
+        if yes not in cls.yes_list:
+            cls.yes_list.append(yes)
+        yes_fc = yes[0]
+        if yes_fc not in cls.yes_list:
+            cls.yes_list.append(yes_fc)
+
+        no = _('no')
+        if no not in cls.no_list and no not in cls.yes_list:
+            cls.no_list.append(no)
+        no_fc = no[0]
+        if no_fc not in cls.no_list and no_fc not in cls.yes_list:
+            cls.no_list.append(no_fc)
+
+        cls.pattern_yes_no = (
+            r'^\s*(' + '|'.join(cls.yes_list) + '|' + '|'.join(cls.no_list) + r')?\s*$')
+        cls.re_yes_no = re.compile(cls.pattern_yes_no, re.IGNORECASE)
+
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
@@ -284,9 +338,13 @@ class HandlingObject(FbBaseObject):
         res['force'] = self.force
         res['interrupted'] = self.interrupted
         res['is_venv'] = self.is_venv
+        res['no_list'] = self.no_list
+        res['pattern_yes_no'] = self.pattern_yes_no
+        res['prompt_timeout'] = self.prompt_timeout
         res['quiet'] = self.quiet
         res['simulate'] = self.simulate
         res['terminal_has_colors'] = self.terminal_has_colors
+        res['yes_list'] = self.yes_list
 
         return res
 
@@ -876,6 +934,175 @@ class CompletedProcess(object):
         """Raise CalledProcessError if the exit code is non-zero."""
         if self.returncode:
             raise CalledProcessError(self.returncode, self.args, self.stdout, self.stderr)
+
+    # -------------------------------------------------------------------------
+    def get_password(self, first_prompt=None, second_prompt=None, may_empty=True, repeat=True):
+        """
+        Ask the user for a password on the console.
+
+        @raise AbortAppError: if the user presses Ctrl-D (EOF)
+        @raise TimeoutOnPromptError: if the user does not finishing after a time
+
+        @param first_prompt: the prompt for the first password question
+        @type first_prompt: str
+        @param second_prompt: the prompt for the second password question
+        @type second_prompt: str
+        @param may_empty: The behaviour, if the user inputs an empty password:
+                          if True, an empty password will be returned
+                          if False, the question will be repeated.
+        @type may_empty: bool
+        @param repeat: Asking for the password a second time, which must be equal
+                       to the first given password.
+        @type repeat: bool
+
+        @return: The entered password
+        @rtype: str
+
+        """
+
+        if not first_prompt:
+            first_prompt = _('Password:') + ' '
+
+        if not second_prompt:
+            second_prompt = _('Repeat password:') + ' '
+
+        ret_passwd = None
+        second_passwd = None
+
+        while True:
+
+            if not self.quiet:
+                print()
+            ret_passwd = self._get_password(first_prompt, may_empty)
+            if ret_passwd:
+                if repeat:
+                    second_passwd = self._get_password(second_prompt, may_empty=False)
+                    if ret_passwd != second_passwd:
+                        msg = _("The entered passwords does not match.")
+                        LOG.error(msg)
+                        continue
+            break
+
+        return ret_passwd
+
+    # -------------------------------------------------------------------------
+    def _get_password(self, prompt, may_empty=True):
+
+        def passwd_alarm_caller(signum, sigframe):
+            raise TimeoutOnPromptError(self.prompt_timeout)
+
+        msg_intr = _("Interrupted on demand.")
+        ret_passwd = ''
+
+        try:
+            signal.signal(signal.SIGALRM, passwd_alarm_caller)
+            signal.alarm(self.prompt_timeout)
+
+            while True:
+
+                try:
+                    ret_passwd = getpass.getpass(prompt)
+                except EOFError:
+                    raise AbortAppError(msg_intr)
+
+                signal.alarm(self.prompt_timeout)
+
+                if ret_passwd == '':
+                    if may_empty:
+                        return ''
+                    else:
+                        continue
+                else:
+                    break
+
+        except (TimeoutOnPromptError, AbortAppError) as e:
+            msg = _("Got a {}:").format(e.__class__.__name__) + ' ' + str(e)
+            LOG.error(msg)
+            self.exit(10)
+
+        except KeyboardInterrupt:
+            msg = _("Got a {}:").format('KeyboardInterrupt') + ' ' + msg_intr
+            LOG.error(msg)
+            self.exit(10)
+
+        finally:
+            signal.alarm(0)
+
+        return ret_passwd
+
+    # -------------------------------------------------------------------------
+    def ask_for_yes_or_no(self, prompt, default_on_empty=None):
+        """
+        Ask the user for yes or no.
+
+        @raise AbortAppError: if the user presses Ctrl-D (EOF)
+        @raise TimeoutOnPromptError: if the user does not correct answer after a time
+
+        @param prompt: the prompt for the question
+        @type prompt: str
+        @param default_on_empty: behaviour on an empty reply:
+                                 * if None, repeat the question
+                                 * if True, return True
+                                 * else return False
+        @type default_on_empty: bool or None
+
+        @return: True, if the user answered Yes, else False
+        @rtype: bool
+
+        """
+
+        if not prompt:
+            prompt = _('Yes/No') + ' '
+
+        def prompt_alarm_caller(signum, sigframe):
+            raise TimeoutOnPromptError(self.prompt_timeout)
+
+        msg_intr = _("Interrupted on demand.")
+        try:
+            signal.signal(signal.SIGALRM, prompt_alarm_caller)
+            signal.alarm(self.prompt_timeout)
+
+            reply = ''
+            while True:
+                try:
+                    reply = input(prompt)
+                except EOFError:
+                    raise AbortAppError(msg_intr)
+                signal.alarm(self.prompt_timeout)
+                match = self.re_yes_no.match(reply)
+                if match:
+                    if match.group(1) is None:
+                        if default_on_empty is None:
+                            continue
+                        return bool(default_on_empty)
+                    # There is an answer
+                    r = match.group(1).lower()
+                    if r in self.no_list:
+                        # Continue == no
+                        return False
+                    elif r in self.yes_list:
+                        # Continue == yes
+                        return True
+                    else:
+                        continue
+                else:
+                    continue
+                # Repeat the question
+
+        except (TimeoutOnPromptError, AbortAppError) as e:
+            print()
+            msg = _("Got a {}:").format(e.__class__.__name__) + ' ' + str(e)
+            LOG.error(msg)
+            self.exit(10)
+
+        except KeyboardInterrupt:
+            msg = _("Got a {}:").format('KeyboardInterrupt') + ' ' + msg_intr
+            print()
+            LOG.error(msg)
+            self.exit(10)
+
+        finally:
+            signal.alarm(0)
 
 
 # =============================================================================

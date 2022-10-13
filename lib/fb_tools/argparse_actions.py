@@ -23,7 +23,7 @@ except ImportError:
 
 from .xlate import XLATOR
 
-__version__ = '2.0.0'
+__version__ = '2.1.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -169,6 +169,33 @@ class CfgFileOptionAction(argparse.Action):
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, path.resolve())
+
+
+# =============================================================================
+class TimeoutOptionAction(argparse.Action):
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, *args, **kwargs):
+
+        super(TimeoutOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, given_timeout, option_string=None):
+
+        try:
+            timeout = int(given_timeout)
+            if timeout <= 0 or timeout > MAX_TIMEOUT:
+                msg = _(
+                    "a timeout must be greater than zero and less "
+                    "or equal to {}.").format(MAX_TIMEOUT)
+                raise ValueError(msg)
+        except (ValueError, TypeError) as e:
+            msg = _("Wrong timeout {!r}:").format(given_timeout)
+            msg += ' ' + str(e)
+            raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, timeout)
 
 
 # =============================================================================
