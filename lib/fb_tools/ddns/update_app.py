@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for the classes of the update-ddns application.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: The module for the classes of the update-ddns application.
 """
 from __future__ import absolute_import, print_function
 
@@ -35,7 +36,7 @@ from . import WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
 
 from .config import DdnsConfiguration
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -43,16 +44,14 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class UpdateDdnsApplication(BaseDdnsApplication):
-    """
-    Class for the application objects.
-    """
+    """Class for the application objects."""
 
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
-
+        """Initialise a UpdateDdnsApplication object."""
         self.show_assume_options = False
         self.show_force_option = True
         self.show_simulate_option = True
@@ -111,14 +110,13 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def init_logging(self):
-        """
-        Initialize the logger object.
+        """Initialize the logger object.
+
         It creates a colored loghandler with all output to STDERR.
         Maybe overridden in descendant classes.
 
         @return: None
         """
-
         log_level = logging.INFO
         if self.verbose:
             log_level = logging.DEBUG
@@ -148,7 +146,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def init_file_logging(self):
-
+        """Initialise logging into a logfile."""
         logfile = self.config.logfile
         if not logfile:
             return
@@ -185,10 +183,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
-        """
-        Public available method to initiate the argument parser.
-        """
-
+        """Initiate the argument parser."""
         super(UpdateDdnsApplication, self).init_arg_parser()
 
         update_group = self.arg_parser.add_argument_group(_('Update DDNS options'))
@@ -223,11 +218,12 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def post_init(self):
         """
+        Execute post-init actions.
+
         Method to execute before calling run(). Here could be done some
         finishing actions after reading in commandline parameters,
         configuration a.s.o.
         """
-
         super(UpdateDdnsApplication, self).post_init()
         self.initialized = False
 
@@ -249,11 +245,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def perform_arg_parser_late(self):
-        """
-        Public available method to execute some actions after parsing
-        the command line parameters.
-        """
-
+        """Execute some actions after parsing the command line parameters."""
         if self.args.user:
             user = self.args.user.strip()
             if user:
@@ -293,7 +285,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def do_update_ipv4(self):
-
+        """Update an IPv4 address entry."""
         last_address = self.get_ipv4_cache()
         if last_address:
             LOG.debug(_("Last {w} address: {a!r}.").format(w='IPv4', a=str(last_address)))
@@ -331,7 +323,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def do_update_ipv6(self):
-
+        """Update an IPv6 address entry."""
         last_address = self.get_ipv6_cache()
         if last_address:
             LOG.debug(_("Last {w} address: {a!r}.").format(w='IPv6', a=str(last_address)))
@@ -369,7 +361,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def do_update(self, my_ip, protocol):
-
+        """Execute the update."""
         msg = _("Updating DNS records to IPv{p} address {a!r} ...").format(
             p=protocol, a=str(my_ip))
         LOG.info(msg)

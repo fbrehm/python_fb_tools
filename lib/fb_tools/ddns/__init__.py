@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The base module for all DDNS related classes.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: The base module for all DDNS related classes.
 """
 from __future__ import absolute_import, print_function
 
@@ -43,7 +44,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -51,23 +52,25 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class DdnsAppError(FbAppError):
-    """ Base exception class for all exceptions in this application."""
+    """Base exception class for all exceptions in this application."""
+
     pass
 
 
 # =============================================================================
 class DdnsRequestError(DdnsAppError):
-    """Base class for more complex exceptions"""
+    """Base class for more complex exceptions."""
 
     # -------------------------------------------------------------------------
     def __init__(self, code, content, url=None):
+        """Construct a DdnsRequestError object."""
         self.code = code
         self.content = content
         self.url = url
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string."""
         msg = _("Got an error {c} on requesting {u!r}: {m}").format(
             c=self.code, u=self.url, m=self.content)
         return msg
@@ -85,7 +88,7 @@ class WorkDirNotExistsError(WorkDirError, FileNotFoundError):
 
     # -------------------------------------------------------------------------
     def __init__(self, workdir):
-
+        """Construct a WorkDirNotExistsError object."""
         super(WorkDirNotExistsError, self).__init__(
             errno.ENOENT, _("Directory does not exists"), str(workdir))
 
@@ -96,7 +99,7 @@ class WorkDirNotDirError(WorkDirError, NotADirectoryError):
 
     # -------------------------------------------------------------------------
     def __init__(self, workdir):
-
+        """Construct a WorkDirNotDirError object."""
         super(WorkDirNotDirError, self).__init__(
             errno.ENOTDIR, _("Path is not a directory"), str(workdir))
 
@@ -107,7 +110,7 @@ class WorkDirAccessError(WorkDirError, PermissionError):
 
     # -------------------------------------------------------------------------
     def __init__(self, workdir, msg=None):
-
+        """Construct a WorkDirAccessError object."""
         if not msg:
             msg = _("Invalid permissions")
 
@@ -116,9 +119,7 @@ class WorkDirAccessError(WorkDirError, PermissionError):
 
 # =============================================================================
 class BaseDdnsApplication(BaseApplication):
-    """
-    Class for the application objects.
-    """
+    """Class for the application objects."""
 
     library_name = "ddns-client"
     loglevel_requests_set = False
@@ -128,7 +129,7 @@ class BaseDdnsApplication(BaseApplication):
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
-
+        """Construct a BaseDdnsApplication object."""
         if description is None:
             description = _("This is a base DDNS related application.")
 
@@ -148,19 +149,19 @@ class BaseDdnsApplication(BaseApplication):
     # -------------------------------------------------------------------------
     @property
     def cfg_dir(self):
-        """The directory containing the configuration file."""
+        """Return the directory containing the configuration file."""
         return self._cfg_dir
 
     # -------------------------------------------------------------------------
     @property
     def cfg_file(self):
-        """Configuration file."""
+        """Return the configuration file."""
         return self._cfg_file
 
     # -----------------------------------------------------------
     @property
     def user_agent(self):
-        "The name of the user agent used in API calls."
+        """Return the name of the user agent used in API calls."""
         return self._user_agent
 
     @user_agent.setter
@@ -172,7 +173,7 @@ class BaseDdnsApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -180,7 +181,6 @@ class BaseDdnsApplication(BaseApplication):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(BaseDdnsApplication, self).as_dict(short=short)
         res['cfg_dir'] = self.cfg_dir
         res['cfg_file'] = self.cfg_file
@@ -190,10 +190,7 @@ class BaseDdnsApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
-        """
-        Public available method to initiate the argument parser.
-        """
-
+        """Initiate the argument parser."""
         super(BaseDdnsApplication, self).init_arg_parser()
 
         ddns_group = self.arg_parser.add_argument_group(_('DDNS options'))
@@ -263,6 +260,8 @@ class BaseDdnsApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def post_init(self):
         """
+        Execute actions after init and befor the underlaying run.
+
         Method to execute before calling run(). Here could be done some
         finishing actions after reading in commandline parameters,
         configuration a.s.o.
@@ -272,7 +271,6 @@ class BaseDdnsApplication(BaseApplication):
         parent class.
 
         """
-
         self.initialized = False
 
         self.init_logging()
@@ -329,7 +327,7 @@ class BaseDdnsApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def get_my_ipv(self, protocol):
-
+        """Retrieve the current public IPv64 address."""
         LOG.debug(_("Trying to get my public IPv{} address.").format(protocol))
 
         url = self.config.get_ipv4_url
@@ -348,8 +346,7 @@ class BaseDdnsApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def perform_request(self, url, method='GET', data=None, headers=None, may_simulate=False):
-        """Performing the underlying Web request."""
-
+        """Perform the underlying Web request."""
         if headers is None:
             headers = dict()
 
@@ -420,8 +417,7 @@ class BaseDdnsApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def verify_working_dir(self):
-        """Verifying existence and accessibility of working directory."""
-
+        """Verify existence and accessibility of working directory."""
         if self.verbose > 1:
             LOG.debug(_(
                 "Checking existence and accessibility of working directory {!r} ...").format(
@@ -443,15 +439,17 @@ class BaseDdnsApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def write_ipv4_cache(self, address):
+        """Write the cache for IPv4 addresses."""
         self.write_ip_cache(address, self.config.ipv4_cache_file)
 
     # -------------------------------------------------------------------------
     def write_ipv6_cache(self, address):
+        """Write the cache for IPv6 addresses."""
         self.write_ip_cache(address, self.config.ipv6_cache_file)
 
     # -------------------------------------------------------------------------
     def write_ip_cache(self, address, cache_file):
-
+        """Write a cache entry."""
         LOG.debug(_(
             "Writing IP address {a!r} into {f!r} ...").format(
                 a=str(address), f=str(cache_file)))
@@ -465,15 +463,17 @@ class BaseDdnsApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def get_ipv4_cache(self):
+        """Return a current IPv4 address cache entry."""
         return self.get_ip_cache(self.config.ipv4_cache_file)
 
     # -------------------------------------------------------------------------
     def get_ipv6_cache(self):
+        """Return a current IPv6 address cache entry."""
         return self.get_ip_cache(self.config.ipv6_cache_file)
 
     # -------------------------------------------------------------------------
     def get_ip_cache(self, cache_file):
-
+        """Return a common IP address entry."""
         re_comment = re.compile(r'^\s*[;#]')
 
         if not cache_file.exists():
