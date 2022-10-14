@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for i18n.
+
+It provides translation object, usable from all other modules in this package.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: The module for i18n.
-          It provides translation object, usable from all other
-          modules in this package.
 """
 from __future__ import absolute_import, print_function
 
@@ -34,7 +35,7 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
@@ -76,6 +77,7 @@ _ = XLATOR.gettext
 def format_list(lst, do_repr=False, style='standard', locale=DEFAULT_LOCALE):
     """
     Format the items in `lst` as a list.
+
     :param lst: a sequence of items to format in to a list
     :param locale: the locale
     """
