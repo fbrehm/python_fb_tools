@@ -1,4 +1,4 @@
-fb-tools (2.1.0) UNRELEASED; urgency=medium
+fb-tools (2.1.0) all; urgency=medium
 
   * Updating documentation in all Python modules
   * Adding common commandline options for assumed answers.
