@@ -24,7 +24,7 @@ from . import BaseDdnsApplication, WorkDirError
 
 from .config import DdnsConfiguration
 
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -33,6 +33,11 @@ _ = XLATOR.gettext
 class MyIpApplication(BaseDdnsApplication):
     """Class for the application objects."""
 
+    show_assume_options = False
+    show_console_timeout_option = False
+    show_force_option = False
+    show_simulate_option = False
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
@@ -40,10 +45,6 @@ class MyIpApplication(BaseDdnsApplication):
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
         """Initialise a MyIpApplication object."""
         self._write_ips = False
-
-        self.show_assume_options = False
-        self.show_force_option = False
-        self.show_simulate_option = False
 
         if description is None:
             description = _(

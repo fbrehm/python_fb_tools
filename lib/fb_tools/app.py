@@ -68,7 +68,7 @@ class BaseApplication(HandlingObject):
 
     default_force_desc_msg = _("Forced execution - whatever it means.")
 
-    show_assume_options = True
+    show_assume_options = False
     show_console_timeout_option = False
     show_force_option = False
     show_simulate_option = True

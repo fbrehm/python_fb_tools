@@ -33,7 +33,7 @@ from .common import pp, get_monday
 
 from .app import BaseApplication
 
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -131,6 +131,11 @@ class GetFileRmApplication(BaseApplication):
 
     default_date_pattern = r'%Y[-_]?%m[-_]?%d'
 
+    show_assume_options = False
+    show_console_timeout_option = False
+    show_force_option = False
+    show_simulate_option = False
+
     # -------------------------------------------------------------------------
     def __init__(
             self, verbose=0, version=__version__, *arg, **kwargs):
@@ -139,10 +144,6 @@ class GetFileRmApplication(BaseApplication):
             "Returns a newline separated list of files generated from file globbing patterns "
             "given as arguments to this application, where all files are omitted, which "
             "should not be removed.")
-
-        self.show_assume_options = False
-        self.show_force_option = False
-        self.show_simulate_option = False
 
         self._keep_days = self.default_keep_days
         self._keep_weeks = self.default_keep_weeks

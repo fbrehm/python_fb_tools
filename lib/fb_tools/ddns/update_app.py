@@ -36,7 +36,7 @@ from . import WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
 
 from .config import DdnsConfiguration
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -46,16 +46,17 @@ _ = XLATOR.gettext
 class UpdateDdnsApplication(BaseDdnsApplication):
     """Class for the application objects."""
 
+    show_assume_options = False
+    show_console_timeout_option = False
+    show_force_option = False
+    show_simulate_option = True
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
         """Initialise a UpdateDdnsApplication object."""
-        self.show_assume_options = False
-        self.show_force_option = True
-        self.show_simulate_option = True
-
         self.last_ipv4_address = None
         self.last_ipv6_address = None
         self.current_ipv4_address = None
