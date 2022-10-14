@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.0.3\n"
+"Project-Id-Version: fb_tools 2.1.0\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-10-14 15:34+0200\n"
+"POT-Creation-Date: 2022-10-14 16:58+0200\n"
 "PO-Revision-Date: 2022-07-20 16:50+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en_US\n"
@@ -195,33 +195,33 @@ msgstr ""
 msgid "The given directory {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:130 lib/fb_tools/cfg_app.py:223
+#: lib/fb_tools/argparse_actions.py:130 lib/fb_tools/cfg_app.py:226
 msgid "Directory {!r} does not exists."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:133 lib/fb_tools/cfg_app.py:227
+#: lib/fb_tools/argparse_actions.py:133 lib/fb_tools/cfg_app.py:230
 msgid "Path {!r} exists, but is not a directory."
 msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:139 lib/fb_tools/argparse_actions.py:174
-#: lib/fb_tools/cfg_app.py:234 lib/fb_tools/get_file_rm_app.py:398
+#: lib/fb_tools/cfg_app.py:237 lib/fb_tools/get_file_rm_app.py:399
 msgid "File {!r} is not a regular file."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:142 lib/fb_tools/cfg_app.py:238
+#: lib/fb_tools/argparse_actions.py:142 lib/fb_tools/cfg_app.py:241
 msgid "File {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:146 lib/fb_tools/cfg_app.py:243
+#: lib/fb_tools/argparse_actions.py:146 lib/fb_tools/cfg_app.py:246
 msgid "Directory {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:171 lib/fb_tools/get_file_rm_app.py:389
+#: lib/fb_tools/argparse_actions.py:171 lib/fb_tools/get_file_rm_app.py:390
 msgid "File {!r} does not exists."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:197
-msgid "a timeout must be greater than zero and less or equal to {}."
+#: lib/fb_tools/argparse_actions.py:197 lib/fb_tools/multi_config.py:1155
+msgid "A timeout must be greater than zero and less or equal to {}."
 msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:202
@@ -237,7 +237,7 @@ msgid "Config options and options for logging"
 msgstr ""
 
 #: lib/fb_tools/cfg_app.py:149 lib/fb_tools/cfg_app.py:155 lib/fb_tools/ddns/__init__.py:255
-#: lib/fb_tools/get_file_rm_app.py:269
+#: lib/fb_tools/get_file_rm_app.py:270
 msgid "FILE"
 msgstr ""
 
@@ -257,7 +257,7 @@ msgstr ""
 msgid "Error on reading configuration:"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:247
+#: lib/fb_tools/cfg_app.py:250
 msgid "Start logging into file {!r} ..."
 msgstr "Start logging into file {!r} …"
 
@@ -321,11 +321,11 @@ msgstr ""
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr ""
 
-#: lib/fb_tools/config.py:101 lib/fb_tools/multi_config.py:239
+#: lib/fb_tools/config.py:101 lib/fb_tools/multi_config.py:245
 msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
 msgstr ""
 
-#: lib/fb_tools/config.py:119 lib/fb_tools/multi_config.py:297
+#: lib/fb_tools/config.py:119 lib/fb_tools/multi_config.py:303
 msgid "A configuration directory may not be None."
 msgstr ""
 
@@ -333,7 +333,7 @@ msgstr ""
 msgid "A configuration file may not be None."
 msgstr ""
 
-#: lib/fb_tools/config.py:140 lib/fb_tools/config.py:148 lib/fb_tools/multi_config.py:269
+#: lib/fb_tools/config.py:140 lib/fb_tools/config.py:148 lib/fb_tools/multi_config.py:275
 msgid "Configuration file {!r} exists, but is not a regular file."
 msgstr ""
 
@@ -361,7 +361,7 @@ msgstr ""
 msgid "Configuration parse error"
 msgstr ""
 
-#: lib/fb_tools/config.py:229 lib/fb_tools/multi_config.py:1111
+#: lib/fb_tools/config.py:229 lib/fb_tools/multi_config.py:1124
 msgid "Checking config section {!r} ..."
 msgstr "Checking config section {!r} …"
 
@@ -459,11 +459,11 @@ msgstr ""
 msgid "Checking existence and accessibility of working directory {!r} ..."
 msgstr "Checking existence and accessibility of working directory {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:434 lib/fb_tools/ddns/update_app.py:168
+#: lib/fb_tools/ddns/__init__.py:434 lib/fb_tools/ddns/update_app.py:169
 msgid "No read access"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:438 lib/fb_tools/ddns/update_app.py:171
+#: lib/fb_tools/ddns/__init__.py:438 lib/fb_tools/ddns/update_app.py:172
 msgid "No write access"
 msgstr ""
 
@@ -503,135 +503,135 @@ msgstr ""
 msgid "The path to the logfile must be an absolute path (given: {!r})."
 msgstr ""
 
-#: lib/fb_tools/ddns/myip_app.py:49
+#: lib/fb_tools/ddns/myip_app.py:50
 msgid ""
 "Tries to detect the public NAT IPv4 address and/or the automatic assigned IPv6 address in a "
 "local network and print it out."
 msgstr ""
 
-#: lib/fb_tools/ddns/myip_app.py:54 lib/fb_tools/ddns/myip_app.py:55
+#: lib/fb_tools/ddns/myip_app.py:55 lib/fb_tools/ddns/myip_app.py:56
 msgid "Use only {} to retreive the public IP address."
 msgstr ""
 
-#: lib/fb_tools/ddns/myip_app.py:56
+#: lib/fb_tools/ddns/myip_app.py:57
 msgid "The IP protocol, for which the public IP should be retrieved (one of {c}, default {d!r})."
 msgstr ""
 
-#: lib/fb_tools/ddns/myip_app.py:98
+#: lib/fb_tools/ddns/myip_app.py:99
 msgid "myip options"
 msgstr ""
 
-#: lib/fb_tools/ddns/myip_app.py:102
+#: lib/fb_tools/ddns/myip_app.py:103
 msgid "Write found public IPs into a cache file in working directory."
 msgstr ""
 
-#: lib/fb_tools/ddns/myip_app.py:133 lib/fb_tools/ddns/update_app.py:274
+#: lib/fb_tools/ddns/myip_app.py:134 lib/fb_tools/ddns/update_app.py:275
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr "Starting {a!r}, version {v!r} …"
 
-#: lib/fb_tools/ddns/update_app.py:65
+#: lib/fb_tools/ddns/update_app.py:66
 msgid "Updating the DDNS records, even if seems not to be changed."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:68
+#: lib/fb_tools/ddns/update_app.py:69
 msgid "Tries to update the A and/or AAAA record at ddns.de with the current IP address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:73 lib/fb_tools/ddns/update_app.py:74
+#: lib/fb_tools/ddns/update_app.py:74 lib/fb_tools/ddns/update_app.py:75
 msgid "Update only the {} record with the public IP address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:75
+#: lib/fb_tools/ddns/update_app.py:76
 msgid ""
 "The IP protocol, for which the appropriate DNS record should be updated with the public IP (one "
 "of {c}, default {d!r})."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:157
+#: lib/fb_tools/ddns/update_app.py:158
 msgid "Checking existence and accessibility of log directory {!r} ..."
 msgstr "Checking existence and accessibility of log directory {!r} …"
 
-#: lib/fb_tools/ddns/update_app.py:189
+#: lib/fb_tools/ddns/update_app.py:190
 msgid "Update DDNS options"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:192
+#: lib/fb_tools/ddns/update_app.py:193
 msgid "USER"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:193
+#: lib/fb_tools/ddns/update_app.py:194
 msgid "The username to login at ddns.de."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:197
+#: lib/fb_tools/ddns/update_app.py:198
 msgid "PASSWORD"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:198
+#: lib/fb_tools/ddns/update_app.py:199
 msgid "The password of the user to login at ddns.de."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:202
+#: lib/fb_tools/ddns/update_app.py:203
 msgid "FILENAME"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:203
+#: lib/fb_tools/ddns/update_app.py:204
 msgid "The filename to use as a logfile. Leave it empty to disable file logging."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:210
+#: lib/fb_tools/ddns/update_app.py:211
 msgid "Update all domains, which are connected whith the given ddns account."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:214
+#: lib/fb_tools/ddns/update_app.py:215
 msgid "DOMAIN"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:215
+#: lib/fb_tools/ddns/update_app.py:216
 msgid "The particular domain(s), which should be updated (if not all)."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:233
+#: lib/fb_tools/ddns/update_app.py:234
 msgid "No domains to update given, but the option all domains is deactivated."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:283
+#: lib/fb_tools/ddns/update_app.py:284
 msgid "Ending {a!r}."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:291 lib/fb_tools/ddns/update_app.py:329
+#: lib/fb_tools/ddns/update_app.py:292 lib/fb_tools/ddns/update_app.py:330
 msgid "Last {w} address: {a!r}."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:293 lib/fb_tools/ddns/update_app.py:331
+#: lib/fb_tools/ddns/update_app.py:294 lib/fb_tools/ddns/update_app.py:332
 msgid "Did not found a last {} address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:296
+#: lib/fb_tools/ddns/update_app.py:297
 msgid "Got no public IPv4 address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:301 lib/fb_tools/ddns/update_app.py:339
+#: lib/fb_tools/ddns/update_app.py:302 lib/fb_tools/ddns/update_app.py:340
 msgid "Address {a!r} seems not to be a valid {w} address: {e}"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:306 lib/fb_tools/ddns/update_app.py:344
+#: lib/fb_tools/ddns/update_app.py:307 lib/fb_tools/ddns/update_app.py:345
 msgid "Address {a!r} seems not to be a valid {w} address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:311 lib/fb_tools/ddns/update_app.py:349
+#: lib/fb_tools/ddns/update_app.py:312 lib/fb_tools/ddns/update_app.py:350
 msgid "Current {w} address is {a!r}."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:314 lib/fb_tools/ddns/update_app.py:352
+#: lib/fb_tools/ddns/update_app.py:315 lib/fb_tools/ddns/update_app.py:353
 msgid "The public {w} address {a!r} seems not to be changed since the last update."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:334
+#: lib/fb_tools/ddns/update_app.py:335
 msgid "Got no public IPv6 address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:365
+#: lib/fb_tools/ddns/update_app.py:366
 msgid "Updating DNS records to IPv{p} address {a!r} ..."
 msgstr "Updating DNS records to IPv{p} address {a!r} …"
 
@@ -702,165 +702,165 @@ msgstr ""
 msgid ". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:138
+#: lib/fb_tools/get_file_rm_app.py:143
 msgid ""
 "Returns a newline separated list of files generated from file globbing patterns given as "
 "arguments to this application, where all files are omitted, which should not be removed."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:181 lib/fb_tools/get_file_rm_app.py:197
-#: lib/fb_tools/get_file_rm_app.py:213 lib/fb_tools/get_file_rm_app.py:229
-#: lib/fb_tools/get_file_rm_app.py:245
+#: lib/fb_tools/get_file_rm_app.py:182 lib/fb_tools/get_file_rm_app.py:198
+#: lib/fb_tools/get_file_rm_app.py:214 lib/fb_tools/get_file_rm_app.py:230
+#: lib/fb_tools/get_file_rm_app.py:246
 msgid "Wrong value {v!r} for {n}, must be >= {m}"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:266
+#: lib/fb_tools/get_file_rm_app.py:267
 msgid "File options"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:270
+#: lib/fb_tools/get_file_rm_app.py:271
 msgid "File pattern to generate list of files to remove."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:273
+#: lib/fb_tools/get_file_rm_app.py:274
 msgid "Keep options"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:276
+#: lib/fb_tools/get_file_rm_app.py:277
 msgid "NR_FILES"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:278
+#: lib/fb_tools/get_file_rm_app.py:279
 msgid "How many of the last files should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:285
+#: lib/fb_tools/get_file_rm_app.py:286
 msgid "DAYS"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:287
+#: lib/fb_tools/get_file_rm_app.py:288
 msgid "How many files one per day from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:294
+#: lib/fb_tools/get_file_rm_app.py:295
 msgid "WEEKS"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:296
+#: lib/fb_tools/get_file_rm_app.py:297
 msgid "How many files one per week from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:303
+#: lib/fb_tools/get_file_rm_app.py:304
 msgid "MONTHS"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:305
+#: lib/fb_tools/get_file_rm_app.py:306
 msgid "How many files one per month from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:312
+#: lib/fb_tools/get_file_rm_app.py:313
 msgid "YEARS"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:314
+#: lib/fb_tools/get_file_rm_app.py:315
 msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:345
+#: lib/fb_tools/get_file_rm_app.py:346
 msgid "Resolving date pattern {!r}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:366
+#: lib/fb_tools/get_file_rm_app.py:367
 msgid "Checking given files..."
 msgstr "Checking given files …"
 
-#: lib/fb_tools/get_file_rm_app.py:371
+#: lib/fb_tools/get_file_rm_app.py:372
 msgid "Checking given file {!r} ..."
 msgstr "Checking given file {!r} …"
 
-#: lib/fb_tools/get_file_rm_app.py:380
+#: lib/fb_tools/get_file_rm_app.py:381
 msgid "Resolved paths:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:382
+#: lib/fb_tools/get_file_rm_app.py:383
 msgid "File pattern {!r} does not match any files."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:387
+#: lib/fb_tools/get_file_rm_app.py:388
 msgid "Checking {!r} ..."
 msgstr "Checking {!r} …"
 
-#: lib/fb_tools/get_file_rm_app.py:393
+#: lib/fb_tools/get_file_rm_app.py:394
 msgid "File {!r} is a regular file."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:396
+#: lib/fb_tools/get_file_rm_app.py:397
 msgid "Path {!r} is a directory."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:403
+#: lib/fb_tools/get_file_rm_app.py:404
 msgid "File {fi!r} does not match pattern {pa!r}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:413
+#: lib/fb_tools/get_file_rm_app.py:414
 msgid "Date in file {fi!r} is not a valid date: {e}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:464
+#: lib/fb_tools/get_file_rm_app.py:465
 msgid "Did not found any files to evaluate."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:496
+#: lib/fb_tools/get_file_rm_app.py:497
 msgid "Keeping last file ..."
 msgid_plural "Keeping last {} files ..."
 msgstr[0] "Keeping last file …"
 msgstr[1] "Keeping last {} files …"
 
-#: lib/fb_tools/get_file_rm_app.py:502
+#: lib/fb_tools/get_file_rm_app.py:503
 msgid "Keep last file {!r}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:507
+#: lib/fb_tools/get_file_rm_app.py:508
 msgid "Files to keep:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:528
+#: lib/fb_tools/get_file_rm_app.py:529
 msgid "Files to keep for year:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:550
+#: lib/fb_tools/get_file_rm_app.py:551
 msgid "Got last month: {!r}"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:564
+#: lib/fb_tools/get_file_rm_app.py:565
 msgid "Files to keep for month:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:578
+#: lib/fb_tools/get_file_rm_app.py:579
 msgid "Got last Monday: {!r}"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:591
+#: lib/fb_tools/get_file_rm_app.py:592
 msgid "Files to keep for week:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:604
+#: lib/fb_tools/get_file_rm_app.py:605
 msgid "Got last day: {!r}"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:615
+#: lib/fb_tools/get_file_rm_app.py:616
 msgid "Keeping all files from today."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:622
+#: lib/fb_tools/get_file_rm_app.py:623
 msgid "Files to keep for day:"
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:639
+#: lib/fb_tools/get_file_rm_app.py:640
 msgid "Trying to get date of file {!r}."
 msgstr ""
 
-#: lib/fb_tools/get_file_rm_app.py:678
+#: lib/fb_tools/get_file_rm_app.py:679
 msgid "Explored and assigned files:"
 msgstr ""
 
@@ -1330,169 +1330,173 @@ msgstr ""
 msgid "Mail address {} is not in address list."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:98
+#: lib/fb_tools/multi_config.py:100
 msgid "Config loader method {!r} was not found."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:205 lib/fb_tools/multi_config.py:207 lib/fb_tools/multi_config.py:209
+#: lib/fb_tools/multi_config.py:211 lib/fb_tools/multi_config.py:213 lib/fb_tools/multi_config.py:215
 msgid "{} configuration is not supported."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:262
+#: lib/fb_tools/multi_config.py:268
 msgid "Additional config file {!r} does not exists."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:276
+#: lib/fb_tools/multi_config.py:282
 msgid "Configuration file {!r} is not readable."
 msgstr "Configuration file {!r} is not readable."
 
-#: lib/fb_tools/multi_config.py:300
+#: lib/fb_tools/multi_config.py:306
 msgid "Configuration directory {!r} may not be absolute."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:374
+#: lib/fb_tools/multi_config.py:386
 msgid "Cannot use {!r} as delimiters for ini-files."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:396
+#: lib/fb_tools/multi_config.py:408
 msgid "Cannot use {!r} as comment prefixes for ini-files."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:418
+#: lib/fb_tools/multi_config.py:430
 msgid "Cannot use {!r} as inline comment prefixes for ini-files."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:603 lib/fb_tools/multi_config.py:614
+#: lib/fb_tools/multi_config.py:616 lib/fb_tools/multi_config.py:627
 msgid "Stem {!r} is not a String type."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:607 lib/fb_tools/multi_config.py:618 lib/fb_tools/multi_config.py:625
+#: lib/fb_tools/multi_config.py:620 lib/fb_tools/multi_config.py:631 lib/fb_tools/multi_config.py:638
 msgid "File name stem {!r} is invalid."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:633
+#: lib/fb_tools/multi_config.py:646
 msgid "Invalid configuration type {t!r} - not found in {w!r}."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:673
+#: lib/fb_tools/multi_config.py:686
 msgid "Collecting all configuration files."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:680
+#: lib/fb_tools/multi_config.py:693
 msgid "Discovering config directory {!r} ..."
 msgstr "Discovering config directory {!r} …"
 
-#: lib/fb_tools/multi_config.py:689
+#: lib/fb_tools/multi_config.py:702
 msgid "Collected config files:"
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:702
+#: lib/fb_tools/multi_config.py:715
 msgid "Checking permissions of config files ..."
 msgstr "Checking permissions of config files …"
 
-#: lib/fb_tools/multi_config.py:718
+#: lib/fb_tools/multi_config.py:731
 msgid "Checking permissions of {!r} ..."
 msgstr "Checking permissions of {!r} …"
 
-#: lib/fb_tools/multi_config.py:722
+#: lib/fb_tools/multi_config.py:735
 msgid "Found file permissions of {fn!r}: {mode:04o}"
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:725
+#: lib/fb_tools/multi_config.py:738
 msgid "File {fn!r} is readable by group or by others, found mode {mode:04o}."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:737
+#: lib/fb_tools/multi_config.py:750
 msgid "Trying to detect file type of additional config file {!r}."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:746 lib/fb_tools/multi_config.py:811
+#: lib/fb_tools/multi_config.py:759 lib/fb_tools/multi_config.py:824
 msgid "Checking file {fn!r} for pattern {pat!r}."
 msgstr "Checking file {fn!r} for pattern {pat!r}."
 
-#: lib/fb_tools/multi_config.py:752 lib/fb_tools/multi_config.py:817
+#: lib/fb_tools/multi_config.py:765 lib/fb_tools/multi_config.py:830
 msgid "Found config file {fi!r}, loader method {m!r}."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:766
+#: lib/fb_tools/multi_config.py:779
 msgid "Did not found file type of additional config file {fn!r}. Available config types are: {list}."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:785
+#: lib/fb_tools/multi_config.py:798
 msgid "Something strange is happend, file type {!r} not found."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:795
+#: lib/fb_tools/multi_config.py:808
 msgid "Checking, whether {!r} is a possible config file."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:800
+#: lib/fb_tools/multi_config.py:813
 msgid "Path {!r} is not a regular file."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:836
+#: lib/fb_tools/multi_config.py:849
 msgid "Reading configuration file {!r} ..."
 msgstr "Reading configuration file {!r} …"
 
-#: lib/fb_tools/multi_config.py:840
+#: lib/fb_tools/multi_config.py:853
 msgid "Using loading method {!r}."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:848
+#: lib/fb_tools/multi_config.py:861
 msgid "Read config from {fn!r}:"
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:859
+#: lib/fb_tools/multi_config.py:872
 msgid "Read merged config:"
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:866
+#: lib/fb_tools/multi_config.py:879
 msgid ""
 "Character set detection by module {mod!r} for file {fn!r} should not be used, using character "
 "set {enc!r}."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:873
+#: lib/fb_tools/multi_config.py:886
 msgid "Trying to detect character set of file {fn!r} ..."
 msgstr "Trying to detect character set of file {fn!r} …"
 
-#: lib/fb_tools/multi_config.py:884
+#: lib/fb_tools/multi_config.py:897
 #, python-format
 msgid ""
 "The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, using character set "
 "{cs_def!r} instead of {cs_found!r}."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:894
+#: lib/fb_tools/multi_config.py:907
 msgid "Got {what} on detecting cheracter set of {fn!r}: {e}"
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:899
+#: lib/fb_tools/multi_config.py:912
 msgid "Found character set {cs!r} for file {fn!r} with a confidence of {con:0.1f}%."
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:909 lib/fb_tools/multi_config.py:939 lib/fb_tools/multi_config.py:973
-#: lib/fb_tools/multi_config.py:1030 lib/fb_tools/multi_config.py:1056
+#: lib/fb_tools/multi_config.py:922 lib/fb_tools/multi_config.py:952 lib/fb_tools/multi_config.py:986
+#: lib/fb_tools/multi_config.py:1043 lib/fb_tools/multi_config.py:1069
 msgid "Reading {tp} file {fn!r} ..."
 msgstr "Reading {tp} file {fn!r} …"
 
-#: lib/fb_tools/multi_config.py:920 lib/fb_tools/multi_config.py:954 lib/fb_tools/multi_config.py:1037
-#: lib/fb_tools/multi_config.py:1070
+#: lib/fb_tools/multi_config.py:933 lib/fb_tools/multi_config.py:967 lib/fb_tools/multi_config.py:1050
+#: lib/fb_tools/multi_config.py:1083
 msgid "{what} parse error in {fn!r}, line {line}, column {col}: {msg}"
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:927 lib/fb_tools/multi_config.py:961 lib/fb_tools/multi_config.py:1008
-#: lib/fb_tools/multi_config.py:1044 lib/fb_tools/multi_config.py:1074
-#: lib/fb_tools/multi_config.py:1081
+#: lib/fb_tools/multi_config.py:940 lib/fb_tools/multi_config.py:974 lib/fb_tools/multi_config.py:1021
+#: lib/fb_tools/multi_config.py:1057 lib/fb_tools/multi_config.py:1087
+#: lib/fb_tools/multi_config.py:1094
 msgid "Got {what} on reading and parsing {fn!r}: {e}"
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:990
+#: lib/fb_tools/multi_config.py:1003
 msgid "Arguments on initializing {}:"
 msgstr ""
 
-#: lib/fb_tools/multi_config.py:1094
+#: lib/fb_tools/multi_config.py:1107
 msgid "Evaluation of configuration could only be happen after reading it."
+msgstr ""
+
+#: lib/fb_tools/multi_config.py:1127
+msgid "Invalid value {val!r} in section {sec!r} for console timeout."
 msgstr ""
 
 #: lib/fb_tools/obj.py:63
