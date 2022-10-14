@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for a collection of useful argparse actions.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @copyright: © 2022 by Frank Brehm, Berlin
-@summary: The module for a collection of useful argparse actions.
 """
 from __future__ import absolute_import
 
@@ -21,9 +22,10 @@ except ImportError:
 
 # Own modules
 
+from . import MAX_TIMEOUT
 from .xlate import XLATOR
 
-__version__ = '2.0.0'
+__version__ = '2.1.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -31,10 +33,11 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class RegexOptionAction(argparse.Action):
+    """An argparse action for regular expressions."""
 
     # -------------------------------------------------------------------------
     def __init__(self, option_strings, topic, re_options=None, *args, **kwargs):
-
+        """Initialise a RegexOptionAction object."""
         self._topic = topic
         self._re_options = None
         if re_options is not None:
@@ -45,7 +48,7 @@ class RegexOptionAction(argparse.Action):
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, pattern, option_string=None):
-
+        """Parse the regular expression option."""
         try:
             if self._re_options is None:
                 re_test = re.compile(pattern)                               # noqa
@@ -60,10 +63,11 @@ class RegexOptionAction(argparse.Action):
 
 # =============================================================================
 class DirectoryOptionAction(argparse.Action):
+    """An argparse action for directories."""
 
     # -------------------------------------------------------------------------
     def __init__(self, option_strings, must_exists=True, writeable=False, *args, **kwargs):
-
+        """Initialise a DirectoryOptionAction object."""
         self.must_exists = bool(must_exists)
         self.writeable = bool(writeable)
         if self.writeable:
@@ -74,7 +78,7 @@ class DirectoryOptionAction(argparse.Action):
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, given_path, option_string=None):
-
+        """Parse the directory option."""
         path = Path(given_path)
         if not path.is_absolute():
             msg = _("The path {!r} must be an absolute path.").format(given_path)
@@ -103,16 +107,17 @@ class DirectoryOptionAction(argparse.Action):
 
 # =============================================================================
 class LogFileOptionAction(argparse.Action):
+    """An argparse action for logfiles."""
 
     # -------------------------------------------------------------------------
     def __init__(self, option_strings, *args, **kwargs):
-
+        """Initialise a LogFileOptionAction object."""
         super(LogFileOptionAction, self).__init__(
             option_strings=option_strings, *args, **kwargs)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, values, option_string=None):
-
+        """Parse the logfile option."""
         if values is None:
             setattr(namespace, self.dest, None)
             return
@@ -146,16 +151,17 @@ class LogFileOptionAction(argparse.Action):
 
 # =============================================================================
 class CfgFileOptionAction(argparse.Action):
+    """An argparse action for a configuration file."""
 
     # -------------------------------------------------------------------------
     def __init__(self, option_strings, *args, **kwargs):
-
+        """Initialise a CfgFileOptionAction object."""
         super(CfgFileOptionAction, self).__init__(
             option_strings=option_strings, *args, **kwargs)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, values, option_string=None):
-
+        """Parse the configuration file option."""
         if values is None:
             setattr(namespace, self.dest, None)
             return
@@ -169,6 +175,35 @@ class CfgFileOptionAction(argparse.Action):
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, path.resolve())
+
+
+# =============================================================================
+class TimeoutOptionAction(argparse.Action):
+    """An argparse action for timeouts."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, max_timeout=MAX_TIMEOUT, *args, **kwargs):
+        """Initialise a TimeoutOptionAction object."""
+        super(TimeoutOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+        self.max_timeout = max_timeout
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, given_timeout, option_string=None):
+        """Parse the timeout option."""
+        try:
+            timeout = int(given_timeout)
+            if timeout <= 0 or timeout > self.max_timeout:
+                msg = _(
+                    "A timeout must be greater than zero and less "
+                    "or equal to {}.").format(self.max_timeout)
+                raise ValueError(msg)
+        except (ValueError, TypeError) as e:
+            msg = _("Wrong timeout {!r}:").format(given_timeout)
+            msg += ' ' + str(e)
+            raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, timeout)
 
 
 # =============================================================================

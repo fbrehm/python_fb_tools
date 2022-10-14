@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: A module for providing a configuration.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: A module for providing a configuration
 """
 from __future__ import absolute_import
 
@@ -32,7 +33,7 @@ from .obj import FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -41,8 +42,7 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class ConfigError(FbError):
-    """Base error class for all exceptions happened during
-    execution this configured application"""
+    """Base error class for all exceptions happened during execution."""
 
     pass
 
@@ -50,8 +50,9 @@ class ConfigError(FbError):
 # =============================================================================
 class BaseConfiguration(FbBaseObject):
     """
-    A base class for providing a configuration for the BaseConfiguration class
-    and methods to read it from configuration files.
+    A base class for providing a configuration for the BaseConfiguration class.
+
+    It provides also methods to read it from configuration files.
     """
 
     default_encoding = DEFAULT_ENCODING
@@ -60,7 +61,7 @@ class BaseConfiguration(FbBaseObject):
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             encoding=DEFAULT_ENCODING, config_dir=None, config_file=None, initialized=False):
-
+        """Initialise a BaseConfiguration object."""
         self._encoding = None
         self._config_dir = None
         self._config_file = None
@@ -91,7 +92,7 @@ class BaseConfiguration(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def encoding(self):
-        """The encoding used to read config files."""
+        """Return the encoding used to read config files."""
         return self._encoding
 
     @encoding.setter
@@ -109,7 +110,7 @@ class BaseConfiguration(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def config_dir(self):
-        """The directory containing the configuration."""
+        """Return the directory containing the configuration."""
         return self._config_dir
 
     @config_dir.setter
@@ -125,7 +126,7 @@ class BaseConfiguration(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def config_file(self):
-        """The configuration file."""
+        """Return the configuration file."""
         return self._config_file
 
     @config_file.setter
@@ -154,7 +155,7 @@ class BaseConfiguration(FbBaseObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -162,7 +163,6 @@ class BaseConfiguration(FbBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(BaseConfiguration, self).as_dict(short=short)
         res['default_encoding'] = self.default_encoding
         res['encoding'] = self.encoding
@@ -173,8 +173,7 @@ class BaseConfiguration(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def read(self, error_if_not_exists=False):
-        """Reading the configuration file."""
-
+        """Read the configuration file."""
         if self.verbose > 2:
             LOG.debug(_("Searching for {!r} ...").format(self.config_file))
         if not self.config_file.exists():
@@ -211,8 +210,7 @@ class BaseConfiguration(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def eval_config(self, config):
-        """Evaluating of all found configuration options."""
-
+        """Evaluate all found configuration options."""
         for section_name in config.sections():
 
             if section_name.lower() == 'default' or section_name.lower() == 'global':
@@ -223,9 +221,10 @@ class BaseConfiguration(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def eval_config_global(self, config, section_name):
-        """Evaluating section [global] of configuration.
-            May be overridden in descendant classes."""
+        """Evaluate section [global] of configuration.
 
+        May be overridden in descendant classes.
+        """
         if self.verbose > 1:
             LOG.debug(_("Checking config section {!r} ...").format(section_name))
 
@@ -237,9 +236,10 @@ class BaseConfiguration(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def eval_config_section(self, config, section_name):
-        """Evaluating section with given name of configuration.
-            Should be overridden in descendant classes."""
+        """Evaluate section with given name of configuration.
 
+        Should be overridden in descendant classes.
+        """
         pass
 
 

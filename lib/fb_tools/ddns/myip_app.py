@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for the classes of the myip application.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: The module for the classes of the myip application.
 """
 from __future__ import absolute_import, print_function
 
@@ -23,23 +24,26 @@ from . import BaseDdnsApplication, WorkDirError
 
 from .config import DdnsConfiguration
 
-__version__ = '2.0.0'
+__version__ = '2.0.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
 
 # =============================================================================
 class MyIpApplication(BaseDdnsApplication):
-    """
-    Class for the application objects.
-    """
+    """Class for the application objects."""
+
+    show_assume_options = False
+    show_console_timeout_option = False
+    show_force_option = False
+    show_simulate_option = False
 
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
             initialized=False, usage=None, description=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
-
+        """Initialise a MyIpApplication object."""
         self._write_ips = False
 
         if description is None:
@@ -64,7 +68,7 @@ class MyIpApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     @property
     def write_ips(self):
-        """Flag to write retreived IPs into the working directory."""
+        """Return the Flag to write retreived IPs into the working directory."""
         return self._write_ips
 
     @write_ips.setter
@@ -74,7 +78,7 @@ class MyIpApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -82,7 +86,6 @@ class MyIpApplication(BaseDdnsApplication):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(MyIpApplication, self).as_dict(short=short)
         res['write_ips'] = self.write_ips
 
@@ -90,10 +93,7 @@ class MyIpApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
-        """
-        Public available method to initiate the argument parser.
-        """
-
+        """Initiate th eargument parser."""
         super(MyIpApplication, self).init_arg_parser()
 
         myip_group = self.arg_parser.add_argument_group(_('myip options'))
@@ -105,12 +105,11 @@ class MyIpApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def post_init(self):
-        """
-        Method to execute before calling run(). Here could be done some
-        finishing actions after reading in commandline parameters,
-        configuration a.s.o.
-        """
+        """Execute some actions before calling run().
 
+        Here could be done some finishing actions after reading in
+        commandline parameters, configuration a.s.o.
+        """
         super(MyIpApplication, self).post_init()
         self.initialized = False
 
@@ -125,11 +124,7 @@ class MyIpApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
-        """
-        Public available method to execute some actions after parsing
-        the command line parameters.
-        """
-
+        """Execute some actions after parsing the command line parameters."""
         if self.args.write_ips:
             self.write_ips = True
 
@@ -146,7 +141,7 @@ class MyIpApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def print_my_ipv(self, protocol):
-
+        """Write back the current public IP to console."""
         my_ip = self.get_my_ipv(protocol)
         if my_ip:
             print('IPv{p}: {i}'.format(p=protocol, i=my_ip))

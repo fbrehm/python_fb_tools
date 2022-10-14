@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for common used functions.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: The module for common used functions.
 """
 
 # Standard modules
@@ -36,7 +37,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 _ = XLATOR.gettext
 
@@ -94,12 +95,11 @@ RE_UNIT_ZIBYTES = re.compile(r'^\s*Zi(?:B(?:yte)?)?\s*$', re.IGNORECASE)
 # =============================================================================
 def pp(value, indent=4, width=99, depth=None):
     """
-    Returns a pretty print string of the given value.
+    Return a pretty print string of the given value.
 
     @return: pretty print string
     @rtype: str
     """
-
     pretty_printer = pprint.PrettyPrinter(
         indent=indent, width=width, depth=depth)
     return pretty_printer.pformat(value)
@@ -108,14 +108,14 @@ def pp(value, indent=4, width=99, depth=None):
 # =============================================================================
 def terminal_can_colors(debug=False):
     """
-    Method to detect, whether the current terminal (stdout and stderr)
-    is able to perform ANSI color sequences.
+    Detect, whether the current terminal is able to perform ANSI color sequences.
+
+    Both stdout and stderr are checked.
 
     @return: both stdout and stderr can perform ANSI color sequences
     @rtype: bool
 
     """
-
     cur_term = ''
     if 'TERM' in os.environ:
         cur_term = os.environ['TERM'].lower().strip()
@@ -171,10 +171,7 @@ def terminal_can_colors(debug=False):
 
 # =============================================================================
 def to_bool(value):
-    """
-    Converter from string to boolean values (e.g. from configurations)
-    """
-
+    """Convert from string to boolean values (e.g. from configurations)."""
     if not value:
         return False
 
@@ -237,7 +234,7 @@ def to_bool(value):
 
 # =============================================================================
 def is_general_string(value):
-
+    """Return, whether the given value is a common string."""
     if isinstance(value, six.string_types):
         return True
 
@@ -249,7 +246,7 @@ def is_general_string(value):
 
 # =============================================================================
 def to_unicode(obj, encoding='utf-8'):
-
+    """Convert given value to unicode."""
     do_decode = False
     if six.PY2:
         if isinstance(obj, str):
@@ -266,13 +263,13 @@ def to_unicode(obj, encoding='utf-8'):
 
 # =============================================================================
 def to_utf8(obj):
-
+    """Convert given value to a utf-8 encoded byte string."""
     return encode_or_bust(obj, 'utf-8')
 
 
 # =============================================================================
 def encode_or_bust(obj, encoding='utf-8'):
-
+    """Convert given value to a byte string withe the given encoding."""
     do_encode = False
     if six.PY2:
         if isinstance(obj, unicode):                            # noqa
@@ -289,18 +286,16 @@ def encode_or_bust(obj, encoding='utf-8'):
 
 # =============================================================================
 def to_bytes(obj, encoding='utf-8'):
-    "Wrapper for encode_or_bust()"
-
+    """Do the same as encode_or_bust()."""
     return encode_or_bust(obj, encoding)
 
 
 # =============================================================================
 def to_str(obj, encoding='utf-8'):
-    """
-    Transformes the given string-like object into the str-type according
-    to the current Python version.
-    """
+    """Transform he given string-like object into the str-type.
 
+    This will be done according to the current Python version.
+    """
     if six.PY2:
         return encode_or_bust(obj, encoding)
     else:
@@ -309,7 +304,7 @@ def to_str(obj, encoding='utf-8'):
 
 # =============================================================================
 def is_sequence(arg):
-
+    """Return, whether the given value is a sequential object, but nat a str."""
     if not isinstance(arg, Sequence):
         return False
 
@@ -321,14 +316,14 @@ def is_sequence(arg):
 
 # =============================================================================
 def caller_search_path(*additional_paths):
-    """
+    """Build a search path for executables.
+
     Builds a search path for executables from environment $PATH
     including some standard paths.
 
     @return: all existing search paths
     @rtype: list
     """
-
     path_list = []
     search_path = os.environ['PATH']
     if not search_path:
@@ -385,7 +380,7 @@ def caller_search_path(*additional_paths):
 
 # =============================================================================
 def compare_fqdn(x, y):
-
+    """Compare FQDN-like objects."""
     # LOG.debug("Comparing {!r} <=> {!r}.".format(x, y))
 
     # First check for None values
@@ -433,7 +428,7 @@ def compare_fqdn(x, y):
 
 # =============================================================================
 def compare_fqdn_tokens(xs, ys):
-
+    """Compare tokens from FQDN-like objects."""
     xa = RE_DOT.split(xs)
     xa.reverse()
     xa.pop(0)
@@ -471,7 +466,7 @@ def compare_fqdn_tokens(xs, ys):
 
 # =============================================================================
 def compare_ldap_values(first, second):
-
+    """Compare objects, which are originated as values of LDAP entries."""
     def _to_str_single(value):
 
         if is_sequence(value):
@@ -526,8 +521,9 @@ def compare_ldap_values(first, second):
 # =============================================================================
 def human2mbytes(value, si_conform=False, as_float=False):
     """
-    Converts the given human readable byte value (e.g. 5MB, 8.4GiB etc.)
-    with a prefix into an integer/float value (without a prefix) of MiBiBytes.
+    Convert the given human readable byte value (e.g. 5MB, 8.4GiB etc.).
+
+    The could have with a prefix into an integer/float value (without a prefix) of MiBiBytes.
     It raises a ValueError on invalid values.
 
     Available prefixes are:
@@ -553,7 +549,6 @@ def human2mbytes(value, si_conform=False, as_float=False):
     @rtype:  int or float
 
     """
-
     if value is None:
         msg = _("Given value is {!r}.").format(None)
         raise ValueError(msg)
@@ -689,7 +684,8 @@ def _get_factor_human2bytes(unit, factor_bin, factor_si):
 def bytes2human(
         value, si_conform=False, precision=None, format_str='{value} {unit}'):
     """
-    Converts the given value in bytes into a human readable format.
+    Convert the given value in bytes into a human readable format.
+
     The limit for electing the next higher prefix is at 1500.
 
     It raises a ValueError on invalid values.
@@ -709,7 +705,6 @@ def bytes2human(
     @rtype: str
 
     """
-
     val = int(value)
 
     if not val:
@@ -772,7 +767,7 @@ def bytes2human(
 
 # =============================================================================
 def generate_password(length=12):
-
+    """Generate a string of random characters with the givlen length."""
     characters = string.ascii_letters + string.punctuation + string.digits
     password = "".join(random.choice(characters) for x in range(length))
     return password
@@ -780,7 +775,10 @@ def generate_password(length=12):
 
 # =============================================================================
 def get_monday(day):
+    """Return the last Monday before the given date.
 
+    If the given date is a Monday itself, then this date will be returned.
+    """
     if not isinstance(day, (datetime.date, datetime.datetime)):
         msg = _("Argument {a!r} must be of type {t1!r} or {t2!r}.").format(
             a=day, t1='datetime.date', t2='datetime.datetime')
@@ -799,7 +797,10 @@ def get_monday(day):
 
 # =============================================================================
 def reverse_pointer(address):
+    """Return the tuples or digits of the given IP address in reverse order.
 
+    This is used to build the names of reverse DNS zones.
+    """
     addr = ipaddress.ip_address(address)
 
     if addr.version == 4:
@@ -812,7 +813,7 @@ def reverse_pointer(address):
 
 # =============================================================================
 def indent(text, prefix, initial_prefix=None, predicate=None):
-    """Adds 'prefix' to the beginning of selected lines in 'text'.
+    """Add 'prefix' to the beginning of selected lines in 'text'.
 
     If 'predicate' is provided, 'prefix' will only be added to the lines
     where 'predicate(line)' is True. If 'predicate' is not provided,
@@ -822,7 +823,6 @@ def indent(text, prefix, initial_prefix=None, predicate=None):
     It's a reinventing the wheel - sorry, but in module textwrap of Python 2.7
     this function is not existing.
     """
-
     if predicate is None:
         def predicate(line):
             return line.strip()

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: A module for providing a configuration for the ddns-update script.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: A module for providing a configuration for the ddns-update script
 """
 from __future__ import absolute_import
 
@@ -26,7 +27,7 @@ from ..config import ConfigError, BaseConfiguration
 
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -35,18 +36,14 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class DdnsConfigError(ConfigError):
-    """Base error class for all exceptions happened during
-    execution this configured application"""
+    """Base error class for all exceptions in this module."""
 
     pass
 
 
 # =============================================================================
 class DdnsConfiguration(BaseConfiguration):
-    """
-    A class for providing a configuration for the GetVmApplication class
-    and methods to read it from configuration files.
-    """
+    """A configuration class for the GetVmApplication class."""
 
     default_working_dir = Path('/var/lib/ddns')
     default_logfile = Path('/var/log/ddnss/ddnss-update.log')
@@ -67,7 +64,7 @@ class DdnsConfiguration(BaseConfiguration):
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             encoding=None, config_dir=None, config_file=None, initialized=False):
-
+        """Initialise a DdnsConfiguration object."""
         self.working_dir = self.default_working_dir
         self.logfile = self.default_logfile
         self.ddns_user = None
@@ -95,7 +92,7 @@ class DdnsConfiguration(BaseConfiguration):
     # -------------------------------------------------------------------------
     @property
     def timeout(self):
-        """The timeout in seconds for Web requests."""
+        """Return the timeout in seconds for Web requests."""
         return self._timeout
 
     @timeout.setter
@@ -114,19 +111,19 @@ class DdnsConfiguration(BaseConfiguration):
     # -------------------------------------------------------------------------
     @property
     def ipv4_cache_file(self):
-        """Filename (as Path-object) for storing the current public IPv4 address."""
+        """Return the Filename (as Path-object) for storing the current public IPv4 address."""
         return self.working_dir / self.ipv4_cache_basename
 
     # -------------------------------------------------------------------------
     @property
     def ipv6_cache_file(self):
-        """Filename (as Path-object) for storing the current public IPv6 address."""
+        """Return the Filename (as Path-object) for storing the current public IPv6 address."""
         return self.working_dir / self.ipv6_cache_basename
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -134,7 +131,6 @@ class DdnsConfiguration(BaseConfiguration):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(DdnsConfiguration, self).as_dict(short=short)
 
         res['ddns_pwd'] = None
@@ -162,7 +158,7 @@ class DdnsConfiguration(BaseConfiguration):
 
     # -------------------------------------------------------------------------
     def eval_config_section(self, config, section_name):
-
+        """Evaluate config sections for DDNS."""
         super(DdnsConfiguration, self).eval_config_section(config, section_name)
 
         if section_name.lower() == 'ddns':

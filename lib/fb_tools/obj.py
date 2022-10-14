@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: Module for base object classes, which are used everywhere in my projects.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2021 Frank Brehm, Berlin
+@copyright: © 2022 Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
@@ -32,7 +34,7 @@ from .errors import FbError
 
 from .xlate import XLATOR
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -41,9 +43,7 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class FbBaseObjectError(FbError):
-    """
-    Base error class useable by all descendand objects.
-    """
+    """Base error class useable by all descendand objects."""
 
     pass
 
@@ -54,12 +54,12 @@ class BasedirNotExistingError(FbBaseObjectError):
 
     # -------------------------------------------------------------------------
     def __init__(self, dir_name):
-
+        """Initialise a BasedirNotExistingError exception."""
         self.dir_name = dir_name
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string object."""
         msg = _(
             "The base directory {!r} is not existing or not "
             "a directory.").format(str(self.dir_name))
@@ -69,15 +69,15 @@ class BasedirNotExistingError(FbBaseObjectError):
 # =============================================================================
 @add_metaclass(ABCMeta)
 class FbGenericBaseObject(object):
-    """
-    Base class for all and everything.
+    """Base class for all and everything.
+
     42
     """
 
     # -------------------------------------------------------------------------
     @classmethod
     def get_generic_appname(cls, appname=None):
-
+        """Get the base name of the currently running application."""
         if appname:
             v = str(appname).strip()
             if v:
@@ -86,28 +86,24 @@ class FbGenericBaseObject(object):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """
-        Typecasting function for translating object structure
-        into a string
+        """Typecast into a string object.
 
         @return: structure as string
         @rtype:  str
         """
-
         return pp(self.as_dict(short=True))
 
     # -------------------------------------------------------------------------
     @abstractmethod
     def __repr__(self):
-        """Typecasting into a string for reproduction."""
-
+        """Typecast into a string for reproduction."""
         out = "<%s()>" % (self.__class__.__name__)
         return out
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -115,7 +111,6 @@ class FbGenericBaseObject(object):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = {}
         for key in self.__dict__:
             if short and key.startswith('_') and not key.startswith('__'):
@@ -146,7 +141,6 @@ class FbGenericBaseObject(object):
         @type do_traceback: bool
 
         """
-
         msg = str(error_message).strip()
         if not msg:
             msg = _('undefined error.')
@@ -186,8 +180,9 @@ class FbGenericBaseObject(object):
     # -------------------------------------------------------------------------
     def handle_info(self, message, info_name=None):
         """
-        Shows an information. This happens both to STDERR and to all
-        initialized log handlers.
+        Show an information.
+
+        This happens both to STDERR and to all initialized log handlers.
 
         @param message: the info message to display
         @type message: str
@@ -195,7 +190,6 @@ class FbGenericBaseObject(object):
         @type info_name: str
 
         """
-
         msg = ''
         if info_name is not None:
             info_name = info_name.strip()
@@ -224,19 +218,18 @@ class FbGenericBaseObject(object):
 
 # =============================================================================
 class FbBaseObject(FbGenericBaseObject):
-    """
-    Base class for all objects with some fundamental properties.
-    """
+    """Base class for all objects with some fundamental properties."""
 
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None,
             initialized=False):
         """
-        Initialisation of the base object.
+        Initialise the base object.
 
         Raises an exception on a uncoverable error.
         """
+        # Senseless comment to satisfy the linter.
 
         """
         @ivar: name of the current running application
@@ -282,7 +275,7 @@ class FbBaseObject(FbGenericBaseObject):
     # -----------------------------------------------------------
     @property
     def appname(self):
-        """The name of the current running application."""
+        """Return the name of the current running application."""
         if hasattr(self, '_appname'):
             return self._appname
         return os.path.basename(sys.argv[0])
@@ -297,13 +290,13 @@ class FbBaseObject(FbGenericBaseObject):
     # -----------------------------------------------------------
     @property
     def version(self):
-        """The version string of the current object or application."""
+        """Return the version string of the current object or application."""
         return getattr(self, '_version', __version__)
 
     # -----------------------------------------------------------
     @property
     def verbose(self):
-        """The verbosity level."""
+        """Return the verbosity level."""
         return getattr(self, '_verbose', 0)
 
     @verbose.setter
@@ -317,7 +310,7 @@ class FbBaseObject(FbGenericBaseObject):
     # -----------------------------------------------------------
     @property
     def initialized(self):
-        """The initialisation of this object is complete."""
+        """Return whther the initialisation of this object is complete."""
         return getattr(self, '_initialized', False)
 
     @initialized.setter
@@ -327,7 +320,7 @@ class FbBaseObject(FbGenericBaseObject):
     # -----------------------------------------------------------
     @property
     def base_dir(self):
-        """The base directory used for different purposes."""
+        """Return the base directory, which can be used for different purposes."""
         return self._base_dir
 
     @base_dir.setter
@@ -347,7 +340,6 @@ class FbBaseObject(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __repr__(self):
         """Typecasting into a string for reproduction."""
-
         out = "<%s(" % (self.__class__.__name__)
 
         fields = []
@@ -363,7 +355,7 @@ class FbBaseObject(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -371,7 +363,6 @@ class FbBaseObject(FbGenericBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(FbBaseObject, self).as_dict(short=short)
 
         res['appname'] = self.appname
