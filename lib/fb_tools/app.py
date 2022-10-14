@@ -28,6 +28,8 @@ from fb_logging.colored import ColoredFormatter
 
 from . import __version__ as __pkg_version__
 
+from .argparse_actions import TimeoutOptionAction
+
 from .errors import FbAppError
 from .errors import FunctionNotImplementedError
 
@@ -40,7 +42,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -67,6 +69,7 @@ class BaseApplication(HandlingObject):
     default_force_desc_msg = _("Forced execution - whatever it means.")
 
     show_assume_options = True
+    show_console_timeout_option = False
     show_force_option = False
     show_simulate_option = True
 
@@ -317,6 +320,7 @@ class BaseApplication(HandlingObject):
         res['exit_value'] = self.exit_value
         res['force_desc_msg'] = self.force_desc_msg
         res['show_assume_options'] = self.show_assume_options
+        res['show_console_timeout_option'] = self.show_console_timeout_option
         res['show_force_option'] = self.show_force_option
         res['show_simulate_option'] = self.show_simulate_option
         res['usage'] = self.usage
@@ -638,6 +642,14 @@ class BaseApplication(HandlingObject):
                     self.colored(_('No'), 'CYAN'))
             )
 
+        if self.show_console_timeout_option:
+            general_group.add_argument(
+                '--console-timeout', metavar=_('SECONDS'), dest="console_timeout", type=int,
+                action=TimeoutOptionAction, max_timeout=self.max_prompt_timeout,
+                help=_("The timeout in seconds for console input. Default: {}").format(
+                    self.default_prompt_timeout)
+            )
+
         general_group.add_argument(
             '--color', action="store", dest='color', const='yes',
             default='auto', nargs='?', choices=['yes', 'no', 'auto'],
@@ -711,6 +723,10 @@ class BaseApplication(HandlingObject):
 
         if self.args.quiet:
             self.quiet = self.args.quiet
+
+        prompt_timeout = getattr(self.args, 'console_timeout', None)
+        if prompt_timeout is not None:
+            self.prompt_timeout = prompt_timeout
 
         if self.args.color == 'yes':
             self._terminal_has_colors = True

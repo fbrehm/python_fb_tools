@@ -182,20 +182,21 @@ class TimeoutOptionAction(argparse.Action):
     """An argparse action for timeouts."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, option_strings, *args, **kwargs):
+    def __init__(self, option_strings, max_timeout=MAX_TIMEOUT, *args, **kwargs):
         """Initialise a TimeoutOptionAction object."""
         super(TimeoutOptionAction, self).__init__(
             option_strings=option_strings, *args, **kwargs)
+        self.max_timeout = max_timeout
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, given_timeout, option_string=None):
         """Parse the timeout option."""
         try:
             timeout = int(given_timeout)
-            if timeout <= 0 or timeout > MAX_TIMEOUT:
+            if timeout <= 0 or timeout > self.max_timeout:
                 msg = _(
                     "a timeout must be greater than zero and less "
-                    "or equal to {}.").format(MAX_TIMEOUT)
+                    "or equal to {}.").format(self.max_timeout)
                 raise ValueError(msg)
         except (ValueError, TypeError) as e:
             msg = _("Wrong timeout {!r}:").format(given_timeout)
