@@ -63,11 +63,13 @@ from .common import pp, to_bool, to_str, is_sequence
 
 from .obj import FbBaseObject
 
+from handling_obj import HandlingObject
+
 from .merge import merge_structure
 
 from .xlate import XLATOR, format_list
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -151,6 +153,9 @@ class BaseMultiConfig(FbBaseObject):
 
     re_invalid_stem = re.compile(re.escape(os.sep))
 
+    re_common_prompt_timeout_key = re.compile(
+        r'^\s*(?:prompt|console)[_-]*timeout\s*$', re.IGNORECASE)
+
     default_ini_default_section = '/'
 
     chardet_min_level_confidence = 1.0 / 3
@@ -182,6 +187,7 @@ class BaseMultiConfig(FbBaseObject):
         self._was_read = False
         self._ensure_privacy = to_bool(ensure_privacy)
         self._logfile = None
+        self._prompt_timeout = None
 
         self.cfg = {}
         self.ext_loader = {}
@@ -316,6 +322,12 @@ class BaseMultiConfig(FbBaseObject):
             self._logfile = None
             return
         self._logfile = Path(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def prompt_timeout(self):
+        """Return the timeout in seconds for waiting for an answer on a prompt."""
+        return getattr(self, '_prompt_timeout', None)
 
     # -------------------------------------------------------------------------
     @property
@@ -521,6 +533,7 @@ class BaseMultiConfig(FbBaseObject):
         res['use_chardet'] = self.use_chardet
         res['ensure_privacy'] = self.ensure_privacy
         res['logfile'] = self.logfile
+        res['prompt_timeout'] = self.prompt_timeout
 
         return res
 
@@ -1110,6 +1123,9 @@ class BaseMultiConfig(FbBaseObject):
         if self.verbose > 1:
             LOG.debug(_("Checking config section {!r} ...").format(section_name))
 
+        max_timeout = HandlingObject.max_prompt_timeout
+        invalid_msg = _("Invalid value {val!r} in section {sec!r} for console timeout.")
+
         config = self.cfg[section_name]
         for key in config.keys():
             value = config[key]
@@ -1125,6 +1141,25 @@ class BaseMultiConfig(FbBaseObject):
                 if val > self.verbose:
                     self.verbose = val
                 continue
+
+            if self.re_common_prompt_timeout_key.match(key):
+                try:
+                    timeout = int(value)
+                except (ValueError, TypeError) as e:
+                    msg = invalid_msg.format(val=value, sec=section_name)
+                    msg += ' ' + str(e)
+                    LOG.error(msg)
+                    continue
+                if timeout <= 0 or timeout > max_timeout:
+                    msg = invalid_msg.format(val=value, sec=section_name)
+                    msg += " " + _(
+                        "A timeout must be greater than zero and less or equal to {}.").format(
+                        max_timeout)
+                    LOG.error(msg)
+                    continue
+                self._prompt_timeout = timeout
+                continue
+
             if key.lower() in ('logfile', 'log-file', 'log'):
                 self.logfile = value
                 continue

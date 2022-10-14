@@ -37,7 +37,7 @@ from .multi_config import MultiConfigError, BaseMultiConfig
 
 from .xlate import XLATOR
 
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -203,6 +203,9 @@ class FbConfigApplication(BaseApplication):
             self.exit(4)
         if self.cfg.verbose > self.verbose:
             self.verbose = self.cfg.verbose
+
+        if self.cfg.prompt_timeout is not None:
+            self.prompt_timeout = self.cfg.prompt_timeout
 
         if self.cfg.logfile and not self.logfile:
             self.logfile = self.cfg.logfile.resolve()

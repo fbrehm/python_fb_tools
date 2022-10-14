@@ -25,7 +25,7 @@ except ImportError:
 from . import MAX_TIMEOUT
 from .xlate import XLATOR
 
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -195,7 +195,7 @@ class TimeoutOptionAction(argparse.Action):
             timeout = int(given_timeout)
             if timeout <= 0 or timeout > self.max_timeout:
                 msg = _(
-                    "a timeout must be greater than zero and less "
+                    "A timeout must be greater than zero and less "
                     "or equal to {}.").format(self.max_timeout)
                 raise ValueError(msg)
         except (ValueError, TypeError) as e:
