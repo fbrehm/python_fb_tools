@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """
+@summary: Modules for common used objects, error classes and methods.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @license: LGPL3+
-@copyright: © 2018 Frank Brehm, Berlin
-@summary: Modules for common used objects, error classes and methods.
+@copyright: © 2022 Frank Brehm, Berlin
 """
 from __future__ import print_function
 
@@ -42,6 +43,7 @@ PATHS = {
 
 # -----------------------------------
 def pp(obj):
+    """Return a pretty print string of the given value."""
     pprinter = pprint.PrettyPrinter(indent=4)
     return pprinter.pformat(obj)
 
@@ -75,7 +77,7 @@ if sys.version_info[0] < 3:
 
 # -----------------------------------
 def read(fname):
-
+    """Read the given file and return its contant."""
     content = None
 
     if sys.version_info[0] < 3:
@@ -90,6 +92,7 @@ def read(fname):
 
 # -----------------------------------
 def is_python_file(filename):
+    """Return, whether the given file seems to be a Python source file."""
     if filename.endswith('.py'):
         return True
     else:
@@ -104,6 +107,7 @@ __readme_file__ = os.path.join(__base_dir__, 'README.txt')
 
 # -----------------------------------
 def get_debian_version():
+    """Return the latest package version fron Debian changelog file."""
     if not os.path.isfile(__changelog_file__):
         return None
     changelog = read(__changelog_file__)
@@ -124,16 +128,17 @@ if __debian_version__ is not None and __debian_version__ != '':
 
 # -----------------------------------
 def write_local_version():
-
+    """Write the local version file."""
     local_version_file = os.path.join(__module_dir__, 'local_version.py')
     local_version_file_content = textwrap.dedent('''\
         #!/usr/bin/python
         # -*- coding: utf-8 -*-
         """
+        @summary: Modules for common used objects, error classes and methods.
+
         @author: {author}
         @contact: {contact}
         @copyright: © {cur_year} by {author}, Berlin
-        @summary: Modules for common used objects, error classes and methods.
         """
 
         __author__ = '{author} <{contact}>'
@@ -170,7 +175,7 @@ __requirements__ = [
 
 # -----------------------------------
 def read_requirements():
-
+    """Read the requiremments.txt file."""
     req_file = os.path.join(__base_dir__, 'requirements.txt')
     if not os.path.isfile(req_file):
         return
@@ -203,7 +208,7 @@ read_requirements()
 __scripts__ = []
 
 def get_scripts():
-
+    """Collect binary script files from bin/."""
     fpattern = os.path.join(__bin_dir__, '*')
     for fname in glob.glob(fpattern):
         script_name = os.path.relpath(fname, __base_dir__)
@@ -244,6 +249,7 @@ MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
 PO_FILES = 'locale/*/LC_MESSAGES/*.po'
 
 def create_mo_files():
+    """Compile the translation files."""
     mo_files = []
     for po_path in glob.glob(PO_FILES):
         mo = Path(po_path.replace('.po', '.mo'))
