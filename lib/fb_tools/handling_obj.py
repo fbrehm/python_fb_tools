@@ -177,12 +177,11 @@ class HandlingObject(FbBaseObject):
             terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
             initialized=None):
         """Initialise a HandlingObject."""
+        self.init_yes_no_lists()
+
         self._simulate = False
-
         self._force = False
-
         self._quiet = quiet
-
         self._assumed_answer = None
 
         self.add_search_paths = []
@@ -933,6 +932,16 @@ class HandlingObject(FbBaseObject):
         """
         if not prompt:
             prompt = _('Yes/No') + ' '
+
+        if self.assumed_answer is not None:
+            ret = self.assumed_answer
+            if not self.quiet:
+                answer = _('No')
+                if ret:
+                    answer = _('Yes')
+                answer = " " + _("Automatic answer: '{}'.").format(self.colored(answer, 'CYAN'))
+                print(prompt + answer)
+            return ret
 
         def prompt_alarm_caller(signum, sigframe):
             raise TimeoutOnPromptError(self.prompt_timeout)

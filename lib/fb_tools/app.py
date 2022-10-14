@@ -19,6 +19,7 @@ import argparse
 import getpass
 import signal
 import time
+import copy
 
 # Third party modules
 
@@ -39,7 +40,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import XLATOR, LOCALE_DIR, DOMAIN
 
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -310,6 +311,7 @@ class BaseApplication(HandlingObject):
         res = super(BaseApplication, self).as_dict(short=short)
         res['argparse_epilog'] = self.argparse_epilog
         res['argparse_prefix_chars'] = self.argparse_prefix_chars
+        res['args'] = copy.copy(self.args.__dict__)
         res['description'] = self.description
         res['env_prefix'] = self.env_prefix
         res['exit_value'] = self.exit_value
@@ -703,7 +705,7 @@ class BaseApplication(HandlingObject):
         if hasattr(self.args, 'assume_yes'):
             if self.args.assume_yes:
                 self.assumed_answer = True
-        elif hasattr(self.args, 'assume_no'):
+        if hasattr(self.args, 'assume_no'):
             if self.args.assume_no:
                 self.assumed_answer = False
 
