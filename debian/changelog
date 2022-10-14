@@ -1,3 +1,19 @@
+fb-tools (2.1.0) UNRELEASED; urgency=medium
+
+  * Updating documentation in all Python modules
+  * Adding common commandline options for assumed answers.
+  * Making visibiliy of some common options optional.
+  * Adding class TimeoutOptionAction to module fb_tools.argparse_actions
+  * Adding exceptions AbortAppError and TimeoutOnPromptError to module
+    fb_tools.errors.
+  * Adding properties prompt_timeout and init_yes_no_lists and methods
+    get_password() and ask_for_yes_or_no() to class HandlingObject in
+    module fb_tools.handling_obj.
+  * Adding optional common commandline option for the timeout of console
+    input.
+
+ -- Frank Brehm <frank@brehm-online.com>  Fri, 14 Oct 2022 15:51:47 +0200
+
 fb-tools (2.0.3) all; urgency=medium
 
   * Changes on help display of command line options.

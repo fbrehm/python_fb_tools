@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for a base object with extended handling.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: The module for a base object with extended handling.
 """
 from __future__ import absolute_import
 
@@ -18,6 +19,8 @@ import sys
 import locale
 import datetime
 import copy
+import re
+import getpass
 
 try:
     import pathlib
@@ -29,9 +32,13 @@ if sys.version_info[0] >= 3:
     from subprocess import SubprocessError, TimeoutExpired
 else:
     class SubprocessError(Exception):
+        """Dummy exception for Python 2."""
+
         pass
 
     class TimeoutExpired(SubprocessError):
+        """Dummy exception for Python 2."""
+
         pass
 
 # Third party modules
@@ -46,24 +53,28 @@ from .common import indent, is_sequence
 from .xlate import XLATOR
 
 from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
+from .errors import AbortAppError, TimeoutOnPromptError
 
 from .obj import FbBaseObject
 
-__version__ = '2.0.0'
+__version__ = '2.1.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
 
 DEFAULT_FILEIO_TIMEOUT = 2
+DEFAULT_PROMPT_TIMEOUT = 30
+DEFAULT_MAX_PROMPT_TIMEOUT = 600
 
 
 # =============================================================================
 class ProcessCommunicationTimeout(IoTimeoutError, SubprocessError):
+    """Special exception class for process communication errors."""
 
     # -------------------------------------------------------------------------
     def __init__(self, timeout):
-
+        """Initialise a ProcessCommunicationTimeout exception."""
         msg = _("Timeout on communicating with process.")
         super(ProcessCommunicationTimeout, self).__init__(msg, timeout)
 
@@ -71,8 +82,7 @@ class ProcessCommunicationTimeout(IoTimeoutError, SubprocessError):
 # =============================================================================
 class CalledProcessError(SubprocessError):
     """
-    Raised when run() is called with check=True and the process
-    returns a non-zero exit status.
+    Raised when run() is called with check=True and the process returns a non-zero exit status.
 
     Attributes:
       cmd, returncode, stdout, stderr, output
@@ -82,6 +92,7 @@ class CalledProcessError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __init__(self, returncode, cmd, output=None, stderr=None):
+        """Initialise a CalledProcessError exception."""
         self.returncode = returncode
         self.cmd = cmd
         self.output = output
@@ -89,13 +100,14 @@ class CalledProcessError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
+        """Typecast into string."""
         return _("Command {c!r} returned non-zero exit status {rc}.").format(
             c=self.cmd, rc=self.returncode)
 
     # -------------------------------------------------------------------------
     @property
     def stdout(self):
-        """Alias for output attribute, to match stderr"""
+        """Alias for output attribute, to match stderr."""
         return self.output
 
     @stdout.setter
@@ -108,8 +120,7 @@ class CalledProcessError(SubprocessError):
 # =============================================================================
 class TimeoutExpiredError(SubprocessError):
     """
-    This exception is raised when the timeout expires while waiting for a
-    child process.
+    This exception is raised when the timeout expires while waiting for a child process.
 
     Attributes:
         cmd, output, stdout, stderr, timeout
@@ -119,6 +130,7 @@ class TimeoutExpiredError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __init__(self, cmd, timeout, output=None, stderr=None):
+        """Initialise a TimeoutExpiredError exception."""
         self.cmd = cmd
         self.timeout = timeout
         self.output = output
@@ -126,6 +138,7 @@ class TimeoutExpiredError(SubprocessError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
+        """Typecast into string."""
         msg = ngettext(
             "Command {c!r} timed out after {s} second.",
             "Command {c!r} timed out after {s} seconds.", self.timeout)
@@ -134,6 +147,7 @@ class TimeoutExpiredError(SubprocessError):
     # -------------------------------------------------------------------------
     @property
     def stdout(self):
+        """Return self.output."""
         return self.output
 
     @stdout.setter
@@ -145,24 +159,34 @@ class TimeoutExpiredError(SubprocessError):
 
 # =============================================================================
 class HandlingObject(FbBaseObject):
-    """
-    Base class for an object with extend handling possibilities.
-    """
+    """Base class for an object with extend handling possibilities."""
 
     fileio_timeout = DEFAULT_FILEIO_TIMEOUT
+    default_prompt_timeout = DEFAULT_PROMPT_TIMEOUT
+    max_prompt_timeout = DEFAULT_MAX_PROMPT_TIMEOUT
+
+    yes_list = ['y', 'yes']
+    no_list = ['n', 'no']
+
+    pattern_yes_no = r'^\s*(' + '|'.join(yes_list) + '|' + '|'.join(no_list) + r')?\s*$'
+    re_yes_no = re.compile(pattern_yes_no, re.IGNORECASE)
 
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=__version__, base_dir=None, quiet=False,
-            terminal_has_colors=False, simulate=None, force=None, initialized=None):
+            terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
+            initialized=None):
+        """Initialise a HandlingObject."""
+        self.init_yes_no_lists()
 
         self._simulate = False
-
         self._force = False
-
         self._quiet = quiet
+        self._assumed_answer = None
 
         self.add_search_paths = []
+
+        self._prompt_timeout = self.default_prompt_timeout
 
         self._terminal_has_colors = bool(terminal_has_colors)
         """
@@ -187,11 +211,15 @@ class HandlingObject(FbBaseObject):
 
         if simulate is not None:
             self.simulate = simulate
+        if force is not None:
+            self.force = force
+        if assumed_answer is not None:
+            self.assumed_answer = assumed_answer
 
     # -----------------------------------------------------------
     @property
     def simulate(self):
-        """A flag describing, that all should be simulated."""
+        """Return whether simulation mode is enabled."""
         return self._simulate
 
     @simulate.setter
@@ -201,7 +229,7 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def force(self):
-        """Forced execution of some actions."""
+        """Return whether some actions should be executed forced."""
         return self._force
 
     @force.setter
@@ -211,8 +239,10 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def quiet(self):
-        """Quiet execution of the application,
-            only warnings and errors are emitted."""
+        """Return whether the application should be executed quietly.
+
+        Only warnings and errors are emitted.
+        """
         return self._quiet
 
     @quiet.setter
@@ -221,10 +251,25 @@ class HandlingObject(FbBaseObject):
 
     # -----------------------------------------------------------
     @property
-    def is_venv(self):
-        """Flag showing, that the current application is running
-            inside a virtual environment."""
+    def assumed_answer(self):
+        """Return the assuming of the answer to all questions.
 
+        If None, no answer is assumed.
+        If True, then assuming 'yes', if False, then assuming 'no'.
+        """
+        return getattr(self, '_assumed_answer', None)
+
+    @assumed_answer.setter
+    def assumed_answer(self, value):
+        if value is None:
+            self._assumed_answer = None
+        else:
+            self._assumed_answer = bool(value)
+
+    # -----------------------------------------------------------
+    @property
+    def is_venv(self):
+        """Return whether the current application is running inside a virtual environment."""
         if hasattr(sys, 'real_prefix'):
             return True
         return (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
@@ -232,23 +277,62 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def interrupted(self):
-        """Flag indicating, that the current process was interrupted."""
+        """Return the flag indicating, that the current process was interrupted."""
         return self._interrupted
 
     # -----------------------------------------------------------
     @property
     def terminal_has_colors(self):
-        """A flag, that the current terminal understands color ANSI codes."""
+        """Return whether the current terminal understands color ANSI codes."""
         return self._terminal_has_colors
 
     @terminal_has_colors.setter
     def terminal_has_colors(self, value):
         self._terminal_has_colors = bool(value)
 
+    # -----------------------------------------------------------
+    @property
+    def prompt_timeout(self):
+        """Return the timeout in seconds for waiting for an answer on a prompt."""
+        return getattr(self, '_prompt_timeout', self.default_prompt_timeout)
+
+    @prompt_timeout.setter
+    def prompt_timeout(self, value):
+        v = int(value)
+        if v < 0 or v > self.max_prompt_timeout:
+            msg = _(
+                "Wrong prompt timeout {v!r}, must be greater or equal to Null "
+                "and less or equal to {max}.").format(v=value, max=self.max_prompt_timeout)
+            LOG.warning(msg)
+        else:
+            self._prompt_timeout = v
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def init_yes_no_lists(cls):
+        """Initialise the lists for 'yes'- and 'no'-values by localized values."""
+        yes = _('yes')
+        if yes not in cls.yes_list:
+            cls.yes_list.append(yes)
+        yes_fc = yes[0]
+        if yes_fc not in cls.yes_list:
+            cls.yes_list.append(yes_fc)
+
+        no = _('no')
+        if no not in cls.no_list and no not in cls.yes_list:
+            cls.no_list.append(no)
+        no_fc = no[0]
+        if no_fc not in cls.no_list and no_fc not in cls.yes_list:
+            cls.no_list.append(no_fc)
+
+        cls.pattern_yes_no = (
+            r'^\s*(' + '|'.join(cls.yes_list) + '|' + '|'.join(cls.no_list) + r')?\s*$')
+        cls.re_yes_no = re.compile(cls.pattern_yes_no, re.IGNORECASE)
+
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -256,28 +340,33 @@ class HandlingObject(FbBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(HandlingObject, self).as_dict(short=short)
+        res['assumed_answer'] = self.assumed_answer
         res['fileio_timeout'] = self.fileio_timeout
         res['force'] = self.force
         res['interrupted'] = self.interrupted
         res['is_venv'] = self.is_venv
+        res['no_list'] = self.no_list
+        res['pattern_yes_no'] = self.pattern_yes_no
+        res['prompt_timeout'] = self.prompt_timeout
         res['quiet'] = self.quiet
         res['simulate'] = self.simulate
         res['terminal_has_colors'] = self.terminal_has_colors
+        res['yes_list'] = self.yes_list
 
         return res
 
     # -------------------------------------------------------------------------
     def get_cmd(self, cmd, quiet=False):
-
+        """Search the OS search path for the given command."""
         return self.get_command(cmd, quiet=quiet)
 
     # -------------------------------------------------------------------------
     def get_command(self, cmd, quiet=False, resolve=False):
         """
-        Searches the OS search path for the given command and gives back the
-        normalized position of this command.
+        Search the OS search path for the given command.
+
+        Gives back the normalized position of this command.
         If the command is given as an absolute path, it check the existence
         of this command.
 
@@ -294,7 +383,6 @@ class HandlingObject(FbBaseObject):
         @rtype: str or None
 
         """
-
         cmd = pathlib.Path(cmd)
 
         if self.verbose > 2:
@@ -372,7 +460,6 @@ class HandlingObject(FbBaseObject):
 
         This method was taken from subprocess.py of the standard library of Python 3.5.
         """
-
         input = None
         if 'input' in kwargs:
             input = kwargs['input']
@@ -501,6 +588,8 @@ class HandlingObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def colored(self, msg, color):
         """
+        Colorize the given string somehow.
+
         Wrapper function to colorize the message. Depending, whether the current
         terminal can display ANSI colors, the message is colorized or not.
 
@@ -513,7 +602,6 @@ class HandlingObject(FbBaseObject):
         @rtype: str
 
         """
-
         if not self.terminal_has_colors:
             return msg
         return colorstr(msg, color)
@@ -521,6 +609,8 @@ class HandlingObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def signal_handler(self, signum, frame):
         """
+        Do some actions on a signal.
+
         Handler as a callback function for getting a signal from somewhere.
 
         @param signum: the gotten signal number
@@ -529,7 +619,6 @@ class HandlingObject(FbBaseObject):
         @type frame: None or a frame object
 
         """
-
         err = InterruptError(signum)
 
         if signum in self.signals_dont_interrupt:
@@ -544,7 +633,7 @@ class HandlingObject(FbBaseObject):
     def read_file(
             self, filename, timeout=None, binary=False, quiet=False, encoding='utf-8'):
         """
-        Reads the content of the given filename.
+        Read the content of the given filename.
 
         @raise IOError: if file doesn't exists or isn't readable
         @raise PbReadTimeoutError: on timeout reading the file
@@ -563,21 +652,21 @@ class HandlingObject(FbBaseObject):
         @rtype:  str
 
         """
-
         needed_verbose_level = 1
         if quiet:
             needed_verbose_level = 3
 
         def read_alarm_caller(signum, sigframe):
-            '''
-            This nested function will be called in event of a timeout
+            """
+            Raise a ReadTimeoutError on an alarm event.
+
+            This nested function will be called in event of a timeout.
 
             @param signum:   the signal number (POSIX) which happend
             @type signum:    int
             @param sigframe: the frame of the signal
             @type sigframe:  object
-            '''
-
+            """
             raise ReadTimeoutError(timeout, filename)
 
         if timeout is None:
@@ -627,7 +716,8 @@ class HandlingObject(FbBaseObject):
             self, filename, content, timeout=None, must_exists=True,
             quiet=False, encoding='utf-8'):
         """
-        Writes the given content into the given filename.
+        Write the given content into the given filename.
+
         It should only be used for small things, because it writes unbuffered.
 
         @raise IOError: if file doesn't exists or isn't writeable
@@ -646,19 +736,19 @@ class HandlingObject(FbBaseObject):
         @type quiet: bool
 
         @return: None
-
         """
 
         def write_alarm_caller(signum, sigframe):
-            '''
+            """
+            Raise a WriteTimeoutError on a alarm event.
+
             This nested function will be called in event of a timeout
 
             @param signum:   the signal number (POSIX) which happend
             @type signum:    int
             @param sigframe: the frame of the signal
             @type sigframe:  object
-            '''
-
+            """
             raise WriteTimeoutError(timeout, filename)
 
         verb_level1 = 0
@@ -726,6 +816,183 @@ class HandlingObject(FbBaseObject):
 
         return
 
+    # -------------------------------------------------------------------------
+    def get_password(self, first_prompt=None, second_prompt=None, may_empty=True, repeat=True):
+        """
+        Ask the user for a password on the console.
+
+        @raise AbortAppError: if the user presses Ctrl-D (EOF)
+        @raise TimeoutOnPromptError: if the user does not finishing after a time
+
+        @param first_prompt: the prompt for the first password question
+        @type first_prompt: str
+        @param second_prompt: the prompt for the second password question
+        @type second_prompt: str
+        @param may_empty: The behaviour, if the user inputs an empty password:
+                          if True, an empty password will be returned
+                          if False, the question will be repeated.
+        @type may_empty: bool
+        @param repeat: Asking for the password a second time, which must be equal
+                       to the first given password.
+        @type repeat: bool
+
+        @return: The entered password
+        @rtype: str
+
+        """
+        if not first_prompt:
+            first_prompt = _('Password:') + ' '
+
+        if not second_prompt:
+            second_prompt = _('Repeat password:') + ' '
+
+        ret_passwd = None
+        second_passwd = None
+
+        while True:
+
+            if not self.quiet:
+                print()
+            ret_passwd = self._get_password(first_prompt, may_empty)
+            if ret_passwd:
+                if repeat:
+                    second_passwd = self._get_password(second_prompt, may_empty=False)
+                    if ret_passwd != second_passwd:
+                        msg = _("The entered passwords does not match.")
+                        LOG.error(msg)
+                        continue
+            break
+
+        return ret_passwd
+
+    # -------------------------------------------------------------------------
+    def _get_password(self, prompt, may_empty=True):
+
+        def passwd_alarm_caller(signum, sigframe):
+            raise TimeoutOnPromptError(self.prompt_timeout)
+
+        msg_intr = _("Interrupted on demand.")
+        ret_passwd = ''
+
+        try:
+            signal.signal(signal.SIGALRM, passwd_alarm_caller)
+            signal.alarm(self.prompt_timeout)
+
+            while True:
+
+                try:
+                    ret_passwd = getpass.getpass(prompt)
+                except EOFError:
+                    raise AbortAppError(msg_intr)
+
+                signal.alarm(self.prompt_timeout)
+
+                if ret_passwd == '':
+                    if may_empty:
+                        return ''
+                    else:
+                        continue
+                else:
+                    break
+
+        except (TimeoutOnPromptError, AbortAppError) as e:
+            msg = _("Got a {}:").format(e.__class__.__name__) + ' ' + str(e)
+            LOG.error(msg)
+            self.exit(10)
+
+        except KeyboardInterrupt:
+            msg = _("Got a {}:").format('KeyboardInterrupt') + ' ' + msg_intr
+            LOG.error(msg)
+            self.exit(10)
+
+        finally:
+            signal.alarm(0)
+
+        return ret_passwd
+
+    # -------------------------------------------------------------------------
+    def ask_for_yes_or_no(self, prompt, default_on_empty=None):
+        """
+        Ask the user for yes or no.
+
+        @raise AbortAppError: if the user presses Ctrl-D (EOF)
+        @raise TimeoutOnPromptError: if the user does not correct answer after a time
+
+        @param prompt: the prompt for the question
+        @type prompt: str
+        @param default_on_empty: behaviour on an empty reply:
+                                 * if None, repeat the question
+                                 * if True, return True
+                                 * else return False
+        @type default_on_empty: bool or None
+
+        @return: True, if the user answered Yes, else False
+        @rtype: bool
+
+        """
+        if not prompt:
+            prompt = _('Yes/No') + ' '
+
+        if self.assumed_answer is not None:
+            ret = self.assumed_answer
+            if not self.quiet:
+                answer = _('No')
+                if ret:
+                    answer = _('Yes')
+                answer = " " + _("Automatic answer: '{}'.").format(self.colored(answer, 'CYAN'))
+                print(prompt + answer)
+            return ret
+
+        def prompt_alarm_caller(signum, sigframe):
+            raise TimeoutOnPromptError(self.prompt_timeout)
+
+        msg_intr = _("Interrupted on demand.")
+        try:
+            signal.signal(signal.SIGALRM, prompt_alarm_caller)
+            signal.alarm(self.prompt_timeout)
+
+            reply = ''
+            while True:
+                try:
+                    reply = input(prompt)
+                except EOFError:
+                    raise AbortAppError(msg_intr)
+                signal.alarm(self.prompt_timeout)
+                match = self.re_yes_no.match(reply)
+                if match:
+                    if match.group(1) is None:
+                        if default_on_empty is None:
+                            continue
+                        return bool(default_on_empty)
+                    # There is an answer
+                    r = match.group(1).lower()
+                    if r in self.no_list:
+                        # Continue == no
+                        return False
+                    elif r in self.yes_list:
+                        # Continue == yes
+                        return True
+                    else:
+                        continue
+                else:
+                    continue
+                # Repeat the question
+
+        except (TimeoutOnPromptError, AbortAppError) as e:
+            print()
+            msg = _("Got a {}:").format(e.__class__.__name__) + ' ' + str(e)
+            LOG.error(msg)
+            self.exit(10)
+
+        except KeyboardInterrupt:
+            msg = _("Got a {}:").format('KeyboardInterrupt') + ' ' + msg_intr
+            print()
+            LOG.error(msg)
+            self.exit(10)
+
+        finally:
+            signal.alarm(0)
+
 
 # =============================================================================
 class CompletedProcess(object):
@@ -747,7 +1014,7 @@ class CompletedProcess(object):
     def __init__(
             self, args, returncode, stdout=None, stderr=None, encoding=None,
             start_dt=None, end_dt=None):
-
+        """Initialize a CompletedProcess object."""
         self.args = args
         self.returncode = returncode
         self.encoding = encoding
@@ -791,19 +1058,19 @@ class CompletedProcess(object):
     # -------------------------------------------------------------------------
     @property
     def start_dt(self):
-        "The timestamp of starting the process."
+        """Return the timestamp of starting the process."""
         return self._start_dt
 
     # -------------------------------------------------------------------------
     @property
     def end_dt(self):
-        "The timestamp of ending the process."
+        """Return the timestamp of ending the process."""
         return self._end_dt
 
     # -------------------------------------------------------------------------
     @property
     def duration(self):
-        "The duration of executing the process."
+        """Return the duration of executing the process."""
         if self.start_dt is None:
             return None
         if self.end_dt is None:
@@ -812,6 +1079,7 @@ class CompletedProcess(object):
 
     # -------------------------------------------------------------------------
     def __repr__(self):
+        """Typecast into a string for reproduction."""
         args = ['args={!r}'.format(self.args),
                 'returncode={!r}'.format(self.returncode)]
         if self.start_dt is not None:
@@ -828,6 +1096,7 @@ class CompletedProcess(object):
 
     # -------------------------------------------------------------------------
     def __str__(self):
+        """Typecast into a string."""
         out = _('Completed process') + ':\n'
         out += '  args:       {!r}\n'.format(self.args)
         out += '  returncode: {}\n'.format(self.returncode)

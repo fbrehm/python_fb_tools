@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: A module for a pidfile object.
+
+It provides methods to define, check, create and remove a pidfile.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @copyright: © 2022 by Frank Brehm, Berlin
-@summary: A module for a pidfile object.
-          It provides methods to define, check, create
-          and remove a pidfile.
 """
 from __future__ import absolute_import
 
@@ -32,7 +33,7 @@ from .obj import FbBaseObjectError, FbBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -41,19 +42,18 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class PidFileError(FbBaseObjectError):
-    """Base error class for all exceptions happened during
-    handling a pidfile."""
+    """Base error class for all exceptions happened during handling a pidfile."""
 
     pass
 
 
 # =============================================================================
 class InvalidPidFileError(PidFileError):
-    """An error class indicating, that the given pidfile is unusable"""
+    """An error class indicating, that the given pidfile is unusable."""
 
     def __init__(self, pidfile, reason=None):
         """
-        Constructor.
+        Initialise a InvalidPidFileError object.
 
         @param pidfile: the filename of the invalid pidfile.
         @type pidfile: str
@@ -61,14 +61,12 @@ class InvalidPidFileError(PidFileError):
         @type reason: str
 
         """
-
         self.pidfile = pidfile
         self.reason = reason
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """Typecasting into a string for error output."""
-
+        """Typecaste into a string for error output."""
         msg = None
         if self.reason:
             msg = _("Invalid pidfile {f!r} given: {r}").format(
@@ -80,14 +78,11 @@ class InvalidPidFileError(PidFileError):
 
 # =============================================================================
 class PidFileInUseError(PidFileError):
-    """
-    An error class indicating, that the given pidfile is in use
-    by another application.
-    """
+    """Exception indicating, that the pidfile is in use."""
 
     def __init__(self, pidfile, pid):
         """
-        Constructor.
+        Initialise a PidFileInUseError object.
 
         @param pidfile: the filename of the pidfile.
         @type pidfile: str
@@ -95,14 +90,12 @@ class PidFileInUseError(PidFileError):
         @type pid: int
 
         """
-
         self.pidfile = pidfile
         self.pid = pid
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """Typecasting into a string for error output."""
-
+        """Typecaste into a string for error output."""
         msg = _(
             "The pidfile {f!r} is currently in use by the application with the PID {p}.").format(
             f=str(self.pidfile), p=self.pid)
@@ -112,9 +105,7 @@ class PidFileInUseError(PidFileError):
 
 # =============================================================================
 class PidFile(FbBaseObject):
-    """
-    Base class for a pidfile object.
-    """
+    """Base class for a pidfile object."""
 
     open_args = {}
     if six.PY3:
@@ -129,7 +120,7 @@ class PidFile(FbBaseObject):
             version=__version__, base_dir=None,
             initialized=False, simulate=False, timeout=10):
         """
-        Initialisation of the pidfile object.
+        Initialise a pidfile object.
 
         @raise ValueError: no filename was given
         @raise PidFileError: on some errors.
@@ -157,7 +148,6 @@ class PidFile(FbBaseObject):
 
         @return: None
         """
-
         self._created = False
         """
         @ivar: the pidfile was created by this current object
@@ -203,7 +193,7 @@ class PidFile(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def filename(self):
-        """The filename of the pidfile."""
+        """Return the filename of the pidfile."""
         return self._filename
 
     # -----------------------------------------------------------
@@ -219,31 +209,31 @@ class PidFile(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def simulate(self):
-        """Simulation mode."""
+        """Return the Simulation mode."""
         return self._simulate
 
     # -----------------------------------------------------------
     @property
     def created(self):
-        """The pidfile was created by this current object."""
+        """Return, whether the pidfile was created by this current object."""
         return self._created
 
     # -----------------------------------------------------------
     @property
     def timeout(self):
-        """The timeout in seconds for IO operations on pidfile."""
+        """Return the timeout in seconds for IO operations on pidfile."""
         return self._timeout
 
     # -----------------------------------------------------------
     @property
     def parent_dir(self):
-        """The directory containing the pidfile."""
+        """Return the directory containing the pidfile."""
         return self.filename.parent
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -251,7 +241,6 @@ class PidFile(FbBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(PidFile, self).as_dict(short=short)
         res['filename'] = self.filename
         res['auto_remove'] = self.auto_remove
@@ -265,8 +254,7 @@ class PidFile(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def __repr__(self):
-        """Typecasting into a string for reproduction."""
-
+        """Typecaste into a string for reproduction."""
         out = "<%s(" % (self.__class__.__name__)
 
         fields = []
@@ -284,8 +272,10 @@ class PidFile(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def __del__(self):
-        """Destructor. Removes the pidfile, if it was created by ourselfes."""
+        """Destruct the object.
 
+        Remove the pidfile, if it was created by ourselfes.
+        """
         if not self.created:
             return
 
@@ -316,7 +306,8 @@ class PidFile(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def create(self, pid=None):
-        """
+        """Create the f***ing pidfile.
+
         The main method of this class. It tries to write the PID of the process
         into the pidfile.
 
@@ -325,7 +316,6 @@ class PidFile(FbBaseObject):
         @type pid: int
 
         """
-
         if pid:
             pid = int(pid)
             if pid <= 0:
@@ -378,14 +368,13 @@ class PidFile(FbBaseObject):
     # -------------------------------------------------------------------------
     def recreate(self, pid=None):
         """
-        Rewrites an even created pidfile with the current PID.
+        Rewrite an even created pidfile with the current PID.
 
         @param pid: the pid to write into the pidfile. If not given, the PID of
                     the current process will taken.
         @type pid: int
 
         """
-
         if not self.created:
             msg = _("Calling {} on a not self created pidfile.").format('recreate()')
             raise PidFileError(msg)
@@ -422,7 +411,8 @@ class PidFile(FbBaseObject):
     # -------------------------------------------------------------------------
     def check(self):
         """
-        This methods checks the usability of the pidfile.
+        Check the usability of the pidfile.
+
         If the method doesn't raise an exception, the pidfile is usable.
 
         It returns, whether the pidfile exist and can be deleted or not.
@@ -438,7 +428,6 @@ class PidFile(FbBaseObject):
         @rtype: bool
 
         """
-
         if not self.filename.exists():
             if not self.parent_dir.exists():
                 reason = _("Pidfile parent directory {!r} doesn't exists.").format(
@@ -462,6 +451,8 @@ class PidFile(FbBaseObject):
         # ---------
         def pidfile_read_alarm_caller(signum, sigframe):
             """
+            Raise a ReadTimeoutError on a timeout alarm.
+
             This nested function will be called in event of a timeout.
 
             @param signum: the signal number (POSIX) which happend
@@ -469,7 +460,6 @@ class PidFile(FbBaseObject):
             @param sigframe: the frame of the signal
             @type sigframe: object
             """
-
             raise ReadTimeoutError(self.timeout, str(self.filename))
 
         if self.verbose > 1:

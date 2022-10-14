@@ -1,8 +1,17 @@
 #!/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+@summary: A module for common used objects, error classes and functions.
+
+@author: Frank Brehm
+@contact: frank@brehm-online.com
+@copyright: © 2022 by Frank Brehm, Berlin
+"""
 
 DDNS_CFG_BASENAME = 'ddns.ini'
-__version__ = '2.0.3'
+MAX_TIMEOUT = 3600
+
+__version__ = '2.1.0'
 
 from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList      # noqa
 

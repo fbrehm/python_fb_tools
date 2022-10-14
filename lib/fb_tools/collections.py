@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: This module implements specialized container datatypes.
+
+They are providing alternatives to Python's general purpose built-in frozen_set, set and dict.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2021 by Frank Brehm, Berlin
-@summary: This module implements specialized container datatypes providing
-          alternatives to Python's general purpose built-in frozen_set, set and dict.
 """
 from __future__ import absolute_import
 
@@ -30,7 +32,7 @@ from .obj import FbGenericBaseObject
 
 from .xlate import XLATOR
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -50,66 +52,67 @@ class WrongItemTypeError(TypeError, FbCollectionsError):
 
     # -------------------------------------------------------------------------
     def __init__(self, item, expected='str'):
-
+        """Initialise a WrongItemTypeError exception."""
         self.item = item
         self.expected = expected
         super(WrongItemTypeError, self).__init__()
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into str."""
         msg = _("Item {item!r} must be of type {must!r}, but is of type {cls!r} instead.")
         return msg.format(item=self.item, must=self.expected, cls=self.item.__class__.__name__)
 
 
 # =============================================================================
 class WrongCompareSetClassError(TypeError, FbCollectionsError):
-    """Exeception class for the case, that a given class ist not of an
-       instance of CIStringSet."""
+    """Exeception class for the case, that a given class ist not of an instance of CIStringSet."""
 
     # -------------------------------------------------------------------------
     def __init__(self, other, expected='CIStringSet'):
-
+        """Initialise a WrongCompareSetClassError exception."""
         self.other_class = other.__class__.__name__
         self.expected = expected
         super(WrongCompareSetClassError, self).__init__()
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into str."""
         msg = _("Object {o!r} is not a {e} object.")
         return msg.format(o=self.other_class, e=self.expected)
 
 
 # =============================================================================
 class WrongKeyTypeError(TypeError, FbCollectionsError):
+    """Exeception if a given key is from wrong type."""
 
     # -------------------------------------------------------------------------
     def __init__(self, key, expected='str'):
-
+        """Initialise a WrongKeyTypeError exception."""
         self.key = key
         self.expected = expected
         super(WrongKeyTypeError, self).__init__()
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into str."""
         msg = _("Key {key!r} must be of type {must!r}, but is of type {cls!r} instead.")
         return msg.format(key=self.key, must=self.expected, cls=self.key.__class__.__name__)
 
 
 # =============================================================================
 class WrongUpdateClassError(TypeError, FbCollectionsError):
+    """Exeception if an object for update is from the wrong type."""
 
     # -------------------------------------------------------------------------
     def __init__(self, other):
-
+        """Initialise a WrongUpdateClassError exception."""
         self.other_class = other.__class__.__name__
         super(WrongUpdateClassError, self).__init__()
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into str."""
         msg = _(
             "Object is neither a {m} object, nor a sequential object, "
             "but a {o!r} object instead.")
@@ -118,26 +121,28 @@ class WrongUpdateClassError(TypeError, FbCollectionsError):
 
 # =============================================================================
 class CaseInsensitiveKeyError(KeyError, FbCollectionsError):
+    """Exeception, if a key was not found."""
 
     # -------------------------------------------------------------------------
     def __init__(self, key):
-
+        """Initialise a CaseInsensitiveKeyError exception."""
         self.key = key
         super(CaseInsensitiveKeyError, self).__init__()
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into str."""
         msg = _("Key {!r} is not existing.")
         return msg.format(self.key)
 
 
 # =============================================================================
 class CIInitfromSequenceError(TypeError, FbCollectionsError):
+    """Exeception if an object for update is from the wrong type."""
 
     # -------------------------------------------------------------------------
     def __init__(self, item, emesg, expected='FrozenCIDict'):
-
+        """Initialise a CIInitfromSequenceError exception."""
         self.item = item
         self.emesg = emesg
         self.expected = expected
@@ -145,17 +150,18 @@ class CIInitfromSequenceError(TypeError, FbCollectionsError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into str."""
         msg = _("Could update {ex} with {i!r}: {m}")
         return msg.format(ex=self.expected, i=self.item, m=self.emesg)
 
 
 # =============================================================================
 class CIInitfromTupleError(IndexError, FbCollectionsError):
+    """Exeception if an object for update is from the wrong type."""
 
     # -------------------------------------------------------------------------
     def __init__(self, item, emesg, expected='FrozenCIDict'):
-
+        """Initialise a CIInitfromTupleError exception."""
         self.item = item
         self.emesg = emesg
         self.expected = expected
@@ -163,7 +169,7 @@ class CIInitfromTupleError(IndexError, FbCollectionsError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into str."""
         msg = _("Could update {ex} with {i!r}: {m}")
         return msg.format(ex=self.expected, i=self.item, m=self.emesg)
 
@@ -172,13 +178,14 @@ class CIInitfromTupleError(IndexError, FbCollectionsError):
 class FrozenCIStringSet(Set, FbGenericBaseObject):
     """
     An immutable set, where the items are insensitive strings.
+
     The items MUST be of type string!
     It works like a set.
     """
 
     # -------------------------------------------------------------------------
     def __init__(self, iterable=None):
-
+        """Initialise a FrozenCIStringSet object."""
         self._items = {}
         if iterable is not None:
             ok = False
@@ -203,8 +210,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __contains__(self, value):
-        """ The 'in' operator."""
-
+        """Return, whether the value is existing - the 'in' operator."""
         if not isinstance(value, str):
             raise WrongItemTypeError(value)
 
@@ -215,19 +221,20 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __iter__(self):
-
+        """Return an iterator over all entries."""
         for key in sorted(self._items.keys()):
             yield self._items[key]
 
     # -------------------------------------------------------------------------
     def __len__(self):
+        """Return the length of the current set."""
         return len(self._items)
 
     # -------------------------------------------------------------------------
     # Nice to have methods
 
     def real_value(self, item):
-
+        """Return the item with the original case."""
         if not isinstance(item, str):
             raise WrongItemTypeError(item)
 
@@ -239,13 +246,14 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __bool__(self):
+        """Typecast into a boolean type."""
         if self.__len__() > 0:
             return True
         return False
 
     # -------------------------------------------------------------------------
     def issubset(self, other):
-
+        """Return, whether the current set is an subset of the other set."""
         cls = self.__class__.__name__
         if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
@@ -258,14 +266,12 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __le__(self, other):
-        """The '<=' operator."""
-
+        """Return the '<=' operator."""
         return self.issubset(other)
 
     # -------------------------------------------------------------------------
     def __lt__(self, other):
-        """The '<' operator."""
-
+        """Return the '<' operator."""
         cls = self.__class__.__name__
         if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
@@ -281,8 +287,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
-        """The '==' operator."""
-
+        """Return the '==' operator."""
         if not isinstance(other, FrozenCIStringSet):
             return False
 
@@ -304,16 +309,14 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __ne__(self, other):
-        """The '!=' operator."""
-
+        """Return the '!=' operator."""
         if self == other:
             return False
         return True
 
     # -------------------------------------------------------------------------
     def __gt__(self, other):
-        """The '>' operator."""
-
+        """Return the '>' operator."""
         cls = self.__class__.__name__
         if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
@@ -330,8 +333,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __ge__(self, other):
-        """The '>=' operator."""
-
+        """Return the '>=' operator."""
         cls = self.__class__.__name__
         if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
@@ -343,7 +345,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __copy__(self):
-
+        """Return a copy of the current set."""
         new_set = self.__class__()
         for item in self:
             ival = item.lower()
@@ -353,16 +355,17 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def copy(self):
+        """Return a copy of the current set."""
         return self.__copy__()
 
     # -------------------------------------------------------------------------
     def values(self):
-
+        """Return all values as a list."""
         return self.as_list()
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into string."""
         if len(self) == 0:
             return "{}()".format(self.__class__.__name__)
 
@@ -377,11 +380,12 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __repr__(self):
+        """Typecast into string for reproduction."""
         return str(self)
 
     # -------------------------------------------------------------------------
     def union(self, *others):
-
+        """Return a union of the current and the other set."""
         cls = self.__class__.__name__
         for other in others:
             if not isinstance(other, FrozenCIStringSet):
@@ -397,13 +401,12 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __or__(self, *others):
-        """The '|' operator."""
-
+        """Return the '|' operator."""
         return self.union(*others)
 
     # -------------------------------------------------------------------------
     def intersection(self, *others):
-
+        """Return a set containing all values which are members of both sets."""
         cls = self.__class__.__name__
         for other in others:
             if not isinstance(other, FrozenCIStringSet):
@@ -426,13 +429,12 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __and__(self, *others):
-        """The '&' operator."""
-
+        """Return the '&' operator."""
         return self.intersection(*others)
 
     # -------------------------------------------------------------------------
     def difference(self, *others):
-
+        """Return a set of own members, which are not members of the other set."""
         cls = self.__class__.__name__
         for other in others:
             if not isinstance(other, FrozenCIStringSet):
@@ -452,13 +454,12 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __sub__(self, *others):
-        """The '-' operator."""
-
+        """Return the '-' operator."""
         return self.difference(*others)
 
     # -------------------------------------------------------------------------
     def symmetric_difference(self, other):
-
+        """Return a set of members, which are exclusive existing in one of both sets."""
         cls = self.__class__.__name__
         if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
@@ -479,13 +480,12 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __xor__(self, other):
-        """The '^' operator."""
-
+        """Return the '^' operator."""
         return self.symmetric_difference(other)
 
     # -------------------------------------------------------------------------
     def isdisjoint(self, other):
-
+        """Return, whether all members of both sets are exclusive in one set."""
         cls = self.__class__.__name__
         if not isinstance(other, FrozenCIStringSet):
             raise WrongCompareSetClassError(other, cls)
@@ -503,7 +503,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -511,7 +511,6 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(FrozenCIStringSet, self).as_dict(short=short)
 
         res['items'] = self.values()
@@ -520,7 +519,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def as_list(self):
-
+        """Typecast into a list."""
         ret = []
         for item in self:
             ret.append(item)
@@ -530,14 +529,15 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
 # =============================================================================
 class CIStringSet(MutableSet, FrozenCIStringSet):
     """
-    A mutable set, where the strings are insensitive strings.
+    A mutable set, where the strings are case insensitive strings.
+
     The items MUST be of type string!
     It works like a set.
     """
 
     # -------------------------------------------------------------------------
     def add(self, value, keep=False):
-
+        """Add a string to the current set, if it does not exists."""
         vals = []
         if is_sequence(value):
             vals = value
@@ -558,7 +558,7 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 
     # -------------------------------------------------------------------------
     def discard(self, value):
-
+        """Remove a string from current set, if it exists."""
         vals = []
         if is_sequence(value):
             vals = value
@@ -577,7 +577,7 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 
     # -------------------------------------------------------------------------
     def update(self, *others):
-
+        """Update the current set with the members of the other set."""
         for other in others:
             if not isinstance(other, FrozenCIStringSet):
                 cls = self.__class__.__name__
@@ -589,13 +589,12 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 
     # -------------------------------------------------------------------------
     def __ior__(self, *others):
-        """The '|=' operator."""
-
+        """Return the '|=' operator."""
         self.update(*others)
 
     # -------------------------------------------------------------------------
     def intersection_update(self, *others):
-
+        """Remove all members on current set, which are not member of the other set."""
         for other in others:
             if not isinstance(other, FrozenCIStringSet):
                 cls = self.__class__.__name__
@@ -614,13 +613,12 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 
     # -------------------------------------------------------------------------
     def __iand__(self, *others):
-        """The '&=' operator."""
-
+        """Return the '&=' operator."""
         self.intersection_update(*others)
 
     # -------------------------------------------------------------------------
     def difference_update(self, *others):
-
+        """Remove all members on current set, which are member of the other set."""
         for other in others:
             if not isinstance(other, CIStringSet):
                 cls = self.__class__.__name__
@@ -634,13 +632,12 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 
     # -------------------------------------------------------------------------
     def __isub__(self, *others):
-        """The '-=' operator."""
-
+        """Return the '-=' operator."""
         self.difference_update(*others)
 
     # -------------------------------------------------------------------------
     def symmetric_difference_update(self, other):
-
+        """Update the set to a symmetric differencewith the other set."""
         if not isinstance(other, CIStringSet):
             cls = self.__class__.__name__
             raise WrongCompareSetClassError(other, cls)
@@ -655,13 +652,12 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 
     # -------------------------------------------------------------------------
     def __ixor__(self, other):
-        """The '|=' operator."""
-
+        """Return the '^=' operator."""
         self.symmetric_difference_update(other)
 
     # -------------------------------------------------------------------------
     def remove(self, value):
-
+        """Remove the value from set, raise a KeyError if it is not existing."""
         vals = []
         if is_sequence(value):
             vals = value
@@ -682,7 +678,7 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 
     # -------------------------------------------------------------------------
     def pop(self):
-
+        """Remove and return an arbitrary element from the set."""
         if len(self) == 0:
             raise IndexError("pop() from empty list")
 
@@ -694,7 +690,7 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 
     # -------------------------------------------------------------------------
     def clear(self):
-
+        """Remove all elements from the set."""
         self._items = {}
 
 
@@ -702,14 +698,17 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 class FrozenCIDict(Mapping, FbGenericBaseObject):
     """
     A dictionary, where the keys are case insensitive strings.
+
     The keys MUST be of type string!
     It works like a dict.
     """
 
     # -------------------------------------------------------------------------
     def __init__(self, first_param=None, **kwargs):
-        '''Use the object dict'''
+        """Initialise a FrozenCIDict object.
 
+        Use the object dict.
+        """
         self._map = dict()
 
         if first_param is not None:
@@ -762,16 +761,17 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __copy__(self):
-
+        """Return a copy of the current set."""
         return self.__class__(self.dict())
 
     # -------------------------------------------------------------------------
     def copy(self):
+        """Return a copy of the current set."""
         return self.__copy__()
 
     # -------------------------------------------------------------------------
     def _get_item(self, key):
-
+        """Return an arbitrary item by the key."""
         if not isinstance(key, str):
             raise WrongKeyTypeError(key)
         lkey = key.lower()
@@ -782,6 +782,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def get(self, key):
+        """Return an arbitrary item by the key."""
         return self._get_item(key)
 
     # -------------------------------------------------------------------------
@@ -789,21 +790,23 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __getitem__(self, key):
+        """Return an arbitrary item by the key."""
         return self._get_item(key)
 
     # -------------------------------------------------------------------------
     def __iter__(self):
-
+        """Return an iterator over all keys."""
         for key in self.keys():
             yield key
 
     # -------------------------------------------------------------------------
     def __len__(self):
+        """Return the the nuber of entries (keys) in this dict."""
         return len(self._map)
 
     # -------------------------------------------------------------------------
     def __repr__(self):
-
+        """Typecast into string for reproduction."""
         if len(self) == 0:
             return "{}()".format(self.__class__.__name__)
 
@@ -823,7 +826,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True, pure=False):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -833,7 +836,6 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         if pure:
             res = {}
         else:
@@ -849,12 +851,12 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def dict(self):
-
+        """Typecast into a regular dict."""
         return self.as_dict(pure=True)
 
     # -------------------------------------------------------------------------
     def real_key(self, key):
-
+        """Return the original notation of the given key."""
         if not isinstance(key, str):
             raise WrongKeyTypeError(key)
 
@@ -866,14 +868,14 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __bool__(self):
-
+        """Typecast into a boolean value."""
         if len(self._map) > 0:
             return True
         return False
 
     # -------------------------------------------------------------------------
     def __contains__(self, key):
-
+        """Return, whether the given key exists(the 'in'-operator)."""
         if not isinstance(key, str):
             raise WrongKeyTypeError(key)
 
@@ -883,12 +885,15 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def keys(self):
-
+        """Return a list with all keys in original notation."""
         return list(map(lambda x: self._map[x]['key'], sorted(self._map.keys())))
 
     # -------------------------------------------------------------------------
     def items(self):
+        """Return a list of all items of the current dict.
 
+        An item is a tuple, with the key in original notation and the value.
+        """
         item_list = []
 
         for lkey in sorted(self._map.keys()):
@@ -900,12 +905,12 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def values(self):
-
+        """Return a list with all values of the current dict."""
         return list(map(lambda x: self._map[x]['val'], sorted(self._map.keys())))
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
-
+        """Return the equality of current dict with another (the '=='-operator)."""
         if not isinstance(other, FrozenCIDict):
             return False
 
@@ -940,7 +945,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __ne__(self, other):
-
+        """Return the not-equality of current dict with another (the '!='-operator)."""
         if self == other:
             return False
 
@@ -950,6 +955,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 class CIDict(MutableMapping, FrozenCIDict):
     """
     A dictionary, where the keys are case insensitive strings.
+
     The keys MUST be of type string!
     It works like a dict.
     """
@@ -959,7 +965,7 @@ class CIDict(MutableMapping, FrozenCIDict):
 
     # -------------------------------------------------------------------------
     def __setitem__(self, key, value):
-
+        """Set the value of the given key."""
         if not isinstance(key, str):
             raise WrongKeyTypeError(key)
 
@@ -971,12 +977,15 @@ class CIDict(MutableMapping, FrozenCIDict):
 
     # -------------------------------------------------------------------------
     def set(self, key, value):
-
+        """Set the value of the given key."""
         self[key] = value
 
     # -------------------------------------------------------------------------
     def __delitem__(self, key):
+        """Delete the entry on the given key.
 
+        Raise a CaseInsensitiveKeyError, if the does not exists.
+        """
         if not isinstance(key, str):
             raise WrongKeyTypeError(key)
 
@@ -991,7 +1000,7 @@ class CIDict(MutableMapping, FrozenCIDict):
 
     # -------------------------------------------------------------------------
     def pop(self, key, *args):
-
+        """Remove and return an arbitrary element from the dict."""
         if not isinstance(key, str):
             raise WrongKeyTypeError(key)
 
@@ -1013,7 +1022,7 @@ class CIDict(MutableMapping, FrozenCIDict):
 
     # -------------------------------------------------------------------------
     def popitem(self):
-
+        """Remove and return the first element from the dict."""
         if not len(self._map):
             return None
 
@@ -1025,12 +1034,12 @@ class CIDict(MutableMapping, FrozenCIDict):
 
     # -------------------------------------------------------------------------
     def clear(self):
-
+        """Remove all items from the dict."""
         self._map = dict()
 
     # -------------------------------------------------------------------------
     def setdefault(self, key, default=None):
-
+        """Set the item of the given key to a default value."""
         if not isinstance(key, str):
             raise WrongKeyTypeError(key)
 
@@ -1042,7 +1051,7 @@ class CIDict(MutableMapping, FrozenCIDict):
 
     # -------------------------------------------------------------------------
     def update(self, other):
-
+        """Update the current dict with the items of the other dict."""
         if isinstance(other, Mapping):
             self._update_from_mapping(other)
         elif other.__class__.__name__ == 'zip':
