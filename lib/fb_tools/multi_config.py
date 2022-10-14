@@ -63,13 +63,13 @@ from .common import pp, to_bool, to_str, is_sequence
 
 from .obj import FbBaseObject
 
-from handling_obj import HandlingObject
+from .handling_obj import HandlingObject
 
 from .merge import merge_structure
 
 from .xlate import XLATOR, format_list
 
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
