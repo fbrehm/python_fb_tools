@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: A module for providing a configuration based on multiple configuration files.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2022 by Frank Brehm, Berlin
-@summary: A module for providing a configuration based on multiple configuration files
 """
 from __future__ import absolute_import
 
@@ -66,7 +67,7 @@ from .merge import merge_structure
 
 from .xlate import XLATOR, format_list
 
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -77,8 +78,7 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class MultiConfigError(ConfigError):
-    """Base error class for all exceptions happened during
-    execution this configured application"""
+    """Base error class for all exceptions in this module."""
 
     pass
 
@@ -89,28 +89,32 @@ class MultiCfgLoaderNotFoundError(MultiConfigError, RuntimeError):
 
     # -------------------------------------------------------------------------
     def __init__(self, method):
-
+        """Initialise a MultiCfgLoaderNotFoundError exception."""
         self.method = method
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typescast into a string."""
         msg = _("Config loader method {!r} was not found.").format(self.method)
         return msg
 
 
 # =============================================================================
 class MultiCfgParseError(MultiConfigError, ValueError):
-    """Exception class, when a parse error of a loader module was raised and
-       BaseMultiConfig.raise_on_error was set to True."""
+    """Exception class for parsing in BaseMultiConfig class.
+
+    It s raised, when a parse error of a loader module was raised and
+    BaseMultiConfig.raise_on_error was set to True.
+    """
 
     pass
 
 # =============================================================================
 class BaseMultiConfig(FbBaseObject):
     """
-    A base class for providing a configuration for the BaseMultiConfig class
-    and methods to read it from configuration files.
+    A base class for providing a configuration based in different config files.
+
+    It provides methods to read it from configuration files.
     """
 
     default_encoding = DEFAULT_ENCODING
@@ -161,7 +165,7 @@ class BaseMultiConfig(FbBaseObject):
             append_appname_to_stems=True, config_dir=None, additional_stems=None,
             additional_cfgdirs=None, encoding=DEFAULT_ENCODING, additional_config_file=None,
             use_chardet=True, raise_on_error=True, ensure_privacy=False, initialized=False):
-
+        """Initialise a BaseMultiConfig object."""
         self._encoding = None
         self._config_dir = None
         self._additional_config_file = None
@@ -226,7 +230,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def encoding(self):
-        """The default encoding used to read config files."""
+        """Return the default encoding used to read config files."""
         return self._encoding
 
     @encoding.setter
@@ -244,7 +248,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def additional_config_file(self):
-        """An additional configuration file."""
+        """Return an additional configuration file."""
         return self._additional_config_file
 
     @additional_config_file.setter
@@ -281,7 +285,10 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def config_dir(self):
-        """The directory containing the configuration relative to different paths."""
+        """Return the config directory.
+
+        This directory contains the configuration relative to different paths.
+        """
         return self._config_dir
 
     @config_dir.setter
@@ -297,8 +304,10 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def logfile(self):
-        """A possible log file, which can be used as a FileAppender target
-        in logging."""
+        """Return a possible log file.
+
+        This file can be used as a FileAppender target in logging.
+        """
         return self._logfile
 
     @logfile.setter
@@ -311,8 +320,10 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def use_chardet(self):
-        """Flag, whether to use the chardet module to detect the
-           character set of a config file."""
+        """Return whether the chardet module should be used.
+
+        Use the chardet module to detect the character set of a config file.
+        """
         return self._use_chardet
 
     # -------------------------------------------------------------------------
@@ -330,7 +341,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def ini_allow_no_value(self):
-        """Accept keys without values in ini-files."""
+        """Return whether keys without values in ini-files are accepted."""
         return self._ini_allow_no_value
 
     @ini_allow_no_value.setter
@@ -340,8 +351,11 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def ini_delimiters(self):
-        """Delimiters are substrings that delimit keys from values within a section
-        in ini-files."""
+        """Reurn delimiters of ini-files.
+
+        Delimiters are substrings that delimit keys from values within a section
+        in ini-files.
+        """
         return self._ini_delimiters
 
     @ini_delimiters.setter
@@ -363,7 +377,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def ini_comment_prefixes(self):
-        """Prefixes for comment lines in ini-files."""
+        """Return prefixes for comment lines in ini-files."""
         return self._ini_comment_prefixes
 
     @ini_comment_prefixes.setter
@@ -385,7 +399,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def ini_inline_comment_prefixes(self):
-        """Inline prefixes for comment lines in ini-files."""
+        """Return inline prefixes for comment lines in ini-files."""
         return self._ini_inline_comment_prefixes
 
     @ini_inline_comment_prefixes.setter
@@ -407,8 +421,10 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def ini_extended_interpolation(self):
-        """Use ExtendedInterpolation for interpolation of ini-files
-        instead of BasicInterpolation."""
+        """Use ExtendedInterpolation for interpolation of ini-files.
+
+        Use it instead of BasicInterpolation.
+        """
         return self._ini_extended_interpolation
 
     @ini_extended_interpolation.setter
@@ -418,8 +434,11 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def ini_strict(self):
-        """The ini-parser will not allow for any section or option duplicates while
-        reading from a single source"""
+        """Return the strictness of ini-files.
+
+        The ini-parser will not allow for any section or option duplicates while
+        reading from a single source.
+        """
         return self._ini_strict
 
     @ini_strict.setter
@@ -429,8 +448,11 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def ini_empty_lines_in_values(self):
-        """May values can span multiple lines as long as they are indented more thans
-         the key that holds them in ini-files."""
+        """Return the possibility of multi-line values in ini-files.
+
+        May values can span multiple lines as long as they are indented more thans
+        the key that holds them in ini-files.
+        """
         return self._ini_empty_lines_in_values
 
     @ini_empty_lines_in_values.setter
@@ -450,8 +472,11 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @property
     def ensure_privacy(self):
-        """If True, then all found config files, which are not located below /etc,
-        must not readable for others or the group (mode 0400 or 0600)."""
+        """Return the need for privacy of the config files.
+
+        If True, then all found config files, which are not located below /etc,
+        must not readable for others or the group (mode 0400 or 0600).
+        """
         return self._ensure_privacy
 
     @ensure_privacy.setter
@@ -461,7 +486,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -469,7 +494,6 @@ class BaseMultiConfig(FbBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(BaseMultiConfig, self).as_dict(short=short)
         res['default_encoding'] = self.default_encoding
         res['default_stems'] = self.default_stems
@@ -503,9 +527,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @classmethod
     def is_venv(cls):
-        """Flag showing, that the current application is running
-            inside a virtual environment."""
-
+        """Return whther application is running inside a virtual environment."""
         if hasattr(sys, 'real_prefix'):
             return True
         return (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
@@ -513,9 +535,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     @classmethod
     def valid_stem(cls, stem):
-        """Checks, whether the given stem is a valid file name stem
-            (whithout a path separator)."""
-
+        """Check whether the given stem is a valid file name stem (whithout a path separator)."""
         if cls.re_invalid_stem.search(stem):
             return False
         return True
@@ -609,8 +629,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def _init_types(self):
-        """Initializing configuration types and their assigned file extensions."""
-
+        """Initialize configuration types and their assigned file extensions."""
         invalid_msg = _("Invalid configuration type {t!r} - not found in {w!r}.")
 
         for cfg_type in self.available_cfg_types:
@@ -631,7 +650,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def assign_extension(self, type_name, ext_pattern, loader_method_name, ini_style=None):
-
+        """Assign a file extension to a cofiguration type."""
         type_name = type_name.lower()
         if type_name not in self.available_cfg_types:
             self.available_cfg_types.append(type_name)
@@ -650,7 +669,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def collect_config_files(self):
-
+        """Collect all appropriate config file from different directories."""
         LOG.debug(_("Collecting all configuration files."))
 
         self.config_files = []
@@ -673,7 +692,10 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def check_privacy(self):
+        """Check the permissions of the given config file.
 
+        If it  is not located below /etc and public visible, then raise a MultiConfigError.
+        """
         if not self.ensure_privacy:
             return
 
@@ -803,11 +825,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def read(self):
-        """
-        Reading all collected config files and save their appropriate
-        configuration in self.raw_configs.
-        """
-
+        """Read all collected config files and save their configuration."""
         if not self.cfgfiles_collected:
             self.collect_config_files()
 
@@ -842,7 +860,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def detect_file_encoding(self, cfg_file, force=False):
-
+        """Try to detect the encoding of the given file."""
         if not force and not self.use_chardet:
             if self.verbose > 2:
                 LOG.debug(_(
@@ -887,7 +905,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def load_json(self, cfg_file):
-
+        """Read and load the given file as a JSON file."""
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='JSON', fn=str(cfg_file)))
 
         open_opts = {
@@ -917,7 +935,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def load_hjson(self, cfg_file):
-
+        """Read and load the given file as an human readable JSON file."""
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(
             tp='human readable JSON', fn=str(cfg_file)))
 
@@ -951,7 +969,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def load_ini(self, cfg_file):
-
+        """Read and load the given file as an INI file."""
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='INI', fn=str(cfg_file)))
 
         kargs = {
@@ -1008,7 +1026,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def load_toml(self, cfg_file):
-
+        """Read and load the given file as a TOML file."""
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='TOML', fn=str(cfg_file)))
 
         cfg = {}
@@ -1034,7 +1052,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def load_yaml(self, cfg_file):
-
+        """Read and load the given file as a YAML file."""
         LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='YAML', fn=str(cfg_file)))
 
         open_opts = {
@@ -1071,8 +1089,7 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def eval(self):
-        """Evaluating read configuration and storing them in object properties."""
-
+        """Evaluate configuration and store it in object properties."""
         if not self.was_read:
             msg = _("Evaluation of configuration could only be happen after reading it.")
             raise RuntimeError(msg)
@@ -1086,9 +1103,10 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def eval_global_section(self, section_name):
-        """Evaluating section [global] of configuration.
-            May be overridden in descendant classes."""
+        """Evaluate section [global] of configuration.
 
+        May be overridden in descendant classes.
+        """
         if self.verbose > 1:
             LOG.debug(_("Checking config section {!r} ...").format(section_name))
 
@@ -1113,9 +1131,10 @@ class BaseMultiConfig(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def eval_section(self, section_name):
-        """Evaluating section with given name of configuration.
-            Should be overridden in descendant classes."""
+        """Evaluate section with given name of configuration.
 
+        Should be overridden in descendant classes.
+        """
         pass
 
 
