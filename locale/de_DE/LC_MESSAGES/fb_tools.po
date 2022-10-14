@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 2.0.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-10-14 13:58+0200\n"
-"PO-Revision-Date: 2022-10-14 14:00+0200\n"
+"POT-Creation-Date: 2022-10-14 15:34+0200\n"
+"PO-Revision-Date: 2022-10-14 15:35+0200\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de_DE\n"
 "Language-Team: de_DE <frank@brehm-online.com>\n"
@@ -26,15 +26,15 @@ msgstr ""
 "{c}-Objekt:\n"
 "{a}"
 
-#: lib/fb_tools/app.py:66
+#: lib/fb_tools/app.py:69
 msgid "Forced execution - whatever it means."
 msgstr "Forcierte Ausführung, was auch immer das bedeuten mag."
 
-#: lib/fb_tools/app.py:147
+#: lib/fb_tools/app.py:151
 msgid "Invalid env_prefix {!r} given - it may not be empty."
 msgstr "Ungültiger env_prefix {!r} übergeben - er darf nicht leer sein."
 
-#: lib/fb_tools/app.py:151
+#: lib/fb_tools/app.py:155
 msgid ""
 "Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
 "underscore (this not as the first character) are allowed."
@@ -42,128 +42,136 @@ msgstr ""
 "Ungültige Zeichen in env_prefix {!r} gefunden, nur alphanumerische Zeichen und Unterstriche "
 "(diese aber nicht als erstes Zeichen) sind erlaubt."
 
-#: lib/fb_tools/app.py:162
+#: lib/fb_tools/app.py:166
 msgid "Unknown and undescriped application."
 msgstr "Unbekannte und nicht beschriebene Anwendung."
 
-#: lib/fb_tools/app.py:187
+#: lib/fb_tools/app.py:191
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr "Falscher Wert für exit_value {!r}, muss größer als oder gleich Null sein."
 
-#: lib/fb_tools/app.py:422
+#: lib/fb_tools/app.py:428
 msgid "Trying to get {} via console ..."
 msgstr "Versuche {} über die Konsole zu bekommen …"
 
-#: lib/fb_tools/app.py:438
+#: lib/fb_tools/app.py:444
 msgid "Got a signal {}."
 msgstr "Erhielt ein Signal {}."
 
-#: lib/fb_tools/app.py:441
+#: lib/fb_tools/app.py:447
 msgid "Got a signal {n!r} ({s})."
 msgstr "Erhielt ein Signal {n!r} ({s})."
 
-#: lib/fb_tools/app.py:448
+#: lib/fb_tools/app.py:454
 msgid "Exit on signal {n!r} ({s})."
 msgstr "Beendigung auf Signal {n!r} ({s})."
 
-#: lib/fb_tools/app.py:456
+#: lib/fb_tools/app.py:462
 msgid "Tweaking signal handlers."
 msgstr "Schraube an den Signalhandlern."
 
-#: lib/fb_tools/app.py:462
+#: lib/fb_tools/app.py:468
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr "Setze Signalhandler für {n!r} ({s})."
 
-#: lib/fb_tools/app.py:473
+#: lib/fb_tools/app.py:479
 msgid "Enter "
 msgstr "Eingabe von "
 
-#: lib/fb_tools/app.py:480
+#: lib/fb_tools/app.py:486
 msgid "Repeat enter "
 msgstr "Wiederholen der Eingabe von "
 
-#: lib/fb_tools/app.py:490
+#: lib/fb_tools/app.py:496
 msgid "{n} and repeated {n} did not match."
 msgstr "{n} und das wiederholte {n} stimmen nicht überein."
 
-#: lib/fb_tools/app.py:494
+#: lib/fb_tools/app.py:500
 msgid "Restoring original signal handlers."
 msgstr "Stelle original Signalhandler wieder her."
 
-#: lib/fb_tools/app.py:499
+#: lib/fb_tools/app.py:505
 msgid "Got {n!r}: {s!r}"
 msgstr "Erhielt {n!r}: {s!r}"
 
-#: lib/fb_tools/app.py:549
+#: lib/fb_tools/app.py:555
 msgid "The application is not completely initialized."
 msgstr "Die Anwendung ist nicht vollständig initialisiert."
 
-#: lib/fb_tools/app.py:560
+#: lib/fb_tools/app.py:566
 msgid "Object {!r} seems not to be completely initialized."
 msgstr "Das {!r}-Objekt scheit noch nicht vollständig initialisiert zu sein."
 
-#: lib/fb_tools/app.py:570
+#: lib/fb_tools/app.py:576
 msgid "Ending."
 msgstr "Beenden."
 
-#: lib/fb_tools/app.py:588
+#: lib/fb_tools/app.py:594
 msgid "Executing {} ..."
 msgstr "Führe {} aus …"
 
-#: lib/fb_tools/app.py:610
+#: lib/fb_tools/app.py:616
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
-#: lib/fb_tools/app.py:615
+#: lib/fb_tools/app.py:621
 msgid "Simulation mode, nothing is really done."
 msgstr "Simulations-Modus, es wird nichts wirklich verändert."
 
-#: lib/fb_tools/app.py:629 lib/fb_tools/app.py:635
+#: lib/fb_tools/app.py:635 lib/fb_tools/app.py:641
 msgid "Automatically answer '{}' for all questions."
 msgstr "Automatisch alle Fragen mit {} beantworten."
 
-#: lib/fb_tools/app.py:630
+#: lib/fb_tools/app.py:636 lib/fb_tools/handling_obj.py:941
 msgid "Yes"
 msgstr "Ja"
 
-#: lib/fb_tools/app.py:636
+#: lib/fb_tools/app.py:642 lib/fb_tools/handling_obj.py:939
 msgid "No"
 msgstr "Nein"
 
-#: lib/fb_tools/app.py:642
+#: lib/fb_tools/app.py:647 lib/fb_tools/ddns/__init__.py:249
+msgid "SECONDS"
+msgstr "SEKUNDEN"
+
+#: lib/fb_tools/app.py:649
+msgid "The timeout in seconds for console input. Default: {}"
+msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Konsolen-Eingaben Vorgabe: {}."
+
+#: lib/fb_tools/app.py:656
 msgid "Use colored output for messages."
 msgstr "Verwenden kolorierter Ausgabe für Mitteilungen."
 
-#: lib/fb_tools/app.py:649
+#: lib/fb_tools/app.py:663
 msgid "Increase the verbosity level"
 msgstr "Erhöhen des Ausführichkeits-Niveaus"
 
-#: lib/fb_tools/app.py:654
+#: lib/fb_tools/app.py:668
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr "Stillschweigende Ausführung, nur Warnungen und Fehler werden ausgegeben."
 
-#: lib/fb_tools/app.py:659
+#: lib/fb_tools/app.py:673
 msgid "Show this help message and exit."
 msgstr "Zeigt diesen Hilfe-Bildschirm und beendet sich."
 
-#: lib/fb_tools/app.py:663
+#: lib/fb_tools/app.py:677
 msgid "Display brief usage message and exit."
 msgstr "Zeigt eine kurze Darstellug zur Verwendung und beendet sich."
 
-#: lib/fb_tools/app.py:665
+#: lib/fb_tools/app.py:679
 #, python-format
 msgid "Version of %(prog)s: {}"
 msgstr "Version von %(prog)s: {}"
 
-#: lib/fb_tools/app.py:668
+#: lib/fb_tools/app.py:682
 msgid "Show program's version number and exit."
 msgstr "Stellt die Programm-Version dar und beendet sich."
 
-#: lib/fb_tools/app.py:794
+#: lib/fb_tools/app.py:812
 msgid "Starting in:"
 msgstr "Start in:"
 
-#: lib/fb_tools/app.py:816
+#: lib/fb_tools/app.py:834
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
 
@@ -216,11 +224,11 @@ msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
 msgid "File {!r} does not exists."
 msgstr "Die Datei {!r} existiert nicht."
 
-#: lib/fb_tools/argparse_actions.py:196
+#: lib/fb_tools/argparse_actions.py:197
 msgid "a timeout must be greater than zero and less or equal to {}."
 msgstr "Ein Timeout muss größer als Null und kleiner oder gleich {} sein."
 
-#: lib/fb_tools/argparse_actions.py:201
+#: lib/fb_tools/argparse_actions.py:202
 msgid "Wrong timeout {!r}:"
 msgstr "Ungültiger Timeout {!r}:"
 
@@ -414,10 +422,6 @@ msgid ""
 msgstr ""
 "Das Verzeichnis, von wo Cache-Dateien mit den ermittelten IP-Adresses und wohin sie auch "
 "geschrieben werden (Vorgane: {!r})."
-
-#: lib/fb_tools/ddns/__init__.py:249
-msgid "SECONDS"
-msgstr "SEKUNDEN"
 
 #: lib/fb_tools/ddns/__init__.py:250
 msgid "The timeout in seconds for Web requests (default: {})."
@@ -1139,142 +1143,146 @@ msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] "Das Kommando {c!r} timte nach einer Sekunde aus."
 msgstr[1] "Das Kommando {c!r} timte nach {s} Sekunden aus."
 
-#: lib/fb_tools/handling_obj.py:304
+#: lib/fb_tools/handling_obj.py:303
 msgid "Wrong prompt timeout {v!r}, must be greater or equal to Null and less or equal to {max}."
 msgstr ""
 "Falscher Eingabe-Timeout {v!r}, er muss größer oder gleich Null sowie kleiner oder gleich {max} "
 "sein."
 
-#: lib/fb_tools/handling_obj.py:315
+#: lib/fb_tools/handling_obj.py:314
 msgid "yes"
 msgstr "ja"
 
-#: lib/fb_tools/handling_obj.py:322
+#: lib/fb_tools/handling_obj.py:321
 msgid "no"
 msgstr "nein"
 
-#: lib/fb_tools/handling_obj.py:390
+#: lib/fb_tools/handling_obj.py:389
 msgid "Searching for command {!r} ..."
 msgstr "Suche nach Befehl {!r} …"
 
-#: lib/fb_tools/handling_obj.py:395
+#: lib/fb_tools/handling_obj.py:394
 msgid "Command {!r} doesn't exists."
 msgstr "Das Befehl {!r} existiert nicht."
 
-#: lib/fb_tools/handling_obj.py:398 lib/fb_tools/handling_obj.py:422
+#: lib/fb_tools/handling_obj.py:397 lib/fb_tools/handling_obj.py:421
 msgid "Command {!r} is not executable."
 msgstr "Das Befehl {!r} ist nicht ausführbar."
 
-#: lib/fb_tools/handling_obj.py:412
+#: lib/fb_tools/handling_obj.py:411
 msgid "Searching command in {!r} ..."
 msgstr "Suche Befehl in {!r} …"
 
-#: lib/fb_tools/handling_obj.py:425
+#: lib/fb_tools/handling_obj.py:424
 msgid "Command {!r} not found."
 msgstr "Das Kommando {!r} wurde nicht gefunden."
 
-#: lib/fb_tools/handling_obj.py:497
+#: lib/fb_tools/handling_obj.py:496
 msgid "STDIN and input arguments may not both be used."
 msgstr "STDIN und Eingabe-Argumente dürfen nicht zusammen verwendet werden."
 
-#: lib/fb_tools/handling_obj.py:500
+#: lib/fb_tools/handling_obj.py:499
 msgid "Executing command args:"
 msgstr "Auszuführende Befehlsargumente:"
 
-#: lib/fb_tools/handling_obj.py:503
+#: lib/fb_tools/handling_obj.py:502
 msgid "Performing argument {!r}."
 msgstr "Verarbeite Argument {!r}."
 
-#: lib/fb_tools/handler/__init__.py:247 lib/fb_tools/handling_obj.py:508
+#: lib/fb_tools/handler/__init__.py:247 lib/fb_tools/handling_obj.py:507
 msgid "Executing: {}"
 msgstr "Ausführung: {}"
 
-#: lib/fb_tools/handling_obj.py:511
+#: lib/fb_tools/handling_obj.py:510
 msgid "Simulation mode, not executing: {}"
 msgstr "Simulations-Modus, führe nicht aus: {}"
 
-#: lib/fb_tools/handling_obj.py:519
+#: lib/fb_tools/handling_obj.py:518
 msgid "PID of process: {}"
 msgstr "PID des Prozesses: {}"
 
-#: lib/fb_tools/handling_obj.py:525
+#: lib/fb_tools/handling_obj.py:524
 msgid "{c} happened, killing process: {e}"
 msgstr "{} aufgetreten, töte Prozess: {e}"
 
-#: lib/fb_tools/handling_obj.py:627
+#: lib/fb_tools/handling_obj.py:626
 msgid "Nothing to do on signal."
 msgstr "Aud das Signal gibt es nichts zu tun."
 
-#: lib/fb_tools/handling_obj.py:681 lib/fb_tools/handling_obj.py:770
+#: lib/fb_tools/handling_obj.py:680 lib/fb_tools/handling_obj.py:769
 msgid "File doesn't exists."
 msgstr "Die Datei existiert nicht."
 
-#: lib/fb_tools/handling_obj.py:684
+#: lib/fb_tools/handling_obj.py:683
 msgid "Read permission denied."
 msgstr "Lesezugriff verboten."
 
-#: lib/fb_tools/handling_obj.py:687
+#: lib/fb_tools/handling_obj.py:686
 msgid "Reading file content of {!r} ..."
 msgstr "Lese Inhalt der Datei {!r} …"
 
-#: lib/fb_tools/handling_obj.py:775 lib/fb_tools/handling_obj.py:782
+#: lib/fb_tools/handling_obj.py:774 lib/fb_tools/handling_obj.py:781
 msgid "Write permission to {!r} denied."
 msgstr "Schreibzugriff auf {!r} verboten."
 
-#: lib/fb_tools/handling_obj.py:777 lib/fb_tools/handling_obj.py:784
+#: lib/fb_tools/handling_obj.py:776 lib/fb_tools/handling_obj.py:783
 msgid "Write permission denied."
 msgstr "Schreibzugriff verboten."
 
-#: lib/fb_tools/handling_obj.py:788
+#: lib/fb_tools/handling_obj.py:787
 msgid "Write {what!r} into {to!r}."
 msgstr "Schreibe {what!r} nach {to!r}."
 
-#: lib/fb_tools/handling_obj.py:790
+#: lib/fb_tools/handling_obj.py:789
 msgid "Writing {!r} ..."
 msgstr "Schreibe {!r} …"
 
-#: lib/fb_tools/handling_obj.py:802
+#: lib/fb_tools/handling_obj.py:801
 msgid "Simulating write into {!r}."
 msgstr "Simuliere das Schreiben nach {!r}."
 
-#: lib/fb_tools/handling_obj.py:810
+#: lib/fb_tools/handling_obj.py:809
 msgid "Opening {!r} for write unbuffered ..."
 msgstr "Öffne {!r} zum ungepufferten Schreiben …"
 
-#: lib/fb_tools/handler/lock.py:913 lib/fb_tools/handling_obj.py:814
+#: lib/fb_tools/handler/lock.py:913 lib/fb_tools/handling_obj.py:813
 msgid "Closing {!r} ..."
 msgstr "Schließe {!r} …"
 
-#: lib/fb_tools/handling_obj.py:845
+#: lib/fb_tools/handling_obj.py:844
 msgid "Password:"
 msgstr "Passwort:"
 
-#: lib/fb_tools/handling_obj.py:848
+#: lib/fb_tools/handling_obj.py:847
 msgid "Repeat password:"
 msgstr "Passwort Wiederholung:"
 
-#: lib/fb_tools/handling_obj.py:862
+#: lib/fb_tools/handling_obj.py:861
 msgid "The entered passwords does not match."
 msgstr "Die eingegebenen Passwörter stimmen nicht überein."
 
-#: lib/fb_tools/handling_obj.py:875 lib/fb_tools/handling_obj.py:940
+#: lib/fb_tools/handling_obj.py:874 lib/fb_tools/handling_obj.py:949
 msgid "Interrupted on demand."
 msgstr "Abbruch auf Verlangen."
 
-#: lib/fb_tools/handling_obj.py:900 lib/fb_tools/handling_obj.py:905 lib/fb_tools/handling_obj.py:974
-#: lib/fb_tools/handling_obj.py:979
+#: lib/fb_tools/handling_obj.py:899 lib/fb_tools/handling_obj.py:904 lib/fb_tools/handling_obj.py:983
+#: lib/fb_tools/handling_obj.py:988
 msgid "Got a {}:"
 msgstr "Habe ein {} erhalten:"
 
-#: lib/fb_tools/handling_obj.py:935
+#: lib/fb_tools/handling_obj.py:934
 msgid "Yes/No"
 msgstr "Ja/Nein"
 
-#: lib/fb_tools/handling_obj.py:1022 lib/fb_tools/handling_obj.py:1028
+#: lib/fb_tools/handling_obj.py:942
+msgid "Automatic answer: '{}'."
+msgstr "Automatische Antwort: '{}'."
+
+#: lib/fb_tools/handling_obj.py:1031 lib/fb_tools/handling_obj.py:1037
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr "Der Parameter {t!r} muss ein {e} ein, statt dessen wurde {v!r} übergeben."
 
-#: lib/fb_tools/handling_obj.py:1091
+#: lib/fb_tools/handling_obj.py:1100
 msgid "Completed process"
 msgstr "Fertiggestellter Prozess"
 
