@@ -180,6 +180,7 @@ Linter:
     - 'test Python 3.8'
     - 'test Python 3.9'
     - 'test Python 3.10'
+    - 'test Python 3.11'
 
 # ---------------------------
 .pkg-build-rules:
