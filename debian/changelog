@@ -1,4 +1,4 @@
-fb-tools (2.1.1) UNRELEASED; urgency=medium
+fb-tools (2.1.1) all; urgency=medium
 
   * Fixing imports in lib/fb_tools/cfg_app.py
   * Extending tests in CI jobs by Python 3.11
