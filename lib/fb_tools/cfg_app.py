@@ -13,6 +13,8 @@ from __future__ import absolute_import
 import os
 import logging
 
+from logging.handlers import WatchedFileHandler
+
 from pathlib import Path
 
 # Third party modules
@@ -37,7 +39,7 @@ from .multi_config import MultiConfigError, BaseMultiConfig
 
 from .xlate import XLATOR
 
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 LOG = logging.getLogger(__name__)
 
 
@@ -257,7 +259,7 @@ class FbConfigApplication(BaseApplication):
         format_str = '[%(asctime)s]: ' + self.appname + ': %(levelname)s - %(message)s'
         formatter = logging.Formatter(format_str)
 
-        lh_file = logging.WatchedFileHandler(str(self.logfile), encoding=UTF8_ENCODING)
+        lh_file = WatchedFileHandler(str(self.logfile), encoding=UTF8_ENCODING)
         lh_file.setLevel(log_level)
         lh_file.setFormatter(formatter)
 
