@@ -109,6 +109,13 @@ test Python 3.10:
   image: python:3.10
 
 # ---------------------------
+test Python 3.11:
+  extends:
+    - .docker_job_definition
+    - .test-rules
+  image: python:3.11
+
+# ---------------------------
 Linter:
   stage: linter
   extends:
