@@ -39,7 +39,7 @@ jobs:
         python_version: [ '3.6', '3.7', '3.8', '3.9', '3.10', '3.11' ]
     container: python:${{ matrix.python_version }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Show Environment
         run: python --version
       - uses: ./.github/actions/prepare-debian-container
@@ -63,7 +63,7 @@ jobs:
     needs:
       - test
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/prepare-debian-container
       - uses: ./.github/actions/install-pip-modules
       - name: Install shellcheck and yamllint
@@ -128,7 +128,7 @@ jobs:
     needs:
       - linter
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/add-fb-debian-repo
         with:
           vendor: Debian
@@ -143,7 +143,7 @@ jobs:
           mv -vi ../*.dsc ../*.tar.* ../*.build* ../*.changes debian/pkgs/src
           ls -lA --color=always debian/pkgs/*/*
       - name: 'Upload Source Package'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: debian_sources
           path: debian/pkgs/*/*
@@ -199,7 +199,7 @@ jobs:
       MAN_SECTION: 1
     container: ${{ matrix.container }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setting timezone
         if: ${{ matrix.distributor == 'Ubuntu' }}
         run: |
@@ -253,7 +253,7 @@ jobs:
           mv -vi ../*.deb ../*.build* debian/pkgs/${VERSION_PREFIX}
           ls -lA --color=always debian/pkgs/*/*
       - name: 'Upload Binary Package'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: debian_bin_pkgs_${{ matrix.version_prefix }}
           path: debian/pkgs/*/*
@@ -304,7 +304,7 @@ jobs:
       USED_LC: 'en_US.utf8'
       YUM: ${{ matrix.yum }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Checking locales
         shell: bash
         run: |
@@ -493,7 +493,7 @@ jobs:
           echo "Results:"
           find rpmdir/*RPMS -type f -print0 | xargs --null --no-run-if-empty ls -l -d --color=always
       - name: 'Upload RPM Packages'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: rpm_pkgs_el${{ matrix.el_version }}
           path: |
@@ -509,7 +509,7 @@ jobs:
     needs:
       - linter
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Show Environment
         run: python --version
       - uses: ./.github/actions/prepare-debian-container
@@ -525,7 +525,7 @@ jobs:
         shell: bash
         run: ls -l --color=always dist/
       - name: 'Upload Python Package'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: python_pkgs
           path: dist/*
@@ -541,9 +541,9 @@ jobs:
       - 'build_debian_bin'
       - 'build_rpm'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Downloading all artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: artifacts
       - name: Sorting all artifacts
@@ -589,7 +589,7 @@ jobs:
       - 'deploy_to_fbrepo'
     steps:
       - name: Sending message
-        uses: dawidd6/action-send-mail@v2
+        uses: dawidd6/action-send-mail@v3
         with:
           # mail server settings
           server_address: ${{ env.SMTP_SERVER_ADDRESS }}
