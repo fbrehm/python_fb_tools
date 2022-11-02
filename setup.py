@@ -66,7 +66,7 @@ __debian_pkg_name__ = 'fb-tools'
 
 __author__ = 'Frank Brehm'
 __contact__ = 'frank@brehm-online.com'
-__copyright__ = '(C) 2018 Frank Brehm, Berlin'
+__copyright__ = '(C) 2022 Frank Brehm, Berlin'
 __license__ = 'LGPL3+'
 __url__ = 'https://github.com/fbrehm/python_fb_tools'
 
