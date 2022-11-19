@@ -15,6 +15,7 @@ from __future__ import absolute_import, print_function
 import logging
 import gettext
 import copy
+import sys
 
 try:
     from pathlib import Path
@@ -42,17 +43,21 @@ __module_dir__ = __me__.parent
 __lib_dir__ = __module_dir__.parent
 __base_dir__ = __lib_dir__.parent
 LOCALE_DIR = __base_dir__.joinpath('locale')
-if not LOCALE_DIR.is_dir():
+if LOCALE_DIR.is_dir():
+    LOCALE_DIR = str(LOCALE_DIR)
+else:
     LOCALE_DIR = __module_dir__.joinpath('locale')
-    if not LOCALE_DIR.is_dir():
-        LOCALE_DIR = None
+    if LOCALE_DIR.is_dir():
+        LOCALE_DIR = str(LOCALE_DIR)
+    else:
+        LOCALE_DIR = sys.base_prefix + '/share/locale'
 
 DEFAULT_LOCALE_DEF = 'en_US'
 DEFAULT_LOCALE = babel.core.default_locale()
 if not DEFAULT_LOCALE:
     DEFAULT_LOCALE = DEFAULT_LOCALE_DEF
 
-__mo_file__ = gettext.find(DOMAIN, str(LOCALE_DIR))
+__mo_file__ = gettext.find(DOMAIN, LOCALE_DIR)
 if __mo_file__:
     try:
         with open(__mo_file__, 'rb') as F:

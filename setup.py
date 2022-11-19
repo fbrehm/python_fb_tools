@@ -32,6 +32,8 @@ __lib_dir__ = os.path.join(__base_dir__, 'lib')
 __module_dir__ = os.path.join(__lib_dir__, 'fb_tools')
 __init_py__ = os.path.join(__module_dir__, '__init__.py')
 __local_usr_dir__ = Path(__base_dir__) / 'usr'
+__share_dir__ = Path(sys.base_prefix) / 'share'
+__locale_dir__ = __share_dir__ / 'locale'
 
 PATHS = {
     '__base_dir__': __base_dir__,
@@ -39,6 +41,8 @@ PATHS = {
     '__lib_dir__': __lib_dir__,
     '__module_dir__': __module_dir__,
     '__init_py__': __init_py__,
+    '__share_dir__': __share_dir__,
+    '__locale_dir__': __locale_dir__,
 }
 
 # -----------------------------------
@@ -241,11 +245,7 @@ if __local_usr_dir__.is_dir():
     for udir in usr_files.keys():
         __data_files__.append((udir, usr_files[udir]))
 
-# print("Found data files:\n" + pp(__data_files__) + "\n")
-
-
 # -----------------------------------
-MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
 PO_FILES = 'locale/*/LC_MESSAGES/*.po'
 
 def create_mo_files():
@@ -255,11 +255,19 @@ def create_mo_files():
         mo = Path(po_path.replace('.po', '.mo'))
         if not mo.exists():
             subprocess.call(['msgfmt', '-o', str(mo), po_path])
-        mo_files.append(str(mo))
+        mo_files.append(mo)
 
     # print("Found mo files: {}\n".format(pp(mo_files)))
     return mo_files
 
+
+for mo_file in create_mo_files():
+    ltype = mo_file.parent.name
+    lname = mo_file.parent.parent.name
+    ldir = __locale_dir__ / lname / ltype
+    __data_files__.append((str(ldir), [str(mo_file)]))
+
+# print("Found data files:\n" + pp(__data_files__) + "\n")
 
 # -----------------------------------
 setup(
@@ -268,9 +276,6 @@ setup(
     scripts=__scripts__,
     requires=__requirements__,
     package_dir={'': 'lib'},
-    package_data={
-        '': create_mo_files(),
-    },
     data_files=__data_files__,
 )
 
