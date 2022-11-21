@@ -36,7 +36,7 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
@@ -50,7 +50,7 @@ else:
     if LOCALE_DIR.is_dir():
         LOCALE_DIR = str(LOCALE_DIR)
     else:
-        LOCALE_DIR = sys.base_prefix + '/share/locale'
+        LOCALE_DIR = sys.prefix + '/share/locale'
 
 DEFAULT_LOCALE_DEF = 'en_US'
 DEFAULT_LOCALE = babel.core.default_locale()
