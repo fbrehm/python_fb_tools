@@ -24,6 +24,9 @@ from pathlib import Path
 
 # Third party modules
 from setuptools import setup
+from setuptools.command.sdist import sdist
+
+from babel.messages import frontend as babel
 
 # own modules:
 __base_dir__ = os.path.abspath(os.path.dirname(__file__))
@@ -269,6 +272,17 @@ for mo_file in create_mo_files():
 
 # print("Found data files:\n" + pp(__data_files__) + "\n")
 
+
+# -----------------------------------
+class Sdist(sdist):
+    """Custom ``sdist`` command to ensure that mo files are always created."""
+
+    def run(self):
+        self.run_command('compile_catalog')
+        # sdist is an old style class so super cannot be used.
+        sdist.run(self)
+
+
 # -----------------------------------
 setup(
     version=__packet_version__,
@@ -277,6 +291,13 @@ setup(
     requires=__requirements__,
     package_dir={'': 'lib'},
     data_files=__data_files__,
+    cmdclass={
+        'compile_catalog': babel.compile_catalog,
+        'extract_messages': babel.extract_messages,
+        'init_catalog': babel.init_catalog,
+        'update_catalog': babel.update_catalog,
+        'sdist': Sdist,
+    },
 )
 
 
