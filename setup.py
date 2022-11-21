@@ -278,7 +278,8 @@ for mo_file in __pkg_mo_paths__:
     ltype = mo_file.parent.name
     lname = mo_file.parent.parent.name
     ldir = __locale_dir__ / lname / ltype
-    __data_files__.append((str(ldir), [str(mo_file)]))
+    mo_file_rel = str(mo_file).lstrip('/')
+    __data_files__.append((str(ldir), [mo_file_rel]))
 
 # print("Found data files:\n" + pp(__data_files__) + "\n")
 
