@@ -1,1497 +1,1460 @@
-# German (Germany) translations for fb_tools.
+# English translations for fb_tools.
 # Copyright (C) 2022 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank@brehm-online.com>, 2022.
+# Frank Brehm <frank.brehm@pixelpark.com>, 2022.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.1.0\n"
+"Project-Id-Version: fb_tools 2.1.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-10-14 16:58+0200\n"
-"PO-Revision-Date: 2022-10-14 17:00+0200\n"
+"POT-Creation-Date: 2022-11-21 14:24+0100\n"
+"PO-Revision-Date: 2022-07-20 16:50+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
-"Language: de_DE\n"
-"Language-Team: de_DE <frank@brehm-online.com>\n"
+"Language: en\n"
+"Language-Team: en <frank@brehm-online.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.10.3\n"
+"Generated-By: Babel 2.11.0\n"
 
 #: bin/get-file-to-remove:84
 msgid ""
 "{c}-Object:\n"
 "{a}"
 msgstr ""
-"{c}-Objekt:\n"
-"{a}"
 
 #: lib/fb_tools/app.py:69
 msgid "Forced execution - whatever it means."
-msgstr "Forcierte Ausführung, was auch immer das bedeuten mag."
+msgstr ""
 
 #: lib/fb_tools/app.py:151
 msgid "Invalid env_prefix {!r} given - it may not be empty."
-msgstr "Ungültiger env_prefix {!r} übergeben - er darf nicht leer sein."
+msgstr ""
 
 #: lib/fb_tools/app.py:155
 msgid ""
 "Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
 "underscore (this not as the first character) are allowed."
 msgstr ""
-"Ungültige Zeichen in env_prefix {!r} gefunden, nur alphanumerische Zeichen und Unterstriche "
-"(diese aber nicht als erstes Zeichen) sind erlaubt."
 
 #: lib/fb_tools/app.py:166
 msgid "Unknown and undescriped application."
-msgstr "Unbekannte und nicht beschriebene Anwendung."
+msgstr ""
 
 #: lib/fb_tools/app.py:191
 msgid "Wrong exit_value {!r}, must be >= 0."
-msgstr "Falscher Wert für exit_value {!r}, muss größer als oder gleich Null sein."
+msgstr ""
 
 #: lib/fb_tools/app.py:428
 msgid "Trying to get {} via console ..."
-msgstr "Versuche {} über die Konsole zu bekommen …"
+msgstr "Trying to get {} via console …"
 
 #: lib/fb_tools/app.py:444
 msgid "Got a signal {}."
-msgstr "Erhielt ein Signal {}."
+msgstr ""
 
 #: lib/fb_tools/app.py:447
 msgid "Got a signal {n!r} ({s})."
-msgstr "Erhielt ein Signal {n!r} ({s})."
+msgstr ""
 
 #: lib/fb_tools/app.py:454
 msgid "Exit on signal {n!r} ({s})."
-msgstr "Beendigung auf Signal {n!r} ({s})."
+msgstr ""
 
 #: lib/fb_tools/app.py:462
 msgid "Tweaking signal handlers."
-msgstr "Schraube an den Signalhandlern."
+msgstr ""
 
 #: lib/fb_tools/app.py:468
 msgid "Setting signal handler for {n!r} ({s})."
-msgstr "Setze Signalhandler für {n!r} ({s})."
+msgstr ""
 
 #: lib/fb_tools/app.py:479
 msgid "Enter "
-msgstr "Eingabe von "
+msgstr ""
 
 #: lib/fb_tools/app.py:486
 msgid "Repeat enter "
-msgstr "Wiederholen der Eingabe von "
+msgstr ""
 
 #: lib/fb_tools/app.py:496
 msgid "{n} and repeated {n} did not match."
-msgstr "{n} und das wiederholte {n} stimmen nicht überein."
+msgstr ""
 
 #: lib/fb_tools/app.py:500
 msgid "Restoring original signal handlers."
-msgstr "Stelle original Signalhandler wieder her."
+msgstr ""
 
 #: lib/fb_tools/app.py:505
 msgid "Got {n!r}: {s!r}"
-msgstr "Erhielt {n!r}: {s!r}"
+msgstr ""
 
 #: lib/fb_tools/app.py:555
 msgid "The application is not completely initialized."
-msgstr "Die Anwendung ist nicht vollständig initialisiert."
+msgstr ""
 
 #: lib/fb_tools/app.py:566
 msgid "Object {!r} seems not to be completely initialized."
-msgstr "Das {!r}-Objekt scheit noch nicht vollständig initialisiert zu sein."
+msgstr ""
 
 #: lib/fb_tools/app.py:576
 msgid "Ending."
-msgstr "Beenden."
+msgstr ""
 
 #: lib/fb_tools/app.py:594
 msgid "Executing {} ..."
-msgstr "Führe {} aus …"
+msgstr "Executing {} …"
 
 #: lib/fb_tools/app.py:616
 msgid "General options"
-msgstr "Allgemeine Optionen"
+msgstr ""
 
 #: lib/fb_tools/app.py:621
 msgid "Simulation mode, nothing is really done."
-msgstr "Simulations-Modus, es wird nichts wirklich verändert."
+msgstr ""
 
 #: lib/fb_tools/app.py:635 lib/fb_tools/app.py:641
 msgid "Automatically answer '{}' for all questions."
-msgstr "Automatisch alle Fragen mit {} beantworten."
+msgstr ""
 
 #: lib/fb_tools/app.py:636 lib/fb_tools/handling_obj.py:941
 msgid "Yes"
-msgstr "Ja"
+msgstr ""
 
 #: lib/fb_tools/app.py:642 lib/fb_tools/handling_obj.py:939
 msgid "No"
-msgstr "Nein"
+msgstr ""
 
 #: lib/fb_tools/app.py:647 lib/fb_tools/ddns/__init__.py:249
 msgid "SECONDS"
-msgstr "SEKUNDEN"
+msgstr ""
 
 #: lib/fb_tools/app.py:649
 msgid "The timeout in seconds for console input. Default: {}"
-msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Konsolen-Eingaben Vorgabe: {}."
+msgstr ""
 
 #: lib/fb_tools/app.py:656
 msgid "Use colored output for messages."
-msgstr "Verwenden kolorierter Ausgabe für Mitteilungen."
+msgstr ""
 
 #: lib/fb_tools/app.py:663
 msgid "Increase the verbosity level"
-msgstr "Erhöhen des Ausführichkeits-Niveaus"
+msgstr ""
 
 #: lib/fb_tools/app.py:668
 msgid "Silent execution, only warnings and errors are emitted."
-msgstr "Stillschweigende Ausführung, nur Warnungen und Fehler werden ausgegeben."
+msgstr ""
 
 #: lib/fb_tools/app.py:673
 msgid "Show this help message and exit."
-msgstr "Zeigt diesen Hilfe-Bildschirm und beendet sich."
+msgstr ""
 
 #: lib/fb_tools/app.py:677
 msgid "Display brief usage message and exit."
-msgstr "Zeigt eine kurze Darstellug zur Verwendung und beendet sich."
+msgstr ""
 
 #: lib/fb_tools/app.py:679
 #, python-format
 msgid "Version of %(prog)s: {}"
-msgstr "Version von %(prog)s: {}"
+msgstr ""
 
 #: lib/fb_tools/app.py:682
 msgid "Show program's version number and exit."
-msgstr "Stellt die Programm-Version dar und beendet sich."
+msgstr ""
 
 #: lib/fb_tools/app.py:812
 msgid "Starting in:"
-msgstr "Start in:"
+msgstr ""
 
 #: lib/fb_tools/app.py:834
 msgid "Aborted by user interrupt."
-msgstr "Abbruch durch Benutzer-Unterbrechung."
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:58
 msgid "Got a {c} for pattern {p!r}: {e}"
-msgstr "Habe ein(e) {c} zum Suchmuster {p!r} erhalten: {e}"
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:84
 msgid "The path {!r} must be an absolute path."
-msgstr "Der Pfad muss ein absoluter Pfad sein."
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:90
 msgid "The directory {!r} does not exists."
-msgstr "Das Verzeichnis {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:94
 msgid "The given path {!r} exists, but is not a directory."
-msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:98
 msgid "The given directory {!r} is not readable."
-msgstr "Das angegebene Verzeichnis {!r} ist nicht lesbar."
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:102
 msgid "The given directory {!r} is not writeable."
-msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
+msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:130 lib/fb_tools/cfg_app.py:226
+#: lib/fb_tools/argparse_actions.py:130 lib/fb_tools/cfg_app.py:228
 msgid "Directory {!r} does not exists."
-msgstr "Das Verzeichnis {!r} existiert nicht."
+msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:133 lib/fb_tools/cfg_app.py:230
+#: lib/fb_tools/argparse_actions.py:133 lib/fb_tools/cfg_app.py:232
 msgid "Path {!r} exists, but is not a directory."
-msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:139 lib/fb_tools/argparse_actions.py:174
-#: lib/fb_tools/cfg_app.py:237 lib/fb_tools/get_file_rm_app.py:399
+#: lib/fb_tools/cfg_app.py:239 lib/fb_tools/get_file_rm_app.py:399
 msgid "File {!r} is not a regular file."
-msgstr "Die Datei {!r} ist keine reguläre Datei."
+msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:142 lib/fb_tools/cfg_app.py:241
+#: lib/fb_tools/argparse_actions.py:142 lib/fb_tools/cfg_app.py:243
 msgid "File {!r} is not writeable."
-msgstr "Die Datei {!r} ist nicht schreibbar."
+msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:146 lib/fb_tools/cfg_app.py:246
+#: lib/fb_tools/argparse_actions.py:146 lib/fb_tools/cfg_app.py:248
 msgid "Directory {!r} is not writeable."
-msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:171 lib/fb_tools/get_file_rm_app.py:390
 msgid "File {!r} does not exists."
-msgstr "Die Datei {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:197 lib/fb_tools/multi_config.py:1155
 msgid "A timeout must be greater than zero and less or equal to {}."
-msgstr "Ein Timeout muss größer als Null und kleiner oder gleich {} sein."
+msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:202
 msgid "Wrong timeout {!r}:"
-msgstr "Ungültiger Timeout {!r}:"
+msgstr ""
 
-#: lib/fb_tools/cfg_app.py:62
+#: lib/fb_tools/cfg_app.py:64
 msgid "Parameter {cls!r} must be a subclass of {clinfo!r}."
-msgstr "Der Parameter {cls!r} muss eine von {clinfo!r} abgeleitete Klasse sein."
+msgstr ""
 
-#: lib/fb_tools/cfg_app.py:144
+#: lib/fb_tools/cfg_app.py:146
 msgid "Config options and options for logging"
-msgstr "Konfigurations- und Logging-Optionen"
+msgstr ""
 
-#: lib/fb_tools/cfg_app.py:149 lib/fb_tools/cfg_app.py:155 lib/fb_tools/ddns/__init__.py:255
+#: lib/fb_tools/cfg_app.py:151 lib/fb_tools/cfg_app.py:157 lib/fb_tools/ddns/__init__.py:255
 #: lib/fb_tools/get_file_rm_app.py:270
 msgid "FILE"
-msgstr "DATEI"
+msgstr ""
 
-#: lib/fb_tools/cfg_app.py:150
+#: lib/fb_tools/cfg_app.py:152
 msgid "Configuration files to use additional to the standard configuration files."
-msgstr "Zusätzlich zu den Standard-Konfigurationsdateien zu benutzende Dateien."
+msgstr ""
 
-#: lib/fb_tools/cfg_app.py:156
+#: lib/fb_tools/cfg_app.py:158
 msgid "A logfile for storing all logging output."
-msgstr "Eine Logdatei, um alle Log-Ausgaben hineinzuschreiben."
+msgstr ""
 
-#: lib/fb_tools/cfg_app.py:163
+#: lib/fb_tools/cfg_app.py:165
 msgid "Got command line arguments:"
-msgstr "Erhaltene Kommandozeilen-Argumente:"
+msgstr ""
 
-#: lib/fb_tools/cfg_app.py:201
+#: lib/fb_tools/cfg_app.py:203
 msgid "Error on reading configuration:"
-msgstr "Fehler beim Lesen der Konfiguration:"
+msgstr ""
 
-#: lib/fb_tools/cfg_app.py:250
+#: lib/fb_tools/cfg_app.py:252
 msgid "Start logging into file {!r} ..."
-msgstr "Beginne Logging in Datei {!r} …"
+msgstr "Start logging into file {!r} …"
 
 #: lib/fb_tools/collections.py:63
 msgid "Item {item!r} must be of type {must!r}, but is of type {cls!r} instead."
-msgstr "Der Eintrag {item!r} muss vom Typ {must!r} sein, ist aber statt dessen vom Typ {cls!r}."
+msgstr ""
 
 #: lib/fb_tools/collections.py:81
 msgid "Object {o!r} is not a {e} object."
-msgstr "Das Objekt {o!r} ist kein {e}-Objekt."
+msgstr ""
 
 #: lib/fb_tools/collections.py:99
 msgid "Key {key!r} must be of type {must!r}, but is of type {cls!r} instead."
-msgstr "Der Schlüssel muss vom Typ {must!r} sein, ist aber statt dessen vom Typ {cls!r}."
+msgstr ""
 
 #: lib/fb_tools/collections.py:116
 msgid "Object is neither a {m} object, nor a sequential object, but a {o!r} object instead."
 msgstr ""
-"Das Objekt ist weder ein {m}-Objekt noch ein sequentielles Objekt, aber statt dessen vom Typ "
-"{o!r}."
 
 #: lib/fb_tools/collections.py:135
 msgid "Key {!r} is not existing."
-msgstr "Der Schlüssel {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/collections.py:154 lib/fb_tools/collections.py:173
 msgid "Could update {ex} with {i!r}: {m}"
-msgstr "Konnte {ex} nicht mit {i!r} updaten: {m}"
+msgstr ""
 
 #: lib/fb_tools/collections.py:197
 msgid "Parameter {p!r} is not a sequence type, but a {c!r} object instead."
-msgstr "Der Parameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Typ {c!r}."
+msgstr ""
 
 #: lib/fb_tools/collections.py:1008
 msgid "The method {met}() expected at most {max} arguments, got {got}."
-msgstr "Die Methode {met}() erwartet höchstens {max} Argumente, hat aber {got} erhalten."
+msgstr ""
 
 #: lib/fb_tools/common.py:154
 msgid "{} is a tty."
-msgstr "{} ist ein tty."
+msgstr ""
 
 #: lib/fb_tools/common.py:158
 msgid "Platform is Windows and not ansi_term."
-msgstr "Die Plattform ist Windows und nicht ansi_term."
+msgstr ""
 
 #: lib/fb_tools/common.py:162
 msgid "{} is not a tty."
-msgstr "{} ist kein tty."
+msgstr ""
 
 #: lib/fb_tools/common.py:553
 msgid "Given value is {!r}."
-msgstr "Der übergebene Wert ist {!r}."
+msgstr ""
 
 #: lib/fb_tools/common.py:592
 msgid "Could not determine bytes in {!r}."
-msgstr "Konnte die Bytes nicht in {!r} ermitteln."
+msgstr ""
 
 #: lib/fb_tools/common.py:677
 msgid "Couldn't detect unit {!r}."
-msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
+msgstr ""
 
 #: lib/fb_tools/common.py:783
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
-msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
+msgstr ""
 
 #: lib/fb_tools/config.py:101 lib/fb_tools/multi_config.py:245
 msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
-msgstr "Die Kodierung {v!r} muss ein {s!r}-Objekt sein, ist aber statt dessen ein {c!r}-Objekt."
+msgstr ""
 
 #: lib/fb_tools/config.py:119 lib/fb_tools/multi_config.py:303
 msgid "A configuration directory may not be None."
-msgstr "Ein Konfigurations-Verzeichnis darf nicht None sein."
+msgstr ""
 
 #: lib/fb_tools/config.py:135
 msgid "A configuration file may not be None."
-msgstr "Eine Konfigurations-Datei darf nicht None sein."
+msgstr ""
 
 #: lib/fb_tools/config.py:140 lib/fb_tools/config.py:148 lib/fb_tools/multi_config.py:275
 msgid "Configuration file {!r} exists, but is not a regular file."
-msgstr "Die Konfigurations-Datei {!r} existiert, ist aber keine reguläre Datei."
+msgstr ""
 
 #: lib/fb_tools/config.py:178
 msgid "Searching for {!r} ..."
-msgstr "Suche nach {!r} …"
+msgstr "Searching for {!r} …"
 
 #: lib/fb_tools/config.py:180
 msgid "Configuration file {!r} not found."
-msgstr "Die Konfigurations-Datei {!r} wurde nicht gefunden."
+msgstr ""
 
 #: lib/fb_tools/config.py:182
 msgid "Configuration file error"
-msgstr "Konfigurationsdatei-Fehler"
+msgstr ""
 
 #: lib/fb_tools/config.py:193
 msgid "Reading {!r} ..."
-msgstr "Lese {!r} …"
+msgstr "Reading {!r} …"
 
 #: lib/fb_tools/config.py:204
 msgid "Wrong configuration in {!r} found"
-msgstr "Falsche Konfiguration in {!r} gefunden"
+msgstr ""
 
 #: lib/fb_tools/config.py:206
 msgid "Configuration parse error"
-msgstr "Fehler beim Parsen der Konfiguration"
+msgstr ""
 
 #: lib/fb_tools/config.py:229 lib/fb_tools/multi_config.py:1124
 msgid "Checking config section {!r} ..."
-msgstr "Überprüfe Konfigurationsabschnitt {!r} …"
+msgstr "Checking config section {!r} …"
 
 #: lib/fb_tools/ddns/__init__.py:74
 msgid "Got an error {c} on requesting {u!r}: {m}"
-msgstr "Habe einen Fehler {c} beim Abfrage der URL {u!r} erhalten: {m}"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:93
 msgid "Directory does not exists"
-msgstr "Das Verzwichnis existiert nicht"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:104
 msgid "Path is not a directory"
-msgstr "Der Pfad ist kein Verzeichnis"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:115
 msgid "Invalid permissions"
-msgstr "Ungültige Zugriffsrechte"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:134
 msgid "This is a base DDNS related application."
-msgstr "Das ist eine DDNS-bezogene Basisanwendung."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:170
 msgid "Invalid user agent {!r} given."
-msgstr "Ungültiger User-Agent {!r} übergeben."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:196
 msgid "DDNS options"
-msgstr "DDNS-Optionen"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:210 lib/fb_tools/ddns/__init__.py:213
 msgid "Perform action only for {}."
-msgstr "Führe die Aktion nur für {} aus."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:216
 msgid "The IP protocol, for which the action should be performed (one of {c}, default {d!r})."
-msgstr "Das IP-Protokoll, für das die Aktion ausgeführt werden soll (eins ais {c}, Vorgabe {d!r})."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:230
 msgid "PROTOCOL"
-msgstr "PROTOKOLL"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:240
 msgid "DIRECTORY"
-msgstr "VERZEICHNIS"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:242
 msgid ""
 "The directory, where to read and write the cache files of the evaluated IP addresses (default: "
 "{!r})."
 msgstr ""
-"Das Verzeichnis, von wo Cache-Dateien mit den ermittelten IP-Adresses und wohin sie auch "
-"geschrieben werden (Vorgane: {!r})."
 
 #: lib/fb_tools/ddns/__init__.py:250
 msgid "The timeout in seconds for Web requests (default: {})."
-msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Web-Abfragen (Vorgabe: {})."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:257
 msgid "Configuration file (default: {!r})"
-msgstr "Konfigurationsdatei (Vorgabe: {!r})"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:310 lib/fb_tools/ddns/config.py:210
 msgid "Invalid value {!r} as timeout:"
-msgstr "Ungültiger Wert {!r} für die Zeit der Zeitüberschreitung:"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:320
 msgid "Setting Loglevel of the {m} module to {ll}."
-msgstr "Setze Loglevel des {m}-Moduls auf {ll}."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:331
 msgid "Trying to get my public IPv{} address."
-msgstr "Versuche meine öffentliche IPv{}-Adresse zu ermitteln."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:343
 msgid "Got a response:"
-msgstr "Erhaltene Antwort:"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:354
 msgid "Request method: {!r}"
-msgstr "Request-Methode: {!r}"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:374
 msgid "Simulation mode, Request will not be sent."
-msgstr "Simulationsmodus, der Request wird nicht gesendet."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:387
 msgid "Got a {c} on requesting {u!r}: {e}."
-msgstr "Habe ein {c} bei der Abfrage von {u!r} erhalten: {e}."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:394
 msgid "Failed to parse the response"
-msgstr "Konnte Rückgabe nicht auswerten"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:422
 msgid "Checking existence and accessibility of working directory {!r} ..."
-msgstr "Überprüfe Existenz und Verfügbarkeit des Arbeitverzeichnisses {!r} …"
+msgstr "Checking existence and accessibility of working directory {!r} …"
 
 #: lib/fb_tools/ddns/__init__.py:434 lib/fb_tools/ddns/update_app.py:169
 msgid "No read access"
-msgstr "Kein Lesezugriff"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:438 lib/fb_tools/ddns/update_app.py:172
 msgid "No write access"
-msgstr "Kein Schreinzugriff"
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:453
 msgid "Writing IP address {a!r} into {f!r} ..."
-msgstr "Schreibe IP-Adresse {a!r} nach {f!r} …"
+msgstr "Writing IP address {a!r} into {f!r} …"
 
 #: lib/fb_tools/ddns/__init__.py:481
 msgid "File {!r} not found."
-msgstr "Datei {!r} nicht gefunden."
+msgstr ""
 
 #: lib/fb_tools/ddns/__init__.py:484
 msgid "Reading IP address from {!r}..."
-msgstr "Lese IP-Adresse aus {!r} …"
+msgstr "Reading IP address from {!r} …"
 
 #: lib/fb_tools/ddns/__init__.py:504
 msgid "Line {li!r} in {f!r} is not a valid IP address:"
-msgstr "Zeile {li!r} in {f!r} ist keine gültige IP-Adresse:"
+msgstr ""
 
 #: lib/fb_tools/ddns/config.py:104
 msgid "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600."
 msgstr ""
-"Ungültige Zeit {!r} für eine Zeitüberschreitung für aine Webabfrage, sie muss zwischen 0 und "
-"3600 Sekunden liegen."
 
 #: lib/fb_tools/ddns/config.py:224
 msgid "Invalid value {ur} for protocols to update, valid protocols are: "
-msgstr "Ungültiger Wert {ur} für ein zu aktualisierendes Protokoll, gültige Protokolle sind:"
+msgstr ""
 
 #: lib/fb_tools/ddns/config.py:233 lib/fb_tools/ddns/config.py:270
 msgid "Unknown configuration option {o!r} with value {v!r} in section {s!r}."
-msgstr "Unbekannte Konfigurationsoption {o!r} mit dem Wert {v!r} in Abschnitt {s!r}."
+msgstr ""
 
 #: lib/fb_tools/ddns/config.py:255
 msgid "The path to the working directory must be an absolute path (given: {!r})."
-msgstr "Der Pfad zum Arbeitsverzeichnis muss ein absoluter Pfad sein (gegeben: {!r})."
+msgstr ""
 
 #: lib/fb_tools/ddns/config.py:265
 msgid "The path to the logfile must be an absolute path (given: {!r})."
-msgstr "Der Pfad zur Logdatei muss absolut sein (gegeben: {!r})."
+msgstr ""
 
 #: lib/fb_tools/ddns/myip_app.py:50
 msgid ""
 "Tries to detect the public NAT IPv4 address and/or the automatic assigned IPv6 address in a "
 "local network and print it out."
 msgstr ""
-"Versucht die öffentliche NAT-IPv4-Adresse bzw. die automatisch zugewiesene IPv6-Adresse in einem"
-" lokalem Netzwerk zu ermitten und zu zeigen."
 
 #: lib/fb_tools/ddns/myip_app.py:55 lib/fb_tools/ddns/myip_app.py:56
 msgid "Use only {} to retreive the public IP address."
-msgstr "Verwende nur {}, um die öffentliche IP-Adresse zu ermiteln."
+msgstr ""
 
 #: lib/fb_tools/ddns/myip_app.py:57
 msgid "The IP protocol, for which the public IP should be retrieved (one of {c}, default {d!r})."
 msgstr ""
-"Das IP-Protokoll, für welches die öffentliche IP-Adresse ermittelt werden soll (eins aus {c}, "
-"Vorgabe: {d!r})."
 
 #: lib/fb_tools/ddns/myip_app.py:99
 msgid "myip options"
-msgstr "Optionen für myip"
+msgstr ""
 
 #: lib/fb_tools/ddns/myip_app.py:103
 msgid "Write found public IPs into a cache file in working directory."
-msgstr "Schreibe die gefundenen öffentliche IP-Adressen in eine Cache-Datei im Arbeitsverzeichnis zurück."
+msgstr ""
 
 #: lib/fb_tools/ddns/myip_app.py:134 lib/fb_tools/ddns/update_app.py:275
 msgid "Starting {a!r}, version {v!r} ..."
-msgstr "Starte {a!r}, Version {v!r} …"
+msgstr "Starting {a!r}, version {v!r} …"
 
 #: lib/fb_tools/ddns/update_app.py:66
 msgid "Updating the DDNS records, even if seems not to be changed."
-msgstr "Aktualisieren der DDNS-Einträge, auch wenn sie nicht verändert zu sein scheinen."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:69
 msgid "Tries to update the A and/or AAAA record at ddns.de with the current IP address."
-msgstr "Versucht den A- bzw. AAAA-Eintrag bei ddns.de mit der aktuellen IP-Adresse zu aktualisieren."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:74 lib/fb_tools/ddns/update_app.py:75
 msgid "Update only the {} record with the public IP address."
-msgstr "Aktualisiere nur den {}-Eintrag mit der aktuellen IP-Adresse."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:76
 msgid ""
 "The IP protocol, for which the appropriate DNS record should be updated with the public IP (one "
 "of {c}, default {d!r})."
 msgstr ""
-"Das IP-Protokoll, für welches der entsprechende DNS-Eintrag der üffentlichen IP aktualisiert "
-"werden soll (eins aus {c}, Vorgabe {d!r})."
 
 #: lib/fb_tools/ddns/update_app.py:158
 msgid "Checking existence and accessibility of log directory {!r} ..."
-msgstr "Überprüfe Existenz und Verfügbarkeit des Log-Verzeichnisses {!r} …"
+msgstr "Checking existence and accessibility of log directory {!r} …"
 
 #: lib/fb_tools/ddns/update_app.py:190
 msgid "Update DDNS options"
-msgstr "DDNS-Aktualisierungsoptionen"
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:193
 msgid "USER"
-msgstr "BENUTZER"
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:194
 msgid "The username to login at ddns.de."
-msgstr "Der Nutzername, um sich bei ddns.de eizuloggen."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:198
 msgid "PASSWORD"
-msgstr "PASSWORT"
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:199
 msgid "The password of the user to login at ddns.de."
-msgstr "Das Login-Passwort des Nutzers bei ddns.de."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:203
 msgid "FILENAME"
-msgstr "DATEINAME"
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:204
 msgid "The filename to use as a logfile. Leave it empty to disable file logging."
-msgstr "Der Dateiname der Logdatei. Leer lassen, um Dateilogging zu deaktivieren."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:211
 msgid "Update all domains, which are connected whith the given ddns account."
-msgstr "Aktualisirung alle Domänen, die mit dem gegebenen DDNS-Konto verbunden sind."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:215
 msgid "DOMAIN"
-msgstr "DOMÄNE"
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:216
 msgid "The particular domain(s), which should be updated (if not all)."
 msgstr ""
-"Die bestimmte Domäne(n)m die aktualisiert werden solln (wenn nicht alle aktualisiert werden "
-"sollen)."
 
 #: lib/fb_tools/ddns/update_app.py:234
 msgid "No domains to update given, but the option all domains is deactivated."
-msgstr "Keine Domänen zur Aktualisierungg angegeben, aber die Option 'für alle Domänen' ist deaktiviert."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:284
 msgid "Ending {a!r}."
-msgstr "Beende {a!r}."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:292 lib/fb_tools/ddns/update_app.py:330
 msgid "Last {w} address: {a!r}."
-msgstr "Letzte {w}-Adresse: {a!r}."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:294 lib/fb_tools/ddns/update_app.py:332
 msgid "Did not found a last {} address."
-msgstr "Fand keine letzte {}-Adresse."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:297
 msgid "Got no public IPv4 address."
-msgstr "Keine öffentliche IPv4-Adresse gefunden."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:302 lib/fb_tools/ddns/update_app.py:340
 msgid "Address {a!r} seems not to be a valid {w} address: {e}"
-msgstr "Die Adresse {a!r} scheint keine gültige {w}-Adresse zu sein: {e}"
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:307 lib/fb_tools/ddns/update_app.py:345
 msgid "Address {a!r} seems not to be a valid {w} address."
-msgstr "Die Adresse {a!r} scheint keine gültige {w}-Adresse zu sein."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:312 lib/fb_tools/ddns/update_app.py:350
 msgid "Current {w} address is {a!r}."
-msgstr "Aktuelle {w}-Adresse ist {a!r}."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:315 lib/fb_tools/ddns/update_app.py:353
 msgid "The public {w} address {a!r} seems not to be changed since the last update."
 msgstr ""
-"Die öffentliche {w}-Adresse {a!r} scheint sich seit der letzten Aktualisierung nicht geändert zu"
-" haben."
 
 #: lib/fb_tools/ddns/update_app.py:335
 msgid "Got no public IPv6 address."
-msgstr "Keine öffentliche IPv6-Adresse gefunden."
+msgstr ""
 
 #: lib/fb_tools/ddns/update_app.py:366
 msgid "Updating DNS records to IPv{p} address {a!r} ..."
-msgstr "Aktualisier DNS-Einträge zu IPv{p}-Adresse {a!r} …"
+msgstr "Updating DNS records to IPv{p} address {a!r} …"
 
 #: lib/fb_tools/errors.py:51
 msgid "Empty mail address."
-msgstr "Leere Mailadresse."
+msgstr ""
 
 #: lib/fb_tools/errors.py:67
 msgid "Wrong mail address {a!r} ({c})"
-msgstr "Ungültige Mailadresse {a!r} ({c})"
+msgstr ""
 
 #: lib/fb_tools/errors.py:147
 msgid "Process with PID {pid} got signal {signal}."
-msgstr "Der Prozess mit der PID {pid} hat das Signal {signal} erhalten."
+msgstr ""
 
 #: lib/fb_tools/errors.py:186
 msgid "The network {!r} is not existing."
-msgstr "Das Netzerk {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/errors.py:216
 msgid "Method {func}() has to be overridden in class {cls!r}."
-msgstr "Die Methode {func}() der Klasse {cls!r} muss überschrieben werden."
+msgstr ""
 
 #: lib/fb_tools/errors.py:245
 msgid " (timeout after {:0.1f} secs)"
-msgstr " (Timeout nach {:0.1f} Sekunden)"
+msgstr ""
 
 #: lib/fb_tools/errors.py:269
 msgid "Timeout error on reading"
-msgstr "Timeout-Fehler beim Lesen"
+msgstr ""
 
 #: lib/fb_tools/errors.py:288
 msgid "Timeout error on writing"
-msgstr "Timeout-Fehler beim Schreiben"
+msgstr ""
 
 #: lib/fb_tools/errors.py:299
 msgid "Timeout on answering on the console."
-msgstr "Zeitüberschreitung beim Antworten an der Konsole."
+msgstr ""
 
 #: lib/fb_tools/errors.py:318
 msgid "Unknown OS command."
-msgstr "Unbekanntes Betriebssystem-Kommando."
+msgstr ""
 
 #: lib/fb_tools/errors.py:325
 msgid "Empty command list given."
-msgstr "Leere Kommando-Liste übergeben."
+msgstr ""
 
 #: lib/fb_tools/errors.py:333
 msgid "Could not found OS command:"
 msgid_plural "Could not found OS commands:"
-msgstr[0] "Konnte das Betriebssystem-Kommando nicht finden:"
-msgstr[1] "Konnte die Betriebssystem-Kommandos nicht finden:"
+msgstr[0] ""
+msgstr[1] ""
 
 #: lib/fb_tools/errors.py:362
 msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
-msgstr "Konnte die Lock-Datei {lf!r} nicht in {d:0.1f} Sekunden mit {tries} Versuchen vereinnahmen."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:66
 msgid "Value must be at least {m} - {v} was given."
-msgstr "Der Wert muss mindestens {m} sein - {v} wurde gegeben."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:108
 msgid "The given pattern {!r} is not a valid date pattern"
-msgstr "Das übergebene Muster {!r} is kein gültiges Datums-Muster"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:112
 #, python-format
 msgid ". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
-msgstr ". Es muss exakt einmal '%Y', einmal '%m' und einmal '%d' angegeben werden."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:143
 msgid ""
 "Returns a newline separated list of files generated from file globbing patterns given as "
 "arguments to this application, where all files are omitted, which should not be removed."
 msgstr ""
-"Gibt eine mit Zeilenumbruch separierte Liste von Dateien zurück, die aus dem Datei-Muster, "
-"welches als Kommando-Zeilen-Argument dieser Anwendung übergeben wurde, generiert wurde, wobei "
-"alle Datein fehlen, welche nicht gelöscht werden sollen."
 
 #: lib/fb_tools/get_file_rm_app.py:182 lib/fb_tools/get_file_rm_app.py:198
 #: lib/fb_tools/get_file_rm_app.py:214 lib/fb_tools/get_file_rm_app.py:230
 #: lib/fb_tools/get_file_rm_app.py:246
 msgid "Wrong value {v!r} for {n}, must be >= {m}"
-msgstr "Ungültiger Wert {v!r} für {n}, muss größer als oder gleich {m} sein"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:267
 msgid "File options"
-msgstr "Datei-Optionen"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:271
 msgid "File pattern to generate list of files to remove."
-msgstr "Dateimuster, um die Liste der zu löschenden Dateien zu generieren."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:274
 msgid "Keep options"
-msgstr "Optionen zum Aufbewahren"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:277
 msgid "NR_FILES"
-msgstr "ANZAHL_DATEIEN"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:279
 msgid "How many of the last files should be kept (default: {default}, minimum: {min})?"
-msgstr "Wieviele der letzten Dateien sollen aufbewahrt werden (Vorgabe: {default}, Minimum {min})?"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:286
 msgid "DAYS"
-msgstr "TAGE"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:288
 msgid "How many files one per day from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
-"Wieviele Dateien (eine pro Tag) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
-"{default}, Minimum {min})?"
 
 #: lib/fb_tools/get_file_rm_app.py:295
 msgid "WEEKS"
-msgstr "WOCHEN"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:297
 msgid "How many files one per week from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
-"Wieviele Dateien (eine pro Woche) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
-"{default}, Minimum {min})?"
 
 #: lib/fb_tools/get_file_rm_app.py:304
 msgid "MONTHS"
-msgstr "MONATE"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:306
 msgid "How many files one per month from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
-"Wieviele Dateien (eine pro Monat) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
-"{default}, Minimum {min})?"
 
 #: lib/fb_tools/get_file_rm_app.py:313
 msgid "YEARS"
-msgstr "JAHRE"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:315
 msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
-"Wieviele Dateien (eine pro Jahr) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
-"{default}, Minimum {min})?"
 
 #: lib/fb_tools/get_file_rm_app.py:346
 msgid "Resolving date pattern {!r}."
-msgstr "Löse Datumsmuster {!r} auf."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:367
 msgid "Checking given files..."
-msgstr "Überprüfe übergebene Dateien …"
+msgstr "Checking given files …"
 
 #: lib/fb_tools/get_file_rm_app.py:372
 msgid "Checking given file {!r} ..."
-msgstr "Überprüfe übergebene Datei {!r} …"
+msgstr "Checking given file {!r} …"
 
 #: lib/fb_tools/get_file_rm_app.py:381
 msgid "Resolved paths:"
-msgstr "Aufgelöste Pfade:"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:383
 msgid "File pattern {!r} does not match any files."
-msgstr "Das Dateimuster {!r} passt auf keine Dateien."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:388
 msgid "Checking {!r} ..."
-msgstr "Überprüfe {!r} …"
+msgstr "Checking {!r} …"
 
 #: lib/fb_tools/get_file_rm_app.py:394
 msgid "File {!r} is a regular file."
-msgstr "Die Datei {!r} ist eine reguläre Datei."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:397
 msgid "Path {!r} is a directory."
-msgstr "Der Pfad {!r} ist ein Verzeichnis."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:404
 msgid "File {fi!r} does not match pattern {pa!r}."
-msgstr "Die Datei {fi!r} passt nicht in das Dateimuster {pa!r}."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:414
 msgid "Date in file {fi!r} is not a valid date: {e}."
-msgstr "Das Datum in der Datei {fi!r} ist kein gültiges Datum: {e}."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:465
 msgid "Did not found any files to evaluate."
-msgstr "Fand keine Dateien zur Auswertung"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:497
 msgid "Keeping last file ..."
 msgid_plural "Keeping last {} files ..."
-msgstr[0] "Behalte die letzte Datei …"
-msgstr[1] "Behalte die letzten {} Dateien …"
+msgstr[0] "Keeping last file …"
+msgstr[1] "Keeping last {} files …"
 
 #: lib/fb_tools/get_file_rm_app.py:503
 msgid "Keep last file {!r}."
-msgstr "Behalte die letzte Datei {!r}."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:508
 msgid "Files to keep:"
-msgstr "Zu behaltende Dateien:"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:529
 msgid "Files to keep for year:"
-msgstr "Dateien, die für Jahr zu behalten sind:"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:551
 msgid "Got last month: {!r}"
-msgstr "Ermittelter letzter Monat: {!r}"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:565
 msgid "Files to keep for month:"
-msgstr "Dateien, die für Monat zu behalten sind:"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:579
 msgid "Got last Monday: {!r}"
-msgstr "Ermittelter letzter Montag: {!r}"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:592
 msgid "Files to keep for week:"
-msgstr "Dateien, die für Woche zu behalten sind:"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:605
 msgid "Got last day: {!r}"
-msgstr "Ermittelter letzter Tag: {!r}"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:616
 msgid "Keeping all files from today."
-msgstr "Aufheben aller Dateien von heute."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:623
 msgid "Files to keep for day:"
-msgstr "Dateien, die für Tag zu behalten sind:"
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:640
 msgid "Trying to get date of file {!r}."
-msgstr "Versuche das Datum aus der Datei {!r} zu entnehmen."
+msgstr ""
 
 #: lib/fb_tools/get_file_rm_app.py:679
 msgid "Explored and assigned files:"
-msgstr "Ermittelte und zugewiesene Dateien:"
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:159
 msgid "Invalid time zone name {!r}."
-msgstr "Ungültiger Zeitzonenname {!r}."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:161
 msgid "Setting time zone to {!r}."
-msgstr "Setze Zeitzone auf {!r}."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:165
 msgid "Name of the time zone: {!r}."
-msgstr "Name der Zeitzone: {!r}."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:171
 msgid "{}-object not initialized."
-msgstr "Das {}-Objekt ist noch nicht initialisiert."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:173
 msgid "Method {} must be overridden in descendant classes."
-msgstr "Die Methode {} muss in abgeleiteten Klassen überschrieben werden."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:250
 msgid "Quiet execution."
-msgstr "Stillschweigende Ausführung."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:298
 msgid "Starting synchronous communication with '{}'."
-msgstr "Starte synchrone Kommunikation mit '{}'."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:302
 msgid "Finished communication with '{}'."
-msgstr "Kommunikation mit '{}' beendet."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:316
 msgid "Parameter {p!r} is not of type {t!r}."
-msgstr "Der Parameter {p!r} ist nicht vom Typ {t!r}."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:321
 msgid "Got completed process:"
-msgstr "Vollendeten Prozess erhalten:"
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:325 lib/fb_tools/handler/__init__.py:336
 msgid "Output on {}:"
-msgstr "Ausgabe an {}:"
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:357
 msgid "Starting asynchronous communication with '{cmd}', heartbeat interval is {interval:0.1f} seconds."
-msgstr "Starte asynchrone Kommunikation mit '{cmd}', Herzschlag-Intervall ist {interval:0.1f} Sekunden."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:372
 msgid "Checking for the end of the communication ..."
-msgstr "Überprüfe das Ende der Kummunikation …"
+msgstr "Checking for the end of the communication …"
 
 #: lib/fb_tools/handler/__init__.py:382
 msgid "Time to execute the heartbeat handler."
-msgstr "Es ist an der Zeit, den Herzschlag-Handler auszuführen."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:386
 msgid "Sleeping {:0.2f} seconds ..."
-msgstr "Schlafe für {:0.2f} Sekunden …"
+msgstr "Sleeping {:0.2f} seconds …"
 
 #: lib/fb_tools/handler/__init__.py:394 lib/fb_tools/handler/__init__.py:403
 msgid "   {w} is now: {o!r}"
-msgstr "   {w} ist jetzt: {o!r}"
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:101
 msgid "Locking directory {!r} doesn't exists or is not a directory."
-msgstr "Das Lockverzeichnis {!r} existiert entweder nicht oder ist kein Verzeichnis."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:128 lib/fb_tools/handler/lock.py:807
 msgid "Locking directory {!r} isn't writeable."
-msgstr "Kein Schreibzugriff auf das Lockverzeichnis {!r}."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:193
 msgid "No lockfile given on init of a LockObject object."
-msgstr "Keine Lockdatei bei der Initialisierung des LockObject-Ojektes angegeben."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:199
 msgid "Lockfile {!r} doesn't exists, but don't worry, it's simulation mode."
-msgstr "Die Lockdatei {!r} existiert nicht, aber keine Sorge, wir sind im Simulationsmodus."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:203 lib/fb_tools/handler/lock.py:1045
 msgid "Lockfile {!r} doesn't exists."
-msgstr "Die Lockdatei {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:206
 msgid "Lockfile {!r} is not a regular file."
-msgstr "Die Lockdatei {!r} ist keine reguläre Datei."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:360
 msgid "Closing file descriptor {} ..."
-msgstr "Schließe Datei-Deskriptor {} …"
+msgstr "Closing file descriptor {} …"
 
 #: lib/fb_tools/handler/lock.py:371
 msgid "Automatic removing of {!r} ..."
-msgstr "Automatisches Löschen von {!r} …"
+msgstr "Automatic removing of {!r} …"
 
 #: lib/fb_tools/handler/lock.py:399
 msgid "Refreshing atime and mtime of {!r} to the current timestamp."
-msgstr "Setze atime und mtime von {!r} auf den aktuellen Zeitstempel."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:533 lib/fb_tools/handler/lock.py:553 lib/fb_tools/handler/lock.py:573
 #: lib/fb_tools/handler/lock.py:597 lib/fb_tools/handler/lock.py:692 lib/fb_tools/handler/lock.py:1034
 msgid "Value {val!r} for {what} is not a Number."
-msgstr "Der Wert {val!r} für {what} ist keine Zahl."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:538 lib/fb_tools/handler/lock.py:558 lib/fb_tools/handler/lock.py:578
 #: lib/fb_tools/handler/lock.py:602 lib/fb_tools/handler/lock.py:697 lib/fb_tools/handler/lock.py:1038
 msgid "The value for {what} must be greater than zero (is {val!r})."
-msgstr "Der Wert für {what} muss größer als Null sein (ist {val!r})."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:702
 msgid "The value for {what} must be greater than or equal to zero (is {val!r})."
-msgstr "Der Wert für {what} muss größer als oder gleich Null sein (ist {val!r})."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:787
 msgid "Invalid PID {} given on calling create_lockfile()."
-msgstr "Ungültige PID {} beim Aufruf von create_lockfile() übergeben."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:796
 msgid "Using lock directory {!r} ..."
-msgstr "Verwende Lock-Verzeichnis {!r} …"
+msgstr "Using lock directory {!r} …"
 
 #: lib/fb_tools/handler/lock.py:804
 msgid "Trying to lock lockfile {!r} ..."
-msgstr "Versuche Lockdatei {!r} zu okkupieren …"
+msgstr "Trying to lock lockfile {!r} …"
 
 #: lib/fb_tools/handler/lock.py:845
 msgid "Current time difference: {:0.3f} seconds."
-msgstr "Aktuelle Zeitdifferenz: {:0.3f} Sekunden."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:850
 msgid "Try {try_nr} on creating lockfile {lfile!r} ..."
-msgstr "Versuch Nummer {try_nr} zum Erstellen der Lockdatei {lfile!r} …"
+msgstr "Try {try_nr} on creating lockfile {lfile!r} …"
 
 #: lib/fb_tools/handler/lock.py:861 lib/fb_tools/handler/lock.py:980
 msgid "Removing lockfile {!r} ..."
-msgstr "Lösche Lockdatei {!r} …"
+msgstr "Removing lockfile {!r} …"
 
 #: lib/fb_tools/handler/lock.py:866 lib/fb_tools/handler/lock.py:988
 msgid "Error on removing lockfile {lfile!r}: {err}"
-msgstr "Fehler beim Löschen der Lockdatei {lfile!r): {err}"
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:879
 msgid "Sleeping for {:0.1f} seconds."
-msgstr "Schlafe für {:0.1f} Sekunden."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:894
 msgid "Got a lock for lockfile {!r}."
-msgstr "Habe einen Lock für die Lockdatei {!r} erhalten."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:900
 msgid "Write {what!r} in lockfile {lfile!r} ..."
-msgstr "Schreibe {what!r} in Lockdatei {lfile!r} …"
+msgstr "Write {what!r} in lockfile {lfile!r} …"
 
 #: lib/fb_tools/handler/lock.py:909
 msgid "Seeking and syncing {!r} ..."
-msgstr "Seeken und synchronisieren von {!r} …"
+msgstr "Seeking and syncing {!r} …"
 
 #: lib/fb_tools/handler/lock.py:938
 msgid "Trying to open {!r} exclusive ..."
-msgstr "Versuche {!r} exklusiv zu öffnen …"
+msgstr "Trying to open {!r} exclusive …"
 
 #: lib/fb_tools/handler/lock.py:940
 msgid "Simulation mode, no real creation of a lockfile."
-msgstr "Simulationsmodus, Lockdatei wird in Wirklichkeit nicht erstellt."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:948
 msgid "Error on creating lockfile {lfile!r}: {err}"
-msgstr "Fehler beim Erstellen der Lockdatei {lfile!r}: {err}"
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:977
 msgid "Lockfile {!r} to remove doesn't exists."
-msgstr "Die zu löschende Lockdatei {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:982
 msgid "Simulation mode - lockfile won't removed."
-msgstr "Simulationsmodus - die Lockdatei wird nicht gelöscht."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1042
 msgid "Checking lockfile {!r} ..."
-msgstr "Überprüfe Lockdatei {!r} …"
+msgstr "Checking lockfile {!r} …"
 
 #: lib/fb_tools/handler/lock.py:1049
 msgid "No read access for lockfile {!r}."
-msgstr "Kein Lesezugriff auf Lockdatei {!r}."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1053
 msgid "No write access for lockfile {!r}."
-msgstr "Kein Schreibzugriff auf Lockdatei {!r}."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1059
 msgid "Unusable lockfile {!r}."
-msgstr "Nicht verwendungsfähige Lockdatei {!r}."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1062
 msgid "Process with PID {} is unfortunately dead."
-msgstr "Der Prozess mit der PID {} ist unglücklicherweise verstorben."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1065
 msgid "Process with PID {} is still running."
-msgstr "Der Prozess mit der PID {} läuft aktuell noch."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1073
 msgid "Could not stat for file {lfile!r}: {err}"
-msgstr "Konnte Stat-Daten für Datei {lfile!r} nicht ermitteln: {err}"
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1080
 msgid "Lockfile {lfile!r} is older than {max} seconds ({age} seconds)."
-msgstr "Die Lockdatei {lfile!r} ist älter als {max} Sekunden ({age} Sekunden)."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1083
 msgid "Lockfile {lfile!r} is {age} seconds old, but not old enough ({max} seconds)."
-msgstr "Die Lockdatei {lfile!r} ist {age} Sekunden alt, aber nicht alte genug ({max} Sekunden)."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1110
 msgid "Trying to open pidfile {!r} ..."
-msgstr "Versuche PID-Datei {!r} zu öffnen …"
+msgstr "Trying to open pidfile {!r} …"
 
 #: lib/fb_tools/handler/lock.py:1114
 msgid "Could not open pidfile {!r} for reading:"
-msgstr "Konnte PID-Datei {!r} nicht zum Lesen öffnen:"
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1127
 msgid "First line of pidfile {!r} was empty."
-msgstr "Die erste Zeile der PID-Datei {!r} war leer."
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1138
 msgid "Could not interprete {cont!r} as a PID from {file!r}: {err}"
-msgstr "Konnte {cont!r} nicht als PID (in {file!r}) interpretieren: {err}"
+msgstr ""
 
 #: lib/fb_tools/handler/lock.py:1147
 msgid "Invalid PID {pid} in {file!r} found."
-msgstr "Ungültige PID {pid} in Datei {file!r} gefunden."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:78
 msgid "Timeout on communicating with process."
-msgstr "Zeitüberschreitung in der Kommunikation mit einem Prozess."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:104
 msgid "Command {c!r} returned non-zero exit status {rc}."
-msgstr "Das Kommando {c!r} gab den Nicht-Null Wert {rc} zurück."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:142
 msgid "Command {c!r} timed out after {s} second."
 msgid_plural "Command {c!r} timed out after {s} seconds."
-msgstr[0] "Das Kommando {c!r} timte nach einer Sekunde aus."
-msgstr[1] "Das Kommando {c!r} timte nach {s} Sekunden aus."
+msgstr[0] ""
+msgstr[1] ""
 
 #: lib/fb_tools/handling_obj.py:303
 msgid "Wrong prompt timeout {v!r}, must be greater or equal to Null and less or equal to {max}."
 msgstr ""
-"Falscher Eingabe-Timeout {v!r}, er muss größer oder gleich Null sowie kleiner oder gleich {max} "
-"sein."
 
 #: lib/fb_tools/handling_obj.py:314
 msgid "yes"
-msgstr "ja"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:321
 msgid "no"
-msgstr "nein"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:389
 msgid "Searching for command {!r} ..."
-msgstr "Suche nach Befehl {!r} …"
+msgstr "Searching for command {!r} …"
 
 #: lib/fb_tools/handling_obj.py:394
 msgid "Command {!r} doesn't exists."
-msgstr "Das Befehl {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:397 lib/fb_tools/handling_obj.py:421
 msgid "Command {!r} is not executable."
-msgstr "Das Befehl {!r} ist nicht ausführbar."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:411
 msgid "Searching command in {!r} ..."
-msgstr "Suche Befehl in {!r} …"
+msgstr "Searching command in {!r} …"
 
 #: lib/fb_tools/handling_obj.py:424
 msgid "Command {!r} not found."
-msgstr "Das Kommando {!r} wurde nicht gefunden."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:496
 msgid "STDIN and input arguments may not both be used."
-msgstr "STDIN und Eingabe-Argumente dürfen nicht zusammen verwendet werden."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:499
 msgid "Executing command args:"
-msgstr "Auszuführende Befehlsargumente:"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:502
 msgid "Performing argument {!r}."
-msgstr "Verarbeite Argument {!r}."
+msgstr ""
 
 #: lib/fb_tools/handler/__init__.py:247 lib/fb_tools/handling_obj.py:507
 msgid "Executing: {}"
-msgstr "Ausführung: {}"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:510
 msgid "Simulation mode, not executing: {}"
-msgstr "Simulations-Modus, führe nicht aus: {}"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:518
 msgid "PID of process: {}"
-msgstr "PID des Prozesses: {}"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:524
 msgid "{c} happened, killing process: {e}"
-msgstr "{} aufgetreten, töte Prozess: {e}"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:626
 msgid "Nothing to do on signal."
-msgstr "Aud das Signal gibt es nichts zu tun."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:680 lib/fb_tools/handling_obj.py:769
 msgid "File doesn't exists."
-msgstr "Die Datei existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:683
 msgid "Read permission denied."
-msgstr "Lesezugriff verboten."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:686
 msgid "Reading file content of {!r} ..."
-msgstr "Lese Inhalt der Datei {!r} …"
+msgstr "Reading file content of {!r} …"
 
 #: lib/fb_tools/handling_obj.py:774 lib/fb_tools/handling_obj.py:781
 msgid "Write permission to {!r} denied."
-msgstr "Schreibzugriff auf {!r} verboten."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:776 lib/fb_tools/handling_obj.py:783
 msgid "Write permission denied."
-msgstr "Schreibzugriff verboten."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:787
 msgid "Write {what!r} into {to!r}."
-msgstr "Schreibe {what!r} nach {to!r}."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:789
 msgid "Writing {!r} ..."
-msgstr "Schreibe {!r} …"
+msgstr "Writing {!r} …"
 
 #: lib/fb_tools/handling_obj.py:801
 msgid "Simulating write into {!r}."
-msgstr "Simuliere das Schreiben nach {!r}."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:809
 msgid "Opening {!r} for write unbuffered ..."
-msgstr "Öffne {!r} zum ungepufferten Schreiben …"
+msgstr "Opening {!r} for write unbuffered …"
 
 #: lib/fb_tools/handler/lock.py:913 lib/fb_tools/handling_obj.py:813
 msgid "Closing {!r} ..."
-msgstr "Schließe {!r} …"
+msgstr "Closing {!r} …"
 
 #: lib/fb_tools/handling_obj.py:844
 msgid "Password:"
-msgstr "Passwort:"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:847
 msgid "Repeat password:"
-msgstr "Passwort Wiederholung:"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:861
 msgid "The entered passwords does not match."
-msgstr "Die eingegebenen Passwörter stimmen nicht überein."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:874 lib/fb_tools/handling_obj.py:949
 msgid "Interrupted on demand."
-msgstr "Abbruch auf Verlangen."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:899 lib/fb_tools/handling_obj.py:904 lib/fb_tools/handling_obj.py:983
 #: lib/fb_tools/handling_obj.py:988
 msgid "Got a {}:"
-msgstr "Habe ein {} erhalten:"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:934
 msgid "Yes/No"
-msgstr "Ja/Nein"
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:942
 msgid "Automatic answer: '{}'."
-msgstr "Automatische Antwort: '{}'."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:1031 lib/fb_tools/handling_obj.py:1037
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
-msgstr "Der Parameter {t!r} muss ein {e} ein, statt dessen wurde {v!r} übergeben."
+msgstr ""
 
 #: lib/fb_tools/handling_obj.py:1100
 msgid "Completed process"
-msgstr "Fertiggestellter Prozess"
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:69 lib/fb_tools/mailaddress.py:468
 msgid "Empty address."
-msgstr "Leere Adresse."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:78 lib/fb_tools/mailaddress.py:477
 msgid "Wrong type."
-msgstr "Falscher Typ."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:88 lib/fb_tools/mailaddress.py:495 lib/fb_tools/mailaddress.py:535
 #: lib/fb_tools/mailaddress.py:558
 msgid "Invalid address."
-msgstr "Ungültige Adresse."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:106 lib/fb_tools/mailaddress.py:167
 msgid "Given user: {u!r}, given domain: {d!r}."
-msgstr "Gegebener Nutzer: {u!r}, gegebene Domäne: {d!r}."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:111
 msgid "Invalid mail address."
-msgstr "Ungültige Mailadresse."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:128 lib/fb_tools/mailaddress.py:143
 msgid "Invalid user/mailbox name."
-msgstr "Ungültiger Nutzer- bzw. Postfachname."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:150
 msgid "Invalid domain."
-msgstr "Ungültige Domäne."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:204 lib/fb_tools/obj.py:252 lib/fb_tools/obj.py:308
 msgid "Wrong verbose level {!r}, must be >= 0"
-msgstr "Falsches Ausführlichkeits-Niveau, muss größer als oder gleich Null sein"
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:296 lib/fb_tools/mailaddress.py:656
 msgid "Checking equality {self!r} with {other!r} ..."
-msgstr "Vergleiche Gleichheit von {self!r} mit {other!r} …"
+msgstr "Checking equality {self!r} with {other!r} …"
 
 #: lib/fb_tools/mailaddress.py:352 lib/fb_tools/mailaddress.py:680
 msgid "Object {o!r} for comparing is not a {c} object."
-msgstr "Das Vergleichsobjekt {o!r} ist kein {c}-Objekt."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:357 lib/fb_tools/mailaddress.py:685
 msgid "Comparing {self!r} with {other!r} ..."
-msgstr "Vergleiche {self!r} mit {other!r} …"
+msgstr "Comparing {self!r} with {other!r} …"
 
 #: lib/fb_tools/mailaddress.py:485
 msgid "Evaluating address {!r} ..."
-msgstr "Untersuche Adresse {!r} …"
+msgstr "Evaluating address {!r} …"
 
 #: lib/fb_tools/mailaddress.py:486
 msgid "Search pattern simple: {}"
-msgstr "Einfaches Suchmuster: {}"
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:491
 msgid "Search pattern full: {}"
-msgstr "Vollständiges Suchmuster: {}"
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:515
 msgid "Parameters {lst} may not be given, if parameter {a!r} was given."
-msgstr "Die Parameter {lst} dürfen nicht übergeben werden, wenn der Parameter {a!r} angegeben wurde."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:526
 msgid "Invalid full user name."
-msgstr "Ungültiger vollständiger Nutzername."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:879 lib/fb_tools/mailaddress.py:893
 msgid "Given object {o!r} is not a sequence type, but a {t!r} type instead."
-msgstr "Das übergebene Objekt {o!r} ist kein sequentieller Typ, aber statt dessen vom Typ {t!r}."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:908
 msgid "{m} takes at most {max} arguments ({n} given)."
-msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
+msgstr ""
 
 #: lib/fb_tools/mailaddress.py:948
 msgid "Mail address {} is not in address list."
-msgstr "Die Mailadresse {} ist nicht in der Adressliste."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:100
 msgid "Config loader method {!r} was not found."
-msgstr "Die Konfigurations-Lade-Methode {!r} wurde nicht gefunden."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:211 lib/fb_tools/multi_config.py:213 lib/fb_tools/multi_config.py:215
 msgid "{} configuration is not supported."
-msgstr "{}-Konfiguration wird nicht unterstützt."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:268
 msgid "Additional config file {!r} does not exists."
-msgstr "Die zusätzliche Konfigurationsdatei {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:282
 msgid "Configuration file {!r} is not readable."
-msgstr "Die Konfigurations-Datei {!r} ist nicht lesbar."
+msgstr "Configuration file {!r} is not readable."
 
 #: lib/fb_tools/multi_config.py:306
 msgid "Configuration directory {!r} may not be absolute."
-msgstr "Das Konfigurations-Verzeichnis {!r} darf nicht absolut sein."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:386
 msgid "Cannot use {!r} as delimiters for ini-files."
-msgstr "Kann {!r} nicht als Trennzeichen für ini-Dateien verwenden."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:408
 msgid "Cannot use {!r} as comment prefixes for ini-files."
-msgstr "Kann {!r} nicht als Kommentar-Präfix für ini-Dateien verwenden."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:430
 msgid "Cannot use {!r} as inline comment prefixes for ini-files."
-msgstr "Kann {!r} nicht als Inline-Kommentar-Präfix für ini-Dateien verwenden."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:616 lib/fb_tools/multi_config.py:627
 msgid "Stem {!r} is not a String type."
-msgstr "Der Konfigurations-Namens-Stamm {!r} ist kein String-Typ."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:620 lib/fb_tools/multi_config.py:631 lib/fb_tools/multi_config.py:638
 msgid "File name stem {!r} is invalid."
-msgstr "der Konfigurations-Namens-Stamm {!r} ist ungültig."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:646
 msgid "Invalid configuration type {t!r} - not found in {w!r}."
-msgstr "Ungültiger Konfigurationstyp {t!r} - wurde nicht in {w!r} gefunden."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:686
 msgid "Collecting all configuration files."
-msgstr "Sammle alle Konfigurationsdateien."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:693
 msgid "Discovering config directory {!r} ..."
-msgstr "Untersuche Konfigurations-Verzeichnis {!r} …"
+msgstr "Discovering config directory {!r} …"
 
 #: lib/fb_tools/multi_config.py:702
 msgid "Collected config files:"
-msgstr "Gesammelte Konfigurationsdateien:"
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:715
 msgid "Checking permissions of config files ..."
-msgstr "Überprüfe Rechte auf Konfigurationsdateien …"
+msgstr "Checking permissions of config files …"
 
 #: lib/fb_tools/multi_config.py:731
 msgid "Checking permissions of {!r} ..."
-msgstr "Überprüfe Rechte auf {!r} …"
+msgstr "Checking permissions of {!r} …"
 
 #: lib/fb_tools/multi_config.py:735
 msgid "Found file permissions of {fn!r}: {mode:04o}"
-msgstr "Fand Datei-Rechte auf {fn!r}: {mode:04o}"
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:738
 msgid "File {fn!r} is readable by group or by others, found mode {mode:04o}."
-msgstr "Die Datei {fn!r} ist für die Gruppe oder für andere lesbar, gefundener Modus {mode:04o}."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:750
 msgid "Trying to detect file type of additional config file {!r}."
-msgstr "Versuche den Dateityp der zusätzlichen Konfigurationsdatei {!r} zu ermitteln."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:759 lib/fb_tools/multi_config.py:824
 msgid "Checking file {fn!r} for pattern {pat!r}."
-msgstr "Überprüfe Datei {fn!r} nach Muster {pat!r}."
+msgstr "Checking file {fn!r} for pattern {pat!r}."
 
 #: lib/fb_tools/multi_config.py:765 lib/fb_tools/multi_config.py:830
 msgid "Found config file {fi!r}, loader method {m!r}."
-msgstr "Fand Konfigurationsdatei {fi!r}, Lademethode {m!r}."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:779
 msgid "Did not found file type of additional config file {fn!r}. Available config types are: {list}."
 msgstr ""
-"Keinen Dateityp der zusätzlichen Konfigurationsdatei {fn!r} gefunden. Verfügbare Dateitypen "
-"sind: {list}."
 
 #: lib/fb_tools/multi_config.py:798
 msgid "Something strange is happend, file type {!r} not found."
-msgstr "Irgendwas komisches ist passiert, der Dateityp {!r} wurde nicht gefunden."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:808
 msgid "Checking, whether {!r} is a possible config file."
-msgstr "Teste, ob {!r} möglicherweise eine Konfigurationsdatei ist."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:813
 msgid "Path {!r} is not a regular file."
-msgstr "Der Pfad {!r} ist keine reguläre Datei."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:849
 msgid "Reading configuration file {!r} ..."
-msgstr "Lese Konfigurationsdatei {!r} …"
+msgstr "Reading configuration file {!r} …"
 
 #: lib/fb_tools/multi_config.py:853
 msgid "Using loading method {!r}."
-msgstr "Verwende Lade-Methode {!r}."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:861
 msgid "Read config from {fn!r}:"
-msgstr "Von {fn!r} gelesene Konfiguration:"
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:872
 msgid "Read merged config:"
-msgstr "Gelesene und zusammengeführte Konfiguration:"
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:879
 msgid ""
 "Character set detection by module {mod!r} for file {fn!r} should not be used, using character "
 "set {enc!r}."
 msgstr ""
-"Die Zeichesatzerkennung durch das Modul {mod!r} für die Datei {fn!r} soll nicht verwendet "
-"werden, verwende Zeichensatz {enc!r}."
 
 #: lib/fb_tools/multi_config.py:886
 msgid "Trying to detect character set of file {fn!r} ..."
-msgstr "Versuche den Zeichensatz der Datei {fn!r} zu ermitteln …"
+msgstr "Trying to detect character set of file {fn!r} …"
 
 #: lib/fb_tools/multi_config.py:897
 #, python-format
@@ -1499,194 +1462,192 @@ msgid ""
 "The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, using character set "
 "{cs_def!r} instead of {cs_found!r}."
 msgstr ""
-"Die Zuverlässigkeit von {con:0.1f}% ist kleiner als das Limit von {lim:0.1f}%, verwende den "
-"Zeichensatz {cs_def!r} anstelle von {cs_found!r}."
 
 #: lib/fb_tools/multi_config.py:907
 msgid "Got {what} on detecting cheracter set of {fn!r}: {e}"
-msgstr "Erhielt {what} bei der Zeichensatzerkennung von {fn!r}: {e}."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:912
 msgid "Found character set {cs!r} for file {fn!r} with a confidence of {con:0.1f}%."
-msgstr "Fand Zeichensatz {cs!r} für die Datei {fn!r} mit einer Zuverlässigkeit von {con:0.1f}%."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:922 lib/fb_tools/multi_config.py:952 lib/fb_tools/multi_config.py:986
 #: lib/fb_tools/multi_config.py:1043 lib/fb_tools/multi_config.py:1069
 msgid "Reading {tp} file {fn!r} ..."
-msgstr "Lese {tp}-Datei {fn!r} …"
+msgstr "Reading {tp} file {fn!r} …"
 
 #: lib/fb_tools/multi_config.py:933 lib/fb_tools/multi_config.py:967 lib/fb_tools/multi_config.py:1050
 #: lib/fb_tools/multi_config.py:1083
 msgid "{what} parse error in {fn!r}, line {line}, column {col}: {msg}"
-msgstr "{what} Parse-Fehler in {fn!r}, Zeine {line}, Spalte {col}: {msg}"
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:940 lib/fb_tools/multi_config.py:974 lib/fb_tools/multi_config.py:1021
 #: lib/fb_tools/multi_config.py:1057 lib/fb_tools/multi_config.py:1087
 #: lib/fb_tools/multi_config.py:1094
 msgid "Got {what} on reading and parsing {fn!r}: {e}"
-msgstr "Habe {what} beim Lesen und Parsen von {fn!r} erhalten: {e}."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:1003
 msgid "Arguments on initializing {}:"
-msgstr "Argumente zur Initialisierung von {}:"
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:1107
 msgid "Evaluation of configuration could only be happen after reading it."
-msgstr "Die Evaluierung der Konfiguration kann erst erfolgen, nachdem die gelesen wurde."
+msgstr ""
 
 #: lib/fb_tools/multi_config.py:1127
 msgid "Invalid value {val!r} in section {sec!r} for console timeout."
-msgstr "Ungültiger Wert {val!r} für Konsolen-Timeout in Abschnitt {sec!r}."
+msgstr ""
 
 #: lib/fb_tools/obj.py:63
 msgid "The base directory {!r} is not existing or not a directory."
-msgstr "Das Basis-Verzeichnis {!r} existiert nicht oder ist kein Verzeichnis."
+msgstr ""
 
 #: lib/fb_tools/obj.py:146
 msgid "undefined error."
-msgstr "unbestimmter Fehler."
+msgstr ""
 
 #: lib/fb_tools/obj.py:155
 msgid "Exception happened"
-msgstr "Aufgetretene Ausnahme"
+msgstr ""
 
 #: lib/fb_tools/obj.py:332
 msgid "Base directory {!r} does not exists."
-msgstr "Das Basis-Verzeichnis {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/obj.py:335
 msgid "Path for base directory {!r} is not a directory."
-msgstr "Der Pfad zum Basis-Verzeichnis {!r} is kein Verzeichnis"
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:72
 msgid "Invalid pidfile {f!r} given: {r}"
-msgstr "Ungültige PID-Datei {f!r} übergeben: {r}"
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:75
 msgid "Invalid pidfile {!r} given."
-msgstr "Ungültige PID-Datei {!r} übergeben."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:99
 msgid "The pidfile {f!r} is currently in use by the application with the PID {p}."
-msgstr "Die PID-Datei {f!r} wird gegenwärtig von der Anwendung mit der PID {p} verwendet."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:166
 msgid "No filename given on initializing {} object."
-msgstr "Kein Dateiname bei der Initialisierung des {}-Ojektes angegeben."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:284
 msgid "Pidfile {!r} doesn't exists, not removing."
-msgstr "Die PID-Datei {!r} existiert nicht, und wird deshalb auch nicht gelöscht."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:290
 msgid "Auto removing disabled, don't deleting {!r}."
-msgstr "Automatisches Löschen deaktiviert, {!r} wird nicht gelöscht."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:295
 msgid "Removing pidfile {!r} ..."
-msgstr "Lösche PID-Datei {!r} …"
+msgstr "Removing lockfile {!r} …"
 
 #: lib/fb_tools/pidfile.py:298 lib/fb_tools/pidfile.py:332
 msgid "Just kidding ..."
-msgstr "Ich mach doch nur Spaß …"
+msgstr "Just kidding …"
 
 #: lib/fb_tools/pidfile.py:303
 msgid "Could not delete pidfile {f!r}: {e}"
-msgstr "Konnte PID-Datei {f!r} nicht löschen: {e}"
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:322
 msgid "Invalid PID {p} for creating pidfile {f!r} given."
-msgstr "Ungültige PID {p} zur Erstellung der PID-Datei {f!r} übergeben."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:330
 msgid "Deleting pidfile {!r} ..."
-msgstr "Lösche PID-Datei {!r} …"
+msgstr "Deleting pidfile {!r} …"
 
 #: lib/fb_tools/pidfile.py:340
 msgid "Trying opening {!r} exclusive ..."
-msgstr "Versuche {!r} exklusiv zu öffnen …"
+msgstr "Trying opening {!r} exclusive …"
 
 #: lib/fb_tools/pidfile.py:343 lib/fb_tools/pidfile.py:395
 msgid "Simulation mode - don't real writing in {!r}."
-msgstr "Simulationsmodus - es wird nicht wirklich nach {!r} geschrieben."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:354
 msgid "Error on creating pidfile {f!r}: {e}"
-msgstr "Fehler beim Erstellen der PID-Datei {f!r}: {e}"
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:358 lib/fb_tools/pidfile.py:401
 msgid "Writing {p} into {f!r} ..."
-msgstr "Schreibe {p} nach {f!r} …"
+msgstr "Writing {p} into {f!r} …"
 
 #: lib/fb_tools/pidfile.py:379
 msgid "Calling {} on a not self created pidfile."
-msgstr "Aufruf von {} bei einer nicht selbst erstellten PID-Datei."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:392
 msgid "Trying opening {!r} for recreate ..."
-msgstr "Versuche {!r} zum Wiedererstellen zu öffnen …"
+msgstr "Trying opening {!r} for recreate …"
 
 #: lib/fb_tools/pidfile.py:407
 msgid "Error on recreating pidfile {f!r}: {e}"
-msgstr "Fehler beim Wiedererstellen der PID-Datei {f!r}: {e}"
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:433
 msgid "Pidfile parent directory {!r} doesn't exists."
-msgstr "Das Eltern-Verzeichnis der PID-Datei {!r} existiert nicht."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:437
 msgid "Pidfile parent directory {!r} is not a directory."
-msgstr "Das Eltern-Verzeichnis der PID-Datei {!r} is kein Verzeichnis"
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:441
 msgid "No write access to pidfile parent directory {!r}."
-msgstr "Kein Schreibzugriff auf das Eltern-Verzeichnis der PID-Datei {!r}."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:448
 msgid "It is not a regular file."
-msgstr "Es ist keine reguläre Datei."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:466
 msgid "Reading content of pidfile {!r} ..."
-msgstr "Lese Inhalt der PID-Datei {!r} …"
+msgstr "Reading content of pidfile {!r} …"
 
 #: lib/fb_tools/pidfile.py:487
 msgid "No useful information found in pidfile {f!r}: {z!r}"
-msgstr "Keine sinnvollen Informationen in der PID-Datei {f!r} gefunden: {z!r}"
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:492
 msgid "Trying check for process with PID {} ..."
-msgstr "Versuche den Prozess mit der PID {} zu überprüfen …"
+msgstr "Trying check for process with PID {} …"
 
 #: lib/fb_tools/pidfile.py:498
 msgid "Process with PID {} anonymous died."
-msgstr "Der Prozess mit der PID {} ist anonym verstorben."
+msgstr ""
 
 #: lib/fb_tools/pidfile.py:502
 msgid "No permission to signal the process {} ..."
-msgstr "Keine Rechte zum Senden von Signalen an Prozess {} …"
+msgstr "No permission to signal the process {} …"
 
 #: lib/fb_tools/pidfile.py:506
 msgid "Got a {c}: {e}."
-msgstr "Hab eine(e) {c} erhalten: {e}."
+msgstr ""
 
-#: lib/fb_tools/xlate.py:102
+#: lib/fb_tools/xlate.py:107
 msgid "Module directory: {!r}"
-msgstr "Modul-Verzeichnis: {!r}"
+msgstr ""
 
-#: lib/fb_tools/xlate.py:103
+#: lib/fb_tools/xlate.py:108
 msgid "Base directory: {!r}"
-msgstr "Basis-Verzeichnis: {!r}"
+msgstr ""
 
-#: lib/fb_tools/xlate.py:104
+#: lib/fb_tools/xlate.py:109
 msgid "Locale directory: {!r}"
-msgstr "Verzeichnis für Locales: {!r}"
+msgstr ""
 
-#: lib/fb_tools/xlate.py:105
+#: lib/fb_tools/xlate.py:110
 msgid "Locale domain: {!r}"
-msgstr "Locale-Domäne: {!r}"
+msgstr ""
 
-#: lib/fb_tools/xlate.py:106
+#: lib/fb_tools/xlate.py:111
 msgid "Found .mo-file: {!r}"
-msgstr "Gefundene .mo-Datei: {!r}"
+msgstr ""
 

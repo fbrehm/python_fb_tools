@@ -71,8 +71,8 @@ CUR_BABEL_VERSION = Version(babel.__version__)
 NEWER_BABEL_VERSION = Version('2.6.0')
 
 SUPPORTED_LANGS = (
-    'de_DE',
-    'en_US'
+    'de',
+    'en'
 )
 
 _ = XLATOR.gettext

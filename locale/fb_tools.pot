@@ -1,21 +1,21 @@
 # Translations template for fb_tools.
 # Copyright (C) 2022 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank@brehm-online.com>, 2022.
+# Frank Brehm <frank.brehm@pixelpark.com>, 2022.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.1.0\n"
-"Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2022-10-14 16:58+0200\n"
+"Project-Id-Version: fb_tools 2.1.2\n"
+"Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
+"POT-Creation-Date: 2022-11-21 14:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <frank@brehm-online.com>\n"
+"Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.10.3\n"
+"Generated-By: Babel 2.11.0\n"
 
 #: bin/get-file-to-remove:84
 msgid ""
@@ -194,24 +194,24 @@ msgstr ""
 msgid "The given directory {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:130 lib/fb_tools/cfg_app.py:226
+#: lib/fb_tools/argparse_actions.py:130 lib/fb_tools/cfg_app.py:228
 msgid "Directory {!r} does not exists."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:133 lib/fb_tools/cfg_app.py:230
+#: lib/fb_tools/argparse_actions.py:133 lib/fb_tools/cfg_app.py:232
 msgid "Path {!r} exists, but is not a directory."
 msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:139 lib/fb_tools/argparse_actions.py:174
-#: lib/fb_tools/cfg_app.py:237 lib/fb_tools/get_file_rm_app.py:399
+#: lib/fb_tools/cfg_app.py:239 lib/fb_tools/get_file_rm_app.py:399
 msgid "File {!r} is not a regular file."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:142 lib/fb_tools/cfg_app.py:241
+#: lib/fb_tools/argparse_actions.py:142 lib/fb_tools/cfg_app.py:243
 msgid "File {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:146 lib/fb_tools/cfg_app.py:246
+#: lib/fb_tools/argparse_actions.py:146 lib/fb_tools/cfg_app.py:248
 msgid "Directory {!r} is not writeable."
 msgstr ""
 
@@ -227,36 +227,36 @@ msgstr ""
 msgid "Wrong timeout {!r}:"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:62
+#: lib/fb_tools/cfg_app.py:64
 msgid "Parameter {cls!r} must be a subclass of {clinfo!r}."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:144
+#: lib/fb_tools/cfg_app.py:146
 msgid "Config options and options for logging"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:149 lib/fb_tools/cfg_app.py:155 lib/fb_tools/ddns/__init__.py:255
+#: lib/fb_tools/cfg_app.py:151 lib/fb_tools/cfg_app.py:157 lib/fb_tools/ddns/__init__.py:255
 #: lib/fb_tools/get_file_rm_app.py:270
 msgid "FILE"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:150
+#: lib/fb_tools/cfg_app.py:152
 msgid "Configuration files to use additional to the standard configuration files."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:156
+#: lib/fb_tools/cfg_app.py:158
 msgid "A logfile for storing all logging output."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:163
+#: lib/fb_tools/cfg_app.py:165
 msgid "Got command line arguments:"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:201
+#: lib/fb_tools/cfg_app.py:203
 msgid "Error on reading configuration:"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:250
+#: lib/fb_tools/cfg_app.py:252
 msgid "Start logging into file {!r} ..."
 msgstr ""
 
@@ -1630,23 +1630,23 @@ msgstr ""
 msgid "Got a {c}: {e}."
 msgstr ""
 
-#: lib/fb_tools/xlate.py:102
+#: lib/fb_tools/xlate.py:107
 msgid "Module directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:103
+#: lib/fb_tools/xlate.py:108
 msgid "Base directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:104
+#: lib/fb_tools/xlate.py:109
 msgid "Locale directory: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:105
+#: lib/fb_tools/xlate.py:110
 msgid "Locale domain: {!r}"
 msgstr ""
 
-#: lib/fb_tools/xlate.py:106
+#: lib/fb_tools/xlate.py:111
 msgid "Found .mo-file: {!r}"
 msgstr ""
 
