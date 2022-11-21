@@ -250,6 +250,7 @@ if __local_usr_dir__.is_dir():
 
 # -----------------------------------
 PO_FILES = 'locale/*/LC_MESSAGES/*.po'
+__package_data__ = {}
 
 def create_mo_files():
     """Compile the translation files."""
@@ -264,7 +265,16 @@ def create_mo_files():
     return mo_files
 
 
-for mo_file in create_mo_files():
+__pkg_mo_paths__ = create_mo_files()
+__pkg_mo_files__ = []
+for mo_file in __pkg_mo_paths__:
+    __pkg_mo_files__.append(str(mo_file))
+
+__package_data__[''] = __pkg_mo_files__
+# print("Package_data:\n" + pp(__package_data__) + "\n")
+
+
+for mo_file in __pkg_mo_paths__:
     ltype = mo_file.parent.name
     lname = mo_file.parent.parent.name
     ldir = __locale_dir__ / lname / ltype
@@ -290,6 +300,7 @@ setup(
     scripts=__scripts__,
     requires=__requirements__,
     package_dir={'': 'lib'},
+    package_data=__package_data__,
     data_files=__data_files__,
     cmdclass={
         'compile_catalog': babel.compile_catalog,
