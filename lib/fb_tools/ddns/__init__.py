@@ -24,6 +24,8 @@ import requests
 import urllib3
 import json
 
+from json import JSONDecodeError
+
 # Own modules
 from .. import __version__ as GLOBAL_VERSION
 from .. import DDNS_CFG_BASENAME
@@ -44,7 +46,7 @@ from ..errors import FbAppError
 
 from .config import DdnsConfiguration
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -398,7 +400,14 @@ class BaseDdnsApplication(BaseApplication):
         if not response.text:
             return ''
 
-        json_response = response.json()
+        try:
+            json_response = response.json()
+        except JSONDecodeError:
+            if self.verbose > 2:
+                LOG.debug("Setting encoding of response to 'utf-8-sig'.")
+            response.encoding = 'utf-8-sig'
+            json_response = response.json()
+
         if self.verbose > 3:
             LOG.debug("JSON response:\n{}".format(pp(json_response)))
 
