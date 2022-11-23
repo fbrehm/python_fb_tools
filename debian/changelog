@@ -1,3 +1,12 @@
+fb-tools (2.2.0) all; urgency=medium
+
+  * Renaming locale definitions de_DE => and en_US => en.
+  * Changing LOCALE_DIR in lib/fb_tools/xlate.py
+  * Updating setup files.
+  * Fixing lib/fb_tools/ddns/__init__.py for strange encoding.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 22 Nov 2022 09:45:02 +0100
+
 fb-tools (2.1.2) all; urgency=medium
 
   * Fixing and updating setup files
