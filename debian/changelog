@@ -1,3 +1,11 @@
+fb-tools (2.2.1) all; urgency=medium
+
+  * Adding signing of all Debian packages in Githaub workflow
+  * Using shared pipelines in .gitlab-ci.yml
+  * Updating package dependencies in template.spec and debian/control
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 30 Dec 2022 14:19:02 +0100
+
 fb-tools (2.2.0) all; urgency=medium
 
   * Renaming locale definitions de_DE => and en_US => en.
