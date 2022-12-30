@@ -2,7 +2,8 @@
 
 include:
   - project: 'python/packaging'
-    ref: v1.0
+    # ref: v1.0
+    ref: develop
     file: 'gitlab/create-all.yaml'
 
 variables:
