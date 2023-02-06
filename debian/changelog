@@ -1,4 +1,4 @@
-fb-tools (2.2.2) UNRELEASED; urgency=medium
+fb-tools (2.2.2) all; urgency=medium
 
   * Do not update all pip modules in .gitlab-ci.yml.
   * Updating containers in .github/workflows/packages.yaml
