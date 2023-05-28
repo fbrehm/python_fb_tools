@@ -8,13 +8,13 @@
 
 # Standard modules
 import errno
-import signal
 import os
+import signal
 
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -48,7 +48,7 @@ class EmptyMailAddressError(BaseMailAddressError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        return _("Empty mail address.")
+        return _('Empty mail address.')
 
 
 # =============================================================================
@@ -64,7 +64,7 @@ class InvalidMailAddressError(BaseMailAddressError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        msg = _("Wrong mail address {a!r} ({c})").format(
+        msg = _('Wrong mail address {a!r} ({c})').format(
             a=self.address, c=self.address.__class__.__name__)
         if self.msg:
             msg += ': ' + self.msg
@@ -140,11 +140,11 @@ class InterruptError(ExpectedHandlerError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        signame = "{}".format(self.signum)
+        signame = '{}'.format(self.signum)
         if self.signum in self.signal_names:
             signame = self.signal_names[self.signum] + '(' + signame + ')'
 
-        msg = _("Process with PID {pid} got signal {signal}.").format(
+        msg = _('Process with PID {pid} got signal {signal}.').format(
             pid=os.getpid(), signal=signame)
 
         return msg
@@ -183,7 +183,7 @@ class NetworkNotExistingError(ExpectedHandlerError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        msg = _("The network {!r} is not existing.").format(self.net_name)
+        msg = _('The network {!r} is not existing.').format(self.net_name)
         return msg
 
 
@@ -213,7 +213,7 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _("Method {func}() has to be overridden in class {cls!r}.")
+        msg = _('Method {func}() has to be overridden in class {cls!r}.')
         return msg.format(func=self.function_name, cls=self.class_name)
 
 
@@ -242,7 +242,7 @@ class IoTimeoutError(FbError, IOError):
         self.timeout = t_o
 
         if t_o is not None:
-            strerror += _(" (timeout after {:0.1f} secs)").format(t_o)
+            strerror += _(' (timeout after {:0.1f} secs)').format(t_o)
 
         if filename is None:
             super(IoTimeoutError, self).__init__(errno.ETIMEDOUT, strerror)
@@ -266,7 +266,7 @@ class ReadTimeoutError(IoTimeoutError):
         @type filename: str
 
         """
-        strerror = _("Timeout error on reading")
+        strerror = _('Timeout error on reading')
         super(ReadTimeoutError, self).__init__(strerror, timeout, filename)
 
 
@@ -285,7 +285,7 @@ class WriteTimeoutError(IoTimeoutError):
         @type filename: str
 
         """
-        strerror = _("Timeout error on writing")
+        strerror = _('Timeout error on writing')
         super(WriteTimeoutError, self).__init__(strerror, timeout, filename)
 
 
@@ -296,7 +296,7 @@ class TimeoutOnPromptError(AbortAppError, IoTimeoutError):
     # -------------------------------------------------------------------------
     def __init__(self, timeout):
         """Initialise a TimeoutOnPromptError exception."""
-        strerror = _("Timeout on answering on the console.")
+        strerror = _('Timeout on answering on the console.')
         super(TimeoutOnPromptError, self).__init__(strerror, timeout)
 
 
@@ -315,19 +315,19 @@ class CommandNotFoundError(HandlerError):
         """
         self.cmd_list = None
         if cmd_list is None:
-            self.cmd_list = [_("Unknown OS command.")]
+            self.cmd_list = [_('Unknown OS command.')]
         elif isinstance(cmd_list, list):
             self.cmd_list = cmd_list
         else:
             self.cmd_list = [cmd_list]
 
         if len(self.cmd_list) < 1:
-            raise ValueError(_("Empty command list given."))
+            raise ValueError(_('Empty command list given.'))
 
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        cmds = ', '.join(map(lambda x: ("'" + str(x) + "'"), self.cmd_list))
+        cmds = ', '.join((("'" + str(x) + "'") for x in self.cmd_list))
         msg = ngettext(
             'Could not found OS command:', 'Could not found OS commands:',
             len(self.cmd_list)) + cmds
@@ -365,7 +365,7 @@ class CouldntOccupyLockfileError(FbError):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pass
 
 # =============================================================================

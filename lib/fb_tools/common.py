@@ -9,17 +9,17 @@
 """
 
 # Standard modules
-import sys
-import os
-import logging
-import re
-import pprint
-import platform
-import locale
-import string
-import random
 import datetime
 import ipaddress
+import locale
+import logging
+import os
+import platform
+import pprint
+import random
+import re
+import string
+import sys
 try:
     import pathlib
 except ImportError:
@@ -37,7 +37,7 @@ import six
 
 from .xlate import XLATOR
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
 _ = XLATOR.gettext
 
@@ -142,24 +142,24 @@ def terminal_can_colors(debug=False):
         elif re_term.search(cur_term):
             env_term_has_colors = True
     if debug:
-        sys.stderr.write("ansi_term: {a!r}, env_term_has_colors: {h!r}\n".format(
+        sys.stderr.write('ansi_term: {a!r}, env_term_has_colors: {h!r}\n'.format(
             a=ansi_term, h=env_term_has_colors))
 
     has_colors = False
     if env_term_has_colors:
         has_colors = True
     for handle in [sys.stdout, sys.stderr]:
-        if (hasattr(handle, "isatty") and handle.isatty()):
+        if (hasattr(handle, 'isatty') and handle.isatty()):
             if debug:
-                msg = _("{} is a tty.").format(handle.name)
+                msg = _('{} is a tty.').format(handle.name)
                 sys.stderr.write(msg + '\n')
             if (platform.system() == 'Windows' and not ansi_term):
                 if debug:
-                    sys.stderr.write(_("Platform is Windows and not ansi_term.") + "\n")
+                    sys.stderr.write(_('Platform is Windows and not ansi_term.') + '\n')
                 has_colors = False
         else:
             if debug:
-                msg = _("{} is not a tty.").format(handle.name)
+                msg = _('{} is not a tty.').format(handle.name)
                 sys.stderr.write(msg + '\n')
             if ansi_term:
                 pass
@@ -308,7 +308,7 @@ def is_sequence(arg):
     if not isinstance(arg, Sequence):
         return False
 
-    if hasattr(arg, "strip"):
+    if hasattr(arg, 'strip'):
         return False
 
     return True
@@ -550,7 +550,7 @@ def human2mbytes(value, si_conform=False, as_float=False):
 
     """
     if value is None:
-        msg = _("Given value is {!r}.").format(None)
+        msg = _('Given value is {!r}.').format(None)
         raise ValueError(msg)
 
     radix = '.'
@@ -589,7 +589,7 @@ def human2mbytes(value, si_conform=False, as_float=False):
         value_raw = match.group(1)
         unit = match.group(2)
     else:
-        msg = _("Could not determine bytes in {!r}.").format(value)
+        msg = _('Could not determine bytes in {!r}.').format(value)
         raise ValueError(msg)
 
     if CUR_THOUSEP:
@@ -630,7 +630,7 @@ def human2mbytes(value, si_conform=False, as_float=False):
         return int(mbytes)
     return mbytes
     if mbytes != int(mbytes):
-        raise ValueError("int {integer!r} != long {long!r}.".format(
+        raise ValueError('int {integer!r} != long {long!r}.'.format(
             integer=int(mbytes), long=mbytes))
 
     mbytes = int(mbytes)
@@ -769,7 +769,7 @@ def bytes2human(
 def generate_password(length=12):
     """Generate a string of random characters with the givlen length."""
     characters = string.ascii_letters + string.punctuation + string.digits
-    password = "".join(random.choice(characters) for x in range(length))
+    password = ''.join(random.choice(characters) for x in range(length))
     return password
 
 
@@ -780,7 +780,7 @@ def get_monday(day):
     If the given date is a Monday itself, then this date will be returned.
     """
     if not isinstance(day, (datetime.date, datetime.datetime)):
-        msg = _("Argument {a!r} must be of type {t1!r} or {t2!r}.").format(
+        msg = _('Argument {a!r} must be of type {t1!r} or {t2!r}.').format(
             a=day, t1='datetime.date', t2='datetime.datetime')
         raise TypeError(msg)
 
@@ -845,7 +845,7 @@ def indent(text, prefix, initial_prefix=None, predicate=None):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 
