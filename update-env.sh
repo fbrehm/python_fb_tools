@@ -327,6 +327,12 @@ upgrade_modules() {
     empty_line
     pip install ${PIP_OPTIONS} --upgrade --upgrade-strategy eager --requirement requirements.txt
     empty_line
+    if [[ -f requirements-lint.txt ]] ; then
+        info "Installing and/or upgrading necessary modules for linting …"
+        empty_line
+        pip install ${PIP_OPTIONS} --upgrade --upgrade-strategy eager --requirement requirements-lint.txt
+        empty_line
+    fi
 }
 
 #------------------------------------------------------------------------------
