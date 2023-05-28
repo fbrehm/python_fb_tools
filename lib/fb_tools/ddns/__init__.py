@@ -10,43 +10,35 @@
 from __future__ import absolute_import, print_function
 
 # Standard modules
-import logging
 import copy
-import sys
-import socket
 import errno
-import os
 import ipaddress
+import json
+import logging
+import os
 import re
+import socket
+import sys
+from json import JSONDecodeError
 
 # Third party modules
 import requests
-import urllib3
-import json
 
-from json import JSONDecodeError
+import urllib3
 
 # Own modules
-from .. import __version__ as GLOBAL_VERSION
+from .config import DdnsConfiguration
 from .. import DDNS_CFG_BASENAME
-
+from .. import __version__ as GLOBAL_VERSION
+from ..app import BaseApplication
+from ..argparse_actions import CfgFileOptionAction
+from ..argparse_actions import DirectoryOptionAction
+from ..common import pp
+from ..errors import FbAppError
 from ..errors import IoTimeoutError
-
 from ..xlate import XLATOR, format_list
 
-from ..common import pp
-
-from ..argparse_actions import DirectoryOptionAction
-
-from ..app import BaseApplication
-
-from ..argparse_actions import CfgFileOptionAction
-
-from ..errors import FbAppError
-
-from .config import DdnsConfiguration
-
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -73,7 +65,7 @@ class DdnsRequestError(DdnsAppError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        msg = _("Got an error {c} on requesting {u!r}: {m}").format(
+        msg = _('Got an error {c} on requesting {u!r}: {m}').format(
             c=self.code, u=self.url, m=self.content)
         return msg
 
@@ -92,7 +84,7 @@ class WorkDirNotExistsError(WorkDirError, FileNotFoundError):
     def __init__(self, workdir):
         """Construct a WorkDirNotExistsError object."""
         super(WorkDirNotExistsError, self).__init__(
-            errno.ENOENT, _("Directory does not exists"), str(workdir))
+            errno.ENOENT, _('Directory does not exists'), str(workdir))
 
 
 # =============================================================================
@@ -103,7 +95,7 @@ class WorkDirNotDirError(WorkDirError, NotADirectoryError):
     def __init__(self, workdir):
         """Construct a WorkDirNotDirError object."""
         super(WorkDirNotDirError, self).__init__(
-            errno.ENOTDIR, _("Path is not a directory"), str(workdir))
+            errno.ENOTDIR, _('Path is not a directory'), str(workdir))
 
 
 # =============================================================================
@@ -114,7 +106,7 @@ class WorkDirAccessError(WorkDirError, PermissionError):
     def __init__(self, workdir, msg=None):
         """Construct a WorkDirAccessError object."""
         if not msg:
-            msg = _("Invalid permissions")
+            msg = _('Invalid permissions')
 
         super(WorkDirAccessError, self).__init__(errno.EACCES, msg, str(workdir))
 
@@ -123,7 +115,7 @@ class WorkDirAccessError(WorkDirError, PermissionError):
 class BaseDdnsApplication(BaseApplication):
     """Class for the application objects."""
 
-    library_name = "ddns-client"
+    library_name = 'ddns-client'
     loglevel_requests_set = False
 
     # -------------------------------------------------------------------------
@@ -133,7 +125,7 @@ class BaseDdnsApplication(BaseApplication):
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
         """Construct a BaseDdnsApplication object."""
         if description is None:
-            description = _("This is a base DDNS related application.")
+            description = _('This is a base DDNS related application.')
 
         self._cfg_dir = None
         self._cfg_file = None
@@ -169,7 +161,7 @@ class BaseDdnsApplication(BaseApplication):
     @user_agent.setter
     def user_agent(self, value):
         if value is None or str(value).strip() == '':
-            raise DdnsAppError(_("Invalid user agent {!r} given.").format(value))
+            raise DdnsAppError(_('Invalid user agent {!r} given.').format(value))
         self._user_agent = str(value).strip()
 
     # -------------------------------------------------------------------------
@@ -209,23 +201,23 @@ class BaseDdnsApplication(BaseApplication):
         proto_help = getattr(self, '_proto_help', None)
 
         if ipv4_help is None:
-            ipv4_help = _("Perform action only for {}.").format('IPv4')
+            ipv4_help = _('Perform action only for {}.').format('IPv4')
 
         if ipv6_help is None:
-            ipv6_help = _("Perform action only for {}.").format('IPv6')
+            ipv6_help = _('Perform action only for {}.').format('IPv6')
 
         if proto_help is None:
             proto_help = _(
-                "The IP protocol, for which the action should be performed "
-                "(one of {c}, default {d!r}).").format(
+                'The IP protocol, for which the action should be performed '
+                '(one of {c}, default {d!r}).').format(
                     c=format_list(valid_list, do_repr=True, style='or'), d='any')
 
         protocol_group.add_argument(
-            '-4', '--ipv4', dest='ipv4', action="store_true", help=ipv4_help,
+            '-4', '--ipv4', dest='ipv4', action='store_true', help=ipv4_help,
         )
 
         protocol_group.add_argument(
-            '-6', '--ipv6', dest='ipv6', action="store_true", help=ipv6_help,
+            '-6', '--ipv6', dest='ipv6', action='store_true', help=ipv6_help,
         )
 
         protocol_group.add_argument(
@@ -242,21 +234,21 @@ class BaseDdnsApplication(BaseApplication):
             '-d', '--dir', '--work-directory', dest='directory', metavar=_('DIRECTORY'),
             action=DirectoryOptionAction, must_exists=dir_must_exists, writeable=writeable,
             help=_(
-                "The directory, where to read and write the cache files of the "
-                "evaluated IP addresses (default: {!r}).").format(
+                'The directory, where to read and write the cache files of the '
+                'evaluated IP addresses (default: {!r}).').format(
                 str(DdnsConfiguration.default_working_dir)),
         )
 
         ddns_group.add_argument(
             '-T', '--timeout', dest='timeout', type=int, metavar=_('SECONDS'),
-            help=_("The timeout in seconds for Web requests (default: {}).").format(
+            help=_('The timeout in seconds for Web requests (default: {}).').format(
                 DdnsConfiguration.default_timeout),
         )
 
         ddns_group.add_argument(
             '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
             action=CfgFileOptionAction,
-            help=_("Configuration file (default: {!r})").format(str(default_cfg_file))
+            help=_('Configuration file (default: {!r})').format(str(default_cfg_file))
         )
 
     # -------------------------------------------------------------------------
@@ -293,7 +285,7 @@ class BaseDdnsApplication(BaseApplication):
         self.config.initialized = True
 
         if self.verbose > 3:
-            LOG.debug("Read configuration:\n{}".format(pp(self.config.as_dict())))
+            LOG.debug('Read configuration:\n{}'.format(pp(self.config.as_dict())))
 
         if self.args.ipv4:
             self.config.protocol = 'ipv4'
@@ -309,7 +301,7 @@ class BaseDdnsApplication(BaseApplication):
             try:
                 self.config.timeout = self.args.timeout
             except (ValueError, KeyError) as e:
-                msg = _("Invalid value {!r} as timeout:").format(self.args.timeout) + ' ' + str(e)
+                msg = _('Invalid value {!r} as timeout:').format(self.args.timeout) + ' ' + str(e)
                 LOG.error(msg)
                 print()
                 self.arg_parser.print_usage(sys.stdout)
@@ -319,10 +311,10 @@ class BaseDdnsApplication(BaseApplication):
             self.config.working_dir = self.args.directory
 
         if not self.loglevel_requests_set:
-            msg = _("Setting Loglevel of the {m} module to {ll}.").format(
+            msg = _('Setting Loglevel of the {m} module to {ll}.').format(
                 m='requests', ll='WARNING')
             LOG.debug(msg)
-            logging.getLogger("requests").setLevel(logging.WARNING)
+            logging.getLogger('requests').setLevel(logging.WARNING)
             self.loglevel_requests_set = True
 
         self.initialized = True
@@ -330,7 +322,7 @@ class BaseDdnsApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def get_my_ipv(self, protocol):
         """Retrieve the current public IPv64 address."""
-        LOG.debug(_("Trying to get my public IPv{} address.").format(protocol))
+        LOG.debug(_('Trying to get my public IPv{} address.').format(protocol))
 
         url = self.config.get_ipv4_url
         if protocol == 6:
@@ -342,7 +334,7 @@ class BaseDdnsApplication(BaseApplication):
             LOG.error(str(e))
             return None
         if self.verbose > 0:
-            LOG.debug(_("Got a response:") + '\n' + pp(json_response))
+            LOG.debug(_('Got a response:') + '\n' + pp(json_response))
 
         return json_response['IP']
 
@@ -350,30 +342,30 @@ class BaseDdnsApplication(BaseApplication):
     def perform_request(self, url, method='GET', data=None, headers=None, may_simulate=False):
         """Perform the underlying Web request."""
         if headers is None:
-            headers = dict()
+            headers = {}
 
         if self.verbose > 1:
-            LOG.debug(_("Request method: {!r}").format(method))
+            LOG.debug(_('Request method: {!r}').format(method))
 
         if data and self.verbose > 1:
-            data_out = "{!r}".format(data)
+            data_out = '{!r}'.format(data)
             try:
                 data_out = json.loads(data)
             except ValueError:
                 pass
             else:
                 data_out = pp(data_out)
-            LOG.debug("Data:\n{}".format(data_out))
+            LOG.debug('Data:\n{}'.format(data_out))
             if self.verbose > 2:
-                LOG.debug("RAW data:\n{}".format(data))
+                LOG.debug('RAW data:\n{}'.format(data))
 
         headers.update({'User-Agent': self.user_agent})
         headers.update({'Content-Type': 'application/json'})
         if self.verbose > 1:
-            LOG.debug("Headers:\n{}".format(pp(headers)))
+            LOG.debug('Headers:\n{}'.format(pp(headers)))
 
         if may_simulate and self.simulate:
-            LOG.debug(_("Simulation mode, Request will not be sent."))
+            LOG.debug(_('Simulation mode, Request will not be sent.'))
             return ''
 
         try:
@@ -386,7 +378,7 @@ class BaseDdnsApplication(BaseApplication):
                 socket.timeout, urllib3.exceptions.ConnectTimeoutError,
                 urllib3.exceptions.MaxRetryError, requests.exceptions.ConnectionError,
                 requests.exceptions.ConnectTimeout) as e:
-            msg = _("Got a {c} on requesting {u!r}: {e}.").format(
+            msg = _('Got a {c} on requesting {u!r}: {e}.').format(
                 c=e.__class__.__name__, u=url, e=e)
             raise DdnsAppError(msg)
 
@@ -396,7 +388,7 @@ class BaseDdnsApplication(BaseApplication):
             raise DdnsAppError(_('Failed to parse the response'), response.text)
 
         if self.verbose > 3:
-            LOG.debug("RAW response: {!r}.".format(response.text))
+            LOG.debug('RAW response: {!r}.'.format(response.text))
         if not response.text:
             return ''
 
@@ -409,7 +401,7 @@ class BaseDdnsApplication(BaseApplication):
             json_response = response.json()
 
         if self.verbose > 3:
-            LOG.debug("JSON response:\n{}".format(pp(json_response)))
+            LOG.debug('JSON response:\n{}'.format(pp(json_response)))
 
         return json_response
 
@@ -429,7 +421,7 @@ class BaseDdnsApplication(BaseApplication):
         """Verify existence and accessibility of working directory."""
         if self.verbose > 1:
             LOG.debug(_(
-                "Checking existence and accessibility of working directory {!r} ...").format(
+                'Checking existence and accessibility of working directory {!r} ...').format(
                 str(self.config.working_dir)))
 
         if not self.config.working_dir.exists():
@@ -440,11 +432,11 @@ class BaseDdnsApplication(BaseApplication):
 
         if not os.access(str(self.config.working_dir), os.R_OK):
             raise WorkDirAccessError(
-                self.config.working_dir, _("No read access"))
+                self.config.working_dir, _('No read access'))
 
         if not os.access(str(self.config.working_dir), os.W_OK):
             raise WorkDirAccessError(
-                self.config.working_dir, _("No write access"))
+                self.config.working_dir, _('No write access'))
 
     # -------------------------------------------------------------------------
     def write_ipv4_cache(self, address):
@@ -460,7 +452,7 @@ class BaseDdnsApplication(BaseApplication):
     def write_ip_cache(self, address, cache_file):
         """Write a cache entry."""
         LOG.debug(_(
-            "Writing IP address {a!r} into {f!r} ...").format(
+            'Writing IP address {a!r} into {f!r} ...').format(
                 a=str(address), f=str(cache_file)))
         cont = str(address) + '\n'
         try:
@@ -487,10 +479,10 @@ class BaseDdnsApplication(BaseApplication):
 
         if not cache_file.exists():
             if self.verbose > 2:
-                LOG.debug(_("File {!r} not found.").format(cache_file))
+                LOG.debug(_('File {!r} not found.').format(cache_file))
             return None
 
-        LOG.debug(_("Reading IP address from {!r}...").format(str(cache_file)))
+        LOG.debug(_('Reading IP address from {!r}...').format(str(cache_file)))
         has_errors = False
         try:
             cont = self.read_file(str(cache_file), quiet=True)
@@ -510,7 +502,7 @@ class BaseDdnsApplication(BaseApplication):
                 try:
                     addr = ipaddress.ip_address(line)
                 except ValueError as e:
-                    msg = _("Line {li!r} in {f!r} is not a valid IP address:").format(
+                    msg = _('Line {li!r} in {f!r} is not a valid IP address:').format(
                         li=line, f=str(cache_file)) + ' ' + str(e)
                     LOG.error(msg)
                     continue
@@ -524,7 +516,7 @@ class BaseDdnsApplication(BaseApplication):
 
 
 # =============================================================================
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 
