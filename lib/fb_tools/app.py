@@ -10,16 +10,16 @@
 from __future__ import absolute_import
 
 # Standard modules
-import sys
-import os
-import logging
-import re
-import traceback
 import argparse
-import getpass
-import signal
-import time
 import copy
+import getpass
+import logging
+import os
+import re
+import signal
+import sys
+import time
+import traceback
 
 # Third party modules
 
@@ -27,22 +27,17 @@ import copy
 from fb_logging.colored import ColoredFormatter
 
 from . import __version__ as __pkg_version__
-
 from .argparse_actions import TimeoutOptionAction
-
+from .common import terminal_can_colors
 from .errors import FbAppError
 from .errors import FunctionNotImplementedError
-
-from .common import terminal_can_colors
-
 from .handling_obj import HandlingObject
-
-from .xlate import __module_dir__ as __xlate_module_dir__
+from .xlate import DOMAIN, LOCALE_DIR, XLATOR
 from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
-from .xlate import XLATOR, LOCALE_DIR, DOMAIN
+from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.2.0'
+__version__ = '2.2.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -66,7 +61,7 @@ class BaseApplication(HandlingObject):
     re_prefix = re.compile(r'^[a-z0-9][a-z0-9_]*$', re.IGNORECASE)
     re_anum = re.compile(r'[^A-Z0-9_]+', re.IGNORECASE)
 
-    default_force_desc_msg = _("Forced execution - whatever it means.")
+    default_force_desc_msg = _('Forced execution - whatever it means.')
 
     show_assume_options = False
     show_console_timeout_option = False
@@ -148,14 +143,14 @@ class BaseApplication(HandlingObject):
         if env_prefix:
             ep = str(env_prefix).strip()
             if not ep:
-                msg = _("Invalid env_prefix {!r} given - it may not be empty.").format(env_prefix)
+                msg = _('Invalid env_prefix {!r} given - it may not be empty.').format(env_prefix)
                 raise FbAppError(msg)
             match = self.re_prefix.search(ep)
             if not match:
                 msg = _(
-                    "Invalid characters found in env_prefix {!r}, only "
-                    "alphanumeric characters and digits and underscore "
-                    "(this not as the first character) are allowed.").format(env_prefix)
+                    'Invalid characters found in env_prefix {!r}, only '
+                    'alphanumeric characters and digits and underscore '
+                    '(this not as the first character) are allowed.').format(env_prefix)
                 raise FbAppError(msg)
             self._env_prefix = ep
         else:
@@ -163,7 +158,7 @@ class BaseApplication(HandlingObject):
             self._env_prefix = self.re_anum.sub('_', ep)
 
         if not self.description:
-            self._description = _("Unknown and undescriped application.")
+            self._description = _('Unknown and undescriped application.')
 
         if not hasattr(self, '_force_desc_msg'):
             self._force_desc_msg = self.default_force_desc_msg
@@ -188,7 +183,7 @@ class BaseApplication(HandlingObject):
         if v >= 0:
             self._exit_value = v
         else:
-            LOG.warning(_("Wrong exit_value {!r}, must be >= 0.").format(value))
+            LOG.warning(_('Wrong exit_value {!r}, must be >= 0.').format(value))
 
     # -----------------------------------------------------------
     @property
@@ -252,7 +247,7 @@ class BaseApplication(HandlingObject):
         return len(self.usage_term)
 
     # -------------------------------------------------------------------------
-    def exit(self, retval=-1, msg=None, trace=False):
+    def exit(self, retval=-1, msg=None, trace=False):                       # noqa A003
         """
         Exit the current application.
 
@@ -285,9 +280,9 @@ class BaseApplication(HandlingObject):
                     LOG.info(msg)
             if not has_handlers:
                 if hasattr(sys.stderr, 'buffer'):
-                    sys.stderr.buffer.write(str(msg) + "\n")
+                    sys.stderr.buffer.write(str(msg) + '\n')
                 else:
-                    sys.stderr.write(str(msg) + "\n")
+                    sys.stderr.write(str(msg) + '\n')
 
         if trace:
             if has_handlers:
@@ -425,7 +420,7 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def get_secret(self, prompt, item_name):
         """Get a secret as input from console."""
-        LOG.debug(_("Trying to get {} via console ...").format(item_name))
+        LOG.debug(_('Trying to get {} via console ...').format(item_name))
 
         # ------------------------
         def signal_handler(signum, frame):
@@ -440,18 +435,18 @@ class BaseApplication(HandlingObject):
             @type frame: None or a frame object
 
             """
-            signame = "{}".format(signum)
-            msg = _("Got a signal {}.").format(signum)
+            signame = '{}'.format(signum)
+            msg = _('Got a signal {}.').format(signum)
             if signum in SIGNAL_NAMES:
                 signame = SIGNAL_NAMES[signum]
-                msg = _("Got a signal {n!r} ({s}).").format(
+                msg = _('Got a signal {n!r} ({s}).').format(
                     n=signame, s=signum)
             LOG.debug(msg)
 
             if signum in (
                     signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
                     signal.SIGTERM, signal.SIGKILL, signal.SIGQUIT):
-                LOG.info(_("Exit on signal {n!r} ({s}).").format(
+                LOG.info(_('Exit on signal {n!r} ({s}).').format(
                     n=signame, s=signum))
                 self.exit(1)
 
@@ -459,13 +454,13 @@ class BaseApplication(HandlingObject):
         old_handlers = {}
 
         if self.verbose > 2:
-            LOG.debug(_("Tweaking signal handlers."))
+            LOG.debug(_('Tweaking signal handlers.'))
         for signum in (
                 signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
                 signal.SIGTERM, signal.SIGQUIT):
             if self.verbose > 3:
                 signame = SIGNAL_NAMES[signum]
-                LOG.debug(_("Setting signal handler for {n!r} ({s}).").format(
+                LOG.debug(_('Setting signal handler for {n!r} ({s}).').format(
                     n=signame, s=signum))
             old_handlers[signum] = signal.signal(signum, signal_handler)
 
@@ -476,14 +471,14 @@ class BaseApplication(HandlingObject):
 
             while True:
 
-                p = _("Enter ") + prompt + ': '
+                p = _('Enter ') + prompt + ': '
                 while True:
                     secret = getpass.getpass(prompt=p)
                     secret = secret.strip()
                     if secret != '':
                         break
 
-                p = _("Repeat enter ") + prompt + ': '
+                p = _('Repeat enter ') + prompt + ': '
                 while True:
                     secret_repeat = getpass.getpass(prompt=p)
                     secret_repeat = secret_repeat.strip()
@@ -493,16 +488,16 @@ class BaseApplication(HandlingObject):
                 if secret == secret_repeat:
                     break
 
-                LOG.error(_("{n} and repeated {n} did not match.").format(n=item_name))
+                LOG.error(_('{n} and repeated {n} did not match.').format(n=item_name))
 
         finally:
             if self.verbose > 2:
-                LOG.debug(_("Restoring original signal handlers."))
+                LOG.debug(_('Restoring original signal handlers.'))
             for signum in old_handlers.keys():
                 signal.signal(signum, old_handlers[signum])
 
         if self.force:
-            LOG.debug(_("Got {n!r}: {s!r}").format(n=item_name, s=secret))
+            LOG.debug(_('Got {n!r}: {s!r}').format(n=item_name, s=secret))
 
         return secret
 
@@ -552,7 +547,7 @@ class BaseApplication(HandlingObject):
         """
         if not self.initialized:
             self.handle_error(
-                _("The application is not completely initialized."), '', True)
+                _('The application is not completely initialized.'), '', True)
             self.exit(9)
 
         try:
@@ -563,7 +558,7 @@ class BaseApplication(HandlingObject):
 
         if not self.initialized:
             raise FbAppError(
-                _("Object {!r} seems not to be completely initialized.").format(
+                _('Object {!r} seems not to be completely initialized.').format(
                     self.__class__.__name__))
 
         try:
@@ -573,7 +568,7 @@ class BaseApplication(HandlingObject):
             self.exit_value = 99
 
         if self.verbose > 1:
-            LOG.info(_("Ending."))
+            LOG.info(_('Ending.'))
 
         try:
             self.post_run()
@@ -591,7 +586,7 @@ class BaseApplication(HandlingObject):
         This is a dummy method an could be overwritten by descendant classes.
         """
         if self.verbose > 1:
-            LOG.info(_("Executing {} ...").format('post_run()'))
+            LOG.info(_('Executing {} ...').format('post_run()'))
 
     # -------------------------------------------------------------------------
     def _init_arg_parser(self):
@@ -617,13 +612,13 @@ class BaseApplication(HandlingObject):
 
         if self.show_simulate_option:
             general_group.add_argument(
-                '-s', "--simulate", action="store_true", dest="simulate",
-                help=_("Simulation mode, nothing is really done.")
+                '-s', '--simulate', action='store_true', dest='simulate',
+                help=_('Simulation mode, nothing is really done.')
             )
 
         if self.show_force_option:
             general_group.add_argument(
-                '-f', "--force", action="store_true", dest="force",
+                '-f', '--force', action='store_true', dest='force',
                 help=self.force_desc_msg,
             )
 
@@ -631,54 +626,54 @@ class BaseApplication(HandlingObject):
             assume_group = general_group.add_mutually_exclusive_group()
 
             assume_group.add_argument(
-                '--yes', '--assume-yes', action="store_true", dest="assume_yes",
+                '--yes', '--assume-yes', action='store_true', dest='assume_yes',
                 help=_("Automatically answer '{}' for all questions.").format(
                     self.colored(_('Yes'), 'CYAN'))
             )
 
             assume_group.add_argument(
-                '--no', '--assume-no', action="store_true", dest="assume_no",
+                '--no', '--assume-no', action='store_true', dest='assume_no',
                 help=_("Automatically answer '{}' for all questions.").format(
                     self.colored(_('No'), 'CYAN'))
             )
 
         if self.show_console_timeout_option:
             general_group.add_argument(
-                '--console-timeout', metavar=_('SECONDS'), dest="console_timeout", type=int,
+                '--console-timeout', metavar=_('SECONDS'), dest='console_timeout', type=int,
                 action=TimeoutOptionAction, max_timeout=self.max_prompt_timeout,
-                help=_("The timeout in seconds for console input. Default: {}").format(
+                help=_('The timeout in seconds for console input. Default: {}').format(
                     self.default_prompt_timeout)
             )
 
         general_group.add_argument(
-            '--color', action="store", dest='color', const='yes',
+            '--color', action='store', dest='color', const='yes',
             default='auto', nargs='?', choices=['yes', 'no', 'auto'],
-            help=_("Use colored output for messages."),
+            help=_('Use colored output for messages.'),
         )
 
         verbose_group = general_group.add_mutually_exclusive_group()
 
         verbose_group.add_argument(
-            "-v", "--verbose", action="count", dest='verbose',
+            '-v', '--verbose', action='count', dest='verbose',
             help=_('Increase the verbosity level'),
         )
 
         verbose_group.add_argument(
-            "-q", "--quiet", action="store_true", dest='quiet',
+            '-q', '--quiet', action='store_true', dest='quiet',
             help=_('Silent execution, only warnings and errors are emitted.'),
         )
 
         general_group.add_argument(
-            "-h", "--help", action='help', dest='help',
+            '-h', '--help', action='help', dest='help',
             help=_('Show this help message and exit.')
         )
         general_group.add_argument(
-            "--usage", action='store_true', dest='usage',
-            help=_("Display brief usage message and exit.")
+            '--usage', action='store_true', dest='usage',
+            help=_('Display brief usage message and exit.')
         )
-        v_msg = _("Version of %(prog)s: {}").format(self.version)
+        v_msg = _('Version of %(prog)s: {}').format(self.version)
         general_group.add_argument(
-            "-V", '--version', action='version', version=v_msg,
+            '-V', '--version', action='version', version=v_msg,
             help=_("Show program's version number and exit.")
         )
 
@@ -809,13 +804,13 @@ class BaseApplication(HandlingObject):
         if prompt:
             prompt = str(prompt).strip()
         if not prompt:
-            prompt = _("Starting in:")
+            prompt = _('Starting in:')
         prompt = self.colored(prompt, 'YELLOW')
 
         try:
             if not self.force:
                 i = number
-                out = self.colored("%d" % (i), 'RED')
+                out = self.colored('%d' % (i), 'RED')
                 msg = '\n{p} {o}'.format(p=prompt, o=out)
                 sys.stdout.write(msg)
                 sys.stdout.flush()
@@ -824,23 +819,23 @@ class BaseApplication(HandlingObject):
                     sys.stdout.flush()
                     time.sleep(delay)
                     i -= 1
-                    out = self.colored("{}".format(i), 'RED')
+                    out = self.colored('{}'.format(i), 'RED')
                     sys.stdout.write(out)
                     sys.stdout.flush()
-                sys.stdout.write("\n")
+                sys.stdout.write('\n')
                 sys.stdout.flush()
         except KeyboardInterrupt:
-            sys.stderr.write("\n")
-            LOG.warning(_("Aborted by user interrupt."))
+            sys.stderr.write('\n')
+            LOG.warning(_('Aborted by user interrupt.'))
             sys.exit(99)
 
         go = self.colored('Go go go ...', 'GREEN')
-        sys.stdout.write("\n%s\n\n" % (go))
+        sys.stdout.write('\n%s\n\n' % (go))
 
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 
