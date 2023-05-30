@@ -12,11 +12,10 @@ It provides translation object, usable from all other modules in this package.
 from __future__ import absolute_import, print_function
 
 # Standard modules
-import logging
-import gettext
 import copy
+import gettext
+import logging
 import sys
-
 try:
     from pathlib import Path
 except ImportError:
@@ -36,7 +35,7 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
@@ -102,13 +101,13 @@ def format_list(lst, do_repr=False, style='standard', locale=DEFAULT_LOCALE):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
-    print(_("Module directory: {!r}").format(__module_dir__))
-    print(_("Base directory: {!r}").format(__base_dir__))
-    print(_("Locale directory: {!r}").format(LOCALE_DIR))
-    print(_("Locale domain: {!r}").format(DOMAIN))
-    print(_("Found .mo-file: {!r}").format(__mo_file__))
+    print(_('Module directory: {!r}').format(__module_dir__))
+    print(_('Base directory: {!r}').format(__base_dir__))
+    print(_('Locale directory: {!r}').format(LOCALE_DIR))
+    print(_('Locale domain: {!r}').format(DOMAIN))
+    print(_('Found .mo-file: {!r}').format(__mo_file__))
 
 # =============================================================================
 
