@@ -10,31 +10,26 @@
 from __future__ import absolute_import
 
 # Standard modules
-import sys
-import os
-import logging
 import datetime
+import logging
+import os
+import sys
 import traceback
-
+from abc import ABCMeta, abstractmethod
 try:
     import pathlib
 except ImportError:
     import pathlib2 as pathlib
 
-from abc import ABCMeta, abstractmethod
-
 # Third party modules
-
 from six import add_metaclass
 
 # Own modules
 from .common import pp, to_bytes
-
 from .errors import FbError
-
 from .xlate import XLATOR
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -61,8 +56,8 @@ class BasedirNotExistingError(FbBaseObjectError):
     def __str__(self):
         """Typecast into a string object."""
         msg = _(
-            "The base directory {!r} is not existing or not "
-            "a directory.").format(str(self.dir_name))
+            'The base directory {!r} is not existing or not '
+            'a directory.').format(str(self.dir_name))
         return msg
 
 
@@ -97,7 +92,7 @@ class FbGenericBaseObject(object):
     @abstractmethod
     def __repr__(self):
         """Typecast into a string for reproduction."""
-        out = "<%s()>" % (self.__class__.__name__)
+        out = '<%s()>' % (self.__class__.__name__)
         return out
 
     # -------------------------------------------------------------------------
@@ -166,8 +161,8 @@ class FbGenericBaseObject(object):
                 LOG.error(traceback.format_exc())
         else:
             curdate = datetime.datetime.now()
-            curdate_str = "[" + curdate.isoformat(' ') + "]: "
-            msg = curdate_str + msg + "\n"
+            curdate_str = '[' + curdate.isoformat(' ') + ']: '
+            msg = curdate_str + msg + '\n'
             if hasattr(sys.stderr, 'buffer'):
                 sys.stderr.buffer.write(to_bytes(msg))
             else:
@@ -206,8 +201,8 @@ class FbGenericBaseObject(object):
             LOG.info(msg)
         else:
             curdate = datetime.datetime.now()
-            curdate_str = "[" + curdate.isoformat(' ') + "]: "
-            msg = curdate_str + msg + "\n"
+            curdate_str = '[' + curdate.isoformat(' ') + ']: '
+            msg = curdate_str + msg + '\n'
             if hasattr(sys.stderr, 'buffer'):
                 sys.stderr.buffer.write(to_bytes(msg))
             else:
@@ -249,7 +244,7 @@ class FbBaseObject(FbGenericBaseObject):
         @type: int
         """
         if self._verbose < 0:
-            msg = _("Wrong verbose level {!r}, must be >= 0").format(verbose)
+            msg = _('Wrong verbose level {!r}, must be >= 0').format(verbose)
             raise ValueError(msg)
 
         self._initialized = False
@@ -305,7 +300,7 @@ class FbBaseObject(FbGenericBaseObject):
         if v >= 0:
             self._verbose = v
         else:
-            LOG.warning(_("Wrong verbose level {!r}, must be >= 0").format(value))
+            LOG.warning(_('Wrong verbose level {!r}, must be >= 0').format(value))
 
     # -----------------------------------------------------------
     @property
@@ -329,10 +324,10 @@ class FbBaseObject(FbGenericBaseObject):
         if str(base_dir_path).startswith('~'):
             base_dir_path = base_dir_path.expanduser()
         if not base_dir_path.exists():
-            msg = _("Base directory {!r} does not exists.").format(str(value))
+            msg = _('Base directory {!r} does not exists.').format(str(value))
             self.handle_error(msg, self.appname)
         elif not base_dir_path.is_dir():
-            msg = _("Path for base directory {!r} is not a directory.").format(str(value))
+            msg = _('Path for base directory {!r} is not a directory.').format(str(value))
             self.handle_error(msg, self.appname)
         else:
             self._base_dir = base_dir_path
@@ -340,16 +335,16 @@ class FbBaseObject(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __repr__(self):
         """Typecasting into a string for reproduction."""
-        out = "<%s(" % (self.__class__.__name__)
+        out = '<%s(' % (self.__class__.__name__)
 
         fields = []
-        fields.append("appname={!r}".format(self.appname))
-        fields.append("verbose={!r}".format(self.verbose))
-        fields.append("version={!r}".format(self.version))
-        fields.append("base_dir={!r}".format(self.base_dir))
-        fields.append("initialized={!r}".format(self.initialized))
+        fields.append('appname={!r}'.format(self.appname))
+        fields.append('verbose={!r}'.format(self.verbose))
+        fields.append('version={!r}'.format(self.version))
+        fields.append('base_dir={!r}'.format(self.base_dir))
+        fields.append('initialized={!r}'.format(self.initialized))
 
-        out += ", ".join(fields) + ")>"
+        out += ', '.join(fields) + ')>'
         return out
 
     # -------------------------------------------------------------------------
@@ -376,7 +371,7 @@ class FbBaseObject(FbGenericBaseObject):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

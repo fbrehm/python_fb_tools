@@ -10,24 +10,22 @@
 from __future__ import absolute_import
 
 # Standard modules
-import os
-import logging
-import pipes
-import signal
-import errno
-import sys
-import locale
-import datetime
 import copy
-import re
+import datetime
+import errno
 import getpass
-
+import locale
+import logging
+import os
+import pipes
+import re
+import signal
+import sys
 try:
     import pathlib
 except ImportError:
     import pathlib2 as pathlib
-
-from subprocess import Popen, PIPE
+from subprocess import PIPE, Popen
 if sys.version_info[0] >= 3:
     from subprocess import SubprocessError, TimeoutExpired
 else:
@@ -42,22 +40,19 @@ else:
         pass
 
 # Third party modules
+from fb_logging.colored import colorstr
+
 import six
 
 # Own modules
-from fb_logging.colored import colorstr
-
-from .common import pp, to_bool, caller_search_path, to_str, encode_or_bust
+from .common import caller_search_path, encode_or_bust, pp, to_bool, to_str
 from .common import indent, is_sequence
-
+from .errors import AbortAppError, TimeoutOnPromptError
+from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
+from .obj import FbBaseObject
 from .xlate import XLATOR
 
-from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
-from .errors import AbortAppError, TimeoutOnPromptError
-
-from .obj import FbBaseObject
-
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -75,7 +70,7 @@ class ProcessCommunicationTimeout(IoTimeoutError, SubprocessError):
     # -------------------------------------------------------------------------
     def __init__(self, timeout):
         """Initialise a ProcessCommunicationTimeout exception."""
-        msg = _("Timeout on communicating with process.")
+        msg = _('Timeout on communicating with process.')
         super(ProcessCommunicationTimeout, self).__init__(msg, timeout)
 
 
@@ -101,7 +96,7 @@ class CalledProcessError(SubprocessError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into string."""
-        return _("Command {c!r} returned non-zero exit status {rc}.").format(
+        return _('Command {c!r} returned non-zero exit status {rc}.').format(
             c=self.cmd, rc=self.returncode)
 
     # -------------------------------------------------------------------------
@@ -140,8 +135,8 @@ class TimeoutExpiredError(SubprocessError):
     def __str__(self):
         """Typecast into string."""
         msg = ngettext(
-            "Command {c!r} timed out after {s} second.",
-            "Command {c!r} timed out after {s} seconds.", self.timeout)
+            'Command {c!r} timed out after {s} second.',
+            'Command {c!r} timed out after {s} seconds.', self.timeout)
         return msg.format(c=self.cmd, s=self.timeout)
 
     # -------------------------------------------------------------------------
@@ -301,8 +296,8 @@ class HandlingObject(FbBaseObject):
         v = int(value)
         if v < 0 or v > self.max_prompt_timeout:
             msg = _(
-                "Wrong prompt timeout {v!r}, must be greater or equal to Null "
-                "and less or equal to {max}.").format(v=value, max=self.max_prompt_timeout)
+                'Wrong prompt timeout {v!r}, must be greater or equal to Null '
+                'and less or equal to {max}.').format(v=value, max=self.max_prompt_timeout)
             LOG.warning(msg)
         else:
             self._prompt_timeout = v
@@ -386,7 +381,7 @@ class HandlingObject(FbBaseObject):
         cmd = pathlib.Path(cmd)
 
         if self.verbose > 2:
-            LOG.debug(_("Searching for command {!r} ...").format(str(cmd)))
+            LOG.debug(_('Searching for command {!r} ...').format(str(cmd)))
 
         # Checking an absolute path
         if cmd.is_absolute():
@@ -394,7 +389,7 @@ class HandlingObject(FbBaseObject):
                 LOG.warning(_("Command {!r} doesn't exists.").format(str(cmd)))
                 return None
             if not os.access(str(cmd), os.X_OK):
-                msg = _("Command {!r} is not executable.").format(str(cmd))
+                msg = _('Command {!r} is not executable.').format(str(cmd))
                 LOG.warning(msg)
                 return None
             if resolve:
@@ -408,20 +403,20 @@ class HandlingObject(FbBaseObject):
         # Checking a relative path
         for d in caller_search_path(*additional_paths):
             if self.verbose > 3:
-                LOG.debug(_("Searching command in {!r} ...").format(str(d)))
+                LOG.debug(_('Searching command in {!r} ...').format(str(d)))
             p = d / cmd
             if p.exists():
                 if self.verbose > 2:
-                    LOG.debug("Found {!r} ...".format(str(p)))
+                    LOG.debug('Found {!r} ...'.format(str(p)))
                 if os.access(str(p), os.X_OK):
                     if resolve:
                         return p.resolve()
                     return p
                 else:
-                    LOG.debug(_("Command {!r} is not executable.").format(str(p)))
+                    LOG.debug(_('Command {!r} is not executable.').format(str(p)))
 
         # command not found, sorry
-        msg = _("Command {!r} not found.").format(str(cmd))
+        msg = _('Command {!r} not found.').format(str(cmd))
         if quiet:
             if self.verbose > 2:
                 LOG.debug(msg)
@@ -460,9 +455,9 @@ class HandlingObject(FbBaseObject):
 
         This method was taken from subprocess.py of the standard library of Python 3.5.
         """
-        input = None
+        inp = None
         if 'input' in kwargs:
-            input = kwargs['input']
+            inp = kwargs['input']
             del kwargs['input']
 
         timeout = None
@@ -482,46 +477,46 @@ class HandlingObject(FbBaseObject):
 
         if self.verbose >= 2:
             myargs = {
-                'input': input,
+                'input': inp,
                 'timeout': timeout,
                 'check': check,
                 'may_simulate': may_simulate,
                 'popenargs': popenargs,
                 'kwargs': kwargs,
             }
-            LOG.debug("Args of run():\n{}".format(pp(myargs)))
+            LOG.debug('Args of run():\n{}'.format(pp(myargs)))
 
-        if input is not None:
+        if inp is not None:
             if 'stdin' in kwargs:
                 raise ValueError(_('STDIN and input arguments may not both be used.'))
             kwargs['stdin'] = PIPE
 
-        LOG.debug(_("Executing command args:") + '\n' + pp(popenargs))
+        LOG.debug(_('Executing command args:') + '\n' + pp(popenargs))
         cmd_args = []
         for arg in popenargs[0]:
-            LOG.debug(_("Performing argument {!r}.").format(arg))
+            LOG.debug(_('Performing argument {!r}.').format(arg))
             cmd_args.append(pipes.quote(arg))
         cmd_str = ' '.join(cmd_args)
 
-        cmd_str = ' '.join(map(lambda x: pipes.quote(x), popenargs[0]))
-        LOG.debug(_("Executing: {}").format(cmd_str))
+        cmd_str = ' '.join((pipes.quote(x) for x in popenargs[0]))
+        LOG.debug(_('Executing: {}').format(cmd_str))
 
         if may_simulate and self.simulate:
-            LOG.info(_("Simulation mode, not executing: {}").format(cmd_str))
-            return CompletedProcess(popenargs, 0, "Simulated execution.\n", '')
+            LOG.info(_('Simulation mode, not executing: {}').format(cmd_str))
+            return CompletedProcess(popenargs, 0, 'Simulated execution.\n', '')
 
         process = None
         try:
             start_dt = datetime.datetime.now()
             process = Popen(*popenargs, **kwargs)
             if self.verbose > 0:
-                LOG.debug(_("PID of process: {}").format(process.pid))
+                LOG.debug(_('PID of process: {}').format(process.pid))
             try:
                 stdout, stderr = self._communicate(
-                    process, popenargs, input=input, timeout=timeout)
+                    process, popenargs, input=inp, timeout=timeout)
             except Exception as e:
                 if self.verbose > 2:
-                    LOG.debug(_("{c} happened, killing process: {e}").format(
+                    LOG.debug(_('{c} happened, killing process: {e}').format(
                         c=e.__class__.__name__, e=e))
                 process.poll()
                 if process.returncode is None:
@@ -554,12 +549,12 @@ class HandlingObject(FbBaseObject):
                 popenargs, retcode, stdout, stderr, start_dt=start_dt, end_dt=end_dt)
 
     # -------------------------------------------------------------------------
-    def _communicate(self, process, popenargs, input=None, timeout=None):
+    def _communicate(self, process, popenargs, inp=None, timeout=None):
 
         try:
 
             if timeout is None:
-                return process.communicate(input)
+                return process.communicate(inp)
 
             def communicate_alarm_caller(signum, sigframe):
                 err = InterruptError(signum)
@@ -570,7 +565,7 @@ class HandlingObject(FbBaseObject):
             signal.signal(signal.SIGALRM, communicate_alarm_caller)
             signal.alarm(timeout)
 
-            stdout, stderr = process.communicate(input)
+            stdout, stderr = process.communicate(inp)
 
             signal.alarm(0)
 
@@ -623,7 +618,7 @@ class HandlingObject(FbBaseObject):
 
         if signum in self.signals_dont_interrupt:
             self.handle_info(str(err))
-            LOG.info(_("Nothing to do on signal."))
+            LOG.info(_('Nothing to do on signal.'))
             return
 
         self._interrupted = True
@@ -683,7 +678,7 @@ class HandlingObject(FbBaseObject):
                 errno.EACCES, _('Read permission denied.'), ifile)
 
         if self.verbose > needed_verbose_level:
-            LOG.debug(_("Reading file content of {!r} ...").format(ifile))
+            LOG.debug(_('Reading file content of {!r} ...').format(ifile))
 
         signal.signal(signal.SIGALRM, read_alarm_caller)
         signal.alarm(timeout)
@@ -771,22 +766,22 @@ class HandlingObject(FbBaseObject):
         if os.path.exists(ofile):
             if not os.access(ofile, os.W_OK):
                 if self.simulate:
-                    LOG.error(_("Write permission to {!r} denied.").format(ofile))
+                    LOG.error(_('Write permission to {!r} denied.').format(ofile))
                 else:
                     raise IOError(errno.EACCES, _('Write permission denied.'), ofile)
         else:
             parent_dir = os.path.dirname(ofile)
             if not os.access(parent_dir, os.W_OK):
                 if self.simulate:
-                    LOG.error(_("Write permission to {!r} denied.").format(parent_dir))
+                    LOG.error(_('Write permission to {!r} denied.').format(parent_dir))
                 else:
                     raise IOError(errno.EACCES, _('Write permission denied.'), parent_dir)
 
         if self.verbose > verb_level1:
             if self.verbose > verb_level2:
-                LOG.debug(_("Write {what!r} into {to!r}.").format(what=content, to=ofile))
+                LOG.debug(_('Write {what!r} into {to!r}.').format(what=content, to=ofile))
             else:
-                LOG.debug(_("Writing {!r} ...").format(ofile))
+                LOG.debug(_('Writing {!r} ...').format(ofile))
 
         if isinstance(content, six.binary_type):
             content_bin = content
@@ -798,7 +793,7 @@ class HandlingObject(FbBaseObject):
 
         if self.simulate:
             if self.verbose > verb_level2:
-                LOG.debug(_("Simulating write into {!r}.").format(ofile))
+                LOG.debug(_('Simulating write into {!r}.').format(ofile))
             return
 
         signal.signal(signal.SIGALRM, write_alarm_caller)
@@ -806,11 +801,11 @@ class HandlingObject(FbBaseObject):
 
         # Open filename for writing unbuffered
         if self.verbose > verb_level3:
-            LOG.debug(_("Opening {!r} for write unbuffered ...").format(ofile))
+            LOG.debug(_('Opening {!r} for write unbuffered ...').format(ofile))
         with open(ofile, 'wb', 0) as fh:
             fh.write(content_bin)
             if self.verbose > verb_level3:
-                LOG.debug(_("Closing {!r} ...").format(ofile))
+                LOG.debug(_('Closing {!r} ...').format(ofile))
 
         signal.alarm(0)
 
@@ -858,7 +853,7 @@ class HandlingObject(FbBaseObject):
                 if repeat:
                     second_passwd = self._get_password(second_prompt, may_empty=False)
                     if ret_passwd != second_passwd:
-                        msg = _("The entered passwords does not match.")
+                        msg = _('The entered passwords does not match.')
                         LOG.error(msg)
                         continue
             break
@@ -871,7 +866,7 @@ class HandlingObject(FbBaseObject):
         def passwd_alarm_caller(signum, sigframe):
             raise TimeoutOnPromptError(self.prompt_timeout)
 
-        msg_intr = _("Interrupted on demand.")
+        msg_intr = _('Interrupted on demand.')
         ret_passwd = ''
 
         try:
@@ -896,12 +891,12 @@ class HandlingObject(FbBaseObject):
                     break
 
         except (TimeoutOnPromptError, AbortAppError) as e:
-            msg = _("Got a {}:").format(e.__class__.__name__) + ' ' + str(e)
+            msg = _('Got a {}:').format(e.__class__.__name__) + ' ' + str(e)
             LOG.error(msg)
             self.exit(10)
 
         except KeyboardInterrupt:
-            msg = _("Got a {}:").format('KeyboardInterrupt') + ' ' + msg_intr
+            msg = _('Got a {}:').format('KeyboardInterrupt') + ' ' + msg_intr
             LOG.error(msg)
             self.exit(10)
 
@@ -939,14 +934,14 @@ class HandlingObject(FbBaseObject):
                 answer = _('No')
                 if ret:
                     answer = _('Yes')
-                answer = " " + _("Automatic answer: '{}'.").format(self.colored(answer, 'CYAN'))
+                answer = ' ' + _("Automatic answer: '{}'.").format(self.colored(answer, 'CYAN'))
                 print(prompt + answer)
             return ret
 
         def prompt_alarm_caller(signum, sigframe):
             raise TimeoutOnPromptError(self.prompt_timeout)
 
-        msg_intr = _("Interrupted on demand.")
+        msg_intr = _('Interrupted on demand.')
         try:
             signal.signal(signal.SIGALRM, prompt_alarm_caller)
             signal.alarm(self.prompt_timeout)
@@ -980,12 +975,12 @@ class HandlingObject(FbBaseObject):
 
         except (TimeoutOnPromptError, AbortAppError) as e:
             print()
-            msg = _("Got a {}:").format(e.__class__.__name__) + ' ' + str(e)
+            msg = _('Got a {}:').format(e.__class__.__name__) + ' ' + str(e)
             LOG.error(msg)
             self.exit(10)
 
         except KeyboardInterrupt:
-            msg = _("Got a {}:").format('KeyboardInterrupt') + ' ' + msg_intr
+            msg = _('Got a {}:').format('KeyboardInterrupt') + ' ' + msg_intr
             print()
             LOG.error(msg)
             self.exit(10)
@@ -1028,13 +1023,13 @@ class CompletedProcess(object):
         self._end_dt = None
         if start_dt is not None:
             if not isinstance(start_dt, datetime.datetime):
-                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                msg = _('Parameter {t!r} must be a {e}, {v!r} was given.').format(
                     t='start_dt', e='datetime.datetime', v=start_dt)
                 raise TypeError(msg)
             self._start_dt = start_dt
         if end_dt is not None:
             if not isinstance(end_dt, datetime.datetime):
-                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                msg = _('Parameter {t!r} must be a {e}, {v!r} was given.').format(
                     t='end_dt', e='datetime.datetime', v=end_dt)
                 raise TypeError(msg)
             self._end_dt = end_dt
@@ -1092,7 +1087,7 @@ class CompletedProcess(object):
             args.append('stdout={!r}'.format(self.stdout))
         if self.stderr is not None:
             args.append('stderr={!r}'.format(self.stderr))
-        return "{}({})".format(type(self).__name__, ', '.join(args))
+        return '{}({})'.format(type(self).__name__, ', '.join(args))
 
     # -------------------------------------------------------------------------
     def __str__(self):
@@ -1127,7 +1122,7 @@ class CompletedProcess(object):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 
