@@ -3,7 +3,7 @@
 '''
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2021 Frank Brehm, Digitas Pixelpark GmbH Berlin
+@copyright: © 2023 Frank Brehm, Digitas Pixelpark GmbH Berlin
 @license: LGPL3
 @summary: test script (and module) for unit tests on mailaddress class and objects
 '''
