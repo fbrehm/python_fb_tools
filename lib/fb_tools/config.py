@@ -5,14 +5,14 @@
 
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2021 by Frank Brehm, Berlin
+@copyright: © 2023 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
 # Standard module
-import logging
 import codecs
-
+import logging
+from configparser import Error as ConfigParseError
 try:
     import pathlib
 except ImportError:
@@ -20,20 +20,15 @@ except ImportError:
 
 # Third party modules
 import six
-
 from six import StringIO
 from six.moves import configparser
 
-from configparser import Error as ConfigParseError
-
 # Own modules
 from .errors import FbError
-
 from .obj import FbBaseObject
-
 from .xlate import XLATOR
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
@@ -99,8 +94,8 @@ class BaseConfiguration(FbBaseObject):
     def encoding(self, value):
         if not isinstance(value, str):
             msg = _(
-                "Encoding {v!r} must be a {s!r} object, "
-                "but is a {c!r} object instead.").format(
+                'Encoding {v!r} must be a {s!r} object, '
+                'but is a {c!r} object instead.').format(
                 v=value, s='str', c=value.__class__.__name__)
             raise TypeError(msg)
 
@@ -116,7 +111,7 @@ class BaseConfiguration(FbBaseObject):
     @config_dir.setter
     def config_dir(self, value):
         if value is None:
-            raise TypeError(_("A configuration directory may not be None."))
+            raise TypeError(_('A configuration directory may not be None.'))
         cdir = pathlib.Path(value)
         if cdir.exists():
             self._config_dir = cdir.resolve()
@@ -132,12 +127,12 @@ class BaseConfiguration(FbBaseObject):
     @config_file.setter
     def config_file(self, value):
         if value is None:
-            raise TypeError(_("A configuration file may not be None."))
+            raise TypeError(_('A configuration file may not be None.'))
 
         cfile = pathlib.Path(value)
         if cfile.exists():
             if not cfile.is_file():
-                msg = _("Configuration file {!r} exists, but is not a regular file.").format(
+                msg = _('Configuration file {!r} exists, but is not a regular file.').format(
                     str(cfile))
                 raise ConfigError(msg)
             self._config_file = cfile.resolve()
@@ -145,7 +140,7 @@ class BaseConfiguration(FbBaseObject):
         cfile = self.config_dir.joinpath(cfile)
         if cfile.exists():
             if not cfile.is_file():
-                msg = _("Configuration file {!r} exists, but is not a regular file.").format(
+                msg = _('Configuration file {!r} exists, but is not a regular file.').format(
                     str(cfile))
                 raise ConfigError(msg)
             self._config_file = cfile.resolve()
@@ -175,11 +170,11 @@ class BaseConfiguration(FbBaseObject):
     def read(self, error_if_not_exists=False):
         """Read the configuration file."""
         if self.verbose > 2:
-            LOG.debug(_("Searching for {!r} ...").format(self.config_file))
+            LOG.debug(_('Searching for {!r} ...').format(self.config_file))
         if not self.config_file.exists():
-            msg = _("Configuration file {!r} not found.").format(str(self.config_file))
+            msg = _('Configuration file {!r} not found.').format(str(self.config_file))
             if error_if_not_exists:
-                self.handle_error(msg, _("Configuration file error"))
+                self.handle_error(msg, _('Configuration file error'))
             else:
                 LOG.debug(msg)
             return
@@ -190,20 +185,20 @@ class BaseConfiguration(FbBaseObject):
             open_opts['errors'] = 'surrogateescape'
 
         if self.verbose > 1:
-            LOG.debug(_("Reading {!r} ...").format(self.config_file))
+            LOG.debug(_('Reading {!r} ...').format(self.config_file))
 
         config = configparser.ConfigParser()
         try:
             with open(str(self.config_file), 'r', **open_opts) as fh:
-                stream = StringIO("[default]\n" + fh.read())
+                stream = StringIO('[default]\n' + fh.read())
                 if six.PY2:
                     config.readfp(stream)
                 else:
                     config.read_file(stream)
         except ConfigParseError as e:
-            msg = _("Wrong configuration in {!r} found").format(str(self.config_file))
+            msg = _('Wrong configuration in {!r} found').format(str(self.config_file))
             msg += ': ' + str(e)
-            self.handle_error(msg, _("Configuration parse error"))
+            self.handle_error(msg, _('Configuration parse error'))
             return
 
         self.eval_config(config)
@@ -226,7 +221,7 @@ class BaseConfiguration(FbBaseObject):
         May be overridden in descendant classes.
         """
         if self.verbose > 1:
-            LOG.debug(_("Checking config section {!r} ...").format(section_name))
+            LOG.debug(_('Checking config section {!r} ...').format(section_name))
 
         for (key, value) in config.items(section_name):
             if key.lower() == 'verbose':
@@ -245,7 +240,7 @@ class BaseConfiguration(FbBaseObject):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

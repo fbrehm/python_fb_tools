@@ -40,7 +40,7 @@ from fb_tools.ddns.update_app import UpdateDdnsApplication
 log = logging.getLogger(__name__)
 
 __author__ = 'Frank Brehm <frank@brehm-online.com>'
-__copyright__ = '(C) 2019 by Frank Brehm, Berlin'
+__copyright__ = '(C) 2023 by Frank Brehm, Berlin'
 
 appname = os.path.basename(sys.argv[0])
 

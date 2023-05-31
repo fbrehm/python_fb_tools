@@ -5,33 +5,30 @@
 
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2022 by Frank Brehm, Berlin
+@copyright: © 2023 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
 # Standard module
-import logging
-import pathlib
 import codecs
-import re
-import sys
 import copy
-import os
 import json
+import logging
+import os
+import pathlib
+import re
 import stat
-
+import sys
+# from configparser import Error as ConfigParseError
+from configparser import ExtendedInterpolation
 from pathlib import Path
 
 # Third party modules
-import six
-
-from six import StringIO
-from six.moves import configparser
-
 import chardet
 
-# from configparser import Error as ConfigParseError
-from configparser import ExtendedInterpolation
+import six
+from six import StringIO
+from six.moves import configparser
 
 HAS_YAML = False
 try:
@@ -57,19 +54,14 @@ except ImportError:
 
 
 # Own modules
+from .common import is_sequence, pp, to_bool, to_str
 from .config import ConfigError
-
-from .common import pp, to_bool, to_str, is_sequence
-
-from .obj import FbBaseObject
-
 from .handling_obj import HandlingObject
-
 from .merge import merge_structure
-
+from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.0.3'
+__version__ = '2.0.4'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -97,7 +89,7 @@ class MultiCfgLoaderNotFoundError(MultiConfigError, RuntimeError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typescast into a string."""
-        msg = _("Config loader method {!r} was not found.").format(self.method)
+        msg = _('Config loader method {!r} was not found.').format(self.method)
         return msg
 
 
@@ -208,11 +200,11 @@ class BaseMultiConfig(FbBaseObject):
 
         if self.verbose > 1:
             if not HAS_YAML:
-                LOG.debug(_("{} configuration is not supported.").format('Yaml'))
+                LOG.debug(_('{} configuration is not supported.').format('Yaml'))
             if not HAS_HJSON:
-                LOG.debug(_("{} configuration is not supported.").format('HJson'))
+                LOG.debug(_('{} configuration is not supported.').format('HJson'))
             if not HAS_TOML:
-                LOG.debug(_("{} configuration is not supported.").format('Toml'))
+                LOG.debug(_('{} configuration is not supported.').format('Toml'))
 
         if encoding:
             self.encoding = encoding
@@ -243,8 +235,8 @@ class BaseMultiConfig(FbBaseObject):
     def encoding(self, value):
         if not isinstance(value, str):
             msg = _(
-                "Encoding {v!r} must be a {s!r} object, "
-                "but is a {c!r} object instead.").format(
+                'Encoding {v!r} must be a {s!r} object, '
+                'but is a {c!r} object instead.').format(
                 v=value, s='str', c=value.__class__.__name__)
             raise TypeError(msg)
 
@@ -265,21 +257,21 @@ class BaseMultiConfig(FbBaseObject):
 
         cfg_file = Path(value)
         if not cfg_file.exists():
-            msg = _("Additional config file {!r} does not exists.")
+            msg = _('Additional config file {!r} does not exists.')
             if self.raise_on_error:
                 raise MultiConfigError(msg.format(str(cfg_file)))
             LOG.error(msg.format(str(cfg_file)))
             return
 
         if not cfg_file.is_file():
-            msg = _("Configuration file {!r} exists, but is not a regular file.")
+            msg = _('Configuration file {!r} exists, but is not a regular file.')
             if self.raise_on_error:
                 raise MultiConfigError(msg.format(str(cfg_file)))
             LOG.error(msg.format(str(cfg_file)))
             return
 
         if not os.access(cfg_file, os.R_OK):
-            msg = _("Configuration file {!r} is not readable.")
+            msg = _('Configuration file {!r} is not readable.')
             if self.raise_on_error:
                 raise MultiConfigError(msg.format(str(cfg_file)))
             LOG.error(msg.format(str(cfg_file)))
@@ -300,10 +292,10 @@ class BaseMultiConfig(FbBaseObject):
     @config_dir.setter
     def config_dir(self, value):
         if value is None:
-            raise TypeError(_("A configuration directory may not be None."))
+            raise TypeError(_('A configuration directory may not be None.'))
         cdir = pathlib.Path(value)
         if cdir.is_absolute():
-            msg = _("Configuration directory {!r} may not be absolute.").format(str(cdir))
+            msg = _('Configuration directory {!r} may not be absolute.').format(str(cdir))
             raise MultiConfigError(msg)
         self._config_dir = cdir
 
@@ -383,7 +375,7 @@ class BaseMultiConfig(FbBaseObject):
         if is_sequence(value):
             self._ini_delimiters = copy.copy(value)
             return
-        msg = _("Cannot use {!r} as delimiters for ini-files.").format(value)
+        msg = _('Cannot use {!r} as delimiters for ini-files.').format(value)
         raise TypeError(msg)
 
     # -------------------------------------------------------------------------
@@ -405,7 +397,7 @@ class BaseMultiConfig(FbBaseObject):
         if is_sequence(value):
             self._ini_comment_prefixes = copy.copy(value)
             return
-        msg = _("Cannot use {!r} as comment prefixes for ini-files.").format(value)
+        msg = _('Cannot use {!r} as comment prefixes for ini-files.').format(value)
         raise TypeError(msg)
 
     # -------------------------------------------------------------------------
@@ -427,7 +419,7 @@ class BaseMultiConfig(FbBaseObject):
         if is_sequence(value):
             self._ini_inline_comment_prefixes = copy.copy(value)
             return
-        msg = _("Cannot use {!r} as inline comment prefixes for ini-files.").format(value)
+        msg = _('Cannot use {!r} as inline comment prefixes for ini-files.').format(value)
         raise TypeError(msg)
 
     # -------------------------------------------------------------------------
@@ -613,29 +605,29 @@ class BaseMultiConfig(FbBaseObject):
             if is_sequence(additional_stems):
                 for stem in additional_stems:
                     if not isinstance(stem, (six.string_types, six.binary_type, pathlib.Path)):
-                        msg = _("Stem {!r} is not a String type.").format(stem)
+                        msg = _('Stem {!r} is not a String type.').format(stem)
                         raise TypeError(msg)
                     s = str(to_str(stem))
                     if not self.valid_stem(s):
-                        msg = _("File name stem {!r} is invalid.").format(s)
+                        msg = _('File name stem {!r} is invalid.').format(s)
                         raise ValueError(msg)
                     if s not in self.stems:
                         self.stems.append(s)
             else:
                 if not isinstance(additional_stems, (
                         six.string_types, six.binary_type, pathlib.Path)):
-                    msg = _("Stem {!r} is not a String type.").format(additional_stems)
+                    msg = _('Stem {!r} is not a String type.').format(additional_stems)
                     raise TypeError(msg)
                 s = str(to_str(additional_stems))
                 if not self.valid_stem(s):
-                    msg = _("File name stem {!r} is invalid.").format(s)
+                    msg = _('File name stem {!r} is invalid.').format(s)
                     raise ValueError(msg)
                 if s not in self.stems:
                     self.stems.append(s)
 
         if not self.stems or append_appname_to_stems:
             if not self.valid_stem(self.appname):
-                msg = _("File name stem {!r} is invalid.").format(self.appname)
+                msg = _('File name stem {!r} is invalid.').format(self.appname)
                 raise ValueError(msg)
             if self.appname not in self.stems:
                 self.stems.append(self.appname)
@@ -643,7 +635,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def _init_types(self):
         """Initialize configuration types and their assigned file extensions."""
-        invalid_msg = _("Invalid configuration type {t!r} - not found in {w!r}.")
+        invalid_msg = _('Invalid configuration type {t!r} - not found in {w!r}.')
 
         for cfg_type in self.available_cfg_types:
 
@@ -683,14 +675,14 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def collect_config_files(self):
         """Collect all appropriate config file from different directories."""
-        LOG.debug(_("Collecting all configuration files."))
+        LOG.debug(_('Collecting all configuration files.'))
 
         self.config_files = []
         self.config_file_pattern = {}
 
         for cfg_dir in self.config_dirs:
             if self.verbose > 1:
-                msg = _("Discovering config directory {!r} ...").format(str(cfg_dir))
+                msg = _('Discovering config directory {!r} ...').format(str(cfg_dir))
                 LOG.debug(msg)
             self._eval_config_dir(cfg_dir)
 
@@ -699,7 +691,7 @@ class BaseMultiConfig(FbBaseObject):
         self.check_privacy()
 
         if self.verbose > 2:
-            LOG.debug(_("Collected config files:") + '\n' + pp(self.config_files))
+            LOG.debug(_('Collected config files:') + '\n' + pp(self.config_files))
 
         self._cfgfiles_collected = True
 
@@ -712,7 +704,7 @@ class BaseMultiConfig(FbBaseObject):
         if not self.ensure_privacy:
             return
 
-        LOG.debug(_("Checking permissions of config files ..."))
+        LOG.debug(_('Checking permissions of config files ...'))
 
         def is_relative_to_etc(cfile):
             try:
@@ -728,14 +720,14 @@ class BaseMultiConfig(FbBaseObject):
                 continue
 
             if self.verbose > 1:
-                LOG.debug(_("Checking permissions of {!r} ...").format(str(cfg_file)))
+                LOG.debug(_('Checking permissions of {!r} ...').format(str(cfg_file)))
 
             mode = cfg_file.stat().st_mode
             if self.verbose > 2:
-                msg = _("Found file permissions of {fn!r}: {mode:04o}")
+                msg = _('Found file permissions of {fn!r}: {mode:04o}')
                 LOG.debug(msg.format(fn=str(cfg_file), mode=mode))
             if (mode & stat.S_IRGRP) or (mode & stat.S_IROTH):
-                msg = _("File {fn!r} is readable by group or by others, found mode {mode:04o}.")
+                msg = _('File {fn!r} is readable by group or by others, found mode {mode:04o}.')
                 if self.raise_on_error:
                     raise MultiConfigError(msg.format(fn=str(cfg_file), mode=mode))
                 LOG.error(msg.format(fn=str(cfg_file), mode=mode))
@@ -747,7 +739,7 @@ class BaseMultiConfig(FbBaseObject):
             return
 
         if self.verbose > 1:
-            msg = _("Trying to detect file type of additional config file {!r}.")
+            msg = _('Trying to detect file type of additional config file {!r}.')
             LOG.debug(msg.format(str(cfg_file)))
 
         performed = False
@@ -756,13 +748,13 @@ class BaseMultiConfig(FbBaseObject):
 
                 pat = r'\.' + ext_pattern + r'$'
                 if self.verbose > 3:
-                    msg = _("Checking file {fn!r} for pattern {pat!r}.")
+                    msg = _('Checking file {fn!r} for pattern {pat!r}.')
                     LOG.debug(msg.format(fn=cfg_file.name, pat=pat))
 
                 if re.search(pat, cfg_file.name, re.IGNORECASE):
                     method = self.ext_loader[ext_pattern]
                     if self.verbose > 1:
-                        msg = _("Found config file {fi!r}, loader method {m!r}.")
+                        msg = _('Found config file {fi!r}, loader method {m!r}.')
                         LOG.debug(msg.format(fi=str(cfg_file), m=method))
                     if self.additional_config_file:
                         ocfg = self.additional_config_file
@@ -777,8 +769,8 @@ class BaseMultiConfig(FbBaseObject):
 
             if not performed:
                 msg = _(
-                    "Did not found file type of additional config file {fn!r}. "
-                    "Available config types are: {list}.").format(
+                    'Did not found file type of additional config file {fn!r}. '
+                    'Available config types are: {list}.').format(
                     fn=str(cfg_file), list=format_list(self.available_cfg_types))
                 if self.raise_on_error:
                     raise MultiConfigError(msg)
@@ -795,7 +787,7 @@ class BaseMultiConfig(FbBaseObject):
         for type_name in self.available_cfg_types:
 
             if type_name not in self.ext_patterns:
-                msg = _("Something strange is happend, file type {!r} not found.")
+                msg = _('Something strange is happend, file type {!r} not found.')
                 LOG.error(msg.format(type_name))
                 continue
 
@@ -805,12 +797,12 @@ class BaseMultiConfig(FbBaseObject):
                     continue
 
                 if self.verbose > 3:
-                    msg = _("Checking, whether {!r} is a possible config file.").format(
+                    msg = _('Checking, whether {!r} is a possible config file.').format(
                         str(found_file))
                     LOG.debug(msg)
                 if not found_file.is_file():
                     if self.verbose > 2:
-                        msg = _("Path {!r} is not a regular file.").format(str(found_file))
+                        msg = _('Path {!r} is not a regular file.').format(str(found_file))
                         LOG.debug(msg)
                     performed_files.append(found_file)
                     continue
@@ -821,13 +813,13 @@ class BaseMultiConfig(FbBaseObject):
 
                         pat = r'^' + re.escape(stem) + r'\.' + ext_pattern + r'$'
                         if self.verbose > 3:
-                            LOG.debug(_("Checking file {fn!r} for pattern {pat!r}.").format(
+                            LOG.debug(_('Checking file {fn!r} for pattern {pat!r}.').format(
                                 fn=found_file.name, pat=pat))
 
                         if re.search(pat, found_file.name, re.IGNORECASE):
                             method = self.ext_loader[ext_pattern]
                             if self.verbose > 1:
-                                msg = _("Found config file {fi!r}, loader method {m!r}.").format(
+                                msg = _('Found config file {fi!r}, loader method {m!r}.').format(
                                     fi=str(found_file), m=method)
                                 LOG.debug(msg)
                             if found_file in self.config_files:
@@ -846,11 +838,11 @@ class BaseMultiConfig(FbBaseObject):
         for cfg_file in self.config_files:
 
             if self.verbose:
-                LOG.info(_("Reading configuration file {!r} ...").format(str(cfg_file)))
+                LOG.info(_('Reading configuration file {!r} ...').format(str(cfg_file)))
 
             method = self.config_file_methods[cfg_file]
             if self.verbose > 1:
-                LOG.debug(_("Using loading method {!r}.").format(method))
+                LOG.debug(_('Using loading method {!r}.').format(method))
 
             meth = getattr(self, method, None)
             if not meth:
@@ -858,7 +850,7 @@ class BaseMultiConfig(FbBaseObject):
 
             cfg = meth(cfg_file)
             if self.verbose > 3:
-                msg = _("Read config from {fn!r}:").format(fn=str(cfg_file))
+                msg = _('Read config from {fn!r}:').format(fn=str(cfg_file))
                 msg += '\n' + pp(cfg)
                 LOG.debug(msg)
             if cfg and cfg.keys():
@@ -877,13 +869,13 @@ class BaseMultiConfig(FbBaseObject):
         if not force and not self.use_chardet:
             if self.verbose > 2:
                 LOG.debug(_(
-                    "Character set detection by module {mod!r} for file {fn!r} should not be "
-                    "used, using character set {enc!r}.").format(
+                    'Character set detection by module {mod!r} for file {fn!r} should not be '
+                    'used, using character set {enc!r}.').format(
                     mod='chardet', fn=str(cfg_file), enc=self.encoding))
             return self.encoding
 
         if self.verbose > 1:
-            LOG.debug(_("Trying to detect character set of file {fn!r} ...").format(
+            LOG.debug(_('Trying to detect character set of file {fn!r} ...').format(
                 fn=str(cfg_file)))
 
         encoding = self.encoding
@@ -895,8 +887,8 @@ class BaseMultiConfig(FbBaseObject):
             if confidence < self.chardet_min_level_confidence:
                 if chardet_result['encoding'] != self.encoding:
                     msg = _(
-                        "The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, "
-                        "using character set {cs_def!r} instead of {cs_found!r}.").format(
+                        'The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, '
+                        'using character set {cs_def!r} instead of {cs_found!r}.').format(
                         con=(chardet_result['confidence'] * 100),
                         lim=(self.chardet_min_level_confidence * 100),
                         cs_def=self.encoding, cs_found=chardet_result['encoding'])
@@ -904,14 +896,14 @@ class BaseMultiConfig(FbBaseObject):
                 return self.encoding
             encoding = chardet_result['encoding']
         except Exception as e:
-            msg = _("Got {what} on detecting cheracter set of {fn!r}: {e}").format(
+            msg = _('Got {what} on detecting cheracter set of {fn!r}: {e}').format(
                 what=e.__class__.__name__, fn=str(cfg_file), e=e)
             LOG.error(msg)
 
         if self.verbose > 2:
             msg = _(
-                "Found character set {cs!r} for file {fn!r} with a confidence of "
-                "{con:0.1f}%.").format(cs=encoding, fn=str(cfg_file), con=(confidence * 100))
+                'Found character set {cs!r} for file {fn!r} with a confidence of '
+                '{con:0.1f}%.').format(cs=encoding, fn=str(cfg_file), con=(confidence * 100))
             LOG.debug(msg)
 
         return encoding
@@ -919,7 +911,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def load_json(self, cfg_file):
         """Read and load the given file as a JSON file."""
-        LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='JSON', fn=str(cfg_file)))
+        LOG.debug(_('Reading {tp} file {fn!r} ...').format(tp='JSON', fn=str(cfg_file)))
 
         open_opts = {
             'encoding': UTF8_ENCODING,
@@ -930,14 +922,14 @@ class BaseMultiConfig(FbBaseObject):
             with cfg_file.open('r', **open_opts) as fh:
                 js = json.load(fh)
         except json.JSONDecodeError as e:
-            msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
+            msg = _('{what} parse error in {fn!r}, line {line}, column {col}: {msg}').format(
                 what='JSON', fn=str(cfg_file), line=e.lineno, col=e.colno, msg=e.msg)
             if self.raise_on_error:
                 raise MultiCfgParseError(msg)
             LOG.error(msg)
             return None
         except Exception as e:
-            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+            msg = _('Got {what} on reading and parsing {fn!r}: {e}').format(
                 what=e.__class__.__name__, fn=str(cfg_file), e=e)
             if self.raise_on_error:
                 raise MultiCfgParseError(msg)
@@ -949,7 +941,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def load_hjson(self, cfg_file):
         """Read and load the given file as an human readable JSON file."""
-        LOG.debug(_("Reading {tp} file {fn!r} ...").format(
+        LOG.debug(_('Reading {tp} file {fn!r} ...').format(
             tp='human readable JSON', fn=str(cfg_file)))
 
         encoding = self.detect_file_encoding(cfg_file)
@@ -964,14 +956,14 @@ class BaseMultiConfig(FbBaseObject):
             with cfg_file.open('r', **open_opts) as fh:
                 js = hjson.load(fh)
         except hjson.HjsonDecodeError as e:
-            msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
+            msg = _('{what} parse error in {fn!r}, line {line}, column {col}: {msg}').format(
                 what='HJSON', fn=str(cfg_file), line=e.lineno, col=e.colno, msg=e.msg)
             if self.raise_on_error:
                 raise MultiCfgParseError(msg)
             LOG.error(msg)
             return None
         except Exception as e:
-            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+            msg = _('Got {what} on reading and parsing {fn!r}: {e}').format(
                 what=e.__class__.__name__, fn=str(cfg_file), e=e)
             if self.raise_on_error:
                 raise MultiCfgParseError(msg)
@@ -983,7 +975,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def load_ini(self, cfg_file):
         """Read and load the given file as an INI file."""
-        LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='INI', fn=str(cfg_file)))
+        LOG.debug(_('Reading {tp} file {fn!r} ...').format(tp='INI', fn=str(cfg_file)))
 
         kargs = {
             'allow_no_value': self.ini_allow_no_value,
@@ -1000,7 +992,7 @@ class BaseMultiConfig(FbBaseObject):
             kargs['interpolation'] = ExtendedInterpolation
 
         if self.verbose > 1:
-            LOG.debug(_("Arguments on initializing {}:").format('ConfigParser') + "\n" + pp(kargs))
+            LOG.debug(_('Arguments on initializing {}:').format('ConfigParser') + '\n' + pp(kargs))
 
         parser = configparser.ConfigParser(**kargs)
 
@@ -1015,10 +1007,10 @@ class BaseMultiConfig(FbBaseObject):
 
         try:
             with cfg_file.open('r', **open_opts) as fh:
-                stream = StringIO("[/]\n" + fh.read())
+                stream = StringIO('[/]\n' + fh.read())
                 parser.read_file(stream)
         except Exception as e:
-            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+            msg = _('Got {what} on reading and parsing {fn!r}: {e}').format(
                 what=e.__class__.__name__, fn=str(cfg_file), e=e)
             if self.raise_on_error:
                 raise MultiCfgParseError(msg)
@@ -1040,21 +1032,21 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def load_toml(self, cfg_file):
         """Read and load the given file as a TOML file."""
-        LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='TOML', fn=str(cfg_file)))
+        LOG.debug(_('Reading {tp} file {fn!r} ...').format(tp='TOML', fn=str(cfg_file)))
 
         cfg = {}
 
         try:
             cfg = toml.load(cfg_file)
         except TomlDecodeError as e:
-            msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
+            msg = _('{what} parse error in {fn!r}, line {line}, column {col}: {msg}').format(
                 what='TOML', fn=str(cfg_file), line=e.lineno, col=e.colno, msg=e.msg)
             if self.raise_on_error:
                 raise MultiCfgParseError(msg)
             LOG.error(msg)
             return None
         except Exception as e:
-            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+            msg = _('Got {what} on reading and parsing {fn!r}: {e}').format(
                 what=e.__class__.__name__, fn=str(cfg_file), e=e)
             if self.raise_on_error:
                 raise MultiCfgParseError(msg)
@@ -1066,7 +1058,7 @@ class BaseMultiConfig(FbBaseObject):
     # -------------------------------------------------------------------------
     def load_yaml(self, cfg_file):
         """Read and load the given file as a YAML file."""
-        LOG.debug(_("Reading {tp} file {fn!r} ...").format(tp='YAML', fn=str(cfg_file)))
+        LOG.debug(_('Reading {tp} file {fn!r} ...').format(tp='YAML', fn=str(cfg_file)))
 
         open_opts = {
             'encoding': UTF8_ENCODING,
@@ -1080,18 +1072,18 @@ class BaseMultiConfig(FbBaseObject):
         except yaml.YAMLError as e:
             if hasattr(e, 'problem_mark'):
                 mark = e.problem_mark
-                msg = _("{what} parse error in {fn!r}, line {line}, column {col}: {msg}").format(
+                msg = _('{what} parse error in {fn!r}, line {line}, column {col}: {msg}').format(
                     what='YAML', fn=str(cfg_file),
                     line=(mark.line + 1), col=(mark.column + 1), msg=str(e))
             else:
-                msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+                msg = _('Got {what} on reading and parsing {fn!r}: {e}').format(
                     what=e.__class__.__name__, fn=str(cfg_file), e=e)
             if self.raise_on_error:
                 raise MultiCfgParseError(msg)
             LOG.error(msg)
             return None
         except Exception as e:
-            msg = _("Got {what} on reading and parsing {fn!r}: {e}").format(
+            msg = _('Got {what} on reading and parsing {fn!r}: {e}').format(
                 what=e.__class__.__name__, fn=str(cfg_file), e=e)
             if self.raise_on_error:
                 raise MultiCfgParseError(msg)
@@ -1101,10 +1093,10 @@ class BaseMultiConfig(FbBaseObject):
         return cfg
 
     # -------------------------------------------------------------------------
-    def eval(self):
+    def eval(self):                                                         # noqa: A003
         """Evaluate configuration and store it in object properties."""
         if not self.was_read:
-            msg = _("Evaluation of configuration could only be happen after reading it.")
+            msg = _('Evaluation of configuration could only be happen after reading it.')
             raise RuntimeError(msg)
 
         for section_name in self.cfg.keys():
@@ -1121,10 +1113,10 @@ class BaseMultiConfig(FbBaseObject):
         May be overridden in descendant classes.
         """
         if self.verbose > 1:
-            LOG.debug(_("Checking config section {!r} ...").format(section_name))
+            LOG.debug(_('Checking config section {!r} ...').format(section_name))
 
         max_timeout = HandlingObject.max_prompt_timeout
-        invalid_msg = _("Invalid value {val!r} in section {sec!r} for console timeout.")
+        invalid_msg = _('Invalid value {val!r} in section {sec!r} for console timeout.')
 
         config = self.cfg[section_name]
         for key in config.keys():
@@ -1152,8 +1144,8 @@ class BaseMultiConfig(FbBaseObject):
                     continue
                 if timeout <= 0 or timeout > max_timeout:
                     msg = invalid_msg.format(val=value, sec=section_name)
-                    msg += " " + _(
-                        "A timeout must be greater than zero and less or equal to {}.").format(
+                    msg += ' ' + _(
+                        'A timeout must be greater than zero and less or equal to {}.').format(
                         max_timeout)
                     LOG.error(msg)
                     continue
@@ -1175,7 +1167,7 @@ class BaseMultiConfig(FbBaseObject):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

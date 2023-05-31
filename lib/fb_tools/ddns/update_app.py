@@ -5,38 +5,34 @@
 
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2021 by Frank Brehm, Berlin
+@copyright: © 2023 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import, print_function
 
 # Standard modules
-import logging
 import copy
-import sys
-import os
 import ipaddress
-
+import logging
+import os
+import sys
 try:
     from pathlib import Path
 except ImportError:
     from pathlib2 import Path
 
 # Third party module
+from fb_logging.colored import ColoredFormatter
+
 from six.moves.urllib.parse import quote
 
 # Own modules
-from fb_logging.colored import ColoredFormatter
-
+from . import BaseDdnsApplication, WorkDirError
+from . import WorkDirAccessError, WorkDirNotDirError, WorkDirNotExistsError
+from .config import DdnsConfiguration
 from .. import __version__ as GLOBAL_VERSION
-
 from ..xlate import XLATOR, format_list
 
-from . import BaseDdnsApplication, WorkDirError
-from . import WorkDirNotExistsError, WorkDirNotDirError, WorkDirAccessError
-
-from .config import DdnsConfiguration
-
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -63,19 +59,19 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         self.current_ipv6_address = None
         self.txt_records = []
 
-        self._force_desc_msg = _("Updating the DDNS records, even if seems not to be changed.")
+        self._force_desc_msg = _('Updating the DDNS records, even if seems not to be changed.')
 
         if description is None:
             description = _(
-                "Tries to update the A and/or AAAA record at ddns.de with the current "
-                "IP address.")
+                'Tries to update the A and/or AAAA record at ddns.de with the current '
+                'IP address.')
         valid_proto_list = copy.copy(DdnsConfiguration.valid_protocols)
 
-        self._ipv4_help = _("Update only the {} record with the public IP address.").format('A')
-        self._ipv6_help = _("Update only the {} record with the public IP address.").format('AAAA')
+        self._ipv4_help = _('Update only the {} record with the public IP address.').format('A')
+        self._ipv6_help = _('Update only the {} record with the public IP address.').format('AAAA')
         self._proto_help = _(
-            "The IP protocol, for which the appropriate DNS record should be updated with the "
-            "public IP (one of {c}, default {d!r}).").format(c=format_list(
+            'The IP protocol, for which the appropriate DNS record should be updated with the '
+            'public IP (one of {c}, default {d!r}).').format(c=format_list(
                 valid_proto_list, do_repr=True, style='or'), d='any')
 
         super(UpdateDdnsApplication, self).__init__(
@@ -156,7 +152,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         if self.verbose > 1:
             LOG.debug(_(
-                "Checking existence and accessibility of log directory {!r} ...").format(
+                'Checking existence and accessibility of log directory {!r} ...').format(
                 str(logdir)))
 
         if not logdir.exists():
@@ -166,10 +162,10 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             raise WorkDirNotDirError(logdir)
 
         if not os.access(str(logdir), os.R_OK):
-            raise WorkDirAccessError(logdir, _("No read access"))
+            raise WorkDirAccessError(logdir, _('No read access'))
 
         if not os.access(str(logdir), os.W_OK):
-            raise WorkDirAccessError(logdir, _("No write access"))
+            raise WorkDirAccessError(logdir, _('No write access'))
 
         root_log = logging.getLogger()
         formatter = self._get_log_formatter(is_term=False)
@@ -190,30 +186,30 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         update_group = self.arg_parser.add_argument_group(_('Update DDNS options'))
 
         update_group.add_argument(
-            '-U', "--user", metavar=_('USER'), dest="user",
-            help=_("The username to login at ddns.de.")
+            '-U', '--user', metavar=_('USER'), dest='user',
+            help=_('The username to login at ddns.de.')
         )
 
         update_group.add_argument(
-            '-P', "--password", metavar=_('PASSWORD'), dest="password",
-            help=_("The password of the user to login at ddns.de.")
+            '-P', '--password', metavar=_('PASSWORD'), dest='password',
+            help=_('The password of the user to login at ddns.de.')
         )
 
         update_group.add_argument(
-            '--logfile', nargs='?', metavar=_('FILENAME'), dest="logfile", const='',
-            help=_("The filename to use as a logfile. Leave it empty to disable file logging."),
+            '--logfile', nargs='?', metavar=_('FILENAME'), dest='logfile', const='',
+            help=_('The filename to use as a logfile. Leave it empty to disable file logging.'),
         )
 
         domain_group = update_group.add_mutually_exclusive_group()
 
         domain_group.add_argument(
-            '-A', '--all', '--all-domains', action="store_true", dest="all_domains",
-            help=_("Update all domains, which are connected whith the given ddns account."),
+            '-A', '--all', '--all-domains', action='store_true', dest='all_domains',
+            help=_('Update all domains, which are connected whith the given ddns account.'),
         )
 
         domain_group.add_argument(
-            '-D', '--domain', nargs="+", metavar=_("DOMAIN"), dest="domains",
-            help=_("The particular domain(s), which should be updated (if not all).")
+            '-D', '--domain', nargs='+', metavar=_('DOMAIN'), dest='domains',
+            help=_('The particular domain(s), which should be updated (if not all).')
         )
 
     # -------------------------------------------------------------------------
@@ -231,7 +227,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         self.perform_arg_parser_late()
 
         if not self.config.all_domains and not self.config.domains:
-            msg = _("No domains to update given, but the option all domains is deactivated.")
+            msg = _('No domains to update given, but the option all domains is deactivated.')
             LOG.error(msg)
             self.exit(6)
 
@@ -272,7 +268,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def _run(self):
 
-        LOG.info(_("Starting {a!r}, version {v!r} ...").format(
+        LOG.info(_('Starting {a!r}, version {v!r} ...').format(
             a=self.appname, v=self.version))
 
         if self.config.protocol in ('any', 'both', 'ipv4'):
@@ -281,7 +277,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         if self.config.protocol in ('any', 'both', 'ipv6'):
             self.do_update_ipv6()
 
-        LOG.info(_("Ending {a!r}.").format(
+        LOG.info(_('Ending {a!r}.').format(
             a=self.appname, v=self.version))
 
     # -------------------------------------------------------------------------
@@ -289,32 +285,32 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         """Update an IPv4 address entry."""
         last_address = self.get_ipv4_cache()
         if last_address:
-            LOG.debug(_("Last {w} address: {a!r}.").format(w='IPv4', a=str(last_address)))
+            LOG.debug(_('Last {w} address: {a!r}.').format(w='IPv4', a=str(last_address)))
         else:
-            LOG.debug(_("Did not found a last {} address.").format('IPv4'))
+            LOG.debug(_('Did not found a last {} address.').format('IPv4'))
         current_address = self.get_my_ipv(4)
         if not current_address:
-            LOG.error(_("Got no public IPv4 address."))
+            LOG.error(_('Got no public IPv4 address.'))
             return
         try:
             my_ip = ipaddress.ip_address(current_address)
         except ValueError as e:
-            msg = _("Address {a!r} seems not to be a valid {w} address: {e}").format(
+            msg = _('Address {a!r} seems not to be a valid {w} address: {e}').format(
                 a=current_address, w='IP', e=e)
             LOG.error(msg)
             return
         if my_ip.version != 4:
-            msg = _("Address {a!r} seems not to be a valid {w} address.").format(
+            msg = _('Address {a!r} seems not to be a valid {w} address.').format(
                 a=current_address, w='IPv4')
             LOG.error(msg)
             return
 
-        LOG.debug(_("Current {w} address is {a!r}.").format(w='IPv4', a=str(my_ip)))
+        LOG.debug(_('Current {w} address is {a!r}.').format(w='IPv4', a=str(my_ip)))
 
         if last_address == my_ip:
             msg = _(
-                "The public {w} address {a!r} seems not to be changed since "
-                "the last update.").format(w='IPv4', a=str(last_address))
+                'The public {w} address {a!r} seems not to be changed since '
+                'the last update.').format(w='IPv4', a=str(last_address))
             LOG.info(msg)
             if not self.force:
                 return
@@ -327,32 +323,32 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         """Update an IPv6 address entry."""
         last_address = self.get_ipv6_cache()
         if last_address:
-            LOG.debug(_("Last {w} address: {a!r}.").format(w='IPv6', a=str(last_address)))
+            LOG.debug(_('Last {w} address: {a!r}.').format(w='IPv6', a=str(last_address)))
         else:
-            LOG.debug(_("Did not found a last {} address.").format('IPv6'))
+            LOG.debug(_('Did not found a last {} address.').format('IPv6'))
         current_address = self.get_my_ipv(6)
         if not current_address:
-            LOG.error(_("Got no public IPv6 address."))
+            LOG.error(_('Got no public IPv6 address.'))
             return
         try:
             my_ip = ipaddress.ip_address(current_address)
         except ValueError as e:
-            msg = _("Address {a!r} seems not to be a valid {w} address: {e}").format(
+            msg = _('Address {a!r} seems not to be a valid {w} address: {e}').format(
                 a=current_address, w='IP', e=e)
             LOG.error(msg)
             return
         if my_ip.version != 6:
-            msg = _("Address {a!r} seems not to be a valid {w} address.").format(
+            msg = _('Address {a!r} seems not to be a valid {w} address.').format(
                 a=current_address, w='IPv6')
             LOG.error(msg)
             return
 
-        LOG.debug(_("Current {w} address is {a!r}.").format(w='IPv6', a=str(my_ip)))
+        LOG.debug(_('Current {w} address is {a!r}.').format(w='IPv6', a=str(my_ip)))
 
         if last_address == my_ip:
             msg = _(
-                "The public {w} address {a!r} seems not to be changed since "
-                "the last update.").format(w='IPv6', a=str(last_address))
+                'The public {w} address {a!r} seems not to be changed since '
+                'the last update.').format(w='IPv6', a=str(last_address))
             LOG.info(msg)
             if not self.force:
                 return
@@ -363,7 +359,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def do_update(self, my_ip, protocol):
         """Execute the update."""
-        msg = _("Updating DNS records to IPv{p} address {a!r} ...").format(
+        msg = _('Updating DNS records to IPv{p} address {a!r} ...').format(
             p=protocol, a=str(my_ip))
         LOG.info(msg)
 
@@ -391,15 +387,15 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             args.append('mx=1')
 
         url += '?' + '&'.join(args)
-        LOG.debug("Update-URL: {}".format(url))
+        LOG.debug('Update-URL: {}'.format(url))
 
         if self.simulate:
-            LOG.debug("Simulation mode, update will not be sended.")
+            LOG.debug('Simulation mode, update will not be sended.')
             return True
 
 
 # =============================================================================
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

@@ -5,13 +5,13 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2022 by Frank Brehm, Berlin
+@copyright: © 2023 by Frank Brehm, Berlin
 """
 
 DDNS_CFG_BASENAME = 'ddns.ini'
 MAX_TIMEOUT = 3600
 
-__version__ = '2.2.2'
+__version__ = '2.2.3'
 
 from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList      # noqa
 

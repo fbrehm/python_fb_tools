@@ -5,15 +5,15 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2022 by Frank Brehm, Berlin
+@copyright: © 2023 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
 # Standard modules
 import argparse
-import re
-import os
 import logging
+import os
+import re
 
 try:
     from pathlib import Path
@@ -25,7 +25,7 @@ except ImportError:
 from . import MAX_TIMEOUT
 from .xlate import XLATOR
 
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -55,7 +55,7 @@ class RegexOptionAction(argparse.Action):
             else:
                 re_test = re.compile(pattern, self._re_options)             # noqa
         except Exception as e:
-            msg = _("Got a {c} for pattern {p!r}: {e}").format(
+            msg = _('Got a {c} for pattern {p!r}: {e}').format(
                 c=e.__class__.__name__, p=pattern, e=e)
             raise argparse.ArgumentError(self, msg)
 
@@ -81,25 +81,25 @@ class DirectoryOptionAction(argparse.Action):
         """Parse the directory option."""
         path = Path(given_path)
         if not path.is_absolute():
-            msg = _("The path {!r} must be an absolute path.").format(given_path)
+            msg = _('The path {!r} must be an absolute path.').format(given_path)
             raise argparse.ArgumentError(self, msg)
 
         if self.must_exists:
 
             if not path.exists():
-                msg = _("The directory {!r} does not exists.").format(str(path))
+                msg = _('The directory {!r} does not exists.').format(str(path))
                 raise argparse.ArgumentError(self, msg)
 
             if not path.is_dir():
-                msg = _("The given path {!r} exists, but is not a directory.").format(str(path))
+                msg = _('The given path {!r} exists, but is not a directory.').format(str(path))
                 raise argparse.ArgumentError(self, msg)
 
             if not os.access(str(path), os.R_OK) or not os.access(str(path), os.X_OK):
-                msg = _("The given directory {!r} is not readable.").format(str(path))
+                msg = _('The given directory {!r} is not readable.').format(str(path))
                 raise argparse.ArgumentError(self, msg)
 
             if self.writeable and not os.access(str(path), os.W_OK):
-                msg = _("The given directory {!r} is not writeable.").format(str(path))
+                msg = _('The given directory {!r} is not writeable.').format(str(path))
                 raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, path)
@@ -127,23 +127,23 @@ class LogFileOptionAction(argparse.Action):
 
         # Checking the parent directory of the Logfile
         if not logdir.exists():
-            msg = _("Directory {!r} does not exists.").format(str(logdir))
+            msg = _('Directory {!r} does not exists.').format(str(logdir))
             raise argparse.ArgumentError(self, msg)
         if not logdir.is_dir():
-            msg = _("Path {!r} exists, but is not a directory.").format(str(logdir))
+            msg = _('Path {!r} exists, but is not a directory.').format(str(logdir))
             raise argparse.ArgumentError(self, msg)
 
         # Checking logfile, if it is already existing
         if path.exists():
             if not path.is_file():
-                msg = _("File {!r} is not a regular file.").format(values)
+                msg = _('File {!r} is not a regular file.').format(values)
                 raise argparse.ArgumentError(self, msg)
             if not os.access(values, os.W_OK):
-                msg = _("File {!r} is not writeable.").format(values)
+                msg = _('File {!r} is not writeable.').format(values)
                 raise argparse.ArgumentError(self, msg)
         else:
             if not os.access(logdir, os.W_OK):
-                msg = _("Directory {!r} is not writeable.").format(str(logdir))
+                msg = _('Directory {!r} is not writeable.').format(str(logdir))
                 raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, path.resolve())
@@ -168,10 +168,10 @@ class CfgFileOptionAction(argparse.Action):
 
         path = Path(values)
         if not path.exists():
-            msg = _("File {!r} does not exists.").format(values)
+            msg = _('File {!r} does not exists.').format(values)
             raise argparse.ArgumentError(self, msg)
         if not path.is_file():
-            msg = _("File {!r} is not a regular file.").format(values)
+            msg = _('File {!r} is not a regular file.').format(values)
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, path.resolve())
@@ -195,11 +195,11 @@ class TimeoutOptionAction(argparse.Action):
             timeout = int(given_timeout)
             if timeout <= 0 or timeout > self.max_timeout:
                 msg = _(
-                    "A timeout must be greater than zero and less "
-                    "or equal to {}.").format(self.max_timeout)
+                    'A timeout must be greater than zero and less '
+                    'or equal to {}.').format(self.max_timeout)
                 raise ValueError(msg)
         except (ValueError, TypeError) as e:
-            msg = _("Wrong timeout {!r}:").format(given_timeout)
+            msg = _('Wrong timeout {!r}:').format(given_timeout)
             msg += ' ' + str(e)
             raise argparse.ArgumentError(self, msg)
 
@@ -208,7 +208,7 @@ class TimeoutOptionAction(argparse.Action):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

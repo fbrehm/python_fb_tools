@@ -5,14 +5,13 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2021 by Frank Brehm, Berlin
+@copyright: © 2023 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
 # Standard module
 import logging
 import re
-
 try:
     from pathlib import Path
 except ImportError:
@@ -22,12 +21,10 @@ except ImportError:
 
 # Own modules
 from ..common import to_bool
-
-from ..config import ConfigError, BaseConfiguration
-
+from ..config import BaseConfiguration, ConfigError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -102,7 +99,7 @@ class DdnsConfiguration(BaseConfiguration):
             return
         val = int(value)
         err_msg = _(
-            "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600.")
+            'Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600.')
         if val <= 0 or val > 3600:
             msg = err_msg.format(value)
             raise ValueError(msg)
@@ -170,13 +167,13 @@ class DdnsConfiguration(BaseConfiguration):
             return
 
         if self.verbose > 1:
-            LOG.debug("Unhandled configuration section {!r}.".format(section_name))
+            LOG.debug('Unhandled configuration section {!r}.'.format(section_name))
 
     # -------------------------------------------------------------------------
     def _eval_config_ddns(self, config, section_name):
 
         if self.verbose > 1:
-            LOG.debug("Checking config section {!r} ...".format(section_name))
+            LOG.debug('Checking config section {!r} ...'.format(section_name))
 
         re_domains = re.compile(r'[,;\s]+')
         re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
@@ -207,7 +204,7 @@ class DdnsConfiguration(BaseConfiguration):
                 try:
                     self.timeout = value
                 except (ValueError, KeyError) as e:
-                    msg = _("Invalid value {!r} as timeout:").format(value) + ' ' + str(e)
+                    msg = _('Invalid value {!r} as timeout:').format(value) + ' ' + str(e)
                     LOG.error(msg)
                 continue
             match = re_get_url.match(key)
@@ -222,8 +219,8 @@ class DdnsConfiguration(BaseConfiguration):
                 p = value.strip().lower()
                 if p not in self.valid_protocols:
                     LOG.error(_(
-                        "Invalid value {ur} for protocols to update, valid protocols "
-                        "are: ").format(value) + format_list(self.valid_protocols, do_repr=True))
+                        'Invalid value {ur} for protocols to update, valid protocols '
+                        'are: ').format(value) + format_list(self.valid_protocols, do_repr=True))
                 else:
                     if p == 'both':
                         p = 'any'
@@ -231,8 +228,8 @@ class DdnsConfiguration(BaseConfiguration):
                 continue
 
             LOG.warning(_(
-                "Unknown configuration option {o!r} with value {v!r} in "
-                "section {s!r}.").format(o=key, v=value, s=section_name))
+                'Unknown configuration option {o!r} with value {v!r} in '
+                'section {s!r}.').format(o=key, v=value, s=section_name))
 
         return
 
@@ -240,7 +237,7 @@ class DdnsConfiguration(BaseConfiguration):
     def _eval_config_files(self, config, section_name):
 
         if self.verbose > 1:
-            LOG.debug("Checking config section {!r} ...".format(section_name))
+            LOG.debug('Checking config section {!r} ...'.format(section_name))
 
         re_work_dir = re.compile(r'^\s*work(ing)?[_-]?dir(ectory)?\ſ*', re.IGNORECASE)
         re_logfile = re.compile(r'^\s*log[_-]?file\s*$', re.IGNORECASE)
@@ -253,8 +250,8 @@ class DdnsConfiguration(BaseConfiguration):
                     self.working_dir = p
                 else:
                     LOG.error(_(
-                        "The path to the working directory must be an absolute path "
-                        "(given: {!r}).").format(value))
+                        'The path to the working directory must be an absolute path '
+                        '(given: {!r}).').format(value))
                 continue
 
             if re_logfile.match(key) and value.strip():
@@ -263,20 +260,20 @@ class DdnsConfiguration(BaseConfiguration):
                     self.logfile = p
                 else:
                     LOG.error(_(
-                        "The path to the logfile must be an absolute path "
-                        "(given: {!r}).").format(value))
+                        'The path to the logfile must be an absolute path '
+                        '(given: {!r}).').format(value))
                 continue
 
             LOG.warning(_(
-                "Unknown configuration option {o!r} with value {v!r} in "
-                "section {s!r}.").format(o=key, v=value, s=section_name))
+                'Unknown configuration option {o!r} with value {v!r} in '
+                'section {s!r}.').format(o=key, v=value, s=section_name))
 
         return
 
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

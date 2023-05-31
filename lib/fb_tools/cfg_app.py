@@ -5,16 +5,14 @@
 
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2022 by Frank Brehm, Berlin
+@copyright: © 2023 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
 # Standard modules
-import os
 import logging
-
+import os
 from logging.handlers import WatchedFileHandler
-
 from pathlib import Path
 
 # Third party modules
@@ -23,23 +21,16 @@ from pathlib import Path
 # Own modules
 
 from . import __version__ as __pkg_version__
-
 from .app import BaseApplication
-
-# from .error import FbCfgAppError
-
-from .common import pp, to_bool
-
-from .argparse_actions import LogFileOptionAction
-
 from .argparse_actions import CfgFileOptionAction
-
-from .multi_config import UTF8_ENCODING, DEFAULT_ENCODING
-from .multi_config import MultiConfigError, BaseMultiConfig
-
+from .argparse_actions import LogFileOptionAction
+# from .error import FbCfgAppError
+from .common import pp, to_bool
+from .multi_config import BaseMultiConfig, MultiConfigError
+from .multi_config import DEFAULT_ENCODING, UTF8_ENCODING
 from .xlate import XLATOR
 
-__version__ = '2.2.0'
+__version__ = '2.2.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -61,7 +52,7 @@ class FbConfigApplication(BaseApplication):
             use_chardet=True, initialized=False):
         """Initialise a FbConfigApplication object."""
         if not issubclass(cfg_class, BaseMultiConfig):
-            msg = _("Parameter {cls!r} must be a subclass of {clinfo!r}.").format(
+            msg = _('Parameter {cls!r} must be a subclass of {clinfo!r}.').format(
                 cls='cfg_class', clinfo='BaseMultiConfig')
             raise TypeError(msg)
 
@@ -143,26 +134,26 @@ class FbConfigApplication(BaseApplication):
         This method should be explicitely called by all init_arg_parser()
         methods in descendant classes.
         """
-        title = _("Config options and options for logging")
+        title = _('Config options and options for logging')
         cfg_options = self.arg_parser.add_argument_group(title)
 
         cfg_options.add_argument(
-            "-C", "--cfgfile", "--cfg-file", "--config",
-            metavar=_("FILE"), dest="cfg_file", action=CfgFileOptionAction,
-            help=_("Configuration files to use additional to the standard configuration files."),
+            '-C', '--cfgfile', '--cfg-file', '--config',
+            metavar=_('FILE'), dest='cfg_file', action=CfgFileOptionAction,
+            help=_('Configuration files to use additional to the standard configuration files.'),
         )
 
         cfg_options.add_argument(
-            "--logfile", "--log",
-            metavar=_("FILE"), dest="logfile", action=LogFileOptionAction,
-            help=_("A logfile for storing all logging output."),
+            '--logfile', '--log',
+            metavar=_('FILE'), dest='logfile', action=LogFileOptionAction,
+            help=_('A logfile for storing all logging output.'),
         )
 
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
         """Parse the commnd line parameters."""
         if self.verbose > 2:
-            LOG.debug(_("Got command line arguments:") + '\n' + pp(self.args))
+            LOG.debug(_('Got command line arguments:') + '\n' + pp(self.args))
 
         if self.args.cfg_file:
             self._additional_cfg_file = self.args.cfg_file
@@ -200,7 +191,7 @@ class FbConfigApplication(BaseApplication):
             self.cfg.read()
             self.cfg.eval()
         except MultiConfigError as e:
-            msg = _("Error on reading configuration:") + ' ' + str(e)
+            msg = _('Error on reading configuration:') + ' ' + str(e)
             LOG.error(msg)
             self.exit(4)
         if self.cfg.verbose > self.verbose:
@@ -225,31 +216,31 @@ class FbConfigApplication(BaseApplication):
 
         # Checking the parent directory of the Logfile
         if not logdir.exists():
-            msg = _("Directory {!r} does not exists.").format(str(logdir))
+            msg = _('Directory {!r} does not exists.').format(str(logdir))
             LOG.error(msg)
             self.exit(6)
         if not logdir.is_dir():
-            msg = _("Path {!r} exists, but is not a directory.").format(str(logdir))
+            msg = _('Path {!r} exists, but is not a directory.').format(str(logdir))
             LOG.error(msg)
             self.exit(6)
 
         # Checking logfile, if it is already existing
         if self.logfile.exists():
             if not self.logfile.is_file():
-                msg = _("File {!r} is not a regular file.").format(str(self.logfile))
+                msg = _('File {!r} is not a regular file.').format(str(self.logfile))
                 LOG.error(msg)
                 self.exit(6)
             if not os.access(self.logfile, os.W_OK):
-                msg = _("File {!r} is not writeable.").format(self.logfile)
+                msg = _('File {!r} is not writeable.').format(self.logfile)
                 LOG.error(msg)
                 self.exit(6)
         else:
             if not os.access(logdir, os.W_OK):
-                msg = _("Directory {!r} is not writeable.").format(str(logdir))
+                msg = _('Directory {!r} is not writeable.').format(str(logdir))
                 LOG.error(msg)
                 self.exit(6)
 
-        LOG.debug(_("Start logging into file {!r} ...").format(str(self.logfile)))
+        LOG.debug(_('Start logging into file {!r} ...').format(str(self.logfile)))
 
         log_level = logging.INFO
         if self.verbose:
@@ -268,7 +259,7 @@ class FbConfigApplication(BaseApplication):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

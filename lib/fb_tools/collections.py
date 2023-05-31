@@ -7,7 +7,7 @@ They are providing alternatives to Python's general purpose built-in frozen_set,
 
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2021 by Frank Brehm, Berlin
+@copyright: © 2023 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
@@ -15,24 +15,21 @@ from __future__ import absolute_import
 import logging
 
 try:
-    from collections.abc import Set, MutableSet
     from collections.abc import Mapping, MutableMapping
+    from collections.abc import MutableSet, Set
 except ImportError:
-    from collections import Set, MutableSet
     from collections import Mapping, MutableMapping
+    from collections import MutableSet, Set
 
 # Third party modules
 
 # Own modules
-from .errors import FbError
-
 from .common import is_sequence
-
+from .errors import FbError
 from .obj import FbGenericBaseObject
-
 from .xlate import XLATOR
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -60,7 +57,7 @@ class WrongItemTypeError(TypeError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _("Item {item!r} must be of type {must!r}, but is of type {cls!r} instead.")
+        msg = _('Item {item!r} must be of type {must!r}, but is of type {cls!r} instead.')
         return msg.format(item=self.item, must=self.expected, cls=self.item.__class__.__name__)
 
 
@@ -78,7 +75,7 @@ class WrongCompareSetClassError(TypeError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _("Object {o!r} is not a {e} object.")
+        msg = _('Object {o!r} is not a {e} object.')
         return msg.format(o=self.other_class, e=self.expected)
 
 
@@ -96,7 +93,7 @@ class WrongKeyTypeError(TypeError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _("Key {key!r} must be of type {must!r}, but is of type {cls!r} instead.")
+        msg = _('Key {key!r} must be of type {must!r}, but is of type {cls!r} instead.')
         return msg.format(key=self.key, must=self.expected, cls=self.key.__class__.__name__)
 
 
@@ -114,9 +111,9 @@ class WrongUpdateClassError(TypeError, FbCollectionsError):
     def __str__(self):
         """Typecast into str."""
         msg = _(
-            "Object is neither a {m} object, nor a sequential object, "
-            "but a {o!r} object instead.")
-        return msg.format(o=self.other_class, m="Mapping")
+            'Object is neither a {m} object, nor a sequential object, '
+            'but a {o!r} object instead.')
+        return msg.format(o=self.other_class, m='Mapping')
 
 
 # =============================================================================
@@ -132,7 +129,7 @@ class CaseInsensitiveKeyError(KeyError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _("Key {!r} is not existing.")
+        msg = _('Key {!r} is not existing.')
         return msg.format(self.key)
 
 
@@ -151,7 +148,7 @@ class CIInitfromSequenceError(TypeError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _("Could update {ex} with {i!r}: {m}")
+        msg = _('Could update {ex} with {i!r}: {m}')
         return msg.format(ex=self.expected, i=self.item, m=self.emesg)
 
 
@@ -170,7 +167,7 @@ class CIInitfromTupleError(IndexError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _("Could update {ex} with {i!r}: {m}")
+        msg = _('Could update {ex} with {i!r}: {m}')
         return msg.format(ex=self.expected, i=self.item, m=self.emesg)
 
 
@@ -194,7 +191,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
             elif isinstance(iterable, FrozenCIStringSet):
                 ok = True
             if not ok:
-                msg = _("Parameter {p!r} is not a sequence type, but a {c!r} object instead.")
+                msg = _('Parameter {p!r} is not a sequence type, but a {c!r} object instead.')
                 msg = msg.format(p='iterable', c=iterable.__class__.__qualname__)
                 raise TypeError(msg)
 
@@ -367,12 +364,12 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
     def __str__(self):
         """Typecast into string."""
         if len(self) == 0:
-            return "{}()".format(self.__class__.__name__)
+            return '{}()'.format(self.__class__.__name__)
 
-        ret = "{}(".format(self.__class__.__name__)
+        ret = '{}('.format(self.__class__.__name__)
         if len(self):
             ret += '['
-            ret += ', '.join(map(lambda x: "{!r}".format(x), self.values()))
+            ret += ', '.join(map(lambda x: '{!r}'.format(x), self.values()))        # noqa: C417
             ret += ']'
         ret += ')'
 
@@ -680,7 +677,7 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
     def pop(self):
         """Remove and return an arbitrary element from the set."""
         if len(self) == 0:
-            raise IndexError("pop() from empty list")
+            raise IndexError('pop() from empty list')
 
         key = self._items.keys()[0]
         value = self._items[key]
@@ -709,7 +706,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
         Use the object dict.
         """
-        self._map = dict()
+        self._map = {}
 
         if first_param is not None:
 
@@ -808,12 +805,12 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
     def __repr__(self):
         """Typecast into string for reproduction."""
         if len(self) == 0:
-            return "{}()".format(self.__class__.__name__)
+            return '{}()'.format(self.__class__.__name__)
 
-        ret = "{}({{".format(self.__class__.__name__)
+        ret = '{}({{'.format(self.__class__.__name__)
         kargs = []
         for pair in self.items():
-            arg = "{k!r}: {v!r}".format(k=pair[0], v=pair[1])
+            arg = '{k!r}: {v!r}'.format(k=pair[0], v=pair[1])
             kargs.append(arg)
         ret += ', '.join(kargs)
         ret += '})'
@@ -850,7 +847,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
         return res
 
     # -------------------------------------------------------------------------
-    def dict(self):
+    def dict(self):                                                     # noqa: A003
         """Typecast into a regular dict."""
         return self.as_dict(pure=True)
 
@@ -886,7 +883,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def keys(self):
         """Return a list with all keys in original notation."""
-        return list(map(lambda x: self._map[x]['key'], sorted(self._map.keys())))
+        return list(map(lambda x: self._map[x]['key'], sorted(self._map.keys())))   # noqa: C417
 
     # -------------------------------------------------------------------------
     def items(self):
@@ -906,7 +903,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def values(self):
         """Return a list with all values of the current dict."""
-        return list(map(lambda x: self._map[x]['val'], sorted(self._map.keys())))
+        return list(map(lambda x: self._map[x]['val'], sorted(self._map.keys())))   # noqa: C417
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
@@ -976,7 +973,7 @@ class CIDict(MutableMapping, FrozenCIDict):
         }
 
     # -------------------------------------------------------------------------
-    def set(self, key, value):
+    def set(self, key, value):                                          # noqa: A003
         """Set the value of the given key."""
         self[key] = value
 
@@ -1005,7 +1002,7 @@ class CIDict(MutableMapping, FrozenCIDict):
             raise WrongKeyTypeError(key)
 
         if len(args) > 1:
-            msg = _("The method {met}() expected at most {max} arguments, got {got}.").format(
+            msg = _('The method {met}() expected at most {max} arguments, got {got}.').format(
                 met='pop', max=2, got=(len(args) + 1))
             raise TypeError(msg)
 
@@ -1035,7 +1032,7 @@ class CIDict(MutableMapping, FrozenCIDict):
     # -------------------------------------------------------------------------
     def clear(self):
         """Remove all items from the dict."""
-        self._map = dict()
+        self._map = {}
 
     # -------------------------------------------------------------------------
     def setdefault(self, key, default=None):
@@ -1064,7 +1061,7 @@ class CIDict(MutableMapping, FrozenCIDict):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

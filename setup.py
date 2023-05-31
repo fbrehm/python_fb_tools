@@ -7,26 +7,19 @@
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @license: LGPL3+
-@copyright: © 2022 Frank Brehm, Berlin
+@copyright: © 2023 Frank Brehm, Berlin
 """
 from __future__ import print_function
 
-import os
-import sys
-import re
-import pprint
 import datetime
-import textwrap
 import glob
+import os
+import pprint
+import re
 import subprocess
-
+import sys
+import textwrap
 from pathlib import Path
-
-# Third party modules
-from setuptools import setup
-from setuptools.command.sdist import sdist
-
-from babel.messages import frontend as babel
 
 # own modules:
 __base_dir__ = os.path.abspath(os.path.dirname(__file__))
@@ -60,11 +53,17 @@ def pp(obj):
 if os.path.exists(__module_dir__) and os.path.isfile(__init_py__):
     sys.path.insert(0, os.path.abspath(__lib_dir__))
 
+# Third party modules
+from babel.messages import frontend as babel
+
 import fb_tools
+
+from setuptools import setup
+from setuptools.command.sdist import sdist
 
 # from fb_tools.common import pp
 
-ENCODING = "utf-8"
+ENCODING = 'utf-8'
 
 __packet_version__ = fb_tools.__version__
 
@@ -73,7 +72,7 @@ __debian_pkg_name__ = 'fb-tools'
 
 __author__ = 'Frank Brehm'
 __contact__ = 'frank@brehm-online.com'
-__copyright__ = '(C) 2022 Frank Brehm, Berlin'
+__copyright__ = '(C) 2023 Frank Brehm, Berlin'
 __license__ = 'LGPL3+'
 __url__ = 'https://github.com/fbrehm/python_fb_tools'
 
@@ -289,6 +288,7 @@ class Sdist(sdist):
     """Custom ``sdist`` command to ensure that mo files are always created."""
 
     def run(self):
+        """Compile the l18n catalog."""
         self.run_command('compile_catalog')
         # sdist is an old style class so super cannot be used.
         sdist.run(self)
