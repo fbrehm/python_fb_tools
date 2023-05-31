@@ -52,7 +52,7 @@ from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeo
 from .obj import FbBaseObject
 from .xlate import XLATOR
 
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -513,7 +513,7 @@ class HandlingObject(FbBaseObject):
                 LOG.debug(_('PID of process: {}').format(process.pid))
             try:
                 stdout, stderr = self._communicate(
-                    process, popenargs, input=inp, timeout=timeout)
+                    process, popenargs, inp=inp, timeout=timeout)
             except Exception as e:
                 if self.verbose > 2:
                     LOG.debug(_('{c} happened, killing process: {e}').format(
