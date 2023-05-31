@@ -1,7 +1,8 @@
-fb-tools (2.2.3) UNRELEASED; urgency=medium
+fb-tools (2.2.3) all; urgency=medium
 
   * Applying additional linter tests to Github workflow
   * Fixing countless linter errors.
+  * Updating copyright year where applicable.
 
  -- Frank Brehm <frank@brehm-online.com>  Wed, 31 May 2023 14:23:45 +0200
 
