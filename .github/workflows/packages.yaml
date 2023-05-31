@@ -74,7 +74,11 @@ jobs:
       - name: Install flake8 and pylint
         shell: bash
         run: |
-          pip install --upgrade --upgrade-strategy eager flake8 pylint
+          if [[ -f requirements-lint.txt ]] ; then
+              pip install --upgrade --upgrade-strategy eager --requirement requirements-lint.txt
+          else
+              pip install --upgrade --upgrade-strategy eager flake8 pylint
+          fi
           pip list --format columns
       - name: "Checking module version against tag."
         shell: bash
