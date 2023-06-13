@@ -11,7 +11,7 @@
 DDNS_CFG_BASENAME = 'ddns.ini'
 MAX_TIMEOUT = 3600
 
-__version__ = '2.2.3'
+__version__ = '2.2.4'
 
 from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList      # noqa
 

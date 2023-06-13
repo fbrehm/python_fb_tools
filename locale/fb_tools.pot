@@ -1,16 +1,16 @@
 # Translations template for fb_tools.
 # Copyright (C) 2023 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank@brehm-online.com>, 2023.
+# Frank Brehm <frank.brehm@pixelpark.com>, 2023.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 2.2.3\n"
-"Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2023-05-31 14:28+0200\n"
+"Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
+"POT-Creation-Date: 2023-06-13 11:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <frank@brehm-online.com>\n"
+"Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -27,146 +27,146 @@ msgstr ""
 msgid "Forced execution - whatever it means."
 msgstr ""
 
-#: lib/fb_tools/app.py:146
+#: lib/fb_tools/app.py:147
 msgid "Invalid env_prefix {!r} given - it may not be empty."
 msgstr ""
 
-#: lib/fb_tools/app.py:150
+#: lib/fb_tools/app.py:151
 msgid ""
 "Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
 "underscore (this not as the first character) are allowed."
 msgstr ""
 
-#: lib/fb_tools/app.py:161
+#: lib/fb_tools/app.py:162
 msgid "Unknown and undescriped application."
 msgstr ""
 
-#: lib/fb_tools/app.py:186
+#: lib/fb_tools/app.py:187
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr ""
 
-#: lib/fb_tools/app.py:423
+#: lib/fb_tools/app.py:425
 msgid "Trying to get {} via console ..."
 msgstr ""
 
-#: lib/fb_tools/app.py:439
+#: lib/fb_tools/app.py:441
 msgid "Got a signal {}."
 msgstr ""
 
-#: lib/fb_tools/app.py:442
+#: lib/fb_tools/app.py:444
 msgid "Got a signal {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:449
+#: lib/fb_tools/app.py:451
 msgid "Exit on signal {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:457
+#: lib/fb_tools/app.py:459
 msgid "Tweaking signal handlers."
 msgstr ""
 
-#: lib/fb_tools/app.py:463
+#: lib/fb_tools/app.py:465
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr ""
 
-#: lib/fb_tools/app.py:474
+#: lib/fb_tools/app.py:476
 msgid "Enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:481
+#: lib/fb_tools/app.py:483
 msgid "Repeat enter "
 msgstr ""
 
-#: lib/fb_tools/app.py:491
+#: lib/fb_tools/app.py:493
 msgid "{n} and repeated {n} did not match."
 msgstr ""
 
-#: lib/fb_tools/app.py:495
+#: lib/fb_tools/app.py:497
 msgid "Restoring original signal handlers."
 msgstr ""
 
-#: lib/fb_tools/app.py:500
+#: lib/fb_tools/app.py:502
 msgid "Got {n!r}: {s!r}"
 msgstr ""
 
-#: lib/fb_tools/app.py:550
+#: lib/fb_tools/app.py:552
 msgid "The application is not completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:561
+#: lib/fb_tools/app.py:563
 msgid "Object {!r} seems not to be completely initialized."
 msgstr ""
 
-#: lib/fb_tools/app.py:571
+#: lib/fb_tools/app.py:573
 msgid "Ending."
 msgstr ""
 
-#: lib/fb_tools/app.py:589
+#: lib/fb_tools/app.py:591
 msgid "Executing {} ..."
 msgstr ""
 
-#: lib/fb_tools/app.py:611
+#: lib/fb_tools/app.py:613
 msgid "General options"
 msgstr ""
 
-#: lib/fb_tools/app.py:616
+#: lib/fb_tools/app.py:618
 msgid "Simulation mode, nothing is really done."
 msgstr ""
 
-#: lib/fb_tools/app.py:630 lib/fb_tools/app.py:636
+#: lib/fb_tools/app.py:632 lib/fb_tools/app.py:638
 msgid "Automatically answer '{}' for all questions."
 msgstr ""
 
-#: lib/fb_tools/app.py:631 lib/fb_tools/handling_obj.py:936
+#: lib/fb_tools/app.py:633 lib/fb_tools/handling_obj.py:936
 msgid "Yes"
 msgstr ""
 
-#: lib/fb_tools/app.py:637 lib/fb_tools/handling_obj.py:934
+#: lib/fb_tools/app.py:639 lib/fb_tools/handling_obj.py:934
 msgid "No"
 msgstr ""
 
-#: lib/fb_tools/app.py:642 lib/fb_tools/ddns/__init__.py:243
+#: lib/fb_tools/app.py:644 lib/fb_tools/ddns/__init__.py:243
 msgid "SECONDS"
 msgstr ""
 
-#: lib/fb_tools/app.py:644
+#: lib/fb_tools/app.py:646
 msgid "The timeout in seconds for console input. Default: {}"
 msgstr ""
 
-#: lib/fb_tools/app.py:651
+#: lib/fb_tools/app.py:653
 msgid "Use colored output for messages."
 msgstr ""
 
-#: lib/fb_tools/app.py:658
+#: lib/fb_tools/app.py:656
 msgid "Increase the verbosity level"
 msgstr ""
 
-#: lib/fb_tools/app.py:663
+#: lib/fb_tools/app.py:665
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr ""
 
-#: lib/fb_tools/app.py:668
+#: lib/fb_tools/app.py:675
 msgid "Show this help message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:672
+#: lib/fb_tools/app.py:679
 msgid "Display brief usage message and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:674
+#: lib/fb_tools/app.py:681
 #, python-format
 msgid "Version of %(prog)s: {}"
 msgstr ""
 
-#: lib/fb_tools/app.py:677
+#: lib/fb_tools/app.py:684
 msgid "Show program's version number and exit."
 msgstr ""
 
-#: lib/fb_tools/app.py:807
+#: lib/fb_tools/app.py:814
 msgid "Starting in:"
 msgstr ""
 
-#: lib/fb_tools/app.py:829
+#: lib/fb_tools/app.py:836
 msgid "Aborted by user interrupt."
 msgstr ""
 

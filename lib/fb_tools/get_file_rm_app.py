@@ -29,7 +29,7 @@ from .common import get_monday, pp
 from .errors import FbAppError
 from .xlate import XLATOR
 
-__version__ = '2.0.4'
+__version__ = '2.0.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -130,6 +130,7 @@ class GetFileRmApplication(BaseApplication):
     show_assume_options = False
     show_console_timeout_option = False
     show_force_option = False
+    show_quiet_option = False
     show_simulate_option = False
 
     # -------------------------------------------------------------------------
