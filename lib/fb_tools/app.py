@@ -37,7 +37,7 @@ from .xlate import __base_dir__ as __xlate_base_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.2.2'
+__version__ = '2.2.3'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -66,6 +66,7 @@ class BaseApplication(HandlingObject):
     show_assume_options = False
     show_console_timeout_option = False
     show_force_option = False
+    show_quiet_option = True
     show_simulate_option = True
 
     # -------------------------------------------------------------------------
@@ -317,6 +318,7 @@ class BaseApplication(HandlingObject):
         res['show_assume_options'] = self.show_assume_options
         res['show_console_timeout_option'] = self.show_console_timeout_option
         res['show_force_option'] = self.show_force_option
+        res['show_quiet_option'] = self.show_quiet_option
         res['show_simulate_option'] = self.show_simulate_option
         res['usage'] = self.usage
         if 'xlate' not in res:
@@ -651,17 +653,22 @@ class BaseApplication(HandlingObject):
             help=_('Use colored output for messages.'),
         )
 
-        verbose_group = general_group.add_mutually_exclusive_group()
-
-        verbose_group.add_argument(
-            '-v', '--verbose', action='count', dest='verbose',
-            help=_('Increase the verbosity level'),
-        )
-
-        verbose_group.add_argument(
-            '-q', '--quiet', action='store_true', dest='quiet',
-            help=_('Silent execution, only warnings and errors are emitted.'),
-        )
+        verbose_help = _('Increase the verbosity level')
+        if self.show_quiet_option:
+            verbose_group = general_group.add_mutually_exclusive_group()
+            verbose_group.add_argument(
+                '-v', '--verbose', action='count', dest='verbose',
+                help=verbose_help,
+            )
+            verbose_group.add_argument(
+                '-q', '--quiet', action='store_true', dest='quiet',
+                help=_('Silent execution, only warnings and errors are emitted.'),
+            )
+        else:
+            general_group.add_argument(
+                '-v', '--verbose', action='count', dest='verbose',
+                help=verbose_help,
+            )
 
         general_group.add_argument(
             '-h', '--help', action='help', dest='help',
@@ -716,8 +723,8 @@ class BaseApplication(HandlingObject):
             if self.args.assume_no:
                 self.assumed_answer = False
 
-        if self.args.quiet:
-            self.quiet = self.args.quiet
+        if hasattr(self.args, 'quiet') and self.args.quiet:
+            self.quiet = True
 
         prompt_timeout = getattr(self.args, 'console_timeout', None)
         if prompt_timeout is not None:

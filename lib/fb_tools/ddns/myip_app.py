@@ -20,7 +20,7 @@ from .. import __version__ as GLOBAL_VERSION
 from ..common import to_bool
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.4'
+__version__ = '2.0.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -32,6 +32,7 @@ class MyIpApplication(BaseDdnsApplication):
     show_assume_options = False
     show_console_timeout_option = False
     show_force_option = False
+    show_quiet_option = False
     show_simulate_option = False
 
     # -------------------------------------------------------------------------
