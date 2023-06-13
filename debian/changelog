@@ -1,4 +1,4 @@
-fb-tools (2.2.4) UNRELEASED; urgency=medium
+fb-tools (2.2.4) all; urgency=medium
 
   * Making command line option '--quiet' optional.
 
