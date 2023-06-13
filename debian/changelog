@@ -1,3 +1,9 @@
+fb-tools (2.2.4) UNRELEASED; urgency=medium
+
+  * Making command line option '--quiet' optional.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 13 Jun 2023 11:55:32 +0200
+
 fb-tools (2.2.3) all; urgency=medium
 
   * Applying additional linter tests to Github workflow
