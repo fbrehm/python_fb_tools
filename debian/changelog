@@ -1,4 +1,4 @@
-fb-tools (2.2.5) UNRELEASED; urgency=medium
+fb-tools (2.2.5) all; urgency=medium
 
   * Better search for localisation files.
   * Disable false shellcheck error
