@@ -1,3 +1,11 @@
+fb-tools (2.2.5) UNRELEASED; urgency=medium
+
+  * Better search for localisation files.
+  * Disable false shellcheck error
+  * Adding Debian 12 (bookworm) for building binary packages on Github.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 19 Jun 2023 11:04:44 +0200
+
 fb-tools (2.2.4) all; urgency=medium
 
   * Making command line option '--quiet' optional.

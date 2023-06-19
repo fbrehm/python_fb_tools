@@ -34,10 +34,11 @@ from .errors import FunctionNotImplementedError
 from .handling_obj import HandlingObject
 from .xlate import DOMAIN, LOCALE_DIR, XLATOR
 from .xlate import __base_dir__ as __xlate_base_dir__
+from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.2.3'
+__version__ = '2.2.4'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -325,6 +326,7 @@ class BaseApplication(HandlingObject):
             res['xlate'] = {}
         res['xlate']['fb_tools'] = {
             '__module_dir__': __xlate_module_dir__,
+            '__lib_dir__': __xlate_lib_dir__,
             '__base_dir__': __xlate_base_dir__,
             'LOCALE_DIR': LOCALE_DIR,
             'DOMAIN': DOMAIN,

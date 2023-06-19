@@ -67,6 +67,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/prepare-debian-container
+      - name: Install and execute lsb-release
+        shell: bash
+        run: apt install lsb-release || true; echo; lsb_release -a
       - uses: ./.github/actions/install-pip-modules
       - name: Install shellcheck and yamllint
         shell: bash
@@ -119,6 +122,8 @@ jobs:
           echo
           shellscripts="compile-xlate-msgs.sh test/call_script.sh test/call_sleep.sh"
           shellscripts+=" update-env.sh xtract-xlate-msgs.sh"
+          shellcheck --version
+          echo
           echo -e "shellcheck -x ${shellscripts}"
           shellcheck -x ${shellscripts}
       - name: Execute Yamllint
@@ -213,6 +218,12 @@ jobs:
             os_release: '11'
             container: 'debian:bullseye'
             version_prefix: 'deb11'
+            compat: '12'
+          - distributor: 'Debian'
+            os_codename: 'bookworm'
+            os_release: '12'
+            container: 'debian:bookworm'
+            version_prefix: 'deb12'
             compat: '12'
           - distributor: 'Ubuntu'
             os_codename: 'bionic'
