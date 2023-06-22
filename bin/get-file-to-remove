@@ -1,47 +1,39 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+@summary: Print a newline separated list of files generated from file globbing patterns.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
 @copyright: © 2023 by Frank Brehm, Berlin
-@summary: Returns a newline separated list of files generated from file globbing patterns
 """
 from __future__ import print_function
 
 # Standard modules
-import sys
-import gettext
-
-__exp_py_version_major__ = 3
-__min_py_version_minor__ = 4
-
-if sys.version_info[0] != __exp_py_version_major__:
-    print("This script is intended to use with Python {}.".format(
-            __exp_py_version_major__), file=sys.stderr)
-    print("You are using Python: {0}.{1}.{2}-{3}-{4}.".format(
-        *sys.version_info) + "\n", file=sys.stderr)
-    sys.exit(1)
-
-if sys.version_info[1] < __min_py_version_minor__:
-    print("A minimal Python version of {maj}.{min} is necessary to execute this script.".format(
-        maj=__exp_py_version_major__, min=__min_py_version_minor__), file=sys.stderr)
-    print("You are using Python: {0}.{1}.{2}-{3}-{4}.".format(
-        *sys.version_info) + "\n", file=sys.stderr)
-    sys.exit(1)
-
-import os
-import logging
 import locale
+import sys
 
 try:
-    import pathlib
     from pathlib import Path
 except ImportError:
     from pathlib2 import Path
-    import pathlib2 as pathlib
 
+__exp_py_version_major__ = 3
+__min_py_version_minor__ = 6
 
-# own modules:
+if sys.version_info[0] != __exp_py_version_major__:
+    print('This script is intended to use with Python {}.'.format(
+        __exp_py_version_major__), file=sys.stderr)
+    print('You are using Python: {0}.{1}.{2}-{3}-{4}.'.format(
+        *sys.version_info) + '\n', file=sys.stderr)
+    sys.exit(1)
+
+if sys.version_info[1] < __min_py_version_minor__:
+    print('A minimal Python version of {maj}.{min} is necessary to execute this script.'.format(
+        maj=__exp_py_version_major__, min=__min_py_version_minor__), file=sys.stderr)
+    print('You are using Python: {0}.{1}.{2}-{3}-{4}.'.format(
+        *sys.version_info) + '\n', file=sys.stderr)
+    sys.exit(1)
 
 my_path = Path(__file__)
 my_real_path = my_path.resolve()
@@ -60,15 +52,11 @@ module_dir = lib_dir.joinpath('fb_tools')
 if module_dir.exists():
     sys.path.insert(0, str(lib_dir))
 
-from fb_tools.common import pp
-
+# own modules:
 from fb_tools.get_file_rm_app import GetFileRmApplication
-
 from fb_tools.xlate import XLATOR
 
 _ = XLATOR.gettext
-
-LOG = logging.getLogger(__name__)
 
 __author__ = 'Frank Brehm <frank.brehm@pixelpark.com>'
 __copyright__ = '(C) 2023 by Frank Brehm, Pixelpark GmbH, Berlin'
@@ -81,7 +69,7 @@ app = GetFileRmApplication(appname=appname, base_dir=base_dir)
 app.initialized = True
 
 if app.verbose > 2:
-    print(_("{c}-Object:\n{a}").format(c=app.__class__.__name__, a=app), file=sys.stderr)
+    print(_('{c}-Object:\n{a}').format(c=app.__class__.__name__, a=app), file=sys.stderr)
 
 app()
 
