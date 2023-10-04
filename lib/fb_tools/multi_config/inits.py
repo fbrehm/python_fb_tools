@@ -24,7 +24,7 @@ import six
 from ..common import is_sequence, to_str
 from ..xlate import XLATOR
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -131,7 +131,7 @@ class MultiCfgInitMixin():
     def append_stem(self, stem):
         """Append the given stem to the list of basename stems."""
         if self.verbose > 2:
-            LOG.debug("Appending basename stem {!r} ...".format(stem))
+            LOG.debug('Appending basename stem {!r} ...'.format(stem))
 
         stems = []
 
@@ -155,7 +155,7 @@ class MultiCfgInitMixin():
     def prepend_stem(self, stem):
         """Put the given stem to the begin of the list of basename stems."""
         if self.verbose > 2:
-            LOG.debug("Prepending basename stem {!r} ...".format(stem))
+            LOG.debug('Prepending basename stem {!r} ...'.format(stem))
 
         stems = [stem]
 
