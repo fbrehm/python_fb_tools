@@ -13,6 +13,7 @@ MAX_TIMEOUT = 3600
 
 __version__ = '2.2.5'
 
-from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList      # noqa
+from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList     # noqa
+from .multi_config import BaseMultiConfig                                       # noqa
 
 # vim: ts=4 et list

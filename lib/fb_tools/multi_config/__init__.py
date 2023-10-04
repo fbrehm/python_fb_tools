@@ -54,14 +54,14 @@ except ImportError:
 
 
 # Own modules
-from .common import is_sequence, pp, to_bool, to_str
-from .config import ConfigError
-from .handling_obj import HandlingObject
-from .merge import merge_structure
-from .obj import FbBaseObject
-from .xlate import XLATOR, format_list
+from ..common import is_sequence, pp, to_bool, to_str
+from ..errors import MultiCfgLoaderNotFoundError, MultiCfgParseError, MultiConfigError
+from ..handling_obj import HandlingObject
+from ..merge import merge_structure
+from ..obj import FbBaseObject
+from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.4'
+__version__ = '2.1.0'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -69,39 +69,6 @@ DEFAULT_ENCODING = UTF8_ENCODING
 
 _ = XLATOR.gettext
 
-
-# =============================================================================
-class MultiConfigError(ConfigError):
-    """Base error class for all exceptions in this module."""
-
-    pass
-
-
-# =============================================================================
-class MultiCfgLoaderNotFoundError(MultiConfigError, RuntimeError):
-    """Special error class for the case, that a loader method was not found."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, method):
-        """Initialise a MultiCfgLoaderNotFoundError exception."""
-        self.method = method
-
-    # -------------------------------------------------------------------------
-    def __str__(self):
-        """Typescast into a string."""
-        msg = _('Config loader method {!r} was not found.').format(self.method)
-        return msg
-
-
-# =============================================================================
-class MultiCfgParseError(MultiConfigError, ValueError):
-    """Exception class for parsing in BaseMultiConfig class.
-
-    It s raised, when a parse error of a loader module was raised and
-    BaseMultiConfig.raise_on_error was set to True.
-    """
-
-    pass
 
 # =============================================================================
 class BaseMultiConfig(FbBaseObject):

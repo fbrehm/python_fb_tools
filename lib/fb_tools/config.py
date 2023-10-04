@@ -24,22 +24,15 @@ from six import StringIO
 from six.moves import configparser
 
 # Own modules
-from .errors import FbError
+from .errors import ConfigError
 from .obj import FbBaseObject
 from .xlate import XLATOR
 
-__version__ = '2.0.2'
+__version__ = '2.1.0'
 LOG = logging.getLogger(__name__)
 DEFAULT_ENCODING = 'utf-8'
 
 _ = XLATOR.gettext
-
-
-# =============================================================================
-class ConfigError(FbError):
-    """Base error class for all exceptions happened during execution."""
-
-    pass
 
 
 # =============================================================================
