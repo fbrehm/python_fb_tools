@@ -149,7 +149,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         LOG.debug("Testing, whether appname is in file stems ...")
         cfg = BaseMultiConfig(appname=self.appname, config_dir='test', verbose=self.verbose)
         if self.verbose >= 2:
-            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+            LOG.debug("Initialized base stems:\n{}".format(pp(cfg.stems)))
         if self.verbose > 1:
             LOG.debug("Checking for existence of stem {!r}.".format(self.appname))
         self.assertIn(self.appname, cfg.stems)
@@ -186,6 +186,35 @@ class TestFbMultiConfig(FbToolsTestcase):
                 )
             e = cm.exception
             LOG.debug("{c} raised on stem {s!r}: {e}".format(c=e.__class__.__name__, s=stem, e=e))
+
+        LOG.debug("Testing appending and perpending stems ...")
+
+        cfg = BaseMultiConfig(appname=self.appname, config_dir='test', verbose=self.verbose)
+
+        LOG.debug("Appending stem 'uhu' ...")
+        cfg.append_stem('uhu')
+        if self.verbose >= 2:
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+        self.assertEqual(cfg.stems, [self.appname, 'uhu'])
+
+        LOG.debug("Appending stem 'uhu' again ...")
+        cfg.append_stem('uhu')
+        if self.verbose >= 2:
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+        self.assertEqual(cfg.stems, [self.appname, 'uhu'])
+
+        LOG.debug("Appending stem 'mycfg' ...")
+        cfg.add_stem('mycfg')
+        if self.verbose >= 2:
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+        self.assertEqual(cfg.stems, [self.appname, 'uhu', 'mycfg'])
+
+        LOG.debug("Prepending stem 'bla' ...")
+        cfg.prepend_stem('bla')
+        if self.verbose >= 2:
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+        self.assertEqual(cfg.stems, ['bla', self.appname, 'uhu', 'mycfg'])
+
 
     # -------------------------------------------------------------------------
     def test_collect_cfg_files(self):

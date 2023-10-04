@@ -26,7 +26,6 @@ from pathlib import Path
 # Third party modules
 import chardet
 
-import six
 from six import StringIO
 from six.moves import configparser
 
@@ -54,14 +53,15 @@ except ImportError:
 
 
 # Own modules
-from ..common import is_sequence, pp, to_bool, to_str
+from .inits import MultiCfgInitMixin
+from ..common import is_sequence, pp, to_bool
 from ..errors import MultiCfgLoaderNotFoundError, MultiCfgParseError, MultiConfigError
 from ..handling_obj import HandlingObject
 from ..merge import merge_structure
 from ..obj import FbBaseObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -71,7 +71,7 @@ _ = XLATOR.gettext
 
 
 # =============================================================================
-class BaseMultiConfig(FbBaseObject):
+class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin):
     """
     A base class for providing a configuration based in different config files.
 
@@ -511,133 +511,6 @@ class BaseMultiConfig(FbBaseObject):
         if cls.re_invalid_stem.search(stem):
             return False
         return True
-
-    # -------------------------------------------------------------------------
-    def _init_config_dirs(self, additional_cfgdirs=None):
-
-        self.config_dirs = []
-
-        self.config_dirs.append(Path('/etc') / self.config_dir)
-
-        path = Path(os.path.expanduser('~')) / '.config' / self.config_dir
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-
-        self.config_dirs.append(path)
-        if self.is_venv():
-            path = Path(sys.prefix) / 'etc'
-            if path in self.config_dirs:
-                self.config_dirs.remove(path)
-            self.config_dirs.append(path)
-
-        path = Path.cwd() / 'etc'
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-        self.config_dirs.append(path)
-
-        path = self.base_dir / 'etc'
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-        self.config_dirs.append(path)
-
-        path = self.base_dir
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-        self.config_dirs.append(path)
-
-        path = Path.cwd()
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-        self.config_dirs.append(path)
-
-        if additional_cfgdirs:
-            if is_sequence(additional_cfgdirs):
-                for item in additional_cfgdirs:
-                    path = Path(item)
-                    if path in self.config_dirs:
-                        self.config_dirs.remove(path)
-                    self.config_dirs.append(path)
-            else:
-                path = Path(additional_cfgdirs)
-                if path in self.config_dirs:
-                    self.config_dirs.remove(path)
-                self.config_dirs.append(path)
-
-    # -------------------------------------------------------------------------
-    def _init_stems(self, append_appname_to_stems, additional_stems=None):
-
-        self.stems = copy.copy(self.default_stems)
-
-        if additional_stems:
-            if is_sequence(additional_stems):
-                for stem in additional_stems:
-                    if not isinstance(stem, (six.string_types, six.binary_type, pathlib.Path)):
-                        msg = _('Stem {!r} is not a String type.').format(stem)
-                        raise TypeError(msg)
-                    s = str(to_str(stem))
-                    if not self.valid_stem(s):
-                        msg = _('File name stem {!r} is invalid.').format(s)
-                        raise ValueError(msg)
-                    if s not in self.stems:
-                        self.stems.append(s)
-            else:
-                if not isinstance(additional_stems, (
-                        six.string_types, six.binary_type, pathlib.Path)):
-                    msg = _('Stem {!r} is not a String type.').format(additional_stems)
-                    raise TypeError(msg)
-                s = str(to_str(additional_stems))
-                if not self.valid_stem(s):
-                    msg = _('File name stem {!r} is invalid.').format(s)
-                    raise ValueError(msg)
-                if s not in self.stems:
-                    self.stems.append(s)
-
-        if not self.stems or append_appname_to_stems:
-            if not self.valid_stem(self.appname):
-                msg = _('File name stem {!r} is invalid.').format(self.appname)
-                raise ValueError(msg)
-            if self.appname not in self.stems:
-                self.stems.append(self.appname)
-
-    # -------------------------------------------------------------------------
-    def _init_types(self):
-        """Initialize configuration types and their assigned file extensions."""
-        invalid_msg = _('Invalid configuration type {t!r} - not found in {w!r}.')
-
-        for cfg_type in self.available_cfg_types:
-
-            if cfg_type not in self.default_loader_methods:
-                msg = invalid_msg.format(t=cfg_type, w='default_loader_methods')
-                raise RuntimeError(msg)
-            if cfg_type not in self.default_type_extension_patterns:
-                msg = invalid_msg.format(t=cfg_type, w='default_type_extension_patterns')
-                raise RuntimeError(msg)
-
-            method = self.default_loader_methods[cfg_type]
-            for pattern in self.default_type_extension_patterns[cfg_type]:
-                ini_style = False
-                if cfg_type in self.default_ini_style_types:
-                    ini_style = True
-                self.assign_extension(cfg_type, pattern, method, ini_style)
-
-    # -------------------------------------------------------------------------
-    def assign_extension(self, type_name, ext_pattern, loader_method_name, ini_style=None):
-        """Assign a file extension to a cofiguration type."""
-        type_name = type_name.lower()
-        if type_name not in self.available_cfg_types:
-            self.available_cfg_types.append(type_name)
-        if type_name not in self.ext_patterns:
-            self.ext_patterns[type_name] = []
-        self.ext_patterns[type_name].append(ext_pattern)
-        self.ext_loader[ext_pattern] = loader_method_name
-        self.ext_re[ext_pattern] = re.compile(r'\.' + ext_pattern + r'$', re.IGNORECASE)
-        if ini_style is not None:
-            if ini_style:
-                if ext_pattern not in self.ini_style_types:
-                    self.ini_style_types.append(ext_pattern)
-            else:
-                if ext_pattern in self.ini_style_types:
-                    self.ini_style_types.remove(ext_pattern)
 
     # -------------------------------------------------------------------------
     def collect_config_files(self):
