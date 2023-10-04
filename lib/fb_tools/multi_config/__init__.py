@@ -53,6 +53,7 @@ except ImportError:
 
 
 # Own modules
+from .files import MultiCfgFilesMixin
 from .inits import MultiCfgInitMixin
 from ..common import is_sequence, pp, to_bool
 from ..errors import MultiCfgLoaderNotFoundError, MultiCfgParseError, MultiConfigError
@@ -61,7 +62,7 @@ from ..merge import merge_structure
 from ..obj import FbBaseObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -71,7 +72,7 @@ _ = XLATOR.gettext
 
 
 # =============================================================================
-class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin):
+class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin):
     """
     A base class for providing a configuration based in different config files.
 
@@ -511,29 +512,6 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin):
         if cls.re_invalid_stem.search(stem):
             return False
         return True
-
-    # -------------------------------------------------------------------------
-    def collect_config_files(self):
-        """Collect all appropriate config file from different directories."""
-        LOG.debug(_('Collecting all configuration files.'))
-
-        self.config_files = []
-        self.config_file_pattern = {}
-
-        for cfg_dir in self.config_dirs:
-            if self.verbose > 1:
-                msg = _('Discovering config directory {!r} ...').format(str(cfg_dir))
-                LOG.debug(msg)
-            self._eval_config_dir(cfg_dir)
-
-        self._set_additional_file(self.additional_config_file)
-
-        self.check_privacy()
-
-        if self.verbose > 2:
-            LOG.debug(_('Collected config files:') + '\n' + pp(self.config_files))
-
-        self._cfgfiles_collected = True
 
     # -------------------------------------------------------------------------
     def check_privacy(self):
