@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 2.2.5\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2023-10-05 16:03+0200\n"
+"POT-Creation-Date: 2023-10-05 17:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank@brehm-online.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -194,24 +194,24 @@ msgstr ""
 msgid "The given directory {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:130 lib/fb_tools/cfg_app.py:219
+#: lib/fb_tools/argparse_actions.py:130 lib/fb_tools/cfg_app.py:220
 msgid "Directory {!r} does not exists."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:133 lib/fb_tools/cfg_app.py:223
+#: lib/fb_tools/argparse_actions.py:133 lib/fb_tools/cfg_app.py:224
 msgid "Path {!r} exists, but is not a directory."
 msgstr ""
 
 #: lib/fb_tools/argparse_actions.py:139 lib/fb_tools/argparse_actions.py:174
-#: lib/fb_tools/cfg_app.py:230 lib/fb_tools/get_file_rm_app.py:396
+#: lib/fb_tools/cfg_app.py:231 lib/fb_tools/get_file_rm_app.py:396
 msgid "File {!r} is not a regular file."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:142 lib/fb_tools/cfg_app.py:234
+#: lib/fb_tools/argparse_actions.py:142 lib/fb_tools/cfg_app.py:235
 msgid "File {!r} is not writeable."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:146 lib/fb_tools/cfg_app.py:239
+#: lib/fb_tools/argparse_actions.py:146 lib/fb_tools/cfg_app.py:240
 msgid "Directory {!r} is not writeable."
 msgstr ""
 
@@ -220,7 +220,7 @@ msgstr ""
 msgid "File {!r} does not exists."
 msgstr ""
 
-#: lib/fb_tools/argparse_actions.py:197 lib/fb_tools/multi_config/__init__.py:831
+#: lib/fb_tools/argparse_actions.py:197 lib/fb_tools/multi_config/__init__.py:559
 msgid "A timeout must be greater than zero and less or equal to {}."
 msgstr ""
 
@@ -228,36 +228,36 @@ msgstr ""
 msgid "Wrong timeout {!r}:"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:55
+#: lib/fb_tools/cfg_app.py:56
 msgid "Parameter {cls!r} must be a subclass of {clinfo!r}."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:137
+#: lib/fb_tools/cfg_app.py:138
 msgid "Config options and options for logging"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:142 lib/fb_tools/cfg_app.py:148 lib/fb_tools/ddns/__init__.py:249
+#: lib/fb_tools/cfg_app.py:143 lib/fb_tools/cfg_app.py:149 lib/fb_tools/ddns/__init__.py:249
 #: lib/fb_tools/get_file_rm_app.py:267
 msgid "FILE"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:143
+#: lib/fb_tools/cfg_app.py:144
 msgid "Configuration files to use additional to the standard configuration files."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:149
+#: lib/fb_tools/cfg_app.py:150
 msgid "A logfile for storing all logging output."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:156
+#: lib/fb_tools/cfg_app.py:157
 msgid "Got command line arguments:"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:194
+#: lib/fb_tools/cfg_app.py:195
 msgid "Error on reading configuration:"
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:243
+#: lib/fb_tools/cfg_app.py:244
 msgid "Start logging into file {!r} ..."
 msgstr ""
 
@@ -321,11 +321,11 @@ msgstr ""
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr ""
 
-#: lib/fb_tools/config.py:89 lib/fb_tools/multi_config/__init__.py:204
+#: lib/fb_tools/config.py:89 lib/fb_tools/multi_config/__init__.py:196
 msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
 msgstr ""
 
-#: lib/fb_tools/config.py:107 lib/fb_tools/multi_config/__init__.py:262
+#: lib/fb_tools/config.py:107 lib/fb_tools/multi_config/__init__.py:254
 msgid "A configuration directory may not be None."
 msgstr ""
 
@@ -333,7 +333,7 @@ msgstr ""
 msgid "A configuration file may not be None."
 msgstr ""
 
-#: lib/fb_tools/config.py:128 lib/fb_tools/config.py:136 lib/fb_tools/multi_config/__init__.py:234
+#: lib/fb_tools/config.py:128 lib/fb_tools/config.py:136 lib/fb_tools/multi_config/__init__.py:226
 msgid "Configuration file {!r} exists, but is not a regular file."
 msgstr ""
 
@@ -361,7 +361,7 @@ msgstr ""
 msgid "Configuration parse error"
 msgstr ""
 
-#: lib/fb_tools/config.py:217 lib/fb_tools/multi_config/__init__.py:800
+#: lib/fb_tools/config.py:217 lib/fb_tools/multi_config/__init__.py:528
 msgid "Checking config section {!r} ..."
 msgstr ""
 
@@ -423,7 +423,7 @@ msgstr ""
 msgid "Configuration file (default: {!r})"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:304 lib/fb_tools/ddns/config.py:207
+#: lib/fb_tools/ddns/__init__.py:304 lib/fb_tools/ddns/config.py:208
 msgid "Invalid value {!r} as timeout:"
 msgstr ""
 
@@ -483,23 +483,23 @@ msgstr ""
 msgid "Line {li!r} in {f!r} is not a valid IP address:"
 msgstr ""
 
-#: lib/fb_tools/ddns/config.py:101
+#: lib/fb_tools/ddns/config.py:102
 msgid "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600."
 msgstr ""
 
-#: lib/fb_tools/ddns/config.py:221
+#: lib/fb_tools/ddns/config.py:222
 msgid "Invalid value {ur} for protocols to update, valid protocols are: "
 msgstr ""
 
-#: lib/fb_tools/ddns/config.py:230 lib/fb_tools/ddns/config.py:267
+#: lib/fb_tools/ddns/config.py:231 lib/fb_tools/ddns/config.py:268
 msgid "Unknown configuration option {o!r} with value {v!r} in section {s!r}."
 msgstr ""
 
-#: lib/fb_tools/ddns/config.py:252
+#: lib/fb_tools/ddns/config.py:253
 msgid "The path to the working directory must be an absolute path (given: {!r})."
 msgstr ""
 
-#: lib/fb_tools/ddns/config.py:262
+#: lib/fb_tools/ddns/config.py:263
 msgid "The path to the logfile must be an absolute path (given: {!r})."
 msgstr ""
 
@@ -1334,102 +1334,40 @@ msgstr ""
 msgid "Mail address {} is not in address list."
 msgstr ""
 
-#: lib/fb_tools/multi_config/__init__.py:170 lib/fb_tools/multi_config/__init__.py:172
-#: lib/fb_tools/multi_config/__init__.py:174
+#: lib/fb_tools/multi_config/__init__.py:162 lib/fb_tools/multi_config/__init__.py:164
+#: lib/fb_tools/multi_config/__init__.py:166
 msgid "{} configuration is not supported."
 msgstr ""
 
-#: lib/fb_tools/multi_config/__init__.py:227
+#: lib/fb_tools/multi_config/__init__.py:219
 msgid "Additional config file {!r} does not exists."
 msgstr ""
 
-#: lib/fb_tools/multi_config/__init__.py:241
+#: lib/fb_tools/multi_config/__init__.py:233
 msgid "Configuration file {!r} is not readable."
 msgstr ""
 
-#: lib/fb_tools/multi_config/__init__.py:265
+#: lib/fb_tools/multi_config/__init__.py:257
 msgid "Configuration directory {!r} may not be absolute."
 msgstr ""
 
-#: lib/fb_tools/multi_config/__init__.py:345
+#: lib/fb_tools/multi_config/__init__.py:337
 msgid "Cannot use {!r} as delimiters for ini-files."
 msgstr ""
 
-#: lib/fb_tools/multi_config/__init__.py:367
+#: lib/fb_tools/multi_config/__init__.py:359
 msgid "Cannot use {!r} as comment prefixes for ini-files."
 msgstr ""
 
-#: lib/fb_tools/multi_config/__init__.py:389
+#: lib/fb_tools/multi_config/__init__.py:381
 msgid "Cannot use {!r} as inline comment prefixes for ini-files."
 msgstr ""
 
-#: lib/fb_tools/multi_config/__init__.py:525
-msgid "Reading configuration file {!r} ..."
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:529
-msgid "Using loading method {!r}."
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:537
-msgid "Read config from {fn!r}:"
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:548
-msgid "Read merged config:"
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:555
-msgid ""
-"Character set detection by module {mod!r} for file {fn!r} should not be used, using character "
-"set {enc!r}."
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:562
-msgid "Trying to detect character set of file {fn!r} ..."
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:573
-#, python-format
-msgid ""
-"The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, using character set "
-"{cs_def!r} instead of {cs_found!r}."
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:583
-msgid "Got {what} on detecting cheracter set of {fn!r}: {e}"
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:588
-msgid "Found character set {cs!r} for file {fn!r} with a confidence of {con:0.1f}%."
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:598 lib/fb_tools/multi_config/__init__.py:628
-#: lib/fb_tools/multi_config/__init__.py:662 lib/fb_tools/multi_config/__init__.py:719
-#: lib/fb_tools/multi_config/__init__.py:745
-msgid "Reading {tp} file {fn!r} ..."
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:609 lib/fb_tools/multi_config/__init__.py:643
-#: lib/fb_tools/multi_config/__init__.py:726 lib/fb_tools/multi_config/__init__.py:759
-msgid "{what} parse error in {fn!r}, line {line}, column {col}: {msg}"
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:616 lib/fb_tools/multi_config/__init__.py:650
-#: lib/fb_tools/multi_config/__init__.py:697 lib/fb_tools/multi_config/__init__.py:733
-#: lib/fb_tools/multi_config/__init__.py:763 lib/fb_tools/multi_config/__init__.py:770
-msgid "Got {what} on reading and parsing {fn!r}: {e}"
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:679
-msgid "Arguments on initializing {}:"
-msgstr ""
-
-#: lib/fb_tools/multi_config/__init__.py:783
+#: lib/fb_tools/multi_config/__init__.py:511
 msgid "Evaluation of configuration could only be happen after reading it."
 msgstr ""
 
-#: lib/fb_tools/multi_config/__init__.py:803
+#: lib/fb_tools/multi_config/__init__.py:531
 msgid "Invalid value {val!r} in section {sec!r} for console timeout."
 msgstr ""
 
@@ -1551,6 +1489,68 @@ msgstr ""
 
 #: lib/fb_tools/multi_config/inits.py:171
 msgid "Invalid configuration type {t!r} - not found in {w!r}."
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:73
+msgid "Reading configuration file {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:77
+msgid "Using loading method {!r}."
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:85
+msgid "Read config from {fn!r}:"
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:96
+msgid "Read merged config:"
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:103
+msgid ""
+"Character set detection by module {mod!r} for file {fn!r} should not be used, using character "
+"set {enc!r}."
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:110
+msgid "Trying to detect character set of file {fn!r} ..."
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:121
+#, python-format
+msgid ""
+"The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, using character set "
+"{cs_def!r} instead of {cs_found!r}."
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:131
+msgid "Got {what} on detecting cheracter set of {fn!r}: {e}"
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:136
+msgid "Found character set {cs!r} for file {fn!r} with a confidence of {con:0.1f}%."
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:146 lib/fb_tools/multi_config/read.py:176
+#: lib/fb_tools/multi_config/read.py:210 lib/fb_tools/multi_config/read.py:267
+#: lib/fb_tools/multi_config/read.py:293
+msgid "Reading {tp} file {fn!r} ..."
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:157 lib/fb_tools/multi_config/read.py:191
+#: lib/fb_tools/multi_config/read.py:274 lib/fb_tools/multi_config/read.py:307
+msgid "{what} parse error in {fn!r}, line {line}, column {col}: {msg}"
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:164 lib/fb_tools/multi_config/read.py:198
+#: lib/fb_tools/multi_config/read.py:245 lib/fb_tools/multi_config/read.py:281
+#: lib/fb_tools/multi_config/read.py:311 lib/fb_tools/multi_config/read.py:318
+msgid "Got {what} on reading and parsing {fn!r}: {e}"
+msgstr ""
+
+#: lib/fb_tools/multi_config/read.py:227
+msgid "Arguments on initializing {}:"
 msgstr ""
 
 #: lib/fb_tools/obj.py:58
