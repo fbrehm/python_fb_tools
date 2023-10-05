@@ -22,7 +22,7 @@ from ..common import pp
 from ..errors import MultiConfigError
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.2.1'
+__version__ = '0.3.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -117,7 +117,7 @@ class MultiCfgFilesMixin():
                     base_name_pattern = stem + '.' + ext_pattern
                     avail_file_names.append(str(cfg_dir / base_name_pattern))
 
-        if self.verbose > 1:
+        if self.verbose > 2:
             msg = _('Possible usable config directories:') + '\n' + pp(avail_dir_names)
             LOG.debug(msg)
             msg = _('Possible usable config files:') + '\n' + pp(avail_file_names)
@@ -127,7 +127,7 @@ class MultiCfgFilesMixin():
 
             if fn.is_dir():
                 if fn in avail_dir_names:
-                    # self._eval_whole_dir(fn)
+                    self._eval_whole_dir(fn)
                     continue
                 if self.verbose > 2:
                     msg = _('Path {!r} is a unusable directory.').format(str(fn))
@@ -193,9 +193,9 @@ class MultiCfgFilesMixin():
             'Did not found file type of config file {fn!r}. '
             'Available config types are: {list}.').format(
             fn=str(fn), list=format_list(self.available_cfg_types))
-        if self.raise_on_error:
+        if raise_on_error:
             raise MultiConfigError(msg)
-        LOG.error(msg)
+        LOG.debug(msg)
 
         return None
 
@@ -284,6 +284,40 @@ class MultiCfgFilesMixin():
             LOG.debug(msg.format(str(cfg_file)))
 
         self.append_config_file(cfg_file)
+
+    # -------------------------------------------------------------------------
+    def _eval_whole_dir(self, dirname):
+        """Take all possible config files in this directory independend of the filename stem."""
+        if self.verbose > 1:
+            msg = _("Checking directory {!r} for all config files ...").format(str(dirname))
+            LOG.debug(msg)
+
+        for found_file in dirname.glob('*'):
+
+            if self.verbose > 1:
+                msg = _("Checking {!r} as a possible config file.").format(str(found_file))
+                LOG.debug(msg)
+
+            if not found_file.is_file():
+                if self.verbose > 1:
+                    msg = _("Path {!r} is not a regular file.").format(str(found_file))
+                    LOG.debug(msg)
+                continue
+
+            file_info = self._get_file_type(found_file, raise_on_error=False)
+            if file_info is None:
+                if self.verbose > 1:
+                    msg = _('File {!r} is not useable.').format(str(found_file))
+                    LOG.debug(msg)
+                continue
+            if self.verbose > 1:
+                msg = _('Got file info for {!r}:').format(str(found_file)) + '\n' + pp(file_info)
+                LOG.debug(msg)
+            type_name = file_info['type_name']
+            method = file_info['method']
+
+            self.config_files.append(found_file)
+            self.config_file_methods[found_file] = method
 
 
 # =============================================================================
