@@ -1,4 +1,4 @@
-fb-tools (2.3.0) UNRELEASED; urgency=medium
+fb-tools (2.3.0) all; urgency=medium
 
   * Moving all exception classes from module fb_tools.multi_config to
     fb_tools.errors.
