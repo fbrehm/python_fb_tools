@@ -10,9 +10,12 @@
 
 DDNS_CFG_BASENAME = 'ddns.ini'
 MAX_TIMEOUT = 3600
+UTF8_ENCODING = 'utf-8'
+DEFAULT_ENCODING = UTF8_ENCODING
 
-__version__ = '2.2.5'
+__version__ = '2.3.0'
 
-from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList      # noqa
+from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList     # noqa
+from .multi_config import BaseMultiConfig                                       # noqa
 
 # vim: ts=4 et list

@@ -21,10 +21,11 @@ except ImportError:
 
 # Own modules
 from ..common import to_bool
-from ..config import BaseConfiguration, ConfigError
+from ..config import BaseConfiguration
+from ..errors import ConfigError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 
 LOG = logging.getLogger(__name__)
 

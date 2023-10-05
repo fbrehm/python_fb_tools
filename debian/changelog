@@ -1,3 +1,16 @@
+fb-tools (2.3.0) all; urgency=medium
+
+  * Moving all exception classes from module fb_tools.multi_config to
+    fb_tools.errors.
+  * Splitting module fb_tools.multi_config into different mixin modules.
+  * Adding possibility in module fb_tools.multi_config to read all
+    config files in a directory named by the config file stem.
+  * Expanding tests for class BaseMultiConfig.
+  * Updating translations.
+  * Fixing Github workflow for linting.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 05 Oct 2023 17:23:37 +0200
+
 fb-tools (2.2.5) all; urgency=medium
 
   * Better search for localisation files.

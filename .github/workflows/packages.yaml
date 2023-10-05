@@ -58,10 +58,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Executing Linters
     container: python:3.11
-    env:
-      FLAKE8_MAX_LINE_LENGTH: 99
-      FLAKE8_MAX_COMPLEXITY: 20
-      FLAKE8_IGNORE_ERRORS: 'E226,E302,E41,E402'
     needs:
       - test
     steps:
@@ -115,7 +111,7 @@ jobs:
         run: |
           echo
           echo -e "flake8 bin lib setup.py"
-          flake8 bin lib setup.py
+          flake8 bin/* lib setup.py
       - name: Execute Shellcheck
         shell: bash
         run: |
@@ -474,6 +470,7 @@ jobs:
                                   ${PYTHON}-devel \
                                   ${PYTHON}-babel \
                                   ${PYTHON}-pytz \
+                                  ${PYTHON}-chardet \
                                   ${PYTHON}-six \
                                   ${PYTHON}-fb-logging
           echo
