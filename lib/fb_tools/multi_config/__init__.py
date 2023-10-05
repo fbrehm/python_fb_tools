@@ -54,6 +54,7 @@ except ImportError:
 # Own modules
 from .files import MultiCfgFilesMixin
 from .inits import MultiCfgInitMixin
+from .read import MultiCfgReadMixin
 from ..common import is_sequence, pp, to_bool
 from ..errors import MultiCfgLoaderNotFoundError, MultiCfgParseError, MultiConfigError
 from ..handling_obj import HandlingObject
@@ -61,7 +62,7 @@ from ..merge import merge_structure
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
 
-__version__ = '2.1.3'
+__version__ = '2.1.4'
 
 LOG = logging.getLogger(__name__)
 UTF8_ENCODING = 'utf-8'
@@ -71,7 +72,7 @@ _ = XLATOR.gettext
 
 
 # =============================================================================
-class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin):
+class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, MultiCfgReadMixin):
     """
     A base class for providing a configuration based in different config files.
 
