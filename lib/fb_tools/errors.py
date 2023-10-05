@@ -14,7 +14,7 @@ import signal
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.1.2'
+__version__ = '2.2.0'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -26,6 +26,46 @@ class FbError(Exception):
 
     pass
 
+
+# =============================================================================
+class ConfigError(FbError):
+    """Base error class for all exceptions happened during execution."""
+
+    pass
+
+
+# =============================================================================
+class MultiConfigError(ConfigError):
+    """Base error class for all exceptions in this module."""
+
+    pass
+
+
+# =============================================================================
+class MultiCfgLoaderNotFoundError(MultiConfigError, RuntimeError):
+    """Special error class for the case, that a loader method was not found."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, method):
+        """Initialise a MultiCfgLoaderNotFoundError exception."""
+        self.method = method
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """Typescast into a string."""
+        msg = _('Config loader method {!r} was not found.').format(self.method)
+        return msg
+
+
+# =============================================================================
+class MultiCfgParseError(MultiConfigError, ValueError):
+    """Exception class for parsing in BaseMultiConfig class.
+
+    It s raised, when a parse error of a loader module was raised and
+    BaseMultiConfig.raise_on_error was set to True.
+    """
+
+    pass
 
 # =============================================================================
 class BaseMailAddressError(FbError, ValueError):

@@ -52,7 +52,7 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing import of fb_tools.multi_config ...")
@@ -67,7 +67,7 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_object(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing init of a BaseMultiConfig object.")
@@ -85,7 +85,7 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_init_cfg_dirs(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing init of configuration directories.")
@@ -130,7 +130,7 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_init_stems(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing init of configuration file stems.")
@@ -149,7 +149,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         LOG.debug("Testing, whether appname is in file stems ...")
         cfg = BaseMultiConfig(appname=self.appname, config_dir='test', verbose=self.verbose)
         if self.verbose >= 2:
-            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+            LOG.debug("Initialized base stems:\n{}".format(pp(cfg.stems)))
         if self.verbose > 1:
             LOG.debug("Checking for existence of stem {!r}.".format(self.appname))
         self.assertIn(self.appname, cfg.stems)
@@ -187,10 +187,39 @@ class TestFbMultiConfig(FbToolsTestcase):
             e = cm.exception
             LOG.debug("{c} raised on stem {s!r}: {e}".format(c=e.__class__.__name__, s=stem, e=e))
 
+        LOG.debug("Testing appending and perpending stems ...")
+
+        cfg = BaseMultiConfig(appname=self.appname, config_dir='test', verbose=self.verbose)
+
+        LOG.debug("Appending stem 'uhu' ...")
+        cfg.append_stem('uhu')
+        if self.verbose >= 2:
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+        self.assertEqual(cfg.stems, [self.appname, 'uhu'])
+
+        LOG.debug("Appending stem 'uhu' again ...")
+        cfg.append_stem('uhu')
+        if self.verbose >= 2:
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+        self.assertEqual(cfg.stems, [self.appname, 'uhu'])
+
+        LOG.debug("Appending stem 'mycfg' ...")
+        cfg.add_stem('mycfg')
+        if self.verbose >= 2:
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+        self.assertEqual(cfg.stems, [self.appname, 'uhu', 'mycfg'])
+
+        LOG.debug("Prepending stem 'bla' ...")
+        cfg.prepend_stem('bla')
+        if self.verbose >= 2:
+            LOG.debug("Initialized stems:\n{}".format(pp(cfg.stems)))
+        self.assertEqual(cfg.stems, ['bla', self.appname, 'uhu', 'mycfg'])
+
+
     # -------------------------------------------------------------------------
     def test_collect_cfg_files(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing collecting of configuration files.")
@@ -215,22 +244,43 @@ class TestFbMultiConfig(FbToolsTestcase):
         if self.verbose >= 2:
             LOG.debug("Found configuration files:\n{}".format(pp(cfg.config_files)))
             LOG.debug("Found read methods:\n{}".format(pp(cfg.config_file_methods)))
+            LOG.debug("Assigned ext_patterns:\n{}".format(pp(cfg.ext_patterns)))
+            LOG.debug("Assigned ext_loaders:\n{}".format(pp(cfg.ext_loader)))
 
         for ext in exts:
             path = self.test_cfg_dir / (self.appname + ext)
             exp_method = ext_methods[ext]
             LOG.debug("Checking for existence of detected cfg file {!r}.".format(str(path)))
-            self.assertIn(path, cfg.config_files)
-            LOG.debug("Checking method {m!r} of cfg file {f!r}.".format(
-                m=exp_method, f=str(path)))
-            found_method = cfg.config_file_methods[path]
-            LOG.debug("Found method: {!r}".format(found_method))
-            self.assertEqual(exp_method, found_method)
+            if path.exists():
+                self.assertIn(path, cfg.config_files)
+                LOG.debug("Checking method {m!r} of cfg file {f!r}.".format(
+                    m=exp_method, f=str(path)))
+                found_method = cfg.config_file_methods[path]
+                LOG.debug("Found method: {!r}".format(found_method))
+                self.assertEqual(exp_method, found_method)
+            else:
+                self.assertNotIn(path, cfg.config_files)
+                LOG.debug("Not existing file {!r} not in cfg.config_files.".format(path))
+
+        for ext in exts:
+            path = self.test_cfg_dir / (self.appname + '.d') / ('uhu' + ext)
+            exp_method = ext_methods[ext]
+            LOG.debug("Checking for existence of detected cfg file {!r}.".format(str(path)))
+            if path.exists():
+                self.assertIn(path, cfg.config_files)
+                LOG.debug("Checking method {m!r} of cfg file {f!r}.".format(
+                    m=exp_method, f=str(path)))
+                found_method = cfg.config_file_methods[path]
+                LOG.debug("Found method: {!r}".format(found_method))
+                self.assertEqual(exp_method, found_method)
+            else:
+                self.assertNotIn(path, cfg.config_files)
+                LOG.debug("Not existing file {!r} not in cfg.config_files.".format(path))
 
     # -------------------------------------------------------------------------
     def test_read_cfg_files(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing reading of configuration files.")
@@ -251,7 +301,7 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_read_charset(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing reading of configuration files with different charcter sets.")
@@ -279,12 +329,13 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_read_broken(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing reading of broken configuration files.")
 
-        from fb_tools.multi_config import BaseMultiConfig, MultiCfgParseError
+        from fb_tools.errors import MultiCfgParseError
+        from fb_tools.multi_config import BaseMultiConfig
 
         test_stems = (
             'test_multicfg-broken-ini',
@@ -314,7 +365,7 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_evaluation(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing evaluation configuration.")
@@ -352,7 +403,7 @@ class TestFbMultiConfig(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_additional_config_file(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Test performing additional config file.")
@@ -362,22 +413,57 @@ class TestFbMultiConfig(FbToolsTestcase):
         test_stem = 'test_multicfg-add'
         test_add_config = self.test_cfg_dir / 'test_multicfg-additional.ini'
 
+        LOG.debug("Using {!r} as dditional config file.".format(str(test_add_config)))
+
+        LOG.info("Testing appending additional config file given as parameter.")
         cfg = BaseMultiConfig(
             appname=self.appname, config_dir=self.test_cfg_dir.name,
             additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
-            append_appname_to_stems=False, additional_stems=test_stem,
+            append_appname_to_stems=True, additional_stems=test_stem,
             additional_config_file=str(test_add_config))
         cfg.collect_config_files()
+        if self.verbose >= 2:
+            LOG.debug("Found configuration files:\n{}".format(pp(cfg.config_files)))
         self.assertIn(test_add_config, cfg.config_files)
+        self.assertEqual(test_add_config, cfg.config_files[-1])
 
+        LOG.info("Testing appending additional config file by class property.")
         cfg = BaseMultiConfig(
             appname=self.appname, config_dir=self.test_cfg_dir.name,
             additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
-            append_appname_to_stems=False, additional_stems=test_stem)
+            append_appname_to_stems=True, additional_stems=test_stem)
         cfg.additional_config_file = str(test_add_config)
         cfg.collect_config_files()
+        if self.verbose >= 2:
+            LOG.debug("Found configuration files:\n{}".format(pp(cfg.config_files)))
         self.assertIn(test_add_config, cfg.config_files)
+        self.assertEqual(test_add_config, cfg.config_files[-1])
 
+        LOG.info("Testing appending additional config file by method append_config_file().")
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=True, additional_stems=test_stem)
+        cfg.collect_config_files()
+        cfg.append_config_file(test_add_config)
+        if self.verbose >= 2:
+            LOG.debug("Found configuration files:\n{}".format(pp(cfg.config_files)))
+        self.assertIn(test_add_config, cfg.config_files)
+        self.assertEqual(test_add_config, cfg.config_files[-1])
+
+        LOG.info("Testing prepending additional config file by method prepend_config_file().")
+        cfg = BaseMultiConfig(
+            appname=self.appname, config_dir=self.test_cfg_dir.name,
+            additional_cfgdirs=self.test_cfg_dir, verbose=self.verbose,
+            append_appname_to_stems=True, additional_stems=test_stem)
+        cfg.collect_config_files()
+        cfg.prepend_config_file(test_add_config)
+        if self.verbose >= 2:
+            LOG.debug("Found configuration files:\n{}".format(pp(cfg.config_files)))
+        self.assertIn(test_add_config, cfg.config_files)
+        self.assertEqual(test_add_config, cfg.config_files[0])
+
+        LOG.info("Testing wrong config file.")
         wrong_configs = (
             '/this/should/not/exists',
             '/dev',
@@ -395,13 +481,13 @@ class TestFbMultiConfig(FbToolsTestcase):
                 cfg.additional_config_file = test_add_config
                 cfg.collect_config_files()
             e = cm.exception
-            LOG.info("{c} raised on not usable config file {fn!r}: {e}".format(
+            LOG.debug("{c} raised on not usable config file {fn!r}: {e}".format(
                 c=e.__class__.__name__, fn=test_add_config, e=e))
 
     # -------------------------------------------------------------------------
     def test_checking_privacy(self):
 
-        if self.verbose == 1:
+        if self.verbose >= 1:
             print()
 
         LOG.info("Testing check privacy ...")

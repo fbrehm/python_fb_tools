@@ -250,7 +250,7 @@ get_options() {
     if type -t msgfmt >/dev/null ; then
         :
     else
-        echo "Command '${RED}msgfmt${NORMAL}' not found, please install package '${YELLOW}gettext${NORMAL}' or appropriate." >&2
+        error "Command '${RED}msgfmt${NORMAL}' not found, please install package '${YELLOW}gettext${NORMAL}' or appropriate."
         exit 6
     fi
 
