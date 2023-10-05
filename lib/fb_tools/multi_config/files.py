@@ -22,7 +22,7 @@ from ..common import pp
 from ..errors import MultiConfigError
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -241,10 +241,10 @@ class MultiCfgFilesMixin():
         if fn in self.config_files:
             self.config_files.remove(fn)
         if prepend:
-            msg = _("Prepending {!r} to config files.").format(str(fn))
+            msg = _('Prepending {!r} to config files.').format(str(fn))
             self.config_files.insert(0, fn)
         else:
-            msg = _("Appending {!r} to config files.").format(str(fn))
+            msg = _('Appending {!r} to config files.').format(str(fn))
             self.config_files.append(fn)
         if self.verbose > 1:
             LOG.debug(msg)
@@ -292,18 +292,18 @@ class MultiCfgFilesMixin():
     def _eval_whole_dir(self, dirname):
         """Take all possible config files in this directory independend of the filename stem."""
         if self.verbose > 1:
-            msg = _("Checking directory {!r} for all config files ...").format(str(dirname))
+            msg = _('Checking directory {!r} for all config files ...').format(str(dirname))
             LOG.debug(msg)
 
         for found_file in dirname.glob('*'):
 
             if self.verbose > 1:
-                msg = _("Checking {!r} as a possible config file.").format(str(found_file))
+                msg = _('Checking {!r} as a possible config file.').format(str(found_file))
                 LOG.debug(msg)
 
             if not found_file.is_file():
                 if self.verbose > 1:
-                    msg = _("Path {!r} is not a regular file.").format(str(found_file))
+                    msg = _('Path {!r} is not a regular file.').format(str(found_file))
                     LOG.debug(msg)
                 continue
 
@@ -316,7 +316,6 @@ class MultiCfgFilesMixin():
             if self.verbose > 1:
                 msg = _('Got file info for {!r}:').format(str(found_file)) + '\n' + pp(file_info)
                 LOG.debug(msg)
-            type_name = file_info['type_name']
             method = file_info['method']
 
             self.config_files.append(found_file)

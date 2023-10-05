@@ -334,7 +334,8 @@ class TestFbMultiConfig(FbToolsTestcase):
 
         LOG.info("Testing reading of broken configuration files.")
 
-        from fb_tools.multi_config import BaseMultiConfig, MultiCfgParseError
+        from fb_tools.errors import MultiCfgParseError
+        from fb_tools.multi_config import BaseMultiConfig
 
         test_stems = (
             'test_multicfg-broken-ini',

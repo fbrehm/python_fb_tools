@@ -10,6 +10,8 @@
 
 DDNS_CFG_BASENAME = 'ddns.ini'
 MAX_TIMEOUT = 3600
+UTF8_ENCODING = 'utf-8'
+DEFAULT_ENCODING = UTF8_ENCODING
 
 __version__ = '2.2.5'
 
