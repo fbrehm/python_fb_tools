@@ -83,7 +83,7 @@ if sys.version_info[0] < 3:
 
 # -----------------------------------
 def read(fname):
-    """Read the given file and return its contant."""
+    """Read the given file and return its content."""
     content = None
 
     if sys.version_info[0] < 3:

@@ -26,7 +26,8 @@ from .argparse_actions import CfgFileOptionAction
 from .argparse_actions import LogFileOptionAction
 # from .error import FbCfgAppError
 from .common import pp, to_bool
-from .multi_config import BaseMultiConfig, MultiConfigError
+from .errors import MultiConfigError
+from .multi_config import BaseMultiConfig
 from .multi_config import DEFAULT_ENCODING, UTF8_ENCODING
 from .xlate import XLATOR
 
