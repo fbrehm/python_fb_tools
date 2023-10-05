@@ -22,7 +22,7 @@ from ..common import pp
 from ..errors import MultiConfigError
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -241,10 +241,13 @@ class MultiCfgFilesMixin():
         if fn in self.config_files:
             self.config_files.remove(fn)
         if prepend:
+            msg = _("Prepending {!r} to config files.").format(str(fn))
             self.config_files.insert(0, fn)
         else:
+            msg = _("Appending {!r} to config files.").format(str(fn))
             self.config_files.append(fn)
         if self.verbose > 1:
+            LOG.debug(msg)
             msg = _('Loading method of {fn!r} is: {m!r}.').format(fn=str(fn), m=method)
             LOG.debug(msg)
         self.config_file_methods[fn] = method
