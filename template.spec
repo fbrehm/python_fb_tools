@@ -21,6 +21,7 @@ BuildRequires:  python@@@py_version_nodot@@@-babel
 BuildRequires:  python@@@py_version_nodot@@@-pytz
 BuildRequires:  python@@@py_version_nodot@@@-six
 BuildRequires:  python@@@py_version_nodot@@@-fb-logging >= 0.5.0
+BuildRequires:  python@@@py_version_nodot@@@-chardet
 Requires:       python@@@py_version_nodot@@@
 Requires:       python@@@py_version_nodot@@@-libs
 Requires:       python@@@py_version_nodot@@@-babel

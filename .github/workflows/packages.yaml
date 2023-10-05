@@ -470,6 +470,7 @@ jobs:
                                   ${PYTHON}-devel \
                                   ${PYTHON}-babel \
                                   ${PYTHON}-pytz \
+                                  ${PYTHON}-chardet \
                                   ${PYTHON}-six \
                                   ${PYTHON}-fb-logging
           echo
