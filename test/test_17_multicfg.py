@@ -244,17 +244,23 @@ class TestFbMultiConfig(FbToolsTestcase):
         if self.verbose >= 2:
             LOG.debug("Found configuration files:\n{}".format(pp(cfg.config_files)))
             LOG.debug("Found read methods:\n{}".format(pp(cfg.config_file_methods)))
+            LOG.debug("Assigned ext_patterns:\n{}".format(pp(cfg.ext_patterns)))
+            LOG.debug("Assigned ext_loaders:\n{}".format(pp(cfg.ext_loader)))
 
         for ext in exts:
             path = self.test_cfg_dir / (self.appname + ext)
             exp_method = ext_methods[ext]
             LOG.debug("Checking for existence of detected cfg file {!r}.".format(str(path)))
-            self.assertIn(path, cfg.config_files)
-            LOG.debug("Checking method {m!r} of cfg file {f!r}.".format(
-                m=exp_method, f=str(path)))
-            found_method = cfg.config_file_methods[path]
-            LOG.debug("Found method: {!r}".format(found_method))
-            self.assertEqual(exp_method, found_method)
+            if path.exists():
+                self.assertIn(path, cfg.config_files)
+                LOG.debug("Checking method {m!r} of cfg file {f!r}.".format(
+                    m=exp_method, f=str(path)))
+                found_method = cfg.config_file_methods[path]
+                LOG.debug("Found method: {!r}".format(found_method))
+                self.assertEqual(exp_method, found_method)
+            else:
+                self.assertNotIn(path, cfg.config_files)
+                LOG.debug("Not existing file {!r} not in cfg.config_files.".format(path))
 
     # -------------------------------------------------------------------------
     def test_read_cfg_files(self):
