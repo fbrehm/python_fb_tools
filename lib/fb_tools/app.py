@@ -38,7 +38,7 @@ from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.2.4'
+__version__ = '2.2.5'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -69,6 +69,8 @@ class BaseApplication(HandlingObject):
     show_force_option = False
     show_quiet_option = True
     show_simulate_option = True
+
+    do_init_logging = True
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -313,6 +315,7 @@ class BaseApplication(HandlingObject):
         res['argparse_prefix_chars'] = self.argparse_prefix_chars
         res['args'] = copy.copy(self.args.__dict__)
         res['description'] = self.description
+        res['do_init_logging'] = self.do_init_logging
         res['env_prefix'] = self.env_prefix
         res['exit_value'] = self.exit_value
         res['force_desc_msg'] = self.force_desc_msg
@@ -345,6 +348,9 @@ class BaseApplication(HandlingObject):
 
         @return: None
         """
+        if not self.do_init_logging:
+            return
+
         log_level = logging.INFO
         if self.verbose:
             log_level = logging.DEBUG
