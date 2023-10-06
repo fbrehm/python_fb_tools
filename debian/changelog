@@ -1,4 +1,4 @@
-fb-tools (2.3.1) UNRELEASED; urgency=medium
+fb-tools (2.3.1) all; urgency=medium
 
   * Adding test script for importing application modules
   * Adding class property to BaseApplication whether init_logging should
