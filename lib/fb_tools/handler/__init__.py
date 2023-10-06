@@ -15,7 +15,6 @@ import datetime
 import locale
 import logging
 import os
-import pipes
 import pwd
 import stat
 import subprocess
@@ -25,6 +24,7 @@ try:
     import pathlib
 except ImportError:
     import pathlib2 as pathlib
+from shlex import quote
 
 # Third party modules
 import babel
@@ -40,7 +40,7 @@ from ..errors import HandlerError
 from ..handling_obj import CompletedProcess, HandlingObject
 from ..xlate import XLATOR
 
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -237,7 +237,7 @@ class BaseHandler(HandlingObject):
         use_shell = bool(shell)
 
         cmd_list = [str(element) for element in cmd_list]
-        cmd_str = ' '.join((pipes.quote(x) for x in cmd_list))
+        cmd_str = ' '.join((quote(x) for x in cmd_list))
 
         if not quiet or self.verbose > 1:
             LOG.debug(_('Executing: {}').format(cmd_list))
