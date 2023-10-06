@@ -12,6 +12,7 @@
 import logging
 import os
 import sys
+from pathlib import Path
 
 try:
     import unittest2 as unittest
@@ -42,14 +43,14 @@ class TestAppModules(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_import_base_app(self):
-        """Test importing module fb_tools.app and class BaseApplication."""
+        """Test importing module fb_tools.app."""
         if self.verbose >= 1:
             print()
 
         LOG.info('Testing import of fb_tools.app ...')
         import fb_tools.app
 
-        LOG.debug('Module version of BaseApplication is {!r}.'.format(
+        LOG.info('Module version of fb_tools.app is {!r}.'.format(
             fb_tools.app.__version__))
 
     # -------------------------------------------------------------------------
@@ -76,14 +77,14 @@ class TestAppModules(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_import_config_app(self):
-        """Test importing module fb_tools.cfg_app and class FbConfigApplication."""
+        """Test importing module fb_tools.cfg_app."""
         if self.verbose >= 1:
             print()
 
         LOG.info('Testing import of fb_tools.cfg_app ...')
         import fb_tools.cfg_app
 
-        LOG.debug('Module version of FbConfigApplication is {!r}.'.format(
+        LOG.info('Module version of fb_tools.cfg_app is {!r}.'.format(
             fb_tools.cfg_app.__version__))
 
     # -------------------------------------------------------------------------
@@ -108,6 +109,143 @@ class TestAppModules(FbToolsTestcase):
 
         del cfgapp
 
+    # -------------------------------------------------------------------------
+    def test_import_ddns_app(self):
+        """Test importing module fb_tools.ddns."""
+        if self.verbose >= 1:
+            print()
+
+        LOG.info('Testing import of fb_tools.ddns ...')
+        import fb_tools.ddns
+
+        LOG.info('Module version of fb_tools.ddns is {!r}.'.format(
+            fb_tools.ddns.__version__))
+
+    # -------------------------------------------------------------------------
+    def test_instance_ddns_app(self):
+        """Test create an instance of a BaseDdnsApplication object."""
+        if self.verbose >= 1:
+            print()
+
+        LOG.info('Test creating an instance of a BaseDdnsApplication object.')
+
+        from fb_tools.ddns import BaseDdnsApplication
+
+        BaseDdnsApplication.do_init_logging = False
+
+        app = BaseDdnsApplication(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+        LOG.debug('BaseDdnsApplication %%r: {!r}'.format(app))
+        if self.verbose > 1:
+            LOG.debug('BaseDdnsApplication %%s: {}'.format(app))
+
+        del app
+
+    # -------------------------------------------------------------------------
+    def test_import_myip_app(self):
+        """Test importing module fb_tools.ddns.myip_app."""
+        if self.verbose >= 1:
+            print()
+
+        LOG.info('Testing import of fb_tools.ddns.myip_app ...')
+        import fb_tools.ddns.myip_app
+
+        LOG.info('Module version of fb_tools.ddns.myip_app is {!r}.'.format(
+            fb_tools.ddns.myip_app.__version__))
+
+    # -------------------------------------------------------------------------
+    def test_instance_myip_app(self):
+        """Test create an instance of a MyIpApplication object."""
+        if self.verbose >= 1:
+            print()
+
+        LOG.info('Test creating an instance of a MyIpApplication object.')
+
+        from fb_tools.ddns.myip_app import MyIpApplication
+
+        MyIpApplication.do_init_logging = False
+
+        app = MyIpApplication(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+        LOG.debug('MyIpApplication %%r: {!r}'.format(app))
+        if self.verbose > 1:
+            LOG.debug('MyIpApplication %%s: {}'.format(app))
+
+        del app
+
+    # -------------------------------------------------------------------------
+    def test_import_update_ddns_app(self):
+        """Test importing module fb_tools.ddns.update_app."""
+        if self.verbose >= 1:
+            print()
+
+        LOG.info('Testing import of fb_tools.ddns.update_app ...')
+        import fb_tools.ddns.update_app
+
+        LOG.info('Module version of fb_tools.ddns.update_app is {!r}.'.format(
+            fb_tools.ddns.update_app.__version__))
+
+    # -------------------------------------------------------------------------
+    def test_instance_update_ddns_app(self):
+        """Test create an instance of a UpdateDdnsApplication object."""
+        if self.verbose >= 1:
+            print()
+
+        LOG.info('Test creating an instance of a UpdateDdnsApplication object.')
+
+        from fb_tools.ddns.update_app import UpdateDdnsApplication
+
+        UpdateDdnsApplication.do_init_logging = False
+
+        app = UpdateDdnsApplication(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+        LOG.debug('UpdateDdnsApplication %%r: {!r}'.format(app))
+        if self.verbose > 1:
+            LOG.debug('UpdateDdnsApplication %%s: {}'.format(app))
+
+        del app
+
+    # -------------------------------------------------------------------------
+    def test_import_get_file_rm_app(self):
+        """Test importing module fb_tools.get_file_rm_app."""
+        if self.verbose >= 1:
+            print()
+
+        LOG.info('Testing import of fb_tools.get_file_rm_app ...')
+        import fb_tools.get_file_rm_app
+
+        LOG.info('Module version of fb_tools.get_file_rm_app is {!r}.'.format(
+            fb_tools.get_file_rm_app.__version__))
+
+    # -------------------------------------------------------------------------
+    def test_instance_get_file_rm_app(self):
+        """Test create an instance of a GetFileRmApplication object."""
+        if self.verbose >= 1:
+            print()
+
+        LOG.info('Test creating an instance of a GetFileRmApplication object.')
+
+        from fb_tools.get_file_rm_app import GetFileRmApplication
+
+        GetFileRmApplication.do_init_logging = False
+
+        app = GetFileRmApplication(
+            appname=self.appname,
+            testing_args=[str(Path.cwd() / '*.log')],
+            verbose=self.verbose,
+        )
+        LOG.debug('GetFileRmApplication %%r: {!r}'.format(app))
+        if self.verbose > 1:
+            LOG.debug('GetFileRmApplication %%s: {}'.format(app))
+
+        del app
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -125,6 +263,14 @@ if __name__ == '__main__':
     suite.addTest(TestAppModules('test_instance_base_app', verbose))
     suite.addTest(TestAppModules('test_import_config_app', verbose))
     suite.addTest(TestAppModules('test_instance_cfg_app', verbose))
+    suite.addTest(TestAppModules('test_import_ddns_app', verbose))
+    suite.addTest(TestAppModules('test_instance_ddns_app', verbose))
+    suite.addTest(TestAppModules('test_import_myip_app', verbose))
+    suite.addTest(TestAppModules('test_instance_myip_app', verbose))
+    suite.addTest(TestAppModules('test_import_update_ddns_app', verbose))
+    suite.addTest(TestAppModules('test_instance_update_ddns_app', verbose))
+    suite.addTest(TestAppModules('test_import_get_file_rm_app', verbose))
+    suite.addTest(TestAppModules('test_instance_get_file_rm_app', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
