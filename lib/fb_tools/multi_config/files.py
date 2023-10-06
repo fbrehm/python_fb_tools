@@ -22,7 +22,7 @@ from ..common import pp
 from ..errors import MultiConfigError
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 
 LOG = logging.getLogger(__name__)
 
@@ -147,7 +147,7 @@ class MultiCfgFilesMixin():
                     break
 
             if found_file:
-                file_info = self._get_file_type(fn)
+                file_info = self._get_file_type(fn, raise_on_error=False)
                 if file_info is None:
                     if self.verbose > 2:
                         msg = _('File {!r} is not useable.').format(str(fn))
