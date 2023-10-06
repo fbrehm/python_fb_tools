@@ -32,7 +32,7 @@ from .config import DdnsConfiguration
 from .. import __version__ as GLOBAL_VERSION
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.3'
+__version__ = '2.0.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -114,6 +114,9 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         @return: None
         """
+        if not self.do_init_logging:
+            return
+
         log_level = logging.INFO
         if self.verbose:
             log_level = logging.DEBUG
@@ -144,6 +147,9 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def init_file_logging(self):
         """Initialise logging into a logfile."""
+        if not self.do_init_logging:
+            return
+
         logfile = self.config.logfile
         if not logfile:
             return
@@ -226,14 +232,8 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         self.perform_arg_parser_late()
 
-        if not self.config.all_domains and not self.config.domains:
-            msg = _('No domains to update given, but the option all domains is deactivated.')
-            LOG.error(msg)
-            self.exit(6)
-
         try:
             self.init_file_logging()
-            self.verify_working_dir()
         except WorkDirError as e:
             LOG.error(str(e))
             self.exit(3)
@@ -279,6 +279,23 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         LOG.info(_('Ending {a!r}.').format(
             a=self.appname, v=self.version))
+
+    # -------------------------------------------------------------------------
+    def pre_run(self):
+        """Execute some actions before the main routine."""
+        if self.verbose > 1:
+            LOG.debug(_('Actions before running.'))
+
+        if not self.config.all_domains and not self.config.domains:
+            msg = _('No domains to update given, but the option all domains is deactivated.')
+            LOG.error(msg)
+            self.exit(6)
+
+        try:
+            self.verify_working_dir()
+        except WorkDirError as e:
+            LOG.error(str(e))
+            self.exit(3)
 
     # -------------------------------------------------------------------------
     def do_update_ipv4(self):
