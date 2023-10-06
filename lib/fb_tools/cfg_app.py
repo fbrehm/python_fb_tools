@@ -21,6 +21,7 @@ from pathlib import Path
 # Own modules
 
 from . import __version__ as __pkg_version__
+from . import DEFAULT_ENCODING, UTF8_ENCODING
 from .app import BaseApplication
 from .argparse_actions import CfgFileOptionAction
 from .argparse_actions import LogFileOptionAction
@@ -28,10 +29,9 @@ from .argparse_actions import LogFileOptionAction
 from .common import pp, to_bool
 from .errors import MultiConfigError
 from .multi_config import BaseMultiConfig
-from .multi_config import DEFAULT_ENCODING, UTF8_ENCODING
 from .xlate import XLATOR
 
-__version__ = '2.2.1'
+__version__ = '2.2.2'
 LOG = logging.getLogger(__name__)
 
 
