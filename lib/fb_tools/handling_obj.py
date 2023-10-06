@@ -17,7 +17,6 @@ import getpass
 import locale
 import logging
 import os
-import pipes
 import re
 import signal
 import sys
@@ -25,6 +24,7 @@ try:
     import pathlib
 except ImportError:
     import pathlib2 as pathlib
+from shlex import quote
 from subprocess import PIPE, Popen
 if sys.version_info[0] >= 3:
     from subprocess import SubprocessError, TimeoutExpired
@@ -52,7 +52,7 @@ from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeo
 from .obj import FbBaseObject
 from .xlate import XLATOR
 
-__version__ = '2.1.3'
+__version__ = '2.1.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -495,10 +495,10 @@ class HandlingObject(FbBaseObject):
         cmd_args = []
         for arg in popenargs[0]:
             LOG.debug(_('Performing argument {!r}.').format(arg))
-            cmd_args.append(pipes.quote(arg))
+            cmd_args.append(quote(arg))
         cmd_str = ' '.join(cmd_args)
 
-        cmd_str = ' '.join((pipes.quote(x) for x in popenargs[0]))
+        cmd_str = ' '.join((quote(x) for x in popenargs[0]))
         LOG.debug(_('Executing: {}').format(cmd_str))
 
         if may_simulate and self.simulate:

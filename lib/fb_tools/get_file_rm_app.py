@@ -21,7 +21,6 @@ except ImportError:
     import pathlib2 as pathlib
 
 # Third party modules
-import sre_constants
 
 # Own modules
 from .app import BaseApplication
@@ -29,7 +28,7 @@ from .common import get_monday, pp
 from .errors import FbAppError
 from .xlate import XLATOR
 
-__version__ = '2.0.5'
+__version__ = '2.0.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -349,7 +348,7 @@ class GetFileRmApplication(BaseApplication):
 
         try:
             self.re_date = re.compile(self.pattern)
-        except sre_constants.error as e:
+        except re.error as e:
             raise WrongDatePattern(self.date_pattern, str(e))
 
     # -------------------------------------------------------------------------
