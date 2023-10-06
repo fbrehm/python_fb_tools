@@ -1,3 +1,15 @@
+fb-tools (2.3.1) UNRELEASED; urgency=medium
+
+  * Adding test script for importing application modules
+  * Adding class property to BaseApplication whether init_logging should
+    executed or not.
+  * Fixing internaöl imports.
+  * Adding possibility to assining testing command line arguments to
+    BaseApplication.
+  * Fixing deprecated imports.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 06 Oct 2023 14:39:07 +0200
+
 fb-tools (2.3.0) all; urgency=medium
 
   * Moving all exception classes from module fb_tools.multi_config to
