@@ -1,4 +1,4 @@
-fb-tools (2.3.2) UNRELEASED; urgency=medium
+fb-tools (2.3.2) all; urgency=medium
 
   * Fixing runtime error in lib/fb_tools/multi_config/files.py.
 
