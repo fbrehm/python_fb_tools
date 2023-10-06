@@ -38,7 +38,7 @@ from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.2.5'
+__version__ = '2.2.0'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -76,7 +76,7 @@ class BaseApplication(HandlingObject):
     def __init__(
         self, appname=None, verbose=0, version=__pkg_version__, base_dir=None, quiet=False,
             terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
-            initialized=False, usage=None, description=None,
+            initialized=False, usage=None, description=None, testing_args=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
         """Initialise a BaseApplication object."""
         self.arg_parser = None
@@ -108,6 +108,12 @@ class BaseApplication(HandlingObject):
         """
         @ivar: a short text describing the application
         @type: str
+        """
+
+        self._testing_args = testing_args
+        """
+        @ivar: Command line arguments to use for testing purposes.
+        @type: None or list of strings
         """
 
         self._argparse_epilog = argparse_epilog
@@ -222,6 +228,12 @@ class BaseApplication(HandlingObject):
 
     # -----------------------------------------------------------
     @property
+    def testing_args(self):
+        """Get command line arguments to use for testing purposes."""
+        return self._testing_args
+
+    # -----------------------------------------------------------
+    @property
     def argparse_epilog(self):
         """Get the epilog displayed at the end of the argparse help screen."""
         return self._argparse_epilog
@@ -324,6 +336,7 @@ class BaseApplication(HandlingObject):
         res['show_force_option'] = self.show_force_option
         res['show_quiet_option'] = self.show_quiet_option
         res['show_simulate_option'] = self.show_simulate_option
+        res['testing_args'] = self.testing_args
         res['usage'] = self.usage
         if 'xlate' not in res:
             res['xlate'] = {}
@@ -709,7 +722,7 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def _perform_arg_parser(self):
         """Parse the command line options."""
-        self.args = self.arg_parser.parse_args()
+        self.args = self.arg_parser.parse_args(self.testing_args)
 
         if hasattr(self.args, 'simulate'):
             self.simulate = getattr(self.args, 'simulate', True)
