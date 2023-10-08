@@ -1,22 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: Test script (and module) for unit tests on common.py.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @copyright: © 2023 Frank Brehm, Berlin
 @license: GPL3
-@summary: test script (and module) for unit tests on common.py
 """
 
+import locale
+import logging
 import os
 import sys
-import logging
-import locale
 
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
+
+from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
 import six
 
@@ -26,167 +29,132 @@ locale.setlocale(locale.LC_ALL, '')
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 sys.path.insert(0, libdir)
 
-from general import FbToolsTestcase, get_arg_verbose, init_root_logger
-
 LOG = logging.getLogger('test_common')
 
 
 # =============================================================================
 class TestFbCommon(FbToolsTestcase):
+    """Testcase for unit tests on common.py."""
 
     # -------------------------------------------------------------------------
     def setUp(self):
-        pass
+        """Execute this on seting up before calling each particular test method."""
+        if self.verbose >= 1:
+            print()
 
     # -------------------------------------------------------------------------
     def test_import(self):
+        """Test importing module fb_tools.common."""
+        LOG.info('Testing import of fb_tools.common ...')
+        import fb_tools.common
 
-        LOG.info("Testing import of fb_tools.common ...")
-        import fb_tools.common                                          # noqa
+        LOG.info('Module version of fb_tools.common is {!r}.'.format(
+            fb_tools.common.__version__))
 
     # -------------------------------------------------------------------------
     def test_to_unicode(self):
-
-        LOG.info("Testing to_unicode() ...")
+        """Test module function to_unicode()."""
+        LOG.info('Testing to_unicode() ...')
 
         from fb_tools.common import to_unicode
 
         data = []
         data.append((None, None))
         data.append((1, 1))
-
-        if sys.version_info[0] <= 2:
-            data.append((u'a', u'a'))
-            data.append(('a', u'a'))
-        else:
-            data.append(('a', 'a'))
-            data.append((b'a', 'a'))
+        data.append(('a', 'a'))
+        data.append((b'a', 'a'))
 
         for pair in data:
 
             src = pair[0]
             tgt = pair[1]
             result = to_unicode(src)
-            LOG.debug(
-                "Testing to_unicode(%r) => %r, result %r",
-                src, tgt, result)
+            LOG.debug('Testing to_unicode(%r) => %r, result %r', src, tgt, result)
 
-            if sys.version_info[0] <= 2:
-                if isinstance(src, (str, unicode)):                     # noqa
-                    self.assertIsInstance(result, unicode)              # noqa
-                else:
-                    self.assertNotIsInstance(result, (str, unicode))    # noqa
+            if isinstance(src, (str, bytes)):
+                self.assertIsInstance(result, str)
             else:
-                if isinstance(src, (str, bytes)):
-                    self.assertIsInstance(result, str)
-                else:
-                    self.assertNotIsInstance(result, (str, bytes))
+                self.assertNotIsInstance(result, (str, bytes))
 
             self.assertEqual(tgt, result)
 
     # -------------------------------------------------------------------------
     def test_to_utf8(self):
-
-        LOG.info("Testing to_utf8() ...")
+        """Test module function to_utf8()."""
+        LOG.info('Testing to_utf8() ...')
 
         from fb_tools.common import to_utf8
 
         data = []
         data.append((None, None))
         data.append((1, 1))
-
-        if sys.version_info[0] <= 2:
-            data.append((u'a', 'a'))
-            data.append(('a', 'a'))
-        else:
-            data.append(('a', b'a'))
-            data.append((b'a', b'a'))
+        data.append(('a', b'a'))
+        data.append((b'a', b'a'))
 
         for pair in data:
 
             src = pair[0]
             tgt = pair[1]
             result = to_utf8(src)
-            LOG.debug(
-                "Testing to_utf8(%r) => %r, result %r",
-                src, tgt, result)
+            LOG.debug('Testing to_utf8(%r) => %r, result %r', src, tgt, result)
 
-            if sys.version_info[0] <= 2:
-                if isinstance(src, (str, unicode)):                     # noqa
-                    self.assertIsInstance(result, str)
-                else:
-                    self.assertNotIsInstance(result, (str, unicode))    # noqa
+            if isinstance(src, (str, bytes)):
+                self.assertIsInstance(result, bytes)
             else:
-                if isinstance(src, (str, bytes)):
-                    self.assertIsInstance(result, bytes)
-                else:
-                    self.assertNotIsInstance(result, (str, bytes))
+                self.assertNotIsInstance(result, (str, bytes))
 
             self.assertEqual(tgt, result)
 
     # -------------------------------------------------------------------------
     def test_to_str(self):
-
-        LOG.info("Testing to_str() ...")
+        """Test module function to_str()."""
+        LOG.info('Testing to_str() ...')
 
         from fb_tools.common import to_str
 
         data = []
         data.append((None, None))
         data.append((1, 1))
-
-        if sys.version_info[0] <= 2:
-            data.append((u'a', 'a'))
-            data.append(('a', 'a'))
-        else:
-            data.append(('a', 'a'))
-            data.append((b'a', 'a'))
+        data.append(('a', 'a'))
+        data.append((b'a', 'a'))
 
         for pair in data:
 
             src = pair[0]
             tgt = pair[1]
             result = to_str(src)
-            LOG.debug(
-                "Testing to_str(%r) => %r, result %r",
-                src, tgt, result)
+            LOG.debug('Testing to_str(%r) => %r, result %r', src, tgt, result)
 
-            if sys.version_info[0] <= 2:
-                if isinstance(src, (str, unicode)):                     # noqa
-                    self.assertIsInstance(result, str)
-                else:
-                    self.assertNotIsInstance(result, (str, unicode))    # noqa
+            if isinstance(src, (str, bytes)):
+                self.assertIsInstance(result, str)
             else:
-                if isinstance(src, (str, bytes)):
-                    self.assertIsInstance(result, str)
-                else:
-                    self.assertNotIsInstance(result, (str, bytes))
+                self.assertNotIsInstance(result, (str, bytes))
 
             self.assertEqual(tgt, result)
 
     # -------------------------------------------------------------------------
     def test_human2mbytes(self):
-
-        LOG.info("Testing human2mbytes() from fb_tools.common ...")
+        """Test module function human2mbytes()."""
+        LOG.info('Testing human2mbytes() from fb_tools.common ...')
 
         from fb_tools.common import human2mbytes
 
         loc = locale.getlocale()    # get current locale
         encoding = loc[1]
-        LOG.debug("Current locale is %r.", loc)
-        german = ('de_DE', encoding)                                    # noqa
+        LOG.debug('Current locale is %r.', loc)
+        german = ('de_DE', encoding)
 
         do_switch_locales = True
         try:
             locale.setlocale(locale.LC_ALL, german)
         except Exception as e:
-            LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
+            LOG.warning('Got a {c}: {e}'.format(c=e.__class__.__name__, e=e))
             do_switch_locales = False
 
         if do_switch_locales:
-            LOG.debug("Setting to locale 'C' to be secure.")
+            LOG.debug('Setting to locale {!r} to be secure.'.format('C'))
             locale.setlocale(locale.LC_ALL, 'C')
-            LOG.debug("Current locale is now %r.", locale.getlocale())
+            LOG.debug('Current locale is now {!r}.'.format(locale.getlocale()))
 
         test_pairs_int_si = (
             ('1048576', 1),
@@ -231,37 +199,38 @@ class TestFbCommon(FbToolsTestcase):
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing human2mbytes(%r) => %d", src, expected)
+                LOG.debug('Testing human2mbytes({src!r}) => {exp!r}'.format(
+                    src=src, exp=expected))
             result = human2mbytes(src, si_conform=True)
             if self.verbose > 1:
-                LOG.debug("Got result: %r", result)
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertIsInstance(result, int)
             self.assertEqual(expected, result)
 
         if do_switch_locales:
             # Switch back to saved locales
-            LOG.debug("Switching back to saved locales %r.", loc)
+            LOG.debug('Switching back to saved locales {!r}.'.format(loc))
             locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
 
     # -------------------------------------------------------------------------
     def test_human2mbytes_l10n(self):
-
-        LOG.info("Testing localisation of human2mbytes() from fb_tools.common ...")
+        """Testing localisation of human2mbytes()."""
+        LOG.info('Testing localisation of human2mbytes() from fb_tools.common ...')
 
         loc = locale.getlocale()                                        # get current locale
         encoding = loc[1]
-        LOG.debug("Current locale is %r.", loc)
+        LOG.debug('Current locale is {!r}.'.format(loc))
         german = ('de_DE', encoding)
 
         try:
             locale.setlocale(locale.LC_ALL, german)
         except Exception as e:
-            LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
+            LOG.warning('Got a {c}: {e}'.format(c=e.__class__.__name__, e=e))
             return True
 
-        LOG.debug("Setting to locale 'C' to be secure.")
+        LOG.debug('Setting to locale {!r} to be secure.'.format('C'))
         locale.setlocale(locale.LC_ALL, 'C')
-        LOG.debug("Current locale is now %r.", locale.getlocale())
+        LOG.debug('Current locale is now {!r}.'.format(locale.getlocale()))
 
         from fb_tools.common import human2mbytes
 
@@ -277,78 +246,81 @@ class TestFbCommon(FbToolsTestcase):
             ('1.055,4 GiB', int(10554 * 1024 / 10)),
         )
 
-        LOG.debug("Testing english decimal radix character %r.", '.')
+        LOG.debug('Testing english decimal radix character {!r}.'.format('.'))
         for pair in pairs_en:
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing localisation of human2mbytes(%r) => %d", src, expected)
+                LOG.debug('Testing localisation of human2mbytes({src!r}) => {exp!r}'.format(
+                    src=src, exp=expected))
             result = human2mbytes(src, si_conform=True)
             if self.verbose > 1:
-                LOG.debug("Got result: %r", result)
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertIsInstance(result, int)
             self.assertEqual(expected, result)
 
         # Switch to german locales
-        LOG.debug("Switching to german locale %r.", german)
+        LOG.debug('Switching to german locale {!r}.'.format(german))
         # use German locale; name might vary with platform
         locale.setlocale(locale.LC_ALL, german)
-        LOG.debug("Current locale is now %r.", locale.getlocale())
+        LOG.debug('Current locale is now {!r}.'.format(locale.getlocale()))
 
-        LOG.debug("Testing german decimal radix character %r.", ',')
+        LOG.debug('Testing german decimal radix character {!r}.'.format(','))
         for pair in pairs_de:
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing localisation of human2mbytes(%r) => %d", src, expected)
+                LOG.debug('Testing localisation of human2mbytes({src!r}) => {exp!r}'.format(
+                    src=src, exp=expected))
             result = human2mbytes(src, si_conform=True)
             if self.verbose > 1:
-                LOG.debug("Got result: %r", result)
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertIsInstance(result, int)
             self.assertEqual(expected, result)
 
         # Switch back to english locales
         locale.setlocale(locale.LC_ALL, 'C')    # restore saved locale
 
-        LOG.debug("Testing english decimal radix character %r again.", '.')
+        LOG.debug('Testing english decimal radix character {!r} again.'.format('.'))
         for pair in pairs_en:
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing localisation of human2mbytes(%r) => %d", src, expected)
+                LOG.debug('Testing localisation of human2mbytes({src!r}) => {exp!r}'.format(
+                    src=src, exp=expected))
             result = human2mbytes(src, si_conform=True)
             if self.verbose > 1:
-                LOG.debug("Got result: %r", result)
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertIsInstance(result, int)
             self.assertEqual(expected, result)
 
         # Switch back to saved locales
-        LOG.debug("Switching back to saved locales %r.", loc)
+        LOG.debug('Switching back to saved locales {!r}.'.format(loc))
         locale.setlocale(locale.LC_ALL, loc)    # restore saved locale
 
     # -------------------------------------------------------------------------
     def test_bytes2human(self):
-
-        LOG.info("Testing bytes2human() from fb_tools.common ...")
+        """Test module function bytes2human()."""
+        LOG.info('Testing bytes2human() from fb_tools.common ...')
 
         from fb_tools.common import bytes2human
 
         loc = locale.getlocale()    # get current locale
         encoding = loc[1]
-        LOG.debug("Current locale is %r.", loc)
-        german = ('de_DE', encoding)                                    # noqa
+        LOG.debug('Current locale is {!r}.'.format(loc))
+        german = ('de_DE', encoding)
 
         do_switch_locales = True
         try:
             locale.setlocale(locale.LC_ALL, german)
         except Exception as e:
-            LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
+            LOG.warning('Got a {c}: {e}'.format(c=e.__class__.__name__, e=e))
             do_switch_locales = False
 
         if do_switch_locales:
-            LOG.debug("Setting to locale 'C' to be secure.")
+            LOG.debug('Setting to locale {!r} to be secure.'.format('C'))
             locale.setlocale(locale.LC_ALL, 'C')
-            LOG.debug("Current locale is now %r.", locale.getlocale())
+            LOG.debug('Current locale is now {!r}.'.format(locale.getlocale()))
 
         test_pairs_no_si = (
             (0, '0 Bytes'),
@@ -366,10 +338,10 @@ class TestFbCommon(FbToolsTestcase):
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing bytes2human(%r) => %r", src, expected)
+                LOG.debug('Testing bytes2human({src!r}) => {exp!r}'.format(src=src, exp=expected))
             result = bytes2human(src)
             if self.verbose > 1:
-                LOG.debug("Got result: %r", result)
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertIsInstance(result, str)
             self.assertEqual(expected, result)
 
@@ -384,60 +356,73 @@ class TestFbCommon(FbToolsTestcase):
             (2304 * 1024 * 1024, '2.25 GiB'),
         )
 
+        prec = 2
+
         for pair in test_pairs_no_si:
 
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing bytes2human(%r) precission 2 => %r", src, expected)
-            result = bytes2human(src, precision=2)
+                LOG.debug('Testing bytes2human({src!r}) precission {prec} => {exp!r}'.format(
+                    src=src, prec=prec, exp=expected))
+            result = bytes2human(src, precision=prec)
             if self.verbose > 1:
-                LOG.debug("Got result: %r", result)
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertIsInstance(result, str)
             self.assertEqual(expected, result)
 
         if do_switch_locales:
             # Switch back to saved locales
-            LOG.debug("Switching back to saved locales %r.", loc)
+            LOG.debug('Switching back to saved locales {!r}.'.format(loc))
             locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
 
     # -------------------------------------------------------------------------
     def test_to_bool(self):
-
-        LOG.info("Testing to_bool() from fb_tools.common ...")
+        """Test module function to_bool()."""
+        LOG.info('Testing to_bool() from fb_tools.common ...')
 
         from fb_tools.common import to_bool
 
         class TestClass(object):
+
             pass
+
         test_object = TestClass()
 
         class TestClassTrue(object):
+
             if sys.version_info[0] > 2:
                 def __bool__(self):
                     return True
             else:
                 def __nonzero__(self):
                     return True
+
         test_object_true = TestClassTrue()
 
         class TestClassFalse(object):
+
             if sys.version_info[0] > 2:
                 def __bool__(self):
                     return False
             else:
                 def __nonzero__(self):
                     return False
+
         test_object_false = TestClassFalse()
 
         class TestClassFilled(object):
+
             def __len__(self):
                 return 1
+
         test_object_filled = TestClassFilled()
 
         class TestClassEmpty(object):
+
             def __len__(self):
                 return 0
+
         test_object_empty = TestClassEmpty()
 
         test_pairs = (
@@ -485,55 +470,56 @@ class TestFbCommon(FbToolsTestcase):
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing to_bool(%r) => %r", src, expected)
+                LOG.debug('Testing to_bool({src!r}) => {exp!r}'.format(src=src, exp=expected))
             result = to_bool(src)
             if self.verbose > 1:
-                LOG.debug("Got result: %r", result)
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertIsInstance(result, bool)
             self.assertEqual(expected, result)
 
         # Switch to german locales
         loc = locale.getlocale()                                        # get current locale
         encoding = loc[1]
-        LOG.debug("Current locale is %r.", loc)
+        LOG.debug('Current locale is {!r}.'.format(loc))
         german = ('de_DE', encoding)
         try:
             locale.setlocale(locale.LC_ALL, german)
         except Exception as e:
-            LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
+            LOG.warning('Got a {c}: {e}'.format(c=e.__class__.__name__, e=e))
             return True
 
         # use German locale; name might vary with platform
-        LOG.debug("Switching to german locale %r.", german)
+        LOG.debug('Switching to german locale {!r}.'.format(german))
         locale.setlocale(locale.LC_ALL, german)
 
-        LOG.debug("Testing german Yes/No expressions for to_bool().")
+        LOG.debug('Testing german Yes/No expressions for to_bool().')
         for pair in test_pairs_de:
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing localisation of to_bool(%r) => %r", src, expected)
+                LOG.debug('Testing localisation of to_bool({src!r}) => {exp!r}'.format(
+                    src=src, exp=expected))
             result = to_bool(src)
             if self.verbose > 1:
-                LOG.debug("Got result: %r", result)
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertIsInstance(result, bool)
             self.assertEqual(expected, result)
 
         # Switch back to saved locales
-        LOG.debug("Switching back to saved locales %r.", loc)
+        LOG.debug('Switching back to saved locales {!r}.'.format(loc))
         locale.setlocale(locale.LC_ALL, loc)                            # restore saved locale
 
     # -------------------------------------------------------------------------
     def test_indent(self):
-
-        LOG.info("Testing indent() from fb_tools.common ...")
+        """Test module function indent()."""
+        LOG.info('Testing indent() from fb_tools.common ...')
 
         from fb_tools.common import indent
 
         ind = '  '
         initial_ind = ' '
 
-        LOG.debug("Testing indent() without a separate initial_prefix.")
+        LOG.debug('Testing indent() without a separate initial_prefix.')
         test_pairs = (
             ('', ''),
             ('a', ind + 'a'),
@@ -547,13 +533,13 @@ class TestFbCommon(FbToolsTestcase):
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing indenting {src!r} => {tgt!r}".format(src=src, tgt=expected))
+                LOG.debug('Testing indenting {src!r} => {tgt!r}'.format(src=src, tgt=expected))
             result = indent(src, ind)
             if self.verbose > 1:
-                LOG.debug("Got result: {!r}".format(result))
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertEqual(expected, result)
 
-        LOG.debug("Testing indent() with a separate initial_prefix.")
+        LOG.debug('Testing indent() with a separate initial_prefix.')
         test_pairs = (
             ('', ''),
             ('a', initial_ind + 'a'),
@@ -567,13 +553,13 @@ class TestFbCommon(FbToolsTestcase):
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing indenting {src!r} => {tgt!r}".format(src=src, tgt=expected))
+                LOG.debug('Testing indenting {src!r} => {tgt!r}'.format(src=src, tgt=expected))
             result = indent(src, ind, initial_prefix=initial_ind)
             if self.verbose > 1:
-                LOG.debug("Got result: {!r}".format(result))
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertEqual(expected, result)
 
-        LOG.debug("Testing indent() with a predicate function.")
+        LOG.debug('Testing indent() with a predicate function.')
 
         def test_predicate(line):
             if line.strip().startswith('b'):
@@ -599,16 +585,16 @@ class TestFbCommon(FbToolsTestcase):
             src = pair[0]
             expected = pair[1]
             if self.verbose > 1:
-                LOG.debug("Testing indenting {src!r} => {tgt!r}".format(src=src, tgt=expected))
+                LOG.debug('Testing indenting {src!r} => {tgt!r}'.format(src=src, tgt=expected))
             result = indent(src, ind, predicate=test_predicate)
             if self.verbose > 1:
-                LOG.debug("Got result: {!r}".format(result))
+                LOG.debug('Got result: {!r}'.format(result))
             self.assertEqual(expected, result)
 
     # -------------------------------------------------------------------------
     def test_compare_ldap_values(self):
-
-        LOG.info("Testing compare_ldap_values() from fb_tools.common ...")
+        """Test module function compare_ldap_values()."""
+        LOG.info('Testing compare_ldap_values() from fb_tools.common ...')
 
         if six.PY2:
             bin_a = 'a'
@@ -653,7 +639,7 @@ class TestFbCommon(FbToolsTestcase):
             second = test_tuple[1]
             expected = test_tuple[2]
             result = compare_ldap_values(first, second)
-            LOG.debug("Compared {f!r} and {s!r}, result: {res} (expected: {ex}).".format(
+            LOG.debug('Compared {f!r} and {s!r}, result: {res} (expected: {ex}).'.format(
                 f=first, s=second, res=result, ex=expected))
             self.assertEqual(result, expected)
 
@@ -667,7 +653,7 @@ if __name__ == '__main__':
         verbose = 0
     init_root_logger(verbose)
 
-    LOG.info("Starting tests ...")
+    LOG.info('Starting tests ...')
 
     suite = unittest.TestSuite()
 
