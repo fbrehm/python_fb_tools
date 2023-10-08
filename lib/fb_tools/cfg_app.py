@@ -31,7 +31,7 @@ from .errors import MultiConfigError
 from .multi_config import BaseMultiConfig
 from .xlate import XLATOR
 
-__version__ = '2.2.3'
+__version__ = '2.2.4'
 LOG = logging.getLogger(__name__)
 
 
@@ -44,13 +44,10 @@ class FbConfigApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__pkg_version__, base_dir=None, quiet=False,
-            terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
-            usage=None, description=None, cfg_class=BaseMultiConfig,
-            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None,
+        self, version=__pkg_version__, cfg_class=BaseMultiConfig, initialized=False,
             append_appname_to_stems=True, config_dir=None, additional_stems=None,
-            additional_cfgdirs=None, cfg_encoding=DEFAULT_ENCODING,
-            use_chardet=True, initialized=False):
+            additional_cfgdirs=None, cfg_encoding=DEFAULT_ENCODING, use_chardet=True,
+            *args, **kwargs):
         """Initialise a FbConfigApplication object."""
         if not issubclass(cfg_class, BaseMultiConfig):
             msg = _('Parameter {cls!r} must be a subclass of {clinfo!r}.').format(
@@ -70,11 +67,9 @@ class FbConfigApplication(BaseApplication):
         self._cfg_encoding = cfg_encoding
 
         super(FbConfigApplication, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir, quiet=quiet,
-            terminal_has_colors=terminal_has_colors, simulate=simulate, force=force,
-            assumed_answer=assumed_answer, initialized=False, usage=usage, description=description,
-            argparse_epilog=argparse_epilog, argparse_prefix_chars=argparse_prefix_chars,
-            env_prefix=env_prefix,
+            version=version,
+            initialized=False,
+            *args, **kwargs
         )
 
         if initialized:
