@@ -34,7 +34,8 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def setUp(self):
         """Execute this on seting up before calling each particular test method."""
-        pass
+        if self.verbose >= 1:
+            print()
 
     # -------------------------------------------------------------------------
     def tearDown(self):
@@ -44,9 +45,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import_base_app(self):
         """Test importing module fb_tools.app."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Testing import of fb_tools.app ...')
         import fb_tools.app
 
@@ -56,9 +54,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_instance_base_app(self):
         """Test create an instance of a BaseApplication object."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Test creating an instance of a BaseApplication object.')
 
         from fb_tools.app import BaseApplication
@@ -78,9 +73,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import_config_app(self):
         """Test importing module fb_tools.cfg_app."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Testing import of fb_tools.cfg_app ...')
         import fb_tools.cfg_app
 
@@ -90,9 +82,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_instance_cfg_app(self):
         """Test create an instance of a FbConfigApplication object."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Test creating an instance of a FbConfigApplication object.')
 
         from fb_tools.cfg_app import FbConfigApplication
@@ -112,9 +101,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import_ddns_app(self):
         """Test importing module fb_tools.ddns."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Testing import of fb_tools.ddns ...')
         import fb_tools.ddns
 
@@ -124,9 +110,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_instance_ddns_app(self):
         """Test create an instance of a BaseDdnsApplication object."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Test creating an instance of a BaseDdnsApplication object.')
 
         from fb_tools.ddns import BaseDdnsApplication
@@ -146,9 +129,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import_myip_app(self):
         """Test importing module fb_tools.ddns.myip_app."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Testing import of fb_tools.ddns.myip_app ...')
         import fb_tools.ddns.myip_app
 
@@ -158,9 +138,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_instance_myip_app(self):
         """Test create an instance of a MyIpApplication object."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Test creating an instance of a MyIpApplication object.')
 
         from fb_tools.ddns.myip_app import MyIpApplication
@@ -180,9 +157,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import_update_ddns_app(self):
         """Test importing module fb_tools.ddns.update_app."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Testing import of fb_tools.ddns.update_app ...')
         import fb_tools.ddns.update_app
 
@@ -192,9 +166,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_instance_update_ddns_app(self):
         """Test create an instance of a UpdateDdnsApplication object."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Test creating an instance of a UpdateDdnsApplication object.')
 
         from fb_tools.ddns.update_app import UpdateDdnsApplication
@@ -214,9 +185,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import_get_file_rm_app(self):
         """Test importing module fb_tools.get_file_rm_app."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Testing import of fb_tools.get_file_rm_app ...')
         import fb_tools.get_file_rm_app
 
@@ -226,9 +194,6 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_instance_get_file_rm_app(self):
         """Test create an instance of a GetFileRmApplication object."""
-        if self.verbose >= 1:
-            print()
-
         LOG.info('Test creating an instance of a GetFileRmApplication object.')
 
         from fb_tools.get_file_rm_app import GetFileRmApplication
