@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''
+"""
+@summary: Test script (and module) for unit tests on error (exception) classes.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @copyright: © 2023 Frank Brehm, Berlin
 @license: GPL3
-@summary: test script (and module) for unit tests on error (exception) classes
-'''
+"""
 
+import logging
 import os
 import sys
-import logging
 
 try:
     import unittest2 as unittest
@@ -27,36 +28,40 @@ LOG = logging.getLogger('test_errors')
 
 # =============================================================================
 class TestFbErrors(FbToolsTestcase):
+    """Testcase class for unit tests on error (exception) classes."""
 
     # -------------------------------------------------------------------------
     def setUp(self):
-        pass
+        """Execute this on seting up before calling each particular test method."""
+        if self.verbose >= 1:
+            print()
 
     # -------------------------------------------------------------------------
     def test_import(self):
+        """Test importing module fb_tools.errors."""
+        LOG.info('Testing import of fb_tools.errors ...')
 
-        LOG.info("Testing import of fb_tools.errors ...")
-        import fb_tools.errors                                                  # noqa
-        from fb_tools.errors import FbError, FunctionNotImplementedError        # noqa
-        from fb_tools.errors import IoTimeoutError, ReadTimeoutError            # noqa
-        from fb_tools.errors import WriteTimeoutError                           # noqa
+        import fb_tools.errors
+
+        LOG.info('Module version of fb_tools.errors is {!r}.'.format(
+            fb_tools.errors.__version__))
 
     # -------------------------------------------------------------------------
     def test_fb_error(self):
-
-        LOG.info("Test raising a FbError exception ...")
+        """Test raising a FbError exception."""
+        LOG.info('Test raising a FbError exception ...')
 
         from fb_tools.errors import FbError
 
         with self.assertRaises(FbError) as cm:
-            raise FbError("Bla blub")
+            raise FbError('Bla blub')
         e = cm.exception
-        LOG.debug("%s raised: %s", e.__class__.__name__, e)
+        LOG.debug('%s raised: %s', e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_func_not_implemented(self):
-
-        LOG.info("Test raising a FunctionNotImplementedError exception ...")
+        """Test raising a FunctionNotImplementedError exception."""
+        LOG.info('Test raising a FunctionNotImplementedError exception ...')
 
         from fb_tools.errors import FunctionNotImplementedError
 
@@ -64,43 +69,43 @@ class TestFbErrors(FbToolsTestcase):
             raise FunctionNotImplementedError(
                 'test_func_not_implemented', 'test_errors')
         e = cm.exception
-        LOG.debug("%s raised: %s", e.__class__.__name__, e)
+        LOG.debug('%s raised: %s', e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_io_timeout_error(self):
-
-        LOG.info("Test raising a IoTimeoutError exception ...")
+        """Test raising an IoTimeoutError exception."""
+        LOG.info('Test raising an IoTimeoutError exception ...')
 
         from fb_tools.errors import IoTimeoutError
 
         with self.assertRaises(IoTimeoutError) as cm:
-            raise IoTimeoutError("Test IO error", 2.5, '/etc/shadow')
+            raise IoTimeoutError('Test IO error', 2.5, '/etc/shadow')
         e = cm.exception
-        LOG.debug("%s raised: %s", e.__class__.__name__, e)
+        LOG.debug('%s raised: %s', e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_read_timeout_error(self):
-
-        LOG.info("Test raising a ReadTimeoutError exception ...")
+        """Test raising a ReadTimeoutError exception."""
+        LOG.info('Test raising a ReadTimeoutError exception ...')
 
         from fb_tools.errors import ReadTimeoutError
 
         with self.assertRaises(ReadTimeoutError) as cm:
             raise ReadTimeoutError(2.55, '/etc/shadow')
         e = cm.exception
-        LOG.debug("%s raised: %s", e.__class__.__name__, e)
+        LOG.debug('%s raised: %s', e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_write_timeout_error(self):
-
-        LOG.info("Test raising a WriteTimeoutError exception ...")
+        """Test raising a WriteTimeoutError exception."""
+        LOG.info('Test raising a WriteTimeoutError exception ...')
 
         from fb_tools.errors import WriteTimeoutError
 
         with self.assertRaises(WriteTimeoutError) as cm:
             raise WriteTimeoutError(5, '/etc/shadow')
         e = cm.exception
-        LOG.debug("%s raised: %s", e.__class__.__name__, e)
+        LOG.debug('%s raised: %s', e.__class__.__name__, e)
 
 
 # =============================================================================
@@ -111,7 +116,7 @@ if __name__ == '__main__':
         verbose = 0
     init_root_logger(verbose)
 
-    LOG.info("Starting tests ...")
+    LOG.info('Starting tests ...')
 
     suite = unittest.TestSuite()
 

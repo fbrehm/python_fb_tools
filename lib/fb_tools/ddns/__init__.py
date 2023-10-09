@@ -38,7 +38,7 @@ from ..errors import FbAppError
 from ..errors import IoTimeoutError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.3'
+__version__ = '2.0.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -120,9 +120,8 @@ class BaseDdnsApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
-            initialized=False, usage=None, description=None,
-            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
+        self, version=GLOBAL_VERSION, initialized=False, description=None,
+            *args, **kwargs):
         """Construct a BaseDdnsApplication object."""
         if description is None:
             description = _('This is a base DDNS related application.')
@@ -133,8 +132,10 @@ class BaseDdnsApplication(BaseApplication):
         self._user_agent = '{}/{}'.format(self.library_name, GLOBAL_VERSION)
 
         super(BaseDdnsApplication, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            description=description, initialized=False,
+            version=version,
+            description=description,
+            initialized=False,
+            *args, **kwargs
         )
 
         if initialized:

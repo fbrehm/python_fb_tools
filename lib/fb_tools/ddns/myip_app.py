@@ -20,7 +20,7 @@ from .. import __version__ as GLOBAL_VERSION
 from ..common import to_bool
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.5'
+__version__ = '2.0.6'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -37,9 +37,8 @@ class MyIpApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
-            initialized=False, usage=None, description=None,
-            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
+        self, version=GLOBAL_VERSION, initialized=None, description=None,
+            *args, **kwargs):
         """Initialise a MyIpApplication object."""
         self._write_ips = False
 
@@ -56,11 +55,17 @@ class MyIpApplication(BaseDdnsApplication):
             '{d!r}).').format(c=format_list(valid_proto_list, do_repr=True, style='or'), d='any')
 
         super(MyIpApplication, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            description=description, initialized=False,
+            version=version,
+            description=description,
+            initialized=False,
+            *args, **kwargs
         )
 
-        self.initialized = True
+        if initialized is None:
+            self.initialized = True
+        else:
+            if initialized:
+                self.initialized = True
 
     # -------------------------------------------------------------------------
     @property

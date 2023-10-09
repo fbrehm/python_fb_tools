@@ -1,3 +1,12 @@
+fb-tools (2.3.3) UNRELEASED; urgency=medium
+
+  * Fixing lib/fb_tools/cfg_app.py for additional config file.
+  * Simplyfication init of different application classes.
+  * Fixing lib/fb_tools/cfg_app.py for additional config file.
+  * Applying flake8 rules to differenbt test scripts.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 09 Oct 2023 16:48:49 +0200
+
 fb-tools (2.3.2) all; urgency=medium
 
   * Fixing runtime error in lib/fb_tools/multi_config/files.py.
