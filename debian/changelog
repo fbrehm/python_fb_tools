@@ -1,4 +1,4 @@
-fb-tools (2.3.3) UNRELEASED; urgency=medium
+fb-tools (2.3.3) all; urgency=medium
 
   * Fixing lib/fb_tools/cfg_app.py for additional config file.
   * Simplyfication init of different application classes.
