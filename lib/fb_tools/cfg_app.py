@@ -31,7 +31,7 @@ from .errors import MultiConfigError
 from .multi_config import BaseMultiConfig
 from .xlate import XLATOR
 
-__version__ = '2.2.4'
+__version__ = '2.2.5'
 LOG = logging.getLogger(__name__)
 
 
@@ -181,6 +181,7 @@ class FbConfigApplication(BaseApplication):
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             append_appname_to_stems=self._append_appname_to_stems, config_dir=self._config_dir,
             additional_stems=self._additional_stems, additional_cfgdirs=self._additional_cfgdirs,
+            additional_config_file=self.additional_cfg_file,
             encoding=self._cfg_encoding, use_chardet=self.use_chardet, initialized=True)
 
         try:
