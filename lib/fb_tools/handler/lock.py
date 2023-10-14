@@ -34,7 +34,7 @@ from ..errors import CouldntOccupyLockfileError, HandlerError
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
 
-__version__ = '2.0.3'
+__version__ = '2.0.4'
 
 LOG = logging.getLogger(__name__)
 
@@ -142,7 +142,8 @@ class LockObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, lockfile, ctime=None, mtime=None, fcontent=None, fd=None, simulate=False,
-            autoremove=False, version=__version__, silent=False, *args, **kwargs):
+            autoremove=False, version=__version__, silent=False, initialized=False,
+            *args, **kwargs):
         """
         Initialise a LockObject object.
 
@@ -415,7 +416,7 @@ class LockHandler(BaseHandler):
             max_lockfile_age=DEFAULT_MAX_LOCKFILE_AGE,
             locking_use_pid=DEFAULT_LOCKING_USE_PID,
             stay_opened=True, version=__version__,
-            silent=False, *args, **kwargs):
+            silent=False, initialized=False, *args, **kwargs):
         """Initialise the locking handler object.
 
         @raise LockdirNotExistsError: if the lockdir (or base_dir) doesn't exists

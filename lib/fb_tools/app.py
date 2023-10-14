@@ -38,7 +38,7 @@ from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.2.0'
+__version__ = '2.2.1'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -74,10 +74,9 @@ class BaseApplication(HandlingObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__pkg_version__, base_dir=None, quiet=False,
-            terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
-            initialized=False, usage=None, description=None, testing_args=None,
-            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
+        self, version=__pkg_version__, usage=None, description=None, testing_args=None,
+            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None,
+            initialized=None, *args, **kwargs):
         """Initialise a BaseApplication object."""
         self.arg_parser = None
         """
@@ -145,9 +144,9 @@ class BaseApplication(HandlingObject):
         """
 
         super(BaseApplication, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            quiet=quiet, simulate=simulate, force=force, assumed_answer=assumed_answer,
-            terminal_has_colors=terminal_has_colors, initialized=False,
+            version=version,
+            initialized=False,
+            *args, **kwargs
         )
 
         if env_prefix:
@@ -180,6 +179,9 @@ class BaseApplication(HandlingObject):
         self._perform_env()
 
         self.post_init()
+
+        if initialized:
+            self.initialized = True
 
     # -----------------------------------------------------------
     @property
