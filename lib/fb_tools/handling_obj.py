@@ -52,7 +52,7 @@ from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeo
 from .obj import FbBaseObject
 from .xlate import XLATOR
 
-__version__ = '2.1.4'
+__version__ = '2.1.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -168,9 +168,8 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None, quiet=False,
-            terminal_has_colors=False, simulate=None, force=None, assumed_answer=None,
-            initialized=None):
+        self, version=__version__, quiet=False, terminal_has_colors=False,
+            simulate=None, force=None, assumed_answer=None, *args, **kwargs):
         """Initialise a HandlingObject."""
         self.init_yes_no_lists()
 
@@ -197,11 +196,8 @@ class HandlingObject(FbBaseObject):
         self._interrupted = False
 
         super(HandlingObject, self).__init__(
-            appname=appname,
-            verbose=verbose,
             version=version,
-            base_dir=base_dir,
-            initialized=False,
+            *args, **kwargs,
         )
 
         if simulate is not None:
