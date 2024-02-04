@@ -630,7 +630,7 @@ jobs:
           mv -vi artifacts/debian_sources/src artifacts/
           rmdir -v artifacts/debian_bin_pkgs_* artifacts/debian_sources
           for el_version in 7 8 9 10 ; do
-            if [[ -d artifacts/rpm_pkgs_el${el_version} ; then
+            if [[ -d artifacts/rpm_pkgs_el${el_version} ]]; then
               mkdir -pv artifacts/el-${el_version}
               mv -vi artifacts/rpm_pkgs_el${el_version}/*/*/*.rpm artifacts/rpm_pkgs_el${el_version}/*/*.rpm artifacts/el-${el_version}/
             fi
