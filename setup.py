@@ -7,7 +7,7 @@
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @license: LGPL3+
-@copyright: © 2023 Frank Brehm, Berlin
+@copyright: © 2024 Frank Brehm, Berlin
 """
 from __future__ import print_function
 
@@ -72,7 +72,7 @@ __debian_pkg_name__ = 'fb-tools'
 
 __author__ = 'Frank Brehm'
 __contact__ = 'frank@brehm-online.com'
-__copyright__ = '(C) 2023 Frank Brehm, Berlin'
+__copyright__ = '(C) 2024 Frank Brehm, Berlin'
 __license__ = 'LGPL3+'
 __url__ = 'https://github.com/fbrehm/python_fb_tools'
 
