@@ -40,7 +40,7 @@ from ..errors import HandlerError
 from ..handling_obj import CompletedProcess, HandlingObject
 from ..xlate import XLATOR
 
-__version__ = '2.0.3'
+__version__ = '2.0.4'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -71,9 +71,7 @@ class BaseHandler(HandlingObject):
     tz_name = babel.dates.get_timezone_name(tz, width='long', locale=default_locale)
 
     # -------------------------------------------------------------------------
-    def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None, sudo=False,
-            quiet=False, terminal_has_colors=False, simulate=None, force=None, initialized=None):
+    def __init__(self, version=__version__, sudo=False, initialized=None, *args, **kwargs):
         """Construct the object."""
         self._chown_cmd = CHOWN_CMD
         self._echo_cmd = ECHO_CMD
@@ -82,9 +80,9 @@ class BaseHandler(HandlingObject):
         self._sudo = False
 
         super(BaseHandler, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            terminal_has_colors=terminal_has_colors, simulate=simulate, force=force,
-            quiet=quiet, initialized=False,
+            version=version,
+            initialized=False,
+            *args, **kwargs,
         )
 
         self._chown_cmd = self.get_command('chown')

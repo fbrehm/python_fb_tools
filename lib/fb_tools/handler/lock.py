@@ -34,7 +34,7 @@ from ..errors import CouldntOccupyLockfileError, HandlerError
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
 
-__version__ = '2.0.2'
+__version__ = '2.0.4'
 
 LOG = logging.getLogger(__name__)
 
@@ -142,8 +142,8 @@ class LockObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, lockfile, ctime=None, mtime=None, fcontent=None, fd=None, simulate=False,
-            autoremove=False, appname=None, verbose=0, version=__version__,
-            base_dir=None, silent=False):
+            autoremove=False, version=__version__, silent=False, initialized=False,
+            *args, **kwargs):
         """
         Initialise a LockObject object.
 
@@ -163,14 +163,8 @@ class LockObject(FbBaseObject):
         @type simulate: bool
         @param autoremove: removing the lockfile on deleting the current object
         @type autoremove: bool
-        @param appname: name of the current running application
-        @type appname: str
-        @param verbose: verbose level
-        @type verbose: int
         @param version: the version string of the current object or application
         @type version: str
-        @param base_dir: the base directory of all operations
-        @type base_dir: str
         @param silent: Remove silently the lockfile (except on verbose level >= 2)
         @type silent: bool
 
@@ -179,8 +173,9 @@ class LockObject(FbBaseObject):
         self._fd = None
 
         super(LockObject, self).__init__(
-            appname=appname, verbose=verbose, version=version,
-            base_dir=base_dir, initialized=False,
+            version=version,
+            initialized=False,
+            *args, **kwargs,
         )
 
         self._simulate = bool(simulate)
@@ -420,8 +415,8 @@ class LockHandler(BaseHandler):
             lockretry_max_delay=DEFAULT_LOCKRETRY_MAX_DELAY,
             max_lockfile_age=DEFAULT_MAX_LOCKFILE_AGE,
             locking_use_pid=DEFAULT_LOCKING_USE_PID,
-            stay_opened=True, appname=None, verbose=0, version=__version__, base_dir=None,
-            simulate=False, sudo=False, quiet=False, silent=False, *targs, **kwargs):
+            stay_opened=True, version=__version__,
+            silent=False, initialized=False, *args, **kwargs):
         """Initialise the locking handler object.
 
         @raise LockdirNotExistsError: if the lockdir (or base_dir) doesn't exists
@@ -451,20 +446,8 @@ class LockHandler(BaseHandler):
         @type locking_use_pid: bool
         @param stay_opened: should the lockfile stay opened after creation
         @@type stay_opened: bool
-        @param appname: name of the current running application
-        @type appname: str
-        @param verbose: verbose level
-        @type verbose: int
         @param version: the version string of the current object or application
         @type version: str
-        @param base_dir: the base directory of all operations
-        @type base_dir: str
-        @param simulate: don't execute actions, only display them
-        @type simulate: bool
-        @param sudo: should the command executed by sudo by default
-        @type sudo: bool
-        @param quiet: don't display ouput of action after calling
-        @type quiet: bool
         @param silent: Create and remove silently the lockfile (except on verbose level >= 2)
         @type silent: bool
 
@@ -472,10 +455,12 @@ class LockHandler(BaseHandler):
 
         """
         self._stay_opened = bool(stay_opened)
+        self._silent = bool(silent)
 
         super(LockHandler, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            initialized=False, simulate=simulate, sudo=sudo, quiet=quiet,
+            version=version,
+            initialized=False,
+            *args, **kwargs,
         )
 
         self._lockdir = None
@@ -496,8 +481,6 @@ class LockHandler(BaseHandler):
 
         self._locking_use_pid = DEFAULT_LOCKING_USE_PID
         self.locking_use_pid = locking_use_pid
-
-        self._silent = bool(silent)
 
     # -----------------------------------------------------------
     @property
