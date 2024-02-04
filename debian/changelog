@@ -1,5 +1,6 @@
-fb-tools (2.3.4) UNRELEASED; urgency=medium
+fb-tools (2.3.4) all; urgency=medium
 
+  * Simplyfying init of some classes.
   * Adding tests for Python 3.12 to CI tests.
   * Using Python 3.12 for CI linter tests.
   * Adding distros Debian 13 (trixie) and Ubuntu 24.04 (Noble Numbat) to
