@@ -1,4 +1,4 @@
-fb-tools (2.3.5) UNRELEASED; urgency=medium
+fb-tools (2.3.5) all; urgency=medium
 
   * Fixing Github workflow.
 
