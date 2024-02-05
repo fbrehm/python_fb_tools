@@ -89,13 +89,13 @@ class FbToolsTestcase(unittest.TestCase):
     # -------------------------------------------------------------------------
     @property
     def verbose(self):
-        """The verbosity level."""
+        """Return the verbosity level."""
         return getattr(self, '_verbose', 0)
 
     # -------------------------------------------------------------------------
     @property
     def appname(self):
-        """The name of the current running application."""
+        """Return the name of the current running application."""
         return self._appname
 
     # -------------------------------------------------------------------------
