@@ -36,6 +36,10 @@ EXEC_LONG_TESTS = True
 if 'EXEC_LONG_TESTS' in os.environ and os.environ['EXEC_LONG_TESTS'] != '':
     EXEC_LONG_TESTS = to_bool(os.environ['EXEC_LONG_TESTS'])
 
+EXEC_DNS_DEPENDING_TESTS = False
+if 'EXEC_DNS_DEPENDING_TESTS' in os.environ and os.environ['EXEC_DNS_DEPENDING_TESTS'] != '':
+    EXEC_DNS_DEPENDING_TESTS = to_bool(os.environ['EXEC_DNS_DEPENDING_TESTS'])
+
 
 # =============================================================================
 class TestFbHandlingObject(FbToolsTestcase):
@@ -490,6 +494,8 @@ class TestFbHandlingObject(FbToolsTestcase):
         self.assertEqual(p.name, cmd)
 
     # -------------------------------------------------------------------------
+    @unittest.skipUnless(
+        EXEC_DNS_DEPENDING_TESTS, 'Tests depending on external DNS are not executed.')
     def test_get_address(self):
         """Test method get_address() of class HandlingObject."""
         LOG.info('Testing method get_address() of class HandlingObject.')
