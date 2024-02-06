@@ -14,6 +14,7 @@ import logging
 import os
 import sys
 import tempfile
+import textwrap
 from pathlib import Path
 
 try:
@@ -47,7 +48,7 @@ class TestFbHandlingObject(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def setUp(self):
-        """Execute this on seting up before calling each particular test method."""
+        """Execute this on setting up before calling each particular test method."""
         if self.verbose >= 1:
             print()
 
@@ -84,19 +85,29 @@ class TestFbHandlingObject(FbToolsTestcase):
     def test_import(self):
         """Test instantiating fb_tools.handling_obj."""
         LOG.info('Testing import of fb_tools.handling_obj ...')
-        import fb_tools.handling_obj                                        # noqa
+        import fb_tools.handling_obj
+        LOG.debug('Version of fb_tools.handling_obj: {!r}.'.format(
+            fb_tools.handling_obj.__version__))
 
         LOG.info('Testing import of CalledProcessError from fb_tools.handling_obj ...')
-        from fb_tools.handling_obj import CalledProcessError                # noqa
+        from fb_tools.handling_obj import CalledProcessError
+        LOG.debug('Description of CalledProcessError: ' + textwrap.dedent(
+            CalledProcessError.__doc__))
 
         LOG.info('Testing import of TimeoutExpiredError from fb_tools.handling_obj ...')
-        from fb_tools.handling_obj import TimeoutExpiredError               # noqa
+        from fb_tools.handling_obj import TimeoutExpiredError
+        LOG.debug('Description of TimeoutExpiredError: ' + textwrap.dedent(
+            TimeoutExpiredError.__doc__))
 
         LOG.info('Testing import of HandlingObject from fb_tools.handling_obj ...')
-        from fb_tools.handling_obj import HandlingObject                    # noqa
+        from fb_tools.handling_obj import HandlingObject
+        LOG.debug('Description of HandlingObject: ' + textwrap.dedent(
+            HandlingObject.__doc__))
 
         LOG.info('Testing import of CompletedProcess from fb_tools.handling_obj ...')
-        from fb_tools.handling_obj import CompletedProcess                  # noqa
+        from fb_tools.handling_obj import CompletedProcess
+        LOG.debug('Description of CompletedProcess: ' + textwrap.dedent(
+            CompletedProcess.__doc__))
 
     # -------------------------------------------------------------------------
     def test_called_process_error(self):
