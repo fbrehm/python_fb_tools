@@ -73,6 +73,12 @@ def init_root_logger(verbose=0):
 
 
 # =============================================================================
+def currentFuncName(n=0):
+    """Return the name of the function, from where this function was called."""
+    return sys._getframe(n + 1).f_code.co_name
+
+
+# =============================================================================
 class FbToolsTestcase(unittest.TestCase):
     """Base test case for all testcase classes of this package."""
 
