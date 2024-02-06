@@ -1,4 +1,4 @@
-fb-tools (2.4.1) UNRELEASED; urgency=medium
+fb-tools (2.4.1) all; urgency=medium
 
   * Fixing tests for class HandlingObject.
 
