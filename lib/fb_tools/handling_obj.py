@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2023 by Frank Brehm, Berlin
+@copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
@@ -14,11 +14,13 @@ import copy
 import datetime
 import errno
 import getpass
+import ipaddress
 import locale
 import logging
 import os
 import re
 import signal
+import socket
 import sys
 try:
     import pathlib
@@ -50,9 +52,9 @@ from .common import indent, is_sequence
 from .errors import AbortAppError, TimeoutOnPromptError
 from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
 from .obj import FbBaseObject
-from .xlate import XLATOR
+from .xlate import XLATOR, format_list
 
-__version__ = '2.1.5'
+__version__ = '2.2.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -159,12 +161,16 @@ class HandlingObject(FbBaseObject):
     fileio_timeout = DEFAULT_FILEIO_TIMEOUT
     default_prompt_timeout = DEFAULT_PROMPT_TIMEOUT
     max_prompt_timeout = DEFAULT_MAX_PROMPT_TIMEOUT
+    default_address_family = 'any'
 
     yes_list = ['y', 'yes']
     no_list = ['n', 'no']
 
     pattern_yes_no = r'^\s*(' + '|'.join(yes_list) + '|' + '|'.join(no_list) + r')?\s*$'
     re_yes_no = re.compile(pattern_yes_no, re.IGNORECASE)
+
+    valid_address_families = ('any', socket.AF_INET, socket.AF_INET6)
+    valid_address_families_out = ("'any'", 'socket.AF_INET', 'socket.AF_INET6')
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -177,6 +183,7 @@ class HandlingObject(FbBaseObject):
         self._force = False
         self._quiet = quiet
         self._assumed_answer = None
+        self._address_family = self.default_address_family
 
         self.add_search_paths = []
 
@@ -298,6 +305,24 @@ class HandlingObject(FbBaseObject):
         else:
             self._prompt_timeout = v
 
+    # -----------------------------------------------------------
+    @property
+    def address_family(self):
+        """
+        Get the used address family to use for resolving host names.
+
+        Possible values are: 'any', socket.AF_INET, socket.AF_INET6
+        """
+        return self._address_family
+
+    @address_family.setter
+    def address_family(self, value):
+        if value not in self.valid_address_families:
+            msg = _('Wrong address family {!r} given. Valid values are:').format(value)
+            msg += ' ' + format_list(self.valid_address_families_out)
+            raise ValueError(msg)
+        self._address_family = value
+
     # -------------------------------------------------------------------------
     @classmethod
     def init_yes_no_lists(cls):
@@ -332,6 +357,7 @@ class HandlingObject(FbBaseObject):
         @rtype:  dict
         """
         res = super(HandlingObject, self).as_dict(short=short)
+        res['address_family'] = self.assumed_answer
         res['assumed_answer'] = self.assumed_answer
         res['fileio_timeout'] = self.fileio_timeout
         res['force'] = self.force
@@ -346,6 +372,51 @@ class HandlingObject(FbBaseObject):
         res['yes_list'] = self.yes_list
 
         return res
+
+    # -------------------------------------------------------------------------
+    def get_address(self, host, address_family=None):
+        """
+        Try to resolve the addresses of the given hostname and returns them as a list.
+
+        @param host: the hostname to resolve.
+        @param address_family: Limit the result to the addresses of the given address family.
+        """
+        if address_family is not None and address_family not in self.valid_address_families:
+            out_list = ['None']
+            for af in self.valid_address_families_out:
+                out_list.append(af)
+            msg = _('Wrong address family {!r} given. Valid values are:').format(address_family)
+            msg += ' ' + format_list(out_list)
+            raise ValueError(msg)
+
+        if address_family is None:
+            address_family = self.address_family
+
+        af = address_family
+        if address_family == 'any':
+            af = 0
+
+        try:
+            address = ipaddress.ip_address(host)
+            if af == socket.AF_INET and address.version == 6:
+                return []
+            if af == socket.AF_INET6 and address.version == 4:
+                return []
+            return [address]
+        except ValueError:
+            pass
+
+        addresses = []
+        addr_infos = socket.getaddrinfo(host, None, family=af)
+        for addr_info in addr_infos:
+            got_af = addr_info[0]
+            if af and got_af != af:
+                continue
+            addr = ipaddress.ip_address(addr_info[4][0])
+            if addr not in addresses:
+                addresses.append(addr)
+
+        return addresses
 
     # -------------------------------------------------------------------------
     def get_cmd(self, cmd, quiet=False):

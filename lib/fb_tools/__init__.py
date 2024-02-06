@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2023 by Frank Brehm, Berlin
+@copyright: © 2024 by Frank Brehm, Berlin
 """
 
 DDNS_CFG_BASENAME = 'ddns.ini'
@@ -13,7 +13,7 @@ MAX_TIMEOUT = 3600
 UTF8_ENCODING = 'utf-8'
 DEFAULT_ENCODING = UTF8_ENCODING
 
-__version__ = '2.3.5'
+__version__ = '2.4.0'
 
 from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList     # noqa
 from .multi_config import BaseMultiConfig                                       # noqa
