@@ -25,7 +25,7 @@ sys.path.insert(0, libdir)
 
 from fb_tools.common import pp
 
-from general import FbToolsTestcase, currentFuncName, get_arg_verbose, init_root_logger
+from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
 LOG = logging.getLogger('test_mailaddress')
 
@@ -53,7 +53,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import(self):
         """Test import of pp_admintools.mailaddress."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         import fb_tools.mailaddress
         LOG.debug('Version of fb_tools.mailaddress: {!r}'.format(
@@ -62,7 +62,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_object(self):
         """Test init of a simple mailaddress object."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         test_address = 'frank@brehm-online.com'
 
@@ -119,7 +119,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_empty_address(self):
         """Test nit of an empty mailaddress object."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress
         from fb_tools.errors import BaseMailAddressError
@@ -140,7 +140,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_compare(self):
         """Test comparision of mail addresses."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress
 
@@ -167,7 +167,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_wrong_addresses(self):
         """Test init of wrong mailaddress objects."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress
         from fb_tools.errors import BaseMailAddressError
@@ -214,7 +214,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_wrong_user(self):
         """Test  wrong users on init of mailaddress objects."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress
         from fb_tools.errors import BaseMailAddressError
@@ -246,7 +246,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_to_str(self):
         """Test typecasting to str."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress
 
@@ -273,8 +273,8 @@ class TestMailaddress(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_sorting_simple(self):
-        """Test typecasting to str."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        """Test sorting simple MailAddress objects."""
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress
 
@@ -319,7 +319,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_qualified_address(self):
         """Test init of a qualified mailaddress object."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         test_user = 'frank'
         test_domain = 'brehm-online.com'
@@ -384,7 +384,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_empty_qualified_address(self):
         """Test init of an empty qualified mailaddress object."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import QualifiedMailAddress
         from fb_tools.errors import BaseMailAddressError
@@ -405,7 +405,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_wrong_init_full_address(self):
         """Test wrong init of a qualified mailaddress object."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         name = 'Frank Brehm'
         user = 'frank.uwe'
@@ -450,7 +450,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_wrong_qual_address(self):
         """Test init of correct and wrong  qualified mailaddress objects."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import QualifiedMailAddress
         from fb_tools.errors import BaseMailAddressError
@@ -514,7 +514,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_qual_to_simple(self):
         """Test getting a simple MailAddress from a qualified mailaddress object."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         test_user = 'frank'
         test_domain = 'brehm-online.com'
@@ -541,7 +541,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_equality(self):
         """Test equality of MailAddress and QualifiedMailAddress objects."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress as MA
         from fb_tools import QualifiedMailAddress as QMA
@@ -595,7 +595,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_lt(self):
         """Test '<'-operator of MailAddress and QualifiedMailAddress objects."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress as MA
         from fb_tools import QualifiedMailAddress as QMA
@@ -681,7 +681,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_gt(self):
         """Test '>'-operator of MailAddress and QualifiedMailAddress objects."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress as MA
         from fb_tools import QualifiedMailAddress as QMA
@@ -767,7 +767,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_le(self):
         """Test '<='-operator of MailAddress and QualifiedMailAddress objects."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress as MA
         from fb_tools import QualifiedMailAddress as QMA
@@ -853,7 +853,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_ge(self):
         """Test '>='-operator of MailAddress and QualifiedMailAddress objects."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress as MA
         from fb_tools import QualifiedMailAddress as QMA
@@ -939,7 +939,7 @@ class TestMailaddress(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_init_mailaddresslist(self):
         """Test of a MailAddressList object."""
-        LOG.info(getattr(self, currentFuncName()).__doc__)
+        LOG.info(self.get_method_doc())
 
         from fb_tools import MailAddress
         from fb_tools import QualifiedMailAddress
