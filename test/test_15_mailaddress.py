@@ -52,7 +52,7 @@ class TestMailaddress(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_import(self):
-        """Test import of pp_admintools.mailaddress."""
+        """Test import of fb_tools.mailaddress."""
         LOG.info(self.get_method_doc())
 
         import fb_tools.mailaddress
