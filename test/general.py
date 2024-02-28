@@ -13,6 +13,7 @@ import argparse
 import logging
 import os
 import sys
+import textwrap
 
 try:
     import unittest2 as unittest
@@ -73,6 +74,12 @@ def init_root_logger(verbose=0):
 
 
 # =============================================================================
+def currentFuncName(n=0):
+    """Return the name of the function, from where this function was called."""
+    return sys._getframe(n + 1).f_code.co_name
+
+
+# =============================================================================
 class FbToolsTestcase(unittest.TestCase):
     """Base test case for all testcase classes of this package."""
 
@@ -107,6 +114,28 @@ class FbToolsTestcase(unittest.TestCase):
     def tearDown(self):
         """Tear down routine for calling each particular test method."""
         pass
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def current_function_name(cls, level=0):
+        """Return the name of the function, from where this method was called."""
+        return sys._getframe(level + 1).f_code.co_name
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def get_method_doc(cls):
+        """Return the docstring of the method, from where this method was called."""
+        func_name = cls.current_function_name(1)
+        doc_str = getattr(cls, func_name).__doc__
+        cname = cls.__name__
+        mname = '{cls}.{meth}()'.format(cls=cname, meth=func_name)
+        msg = 'This is {}.'.format(mname)
+        if doc_str is None:
+            return msg
+        doc_str = textwrap.dedent(doc_str).strip()
+        if doc_str:
+            msg = '{m} - {d}'.format(m=mname, d=doc_str)
+        return msg
 
 
 # =============================================================================

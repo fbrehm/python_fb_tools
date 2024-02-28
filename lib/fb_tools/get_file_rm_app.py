@@ -23,12 +23,13 @@ except ImportError:
 # Third party modules
 
 # Own modules
+from . import __version__ as __global_version__
 from .app import BaseApplication
 from .common import get_monday, pp
 from .errors import FbAppError
 from .xlate import XLATOR
 
-__version__ = '2.0.6'
+__version__ = '2.0.7'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -134,7 +135,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def __init__(
-            self, verbose=0, version=__version__, *arg, **kwargs):
+            self, verbose=0, version=__global_version__, *arg, **kwargs):
         """Initialise of the get-file-to-remove application object."""
         desc = _(
             'Returns a newline separated list of files generated from file globbing patterns '
@@ -376,7 +377,8 @@ class GetFileRmApplication(BaseApplication):
                 if self.verbose > 2:
                     LOG.debug(_('Resolved paths:') + '\n' + pp(given_paths))
                 if not given_paths:
-                    LOG.info(_('File pattern {!r} does not match any files.').format(fname))
+                    if self.verbose:
+                        LOG.info(_('File pattern {!r} does not match any files.').format(fname))
                     continue
             for f_name in given_paths:
                 fpath = pathlib.Path(f_name)
