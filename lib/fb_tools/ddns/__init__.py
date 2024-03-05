@@ -26,6 +26,15 @@ import requests
 
 import urllib3
 
+HAS_DNS_MODULE = False
+try:
+    import dns
+    import dns.resolver
+    from dns.resolver import NXDOMAIN
+    HAS_DNS_MODULE = True
+except ImportError:
+    pass
+
 # Own modules
 from .config import DdnsConfiguration
 from .. import DDNS_CFG_BASENAME
@@ -38,7 +47,7 @@ from ..errors import FbAppError
 from ..errors import IoTimeoutError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.4'
+__version__ = '2.1.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -166,6 +175,12 @@ class BaseDdnsApplication(BaseApplication):
         self._user_agent = str(value).strip()
 
     # -------------------------------------------------------------------------
+    @property
+    def has_dns_module(self):
+        """Return, whether the dns module could be imported."""
+        return HAS_DNS_MODULE
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transform the elements of the object into a dict.
@@ -179,6 +194,7 @@ class BaseDdnsApplication(BaseApplication):
         res = super(BaseDdnsApplication, self).as_dict(short=short)
         res['cfg_dir'] = self.cfg_dir
         res['cfg_file'] = self.cfg_file
+        res['has_dns_module'] = self.has_dns_module
         res['user_agent'] = self.user_agent
 
         return res
@@ -514,6 +530,110 @@ class BaseDdnsApplication(BaseApplication):
         if self.exit_value <= 1:
             self.exit_value = 5
         return None
+
+    # -------------------------------------------------------------------------
+    def resolve_address(self, name, nameservers=None, address_family=None):
+        """Try to resolve a name to a list of Ip addresses."""
+        if not HAS_DNS_MODULE:
+            return self.get_address(name, address_family=address_family)
+
+        family = self.get_address_famlily_int(address_family)
+
+        addresses = []
+        # A normal resolver based on /etc/resolv.conf
+        resolver = dns.resolver.Resolver()
+        if nameservers:
+            resolver.nameservers = nameservers
+        if self.verbose > 0:
+            LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
+
+        if family in (0, 6):
+            try:
+                answer = resolver.resolve(name, 'AAAA')
+                for rd in answer.rrset:
+                    address = ipaddress.ip_address(str(rd))
+                    if address not in addresses:
+                        addresses.append(address)
+            except NXDOMAIN as e:
+                if self.verbose > 0:
+                    msg = _('Did not found a {t} address for {n}:').format(t='IPv6', n=name)
+                    LOG.debug(msg + ' ' + str(e))
+
+        if family in (0, 4):
+            try:
+                answer = resolver.resolve(name, 'A')
+                for rd in answer.rrset:
+                    address = ipaddress.ip_address(str(rd))
+                    if address not in addresses:
+                        addresses.append(address)
+            except NXDOMAIN as e:
+                if self.verbose > 0:
+                    msg = _('Did not found a {t} address for {n}:').format(t='IPv4', n=name)
+                    LOG.debug(msg + ' ' + str(e))
+
+        return addresses
+
+    # -------------------------------------------------------------------------
+    def get_ns_of_zone(self, zone, nameservers=None, address_family=None):
+        """Try to get a list of the nameservers of the given zone."""
+        if not HAS_DNS_MODULE:
+            msg = _('Cannot execute {method}() - module {mod!r} could not imported.').format(
+                method='get_ns_of_zone', mod='dns')
+            raise RuntimeError(msg)
+
+        ns_list = []
+        resolver = dns.resolver.Resolver()
+        if nameservers:
+            resolver.nameservers = nameservers
+        if self.verbose > 0:
+            LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
+
+        try:
+            answer = resolver.resolve(zone, 'NS')
+            for rd in answer.rrset:
+                ns_name = str(rd)
+                adresses = self.resolve_address(
+                    ns_name, nameservers=nameservers, address_family=address_family)
+                if adresses:
+                    for address in adresses:
+                        if address not in ns_list:
+                            ns_list.append(ns_list)
+        except NXDOMAIN as e:
+            if self.verbose > 0:
+                msg = _('Did not found a {t} entry for zone {z}:').format(t='NS', n=zone)
+                LOG.debug(msg + ' ' + str(e))
+
+        return ns_list
+
+    # -------------------------------------------------------------------------
+    def get_mx_of_zone(self, zone, nameservers=None, address_family=None, as_text=True):
+        """Try to get a list of the mail exchangers of the given zone."""
+        if not HAS_DNS_MODULE:
+            msg = _('Cannot execute {method}() - module {mod!r} could not imported.').format(
+                method='get_mx_of_zone', mod='dns')
+            raise RuntimeError(msg)
+
+        mx_list = []
+        resolver = dns.resolver.Resolver()
+        if nameservers:
+            resolver.nameservers = nameservers
+        if self.verbose > 0:
+            LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
+
+        try:
+            answer = resolver.resolve(zone, 'MX')
+            for rd in answer.rrset:
+                if as_text:
+                    mx_list.append(str(rd))
+                else:
+                    mx_list.append(rd)
+
+        except NXDOMAIN as e:
+            if self.verbose > 0:
+                msg = _('Did not found a {t} entry for zone {z}:').format(t='MX', n=zone)
+                LOG.debug(msg + ' ' + str(e))
+
+        return mx_list
 
 
 # =============================================================================

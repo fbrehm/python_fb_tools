@@ -25,7 +25,7 @@ from ..config import BaseConfiguration
 from ..errors import ConfigError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.3'
+__version__ = '2.0.4'
 
 LOG = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ class DdnsConfiguration(BaseConfiguration):
     """A configuration class for the GetVmApplication class."""
 
     default_working_dir = Path('/var/lib/ddns')
-    default_logfile = Path('/var/log/ddnss/ddnss-update.log')
+    default_logfile = Path('/var/log/ddns/ddnss-update.log')
 
     default_get_ipv4_url = 'https://ip4.ddnss.de/jsonip.php'
     default_get_ipv6_url = 'https://ip6.ddnss.de/jsonip.php'

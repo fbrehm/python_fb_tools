@@ -658,7 +658,7 @@ msgstr "Keine öffentliche IPv6-Adresse gefunden."
 
 #: lib/fb_tools/ddns/update_app.py:384
 msgid "Updating DNS records to IPv{p} address {a!r} ..."
-msgstr "Aktualisier DNS-Einträge zu IPv{p}-Adresse {a!r} …"
+msgstr "Aktualisiere DNS-Einträge zu IPv{p}-Adresse {a!r} …"
 
 #: lib/fb_tools/errors.py:56
 msgid "Config loader method {!r} was not found."
