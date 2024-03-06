@@ -19,6 +19,7 @@ import locale
 import logging
 import os
 import re
+import shutil
 import signal
 import socket
 import sys
@@ -47,6 +48,7 @@ from fb_logging.colored import colorstr
 import six
 
 # Own modules
+from . import DEFAULT_TERMINAL_HEIGHT, DEFAULT_TERMINAL_WIDTH
 from .common import caller_search_path, encode_or_bust, pp, to_bool, to_str
 from .common import indent, is_sequence
 from .errors import AbortAppError, TimeoutOnPromptError
@@ -54,7 +56,7 @@ from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeo
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.2.2'
+__version__ = '2.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -379,6 +381,31 @@ class HandlingObject(FbBaseObject):
         res['yes_list'] = self.yes_list
 
         return res
+
+    # -------------------------------------------------------------------------
+    def line(self, width=None, linechar='-', color=None):
+        """Print out an line on stdout, if not in quiet mode."""
+        if self.quiet:
+            return
+
+        lchar = str(linechar).strip()
+        if not lchar:
+            lchar = '-'
+
+        if not width:
+            term_size = shutil.get_terminal_size((DEFAULT_TERMINAL_WIDTH, DEFAULT_TERMINAL_HEIGHT))
+            width = term_size.columns
+
+        lin = (lchar * width)[0:width]
+        if color:
+            lin = self.colored(lin, color)
+        print(lin)
+
+    # -------------------------------------------------------------------------
+    def empty_line(self):
+        """Print out an empty line on stdout, if not in quiet mode."""
+        if not self.quiet:
+            print()
 
     # -------------------------------------------------------------------------
     def get_address_famlily_int(self, address_family):
