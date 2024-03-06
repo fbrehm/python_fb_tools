@@ -54,7 +54,7 @@ from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeo
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.2.1'
+__version__ = '2.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -387,9 +387,9 @@ class HandlingObject(FbBaseObject):
         if isinstance(address_family, str):
             family = address_family.lower()
 
-        if family not in self.valid_address_families:
+        if family is not None and family not in self.valid_address_families:
             msg = _('Wrong address family {!r} given. Valid values are:').format(address_family)
-            msg += ' ' + format_list(['None'] + self.valid_address_families_out)
+            msg += ' ' + format_list(['None'] + list(self.valid_address_families_out))
             raise ValueError(msg)
 
         if family is None:
