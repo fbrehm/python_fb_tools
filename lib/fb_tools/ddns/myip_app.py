@@ -21,7 +21,7 @@ from .. import __version__ as GLOBAL_VERSION
 from ..common import to_bool
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.8'
+__version__ = '2.0.9'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -97,14 +97,14 @@ class MyIpApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """Initiate th eargument parser."""
-        super(MyIpApplication, self).init_arg_parser()
-
         myip_group = self.arg_parser.add_argument_group(_('myip options'))
 
         myip_group.add_argument(
             '-W', '--write', '--write-ips', action='store_true', dest='write_ips',
             help=_('Write found public IPs into a cache file in working directory.')
         )
+
+        super(MyIpApplication, self).init_arg_parser()
 
     # -------------------------------------------------------------------------
     def post_init(self):
