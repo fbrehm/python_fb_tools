@@ -15,10 +15,6 @@ import ipaddress
 import logging
 import os
 import sys
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
 
 # Third party module
 from fb_logging.colored import ColoredFormatter
@@ -37,7 +33,7 @@ from .. import __version__ as GLOBAL_VERSION
 from ..common import pp
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.1.1'
+__version__ = '2.2.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -161,7 +157,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         if not self.do_init_logging:
             return
 
-        logfile = self.config.logfile
+        logfile = self.cfg.logfile
         if not logfile:
             return
 
@@ -198,8 +194,6 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """Initiate the argument parser."""
-        super(UpdateDdnsApplication, self).init_arg_parser()
-
         update_group = self.arg_parser.add_argument_group(_('Update DDNS options'))
 
         update_group.add_argument(
@@ -210,11 +204,6 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         update_group.add_argument(
             '-P', '--password', metavar=_('PASSWORD'), dest='password',
             help=_('The password of the user to login at ddns.de.')
-        )
-
-        update_group.add_argument(
-            '--logfile', nargs='?', metavar=_('FILENAME'), dest='logfile', const='',
-            help=_('The filename to use as a logfile. Leave it empty to disable file logging.'),
         )
 
         domain_group = update_group.add_mutually_exclusive_group()
@@ -228,6 +217,8 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             '-D', '--domain', nargs='+', metavar=_('DOMAIN'), dest='domains',
             help=_('The particular domain(s), which should be updated (if not all).')
         )
+
+        super(UpdateDdnsApplication, self).init_arg_parser()
 
     # -------------------------------------------------------------------------
     def post_init(self):
@@ -257,24 +248,24 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         if self.args.user:
             user = self.args.user.strip()
             if user:
-                self.config.ddns_user = user
+                self.cfg.ddns_user = user
 
         if self.args.password:
-            self.config.ddns_pwd = self.args.password
+            self.cfg.ddns_pwd = self.args.password
 
-        if self.args.logfile is not None:
-            logfile = self.args.logfile.strip()
-            if logfile == '':
-                self.config.logfile = None
-            else:
-                self.config.logfile = Path(logfile).resolve()
+#        if self.args.logfile is not None:
+#            logfile = self.args.logfile.strip()
+#            if logfile == '':
+#                self.cfg.logfile = None
+#            else:
+#                self.cfg.logfile = Path(logfile).resolve()
 
         if self.args.all_domains:
-            self.config.all_domains = True
+            self.cfg.all_domains = True
         elif self.args.domains:
-            self.config.domains = []
+            self.cfg.domains = []
             for domain in self.args.domains:
-                self.config.domains.append(domain)
+                self.cfg.domains.append(domain)
 
     # -------------------------------------------------------------------------
     def _run(self):
@@ -284,17 +275,17 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         self.get_current_addresses()
 
-        if self.config.all_domains:
+        if self.cfg.all_domains:
             LOG.info(_('Updating all domains ...'))
         else:
-            for domain in self.config.domains:
+            for domain in self.cfg.domains:
                 self.update_domain(domain)
         self.empty_line()
 
-        # if self.config.protocol in ('any', 'both', 'ipv4'):
+        # if self.cfg.protocol in ('any', 'both', 'ipv4'):
         #     self.do_update_ipv4()
 
-        # if self.config.protocol in ('any', 'both', 'ipv6'):
+        # if self.cfg.protocol in ('any', 'both', 'ipv6'):
         #     self.do_update_ipv6()
 
         LOG.info(_('Ending {a!r}.').format(
@@ -306,7 +297,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         if self.verbose > 1:
             LOG.debug(_('Actions before running.'))
 
-        if not self.config.all_domains and not self.config.domains:
+        if not self.cfg.all_domains and not self.cfg.domains:
             msg = _('No domains to update given, but the option all domains is deactivated.')
             LOG.error(msg)
             self.exit(6)
@@ -352,21 +343,19 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             LOG.error(_('Got no public {} address.').format('IPv5'))
         self.current_ipv6_address = my_ip_v6
 
-        if not self.config.all_domains:
-            for domain in self.config.domains:
+        if not self.cfg.all_domains:
+            for domain in self.cfg.domains:
                 addresses = self.resolve_address(domain)
                 self.cur_resolved_addresses[domain] = addresses
         LOG.info(_('Currently configured dynamic addresses:') + '\n' + pp(
             self.cur_resolved_addresses))
 
     # -------------------------------------------------------------------------
-    def update_domain(self, domain):
-        """Update an IPv4 addresses of the given domain."""
-        self.empty_line()
-        LOG.debug(_('Checking the need for updating the given domain {!r}.').format(domain))
-
+    def check_for_update_domain(self, domain):
+        """Return, whether a domain should be updated on DDNSS."""
         do_update = False
-        if self.config.protocol in ('any', 'ipv4'):
+
+        if self.cfg.protocol in ('any', 'ipv4'):
             if self.current_ipv4_address:
                 if self.current_ipv4_address not in self.cur_resolved_addresses[domain]:
                     do_update = True
@@ -375,7 +364,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
                     if addr.version == 4:
                         do_update = True
 
-        if self.config.protocol in ('any', 'ipv6'):
+        if self.cfg.protocol in ('any', 'ipv6'):
             if self.current_ipv6_address:
                 if self.current_ipv6_address not in self.cur_resolved_addresses[domain]:
                     do_update = True
@@ -383,6 +372,16 @@ class UpdateDdnsApplication(BaseDdnsApplication):
                 for addr in self.cur_resolved_addresses[domain]:
                     if addr.version == 6:
                         do_update = True
+
+        return do_update
+
+    # -------------------------------------------------------------------------
+    def update_domain(self, domain):
+        """Update an IPv4 addresses of the given domain."""
+        self.empty_line()
+        LOG.debug(_('Checking the need for updating the given domain {!r}.').format(domain))
+
+        do_update = self.check_for_update_domain(domain)
 
         if not do_update:
             if self.force:
@@ -395,16 +394,16 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         else:
             LOG.info(_('Updating the DDNS records of domain {!r}.').format(domain))
 
-        url = self.config.upd_url
+        url = self.cfg.upd_url
 
         args = []
         args_out = []
 
-        arg = 'user=' + quote(self.config.ddns_user)
+        arg = 'user=' + quote(self.cfg.ddns_user)
         args.append(arg)
         args_out.append(arg)
 
-        arg = 'pwd=' + quote(self.config.ddns_pwd)
+        arg = 'pwd=' + quote(self.cfg.ddns_pwd)
         args.append(arg)
         args_out.append('pwd=******')
 
@@ -412,17 +411,17 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         args.append(arg)
         args_out.append(arg)
 
-        if self.config.protocol in ('any', 'ipv4') and self.current_ipv4_address:
+        if self.cfg.protocol in ('any', 'ipv4') and self.current_ipv4_address:
             arg = 'ip=' + quote(str(self.current_ipv4_address))
             args.append(arg)
             args_out.append(arg)
 
-        if self.config.protocol in ('any', 'ipv6') and self.current_ipv6_address:
+        if self.cfg.protocol in ('any', 'ipv6') and self.current_ipv6_address:
             arg = 'ip6=' + quote(str(self.current_ipv6_address))
             args.append(arg)
             args_out.append(arg)
 
-        if self.config.with_mx:
+        if self.cfg.with_mx:
             args.append('mx=1')
             args.append(arg)
             args_out.append(arg)
@@ -433,15 +432,29 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         # LOG.debug('Update-URL: {}'.format(url))
 
         if self.simulate:
-            LOG.debug(_('Simulation mode, update of domain {!r} will not be sended.').format(
+            self.empty_line()
+            LOG.info(_('Simulation mode, update of domain {!r} will not be sended.').format(
                 domain))
+
             return True
 
+        self.empty_line()
         try:
-            self.perform_request(url, return_json=False)
+            response = self.perform_request(url, return_json=False)
         except DdnsAppError as e:
             LOG.error(str(e))
             return None
+
+        if not self.quiet:
+            if response:
+                msg = _('Response from {}:').format('DDNSS')
+                text_len = len(msg)
+                print(self.colored(msg, 'CYAN'))
+                self.line(text_len, color='CYAN')
+                print(response)
+            else:
+                msg = _('No response from {}.').format('DDNSS')
+                print(self.colored(msg, 'CYAN'))
 
         return True
 
@@ -528,27 +541,27 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             p=protocol, a=str(my_ip))
         LOG.info(msg)
 
-        url = self.config.upd_ipv4_url
+        url = self.cfg.upd_ipv4_url
         if protocol == 6:
-            url = self.config.upd_ipv6_url
+            url = self.cfg.upd_ipv6_url
 
         args = []
 
-        arg = 'user=' + quote(self.config.ddns_user)
+        arg = 'user=' + quote(self.cfg.ddns_user)
         args.append(arg)
 
-        arg = 'pwd=' + quote(self.config.ddns_pwd)
+        arg = 'pwd=' + quote(self.cfg.ddns_pwd)
         args.append(arg)
 
-        if self.config.all_domains:
+        if self.cfg.all_domains:
             arg = 'host=all'
             args.append(arg)
         else:
-            domains = ','.join(map(quote, self.config.domains))
+            domains = ','.join(map(quote, self.cfg.domains))
             arg = 'host=' + domains
             args.append(arg)
 
-        if self.config.with_mx:
+        if self.cfg.with_mx:
             args.append('mx=1')
 
         url += '?' + '&'.join(args)
