@@ -21,7 +21,7 @@ from .. import __version__ as GLOBAL_VERSION
 from ..common import to_bool
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.7'
+__version__ = '2.0.8'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -137,9 +137,9 @@ class MyIpApplication(BaseDdnsApplication):
         LOG.debug(_('Starting {a!r}, version {v!r} ...').format(
             a=self.appname, v=self.version))
 
-        if self.config.protocol in ('any', 'both', 'ipv4'):
+        if self.cfg.protocol in ('any', 'both', 'ipv4'):
             self.print_my_ipv(4)
-        if self.config.protocol in ('any', 'both', 'ipv6'):
+        if self.cfg.protocol in ('any', 'both', 'ipv6'):
             self.print_my_ipv(6)
 
     # -------------------------------------------------------------------------

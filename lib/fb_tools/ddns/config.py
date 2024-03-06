@@ -20,13 +20,13 @@ except ImportError:
 # Third party modules
 
 # Own modules
+from .. import DEFAULT_ENCODING
 from ..common import is_sequence
 from ..common import to_bool
 from ..multi_config import BaseMultiConfig
-from ..multi_config import DEFAULT_ENCODING
 from ..xlate import XLATOR, format_list
 
-__version__ = '3.0.0'
+__version__ = '3.0.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -56,8 +56,9 @@ class DdnsConfiguration(BaseMultiConfig):
     # -------------------------------------------------------------------------
     def __init__(
             self, appname=None, verbose=0, version=__version__, base_dir=None,
-            additional_stems=None, encoding=None, config_dir=None,
-            additional_config_file=None, initialized=False):
+            append_appname_to_stems=True, config_dir=None, additional_stems=None,
+            additional_cfgdirs=None, additional_config_file=None, encoding=DEFAULT_ENCODING,
+            use_chardet=True, initialized=False):
         """Initialise a DdnsConfiguration object."""
         add_stems = []
         if additional_stems:
@@ -89,10 +90,11 @@ class DdnsConfiguration(BaseMultiConfig):
 
         super(DdnsConfiguration, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            append_appname_to_stems=True, config_dir=config_dir,
-            additional_config_file=additional_config_file,
-            encoding=DEFAULT_ENCODING, ensure_privacy=False, use_chardet=True,
-            raise_on_error=True, initialized=False)
+            append_appname_to_stems=append_appname_to_stems, config_dir=config_dir,
+            additional_stems=add_stems, additional_cfgdirs=additional_cfgdirs,
+            encoding=DEFAULT_ENCODING, additional_config_file=additional_config_file,
+            use_chardet=use_chardet, raise_on_error=True, ensure_privacy=False,
+            initialized=False)
 
         if initialized:
             self.initialized = True
