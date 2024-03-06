@@ -11,7 +11,6 @@ from __future__ import absolute_import, print_function
 
 # Standard modules
 import copy
-import errno
 import ipaddress
 import json
 import logging
@@ -38,87 +37,24 @@ except ImportError:
 
 # Own modules
 from .config import DdnsConfiguration
+from .errors import DdnsAppError
+from .errors import DdnsRequestError
+from .errors import WorkDirAccessError
+from .errors import WorkDirNotDirError
+from .errors import WorkDirNotExistsError
 from .. import DDNS_CFG_BASENAME
 from .. import __version__ as GLOBAL_VERSION
 from ..app import BaseApplication
 from ..argparse_actions import CfgFileOptionAction
 from ..argparse_actions import DirectoryOptionAction
 from ..common import pp
-from ..errors import FbAppError
 from ..errors import IoTimeoutError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.1.1'
+__version__ = '2.2.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
-
-
-# =============================================================================
-class DdnsAppError(FbAppError):
-    """Base exception class for all exceptions in this application."""
-
-    pass
-
-
-# =============================================================================
-class DdnsRequestError(DdnsAppError):
-    """Base class for more complex exceptions."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, code, content, url=None):
-        """Construct a DdnsRequestError object."""
-        self.code = code
-        self.content = content
-        self.url = url
-
-    # -------------------------------------------------------------------------
-    def __str__(self):
-        """Typecast into a string."""
-        msg = _('Got an error {c} on requesting {u!r}: {m}').format(
-            c=self.code, u=self.url, m=self.content)
-        return msg
-
-# =============================================================================
-class WorkDirError(DdnsAppError):
-    """Special exception class with problems with the working directory."""
-
-    pass
-
-
-# =============================================================================
-class WorkDirNotExistsError(WorkDirError, FileNotFoundError):
-    """Special exception class, if working diretory does not exists."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, workdir):
-        """Construct a WorkDirNotExistsError object."""
-        super(WorkDirNotExistsError, self).__init__(
-            errno.ENOENT, _('Directory does not exists'), str(workdir))
-
-
-# =============================================================================
-class WorkDirNotDirError(WorkDirError, NotADirectoryError):
-    """Special exception class, if path to working diretory is not a directory."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, workdir):
-        """Construct a WorkDirNotDirError object."""
-        super(WorkDirNotDirError, self).__init__(
-            errno.ENOTDIR, _('Path is not a directory'), str(workdir))
-
-
-# =============================================================================
-class WorkDirAccessError(WorkDirError, PermissionError):
-    """Special exception class, if working diretory is not accessible."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, workdir, msg=None):
-        """Construct a WorkDirAccessError object."""
-        if not msg:
-            msg = _('Invalid permissions')
-
-        super(WorkDirAccessError, self).__init__(errno.EACCES, msg, str(workdir))
 
 
 # =============================================================================

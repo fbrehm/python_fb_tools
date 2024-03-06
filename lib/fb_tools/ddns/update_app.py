@@ -26,14 +26,18 @@ from fb_logging.colored import ColoredFormatter
 from six.moves.urllib.parse import quote
 
 # Own modules
-from . import BaseDdnsApplication, DdnsAppError, WorkDirError
-from . import WorkDirAccessError, WorkDirNotDirError, WorkDirNotExistsError
+from . import BaseDdnsApplication
 from .config import DdnsConfiguration
+from .errors import DdnsAppError
+from .errors import WorkDirAccessError
+from .errors import WorkDirError
+from .errors import WorkDirNotDirError
+from .errors import WorkDirNotExistsError
 from .. import __version__ as GLOBAL_VERSION
 from ..common import pp
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext

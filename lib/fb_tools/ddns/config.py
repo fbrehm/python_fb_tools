@@ -20,12 +20,13 @@ except ImportError:
 # Third party modules
 
 # Own modules
+from ..common import is_sequence
 from ..common import to_bool
-from ..config import BaseConfiguration
-from ..errors import ConfigError
+from ..multi_config import BaseMultiConfig
+from ..multi_config import DEFAULT_ENCODING
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.5'
+__version__ = '3.0.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -33,15 +34,8 @@ _ = XLATOR.gettext
 
 
 # =============================================================================
-class DdnsConfigError(ConfigError):
-    """Base error class for all exceptions in this module."""
-
-    pass
-
-
-# =============================================================================
-class DdnsConfiguration(BaseConfiguration):
-    """A configuration class for the GetVmApplication class."""
+class DdnsConfiguration(BaseMultiConfig):
+    """A configuration class for DDNS application classes."""
 
     default_working_dir = Path('/var/lib/ddns')
     default_logfile = Path('/var/log/ddns/ddnss-update.log')
@@ -61,9 +55,21 @@ class DdnsConfiguration(BaseConfiguration):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None,
-            encoding=None, config_dir=None, config_file=None, initialized=False):
+            self, appname=None, verbose=0, version=__version__, base_dir=None,
+            additional_stems=None, encoding=None, config_dir=None,
+            additional_config_file=None, initialized=False):
         """Initialise a DdnsConfiguration object."""
+        add_stems = []
+        if additional_stems:
+            if is_sequence(additional_stems):
+                for stem in additional_stems:
+                    add_stems.append(stem)
+            else:
+                add_stems.append(additional_stems)
+
+        if 'ddns' not in add_stems:
+            add_stems.append('ddns')
+
         self.working_dir = self.default_working_dir
         self.logfile = self.default_logfile
         self.ddns_user = None
@@ -83,8 +89,10 @@ class DdnsConfiguration(BaseConfiguration):
 
         super(DdnsConfiguration, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            encoding=encoding, config_dir=config_dir, config_file=config_file, initialized=False,
-        )
+            append_appname_to_stems=True, config_dir=config_dir,
+            additional_config_file=additional_config_file,
+            encoding=DEFAULT_ENCODING, ensure_privacy=False, use_chardet=True,
+            raise_on_error=True, initialized=False)
 
         if initialized:
             self.initialized = True
@@ -158,23 +166,22 @@ class DdnsConfiguration(BaseConfiguration):
         return res
 
     # -------------------------------------------------------------------------
-    def eval_config_section(self, config, section_name):
+    def eval_section(self, section_name):
         """Evaluate config sections for DDNS."""
-        super(DdnsConfiguration, self).eval_config_section(config, section_name)
+        super(DdnsConfiguration, self).eval_section(section_name)
 
-        if section_name.lower() == 'ddns':
-            self._eval_config_ddns(config, section_name)
-            return
+        sn = section_name.lower()
 
-        if section_name.lower() == 'files':
-            self._eval_config_files(config, section_name)
-            return
+        if sn == 'ddns':
+            section = self.cfg[section_name]
+            return self._eval_config_ddns(section_name, section)
 
-        if self.verbose > 1:
-            LOG.debug('Unhandled configuration section {!r}.'.format(section_name))
+        if sn == 'files':
+            section = self.cfg[section_name]
+            return self._eval_config_files(section_name, section)
 
     # -------------------------------------------------------------------------
-    def _eval_config_ddns(self, config, section_name):
+    def _eval_config_ddns(self, section_name, section):
 
         if self.verbose > 1:
             LOG.debug('Checking config section {!r} ...'.format(section_name))
@@ -186,7 +193,8 @@ class DdnsConfiguration(BaseConfiguration):
         re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]?url\s*$', re.IGNORECASE)
         re_upd_url_ipv = re.compile(r'^\s*upd(?:ate)?[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
 
-        for (key, value) in config.items(section_name):
+        for key in section.keys():
+            value = section[key]
 
             if key.lower() == 'user' and value.strip():
                 self.ddns_user = value.strip()
@@ -243,7 +251,7 @@ class DdnsConfiguration(BaseConfiguration):
         return
 
     # -------------------------------------------------------------------------
-    def _eval_config_files(self, config, section_name):
+    def _eval_config_files(self, section_name, section):
 
         if self.verbose > 1:
             LOG.debug('Checking config section {!r} ...'.format(section_name))
@@ -251,7 +259,8 @@ class DdnsConfiguration(BaseConfiguration):
         re_work_dir = re.compile(r'^\s*work(ing)?[_-]?dir(ectory)?\ſ*', re.IGNORECASE)
         re_logfile = re.compile(r'^\s*log[_-]?file\s*$', re.IGNORECASE)
 
-        for (key, value) in config.items(section_name):
+        for key in section.keys():
+            value = section[key]
 
             if re_work_dir.match(key) and value.strip():
                 p = Path(value.strip())
