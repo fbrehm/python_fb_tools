@@ -33,7 +33,7 @@ from .. import __version__ as GLOBAL_VERSION
 from ..common import pp
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.2.0'
+__version__ = '2.2.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -276,17 +276,11 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         self.get_current_addresses()
 
         if self.cfg.all_domains:
-            LOG.info(_('Updating all domains ...'))
+            self.update_all()
         else:
             for domain in self.cfg.domains:
                 self.update_domain(domain)
         self.empty_line()
-
-        # if self.cfg.protocol in ('any', 'both', 'ipv4'):
-        #     self.do_update_ipv4()
-
-        # if self.cfg.protocol in ('any', 'both', 'ipv6'):
-        #     self.do_update_ipv6()
 
         LOG.info(_('Ending {a!r}.').format(
             a=self.appname, v=self.version))
@@ -347,6 +341,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             for domain in self.cfg.domains:
                 addresses = self.resolve_address(domain)
                 self.cur_resolved_addresses[domain] = addresses
+
         LOG.info(_('Currently configured dynamic addresses:') + '\n' + pp(
             self.cur_resolved_addresses))
 
@@ -459,117 +454,74 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         return True
 
     # -------------------------------------------------------------------------
-    def do_update_ipv4(self):
-        """Update an IPv4 address entry."""
-        last_address = self.get_ipv4_cache()
-        if last_address:
-            LOG.debug(_('Last {w} address: {a!r}.').format(w='IPv4', a=str(last_address)))
-        else:
-            LOG.debug(_('Did not found a last {} address.').format('IPv4'))
-        current_address = self.get_my_ipv(4)
-        if not current_address:
-            LOG.error(_('Got no public IPv4 address.'))
-            return
-        try:
-            my_ip = ipaddress.ip_address(current_address)
-        except ValueError as e:
-            msg = _('Address {a!r} seems not to be a valid {w} address: {e}').format(
-                a=current_address, w='IP', e=e)
-            LOG.error(msg)
-            return
-        if my_ip.version != 4:
-            msg = _('Address {a!r} seems not to be a valid {w} address.').format(
-                a=current_address, w='IPv4')
-            LOG.error(msg)
-            return
+    def update_all(self):
+        """Update all domains at DDNSS with found dynamic external addresses."""
+        self.empty_line()
+        LOG.info(_('Update all domains at {} with found dynamic external addresses ...').format(
+            'DDNSS'))
 
-        LOG.debug(_('Current {w} address is {a!r}.').format(w='IPv4', a=str(my_ip)))
-
-        if last_address == my_ip:
-            msg = _(
-                'The public {w} address {a!r} seems not to be changed since '
-                'the last update.').format(w='IPv4', a=str(last_address))
-            LOG.info(msg)
-            if not self.force:
-                return
-
-        self.do_update(my_ip, 4)
-        self.write_ipv4_cache(my_ip)
-
-    # -------------------------------------------------------------------------
-    def do_update_ipv6(self):
-        """Update an IPv6 address entry."""
-        last_address = self.get_ipv6_cache()
-        if last_address:
-            LOG.debug(_('Last {w} address: {a!r}.').format(w='IPv6', a=str(last_address)))
-        else:
-            LOG.debug(_('Did not found a last {} address.').format('IPv6'))
-        current_address = self.get_my_ipv(6)
-        if not current_address:
-            LOG.error(_('Got no public IPv6 address.'))
-            return
-        try:
-            my_ip = ipaddress.ip_address(current_address)
-        except ValueError as e:
-            msg = _('Address {a!r} seems not to be a valid {w} address: {e}').format(
-                a=current_address, w='IP', e=e)
-            LOG.error(msg)
-            return
-        if my_ip.version != 6:
-            msg = _('Address {a!r} seems not to be a valid {w} address.').format(
-                a=current_address, w='IPv6')
-            LOG.error(msg)
-            return
-
-        LOG.debug(_('Current {w} address is {a!r}.').format(w='IPv6', a=str(my_ip)))
-
-        if last_address == my_ip:
-            msg = _(
-                'The public {w} address {a!r} seems not to be changed since '
-                'the last update.').format(w='IPv6', a=str(last_address))
-            LOG.info(msg)
-            if not self.force:
-                return
-
-        self.do_update(my_ip, 6)
-        self.write_ipv6_cache(my_ip)
-
-    # -------------------------------------------------------------------------
-    def do_update(self, my_ip, protocol):
-        """Execute the update."""
-        msg = _('Updating DNS records to IPv{p} address {a!r} ...').format(
-            p=protocol, a=str(my_ip))
-        LOG.info(msg)
-
-        url = self.cfg.upd_ipv4_url
-        if protocol == 6:
-            url = self.cfg.upd_ipv6_url
+        url = self.cfg.upd_url
 
         args = []
+        args_out = []
 
         arg = 'user=' + quote(self.cfg.ddns_user)
         args.append(arg)
+        args_out.append(arg)
 
         arg = 'pwd=' + quote(self.cfg.ddns_pwd)
         args.append(arg)
+        args_out.append('pwd=******')
 
-        if self.cfg.all_domains:
-            arg = 'host=all'
+        arg = 'host=all'
+        args.append(arg)
+        args_out.append(arg)
+
+        if self.cfg.protocol in ('any', 'ipv4') and self.current_ipv4_address:
+            arg = 'ip=' + quote(str(self.current_ipv4_address))
             args.append(arg)
-        else:
-            domains = ','.join(map(quote, self.cfg.domains))
-            arg = 'host=' + domains
+            args_out.append(arg)
+
+        if self.cfg.protocol in ('any', 'ipv6') and self.current_ipv6_address:
+            arg = 'ip6=' + quote(str(self.current_ipv6_address))
             args.append(arg)
+            args_out.append(arg)
 
         if self.cfg.with_mx:
             args.append('mx=1')
+            args.append(arg)
+            args_out.append(arg)
 
+        url_out = url + '?' + '&'.join(args_out)
         url += '?' + '&'.join(args)
-        LOG.debug('Update-URL: {}'.format(url))
+        LOG.debug('Update-URL: {}'.format(url_out))
+        # LOG.debug('Update-URL: {}'.format(url))
 
         if self.simulate:
-            LOG.debug('Simulation mode, update will not be sended.')
+            self.empty_line()
+            LOG.info(_('Simulation mode, update of all domains will not be sended.'))
+
             return True
+
+        self.empty_line()
+        try:
+            response = self.perform_request(url, return_json=False)
+        except DdnsAppError as e:
+            LOG.error(str(e))
+            return None
+
+        if not self.quiet:
+            if response:
+                msg = _('Response from {}:').format('DDNSS')
+                text_len = len(msg)
+                print(self.colored(msg, 'CYAN'))
+                self.line(text_len, color='CYAN')
+                print(response)
+            else:
+                msg = _('No response from {}.').format('DDNSS')
+                print(self.colored(msg, 'CYAN'))
+
+        return True
 
 
 # =============================================================================
