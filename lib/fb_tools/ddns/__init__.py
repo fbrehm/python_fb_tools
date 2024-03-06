@@ -49,7 +49,7 @@ from ..common import pp
 from ..errors import IoTimeoutError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.2.1'
+__version__ = '2.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -125,8 +125,6 @@ class BaseDdnsApplication(FbConfigApplication):
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """Initiate the argument parser."""
-        super(BaseDdnsApplication, self).init_arg_parser()
-
         ddns_group = self.arg_parser.add_argument_group(_('DDNS options'))
 
         valid_list = copy.copy(DdnsConfiguration.valid_protocols)
@@ -178,6 +176,8 @@ class BaseDdnsApplication(FbConfigApplication):
                 DdnsConfiguration.default_timeout),
         )
 
+        super(BaseDdnsApplication, self).init_arg_parser()
+
     # -------------------------------------------------------------------------
     def post_init(self):
         """
@@ -226,13 +226,6 @@ class BaseDdnsApplication(FbConfigApplication):
             self.loglevel_requests_set = True
 
         self.initialized = True
-
-    # -------------------------------------------------------------------------
-    def empty_line(self):
-        """Print a an empty line on the terminal, if not quiet."""
-        if self.quiet:
-            return
-        print()
 
     # -------------------------------------------------------------------------
     def get_my_ipv(self, protocol):
@@ -448,7 +441,7 @@ class BaseDdnsApplication(FbConfigApplication):
         resolver = dns.resolver.Resolver()
         if nameservers:
             resolver.nameservers = nameservers
-        if self.verbose > 2:
+        if self.verbose > 3:
             LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
 
         if family in (0, 6):
@@ -489,7 +482,7 @@ class BaseDdnsApplication(FbConfigApplication):
         resolver = dns.resolver.Resolver()
         if nameservers:
             resolver.nameservers = nameservers
-        if self.verbose > 2:
+        if self.verbose > 3:
             LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
 
         try:
@@ -521,7 +514,7 @@ class BaseDdnsApplication(FbConfigApplication):
         resolver = dns.resolver.Resolver()
         if nameservers:
             resolver.nameservers = nameservers
-        if self.verbose > 2:
+        if self.verbose > 3:
             LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
 
         try:
