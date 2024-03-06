@@ -30,6 +30,7 @@ HAS_DNS_MODULE = False
 try:
     import dns
     import dns.resolver
+    from dns.resolver import NoAnswer
     from dns.resolver import NXDOMAIN
     HAS_DNS_MODULE = True
 except ImportError:
@@ -47,7 +48,7 @@ from ..errors import FbAppError
 from ..errors import IoTimeoutError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -337,6 +338,13 @@ class BaseDdnsApplication(BaseApplication):
         self.initialized = True
 
     # -------------------------------------------------------------------------
+    def empty_line(self):
+        """Print a an empty line on the terminal, if not quiet."""
+        if self.quiet:
+            return
+        print()
+
+    # -------------------------------------------------------------------------
     def get_my_ipv(self, protocol):
         """Retrieve the current public IPv64 address."""
         LOG.debug(_('Trying to get my public IPv{} address.').format(protocol))
@@ -350,13 +358,15 @@ class BaseDdnsApplication(BaseApplication):
         except DdnsAppError as e:
             LOG.error(str(e))
             return None
-        if self.verbose > 0:
+        if self.verbose > 1:
             LOG.debug(_('Got a response:') + '\n' + pp(json_response))
 
         return json_response['IP']
 
     # -------------------------------------------------------------------------
-    def perform_request(self, url, method='GET', data=None, headers=None, may_simulate=False):
+    def perform_request(
+            self, url, method='GET', data=None, headers=None, may_simulate=False,
+            return_json=True):
         """Perform the underlying Web request."""
         if headers is None:
             headers = {}
@@ -408,6 +418,10 @@ class BaseDdnsApplication(BaseApplication):
             LOG.debug('RAW response: {!r}.'.format(response.text))
         if not response.text:
             return ''
+
+        if not return_json:
+            LOG.debug('Text response:\n{}'.format(response.text))
+            return response.text
 
         try:
             json_response = response.json()
@@ -544,7 +558,7 @@ class BaseDdnsApplication(BaseApplication):
         resolver = dns.resolver.Resolver()
         if nameservers:
             resolver.nameservers = nameservers
-        if self.verbose > 0:
+        if self.verbose > 2:
             LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
 
         if family in (0, 6):
@@ -554,8 +568,8 @@ class BaseDdnsApplication(BaseApplication):
                     address = ipaddress.ip_address(str(rd))
                     if address not in addresses:
                         addresses.append(address)
-            except NXDOMAIN as e:
-                if self.verbose > 0:
+            except (NoAnswer, NXDOMAIN) as e:
+                if self.verbose > 1:
                     msg = _('Did not found a {t} address for {n}:').format(t='IPv6', n=name)
                     LOG.debug(msg + ' ' + str(e))
 
@@ -566,8 +580,8 @@ class BaseDdnsApplication(BaseApplication):
                     address = ipaddress.ip_address(str(rd))
                     if address not in addresses:
                         addresses.append(address)
-            except NXDOMAIN as e:
-                if self.verbose > 0:
+            except (NoAnswer, NXDOMAIN) as e:
+                if self.verbose > 1:
                     msg = _('Did not found a {t} address for {n}:').format(t='IPv4', n=name)
                     LOG.debug(msg + ' ' + str(e))
 
@@ -585,7 +599,7 @@ class BaseDdnsApplication(BaseApplication):
         resolver = dns.resolver.Resolver()
         if nameservers:
             resolver.nameservers = nameservers
-        if self.verbose > 0:
+        if self.verbose > 2:
             LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
 
         try:
@@ -598,8 +612,8 @@ class BaseDdnsApplication(BaseApplication):
                     for address in adresses:
                         if address not in ns_list:
                             ns_list.append(ns_list)
-        except NXDOMAIN as e:
-            if self.verbose > 0:
+        except (NoAnswer, NXDOMAIN) as e:
+            if self.verbose > 1:
                 msg = _('Did not found a {t} entry for zone {z}:').format(t='NS', n=zone)
                 LOG.debug(msg + ' ' + str(e))
 
@@ -617,7 +631,7 @@ class BaseDdnsApplication(BaseApplication):
         resolver = dns.resolver.Resolver()
         if nameservers:
             resolver.nameservers = nameservers
-        if self.verbose > 0:
+        if self.verbose > 2:
             LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
 
         try:
@@ -628,8 +642,8 @@ class BaseDdnsApplication(BaseApplication):
                 else:
                     mx_list.append(rd)
 
-        except NXDOMAIN as e:
-            if self.verbose > 0:
+        except (NoAnswer, NXDOMAIN) as e:
+            if self.verbose > 1:
                 msg = _('Did not found a {t} entry for zone {z}:').format(t='MX', n=zone)
                 LOG.debug(msg + ' ' + str(e))
 

@@ -25,7 +25,7 @@ from ..config import BaseConfiguration
 from ..errors import ConfigError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.4'
+__version__ = '2.0.5'
 
 LOG = logging.getLogger(__name__)
 
@@ -48,6 +48,7 @@ class DdnsConfiguration(BaseConfiguration):
 
     default_get_ipv4_url = 'https://ip4.ddnss.de/jsonip.php'
     default_get_ipv6_url = 'https://ip6.ddnss.de/jsonip.php'
+    default_upd_url = 'https://www.ddnss.de/upd.php'
     default_upd_ipv4_url = 'https://ip4.ddnss.de/upd.php'
     default_upd_ipv6_url = 'https://ip6.ddnss.de/upd.php'
 
@@ -72,6 +73,7 @@ class DdnsConfiguration(BaseConfiguration):
         self.with_mx = False
         self.get_ipv4_url = self.default_get_ipv4_url
         self.get_ipv6_url = self.default_get_ipv6_url
+        self.upd_url = self.default_upd_url
         self.upd_ipv4_url = self.default_upd_ipv4_url
         self.upd_ipv6_url = self.default_upd_ipv6_url
         self._timeout = self.default_timeout
@@ -142,6 +144,7 @@ class DdnsConfiguration(BaseConfiguration):
         res['default_logfile'] = self.default_logfile
         res['default_get_ipv4_url'] = self.default_get_ipv4_url
         res['default_get_ipv6_url'] = self.default_get_ipv6_url
+        res['default_upd_url'] = self.default_upd_url
         res['default_upd_ipv4_url'] = self.default_upd_ipv4_url
         res['default_upd_ipv6_url'] = self.default_upd_ipv6_url
         res['default_timeout'] = self.default_timeout
@@ -180,7 +183,8 @@ class DdnsConfiguration(BaseConfiguration):
         re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
         re_with_mx = re.compile(r'^\s*with[_-]?mx\s*$', re.IGNORECASE)
         re_get_url = re.compile(r'^\s*get[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
-        re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
+        re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]?url\s*$', re.IGNORECASE)
+        re_upd_url_ipv = re.compile(r'^\s*upd(?:ate)?[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
 
         for (key, value) in config.items(section_name):
 
@@ -213,6 +217,10 @@ class DdnsConfiguration(BaseConfiguration):
                 setattr(self, 'get_ipv{}_url'.format(match.group(1)), value.strip())
                 continue
             match = re_upd_url.match(key)
+            if match and value.strip():
+                setattr(self, 'upd_url', value.strip())
+                continue
+            match = re_upd_url_ipv.match(key)
             if match and value.strip():
                 setattr(self, 'upd_ipv{}_url'.format(match.group(1)), value.strip())
                 continue
