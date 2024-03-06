@@ -607,7 +607,7 @@ msgstr "DOMÄNE"
 #: lib/fb_tools/ddns/update_app.py:223
 msgid "The particular domain(s), which should be updated (if not all)."
 msgstr ""
-"Die bestimmte Domäne(n)m die aktualisiert werden solln (wenn nicht alle aktualisiert werden "
+"Die einzelnen Domäne(n), die aktualisiert werden sollen (wenn nicht alle aktualisiert werden "
 "sollen)."
 
 #: lib/fb_tools/ddns/update_app.py:285
