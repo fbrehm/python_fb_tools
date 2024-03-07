@@ -33,7 +33,7 @@ from .. import __version__ as GLOBAL_VERSION
 from ..common import pp
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.2.1'
+__version__ = '2.2.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -273,11 +273,10 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         LOG.info(_('Starting {a!r}, version {v!r} ...').format(
             a=self.appname, v=self.version))
 
-        self.get_current_addresses()
-
         if self.cfg.all_domains:
             self.update_all()
         else:
+            self.get_current_addresses()
             for domain in self.cfg.domains:
                 self.update_domain(domain)
         self.empty_line()
