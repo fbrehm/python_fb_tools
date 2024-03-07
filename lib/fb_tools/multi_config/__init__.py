@@ -55,7 +55,7 @@ from ..handling_obj import HandlingObject
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
 
-__version__ = '2.2.0'
+__version__ = '2.2.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -109,6 +109,8 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
 
     default_ini_default_section = '/'
 
+    default_logfile = None
+
     chardet_min_level_confidence = 1.0 / 3
 
     has_hjson = HAS_HJSON
@@ -137,7 +139,7 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
         self._raise_on_error = to_bool(raise_on_error)
         self._was_read = False
         self._ensure_privacy = to_bool(ensure_privacy)
-        self._logfile = None
+        self._logfile = self.default_logfile
         self._prompt_timeout = None
 
         self.cfg = {}

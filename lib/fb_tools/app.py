@@ -38,7 +38,7 @@ from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.2.1'
+__version__ = '2.2.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -354,6 +354,30 @@ class BaseApplication(HandlingObject):
         return res
 
     # -------------------------------------------------------------------------
+    def _get_log_formatter(self, is_term=True):
+
+        # create formatter
+        if is_term:
+            format_str = ''
+            if self.verbose > 1:
+                format_str = '[%(asctime)s]: '
+            format_str += self.appname + ': '
+        else:
+            format_str = '[%(asctime)s]: ' + self.appname + ': '
+        if self.verbose:
+            if self.verbose > 1:
+                format_str += '%(name)s(%(lineno)d) %(funcName)s() '
+            else:
+                format_str += '%(name)s '
+        format_str += '%(levelname)s - %(message)s'
+        if is_term and self.terminal_has_colors:
+            formatter = ColoredFormatter(format_str)
+        else:
+            formatter = logging.Formatter(format_str)
+
+        return formatter
+
+    # -------------------------------------------------------------------------
     def init_logging(self):
         """
         Initialize the logger object.
@@ -376,22 +400,7 @@ class BaseApplication(HandlingObject):
         root_logger = logging.getLogger()
         root_logger.setLevel(root_loglevel)
 
-        # create formatter
-        format_str = ''
-        if self.verbose:
-            format_str = '[%(asctime)s]: '
-        format_str += self.appname + ': '
-        if self.verbose:
-            if self.verbose > 1:
-                format_str += '%(name)s(%(lineno)d) %(funcName)s() '
-            else:
-                format_str += '%(name)s '
-        format_str += '%(levelname)s - %(message)s'
-        formatter = None
-        if self.terminal_has_colors:
-            formatter = ColoredFormatter(format_str)
-        else:
-            formatter = logging.Formatter(format_str)
+        formatter = self._get_log_formatter()
 
         # create log handler for console output
         lh_console = logging.StreamHandler(sys.stderr)

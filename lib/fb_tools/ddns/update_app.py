@@ -13,27 +13,20 @@ from __future__ import absolute_import, print_function
 import copy
 import ipaddress
 import logging
-import os
-import sys
+from pathlib import Path
 
 # Third party module
-from fb_logging.colored import ColoredFormatter
-
 from six.moves.urllib.parse import quote
 
 # Own modules
 from . import BaseDdnsApplication
 from .config import DdnsConfiguration
 from .errors import DdnsAppError
-from .errors import WorkDirAccessError
-from .errors import WorkDirError
-from .errors import WorkDirNotDirError
-from .errors import WorkDirNotExistsError
 from .. import __version__ as GLOBAL_VERSION
 from ..common import pp
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.2.2'
+__version__ = '2.2.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -47,6 +40,8 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     show_console_timeout_option = False
     show_force_option = True
     show_simulate_option = True
+
+    default_logfile = Path('/var/log/ddns/ddnss-update.log')
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -87,109 +82,6 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         else:
             if initialized:
                 self.initialized = True
-
-    # -------------------------------------------------------------------------
-    def _get_log_formatter(self, is_term=True):
-
-        # create formatter
-        if is_term:
-            format_str = ''
-            if self.verbose > 1:
-                format_str = '[%(asctime)s]: '
-            format_str += self.appname + ': '
-        else:
-            format_str = '[%(asctime)s]: ' + self.appname + ': '
-        if self.verbose:
-            if self.verbose > 1:
-                format_str += '%(name)s(%(lineno)d) %(funcName)s() '
-            else:
-                format_str += '%(name)s '
-        format_str += '%(levelname)s - %(message)s'
-        if is_term and self.terminal_has_colors:
-            formatter = ColoredFormatter(format_str)
-        else:
-            formatter = logging.Formatter(format_str)
-
-        return formatter
-
-    # -------------------------------------------------------------------------
-    def init_logging(self):
-        """Initialize the logger object.
-
-        It creates a colored loghandler with all output to STDERR.
-        Maybe overridden in descendant classes.
-
-        @return: None
-        """
-        if not self.do_init_logging:
-            return
-
-        log_level = logging.INFO
-        if self.verbose:
-            log_level = logging.DEBUG
-        elif self.quiet:
-            log_level = logging.WARNING
-
-        root_logger = logging.getLogger()
-        root_logger.setLevel(log_level)
-
-        formatter = self._get_log_formatter()
-
-        # create log handler for console output
-        lh_console = logging.StreamHandler(sys.stderr)
-        lh_console.setLevel(log_level)
-        lh_console.setFormatter(formatter)
-
-        root_logger.addHandler(lh_console)
-
-        if self.verbose < 3:
-            paramiko_logger = logging.getLogger('paramiko.transport')
-            if self.verbose < 1:
-                paramiko_logger.setLevel(logging.WARNING)
-            else:
-                paramiko_logger.setLevel(logging.INFO)
-
-        return
-
-    # -------------------------------------------------------------------------
-    def init_file_logging(self):
-        """Initialise logging into a logfile."""
-        if not self.do_init_logging:
-            return
-
-        logfile = self.cfg.logfile
-        if not logfile:
-            return
-
-        logdir = logfile.parent
-
-        if self.verbose > 1:
-            LOG.debug(_(
-                'Checking existence and accessibility of log directory {!r} ...').format(
-                str(logdir)))
-
-        if not logdir.exists():
-            raise WorkDirNotExistsError(logdir)
-
-        if not logdir.is_dir():
-            raise WorkDirNotDirError(logdir)
-
-        if not os.access(str(logdir), os.R_OK):
-            raise WorkDirAccessError(logdir, _('No read access'))
-
-        if not os.access(str(logdir), os.W_OK):
-            raise WorkDirAccessError(logdir, _('No write access'))
-
-        root_log = logging.getLogger()
-        formatter = self._get_log_formatter(is_term=False)
-
-        lh_file = logging.FileHandler(str(logfile), mode='a', encoding='utf-8', delay=True)
-        if self.verbose:
-            lh_file.setLevel(logging.DEBUG)
-        else:
-            lh_file.setLevel(logging.INFO)
-        lh_file.setFormatter(formatter)
-        root_log.addHandler(lh_file)
 
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
@@ -234,12 +126,6 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         self.perform_arg_parser_late()
 
-        try:
-            self.init_file_logging()
-        except WorkDirError as e:
-            LOG.error(str(e))
-            self.exit(3)
-
         self.initialized = True
 
     # -------------------------------------------------------------------------
@@ -252,13 +138,6 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         if self.args.password:
             self.cfg.ddns_pwd = self.args.password
-
-#        if self.args.logfile is not None:
-#            logfile = self.args.logfile.strip()
-#            if logfile == '':
-#                self.cfg.logfile = None
-#            else:
-#                self.cfg.logfile = Path(logfile).resolve()
 
         if self.args.all_domains:
             self.cfg.all_domains = True
@@ -439,15 +318,19 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             LOG.error(str(e))
             return None
 
-        if not self.quiet:
+        msg = _('No response from {}.').format('DDNSS')
+        if response:
+            msg = _('Response from {}:').format('DDNSS')
+
+        if self.quiet:
+            LOG.info(msg + '\n' + response)
+        else:
             if response:
-                msg = _('Response from {}:').format('DDNSS')
                 text_len = len(msg)
                 print(self.colored(msg, 'CYAN'))
                 self.line(text_len, color='CYAN')
                 print(response)
             else:
-                msg = _('No response from {}.').format('DDNSS')
                 print(self.colored(msg, 'CYAN'))
 
         return True
@@ -509,15 +392,19 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             LOG.error(str(e))
             return None
 
-        if not self.quiet:
+        msg = _('No response from {}.').format('DDNSS')
+        if response:
+            msg = _('Response from {}:').format('DDNSS')
+
+        if self.quiet:
+            LOG.info(msg + '\n' + response)
+        else:
             if response:
-                msg = _('Response from {}:').format('DDNSS')
                 text_len = len(msg)
                 print(self.colored(msg, 'CYAN'))
                 self.line(text_len, color='CYAN')
                 print(response)
             else:
-                msg = _('No response from {}.').format('DDNSS')
                 print(self.colored(msg, 'CYAN'))
 
         return True

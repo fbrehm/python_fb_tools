@@ -297,21 +297,30 @@ class BaseDdnsApplication(FbConfigApplication):
         except ValueError:
             raise DdnsAppError(_('Failed to parse the response'), response.text)
 
+        return self._mangle_response(response, return_json=return_json)
+
+    # -------------------------------------------------------------------------
+    def _mangle_response(self, response, return_json=True):
+
         if self.verbose > 3:
             LOG.debug('RAW response: {!r}.'.format(response.text))
         if not response.text:
             return ''
 
         if not return_json:
-            LOG.debug('Text response:\n{}'.format(response.text))
+            msg = _('Text response:') + '\n' + response.text
+            if self.verbose > 3:
+                LOG.debug(msg)
             return response.text
 
         try:
             json_response = response.json()
         except JSONDecodeError:
+            encoding = 'utf-8-sig'
             if self.verbose > 2:
-                LOG.debug("Setting encoding of response to 'utf-8-sig'.")
-            response.encoding = 'utf-8-sig'
+                msg = _('Setting encoding of response to {!r}.').format(encoding)
+                LOG.debug(msg)
+            response.encoding = encoding
             json_response = response.json()
 
         if self.verbose > 3:
