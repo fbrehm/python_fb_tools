@@ -13,10 +13,14 @@ from __future__ import absolute_import, print_function
 import copy
 import ipaddress
 import logging
+import os
+import re
 from pathlib import Path
 
 # Third party module
 from six.moves.urllib.parse import quote
+
+# import yaml
 
 # Own modules
 from . import BaseDdnsApplication
@@ -24,12 +28,122 @@ from .config import DdnsConfiguration
 from .errors import DdnsAppError
 from .. import __version__ as GLOBAL_VERSION
 from ..common import pp
+from ..errors import CommonDirectoryError
+from ..errors import DirectoryAccessError
+from ..errors import DirectoryNotDirError
+from ..errors import DirectoryNotExistsError
+from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.2.4'
+__version__ = '2.3.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
+
+
+# =============================================================================
+class UpdateDdnsStatus(HandlingObject):
+    """
+    A class encapsulating the last or current status of updating DDNS.
+
+    It contains methods for reading or writing a status file.
+    """
+
+    re_has_whitespace = re.compile(r'\s')
+
+    # -------------------------------------------------------------------------
+    def __init__(
+            self, domain=None, workdir=None, version=__version__, initialized=False,
+            *args, **kwargs):
+        """Initialise a UpdateDdnsStatus object."""
+        self._domain = None
+        self.workdir = None
+
+        super(UpdateDdnsStatus, self).__init__(
+            version=version,
+            initialized=False,
+            *args, **kwargs
+        )
+
+        if workdir:
+            wdir = Path(workdir)
+            if not wdir.is_absolute:
+                wdir = wdir.resolve()
+            self.workdir = wdir
+        else:
+            self.workdir = self.base_dir / 'status'
+
+        if domain:
+            self.domain = domain
+
+        if self.domain and initialized:
+            self.initialized = True
+
+    # -------------------------------------------------------------------------
+    @property
+    def domain(self):
+        """Return the domain, for which the status is held."""
+        return self._domain
+
+    @domain.setter
+    def domain(self, value):
+        if value is None:
+            self._domain = None
+            return
+        val = str(value).strip()
+        if val == '':
+            self._domain = None
+            return
+
+        if self.re_has_whitespace(val):
+            msg = _('Invalid domain {!r} given, whitespaces are not allowed.').format(value)
+            raise ValueError(msg)
+
+        self._domain = val
+
+    # -------------------------------------------------------------------------
+    def as_dict(self, short=True):
+        """
+        Transform the elements of the object into a dict.
+
+        @param short: don't include local properties in resulting dict.
+        @type short: bool
+
+        @return: structure as dict
+        @rtype:  dict
+        """
+        res = super(UpdateDdnsStatus, self).as_dict(short=short)
+
+        res['domain'] = self.domain
+
+        return res
+
+    # -------------------------------------------------------------------------
+    def check_workdir(self, check_writeable=False):
+        """
+        Check current working directory.
+
+        Raise a kind of CommonDirectoryError, if it is not useable.
+        """
+        if self.verbose > 1:
+            LOG.debug(_('Checking working directory {d!r} for updating {what} ...').format(
+                d=str(self.workdir), what='DDNS'))
+
+        if not isinstance(self.workdir, Path):
+            raise CommonDirectoryError(self.workdir, _('working directory is not a path object.'))
+
+        if not self.workdir.exists():
+            raise DirectoryNotExistsError(self.workdir)
+
+        if not self.workdir.is_dir():
+            raise DirectoryNotDirError(self.workdir)
+
+        if not os.access(self.workdir, os.R_OK | os.X_OK):
+            raise DirectoryAccessError(self.workdir, _('working directory is notreadable.'))
+
+        if check_writeable:
+            if not os.access(self.workdir, os.W_OK):
+                raise DirectoryAccessError(self.workdir, _('working directory is not writeable.'))
 
 
 # =============================================================================
