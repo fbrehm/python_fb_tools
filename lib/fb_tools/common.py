@@ -34,7 +34,7 @@ except ImportError:
 import six
 
 # Own modules
-
+from .errors import InvalidTimeIntervalError
 from .xlate import XLATOR
 
 __version__ = '2.0.2'
@@ -90,6 +90,14 @@ RE_UNIT_EBYTES = re.compile(r'^\s*E(?:B(?:yte)?)?\s*$', re.IGNORECASE)
 RE_UNIT_EIBYTES = re.compile(r'^\s*Ei(?:B(?:yte)?)?\s*$', re.IGNORECASE)
 RE_UNIT_ZBYTES = re.compile(r'^\s*Z(?:B(?:yte)?)?\s*$', re.IGNORECASE)
 RE_UNIT_ZIBYTES = re.compile(r'^\s*Zi(?:B(?:yte)?)?\s*$', re.IGNORECASE)
+
+RE_UNIT_TIME_SECOND = re.compile(r'\s*(\d+(?:\.\d*)?)\s*(?:s(?:ec(?:onds?)?)?)?,?', re.IGNORECASE)
+RE_UNIT_TIME_MINUTE = re.compile(r'\s*(\d+(?:\.\d*)?)\s*m(?:in(?:utes?)?)?,?', re.IGNORECASE)
+RE_UNIT_TIME_HOUR = re.compile(r'\s*(\d+(?:\.\d*)?)\s*h(?:ours?)?,?', re.IGNORECASE)
+RE_UNIT_TIME_DAY = re.compile(r'\s*(\d+(?:\.\d*)?)\s*d(?:ays?)?,?', re.IGNORECASE)
+RE_UNIT_TIME_WEEK = re.compile(r'\s*(\d+(?:\.\d*)?)\s*w(?:eeks?)?,?', re.IGNORECASE)
+RE_UNIT_TIME_MONTH = re.compile(r'\s*(\d+(?:\.\d*)?)\s*mon(?:ths?)?,?', re.IGNORECASE)
+RE_UNIT_TIME_YEAR = re.compile(r'\s*(\d+(?:\.\d*)?)\s*y(?:ears?)?,?', re.IGNORECASE)
 
 
 # =============================================================================
@@ -841,6 +849,101 @@ def indent(text, prefix, initial_prefix=None, predicate=None):
             lines.append(line)
 
     return ''.join(lines)
+
+
+# =============================================================================
+def timeinterval2delta(interval):
+    """
+    Try to convert the given textual time interval into a datetime.timeinterval object.
+
+    The interval may consists of tokens of float values with a measurement unit.
+    If a token is a float value without a measurement unit, then seconds are assumed.
+    Valid measurement units (as regular expressions) are:
+    * 's(ec(onds?)?)?'
+    * 'm(in(utes?)?)?' == 60 seconds
+    * 'h(ours?)*' == 3600 seconds
+    * 'd(ays?)?' == 3600 * 24 seconds
+    * 'w(eeks?)?' == 3600 * 24 * 7 seconds
+    * 'mon(ths?)?' == 3600 * 24 * 30 seconds
+    * 'y(ears?)?' == 3600 * 24 * 365 seconds
+
+    @raise InvalidTimeIntervalError: if the interval could not be interpreted
+    """
+    if interval is None:
+        raise InvalidTimeIntervalError(None)
+    intrvl = str(interval).strip()
+    if intrvl == '':
+        raise InvalidTimeIntervalError(interval)
+
+    seconds = 0
+
+    # LOG.debug('Start value: {!r}'.format(intrvl))
+
+    m = RE_UNIT_TIME_YEAR.search(intrvl)
+    if m:
+        years = float(m[1])
+        intrvl = RE_UNIT_TIME_YEAR.sub('', intrvl)
+        seconds += years * 3600 * 24 * 365
+        # LOG.debug('After year: match {m!r}, years {y!r}, new value {i!r}, new secs {s}.'.format(
+        #     m=m[1], y=years, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_MONTH.search(intrvl)
+    if m:
+        months = float(m[1])
+        intrvl = RE_UNIT_TIME_MONTH.sub('', intrvl)
+        seconds += months * 3600 * 24 * 30
+        # LOG.debug(
+        #     'After months: match {m!r}, months {mo!r}, new value {i!r}, new secs {s}.'.format(
+        #     m=m[1], mo=months, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_WEEK.search(intrvl)
+    if m:
+        weeks = float(m[1])
+        intrvl = RE_UNIT_TIME_WEEK.sub('', intrvl)
+        seconds += weeks * 3600 * 24 * 7
+        # LOG.debug('After weeks: match {m!r}, weeks {w!r}, new value {i!r}, new secs {s}.'.format(
+        #     m=m[1], w=weeks, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_DAY.search(intrvl)
+    if m:
+        days = float(m[1])
+        intrvl = RE_UNIT_TIME_DAY.sub('', intrvl)
+        seconds += days * 3600 * 24
+        # LOG.debug('After days: match {m!r}, days {d!r}, new value {i!r}, new secs {s}.'.format(
+        #     m=m[1], d=days, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_HOUR.search(intrvl)
+    if m:
+        hours = float(m[1])
+        intrvl = RE_UNIT_TIME_HOUR.sub('', intrvl)
+        seconds += hours * 3600
+        # LOG.debug('After hours: match {m!r}, hours {h!r}, new value {i!r}, new secs {s}.'.format(
+        #     m=m[1], h=hours, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_MINUTE.search(intrvl)
+    if m:
+        minutes = float(m[1])
+        intrvl = RE_UNIT_TIME_MINUTE.sub('', intrvl)
+        seconds += minutes * 60
+        # LOG.debug(
+        #     'After minutes: match {m!r}, minutes {mi!r}, new value {i!r}, new secs {s}.'.format(
+        #     m=m[1], mi=minutes, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_SECOND.search(intrvl)
+    if m:
+        secs = float(m[1])
+        intrvl = RE_UNIT_TIME_SECOND.sub('', intrvl)
+        seconds += secs
+        # LOG.debug(
+        #     'After seconds: match {m!r}, seconds {se!r}, new value {i!r}, new secs {s}.'.format(
+        #     m=m[1], se=secs, i=intrvl, s=seconds))
+
+    intrvl = intrvl.strip()
+    # LOG.debug('Final value: {i!r}, seconds at last: {s}'.format(i=intrvl, s=seconds))
+    if intrvl != '':
+        raise InvalidTimeIntervalError(interval)
+
+    return datetime.timedelta(seconds=seconds)
 
 
 # =============================================================================
