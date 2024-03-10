@@ -14,7 +14,7 @@ import signal
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.3.0'
+__version__ = '2.3.1'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -110,6 +110,22 @@ class InvalidMailAddressError(BaseMailAddressError):
             msg += ': ' + self.msg
         else:
             msg += '.'
+        return msg
+
+
+# =============================================================================
+class InvalidTimeIntervalError(FbError, ValueError):
+    """Class for a exception in case of a malformed textual time intervall."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, interval):
+        """Initialise a InvalidTimeIntervalError  exception."""
+        self.interval = str(interval)
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """Typecast into a string."""
+        msg = _('Wrong time interval {!r}.').format(self.interval)
         return msg
 
 
