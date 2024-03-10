@@ -650,7 +650,11 @@ class TestFbCommon(FbToolsTestcase):
         LOG.info(self.get_method_doc())
 
         from datetime import timedelta
+        from fb_tools.common import set_debug_timeinterval2delta
         from fb_tools.common import timeinterval2delta
+
+        if self.verbose > 2:
+            set_debug_timeinterval2delta(True)
 
         test_data_valid = (
             (1, 1),
@@ -661,8 +665,10 @@ class TestFbCommon(FbToolsTestcase):
             ('5m', 300),
             ('5 m 10s', 310),
             ('10 s 5m', 310),
+            ('2h 2', 7202),
             ('2h 3m 2.222', 2 * 3600 + 3 * 60 + 2.222),
             ('12.5 h', 12 * 3600 + 1800),
+            ('3d , 13h, 4.5 min', 3 * 24 * 3600 + 13 * 3600 + 270),
             (' 14 days, 2 hours', 14 * 24 * 3600 + 2 * 3600),
             ('2 weeks 2 hours', 14 * 24 * 3600 + 2 * 3600),
             ('3 months 2 days', 3 * 30 * 24 * 3600 + 2 * 24 * 3600),
@@ -679,6 +685,31 @@ class TestFbCommon(FbToolsTestcase):
             LOG.debug('Got timedelta "{}".'.format(result))
             self.assertIsInstance(result, timedelta)
             self.assertEqual(result, expected)
+
+        class TestClass(object):
+            """Pointless test class without a function."""
+
+            def blub(self):
+                """Make nothing - senseless method."""
+                return None
+
+        from fb_tools.errors import InvalidTimeIntervalError
+
+        test_object = TestClass()
+
+        test_data_invalid = (
+            None, '', ' 	', 'bla', test_object, test_object.blub,
+            '2h 2h', '2h,, 4min',
+        )
+
+        for test_data in test_data_invalid:
+            LOG.debug('Test invalid time interval {!r}.'.format(test_data))
+
+            with self.assertRaises(InvalidTimeIntervalError) as cm:
+                result = timeinterval2delta(test_data)
+                LOG.error('This result should never be visible: {!r}.'.format(result))
+            e = cm.exception
+            LOG.debug('{c} raised: {e}'.format(c=e.__class__.__name__, e=e))
 
 
 # =============================================================================
