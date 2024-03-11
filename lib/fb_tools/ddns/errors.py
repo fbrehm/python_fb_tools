@@ -7,14 +7,15 @@
 """
 
 # Standard modules
-import errno
 
 # Own modules
+from ..errors import CommonDirectoryError
+from ..errors import CommonFileError
 from ..errors import FbAppError
 from ..errors import MultiConfigError
 from ..xlate import XLATOR
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -52,46 +53,80 @@ class DdnsRequestError(DdnsAppError):
             c=self.code, u=self.url, m=self.content)
         return msg
 
+
 # =============================================================================
-class WorkDirError(DdnsAppError):
+class InvalidUpdateStatusFileError(CommonFileError):
+    """Special exception class with an invalid DDNS update status file."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('There is a problem with the update status file {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class WorkDirError(CommonDirectoryError):
     """Special exception class with problems with the working directory."""
 
-    pass
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('There is a problem with the working directory {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
 
 
 # =============================================================================
 class WorkDirNotExistsError(WorkDirError, FileNotFoundError):
     """Special exception class, if working diretory does not exists."""
 
-    # -------------------------------------------------------------------------
-    def __init__(self, workdir):
-        """Construct a WorkDirNotExistsError object."""
-        super(WorkDirNotExistsError, self).__init__(
-            errno.ENOENT, _('Directory does not exists'), str(workdir))
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Working directory {!r} does not exists').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
 
 
 # =============================================================================
 class WorkDirNotDirError(WorkDirError, NotADirectoryError):
     """Special exception class, if path to working diretory is not a directory."""
 
-    # -------------------------------------------------------------------------
-    def __init__(self, workdir):
-        """Construct a WorkDirNotDirError object."""
-        super(WorkDirNotDirError, self).__init__(
-            errno.ENOTDIR, _('Path is not a directory'), str(workdir))
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Path {!r} is not a directory').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
 
 
 # =============================================================================
 class WorkDirAccessError(WorkDirError, PermissionError):
     """Special exception class, if working diretory is not accessible."""
 
-    # -------------------------------------------------------------------------
-    def __init__(self, workdir, msg=None):
-        """Construct a WorkDirAccessError object."""
-        if not msg:
-            msg = _('Invalid permissions')
-
-        super(WorkDirAccessError, self).__init__(errno.EACCES, msg, str(workdir))
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Invalid permissions for working directory {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
 
 
 # =============================================================================
