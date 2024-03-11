@@ -13,7 +13,6 @@ import logging
 import os
 import sys
 import textwrap
-
 from pathlib import Path
 
 try:
@@ -44,6 +43,15 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         self.test_dir = Path(__file__).parent.resolve()
         self.work_dir = self.test_dir / 'ddns-update-status'
 
+        self.invalid_test_file = self.test_dir / 'testfile'
+        self.invalid_test_file.touch()
+
+        self.invalid_test_dir = self.test_dir / 'testdir'
+        self.invalid_test_dir.mkdir(mode=0o000)
+
+        self.invalid_test_dir_ro = self.test_dir / 'testdir-ro'
+        self.invalid_test_dir_ro.mkdir(mode=0o500)
+
     # -------------------------------------------------------------------------
     def tearDown(self):
         """Tear down routine for calling each particular test method."""
@@ -55,6 +63,15 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
                     continue
                 LOG.debug('Removing status file {!r} ...'.format(str(status_file)))
                 status_file.unlink()
+
+        for path in (self.invalid_test_file, self.invalid_test_dir, self.invalid_test_dir_ro):
+            if path.exists():
+                if path.is_dir():
+                    LOG.debug('Removing test directory {!r} ...'.format(str(path)))
+                    path.rmdir()
+                else:
+                    LOG.debug('Removing test file {!r} ...'.format(str(path)))
+                    path.unlink()
 
     # -------------------------------------------------------------------------
     def test_import(self):
@@ -72,6 +89,41 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         LOG.debug('UpdateDdnsStatus %%r: {!r}'.format(update_status))
         LOG.debug('UpdateDdnsStatus %%s: {}'.format(update_status))
 
+    # -------------------------------------------------------------------------
+    def test_check_workdir(self):
+        """Test method check_workdir() of a UpdateDdnsStatus object."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.ddns.update_app import UpdateDdnsStatus
+        from fb_tools.errors import CommonDirectoryError
+
+        LOG.debug('Testing valid working directory {!r} ...'.format(self.work_dir))
+        update_status = UpdateDdnsStatus(
+            appname=self.appname,
+            verbose=self.verbose,
+            workdir=self.work_dir,
+        )
+        if self.verbose > 1:
+            LOG.debug('UpdateDdnsStatus %%s: {}'.format(update_status))
+        update_status.check_workdir(check_writeable=True)
+        LOG.debug('Check of working directory {!r} was successful.'.format(self.work_dir))
+        self.assertEqual(self.work_dir, update_status.workdir)
+
+        invalid_workdirs = (
+            None, self.invalid_test_file, self.invalid_test_dir, self.invalid_test_dir_ro,
+        )
+        for workdir in invalid_workdirs:
+            LOG.debug('Check of invalid working directory {!r} ...'.format(workdir))
+            update_status = UpdateDdnsStatus(
+                appname=self.appname,
+                verbose=self.verbose,
+                workdir=workdir,
+            )
+            with self.assertRaises(CommonDirectoryError) as cm:
+                update_status.check_workdir(check_writeable=True)
+            e = cm.exception
+            LOG.debug('%s raised: %s', e.__class__.__name__, e)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -86,6 +138,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     suite.addTest(TestDdnsUpdateStatus('test_import', verbose))
+    suite.addTest(TestDdnsUpdateStatus('test_check_workdir', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

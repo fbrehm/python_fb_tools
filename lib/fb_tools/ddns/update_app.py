@@ -35,7 +35,7 @@ from ..errors import DirectoryNotExistsError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.3.0'
+__version__ = '2.3.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -139,7 +139,7 @@ class UpdateDdnsStatus(HandlingObject):
             raise DirectoryNotDirError(self.workdir)
 
         if not os.access(self.workdir, os.R_OK | os.X_OK):
-            raise DirectoryAccessError(self.workdir, _('working directory is notreadable.'))
+            raise DirectoryAccessError(self.workdir, _('working directory is not readable.'))
 
         if check_writeable:
             if not os.access(self.workdir, os.W_OK):
