@@ -142,6 +142,25 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
             e = cm.exception
             LOG.debug('%s raised: %s', e.__class__.__name__, e)
 
+    # -------------------------------------------------------------------------
+    def test_write_yaml(self):
+        """Test writingg an update status YAML file."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.ddns.update_app import UpdateDdnsStatus
+        update_status = UpdateDdnsStatus(
+            appname=self.appname,
+            verbose=self.verbose,
+            workdir=self.work_dir,
+            domain=self.domain,
+        )
+
+        update_status.write_status()
+        content = update_status.filename_abs.read_text(encoding='utf-8')
+        msg = 'Content of written status file {!r}:'.format(str(update_status.filename_abs))
+        msg += '\n' + content
+        LOG.debug(msg)
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -157,6 +176,7 @@ if __name__ == '__main__':
 
     suite.addTest(TestDdnsUpdateStatus('test_import', verbose))
     suite.addTest(TestDdnsUpdateStatus('test_check_workdir', verbose))
+    suite.addTest(TestDdnsUpdateStatus('test_write_yaml', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

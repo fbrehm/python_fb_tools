@@ -24,7 +24,7 @@ from babel.dates import LOCALTZ
 
 from six.moves.urllib.parse import quote
 
-# import yaml
+import yaml
 
 # Own modules
 from . import BaseDdnsApplication
@@ -36,10 +36,13 @@ from ..errors import CommonDirectoryError
 from ..errors import DirectoryAccessError
 from ..errors import DirectoryNotDirError
 from ..errors import DirectoryNotExistsError
+from ..errors import FileAccessError
+from ..errors import FileNotExistsError
+from ..errors import FileNotRegularFileError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.3.2'
+__version__ = '2.4.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -167,6 +170,36 @@ class UpdateDdnsStatus(HandlingObject):
         return datetime.datetime.fromtimestamp(self.timestamp, LOCALTZ)
 
     # -------------------------------------------------------------------------
+    @property
+    def status_code(self):
+        """Return the numeric status code of the update."""
+        return self._status_code
+
+    @status_code.setter
+    def status_code(self, value):
+        if value is None:
+            self._status_code = None
+        else:
+            self._status_code = int(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def status_text(self):
+        """Return the textual reason of responded HTTP Status of the update."""
+        return self._status_text
+
+    @status_text.setter
+    def status_text(self, value):
+        if value is None:
+            self._status_text = None
+            return
+        val = str(value).strip()
+        if val == '':
+            self._status_text = None
+            return
+        self._status_text = val
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transform the elements of the object into a dict.
@@ -182,6 +215,8 @@ class UpdateDdnsStatus(HandlingObject):
         res['domain'] = self.domain
         res['filename_base'] = self.filename_base
         res['filename_abs'] = self.filename_abs
+        res['status_code'] = self.status_code
+        res['status_text'] = self.status_text
         res['timestamp'] = self.timestamp
         res['update_date'] = self.update_date
         res['workdir'] = self.workdir
@@ -214,6 +249,53 @@ class UpdateDdnsStatus(HandlingObject):
         if check_writeable:
             if not os.access(self.workdir, os.W_OK):
                 raise DirectoryAccessError(self.workdir, _('working directory is not writeable.'))
+
+    # -------------------------------------------------------------------------
+    def check_statusfile(self, check_writeable=False, raise_on_not_existing=False):
+        """Check a status YAML file."""
+        if self.verbose > 1:
+            LOG.debug(_('Checking update status file {!r} ...').format(str(self.filename_abs)))
+
+        if not self.filename_abs.exists():
+            if raise_on_not_existing:
+                raise FileNotExistsError(self.filename_abs)
+            LOG.debug(_('Update status file {!r} does not exists.').format(
+                str(self.filename_abs)))
+            return
+
+        if not self.filename_abs.is_file():
+            raise FileNotRegularFileError(self.filename_abs)
+
+        if not os.access(self.filename_abs, os.R_OK):
+            raise FileAccessError(self.filename_abs, _('update status file is not readable.'))
+
+        if check_writeable:
+            if not os.access(self.filename_abs, os.W_OK):
+                raise FileAccessError(
+                    self.filename_abs, _('update status file is not writeable.'))
+
+    # -------------------------------------------------------------------------
+    def write_status(self):
+        """Write the current update status into a status YAML file."""
+        LOG.debug(_('Write status into {!r} ...').format(str(self.filename_abs)))
+
+        if self.filename_abs.exists():
+            self.check_statusfile(check_writeable=True)
+        else:
+            self.check_workdir(check_writeable=True)
+
+        data = {
+            'domain': self.domain,
+            'status_code': self.status_code,
+            'status_text': self.status_text,
+            'timestamp': self.timestamp,
+            'update_date': self.update_date.isoformat(' ')
+        }
+
+        with self.filename_abs.open('wt', encoding='utf-8', errors='surrogateescape') as fh:
+            yaml.dump(
+                data, fh, Dumper=yaml.SafeDumper, explicit_start=True,
+                width=99, default_flow_style=False)
 
 
 # =============================================================================
