@@ -30,6 +30,7 @@ import yaml
 from . import BaseDdnsApplication
 from .config import DdnsConfiguration
 from .errors import DdnsAppError
+from .errors import InvalidUpdateStatusFileError
 from .. import __version__ as GLOBAL_VERSION
 from ..common import pp
 from ..errors import CommonDirectoryError
@@ -42,7 +43,7 @@ from ..errors import FileNotRegularFileError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.4.1'
+__version__ = '2.4.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -88,6 +89,12 @@ class UpdateDdnsStatus(HandlingObject):
             msg = _('No valid domain given on initialization of a {} object.').format(
                 self.__class__.__name__)
             raise ValueError(msg)
+
+        if status_code:
+            self.status_code = status_code
+
+        if status_text:
+            self.status_text = status_text
 
         if initialized:
             self.initialized = True
@@ -292,6 +299,15 @@ class UpdateDdnsStatus(HandlingObject):
             'update_date': self.update_date.isoformat(' ')
         }
 
+        if self.verbose > 1:
+            LOG.debug(_('Data to write in status file:') + '\n' + pp(data))
+
+        if self.simulate:
+            msg = _('Simulation mode, file {!r} will not be written.').format(
+                str(self.filename_abs))
+            LOG.info(msg)
+            return
+
         with self.filename_abs.open('wt', encoding='utf-8', errors='surrogateescape') as fh:
             yaml.dump(
                 data, fh, Dumper=yaml.SafeDumper, explicit_start=True,
@@ -318,6 +334,9 @@ class UpdateDdnsStatus(HandlingObject):
 
         if 'timestamp' in data:
             self.timestamp = data['timestamp']
+        else:
+            raise InvalidUpdateStatusFileError(
+                self.filename_abs, _('no timestamp of last update found.'))
 
 
 # =============================================================================
@@ -331,6 +350,9 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
     default_logfile = Path('/var/log/ddns/ddnss-update.log')
 
+    # Standard interval for forced updating a domain
+    default_forced_update_interval = 7 * 24 * 60 * 60
+
     # -------------------------------------------------------------------------
     def __init__(
         self, version=GLOBAL_VERSION, initialized=None, description=None,
@@ -342,6 +364,8 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         self.current_ipv6_address = None
         self.txt_records = []
         self.cur_resolved_addresses = {}
+        self.forced_update_interval = self.default_forced_update_interval
+        self.last_update_timestamp = None
 
         self._force_desc_msg = _('Updating the DDNS records, even if seems not to be changed.')
 
@@ -445,6 +469,8 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         else:
             self.get_current_addresses()
             for domain in self.cfg.domains:
+                self.last_update_timestamp = None
+                self.get_last_update(domain)
                 self.update_domain(domain)
         self.empty_line()
 
@@ -512,6 +538,30 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             self.cur_resolved_addresses))
 
     # -------------------------------------------------------------------------
+    def get_last_update(self, domain):
+        """Try to get the timestamp of the last update of the domain."""
+        update_status = UpdateDdnsStatus(
+            appname=self.appname, verbose=self.verbose, simulate=self.simulate,
+            domain=domain, workdir=self.cfg.working_dir)
+
+        if not update_status.filename_abs.exists():
+            LOG.info(_('Did not found update status file {!r}.').format(
+                str(update_status.filename_abs)))
+            return
+
+        try:
+            update_status.read_status()
+        except Exception as e:
+            msg = _('{c} - could not evaluate update status file {f!r}: {e}').format(
+                c=e.__class__.__name__, f=str(update_status.filename_abs), e=e)
+            LOG.error(msg)
+            return
+
+        LOG.debug(_('Last update was at {dt} with status {st!r}.').format(
+            dt=update_status.update_date.isoformat(' '), st=update_status.status_code))
+        self.last_update_timestamp = update_status.timestamp
+
+    # -------------------------------------------------------------------------
     def check_for_update_domain(self, domain):
         """Return, whether a domain should be updated on DDNSS."""
         do_update = False
@@ -533,6 +583,17 @@ class UpdateDdnsApplication(BaseDdnsApplication):
                 for addr in self.cur_resolved_addresses[domain]:
                     if addr.version == 6:
                         do_update = True
+
+        if self.last_update_timestamp is None:
+            do_update = True
+        else:
+            timediff = time.time() - self.last_update_timestamp
+            if self.verbose:
+                delta = datetime.timedelta(seconds=timediff)
+                LOG.debug(_('Last update of domain {dom!r} is {delta} ago.').format(
+                    dom=domain, delta=delta))
+            if timediff >= self.forced_update_interval:
+                do_update = True
 
         return do_update
 
@@ -601,17 +662,24 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         self.empty_line()
         try:
-            response = self.perform_request(url, return_json=False)
+            resp = self.perform_request(url, return_json=False)
         except DdnsAppError as e:
             LOG.error(str(e))
             return None
+
+        response = resp[0]
+        status_code = resp[1]
+        status_text = resp[2]
 
         msg = _('No response from {}.').format('DDNSS')
         if response:
             msg = _('Response from {}:').format('DDNSS')
 
+        msg_status = _('Status code: {c}, status text: {r!r}.').format(
+            c=status_code, r=status_text)
+
         if self.quiet:
-            LOG.info(msg + '\n' + response)
+            LOG.info(msg + '\n' + msg_status + '\n' + response)
         else:
             if response:
                 text_len = len(msg)
@@ -620,6 +688,16 @@ class UpdateDdnsApplication(BaseDdnsApplication):
                 print(response)
             else:
                 print(self.colored(msg, 'CYAN'))
+
+        update_status = UpdateDdnsStatus(
+            appname=self.appname, verbose=self.verbose, simulate=self.simulate,
+            domain=domain, workdir=self.cfg.working_dir,
+            status_code=status_code, status_text=status_text,
+        )
+        if self.verbose > 3:
+            LOG.debug('UpdateDdnsStatus object:\n' + pp(update_status.as_dict()))
+
+        update_status.write_status()
 
         return True
 
@@ -675,17 +753,24 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         self.empty_line()
         try:
-            response = self.perform_request(url, return_json=False)
+            resp = self.perform_request(url, return_json=False)
         except DdnsAppError as e:
             LOG.error(str(e))
             return None
+
+        response = resp[0]
+        status_code = resp[1]
+        status_text = resp[2]
 
         msg = _('No response from {}.').format('DDNSS')
         if response:
             msg = _('Response from {}:').format('DDNSS')
 
+        msg_status = _('Status code: {c}, status text: {r!r}.').format(
+            c=status_code, r=status_text)
+
         if self.quiet:
-            LOG.info(msg + '\n' + response)
+            LOG.info(msg + '\n' + msg_status + '\n' + response)
         else:
             if response:
                 text_len = len(msg)
