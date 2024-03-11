@@ -52,6 +52,8 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         self.invalid_test_dir_ro = self.test_dir / 'testdir-ro'
         self.invalid_test_dir_ro.mkdir(mode=0o500)
 
+        self.domain = 'home-uhu-banane.ddnss.org'
+
     # -------------------------------------------------------------------------
     def tearDown(self):
         """Tear down routine for calling each particular test method."""
@@ -85,9 +87,23 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         update_status = UpdateDdnsStatus(
             appname=self.appname,
             verbose=self.verbose,
+            workdir=self.work_dir,
+            domain=self.domain,
         )
         LOG.debug('UpdateDdnsStatus %%r: {!r}'.format(update_status))
         LOG.debug('UpdateDdnsStatus %%s: {}'.format(update_status))
+
+        LOG.debug('Test invalid UpdateDdnsStatus ...')
+        with self.assertRaises(ValueError) as cm:
+            update_status = UpdateDdnsStatus(
+                appname=self.appname,
+                verbose=self.verbose,
+                workdir=self.work_dir,
+                domain=None,
+            )
+            LOG.debug('UpdateDdnsStatus %%s: {}'.format(update_status))
+        e = cm.exception
+        LOG.debug('%s raised: %s', e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_check_workdir(self):
@@ -102,6 +118,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
             appname=self.appname,
             verbose=self.verbose,
             workdir=self.work_dir,
+            domain=self.domain,
         )
         if self.verbose > 1:
             LOG.debug('UpdateDdnsStatus %%s: {}'.format(update_status))
@@ -118,6 +135,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
                 appname=self.appname,
                 verbose=self.verbose,
                 workdir=workdir,
+                domain=self.domain,
             )
             with self.assertRaises(CommonDirectoryError) as cm:
                 update_status.check_workdir(check_writeable=True)

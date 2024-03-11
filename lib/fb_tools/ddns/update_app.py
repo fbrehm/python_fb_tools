@@ -11,13 +11,17 @@ from __future__ import absolute_import, print_function
 
 # Standard modules
 import copy
+import datetime
 import ipaddress
 import logging
 import os
 import re
+import time
 from pathlib import Path
 
 # Third party module
+from babel.dates import LOCALTZ
+
 from six.moves.urllib.parse import quote
 
 # import yaml
@@ -35,7 +39,7 @@ from ..errors import DirectoryNotExistsError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.3.1'
+__version__ = '2.3.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -53,11 +57,15 @@ class UpdateDdnsStatus(HandlingObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-            self, domain=None, workdir=None, version=__version__, initialized=False,
+            self, domain, workdir=None, version=__version__, initialized=False,
+            timestamp=None, status_code=None, status_text=None,
             *args, **kwargs):
         """Initialise a UpdateDdnsStatus object."""
         self._domain = None
-        self.workdir = None
+        self._workdir = None
+        self._timestamp = time.time()
+        self._status_code = None
+        self._status_text = None
 
         super(UpdateDdnsStatus, self).__init__(
             version=version,
@@ -66,17 +74,19 @@ class UpdateDdnsStatus(HandlingObject):
         )
 
         if workdir:
-            wdir = Path(workdir)
-            if not wdir.is_absolute:
-                wdir = wdir.resolve()
-            self.workdir = wdir
+            self.workdir = workdir
         else:
             self.workdir = self.base_dir / 'status'
 
         if domain:
             self.domain = domain
 
-        if self.domain and initialized:
+        if not self.domain:
+            msg = _('No valid domain given on initialization of a {} object.').format(
+                self.__class__.__name__)
+            raise ValueError(msg)
+
+        if initialized:
             self.initialized = True
 
     # -------------------------------------------------------------------------
@@ -95,11 +105,66 @@ class UpdateDdnsStatus(HandlingObject):
             self._domain = None
             return
 
-        if self.re_has_whitespace(val):
+        if self.re_has_whitespace.search(val):
             msg = _('Invalid domain {!r} given, whitespaces are not allowed.').format(value)
             raise ValueError(msg)
 
         self._domain = val
+
+    # -------------------------------------------------------------------------
+    @property
+    def workdir(self):
+        """Return the working directory, wher to search, read and write the status file."""
+        return self._workdir
+
+    @workdir.setter
+    def workdir(self, value):
+        if value is None:
+            self._workdir = None
+            return
+
+        workdir = Path(value)
+        if not workdir.is_absolute():
+            workdir = workdir.resolve()
+
+        self._workdir = workdir
+
+    # -------------------------------------------------------------------------
+    @property
+    def filename_base(self):
+        """Return the base filename for reading the last or writing the current update status."""
+        if not self.domain:
+            return None
+
+        return 'status.update-ddns.{}.yaml'.format(self.domain)
+
+    # -------------------------------------------------------------------------
+    @property
+    def filename_abs(self):
+        """Return the absolute filename for the update status file."""
+        if not self.filename_base:
+            return None
+
+        return self.workdir / self.filename_base
+
+    # -------------------------------------------------------------------------
+    @property
+    def timestamp(self):
+        """Return the UNIX timestamp of the update."""
+        return self._timestamp
+
+    @timestamp.setter
+    def timestamp(self, value):
+        if value is None:
+            msg = _('A timestamp must not be None.')
+            raise TypeError(msg)
+        self._timestamp = float(value)
+
+    # -------------------------------------------------------------------------
+    @property
+    def update_date(self):
+        """Return the timestamp of the update as a datetime.datetime object."""
+        return datetime.datetime.fromtimestamp(self.timestamp, LOCALTZ)
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -115,6 +180,11 @@ class UpdateDdnsStatus(HandlingObject):
         res = super(UpdateDdnsStatus, self).as_dict(short=short)
 
         res['domain'] = self.domain
+        res['filename_base'] = self.filename_base
+        res['filename_abs'] = self.filename_abs
+        res['timestamp'] = self.timestamp
+        res['update_date'] = self.update_date
+        res['workdir'] = self.workdir
 
         return res
 
