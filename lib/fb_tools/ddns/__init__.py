@@ -49,7 +49,7 @@ from ..common import pp
 from ..errors import IoTimeoutError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.2.2'
+__version__ = '2.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -304,14 +304,16 @@ class BaseDdnsApplication(FbConfigApplication):
 
         if self.verbose > 3:
             LOG.debug('RAW response: {!r}.'.format(response.text))
+            LOG.debug('Status of request: {c!r} - {r!r}'.format(
+                c=response.status_code, r=response.reason))
         if not response.text:
-            return ''
+            return ('', response.status_code, response.reason)
 
         if not return_json:
             msg = _('Text response:') + '\n' + response.text
             if self.verbose > 3:
                 LOG.debug(msg)
-            return response.text
+            return (response.text, response.status_code, response.reason)
 
         try:
             json_response = response.json()
