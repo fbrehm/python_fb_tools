@@ -42,7 +42,7 @@ from ..errors import FileNotRegularFileError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.4.0'
+__version__ = '2.4.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -296,6 +296,28 @@ class UpdateDdnsStatus(HandlingObject):
             yaml.dump(
                 data, fh, Dumper=yaml.SafeDumper, explicit_start=True,
                 width=99, default_flow_style=False)
+
+    # -------------------------------------------------------------------------
+    def read_status(self):
+        """Read the last update status from a status YAML file."""
+        LOG.debug(_('Read status from {!r} ...').format(str(self.filename_abs)))
+
+        self.check_statusfile(raise_on_not_existing=True)
+
+        with self.filename_abs.open('rt', encoding='utf-8', errors='surrogateescape') as fh:
+            data = yaml.safe_load(fh)
+
+        if self.verbose > 1:
+            LOG.debug(_('Read data from YAML:') + '\n' + pp(data))
+
+        if 'status_code' in data:
+            self.status_code = data['status_code']
+
+        if 'status_text' in data:
+            self.status_text = data['status_text']
+
+        if 'timestamp' in data:
+            self.timestamp = data['timestamp']
 
 
 # =============================================================================

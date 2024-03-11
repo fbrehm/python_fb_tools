@@ -148,6 +148,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         LOG.info(self.get_method_doc())
 
         from fb_tools.ddns.update_app import UpdateDdnsStatus
+
         update_status = UpdateDdnsStatus(
             appname=self.appname,
             verbose=self.verbose,
@@ -160,6 +161,26 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         msg = 'Content of written status file {!r}:'.format(str(update_status.filename_abs))
         msg += '\n' + content
         LOG.debug(msg)
+
+    # -------------------------------------------------------------------------
+    def test_read_yaml(self):
+        """Test reading an update status YAML file."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.ddns.update_app import UpdateDdnsStatus
+
+        update_status = UpdateDdnsStatus(
+            appname=self.appname,
+            verbose=self.verbose,
+            workdir=self.test_dir,
+            domain=self.domain,
+        )
+
+        update_status.read_status()
+        LOG.debug('UpdateDdnsStatus %%s: {}'.format(update_status))
+        self.assertEqual(update_status.status_code, 200)
+        self.assertEqual(update_status.status_text, 'Ok')
+        self.assertEqual(update_status.timestamp, 1710167309)
 
 
 # =============================================================================
@@ -177,6 +198,7 @@ if __name__ == '__main__':
     suite.addTest(TestDdnsUpdateStatus('test_import', verbose))
     suite.addTest(TestDdnsUpdateStatus('test_check_workdir', verbose))
     suite.addTest(TestDdnsUpdateStatus('test_write_yaml', verbose))
+    suite.addTest(TestDdnsUpdateStatus('test_read_yaml', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
