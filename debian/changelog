@@ -1,4 +1,4 @@
-fb-tools (2.4.3) UNRELEASED; urgency=medium
+fb-tools (2.4.3) all; urgency=medium
 
   * Reorganing exception classes, adding ne exception classes
   * Refactoring modules fb_tools.ddns and fb_tools.ddns.config for using
