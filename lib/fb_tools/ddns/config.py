@@ -29,7 +29,7 @@ from ..errors import InvalidTimeIntervalError
 from ..multi_config import BaseMultiConfig
 from ..xlate import XLATOR, format_list
 
-__version__ = '3.1.0'
+__version__ = '3.1.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -58,6 +58,15 @@ class DdnsConfiguration(BaseMultiConfig):
 
     # Standard interval for forced updating a domain
     default_forced_update_interval = 7 * 24 * 60 * 60
+
+    re_domains_selector = re.compile(r'[,;\s]+')
+    re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
+    re_with_mx = re.compile(r'^\s*with[_-]?mx\s*$', re.IGNORECASE)
+    re_get_url = re.compile(r'^\s*get[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
+    re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]?url\s*$', re.IGNORECASE)
+    re_upd_url_ipv = re.compile(r'^\s*upd(?:ate)?[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
+    re_forced_update_interval = re.compile(
+        r'^^\s*forced[_-]?update[_-]?intervall?\s*$', re.IGNORECASE)
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -196,79 +205,87 @@ class DdnsConfiguration(BaseMultiConfig):
         if self.verbose > 1:
             LOG.debug('Checking config section {!r} ...'.format(section_name))
 
-        re_domains = re.compile(r'[,;\s]+')
-        re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
-        re_with_mx = re.compile(r'^\s*with[_-]?mx\s*$', re.IGNORECASE)
-        re_get_url = re.compile(r'^\s*get[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
-        re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]?url\s*$', re.IGNORECASE)
-        re_upd_url_ipv = re.compile(r'^\s*upd(?:ate)?[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
-        re_forced_update_interval = re.compile(
-            r'^^\s*forced[_-]?update[_-]?intervall?\s*$', re.IGNORECASE)
-
         for key in section.keys():
             value = section[key]
 
-            if key.lower() == 'user' and value.strip():
-                self.ddns_user = value.strip()
-                continue
-            elif (key.lower() == 'pwd' or key.lower() == 'password') and value.strip():
-                self.ddns_pwd = value.strip()
-                continue
-            elif key.lower() == 'domains':
-                domains_str = value.strip()
-                if domains_str:
-                    self.domains = re_domains.split(domains_str)
-                continue
-            elif re_all_domains.match(key) and value.strip():
-                self.all_domains = to_bool(value.strip())
-                continue
-            elif re_with_mx.match(key) and value.strip():
-                self.with_mx = to_bool(value.strip())
-                continue
-            elif key.lower() == 'timeout':
-                try:
-                    self.timeout = value
-                except (ValueError, KeyError) as e:
-                    msg = _('Invalid value {!r} as timeout:').format(value) + ' ' + str(e)
-                    LOG.error(msg)
-                continue
-            match = re_get_url.match(key)
-            if match and value.strip():
-                setattr(self, 'get_ipv{}_url'.format(match.group(1)), value.strip())
-                continue
-            match = re_upd_url.match(key)
-            if match and value.strip():
-                setattr(self, 'upd_url', value.strip())
-                continue
-            match = re_upd_url_ipv.match(key)
-            if match and value.strip():
-                setattr(self, 'upd_ipv{}_url'.format(match.group(1)), value.strip())
-                continue
-            if key.lower() == 'protocol' and value.strip():
-                p = value.strip().lower()
-                if p not in self.valid_protocols:
-                    LOG.error(_(
-                        'Invalid value {ur} for protocols to update, valid protocols '
-                        'are: ').format(value) + format_list(self.valid_protocols, do_repr=True))
-                else:
-                    if p == 'both':
-                        p = 'any'
-                    self.protocol = p
-                continue
-            match = re_forced_update_interval.match(key)
-            if match:
-                try:
-                    interval = timeinterval2delta(value)
-                    self.forced_update_interval = interval
-                except InvalidTimeIntervalError as e:
-                    LOG.error(_('Invalid forced update interval: {}').format(e))
-                continue
-
-            LOG.warning(_(
-                'Unknown configuration option {o!r} with value {v!r} in '
-                'section {s!r}.').format(o=key, v=value, s=section_name))
+            self._eval_config_ddns_value(key, value, section_name)
 
         return
+
+    # -------------------------------------------------------------------------
+    def _eval_config_ddns_value(self, key, value, section_name):
+
+        if key.lower() == 'user' and value.strip():
+            self.ddns_user = value.strip()
+            return
+
+        if (key.lower() == 'pwd' or key.lower() == 'password') and value.strip():
+            self.ddns_pwd = value.strip()
+            return
+
+        if key.lower() == 'domains':
+            domains_str = value.strip()
+            if domains_str:
+                self.domains = self.re_domains_selector.split(domains_str)
+            return
+
+        if self.re_all_domains.match(key) and value.strip():
+            self.all_domains = to_bool(value.strip())
+            return
+
+        if self.re_with_mx.match(key) and value.strip():
+            self.with_mx = to_bool(value.strip())
+            return
+
+        if key.lower() == 'timeout':
+            try:
+                self.timeout = value
+            except (ValueError, KeyError) as e:
+                msg = _('Invalid value {!r} as timeout:').format(value) + ' ' + str(e)
+                LOG.error(msg)
+            return
+
+        match = self.re_get_url.match(key)
+        if match and value.strip():
+            setattr(self, 'get_ipv{}_url'.format(match.group(1)), value.strip())
+            return
+
+        match = self.re_upd_url.match(key)
+        if match and value.strip():
+            setattr(self, 'upd_url', value.strip())
+            return
+
+        match = self.re_upd_url_ipv.match(key)
+        if match and value.strip():
+            setattr(self, 'upd_ipv{}_url'.format(match.group(1)), value.strip())
+            return
+
+        if key.lower() == 'protocol' and value.strip():
+            p = value.strip().lower()
+            if p not in self.valid_protocols:
+                LOG.error(_(
+                    'Invalid value {u!r} for protocols to update in section {s!r}, valid '
+                    'protocols are: ').format(u=value, s=section_name) + format_list(
+                        self.valid_protocols, do_repr=True))
+            else:
+                if p == 'both':
+                    p = 'any'
+                self.protocol = p
+            return
+
+        match = self.re_forced_update_interval.match(key)
+        if match:
+            try:
+                interval = timeinterval2delta(value)
+                self.forced_update_interval = interval
+            except InvalidTimeIntervalError as e:
+                LOG.error(_('Invalid forced update interval in section {!r}:').format(
+                    section_name) + ' ' + str(e))
+            return
+
+        LOG.warning(_(
+            'Unknown configuration option {o!r} with value {v!r} in '
+            'section {s!r}.').format(o=key, v=value, s=section_name))
 
     # -------------------------------------------------------------------------
     def _eval_config_files(self, section_name, section):
