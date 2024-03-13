@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 2.4.2\n"
 "Report-Msgid-Bugs-To: frank.brehm@pixelpark.com\n"
-"POT-Creation-Date: 2024-03-07 17:52+0100\n"
+"POT-Creation-Date: 2024-03-13 15:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank.brehm@pixelpark.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.8.0\n"
 
 #: bin/get-file-to-remove:72 bin/myip:75 bin/update-ddns:75
 msgid ""
@@ -308,31 +308,31 @@ msgstr ""
 msgid "The method {met}() expected at most {max} arguments, got {got}."
 msgstr ""
 
-#: lib/fb_tools/common.py:154
+#: lib/fb_tools/common.py:166
 msgid "{} is a tty."
 msgstr ""
 
-#: lib/fb_tools/common.py:158
+#: lib/fb_tools/common.py:170
 msgid "Platform is Windows and not ansi_term."
 msgstr ""
 
-#: lib/fb_tools/common.py:162
+#: lib/fb_tools/common.py:174
 msgid "{} is not a tty."
 msgstr ""
 
-#: lib/fb_tools/common.py:553
+#: lib/fb_tools/common.py:565
 msgid "Given value is {!r}."
 msgstr ""
 
-#: lib/fb_tools/common.py:592
+#: lib/fb_tools/common.py:604
 msgid "Could not determine bytes in {!r}."
 msgstr ""
 
-#: lib/fb_tools/common.py:677
+#: lib/fb_tools/common.py:689
 msgid "Couldn't detect unit {!r}."
 msgstr ""
 
-#: lib/fb_tools/common.py:783
+#: lib/fb_tools/common.py:795
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr ""
 
@@ -418,7 +418,7 @@ msgstr ""
 msgid "The timeout in seconds for Web requests (default: {})."
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:211 lib/fb_tools/ddns/config.py:222
+#: lib/fb_tools/ddns/__init__.py:211 lib/fb_tools/ddns/config.py:244
 msgid "Invalid value {!r} as timeout:"
 msgstr ""
 
@@ -450,93 +450,101 @@ msgstr ""
 msgid "Failed to parse the response"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:306
+#: lib/fb_tools/ddns/__init__.py:313
 msgid "Text response:"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:316
+#: lib/fb_tools/ddns/__init__.py:323
 msgid "Setting encoding of response to {!r}."
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:341
+#: lib/fb_tools/ddns/__init__.py:348
 msgid "Checking existence and accessibility of working directory {!r} ..."
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:353
+#: lib/fb_tools/ddns/__init__.py:360
 msgid "No read access"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:357
+#: lib/fb_tools/ddns/__init__.py:364
 msgid "No write access"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:372
+#: lib/fb_tools/ddns/__init__.py:379
 msgid "Writing IP address {a!r} into {f!r} ..."
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:400
+#: lib/fb_tools/ddns/__init__.py:407
 msgid "File {!r} not found."
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:403
+#: lib/fb_tools/ddns/__init__.py:410
 msgid "Reading IP address from {!r}..."
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:423
+#: lib/fb_tools/ddns/__init__.py:430
 msgid "Line {li!r} in {f!r} is not a valid IP address:"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:449 lib/fb_tools/ddns/__init__.py:490
-#: lib/fb_tools/ddns/__init__.py:522
+#: lib/fb_tools/ddns/__init__.py:456 lib/fb_tools/ddns/__init__.py:497
+#: lib/fb_tools/ddns/__init__.py:529
 msgid "Using resolver:"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:460 lib/fb_tools/ddns/__init__.py:472
+#: lib/fb_tools/ddns/__init__.py:467 lib/fb_tools/ddns/__init__.py:479
 msgid "Did not found a {t} address for {n}:"
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:481 lib/fb_tools/ddns/__init__.py:513
+#: lib/fb_tools/ddns/__init__.py:488 lib/fb_tools/ddns/__init__.py:520
 msgid "Cannot execute {method}() - module {mod!r} could not imported."
 msgstr ""
 
-#: lib/fb_tools/ddns/__init__.py:504 lib/fb_tools/ddns/__init__.py:534
+#: lib/fb_tools/ddns/__init__.py:511 lib/fb_tools/ddns/__init__.py:541
 msgid "Did not found a {t} entry for zone {z}:"
 msgstr ""
 
-#: lib/fb_tools/ddns/config.py:114
+#: lib/fb_tools/ddns/config.py:131
 msgid "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600."
 msgstr ""
 
-#: lib/fb_tools/ddns/config.py:240
-msgid "Invalid value {ur} for protocols to update, valid protocols are: "
-msgstr ""
-
-#: lib/fb_tools/ddns/config.py:249 lib/fb_tools/ddns/config.py:287
-msgid "Unknown configuration option {o!r} with value {v!r} in section {s!r}."
-msgstr ""
-
-#: lib/fb_tools/ddns/config.py:272
-msgid "The path to the working directory must be an absolute path (given: {!r})."
+#: lib/fb_tools/ddns/config.py:266
+msgid "Invalid value {u!r} for protocols to update in section {s!r}, valid protocols are: "
 msgstr ""
 
 #: lib/fb_tools/ddns/config.py:282
+msgid "Invalid forced update interval in section {!r}:"
+msgstr ""
+
+#: lib/fb_tools/ddns/config.py:286 lib/fb_tools/ddns/config.py:322
+msgid "Unknown configuration option {o!r} with value {v!r} in section {s!r}."
+msgstr ""
+
+#: lib/fb_tools/ddns/config.py:307
+msgid "The path to the working directory must be an absolute path (given: {!r})."
+msgstr ""
+
+#: lib/fb_tools/ddns/config.py:317
 msgid "The path to the logfile must be an absolute path (given: {!r})."
 msgstr ""
 
-#: lib/fb_tools/ddns/errors.py:51
+#: lib/fb_tools/ddns/errors.py:52
 msgid "Got an error {c} on requesting {u!r}: {m}"
 msgstr ""
 
-#: lib/fb_tools/ddns/errors.py:70
-msgid "Directory does not exists"
+#: lib/fb_tools/ddns/errors.py:64
+msgid "There is a problem with the update status file {!r}"
 msgstr ""
 
-#: lib/fb_tools/ddns/errors.py:81
-msgid "Path is not a directory"
+#: lib/fb_tools/ddns/errors.py:79
+msgid "There is a problem with the working directory {!r}"
 msgstr ""
 
-#: lib/fb_tools/ddns/errors.py:92
-msgid "Invalid permissions"
+#: lib/fb_tools/ddns/errors.py:94
+msgid "Working directory {!r} does not exists"
+msgstr ""
+
+#: lib/fb_tools/ddns/errors.py:124
+msgid "Invalid permissions for working directory {!r}"
 msgstr ""
 
 #: lib/fb_tools/ddns/myip_app.py:47
@@ -561,121 +569,209 @@ msgstr ""
 msgid "Write found public IPs into a cache file in working directory."
 msgstr ""
 
-#: lib/fb_tools/ddns/myip_app.py:137 lib/fb_tools/ddns/update_app.py:152
+#: lib/fb_tools/ddns/myip_app.py:137 lib/fb_tools/ddns/update_app.py:462
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:58
+#: lib/fb_tools/ddns/update_app.py:89
+msgid "No valid domain given on initialization of a {} object."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:119
+msgid "Invalid domain {!r} given, whitespaces are not allowed."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:169
+msgid "A timestamp must not be None."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:241
+msgid "Checking working directory {d!r} for updating {what} ..."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:245
+msgid "working directory is not a path object."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:254
+msgid "working directory is not readable."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:258
+msgid "working directory is not writeable."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:264
+msgid "Checking update status file {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:269
+msgid "Update status file {!r} does not exists."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:277
+msgid "update status file is not readable."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:282
+msgid "update status file is not writeable."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:287
+msgid "Write status into {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:303
+msgid "Data to write in status file:"
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:306
+msgid "Simulation mode, file {!r} will not be written."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:319
+msgid "Read status from {!r} ..."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:327
+msgid "Read data from YAML:"
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:339
+msgid "no timestamp of last update found."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:367
 msgid "Updating the DDNS records, even if seems not to be changed."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:61
+#: lib/fb_tools/ddns/update_app.py:370
 msgid "Tries to update the A and/or AAAA record at ddns.de with the current IP address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:66 lib/fb_tools/ddns/update_app.py:67
+#: lib/fb_tools/ddns/update_app.py:375 lib/fb_tools/ddns/update_app.py:376
 msgid "Update only the {} record with the public IP address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:68
+#: lib/fb_tools/ddns/update_app.py:377
 msgid ""
 "The IP protocol, for which the appropriate DNS record should be updated with the public IP (one "
 "of {c}, default {d!r})."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:89
+#: lib/fb_tools/ddns/update_app.py:398
 msgid "Update DDNS options"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:92
+#: lib/fb_tools/ddns/update_app.py:401
 msgid "USER"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:93
+#: lib/fb_tools/ddns/update_app.py:402
 msgid "The username to login at ddns.de."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:97
+#: lib/fb_tools/ddns/update_app.py:406
 msgid "PASSWORD"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:98
+#: lib/fb_tools/ddns/update_app.py:407
 msgid "The password of the user to login at ddns.de."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:105
+#: lib/fb_tools/ddns/update_app.py:414
 msgid "Update all domains, which are connected whith the given ddns account."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:109
+#: lib/fb_tools/ddns/update_app.py:418
 msgid "DOMAIN"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:110
+#: lib/fb_tools/ddns/update_app.py:419
 msgid "The particular domain(s), which should be updated (if not all)."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:163
+#: lib/fb_tools/ddns/update_app.py:475
 msgid "Ending {a!r}."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:170
+#: lib/fb_tools/ddns/update_app.py:482
 msgid "Actions before running."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:173
+#: lib/fb_tools/ddns/update_app.py:485
 msgid "No domains to update given, but the option all domains is deactivated."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:193 lib/fb_tools/ddns/update_app.py:209
+#: lib/fb_tools/ddns/update_app.py:505 lib/fb_tools/ddns/update_app.py:521
 msgid "Found current {t} address {a}."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:195 lib/fb_tools/ddns/update_app.py:211
+#: lib/fb_tools/ddns/update_app.py:507 lib/fb_tools/ddns/update_app.py:523
 msgid "Address {a!r} seems not to be a valid {w} address: {e}"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:199 lib/fb_tools/ddns/update_app.py:215
+#: lib/fb_tools/ddns/update_app.py:511 lib/fb_tools/ddns/update_app.py:527
 msgid "Got no public {} address."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:223
+#: lib/fb_tools/ddns/update_app.py:535
 msgid "Currently configured dynamic addresses:"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:255
+#: lib/fb_tools/ddns/update_app.py:546
+msgid "Did not found update status file {!r}."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:553
+msgid "{c} - could not evaluate update status file {f!r}: {e}"
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:558
+msgid "Last update was at {dt} with status {st!r}."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:591
+msgid "Last update of domain {dom!r} is {delta} ago."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:602
 msgid "Checking the need for updating the given domain {!r}."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:261
+#: lib/fb_tools/ddns/update_app.py:608
 msgid "Updating the DDNS records of domain {!r}, although if they seems not to be changed."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:265
+#: lib/fb_tools/ddns/update_app.py:612
 msgid "Update of domain {!r} is not necessary."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:268
+#: lib/fb_tools/ddns/update_app.py:615
 msgid "Updating the DDNS records of domain {!r}."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:309
+#: lib/fb_tools/ddns/update_app.py:656
 msgid "Simulation mode, update of domain {!r} will not be sended."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:321 lib/fb_tools/ddns/update_app.py:395
+#: lib/fb_tools/ddns/update_app.py:672 lib/fb_tools/ddns/update_app.py:763
 msgid "No response from {}."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:323 lib/fb_tools/ddns/update_app.py:397
+#: lib/fb_tools/ddns/update_app.py:674 lib/fb_tools/ddns/update_app.py:765
 msgid "Response from {}:"
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:342
+#: lib/fb_tools/ddns/update_app.py:676 lib/fb_tools/ddns/update_app.py:767
+msgid "Status code: {c}, status text: {r!r}."
+msgstr ""
+
+#: lib/fb_tools/ddns/update_app.py:706
 msgid "Update all domains at {} with found dynamic external addresses ..."
 msgstr ""
 
-#: lib/fb_tools/ddns/update_app.py:384
+#: lib/fb_tools/ddns/update_app.py:748
 msgid "Simulation mode, update of all domains will not be sended."
 msgstr ""
 
@@ -691,85 +787,89 @@ msgstr ""
 msgid "Wrong mail address {a!r} ({c})"
 msgstr ""
 
-#: lib/fb_tools/errors.py:187
+#: lib/fb_tools/errors.py:128
+msgid "Wrong time interval {!r}."
+msgstr ""
+
+#: lib/fb_tools/errors.py:203
 msgid "Process with PID {pid} got signal {signal}."
 msgstr ""
 
-#: lib/fb_tools/errors.py:226
+#: lib/fb_tools/errors.py:242
 msgid "The network {!r} is not existing."
 msgstr ""
 
-#: lib/fb_tools/errors.py:256
+#: lib/fb_tools/errors.py:272
 msgid "Method {func}() has to be overridden in class {cls!r}."
 msgstr ""
 
-#: lib/fb_tools/errors.py:285
+#: lib/fb_tools/errors.py:301
 msgid " (timeout after {:0.1f} secs)"
 msgstr ""
 
-#: lib/fb_tools/errors.py:309
+#: lib/fb_tools/errors.py:325
 msgid "Timeout error on reading"
 msgstr ""
 
-#: lib/fb_tools/errors.py:328
+#: lib/fb_tools/errors.py:344
 msgid "Timeout error on writing"
 msgstr ""
 
-#: lib/fb_tools/errors.py:339
+#: lib/fb_tools/errors.py:355
 msgid "Timeout on answering on the console."
 msgstr ""
 
-#: lib/fb_tools/errors.py:358
+#: lib/fb_tools/errors.py:374
 msgid "Unknown OS command."
 msgstr ""
 
-#: lib/fb_tools/errors.py:365
+#: lib/fb_tools/errors.py:381
 msgid "Empty command list given."
 msgstr ""
 
-#: lib/fb_tools/errors.py:373
+#: lib/fb_tools/errors.py:389
 msgid "Could not found OS command:"
 msgid_plural "Could not found OS commands:"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/errors.py:402
+#: lib/fb_tools/errors.py:418
 msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
 msgstr ""
 
-#: lib/fb_tools/errors.py:431
+#: lib/fb_tools/errors.py:447
 msgid "There is a problem with path {!r}"
 msgstr ""
 
-#: lib/fb_tools/errors.py:446
+#: lib/fb_tools/errors.py:462
 msgid "There is a problem with directory {!r}"
 msgstr ""
 
-#: lib/fb_tools/errors.py:461
+#: lib/fb_tools/errors.py:477
 msgid "Directory {!r} does not exists"
 msgstr ""
 
-#: lib/fb_tools/errors.py:476
+#: lib/fb_tools/ddns/errors.py:109 lib/fb_tools/errors.py:492
 msgid "Path {!r} is not a directory"
 msgstr ""
 
-#: lib/fb_tools/errors.py:491
+#: lib/fb_tools/errors.py:507
 msgid "Invalid permissions for directory {!r}"
 msgstr ""
 
-#: lib/fb_tools/errors.py:506
+#: lib/fb_tools/errors.py:522
 msgid "There is a problem with file {!r}"
 msgstr ""
 
-#: lib/fb_tools/errors.py:521
+#: lib/fb_tools/errors.py:537
 msgid "File {!r} does not exists"
 msgstr ""
 
-#: lib/fb_tools/errors.py:536
+#: lib/fb_tools/errors.py:552
 msgid "Path {!r} is not a regular file"
 msgstr ""
 
-#: lib/fb_tools/errors.py:551
+#: lib/fb_tools/errors.py:567
 msgid "Invalid permissions for file {!r}"
 msgstr ""
 
