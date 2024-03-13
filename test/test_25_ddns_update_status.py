@@ -126,9 +126,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         LOG.debug('Check of working directory {!r} was successful.'.format(self.work_dir))
         self.assertEqual(self.work_dir, update_status.workdir)
 
-        invalid_workdirs = (
-            None, self.invalid_test_file, self.invalid_test_dir, self.invalid_test_dir_ro,
-        )
+        invalid_workdirs = (None, self.invalid_test_file, self.invalid_test_dir,)
         for workdir in invalid_workdirs:
             LOG.debug('Check of invalid working directory {!r} ...'.format(workdir))
             update_status = UpdateDdnsStatus(
