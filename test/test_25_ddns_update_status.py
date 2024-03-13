@@ -138,7 +138,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
                 domain=self.domain,
             )
             msg = 'CommonDirectoryError not raised for workdir {!r}.'.format(workdir)
-            with self.assertRaises(CommonDirectoryError, msg) as cm:
+            with self.assertRaises(CommonDirectoryError, msg=msg) as cm:
                 update_status.check_workdir(check_writeable=True)
             e = cm.exception
             LOG.debug('{c} raised for working directory {d!r}: {e}'.format(
