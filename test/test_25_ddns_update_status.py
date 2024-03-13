@@ -140,7 +140,8 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
             with self.assertRaises(CommonDirectoryError) as cm:
                 update_status.check_workdir(check_writeable=True)
             e = cm.exception
-            LOG.debug('%s raised: %s', e.__class__.__name__, e)
+            LOG.debug('{c} raised for working directory {d!r}: {e}'.format(
+                c=e.__class__.__name__, d=workdir, e=e))
 
     # -------------------------------------------------------------------------
     def test_write_yaml(self):
