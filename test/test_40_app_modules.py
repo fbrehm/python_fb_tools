@@ -37,10 +37,25 @@ class TestAppModules(FbToolsTestcase):
         if self.verbose >= 1:
             print()
 
+        self.test_dir = Path(__file__).parent.resolve()
+        self.log_dir = self.test_dir / 'log'
+        # if not self.log_dir.exists():
+        #     LOG.debug('Creating logging directory {!r} ...'.format(str(self.log_dir)))
+        #     self.log_dir.mkdir(mode=0o755)
+
+        self.ddns_log_file = self.log_dir / 'ddns.log'
+
     # -------------------------------------------------------------------------
     def tearDown(self):
         """Tear down routine for calling each particular test method."""
-        pass
+        if self.log_dir.exists():
+            files = self.log_dir.glob('*')
+            if files:
+                for logfile in files:
+                    LOG.debug('Removing logfile {!r} ...'.format(str(logfile)))
+                    logfile.unlink()
+            LOG.debug('Removing logging directory {!r} ...'.format(str(self.log_dir)))
+            self.log_dir.rmdir()
 
     # -------------------------------------------------------------------------
     def test_import_base_app(self):
@@ -113,8 +128,10 @@ class TestAppModules(FbToolsTestcase):
         LOG.info('Test creating an instance of a BaseDdnsApplication object.')
 
         from fb_tools.ddns import BaseDdnsApplication
+        from fb_tools.ddns.config import DdnsConfiguration
 
         BaseDdnsApplication.do_init_logging = False
+        DdnsConfiguration.default_logfile = None
 
         app = BaseDdnsApplication(
             appname=self.appname,
@@ -141,8 +158,10 @@ class TestAppModules(FbToolsTestcase):
         LOG.info('Test creating an instance of a MyIpApplication object.')
 
         from fb_tools.ddns.myip_app import MyIpApplication
+        from fb_tools.ddns.config import DdnsConfiguration
 
         MyIpApplication.do_init_logging = False
+        DdnsConfiguration.default_logfile = self.ddns_log_file
 
         app = MyIpApplication(
             appname=self.appname,
@@ -169,8 +188,10 @@ class TestAppModules(FbToolsTestcase):
         LOG.info('Test creating an instance of a UpdateDdnsApplication object.')
 
         from fb_tools.ddns.update_app import UpdateDdnsApplication
+        from fb_tools.ddns.config import DdnsConfiguration
 
         UpdateDdnsApplication.do_init_logging = False
+        DdnsConfiguration.default_logfile = self.ddns_log_file
 
         app = UpdateDdnsApplication(
             appname=self.appname,

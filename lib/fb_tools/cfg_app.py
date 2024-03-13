@@ -37,7 +37,7 @@ from .errors import MultiConfigError
 from .multi_config import BaseMultiConfig
 from .xlate import XLATOR
 
-__version__ = '2.3.0'
+__version__ = '2.3.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -223,6 +223,9 @@ class FbConfigApplication(BaseApplication):
     def init_file_logging(self):
         """Initialise logging into a logfile."""
         if not self.logfile:
+            return
+
+        if not self.do_init_logging:
             return
 
         logdir = self.logfile.parent
