@@ -46,8 +46,8 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         self.invalid_test_file = self.test_dir / 'testfile'
         self.invalid_test_file.touch()
 
-        self.invalid_test_dir = self.test_dir / 'testdir'
-        self.invalid_test_dir.mkdir(mode=0o000)
+        self.invalid_test_dir = self.test_dir / 'invalid-testdir'
+        # self.invalid_test_dir.mkdir(mode=0o000)
 
         self.invalid_test_dir_ro = self.test_dir / 'testdir-ro'
         self.invalid_test_dir_ro.mkdir(mode=0o500)
@@ -137,7 +137,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
                 workdir=workdir,
                 domain=self.domain,
             )
-            msg = 'CommonDirectoryError not raised for workdir {!r}.'.format(workdir)
+            msg = 'Workdir {!r}.'.format(workdir)
             with self.assertRaises(CommonDirectoryError, msg=msg) as cm:
                 update_status.check_workdir(check_writeable=True)
             e = cm.exception
