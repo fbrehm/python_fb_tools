@@ -657,6 +657,8 @@ class TestFbCommon(FbToolsTestcase):
             set_debug_timeinterval2delta(True)
 
         test_data_valid = (
+            (0, 0),
+            ('0', 0),
             (1, 1),
             ('1', 1),
             ('0.1', 0.1),

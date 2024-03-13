@@ -10,6 +10,7 @@
 from __future__ import absolute_import
 
 # Standard module
+import datetime
 import logging
 import re
 try:
@@ -22,11 +23,13 @@ except ImportError:
 # Own modules
 from .. import DEFAULT_ENCODING
 from ..common import is_sequence
+from ..common import timeinterval2delta
 from ..common import to_bool
+from ..errors import InvalidTimeIntervalError
 from ..multi_config import BaseMultiConfig
 from ..xlate import XLATOR, format_list
 
-__version__ = '3.0.1'
+__version__ = '3.1.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -52,6 +55,9 @@ class DdnsConfiguration(BaseMultiConfig):
     default_timeout = 20
 
     valid_protocols = ('any', 'both', 'ipv4', 'ipv6')
+
+    # Standard interval for forced updating a domain
+    default_forced_update_interval = 7 * 24 * 60 * 60
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -87,6 +93,8 @@ class DdnsConfiguration(BaseMultiConfig):
         self.protocol = 'any'
         self.ipv4_cache_basename = self.default_ipv4_cache_basename
         self.ipv6_cache_basename = self.default_ipv6_cache_basename
+        self.forced_update_interval = datetime.timedelta(
+            seconds=self.default_forced_update_interval)
 
         super(DdnsConfiguration, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -194,6 +202,8 @@ class DdnsConfiguration(BaseMultiConfig):
         re_get_url = re.compile(r'^\s*get[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
         re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]?url\s*$', re.IGNORECASE)
         re_upd_url_ipv = re.compile(r'^\s*upd(?:ate)?[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
+        re_forced_update_interval = re.compile(
+            r'^^\s*forced[_-]?update[_-]?intervall?\s*$', re.IGNORECASE)
 
         for key in section.keys():
             value = section[key]
@@ -244,6 +254,14 @@ class DdnsConfiguration(BaseMultiConfig):
                     if p == 'both':
                         p = 'any'
                     self.protocol = p
+                continue
+            match = re_forced_update_interval.match(key)
+            if match:
+                try:
+                    interval = timeinterval2delta(value)
+                    self.forced_update_interval = interval
+                except InvalidTimeIntervalError as e:
+                    LOG.error(_('Invalid forced update interval: {}').format(e))
                 continue
 
             LOG.warning(_(

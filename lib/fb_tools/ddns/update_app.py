@@ -43,7 +43,7 @@ from ..errors import FileNotRegularFileError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.4.2'
+__version__ = '2.4.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -350,9 +350,6 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
     default_logfile = Path('/var/log/ddns/ddnss-update.log')
 
-    # Standard interval for forced updating a domain
-    default_forced_update_interval = 7 * 24 * 60 * 60
-
     # -------------------------------------------------------------------------
     def __init__(
         self, version=GLOBAL_VERSION, initialized=None, description=None,
@@ -364,7 +361,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         self.current_ipv6_address = None
         self.txt_records = []
         self.cur_resolved_addresses = {}
-        self.forced_update_interval = self.default_forced_update_interval
+        self.forced_update_interval = DdnsConfiguration.default_forced_update_interval
         self.last_update_timestamp = None
 
         self._force_desc_msg = _('Updating the DDNS records, even if seems not to be changed.')
@@ -435,6 +432,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         """
         super(UpdateDdnsApplication, self).post_init()
         self.initialized = False
+        self.forced_update_interval = self.cfg.forced_update_interval.total_seconds()
 
         self.perform_arg_parser_late()
 
@@ -586,7 +584,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
         if self.last_update_timestamp is None:
             do_update = True
-        else:
+        elif self.last_update_timestamp > 0:
             timediff = time.time() - self.last_update_timestamp
             if self.verbose:
                 delta = datetime.timedelta(seconds=timediff)
