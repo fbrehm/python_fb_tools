@@ -11,7 +11,6 @@ from __future__ import absolute_import, print_function
 
 # Standard modules
 import copy
-import errno
 import ipaddress
 import json
 import logging
@@ -26,132 +25,67 @@ import requests
 
 import urllib3
 
+HAS_DNS_MODULE = False
+try:
+    import dns
+    import dns.resolver
+    from dns.resolver import NoAnswer
+    from dns.resolver import NXDOMAIN
+    HAS_DNS_MODULE = True
+except ImportError:
+    pass
+
 # Own modules
 from .config import DdnsConfiguration
-from .. import DDNS_CFG_BASENAME
+from .errors import DdnsAppError
+from .errors import DdnsRequestError
+from .errors import WorkDirAccessError
+from .errors import WorkDirNotDirError
+from .errors import WorkDirNotExistsError
 from .. import __version__ as GLOBAL_VERSION
-from ..app import BaseApplication
-from ..argparse_actions import CfgFileOptionAction
 from ..argparse_actions import DirectoryOptionAction
+from ..cfg_app import FbConfigApplication
 from ..common import pp
-from ..errors import FbAppError
 from ..errors import IoTimeoutError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.4'
+__version__ = '2.2.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
 
 
 # =============================================================================
-class DdnsAppError(FbAppError):
-    """Base exception class for all exceptions in this application."""
-
-    pass
-
-
-# =============================================================================
-class DdnsRequestError(DdnsAppError):
-    """Base class for more complex exceptions."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, code, content, url=None):
-        """Construct a DdnsRequestError object."""
-        self.code = code
-        self.content = content
-        self.url = url
-
-    # -------------------------------------------------------------------------
-    def __str__(self):
-        """Typecast into a string."""
-        msg = _('Got an error {c} on requesting {u!r}: {m}').format(
-            c=self.code, u=self.url, m=self.content)
-        return msg
-
-# =============================================================================
-class WorkDirError(DdnsAppError):
-    """Special exception class with problems with the working directory."""
-
-    pass
-
-
-# =============================================================================
-class WorkDirNotExistsError(WorkDirError, FileNotFoundError):
-    """Special exception class, if working diretory does not exists."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, workdir):
-        """Construct a WorkDirNotExistsError object."""
-        super(WorkDirNotExistsError, self).__init__(
-            errno.ENOENT, _('Directory does not exists'), str(workdir))
-
-
-# =============================================================================
-class WorkDirNotDirError(WorkDirError, NotADirectoryError):
-    """Special exception class, if path to working diretory is not a directory."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, workdir):
-        """Construct a WorkDirNotDirError object."""
-        super(WorkDirNotDirError, self).__init__(
-            errno.ENOTDIR, _('Path is not a directory'), str(workdir))
-
-
-# =============================================================================
-class WorkDirAccessError(WorkDirError, PermissionError):
-    """Special exception class, if working diretory is not accessible."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, workdir, msg=None):
-        """Construct a WorkDirAccessError object."""
-        if not msg:
-            msg = _('Invalid permissions')
-
-        super(WorkDirAccessError, self).__init__(errno.EACCES, msg, str(workdir))
-
-
-# =============================================================================
-class BaseDdnsApplication(BaseApplication):
+class BaseDdnsApplication(FbConfigApplication):
     """Class for the application objects."""
 
     library_name = 'ddns-client'
     loglevel_requests_set = False
 
+    work_directory_must_exists = False
+    work_directory_must_be_writeable = False
+
     # -------------------------------------------------------------------------
     def __init__(
-        self, version=GLOBAL_VERSION, initialized=False, description=None,
-            *args, **kwargs):
-        """Construct a BaseDdnsApplication object."""
+        self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
+            cfg_class=DdnsConfiguration, initialized=False, usage=None, description=None,
+            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None,
+            config_dir=None):
+        """Initialize a BaseDdnsApplication object."""
         if description is None:
             description = _('This is a base DDNS related application.')
 
-        self._cfg_dir = None
-        self._cfg_file = None
-        self.config = None
         self._user_agent = '{}/{}'.format(self.library_name, GLOBAL_VERSION)
 
         super(BaseDdnsApplication, self).__init__(
-            version=version,
-            description=description,
-            initialized=False,
-            *args, **kwargs
+            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
+            description=description, cfg_class=cfg_class, initialized=False,
+            argparse_epilog=argparse_epilog, argparse_prefix_chars=argparse_prefix_chars,
+            env_prefix=env_prefix, config_dir=config_dir
         )
 
         if initialized:
             self.initialized = True
-
-    # -------------------------------------------------------------------------
-    @property
-    def cfg_dir(self):
-        """Return the directory containing the configuration file."""
-        return self._cfg_dir
-
-    # -------------------------------------------------------------------------
-    @property
-    def cfg_file(self):
-        """Return the configuration file."""
-        return self._cfg_file
 
     # -----------------------------------------------------------
     @property
@@ -166,6 +100,12 @@ class BaseDdnsApplication(BaseApplication):
         self._user_agent = str(value).strip()
 
     # -------------------------------------------------------------------------
+    @property
+    def has_dns_module(self):
+        """Return, whether the dns module could be imported."""
+        return HAS_DNS_MODULE
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transform the elements of the object into a dict.
@@ -177,8 +117,7 @@ class BaseDdnsApplication(BaseApplication):
         @rtype:  dict
         """
         res = super(BaseDdnsApplication, self).as_dict(short=short)
-        res['cfg_dir'] = self.cfg_dir
-        res['cfg_file'] = self.cfg_file
+        res['has_dns_module'] = self.has_dns_module
         res['user_agent'] = self.user_agent
 
         return res
@@ -186,13 +125,8 @@ class BaseDdnsApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """Initiate the argument parser."""
-        super(BaseDdnsApplication, self).init_arg_parser()
-
         ddns_group = self.arg_parser.add_argument_group(_('DDNS options'))
 
-        self._cfg_dir = self.base_dir.joinpath('etc')
-        self._cfg_file = self.cfg_dir.joinpath(DDNS_CFG_BASENAME)
-        default_cfg_file = copy.copy(self.cfg_file)
         valid_list = copy.copy(DdnsConfiguration.valid_protocols)
 
         protocol_group = ddns_group.add_mutually_exclusive_group()
@@ -226,14 +160,10 @@ class BaseDdnsApplication(BaseApplication):
             choices=valid_list, help=proto_help,
         )
 
-        dir_must_exists = False
-        writeable = False
-        if self.appname == 'update-ddns':
-            dir_must_exists = True
-            writeable = True
         ddns_group.add_argument(
             '-d', '--dir', '--work-directory', dest='directory', metavar=_('DIRECTORY'),
-            action=DirectoryOptionAction, must_exists=dir_must_exists, writeable=writeable,
+            action=DirectoryOptionAction, must_exists=self.work_directory_must_exists,
+            writeable=self.work_directory_must_be_writeable,
             help=_(
                 'The directory, where to read and write the cache files of the '
                 'evaluated IP addresses (default: {!r}).').format(
@@ -246,11 +176,7 @@ class BaseDdnsApplication(BaseApplication):
                 DdnsConfiguration.default_timeout),
         )
 
-        ddns_group.add_argument(
-            '-c', '--config', '--config-file', dest='cfg_file', metavar=_('FILE'),
-            action=CfgFileOptionAction,
-            help=_('Configuration file (default: {!r})').format(str(default_cfg_file))
-        )
+        super(BaseDdnsApplication, self).init_arg_parser()
 
     # -------------------------------------------------------------------------
     def post_init(self):
@@ -266,41 +192,21 @@ class BaseDdnsApplication(BaseApplication):
         parent class.
 
         """
-        self.initialized = False
-
-        self.init_logging()
-
-        self.perform_arg_parser()
-
-        if self.args.cfg_file:
-            self._cfg_file = self.args.cfg_file
-            self._cfg_dir = self.cfg_file.parent
-
-        self.config = DdnsConfiguration(
-            appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
-            config_file=self.cfg_file)
-
-        self.config.read()
-        if self.config.verbose > self.verbose:
-            self.verbose = self.config.verbose
-        self.config.initialized = True
-
-        if self.verbose > 3:
-            LOG.debug('Read configuration:\n{}'.format(pp(self.config.as_dict())))
+        super(BaseDdnsApplication, self).post_init()
 
         if self.args.ipv4:
-            self.config.protocol = 'ipv4'
+            self.cfg.protocol = 'ipv4'
         elif self.args.ipv6:
-            self.config.protocol = 'ipv6'
+            self.cfg.protocol = 'ipv6'
         elif self.args.protocol:
             if self.args.protocol == 'both':
-                self.config.protocol = 'any'
+                self.cfg.protocol = 'any'
             else:
-                self.config.protocol = self.args.protocol
+                self.cfg.protocol = self.args.protocol
 
         if self.args.timeout:
             try:
-                self.config.timeout = self.args.timeout
+                self.cfg.timeout = self.args.timeout
             except (ValueError, KeyError) as e:
                 msg = _('Invalid value {!r} as timeout:').format(self.args.timeout) + ' ' + str(e)
                 LOG.error(msg)
@@ -309,8 +215,9 @@ class BaseDdnsApplication(BaseApplication):
                 self.exit(1)
 
         if self.args.directory:
-            self.config.working_dir = self.args.directory
+            self.cfg.working_dir = self.args.directory
 
+        # TODO: also for urllib3 !!!
         if not self.loglevel_requests_set:
             msg = _('Setting Loglevel of the {m} module to {ll}.').format(
                 m='requests', ll='WARNING')
@@ -325,22 +232,24 @@ class BaseDdnsApplication(BaseApplication):
         """Retrieve the current public IPv64 address."""
         LOG.debug(_('Trying to get my public IPv{} address.').format(protocol))
 
-        url = self.config.get_ipv4_url
+        url = self.cfg.get_ipv4_url
         if protocol == 6:
-            url = self.config.get_ipv6_url
+            url = self.cfg.get_ipv6_url
 
         try:
             json_response = self.perform_request(url)
         except DdnsAppError as e:
             LOG.error(str(e))
             return None
-        if self.verbose > 0:
+        if self.verbose > 1:
             LOG.debug(_('Got a response:') + '\n' + pp(json_response))
 
         return json_response['IP']
 
     # -------------------------------------------------------------------------
-    def perform_request(self, url, method='GET', data=None, headers=None, may_simulate=False):
+    def perform_request(
+            self, url, method='GET', data=None, headers=None, may_simulate=False,
+            return_json=True):
         """Perform the underlying Web request."""
         if headers is None:
             headers = {}
@@ -373,7 +282,7 @@ class BaseDdnsApplication(BaseApplication):
 
             session = requests.Session()
             response = session.request(
-                method, url, data=data, headers=headers, timeout=self.config.timeout)
+                method, url, data=data, headers=headers, timeout=self.cfg.timeout)
 
         except (
                 socket.timeout, urllib3.exceptions.ConnectTimeoutError,
@@ -388,17 +297,32 @@ class BaseDdnsApplication(BaseApplication):
         except ValueError:
             raise DdnsAppError(_('Failed to parse the response'), response.text)
 
+        return self._mangle_response(response, return_json=return_json)
+
+    # -------------------------------------------------------------------------
+    def _mangle_response(self, response, return_json=True):
+
         if self.verbose > 3:
             LOG.debug('RAW response: {!r}.'.format(response.text))
+            LOG.debug('Status of request: {c!r} - {r!r}'.format(
+                c=response.status_code, r=response.reason))
         if not response.text:
-            return ''
+            return ('', response.status_code, response.reason)
+
+        if not return_json:
+            msg = _('Text response:') + '\n' + response.text
+            if self.verbose > 3:
+                LOG.debug(msg)
+            return (response.text, response.status_code, response.reason)
 
         try:
             json_response = response.json()
         except JSONDecodeError:
+            encoding = 'utf-8-sig'
             if self.verbose > 2:
-                LOG.debug("Setting encoding of response to 'utf-8-sig'.")
-            response.encoding = 'utf-8-sig'
+                msg = _('Setting encoding of response to {!r}.').format(encoding)
+                LOG.debug(msg)
+            response.encoding = encoding
             json_response = response.json()
 
         if self.verbose > 3:
@@ -423,31 +347,31 @@ class BaseDdnsApplication(BaseApplication):
         if self.verbose > 1:
             LOG.debug(_(
                 'Checking existence and accessibility of working directory {!r} ...').format(
-                str(self.config.working_dir)))
+                str(self.cfg.working_dir)))
 
-        if not self.config.working_dir.exists():
-            raise WorkDirNotExistsError(self.config.working_dir)
+        if not self.cfg.working_dir.exists():
+            raise WorkDirNotExistsError(self.cfg.working_dir)
 
-        if not self.config.working_dir.is_dir():
-            raise WorkDirNotDirError(self.config.working_dir)
+        if not self.cfg.working_dir.is_dir():
+            raise WorkDirNotDirError(self.cfg.working_dir)
 
-        if not os.access(str(self.config.working_dir), os.R_OK):
+        if not os.access(str(self.cfg.working_dir), os.R_OK):
             raise WorkDirAccessError(
-                self.config.working_dir, _('No read access'))
+                self.cfg.working_dir, _('No read access'))
 
-        if not os.access(str(self.config.working_dir), os.W_OK):
+        if not os.access(str(self.cfg.working_dir), os.W_OK):
             raise WorkDirAccessError(
-                self.config.working_dir, _('No write access'))
+                self.cfg.working_dir, _('No write access'))
 
     # -------------------------------------------------------------------------
     def write_ipv4_cache(self, address):
         """Write the cache for IPv4 addresses."""
-        self.write_ip_cache(address, self.config.ipv4_cache_file)
+        self.write_ip_cache(address, self.cfg.ipv4_cache_file)
 
     # -------------------------------------------------------------------------
     def write_ipv6_cache(self, address):
         """Write the cache for IPv6 addresses."""
-        self.write_ip_cache(address, self.config.ipv6_cache_file)
+        self.write_ip_cache(address, self.cfg.ipv6_cache_file)
 
     # -------------------------------------------------------------------------
     def write_ip_cache(self, address, cache_file):
@@ -466,12 +390,12 @@ class BaseDdnsApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def get_ipv4_cache(self):
         """Return a current IPv4 address cache entry."""
-        return self.get_ip_cache(self.config.ipv4_cache_file)
+        return self.get_ip_cache(self.cfg.ipv4_cache_file)
 
     # -------------------------------------------------------------------------
     def get_ipv6_cache(self):
         """Return a current IPv6 address cache entry."""
-        return self.get_ip_cache(self.config.ipv6_cache_file)
+        return self.get_ip_cache(self.cfg.ipv6_cache_file)
 
     # -------------------------------------------------------------------------
     def get_ip_cache(self, cache_file):
@@ -514,6 +438,110 @@ class BaseDdnsApplication(BaseApplication):
         if self.exit_value <= 1:
             self.exit_value = 5
         return None
+
+    # -------------------------------------------------------------------------
+    def resolve_address(self, name, nameservers=None, address_family=None):
+        """Try to resolve a name to a list of Ip addresses."""
+        if not HAS_DNS_MODULE:
+            return self.get_address(name, address_family=address_family)
+
+        family = self.get_address_famlily_int(address_family)
+
+        addresses = []
+        # A normal resolver based on /etc/resolv.conf
+        resolver = dns.resolver.Resolver()
+        if nameservers:
+            resolver.nameservers = nameservers
+        if self.verbose > 3:
+            LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
+
+        if family in (0, 6):
+            try:
+                answer = resolver.resolve(name, 'AAAA')
+                for rd in answer.rrset:
+                    address = ipaddress.ip_address(str(rd))
+                    if address not in addresses:
+                        addresses.append(address)
+            except (NoAnswer, NXDOMAIN) as e:
+                if self.verbose > 1:
+                    msg = _('Did not found a {t} address for {n}:').format(t='IPv6', n=name)
+                    LOG.debug(msg + ' ' + str(e))
+
+        if family in (0, 4):
+            try:
+                answer = resolver.resolve(name, 'A')
+                for rd in answer.rrset:
+                    address = ipaddress.ip_address(str(rd))
+                    if address not in addresses:
+                        addresses.append(address)
+            except (NoAnswer, NXDOMAIN) as e:
+                if self.verbose > 1:
+                    msg = _('Did not found a {t} address for {n}:').format(t='IPv4', n=name)
+                    LOG.debug(msg + ' ' + str(e))
+
+        return addresses
+
+    # -------------------------------------------------------------------------
+    def get_ns_of_zone(self, zone, nameservers=None, address_family=None):
+        """Try to get a list of the nameservers of the given zone."""
+        if not HAS_DNS_MODULE:
+            msg = _('Cannot execute {method}() - module {mod!r} could not imported.').format(
+                method='get_ns_of_zone', mod='dns')
+            raise RuntimeError(msg)
+
+        ns_list = []
+        resolver = dns.resolver.Resolver()
+        if nameservers:
+            resolver.nameservers = nameservers
+        if self.verbose > 3:
+            LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
+
+        try:
+            answer = resolver.resolve(zone, 'NS')
+            for rd in answer.rrset:
+                ns_name = str(rd)
+                adresses = self.resolve_address(
+                    ns_name, nameservers=nameservers, address_family=address_family)
+                if adresses:
+                    for address in adresses:
+                        if address not in ns_list:
+                            ns_list.append(ns_list)
+        except (NoAnswer, NXDOMAIN) as e:
+            if self.verbose > 1:
+                msg = _('Did not found a {t} entry for zone {z}:').format(t='NS', n=zone)
+                LOG.debug(msg + ' ' + str(e))
+
+        return ns_list
+
+    # -------------------------------------------------------------------------
+    def get_mx_of_zone(self, zone, nameservers=None, address_family=None, as_text=True):
+        """Try to get a list of the mail exchangers of the given zone."""
+        if not HAS_DNS_MODULE:
+            msg = _('Cannot execute {method}() - module {mod!r} could not imported.').format(
+                method='get_mx_of_zone', mod='dns')
+            raise RuntimeError(msg)
+
+        mx_list = []
+        resolver = dns.resolver.Resolver()
+        if nameservers:
+            resolver.nameservers = nameservers
+        if self.verbose > 3:
+            LOG.debug(_('Using resolver:') + '\n' + pp(resolver.__dict__))
+
+        try:
+            answer = resolver.resolve(zone, 'MX')
+            for rd in answer.rrset:
+                if as_text:
+                    mx_list.append(str(rd))
+                else:
+                    mx_list.append(rd)
+
+        except (NoAnswer, NXDOMAIN) as e:
+            if self.verbose > 1:
+                msg = _('Did not found a {t} entry for zone {z}:').format(t='MX', n=zone)
+                LOG.debug(msg + ' ' + str(e))
+
+        return mx_list
 
 
 # =============================================================================

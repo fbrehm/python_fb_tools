@@ -27,11 +27,17 @@ from .argparse_actions import CfgFileOptionAction
 from .argparse_actions import LogFileOptionAction
 # from .error import FbCfgAppError
 from .common import pp, to_bool
+from .errors import CommonPathError
+from .errors import DirectoryAccessError
+from .errors import DirectoryNotDirError
+from .errors import DirectoryNotExistsError
+from .errors import FileAccessError
+from .errors import FileNotRegularFileError
 from .errors import MultiConfigError
 from .multi_config import BaseMultiConfig
 from .xlate import XLATOR
 
-__version__ = '2.2.5'
+__version__ = '2.3.1'
 LOG = logging.getLogger(__name__)
 
 
@@ -41,6 +47,8 @@ _ = XLATOR.gettext
 # =============================================================================
 class FbConfigApplication(BaseApplication):
     """Class for configured application objects."""
+
+    default_logfile = None
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -58,7 +66,7 @@ class FbConfigApplication(BaseApplication):
         self._use_chardet = True
         self.use_chardet = use_chardet
         self._additional_cfg_file = None
-        self._logfile = None
+        self._logfile = self.default_logfile
         self._cfg_class = cfg_class
         self._append_appname_to_stems = append_appname_to_stems
         self._config_dir = config_dir
@@ -139,10 +147,14 @@ class FbConfigApplication(BaseApplication):
             help=_('Configuration files to use additional to the standard configuration files.'),
         )
 
+        help_txt = _('A logfile for storing all logging output.')
+        if self.default_logfile:
+            help_txt += ' ' + _('Default: {!r}.').format(str(self.default_logfile))
+
         cfg_options.add_argument(
             '--logfile', '--log',
             metavar=_('FILE'), dest='logfile', action=LogFileOptionAction,
-            help=_('A logfile for storing all logging output.'),
+            help=help_txt,
         )
 
     # -------------------------------------------------------------------------
@@ -201,7 +213,11 @@ class FbConfigApplication(BaseApplication):
             self.logfile = self.cfg.logfile.resolve()
 
         if self.logfile:
-            self.init_file_logging()
+            try:
+                self.init_file_logging()
+            except CommonPathError as e:
+                LOG.error(_('Got a {c}: {e}.').format(c=e.__class__.__name__, e=e))
+                self.exit(8)
 
     # -------------------------------------------------------------------------
     def init_file_logging(self):
@@ -209,33 +225,26 @@ class FbConfigApplication(BaseApplication):
         if not self.logfile:
             return
 
+        if not self.do_init_logging:
+            return
+
         logdir = self.logfile.parent
 
         # Checking the parent directory of the Logfile
         if not logdir.exists():
-            msg = _('Directory {!r} does not exists.').format(str(logdir))
-            LOG.error(msg)
-            self.exit(6)
+            raise DirectoryNotExistsError(logdir)
         if not logdir.is_dir():
-            msg = _('Path {!r} exists, but is not a directory.').format(str(logdir))
-            LOG.error(msg)
-            self.exit(6)
+            raise DirectoryNotDirError(logdir)
 
         # Checking logfile, if it is already existing
         if self.logfile.exists():
             if not self.logfile.is_file():
-                msg = _('File {!r} is not a regular file.').format(str(self.logfile))
-                LOG.error(msg)
-                self.exit(6)
+                raise FileNotRegularFileError(self.logfile)
             if not os.access(self.logfile, os.W_OK):
-                msg = _('File {!r} is not writeable.').format(self.logfile)
-                LOG.error(msg)
-                self.exit(6)
+                raise FileAccessError(self.logfile, _('file is not writeable.'))
         else:
             if not os.access(logdir, os.W_OK):
-                msg = _('Directory {!r} is not writeable.').format(str(logdir))
-                LOG.error(msg)
-                self.exit(6)
+                raise DirectoryAccessError(logdir, _('no write access to directory.'))
 
         LOG.debug(_('Start logging into file {!r} ...').format(str(self.logfile)))
 

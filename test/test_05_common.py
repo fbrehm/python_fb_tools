@@ -44,8 +44,9 @@ class TestFbCommon(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_import(self):
-        """Test importing module fb_tools.common."""
-        LOG.info('Testing import of fb_tools.common ...')
+        """Test import module fb_tools.common."""
+        LOG.info(self.get_method_doc())
+
         import fb_tools.common
 
         LOG.info('Module version of fb_tools.common is {!r}.'.format(
@@ -54,7 +55,7 @@ class TestFbCommon(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_to_unicode(self):
         """Test module function to_unicode()."""
-        LOG.info('Testing to_unicode() ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import to_unicode
 
@@ -81,7 +82,7 @@ class TestFbCommon(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_to_utf8(self):
         """Test module function to_utf8()."""
-        LOG.info('Testing to_utf8() ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import to_utf8
 
@@ -108,7 +109,7 @@ class TestFbCommon(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_to_str(self):
         """Test module function to_str()."""
-        LOG.info('Testing to_str() ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import to_str
 
@@ -135,7 +136,7 @@ class TestFbCommon(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_human2mbytes(self):
         """Test module function human2mbytes()."""
-        LOG.info('Testing human2mbytes() from fb_tools.common ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import human2mbytes
 
@@ -215,7 +216,7 @@ class TestFbCommon(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_human2mbytes_l10n(self):
         """Testing localisation of human2mbytes()."""
-        LOG.info('Testing localisation of human2mbytes() from fb_tools.common ...')
+        LOG.info(self.get_method_doc())
 
         loc = locale.getlocale()                                        # get current locale
         encoding = loc[1]
@@ -301,7 +302,7 @@ class TestFbCommon(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_bytes2human(self):
         """Test module function bytes2human()."""
-        LOG.info('Testing bytes2human() from fb_tools.common ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import bytes2human
 
@@ -379,7 +380,7 @@ class TestFbCommon(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_to_bool(self):
         """Test module function to_bool()."""
-        LOG.info('Testing to_bool() from fb_tools.common ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import to_bool
 
@@ -512,7 +513,7 @@ class TestFbCommon(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_indent(self):
         """Test module function indent()."""
-        LOG.info('Testing indent() from fb_tools.common ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import indent
 
@@ -594,7 +595,7 @@ class TestFbCommon(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_compare_ldap_values(self):
         """Test module function compare_ldap_values()."""
-        LOG.info('Testing compare_ldap_values() from fb_tools.common ...')
+        LOG.info(self.get_method_doc())
 
         if six.PY2:
             bin_a = 'a'
@@ -643,6 +644,75 @@ class TestFbCommon(FbToolsTestcase):
                 f=first, s=second, res=result, ex=expected))
             self.assertEqual(result, expected)
 
+    # -------------------------------------------------------------------------
+    def test_timeinterval2delta(self):
+        """Test module function timeinterval2delta()."""
+        LOG.info(self.get_method_doc())
+
+        from datetime import timedelta
+        from fb_tools.common import set_debug_timeinterval2delta
+        from fb_tools.common import timeinterval2delta
+
+        if self.verbose > 2:
+            set_debug_timeinterval2delta(True)
+
+        test_data_valid = (
+            (0, 0),
+            ('0', 0),
+            (1, 1),
+            ('1', 1),
+            ('0.1', 0.1),
+            ('1s', 1),
+            ('1.1 s', 1.1),
+            ('5m', 300),
+            ('5 m 10s', 310),
+            ('10 s 5m', 310),
+            ('2h 2', 7202),
+            ('2h 3m 2.222', 2 * 3600 + 3 * 60 + 2.222),
+            ('12.5 h', 12 * 3600 + 1800),
+            ('3d , 13h, 4.5 min', 3 * 24 * 3600 + 13 * 3600 + 270),
+            (' 14 days, 2 hours', 14 * 24 * 3600 + 2 * 3600),
+            ('2 weeks 2 hours', 14 * 24 * 3600 + 2 * 3600),
+            ('3 months 2 days', 3 * 30 * 24 * 3600 + 2 * 24 * 3600),
+            ('4 years, 11 months', 4 * 365 * 24 * 3600 + 11 * 30 * 24 * 3600),
+        )
+
+        for test_tuple in test_data_valid:
+            interval = test_tuple[0]
+            seconds = test_tuple[1]
+            expected = timedelta(seconds=seconds)
+            LOG.debug('Test conversion of {i!r} into timedelta "{delta}" ({s} seconds).'.format(
+                i=interval, delta=expected, s=seconds))
+            result = timeinterval2delta(interval)
+            LOG.debug('Got timedelta "{}".'.format(result))
+            self.assertIsInstance(result, timedelta)
+            self.assertEqual(result, expected)
+
+        class TestClass(object):
+            """Pointless test class without a function."""
+
+            def blub(self):
+                """Make nothing - senseless method."""
+                return None
+
+        from fb_tools.errors import InvalidTimeIntervalError
+
+        test_object = TestClass()
+
+        test_data_invalid = (
+            None, '', ' 	', 'bla', test_object, test_object.blub,
+            '2h 2h', '2h,, 4min',
+        )
+
+        for test_data in test_data_invalid:
+            LOG.debug('Test invalid time interval {!r}.'.format(test_data))
+
+            with self.assertRaises(InvalidTimeIntervalError) as cm:
+                result = timeinterval2delta(test_data)
+                LOG.error('This result should never be visible: {!r}.'.format(result))
+            e = cm.exception
+            LOG.debug('{c} raised: {e}'.format(c=e.__class__.__name__, e=e))
+
 
 # =============================================================================
 
@@ -667,6 +737,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbCommon('test_to_bool', verbose))
     suite.addTest(TestFbCommon('test_indent', verbose))
     suite.addTest(TestFbCommon('test_compare_ldap_values', verbose))
+    suite.addTest(TestFbCommon('test_timeinterval2delta', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

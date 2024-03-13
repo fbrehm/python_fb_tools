@@ -14,7 +14,7 @@ import signal
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.2.0'
+__version__ = '2.3.1'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -110,6 +110,22 @@ class InvalidMailAddressError(BaseMailAddressError):
             msg += ': ' + self.msg
         else:
             msg += '.'
+        return msg
+
+
+# =============================================================================
+class InvalidTimeIntervalError(FbError, ValueError):
+    """Class for a exception in case of a malformed textual time intervall."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, interval):
+        """Initialise a InvalidTimeIntervalError  exception."""
+        self.interval = str(interval)
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """Typecast into a string."""
+        msg = _('Wrong time interval {!r}.').format(self.interval)
         return msg
 
 
@@ -401,6 +417,159 @@ class CouldntOccupyLockfileError(FbError):
         """Typecast into a string for error output."""
         return _("Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries.").format(
             lf=self.lockfile, d=self.duration, tries=self.tries)
+
+
+# =============================================================================
+class CommonPathError(FbError):
+    """Base error class for all errors relating filesystem paths."""
+
+    # -----------------------------------------------------
+    def __init__(self, path, msg=None):
+        """
+        Initialise a CommonPathError exception.
+
+        @param path: The path having a problem.
+        @type path: str or Path
+        @param msg: the error message
+        @type msg: str or None
+
+        """
+        self.path = str(path)
+        self.msg = None
+        if msg is not None:
+            msg = str(msg).strip()
+            if msg != '':
+                self.msg = str(msg)
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('There is a problem with path {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class CommonDirectoryError(CommonPathError):
+    """Base error class for all errors relating directories."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('There is a problem with directory {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class DirectoryNotExistsError(CommonDirectoryError, FileNotFoundError):
+    """Special exception class, if a directory does not exists."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Directory {!r} does not exists').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class DirectoryNotDirError(CommonDirectoryError, NotADirectoryError):
+    """Special exception class, if path to a directory is not a directory."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Path {!r} is not a directory').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class DirectoryAccessError(CommonDirectoryError, NotADirectoryError):
+    """Special exception class, if a directory has insufficient access rights."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Invalid permissions for directory {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class CommonFileError(CommonPathError):
+    """Base error class for all errors relating files."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('There is a problem with file {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class FileNotExistsError(CommonFileError, FileNotFoundError):
+    """Special exception class, if a file does not exists."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('File {!r} does not exists').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class FileNotRegularFileError(CommonFileError, OSError):
+    """Special exception class, if path to a file is not a regular file."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Path {!r} is not a regular file').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class FileAccessError(CommonFileError, PermissionError):
+    """Special exception class, if a file has insufficient access rights."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Invalid permissions for file {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
 
 
 # =============================================================================

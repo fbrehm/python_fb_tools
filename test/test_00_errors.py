@@ -39,7 +39,7 @@ class TestFbErrors(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import(self):
         """Test importing module fb_tools.errors."""
-        LOG.info('Testing import of fb_tools.errors ...')
+        LOG.info(self.get_method_doc())
 
         import fb_tools.errors
 
@@ -49,7 +49,7 @@ class TestFbErrors(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_fb_error(self):
         """Test raising a FbError exception."""
-        LOG.info('Test raising a FbError exception ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.errors import FbError
 
@@ -61,7 +61,7 @@ class TestFbErrors(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_func_not_implemented(self):
         """Test raising a FunctionNotImplementedError exception."""
-        LOG.info('Test raising a FunctionNotImplementedError exception ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.errors import FunctionNotImplementedError
 
@@ -74,7 +74,7 @@ class TestFbErrors(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_io_timeout_error(self):
         """Test raising an IoTimeoutError exception."""
-        LOG.info('Test raising an IoTimeoutError exception ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.errors import IoTimeoutError
 
@@ -86,7 +86,7 @@ class TestFbErrors(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_read_timeout_error(self):
         """Test raising a ReadTimeoutError exception."""
-        LOG.info('Test raising a ReadTimeoutError exception ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.errors import ReadTimeoutError
 
@@ -98,7 +98,7 @@ class TestFbErrors(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_write_timeout_error(self):
         """Test raising a WriteTimeoutError exception."""
-        LOG.info('Test raising a WriteTimeoutError exception ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.errors import WriteTimeoutError
 
@@ -106,6 +106,18 @@ class TestFbErrors(FbToolsTestcase):
             raise WriteTimeoutError(5, '/etc/shadow')
         e = cm.exception
         LOG.debug('%s raised: %s', e.__class__.__name__, e)
+
+    # -------------------------------------------------------------------------
+    def test_invalid_time_interval_error(self):
+        """Test raising an InvalidTimeIntervalError exception."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.errors import InvalidTimeIntervalError
+
+        with self.assertRaises(InvalidTimeIntervalError) as cm:
+            raise InvalidTimeIntervalError('bla')
+        e = cm.exception
+        LOG.debug('{c} raised: {e}'.format(c=e.__class__.__name__, e=e))
 
 
 # =============================================================================
@@ -126,6 +138,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbErrors('test_io_timeout_error', verbose))
     suite.addTest(TestFbErrors('test_read_timeout_error', verbose))
     suite.addTest(TestFbErrors('test_write_timeout_error', verbose))
+    suite.addTest(TestFbErrors('test_invalid_time_interval_error', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
