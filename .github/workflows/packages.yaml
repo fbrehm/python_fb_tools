@@ -110,7 +110,7 @@ jobs:
         shell: bash
         run: |
           echo
-          echo -e "flake8 bin lib setup.py"
+          echo -e "flake8 bin/* lib setup.py"
           flake8 bin/* lib test setup.py
       - name: Execute Shellcheck
         shell: bash

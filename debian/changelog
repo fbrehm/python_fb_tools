@@ -1,3 +1,9 @@
+fb-tools (2.5.1) all; urgency=medium
+
+  * Extending pattern for username in mailaddresses.
+
+ -- Frank Brehm <frank@brehm-online.com>  Sat, 13 Apr 2024 07:47:00 +0200
+
 fb-tools (2.5.0) all; urgency=medium
 
   * Reorganing exception classes, adding ne exception classes
