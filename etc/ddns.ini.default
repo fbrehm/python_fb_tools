@@ -1,13 +1,13 @@
 [ddns]
 
 ; The username taken to access ddns.de
-;user = 
+;user =
 
 ; The password of the latter user at ddns.de
 ;password =
 
 ; A comma or whitespace separated list of domainnames to update
-;domains = 
+;domains =
 
 ; A boolean flag to update all registred domains independent of the latter domain list
 ;all_domains = false
@@ -24,6 +24,9 @@
 ; The URL to get the public IPv6 address
 ;get_ipv6_url = http://ip6.ddnss.de/jsonip.php
 
+; The URL to update the domain(s) with both IPv4 and IPv6 address
+;update_url = 
+
 ; The URL to update the domain(s) with the current IPv4 address
 ;update_ipv4_url = http://ip4.ddnss.de/upd.php
 
@@ -33,6 +36,12 @@
 ; Which IP protocol should be updated? (One of 'any', 'both', 'ipv4' and 'ipv6')
 ; Note: protocol 'any' is identic to 'both'.
 ;protocol = any
+
+; The interval, in which the DDNS update should be executed, even if seems,
+; that the value was not changed. it is possible to use time measuring units,
+; lik seconds, minutes, hours, days, weeks, months or years, also as a compound.
+; If set to 0, the forced update will not be executed.
+;forced_update_interval = 1 week
 
 
 [files]

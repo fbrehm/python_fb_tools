@@ -29,7 +29,7 @@ rules:
   empty-lines:
     max: 2
     max-start: 0
-    max-end: 0
+    max-end: 1
   hyphens:
     max-spaces-after: 1
   indentation:

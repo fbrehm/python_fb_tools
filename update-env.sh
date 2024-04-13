@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2317  # Don't warn about unreachable commands in this file
 
 set -e
 set -u
@@ -7,7 +8,7 @@ VERBOSE="n"
 DEBUG="n"
 QUIET='n'
 
-VERSION="2.3"
+VERSION="2.4"
 
 # console colors:
 RED=""
@@ -17,18 +18,15 @@ GREEN=""
 CYAN=""
 NORMAL=""
 
-BASENAME=$(basename "${0}")
+BASENAME=$( basename "${0}" )
 BASE_DIR=$( dirname "$0" )
-cd "${BASE_DIR}" || exit 99
+cd "${BASE_DIR}"
 BASE_DIR=$( readlink -f . )
+
+declare -a VALID_PY_VERSIONS=("3.11" "3.10" "3.9" "3.8" "3.7" "3.6")
 
 PIP_OPTIONS=
 export VIRTUAL_ENV_DISABLE_PROMPT=y
-
-declare -a VALID_PY_VERSIONS=("3.8" "3.7" "3.6" "3.5")
-PY_VERSION_FINAL=
-PYTHON=
-VENV_BIN='virtualenv'
 
 #-------------------------------------------------------------------
 detect_color() {
@@ -58,13 +56,12 @@ detect_color() {
 
     # console colors:
     if [ "${use_color}" = "true" ] ; then
-        RED="\\033[38;5;196m"
-        YELLOW="\\033[38;5;226m"
-        GREEN="\\033[38;5;46m"
-        # BLUE="\\033[38;5;27m"
-        CYAN="\\033[38;5;36m"
-        NORMAL="\\033[39m"
-        # HAS_COLORS="y"
+        RED="\033[38;5;196m"
+        YELLOW="\033[38;5;226m"
+        GREEN="\033[38;5;46m"
+        # BLUE="\033[38;5;27m"
+        CYAN="\033[38;5;36m"
+        NORMAL="\033[39m"
     else
         RED=""
         YELLOW=""
@@ -75,8 +72,7 @@ detect_color() {
     fi
 
     local my_tty
-
-    my_tty=$(tty)
+    my_tty=$( tty )
     if [[ "${my_tty}" =~ 'not a tty' ]] ; then
         my_tty='-'
     fi
@@ -84,6 +80,7 @@ detect_color() {
 }
 detect_color
 
+#------------------------------------------------------------------------------
 my_date() {
     date +'%F %T.%N %:::z'
 }
@@ -177,9 +174,6 @@ get_options() {
     local tmp=
     local short_options="dvqhV"
     local long_options="debug,verbose,quiet,help,version"
-    local py_version=
-    local py_found="n"
-    local ret=
 
     set +e
     tmp=$( getopt -o "${short_options}" --long "${long_options}" -n "${BASENAME}" -- "$@" )
@@ -212,7 +206,6 @@ get_options() {
                 # BLUE=""
                 CYAN=""
                 NORMAL=""
-                # HAS_COLORS="n"
                 shift
                 ;;
             --nocolor)
@@ -222,7 +215,6 @@ get_options() {
                 # BLUE=""
                 CYAN=""
                 NORMAL=""
-                # HAS_COLORS="n"
                 shift
                 ;;
             -h|--help)
@@ -255,52 +247,10 @@ get_options() {
         exit 1
     fi
 
-    py_found="n"
-    info "Searching for valid Python …"
-    for py_version in "${VALID_PY_VERSIONS[@]}" ; do
-        PYTHON="python${py_version}"
-        debug "Testing Python binary '${CYAN}${PYTHON}${NORMAL}' …"
-        if type -t "${PYTHON}" >/dev/null ; then
-            py_found="y"
-            PY_VERSION_FINAL="${py_version}"
-            empty_line
-            info "Found '${GREEN}${PYTHON}${NORMAL}'."
-            break
-        fi
-    done
-
-    if [[ "${py_found}" == "n" ]] ; then
-        empty_line >&2
-        error "Did not found a usable Python version." >&2
-        error "Usable Python versions are: ${YELLOW}${VALID_PY_VERSIONS[*]}${NORMAL}." >&2
-        empty_line >&2
-        exit 5
-    fi
-
-    info "Searching for valid virtualenv …"
-    VENV_BIN="virtualenv-${PY_VERSION_FINAL}"
-    debug "Testing '${VENV_BIN}' …"
-    if type -t "${VENV_BIN}" >/dev/null ; then
-        :
-    else
-        VENV_BIN="virtualenv"
-        debug "Testing '${VENV_BIN}' …"
-        if type -t "${VENV_BIN}" >/dev/null ; then
-            :
-        else
-            empty_line >&2
-            error "Did not found a usable virtualenv." >&2
-            error "Command '${RED}virtualenv${NORMAL}' not found, please install package '${YELLOW}python-virtualenv${NORMAL}' or appropriate."
-            empty_line >&2
-            exit 6
-        fi
-    fi
-    info "Found '${GREEN}${VENV_BIN}${NORMAL}'."
-
     if type -t msgfmt >/dev/null ; then
         :
     else
-        echo "Command '${RED}msgfmt${NORMAL}' not found, please install package '${YELLOW}gettext${NORMAL}' or appropriate." >&2                                                                                             
+        error "Command '${RED}msgfmt${NORMAL}' not found, please install package '${YELLOW}gettext${NORMAL}' or appropriate."
         exit 6
     fi
 
@@ -315,6 +265,10 @@ get_options() {
 #------------------------------------------------------------------------------
 init_venv() {
 
+    local py_version=
+    local python=
+    local found="n"
+
     empty_line
     line
     info "Preparing virtual environment …"
@@ -322,20 +276,30 @@ init_venv() {
 
 
     if [[ ! -f venv/bin/activate ]] ; then
-
-        empty_line
-        if [[ "${VENV_BIN}" == 'virtualenv' ]] ; then
-            virtualenv --python="${PYTHON}" venv
-        else
-            ${VENV_BIN} venv
+        found="n"
+        for py_version in "${VALID_PY_VERSIONS[@]}" ; do
+            python="python${py_version}"
+            debug "Testing Python binary '${CYAN}${python}${NORMAL}' …"
+            if type -t "${python}" >/dev/null ; then
+                found="y"
+                empty_line
+                info "Found '${GREEN}${python}${NORMAL}'."
+                empty_line
+                "${python}" -m venv venv
+                break
+            fi
+        done
+        if [[ "${found}" == "n" ]] ; then
+            empty_line >&2
+            error "Did not found a usable Python version." >&2
+            error "Usable Python versions are: ${YELLOW}${VALID_PY_VERSIONS[*]}${NORMAL}." >&2
+            empty_line >&2
+            exit 5
         fi
-
     fi
 
     # shellcheck disable=SC1091
     . venv/bin/activate || exit 5
-    debug "Which pip:    $(command -v pip)"
-    debug "Which python: $(command -v python)"
 
 }
 
@@ -364,6 +328,12 @@ upgrade_modules() {
     empty_line
     pip install ${PIP_OPTIONS} --upgrade --upgrade-strategy eager --requirement requirements.txt
     empty_line
+    if [[ -f requirements-lint.txt ]] ; then
+        info "Installing and/or upgrading necessary modules for linting …"
+        empty_line
+        pip install ${PIP_OPTIONS} --upgrade --upgrade-strategy eager --requirement requirements-lint.txt
+        empty_line
+    fi
 }
 
 #------------------------------------------------------------------------------
@@ -376,18 +346,6 @@ list_modules() {
     empty_line
     pip list --format columns
     empty_line
-}
-
-#------------------------------------------------------------------------------
-compile_i18n() {
-
-    if [[ -x compile-xlate-msgs.sh ]]; then
-        line
-        info "Updating i18n files in ${BASE_DIR} …"
-        empty_line
-        ./compile-xlate-msgs.sh
-        empty_line
-    fi
 }
 
 #------------------------------------------------------------------------------
@@ -429,4 +387,4 @@ main "$@"
 
 exit 0
 
-# vim: ts=4
+# vim: ts=4 list

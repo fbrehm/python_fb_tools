@@ -2,27 +2,24 @@
 # -*- coding: utf-8 -*-
 
 """
+@summary: Modules for common used objects, error classes and methods.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @license: LGPL3+
-@copyright: © 2018 Frank Brehm, Berlin
-@summary: Modules for common used objects, error classes and methods.
+@copyright: © 2024 Frank Brehm, Berlin
 """
 from __future__ import print_function
 
-import os
-import sys
-import re
-import pprint
 import datetime
-import textwrap
 import glob
-import pathlib
+import os
+import pprint
+import re
 import subprocess
-
-# Third party modules
-from setuptools import setup
-from setuptools.command.install import install
+import sys
+import textwrap
+from pathlib import Path
 
 # own modules:
 __base_dir__ = os.path.abspath(os.path.dirname(__file__))
@@ -30,6 +27,9 @@ __bin_dir__ = os.path.join(__base_dir__, 'bin')
 __lib_dir__ = os.path.join(__base_dir__, 'lib')
 __module_dir__ = os.path.join(__lib_dir__, 'fb_tools')
 __init_py__ = os.path.join(__module_dir__, '__init__.py')
+__local_usr_dir__ = Path(__base_dir__) / 'usr'
+__share_dir__ = Path(sys.base_prefix) / 'share'
+__locale_dir__ = __share_dir__ / 'locale'
 
 PATHS = {
     '__base_dir__': __base_dir__,
@@ -37,23 +37,33 @@ PATHS = {
     '__lib_dir__': __lib_dir__,
     '__module_dir__': __module_dir__,
     '__init_py__': __init_py__,
+    '__share_dir__': __share_dir__,
+    '__locale_dir__': __locale_dir__,
 }
 
 # -----------------------------------
 def pp(obj):
+    """Return a pretty print string of the given value."""
     pprinter = pprint.PrettyPrinter(indent=4)
     return pprinter.pformat(obj)
 
-#print("Paths:\n{}".format(pp(PATHS)))
+
+# print("Paths:\n{}".format(pp(PATHS)))
 
 if os.path.exists(__module_dir__) and os.path.isfile(__init_py__):
     sys.path.insert(0, os.path.abspath(__lib_dir__))
 
+# Third party modules
+from babel.messages import frontend as babel
+
 import fb_tools
 
-#from fb_tools.common import pp
+from setuptools import setup
+from setuptools.command.sdist import sdist
 
-ENCODING = "utf-8"
+# from fb_tools.common import pp
+
+ENCODING = 'utf-8'
 
 __packet_version__ = fb_tools.__version__
 
@@ -62,7 +72,7 @@ __debian_pkg_name__ = 'fb-tools'
 
 __author__ = 'Frank Brehm'
 __contact__ = 'frank@brehm-online.com'
-__copyright__ = '(C) 2018 Frank Brehm, Berlin'
+__copyright__ = '(C) 2024 Frank Brehm, Berlin'
 __license__ = 'LGPL3+'
 __url__ = 'https://github.com/fbrehm/python_fb_tools'
 
@@ -73,7 +83,7 @@ if sys.version_info[0] < 3:
 
 # -----------------------------------
 def read(fname):
-
+    """Read the given file and return its content."""
     content = None
 
     if sys.version_info[0] < 3:
@@ -88,6 +98,7 @@ def read(fname):
 
 # -----------------------------------
 def is_python_file(filename):
+    """Return, whether the given file seems to be a Python source file."""
     if filename.endswith('.py'):
         return True
     else:
@@ -102,6 +113,7 @@ __readme_file__ = os.path.join(__base_dir__, 'README.txt')
 
 # -----------------------------------
 def get_debian_version():
+    """Return the latest package version fron Debian changelog file."""
     if not os.path.isfile(__changelog_file__):
         return None
     changelog = read(__changelog_file__)
@@ -114,6 +126,7 @@ def get_debian_version():
         return None
     return match.group(1).strip()
 
+
 __debian_version__ = get_debian_version()
 
 if __debian_version__ is not None and __debian_version__ != '':
@@ -121,16 +134,17 @@ if __debian_version__ is not None and __debian_version__ != '':
 
 # -----------------------------------
 def write_local_version():
-
+    """Write the local version file."""
     local_version_file = os.path.join(__module_dir__, 'local_version.py')
     local_version_file_content = textwrap.dedent('''\
         #!/usr/bin/python
         # -*- coding: utf-8 -*-
         """
+        @summary: Modules for common used objects, error classes and methods.
+
         @author: {author}
         @contact: {contact}
         @copyright: © {cur_year} by {author}, Berlin
-        @summary: Modules for common used objects, error classes and methods.
         """
 
         __author__ = '{author} <{contact}>'
@@ -167,7 +181,7 @@ __requirements__ = [
 
 # -----------------------------------
 def read_requirements():
-
+    """Read the requiremments.txt file."""
     req_file = os.path.join(__base_dir__, 'requirements.txt')
     if not os.path.isfile(req_file):
         return
@@ -200,7 +214,7 @@ read_requirements()
 __scripts__ = []
 
 def get_scripts():
-
+    """Collect binary script files from bin/."""
     fpattern = os.path.join(__bin_dir__, '*')
     for fname in glob.glob(fpattern):
         script_name = os.path.relpath(fname, __base_dir__)
@@ -218,19 +232,66 @@ def get_scripts():
 get_scripts()
 
 # -----------------------------------
-MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
+__data_files__ = []
+
+re_usr = re.compile(r'^usr/')
+if __local_usr_dir__.is_dir():
+    usr_files = {}
+    for f in __local_usr_dir__.glob('**/*'):
+        if f.is_file():
+            relpath = Path(os.path.relpath(str(f), __base_dir__))
+            reldir = re_usr.sub('', str(relpath.parent))
+            if reldir not in usr_files:
+                usr_files[reldir] = []
+            usr_files[reldir].append(str(relpath))
+    for udir in usr_files.keys():
+        __data_files__.append((udir, usr_files[udir]))
+
+# -----------------------------------
 PO_FILES = 'locale/*/LC_MESSAGES/*.po'
+__package_data__ = {}
 
 def create_mo_files():
+    """Compile the translation files."""
     mo_files = []
     for po_path in glob.glob(PO_FILES):
-        mo = pathlib.Path(po_path.replace('.po', '.mo'))
+        mo = Path(po_path.replace('.po', '.mo'))
         if not mo.exists():
             subprocess.call(['msgfmt', '-o', str(mo), po_path])
-        mo_files.append(str(mo))
+        mo_files.append(mo)
 
     # print("Found mo files: {}\n".format(pp(mo_files)))
     return mo_files
+
+
+__pkg_mo_paths__ = create_mo_files()
+__pkg_mo_files__ = []
+for mo_file in __pkg_mo_paths__:
+    __pkg_mo_files__.append(str(mo_file))
+
+__package_data__[''] = __pkg_mo_files__
+# print("Package_data:\n" + pp(__package_data__) + "\n")
+
+
+for mo_file in __pkg_mo_paths__:
+    ltype = mo_file.parent.name
+    lname = mo_file.parent.parent.name
+    ldir = __locale_dir__ / lname / ltype
+    mo_file_rel = str(mo_file).lstrip('/')
+    __data_files__.append((str(ldir), [mo_file_rel]))
+
+# print("Found data files:\n" + pp(__data_files__) + "\n")
+
+
+# -----------------------------------
+class Sdist(sdist):
+    """Custom ``sdist`` command to ensure that mo files are always created."""
+
+    def run(self):
+        """Compile the l18n catalog."""
+        self.run_command('compile_catalog')
+        # sdist is an old style class so super cannot be used.
+        sdist.run(self)
 
 
 # -----------------------------------
@@ -240,8 +301,14 @@ setup(
     scripts=__scripts__,
     requires=__requirements__,
     package_dir={'': 'lib'},
-    package_data = {
-        '': create_mo_files(),
+    package_data=__package_data__,
+    data_files=__data_files__,
+    cmdclass={
+        'compile_catalog': babel.compile_catalog,
+        'extract_messages': babel.extract_messages,
+        'init_catalog': babel.init_catalog,
+        'update_catalog': babel.update_catalog,
+        'sdist': Sdist,
     },
 )
 

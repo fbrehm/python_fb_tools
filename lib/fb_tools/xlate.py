@@ -1,51 +1,73 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for i18n.
+
+It provides translation object, usable from all other modules in this package.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
-@summary: The module for i18n.
-          It provides translation object, usable from all other
-          modules in this package.
+@copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import, print_function
 
 # Standard modules
-import logging
-import gettext
 import copy
-
-from pathlib import Path
-
-from distutils.version import LooseVersion
+import gettext
+import logging
+import sys
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 # Third party modules
 import babel
 import babel.lists
 from babel.support import Translations
 
+try:
+    from packaging.version import Version
+except ImportError:
+    from distutils.version import LooseVersion as Version
+
 DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '1.2.3'
+__version__ = '2.0.4'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
 __lib_dir__ = __module_dir__.parent
 __base_dir__ = __lib_dir__.parent
-LOCALE_DIR = __base_dir__.joinpath('locale')
-if not LOCALE_DIR.is_dir():
-    LOCALE_DIR = __module_dir__.joinpath('locale')
-    if not LOCALE_DIR.is_dir():
-        LOCALE_DIR = None
+LOCALE_DIR = __base_dir__ / 'locale'
+if LOCALE_DIR.is_dir():
+    # Not installed, in development workdir
+    LOCALE_DIR = str(LOCALE_DIR)
+else:
+    # Somehow installed
+    if sys.prefix == sys.base_prefix:
+        # installed as a package
+        LOCALE_DIR = sys.prefix + '/share/locale'
+    else:
+        # Obviously in a virtual environment
+        LOCALE_DIR = __lib_dir__ / 'usr' / 'local' / 'share' / 'locale'
+        if LOCALE_DIR.is_dir():
+            LOCALE_DIR = str(LOCALE_DIR.resolve())
+        else:
+            LOCALE_DIR = __module_dir__ / 'locale'
+            if LOCALE_DIR.is_dir():
+                LOCALE_DIR = str(LOCALE_DIR)
+            else:
+                LOCALE_DIR = sys.prefix + '/share/locale'
 
 DEFAULT_LOCALE_DEF = 'en_US'
 DEFAULT_LOCALE = babel.core.default_locale()
 if not DEFAULT_LOCALE:
     DEFAULT_LOCALE = DEFAULT_LOCALE_DEF
 
-__mo_file__ = gettext.find(DOMAIN, str(LOCALE_DIR))
+__mo_file__ = gettext.find(DOMAIN, LOCALE_DIR)
 if __mo_file__:
     try:
         with open(__mo_file__, 'rb') as F:
@@ -55,12 +77,12 @@ if __mo_file__:
 else:
     XLATOR = gettext.NullTranslations()
 
-CUR_BABEL_VERSION = LooseVersion(babel.__version__)
-NEWER_BABEL_VERSION = LooseVersion('2.6.0')
+CUR_BABEL_VERSION = Version(babel.__version__)
+NEWER_BABEL_VERSION = Version('2.6.0')
 
 SUPPORTED_LANGS = (
-    'de_DE',
-    'en_US'
+    'de',
+    'en'
 )
 
 _ = XLATOR.gettext
@@ -70,6 +92,7 @@ _ = XLATOR.gettext
 def format_list(lst, do_repr=False, style='standard', locale=DEFAULT_LOCALE):
     """
     Format the items in `lst` as a list.
+
     :param lst: a sequence of items to format in to a list
     :param locale: the locale
     """
@@ -89,13 +112,13 @@ def format_list(lst, do_repr=False, style='standard', locale=DEFAULT_LOCALE):
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
-    print(_("Module directory: {!r}").format(__module_dir__))
-    print(_("Base directory: {!r}").format(__base_dir__))
-    print(_("Locale directory: {!r}").format(LOCALE_DIR))
-    print(_("Locale domain: {!r}").format(DOMAIN))
-    print(_("Found .mo-file: {!r}").format(__mo_file__))
+    print(_('Module directory: {!r}').format(__module_dir__))
+    print(_('Base directory: {!r}').format(__base_dir__))
+    print(_('Locale directory: {!r}').format(LOCALE_DIR))
+    print(_('Locale domain: {!r}').format(DOMAIN))
+    print(_('Found .mo-file: {!r}').format(__mo_file__))
 
 # =============================================================================
 

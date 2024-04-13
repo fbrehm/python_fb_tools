@@ -1,25 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for common used functions.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2019 by Frank Brehm, Berlin
-@summary: The module for common used functions.
+@copyright: © 2024 by Frank Brehm, Berlin
 """
 
 # Standard modules
-import sys
-import os
-import logging
-import re
-import pprint
-import platform
-import locale
-import string
-import random
 import datetime
-import pathlib
 import ipaddress
+import locale
+import logging
+import os
+import platform
+import pprint
+import random
+import re
+import string
+import sys
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 try:
     from collections.abc import Sequence
@@ -30,10 +34,10 @@ except ImportError:
 import six
 
 # Own modules
-
+from .errors import InvalidTimeIntervalError
 from .xlate import XLATOR
 
-__version__ = '1.4.6'
+__version__ = '2.1.0'
 
 _ = XLATOR.gettext
 
@@ -87,16 +91,27 @@ RE_UNIT_EIBYTES = re.compile(r'^\s*Ei(?:B(?:yte)?)?\s*$', re.IGNORECASE)
 RE_UNIT_ZBYTES = re.compile(r'^\s*Z(?:B(?:yte)?)?\s*$', re.IGNORECASE)
 RE_UNIT_ZIBYTES = re.compile(r'^\s*Zi(?:B(?:yte)?)?\s*$', re.IGNORECASE)
 
+DEBUG_TIMEINTERVAL2DELTA = False
+
+RE_UNIT_TIME_SECOND = re.compile(
+    r'\s*(\d+(?:\.\d*)?)\s*(?:s(?:ec(?:onds?)?)?)?(?:\s*,)?', re.IGNORECASE)
+RE_UNIT_TIME_MINUTE = re.compile(
+    r'\s*(\d+(?:\.\d*)?)\s*m(?:in(?:utes?)?)?(?:\s*,)?', re.IGNORECASE)
+RE_UNIT_TIME_HOUR = re.compile(r'\s*(\d+(?:\.\d*)?)\s*h(?:ours?)?(?:\s*,)?', re.IGNORECASE)
+RE_UNIT_TIME_DAY = re.compile(r'\s*(\d+(?:\.\d*)?)\s*d(?:ays?)?(?:\s*,)?', re.IGNORECASE)
+RE_UNIT_TIME_WEEK = re.compile(r'\s*(\d+(?:\.\d*)?)\s*w(?:eeks?)?(?:\s*,)?', re.IGNORECASE)
+RE_UNIT_TIME_MONTH = re.compile(r'\s*(\d+(?:\.\d*)?)\s*mon(?:ths?)?(?:\s*,)?', re.IGNORECASE)
+RE_UNIT_TIME_YEAR = re.compile(r'\s*(\d+(?:\.\d*)?)\s*y(?:ears?)?(?:\s*,)?', re.IGNORECASE)
+
 
 # =============================================================================
 def pp(value, indent=4, width=99, depth=None):
     """
-    Returns a pretty print string of the given value.
+    Return a pretty print string of the given value.
 
     @return: pretty print string
     @rtype: str
     """
-
     pretty_printer = pprint.PrettyPrinter(
         indent=indent, width=width, depth=depth)
     return pretty_printer.pformat(value)
@@ -105,14 +120,14 @@ def pp(value, indent=4, width=99, depth=None):
 # =============================================================================
 def terminal_can_colors(debug=False):
     """
-    Method to detect, whether the current terminal (stdout and stderr)
-    is able to perform ANSI color sequences.
+    Detect, whether the current terminal is able to perform ANSI color sequences.
+
+    Both stdout and stderr are checked.
 
     @return: both stdout and stderr can perform ANSI color sequences
     @rtype: bool
 
     """
-
     cur_term = ''
     if 'TERM' in os.environ:
         cur_term = os.environ['TERM'].lower().strip()
@@ -139,24 +154,24 @@ def terminal_can_colors(debug=False):
         elif re_term.search(cur_term):
             env_term_has_colors = True
     if debug:
-        sys.stderr.write("ansi_term: {a!r}, env_term_has_colors: {h!r}\n".format(
+        sys.stderr.write('ansi_term: {a!r}, env_term_has_colors: {h!r}\n'.format(
             a=ansi_term, h=env_term_has_colors))
 
     has_colors = False
     if env_term_has_colors:
         has_colors = True
     for handle in [sys.stdout, sys.stderr]:
-        if (hasattr(handle, "isatty") and handle.isatty()):
+        if (hasattr(handle, 'isatty') and handle.isatty()):
             if debug:
-                msg = _("{} is a tty.").format(handle.name)
+                msg = _('{} is a tty.').format(handle.name)
                 sys.stderr.write(msg + '\n')
             if (platform.system() == 'Windows' and not ansi_term):
                 if debug:
-                    sys.stderr.write(_("Platform is Windows and not ansi_term.") + "\n")
+                    sys.stderr.write(_('Platform is Windows and not ansi_term.') + '\n')
                 has_colors = False
         else:
             if debug:
-                msg = _("{} is not a tty.").format(handle.name)
+                msg = _('{} is not a tty.').format(handle.name)
                 sys.stderr.write(msg + '\n')
             if ansi_term:
                 pass
@@ -168,10 +183,7 @@ def terminal_can_colors(debug=False):
 
 # =============================================================================
 def to_bool(value):
-    """
-    Converter from string to boolean values (e.g. from configurations)
-    """
-
+    """Convert from string to boolean values (e.g. from configurations)."""
     if not value:
         return False
 
@@ -233,8 +245,20 @@ def to_bool(value):
 
 
 # =============================================================================
-def to_unicode(obj, encoding='utf-8'):
+def is_general_string(value):
+    """Return, whether the given value is a common string."""
+    if isinstance(value, six.string_types):
+        return True
 
+    if isinstance(value, six.binary_type):
+        return True
+
+    return False
+
+
+# =============================================================================
+def to_unicode(obj, encoding='utf-8'):
+    """Convert given value to unicode."""
     do_decode = False
     if six.PY2:
         if isinstance(obj, str):
@@ -251,13 +275,13 @@ def to_unicode(obj, encoding='utf-8'):
 
 # =============================================================================
 def to_utf8(obj):
-
+    """Convert given value to a utf-8 encoded byte string."""
     return encode_or_bust(obj, 'utf-8')
 
 
 # =============================================================================
 def encode_or_bust(obj, encoding='utf-8'):
-
+    """Convert given value to a byte string withe the given encoding."""
     do_encode = False
     if six.PY2:
         if isinstance(obj, unicode):                            # noqa
@@ -274,18 +298,16 @@ def encode_or_bust(obj, encoding='utf-8'):
 
 # =============================================================================
 def to_bytes(obj, encoding='utf-8'):
-    "Wrapper for encode_or_bust()"
-
+    """Do the same as encode_or_bust()."""
     return encode_or_bust(obj, encoding)
 
 
 # =============================================================================
 def to_str(obj, encoding='utf-8'):
-    """
-    Transformes the given string-like object into the str-type according
-    to the current Python version.
-    """
+    """Transform he given string-like object into the str-type.
 
+    This will be done according to the current Python version.
+    """
     if six.PY2:
         return encode_or_bust(obj, encoding)
     else:
@@ -294,11 +316,11 @@ def to_str(obj, encoding='utf-8'):
 
 # =============================================================================
 def is_sequence(arg):
-
+    """Return, whether the given value is a sequential object, but nat a str."""
     if not isinstance(arg, Sequence):
         return False
 
-    if hasattr(arg, "strip"):
+    if hasattr(arg, 'strip'):
         return False
 
     return True
@@ -306,14 +328,14 @@ def is_sequence(arg):
 
 # =============================================================================
 def caller_search_path(*additional_paths):
-    """
+    """Build a search path for executables.
+
     Builds a search path for executables from environment $PATH
     including some standard paths.
 
     @return: all existing search paths
     @rtype: list
     """
-
     path_list = []
     search_path = os.environ['PATH']
     if not search_path:
@@ -370,7 +392,7 @@ def caller_search_path(*additional_paths):
 
 # =============================================================================
 def compare_fqdn(x, y):
-
+    """Compare FQDN-like objects."""
     # LOG.debug("Comparing {!r} <=> {!r}.".format(x, y))
 
     # First check for None values
@@ -418,7 +440,7 @@ def compare_fqdn(x, y):
 
 # =============================================================================
 def compare_fqdn_tokens(xs, ys):
-
+    """Compare tokens from FQDN-like objects."""
     xa = RE_DOT.split(xs)
     xa.reverse()
     xa.pop(0)
@@ -455,10 +477,65 @@ def compare_fqdn_tokens(xs, ys):
 
 
 # =============================================================================
+def compare_ldap_values(first, second):
+    """Compare objects, which are originated as values of LDAP entries."""
+    def _to_str_single(value):
+
+        if is_sequence(value):
+            if is_general_string(value[0]):
+                return to_str(value[0]).lower()
+            return str(value[0]).lower()
+        if is_general_string(value):
+            return to_str(value).lower()
+        return str(value).lower()
+
+    if is_sequence(first) and not is_sequence(second):
+        if len(first) == 1:
+            str_first = _to_str_single(first)
+            str_second = _to_str_single(second)
+            if str_first == str_second:
+                return True
+        return False
+
+    if is_sequence(second) and not is_sequence(first):
+        if len(second) == 1:
+            str_first = _to_str_single(first)
+            str_second = _to_str_single(second)
+            if str_first == str_second:
+                return True
+        return False
+
+    if not is_sequence(first):
+        # second is also not an array at this point
+        str_first = _to_str_single(first)
+        str_second = _to_str_single(second)
+        if str_first == str_second:
+            return True
+        return False
+
+    # Both parameters are arays
+    if len(first) != len(second):
+        return False
+    first_array = []
+    for val in first:
+        first_array.append(_to_str_single(val))
+    first_array.sort()
+    second_array = []
+    for val in second:
+        second_array.append(_to_str_single(val))
+    second_array.sort()
+
+    if first_array == second_array:
+        return True
+    return False
+
+
+# =============================================================================
 def human2mbytes(value, si_conform=False, as_float=False):
     """
-    Converts the given human readable byte value (e.g. 5MB, 8.4GiB etc.)
-    with a prefix into an integer/float value (without a prefix) of MiBiBytes.
+    Convert the given human readable byte value (e.g. 5MB, 8.4GiB etc.).
+
+    The could have with a prefix into an integer/float value (without a prefix) of MiBiBytes.
     It raises a ValueError on invalid values.
 
     Available prefixes are:
@@ -484,9 +561,8 @@ def human2mbytes(value, si_conform=False, as_float=False):
     @rtype:  int or float
 
     """
-
     if value is None:
-        msg = _("Given value is {!r}.").format(None)
+        msg = _('Given value is {!r}.').format(None)
         raise ValueError(msg)
 
     radix = '.'
@@ -525,7 +601,7 @@ def human2mbytes(value, si_conform=False, as_float=False):
         value_raw = match.group(1)
         unit = match.group(2)
     else:
-        msg = _("Could not determine bytes in {!r}.").format(value)
+        msg = _('Could not determine bytes in {!r}.').format(value)
         raise ValueError(msg)
 
     if CUR_THOUSEP:
@@ -566,7 +642,7 @@ def human2mbytes(value, si_conform=False, as_float=False):
         return int(mbytes)
     return mbytes
     if mbytes != int(mbytes):
-        raise ValueError("int {integer!r} != long {long!r}.".format(
+        raise ValueError('int {integer!r} != long {long!r}.'.format(
             integer=int(mbytes), long=mbytes))
 
     mbytes = int(mbytes)
@@ -620,7 +696,8 @@ def _get_factor_human2bytes(unit, factor_bin, factor_si):
 def bytes2human(
         value, si_conform=False, precision=None, format_str='{value} {unit}'):
     """
-    Converts the given value in bytes into a human readable format.
+    Convert the given value in bytes into a human readable format.
+
     The limit for electing the next higher prefix is at 1500.
 
     It raises a ValueError on invalid values.
@@ -640,7 +717,6 @@ def bytes2human(
     @rtype: str
 
     """
-
     val = int(value)
 
     if not val:
@@ -703,17 +779,20 @@ def bytes2human(
 
 # =============================================================================
 def generate_password(length=12):
-
+    """Generate a string of random characters with the givlen length."""
     characters = string.ascii_letters + string.punctuation + string.digits
-    password = "".join(random.choice(characters) for x in range(length))
+    password = ''.join(random.choice(characters) for x in range(length))
     return password
 
 
 # =============================================================================
 def get_monday(day):
+    """Return the last Monday before the given date.
 
+    If the given date is a Monday itself, then this date will be returned.
+    """
     if not isinstance(day, (datetime.date, datetime.datetime)):
-        msg = _("Argument {a!r} must be of type {t1!r} or {t2!r}.").format(
+        msg = _('Argument {a!r} must be of type {t1!r} or {t2!r}.').format(
             a=day, t1='datetime.date', t2='datetime.datetime')
         raise TypeError(msg)
 
@@ -730,7 +809,10 @@ def get_monday(day):
 
 # =============================================================================
 def reverse_pointer(address):
+    """Return the tuples or digits of the given IP address in reverse order.
 
+    This is used to build the names of reverse DNS zones.
+    """
     addr = ipaddress.ip_address(address)
 
     if addr.version == 4:
@@ -743,7 +825,7 @@ def reverse_pointer(address):
 
 # =============================================================================
 def indent(text, prefix, initial_prefix=None, predicate=None):
-    """Adds 'prefix' to the beginning of selected lines in 'text'.
+    """Add 'prefix' to the beginning of selected lines in 'text'.
 
     If 'predicate' is provided, 'prefix' will only be added to the lines
     where 'predicate(line)' is True. If 'predicate' is not provided,
@@ -753,7 +835,6 @@ def indent(text, prefix, initial_prefix=None, predicate=None):
     It's a reinventing the wheel - sorry, but in module textwrap of Python 2.7
     this function is not existing.
     """
-
     if predicate is None:
         def predicate(line):
             return line.strip()
@@ -773,10 +854,127 @@ def indent(text, prefix, initial_prefix=None, predicate=None):
 
     return ''.join(lines)
 
+# =============================================================================
+def set_debug_timeinterval2delta(enable_debug=False):
+    """Set the module property DEBUG_TIMEINTERVAL2DELTA to a boolean value."""
+    global DEBUG_TIMEINTERVAL2DELTA
+
+    if to_bool(enable_debug):
+        DEBUG_TIMEINTERVAL2DELTA = True
+    else:
+        DEBUG_TIMEINTERVAL2DELTA = False
+
+# =============================================================================
+def timeinterval2delta(interval):
+    """
+    Try to convert the given textual time interval into a datetime.timeinterval object.
+
+    The interval may consists of tokens of float values with a measurement unit.
+    If a token is a float value without a measurement unit, then seconds are assumed.
+    Valid measurement units (as regular expressions) are:
+    * 's(ec(onds?)?)?'
+    * 'm(in(utes?)?)?' == 60 seconds
+    * 'h(ours?)*' == 3600 seconds
+    * 'd(ays?)?' == 3600 * 24 seconds
+    * 'w(eeks?)?' == 3600 * 24 * 7 seconds
+    * 'mon(ths?)?' == 3600 * 24 * 30 seconds
+    * 'y(ears?)?' == 3600 * 24 * 365 seconds
+
+    @raise InvalidTimeIntervalError: if the interval could not be interpreted
+    """
+    if interval is None:
+        raise InvalidTimeIntervalError(None)
+    intrvl = str(interval).strip()
+    if intrvl == '':
+        raise InvalidTimeIntervalError(interval)
+
+    seconds = 0
+
+    if DEBUG_TIMEINTERVAL2DELTA:
+        LOG.debug('Start value: {!r}'.format(intrvl))
+
+    m = RE_UNIT_TIME_YEAR.search(intrvl)
+    if m:
+        years = float(m[1])
+        intrvl = RE_UNIT_TIME_YEAR.sub('', intrvl, 1)
+        seconds += years * 3600 * 24 * 365
+        if DEBUG_TIMEINTERVAL2DELTA:
+            LOG.debug(
+                'After year: match {m!r}, years {y!r}, new value {i!r}, new secs {s}.'.format(
+                    m=m[1], y=years, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_MONTH.search(intrvl)
+    if m:
+        months = float(m[1])
+        intrvl = RE_UNIT_TIME_MONTH.sub('', intrvl, 1)
+        seconds += months * 3600 * 24 * 30
+        if DEBUG_TIMEINTERVAL2DELTA:
+            LOG.debug(
+                'After months: match {m!r}, months {mo!r}, new value {i!r}, new secs {s}.'.format(
+                    m=m[1], mo=months, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_WEEK.search(intrvl)
+    if m:
+        weeks = float(m[1])
+        intrvl = RE_UNIT_TIME_WEEK.sub('', intrvl, 1)
+        seconds += weeks * 3600 * 24 * 7
+        if DEBUG_TIMEINTERVAL2DELTA:
+            LOG.debug(
+                'After weeks: match {m!r}, weeks {w!r}, new value {i!r}, new secs {s}.'.format(
+                    m=m[1], w=weeks, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_DAY.search(intrvl)
+    if m:
+        days = float(m[1])
+        intrvl = RE_UNIT_TIME_DAY.sub('', intrvl, 1)
+        seconds += days * 3600 * 24
+        if DEBUG_TIMEINTERVAL2DELTA:
+            LOG.debug(
+                'After days: match {m!r}, days {d!r}, new value {i!r}, new secs {s}.'.format(
+                    m=m[1], d=days, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_HOUR.search(intrvl)
+    if m:
+        hours = float(m[1])
+        intrvl = RE_UNIT_TIME_HOUR.sub('', intrvl, 1)
+        seconds += hours * 3600
+        if DEBUG_TIMEINTERVAL2DELTA:
+            LOG.debug(
+                'After hours: match {m!r}, hours {h!r}, new value {i!r}, new secs {s}.'.format(
+                    m=m[1], h=hours, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_MINUTE.search(intrvl)
+    if m:
+        minutes = float(m[1])
+        intrvl = RE_UNIT_TIME_MINUTE.sub('', intrvl, 1)
+        seconds += minutes * 60
+        if DEBUG_TIMEINTERVAL2DELTA:
+            LOG.debug(
+                'After minutes: match {m!r}, minutes {mi!r}, new value {i!r}, '
+                'new secs {s}.'.format(m=m[1], mi=minutes, i=intrvl, s=seconds))
+
+    m = RE_UNIT_TIME_SECOND.search(intrvl)
+    if m:
+        secs = float(m[1])
+        intrvl = RE_UNIT_TIME_SECOND.sub('', intrvl, 1)
+        seconds += secs
+        if DEBUG_TIMEINTERVAL2DELTA:
+            LOG.debug(
+                'After seconds: match {m!r}, seconds {se!r}, new value {i!r}, '
+                'new secs {s}.'.format(m=m[1], se=secs, i=intrvl, s=seconds))
+
+    intrvl = intrvl.strip()
+    if DEBUG_TIMEINTERVAL2DELTA:
+        LOG.debug('Final value: {i!r}, seconds at last: {s}'.format(i=intrvl, s=seconds))
+    if intrvl != '':
+        raise InvalidTimeIntervalError(interval)
+
+    return datetime.timedelta(seconds=seconds)
+
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

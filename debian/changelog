@@ -1,8 +1,375 @@
-fb-tools (1.7.1) UNRELEASED; urgency=medium
+fb-tools (2.5.0) all; urgency=medium
 
-  * Merging master into develop
+  * Reorganing exception classes, adding ne exception classes
+  * Refactoring modules fb_tools.ddns and fb_tools.ddns.config for using
+    MultiConfig
+  * Adding methods line() and empty_line() to HandlingObject .
+  * Removing method empty_line() from BaseDdnsApplication - it's now in
+    a parent class.
+  * Implementing update of all domains in UpdateDdnsApplication.
+  * Adding and testing function timeinterval2delta() to fb_toolds.common
+  * Implementing reading and writing a status file in UpdateDdnsStatus
+  * Fixing FbConfigApplication in module fb_tools.cfg_app some test
+    scripts
 
- -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 03 Nov 2020 09:04:48 +0100
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 13 Mar 2024 15:53:28 +0100
+
+fb-tools (2.4.2) all; urgency=medium
+
+  * Changing logging behaviour of get-file-to-remove.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 28 Feb 2024 16:51:39 +0100
+
+fb-tools (2.4.1) all; urgency=medium
+
+  * Fixing tests for class HandlingObject.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 06 Feb 2024 13:41:38 +0100
+
+fb-tools (2.4.0) all; urgency=medium
+
+  * Fixing Github workflow.
+  * Adding property 'address_family' and method get_address() to class
+    HandlingObject.
+  * Updating translations.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 06 Feb 2024 13:26:41 +0100
+
+fb-tools (2.3.5) all; urgency=medium
+
+  * Fixing Github workflow.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Sun, 04 Feb 2024 12:05:26 +0100
+
+fb-tools (2.3.4) all; urgency=medium
+
+  * Simplyfying init of some classes.
+  * Adding tests for Python 3.12 to CI tests.
+  * Using Python 3.12 for CI linter tests.
+  * Adding distros Debian 13 (trixie) and Ubuntu 24.04 (Noble Numbat) to
+    Github workflow packages for building OS packages.
+  * Removing deprecated OS versions Ubuntu 18.04 (Bionic Beaver) and
+    Enterprise Linux 7 from Github workflow.
+  * Updating external Guthub actions.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Sun, 04 Feb 2024 10:39:13 +0100
+
+fb-tools (2.3.3) all; urgency=medium
+
+  * Fixing lib/fb_tools/cfg_app.py for additional config file.
+  * Simplyfication init of different application classes.
+  * Fixing lib/fb_tools/cfg_app.py for additional config file.
+  * Applying flake8 rules to differenbt test scripts.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 09 Oct 2023 16:48:49 +0200
+
+fb-tools (2.3.2) all; urgency=medium
+
+  * Fixing runtime error in lib/fb_tools/multi_config/files.py.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 06 Oct 2023 17:08:11 +0200
+
+fb-tools (2.3.1) all; urgency=medium
+
+  * Adding test script for importing application modules
+  * Adding class property to BaseApplication whether init_logging should
+    executed or not.
+  * Fixing internaöl imports.
+  * Adding possibility to assining testing command line arguments to
+    BaseApplication.
+  * Fixing deprecated imports.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 06 Oct 2023 14:39:07 +0200
+
+fb-tools (2.3.0) all; urgency=medium
+
+  * Moving all exception classes from module fb_tools.multi_config to
+    fb_tools.errors.
+  * Splitting module fb_tools.multi_config into different mixin modules.
+  * Adding possibility in module fb_tools.multi_config to read all
+    config files in a directory named by the config file stem.
+  * Expanding tests for class BaseMultiConfig.
+  * Updating translations.
+  * Fixing Github workflow for linting.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 05 Oct 2023 17:23:37 +0200
+
+fb-tools (2.2.5) all; urgency=medium
+
+  * Better search for localisation files.
+  * Disable false shellcheck error
+  * Adding Debian 12 (bookworm) for building binary packages on Github.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 19 Jun 2023 11:04:44 +0200
+
+fb-tools (2.2.4) all; urgency=medium
+
+  * Making command line option '--quiet' optional.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 13 Jun 2023 11:55:32 +0200
+
+fb-tools (2.2.3) all; urgency=medium
+
+  * Applying additional linter tests to Github workflow
+  * Fixing countless linter errors.
+  * Updating copyright year where applicable.
+
+ -- Frank Brehm <frank@brehm-online.com>  Wed, 31 May 2023 14:23:45 +0200
+
+fb-tools (2.2.2) all; urgency=medium
+
+  * Do not update all pip modules in .gitlab-ci.yml.
+  * Updating containers in .github/workflows/packages.yaml
+  * Fixing get-debian-release for shellcheck errors
+  * Updating list of shellscripts in .gitlab-ci.yml
+  * Changing version of used shared pipeline.
+  * Adding quiet as an init parameter for application objects.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 06 Feb 2023 10:38:08 +0100
+
+fb-tools (2.2.1) all; urgency=medium
+
+  * Adding signing of all Debian packages in Githaub workflow
+  * Using shared pipelines in .gitlab-ci.yml
+  * Updating package dependencies in template.spec and debian/control
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 30 Dec 2022 14:19:02 +0100
+
+fb-tools (2.2.0) all; urgency=medium
+
+  * Renaming locale definitions de_DE => and en_US => en.
+  * Changing LOCALE_DIR in lib/fb_tools/xlate.py
+  * Updating setup files.
+  * Fixing lib/fb_tools/ddns/__init__.py for strange encoding.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 22 Nov 2022 09:45:02 +0100
+
+fb-tools (2.1.2) all; urgency=medium
+
+  * Fixing and updating setup files
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 02 Nov 2022 12:05:26 +0100
+
+fb-tools (2.1.1) all; urgency=medium
+
+  * Fixing imports in lib/fb_tools/cfg_app.py
+  * Extending tests in CI jobs by Python 3.11
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 01 Nov 2022 17:15:48 +0100
+
+fb-tools (2.1.0) all; urgency=medium
+
+  * Updating documentation in all Python modules
+  * Adding common commandline options for assumed answers.
+  * Making visibiliy of some common options optional.
+  * Adding class TimeoutOptionAction to module fb_tools.argparse_actions
+  * Adding exceptions AbortAppError and TimeoutOnPromptError to module
+    fb_tools.errors.
+  * Adding properties prompt_timeout and init_yes_no_lists and methods
+    get_password() and ask_for_yes_or_no() to class HandlingObject in
+    module fb_tools.handling_obj.
+  * Adding optional common commandline option for the timeout of console
+    input.
+
+ -- Frank Brehm <frank@brehm-online.com>  Fri, 14 Oct 2022 15:51:47 +0200
+
+fb-tools (2.0.3) all; urgency=medium
+
+  * Changes on help display of command line options.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 21 Sep 2022 12:21:49 +0200
+
+fb-tools (2.0.2) all; urgency=medium
+
+  * Removing last dependencies to pyvmomi
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 30 Aug 2022 09:47:22 +0200
+
+fb-tools (2.0.1) all; urgency=medium
+
+  * Refactoring .gitlab-ci.yml
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 27 Jul 2022 14:46:00 +0200
+
+fb-tools (2.0.0) all; urgency=medium
+
+  * Removing all VSpere modules and applications in favor of the
+    separate Python package fb_vmware
+  * Applying flake8 rules to setup.py
+  * Generating man pages of scripts in bin/ in all CI environments
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 27 Jul 2022 10:01:42 +0200
+
+fb-tools (1.9.6) all; urgency=medium
+
+  * Fixing typo in locale/de_DE/LC_MESSAGES/fb_tools.po.
+  * Removing dependency to Python module packaging on EL
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 11 Jul 2022 15:01:03 +0200
+
+fb-tools (1.9.5) all; urgency=medium
+
+  * Substituting distutils.version.LooseVersion by
+    packaging.version.Version
+  * Adding Python module 'packaging' as a dependency.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 16 May 2022 17:11:56 +0200
+
+fb-tools (1.9.4) all; urgency=medium
+
+  * Supporting Ubuntu 22.04 Jammy Jellyfish
+
+ -- Frank Brehm <frank@brehm-online.com>  Sat, 23 Apr 2022 08:37:11 +0200
+
+fb-tools (1.9.3) all; urgency=medium
+
+  * Adding exception classes BaseMailAddressError,
+    GeneralMailAddressError and EmptyMailAddressError to module
+    fb_tools.errors.
+  * Adding module fb_tools.mailaddress for classes MailAddress,
+    QualifiedMailAddress and MailAddressList
+  * Changing .github/workflows/packages.yaml for ignoring feature*
+    branches and fixing job deploy_to_pypi
+  * Renaming test scripts for ensuring correct order of executing test
+    scripts
+  * Adding script test/test_15_mailaddress.py for testing all classes in
+    module fb_tools.mailaddress
+
+ -- Frank Brehm <frank@brehm-online.com>  Wed, 20 Apr 2022 12:58:19 +0200
+
+fb-tools (1.9.2) all; urgency=medium
+
+  * Adding lib/fb_tools/pidfile.py for class PidFile.
+  * Adding test/test_pidfile.py for testing class PidFile.
+  * Updating update-env.sh.
+  * Fixing translation fieles.
+
+ -- Frank Brehm <frank@brehm-online.com>  Fri, 01 Apr 2022 13:49:43 +0200
+
+fb-tools (1.9.1) all; urgency=medium
+
+  * Adding evaluation of configuration in BaseMultiConfig
+  * Performing additional config file in BaseMultiConfig
+  * Adding class FbConfigApplication as a base class for configured
+    applications.
+  * Adding option for demanding protected coonfig files.
+  * Adding lib/fb_tools/argparse_actions.py containg all argparse action
+    classes
+  * Adding class BaseVmwareApplication as a base class for all VMEare
+    applications
+  * Changing class VmwareConfiguration to use BaseMultiConfig as parent
+  * Chaning all VMWare applications to use BaseVmwareApplication as
+    parent
+
+ -- Frank Brehm <frank@brehm-online.com>  Thu, 24 Mar 2022 11:52:15 +0100
+
+fb-tools (1.9.0) all; urgency=medium
+
+  * Adding script bin/get-vmware-hosts
+  * Adding lib/fb_tools/merge.py
+  * Adding lib/fb_tools/multi_config.py with appropriate tests.
+
+ -- Frank Brehm <frank@brehm-online.com>  Mon, 21 Mar 2022 17:03:15 +0100
+
+fb-tools (1.8.6) all; urgency=medium
+
+  * Tweaking dependencies in .github/workflows/packages.yaml and
+    specs/fb-tools.spec.template.
+  * Fixing creation of RPMs in Github workflow.
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 01 Feb 2022 16:15:54 +0100
+
+fb-tools (1.8.5) all; urgency=medium
+
+  * Support creating RPMs for CentOS Stream 9
+  * Changing Distro for building EL-8 packages to CentOS Stream 8
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 01 Feb 2022 10:16:54 +0100
+
+fb-tools (1.8.4) all; urgency=medium
+
+  * Removing all pdns modules and bin/pdns-bulk-remove, because it's now
+    located in Github repo 'fbrehm/fb-pdnstools.git'
+  * Updating translations because of removed modules
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Wed, 17 Nov 2021 11:35:01 +0100
+
+fb-tools (1.8.3) all; urgency=medium
+
+  * Fixing .github/workflows/packages.yaml
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 16 Nov 2021 16:32:25 +0100
+
+fb-tools (1.8.2) all; urgency=medium
+
+  * Updating setup.cfg for building Python packages
+  * dch Fixing packages in Github action 'debian-install-buildenv'
+  * Adding Github action 'add-fb-yum-repo'
+  * Adding file LICENSE
+  * Adding job 'build_rpm' to Github workflow
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 16 Nov 2021 16:13:33 +0100
+
+fb-tools (1.8.1) all; urgency=medium
+
+  * Adding dependencies to fb-logging and removing all appropriate
+    modules and test scripts, which are substituted by this package.
+  * Modifying Github action and workflow to reflect this.
+  * Adding Debian Repository definition of Franks Repo on building
+    Debian packages in .gitlab-ci.yml
+  * Completing tests and build process in .gitlab-ci.yml
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 25 Oct 2021 16:31:07 +0200
+
+fb-tools (1.8.0) all; urgency=medium
+
+  * Adding bin-build/changelog-deb2rpm.py for converting Debian
+    changelog to spec format
+  * Removing Python 2 support
+  * Removing support for Debian 9 and for Ubuntu 16.04
+  * Moving some build functionality from .gitlab-ci.yml into separate
+    scripts
+  * Adding Github workflow and Github actions for building packages
+  * Setting debian/compat to 12
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 30 Aug 2021 18:53:33 +0200
+
+fb-tools (1.7.6) all; urgency=medium
+
+  * Adding Build for Debian 11 bullseye
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 24 Aug 2021 15:48:46 +0200
+
+fb-tools (1.7.5) all; urgency=medium
+
+  * Decreasing minimal values of files to keep
+
+ -- Frank Brehm <frank@brehm-online.com>  Sat, 03 Apr 2021 09:19:49 +0200
+
+fb-tools (1.7.4) all; urgency=medium
+
+  * Satisfying linter in lib/fb_tools/collections.py
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 04 Jan 2021 12:50:26 +0100
+
+fb-tools (1.7.3) all; urgency=medium
+
+  * New module lib/fb_tools/collections.py with new classes
+    FrozenCIStringSet, CIStringSet, FrozenCIDict and CIDict, and some
+    additional Exception classes
+  * Adding test script test/test_collections.py for testing
+    lib/fb_tools/collections.py
+  * Modifying .github/workflows/superlinter.yml to execute only in
+    Branch master
+
+ -- Frank Brehm <frank@brehm-online.com>  Mon, 04 Jan 2021 12:00:55 +0100
+
+fb-tools (1.7.2) all; urgency=medium
+
+  * Adding functions is_general_string() and compare_ldap_values() to
+    lib/fb_tools/common.py
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 14 Dec 2020 15:09:56 +0100
 
 fb-tools (1.7.0) all; urgency=medium
 
