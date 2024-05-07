@@ -15,7 +15,7 @@ DEFAULT_ENCODING = UTF8_ENCODING
 DEFAULT_TERMINAL_WIDTH = 99
 DEFAULT_TERMINAL_HEIGHT = 40
 
-__version__ = '2.5.0'
+__version__ = '2.5.2'
 
 from .mailaddress import MailAddress, QualifiedMailAddress, MailAddressList     # noqa
 from .multi_config import BaseMultiConfig                                       # noqa
