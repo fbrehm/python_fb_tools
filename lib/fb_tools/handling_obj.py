@@ -456,7 +456,7 @@ class HandlingObject(FbBaseObject):
         """
         af = self.get_address_famlily_int(address_family)
         if self.verbose > 3:
-            LOG.debug(f"Got the integer address family {af!r} for {address_family!r}.")
+            LOG.debug(f'Got the integer address family {af!r} for {address_family!r}.')
 
         try:
             address = ipaddress.ip_address(host)
