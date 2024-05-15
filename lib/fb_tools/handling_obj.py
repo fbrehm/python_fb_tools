@@ -56,7 +56,7 @@ from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeo
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.2.3'
+__version__ = '2.2.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -171,8 +171,9 @@ class HandlingObject(FbBaseObject):
     pattern_yes_no = r'^\s*(' + '|'.join(yes_list) + '|' + '|'.join(no_list) + r')?\s*$'
     re_yes_no = re.compile(pattern_yes_no, re.IGNORECASE)
 
-    valid_address_families = ('any', socket.AF_INET, 'ipv4', socket.AF_INET6, 'ipv6')
-    valid_address_families_out = ("'any'", 'socket.AF_INET', "'IPv4'", 'socket.AF_INET6', "'IPv6'")
+    valid_address_families = ('any', 0, socket.AF_INET, 'ipv4', 4, socket.AF_INET6, 'ipv6', 6)
+    valid_address_families_out = (
+        "'any'", '0', 'socket.AF_INET', "'IPv4'", '4', 'socket.AF_INET6', "'IPv6'", '6')
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -330,6 +331,12 @@ class HandlingObject(FbBaseObject):
             family = socket.AF_INET
         elif family == 'ipv6':
             family = socket.AF_INET6
+        elif family == 0:
+            family = 'any'
+        elif family == 4:
+            family = socket.AF_INET
+        elif family == 6:
+            family = socket.AF_INET6
         self._address_family = family
 
     # -------------------------------------------------------------------------
@@ -366,7 +373,7 @@ class HandlingObject(FbBaseObject):
         @rtype:  dict
         """
         res = super(HandlingObject, self).as_dict(short=short)
-        res['address_family'] = self.assumed_answer
+        res['address_family'] = self.address_family
         res['assumed_answer'] = self.assumed_answer
         res['fileio_timeout'] = self.fileio_timeout
         res['force'] = self.force
@@ -414,7 +421,9 @@ class HandlingObject(FbBaseObject):
         if isinstance(address_family, str):
             family = address_family.lower()
 
-        if family is not None and family not in self.valid_address_families:
+        if family is None:
+            family = self.address_family
+        elif family not in self.valid_address_families:
             msg = _('Wrong address family {!r} given. Valid values are:').format(address_family)
             msg += ' ' + format_list(['None'] + list(self.valid_address_families_out))
             raise ValueError(msg)
@@ -424,12 +433,18 @@ class HandlingObject(FbBaseObject):
 
         if family == 'any':
             return 0
+        elif family == 0:
+            return 0
         elif family == 'ipv4':
+            return socket.AF_INET
+        elif family == 4:
             return socket.AF_INET
         elif family == 'ipv6':
             return socket.AF_INET6
+        elif family == 6:
+            return socket.AF_INET6
 
-        return address_family
+        return family
 
     # -------------------------------------------------------------------------
     def get_address(self, host, address_family=None):
@@ -440,6 +455,8 @@ class HandlingObject(FbBaseObject):
         @param address_family: Limit the result to the addresses of the given address family.
         """
         af = self.get_address_famlily_int(address_family)
+        if self.verbose > 3:
+            LOG.debug(f'Got the integer address family {af!r} for {address_family!r}.')
 
         try:
             address = ipaddress.ip_address(host)
