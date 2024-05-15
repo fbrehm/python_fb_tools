@@ -84,7 +84,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import(self):
         """Test instantiating fb_tools.handling_obj."""
-        LOG.info('Testing import of fb_tools.handling_obj ...')
+        LOG.info(self.get_method_doc())
         import fb_tools.handling_obj
         LOG.debug('Version of fb_tools.handling_obj: {!r}.'.format(
             fb_tools.handling_obj.__version__))
@@ -112,7 +112,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_called_process_error(self):
         """Test raising a CalledProcessError exception."""
-        LOG.info('Testing raising a CalledProcessError exception ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.handling_obj import CalledProcessError
 
@@ -150,7 +150,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_timeout_expired_error(self):
         """Test raising a TimeoutExpiredError exception."""
-        LOG.info('Testing raising a TimeoutExpiredError exception ...')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.handling_obj import TimeoutExpiredError
 
@@ -189,7 +189,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_generic_handling_object(self):
         """Test init of a generic handling object."""
-        LOG.info('Testing init of a generic handling object.')
+        LOG.info(self.get_method_doc())
 
         import fb_tools.handling_obj
         from fb_tools.handling_obj import HandlingObject
@@ -223,7 +223,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_completed_process(self):
         """Test class CompletedProcess."""
-        LOG.info('Testing class CompletedProcess.')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.handling_obj import CompletedProcess
         from fb_tools.handling_obj import CalledProcessError
@@ -258,7 +258,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     @unittest.skipUnless(EXEC_LONG_TESTS, 'Long terming tests are not executed.')
     def test_run_simple(self):
         """Test execution of a shell script."""
-        LOG.info('Testing execution of a shell script.')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import pp
         from fb_tools.handling_obj import HandlingObject, CompletedProcess
@@ -293,7 +293,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     @unittest.skipUnless(EXEC_LONG_TESTS, 'Long terming tests are not executed.')
     def test_run_timeout(self):
         """Test timing out the run() method."""
-        LOG.info('Testing timing out the run() method.')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.handling_obj import HandlingObject
         from fb_tools.handling_obj import TimeoutExpiredError
@@ -325,7 +325,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_read_file(self):
         """Test method read_file() of class HandlingObject."""
-        LOG.info('Testing method read_file() of class HandlingObject.')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import to_unicode, to_str, encode_or_bust
 
@@ -394,7 +394,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_write_file(self):
         """Test method write_file() of class HandlingObject."""
-        LOG.info('Testing method write_file() of class HandlingObject.')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import to_unicode, encode_or_bust
 
@@ -429,7 +429,7 @@ class TestFbHandlingObject(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_get_command(self):
         """Test method get_command() of class HandlingObject."""
-        LOG.info('Testing method get_command() of class HandlingObject.')
+        LOG.info(self.get_method_doc())
 
         from fb_tools.handling_obj import HandlingObject
 
@@ -505,11 +505,88 @@ class TestFbHandlingObject(FbToolsTestcase):
         self.assertEqual(p.name, cmd)
 
     # -------------------------------------------------------------------------
+    def test_get_int_addressfamily(self):
+        """Test property address_famlily and method get_address_famlily_int()."""
+        LOG.info(self.get_method_doc())
+
+        import socket
+
+        from fb_tools.handling_obj import HandlingObject
+
+        hdlr = HandlingObject(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+
+        af = hdlr.address_family
+        LOG.debug(f'Default value of property address_famlily is {af!r}.')
+        self.assertEqual(hdlr.address_family, 'any')
+
+        test_data = (
+            (socket.AF_INET, socket.AF_INET),
+            ('ipv4', socket.AF_INET),
+            (4, socket.AF_INET),
+            (socket.AF_INET6, socket.AF_INET6),
+            ('ipv6', socket.AF_INET6),
+            (6, socket.AF_INET6),
+            ('any', 'any'),
+            (0, 'any'),
+        )
+
+        for pair in test_data:
+            test_val = pair[0]
+            exp_val = pair[1]
+            LOG.debug(f'Testing {test_val!r} for property address_family, expecting {exp_val!r}.')
+            hdlr.address_family = test_val
+            af = hdlr.address_family
+            LOG.debug(f'Value of property address_famlily is {af!r}.')
+            self.assertEqual(af, exp_val)
+
+        test_data = (None, '0', 3, '4', 'bla')
+        for test_val in test_data:
+            LOG.debug(f'Testing {test_val!r} for property address_family.')
+            with self.assertRaises(ValueError) as cm:
+                hdlr.address_family = test_val
+            e = cm.exception
+            LOG.debug('{} raised: {}'.format(e.__class__.__name__, e))
+
+        hdlr.address_family = 0
+
+        test_data = (
+            (None, 0),
+            (0, 0),
+            ('any', 0),
+            (socket.AF_INET, socket.AF_INET),
+            ('ipv4', socket.AF_INET),
+            (4, socket.AF_INET),
+            (socket.AF_INET6, socket.AF_INET6),
+            ('ipv6', socket.AF_INET6),
+            (6, socket.AF_INET6),
+        )
+
+        for pair in test_data:
+            test_val = pair[0]
+            exp_val = pair[1]
+            LOG.debug(
+                f'Testing {test_val!r} for get_address_famlily_int(), expecting {exp_val!r}.')
+            af = hdlr.get_address_famlily_int(test_val)
+            LOG.debug(f'Return value of get_address_famlily_int() is {af!r}.')
+            self.assertEqual(af, exp_val)
+
+        test_data = ('0', 3, '4', 'bla', object())
+        for test_val in test_data:
+            LOG.debug(f'Testing get_address_famlily_int({test_val!r}) ...')
+            with self.assertRaises(ValueError) as cm:
+                af = hdlr.get_address_famlily_int(test_val)
+            e = cm.exception
+            LOG.debug('{} raised: {}'.format(e.__class__.__name__, e))
+
+    # -------------------------------------------------------------------------
     @unittest.skipUnless(
         EXEC_DNS_DEPENDING_TESTS, 'Tests depending on external DNS are not executed.')
     def test_get_address(self):
         """Test method get_address() of class HandlingObject."""
-        LOG.info('Testing method get_address() of class HandlingObject.')
+        LOG.info(self.get_method_doc())
 
         import ipaddress
         import socket
@@ -574,6 +651,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbHandlingObject('test_read_file', verbose))
     suite.addTest(TestFbHandlingObject('test_write_file', verbose))
     suite.addTest(TestFbHandlingObject('test_get_command', verbose))
+    suite.addTest(TestFbHandlingObject('test_get_int_addressfamily', verbose))
     suite.addTest(TestFbHandlingObject('test_get_address', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
