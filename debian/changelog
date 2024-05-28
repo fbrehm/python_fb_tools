@@ -1,4 +1,4 @@
-fb-tools (2.5.3) UNRELEASED; urgency=medium
+fb-tools (2.5.3) all; urgency=medium
 
   * Fixing lib/fb_tools/handling_obj.py.
 
