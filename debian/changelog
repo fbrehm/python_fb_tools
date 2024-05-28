@@ -1,3 +1,9 @@
+fb-tools (2.5.3) UNRELEASED; urgency=medium
+
+  * Fixing lib/fb_tools/handling_obj.py.
+
+ -- Frank Brehm <frank@brehm-online.com>  Tue, 28 May 2024 09:17:51 +0200
+
 fb-tools (2.5.2) all; urgency=medium
 
   * Updating .gitlab-ci.yml to the latest version of Digitas packaging
