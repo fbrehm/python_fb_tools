@@ -56,7 +56,7 @@ from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeo
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.2.4'
+__version__ = '2.2.5'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -1022,12 +1022,12 @@ class HandlingObject(FbBaseObject):
         except (TimeoutOnPromptError, AbortAppError) as e:
             msg = _('Got a {}:').format(e.__class__.__name__) + ' ' + str(e)
             LOG.error(msg)
-            self.exit(10)
+            sys.exit(10)
 
         except KeyboardInterrupt:
             msg = _('Got a {}:').format('KeyboardInterrupt') + ' ' + msg_intr
             LOG.error(msg)
-            self.exit(10)
+            sys.exit(10)
 
         finally:
             signal.alarm(0)
@@ -1106,13 +1106,13 @@ class HandlingObject(FbBaseObject):
             print()
             msg = _('Got a {}:').format(e.__class__.__name__) + ' ' + str(e)
             LOG.error(msg)
-            self.exit(10)
+            sys.exit(10)
 
         except KeyboardInterrupt:
             msg = _('Got a {}:').format('KeyboardInterrupt') + ' ' + msg_intr
             print()
             LOG.error(msg)
-            self.exit(10)
+            sys.exit(10)
 
         finally:
             signal.alarm(0)
