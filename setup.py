@@ -27,6 +27,8 @@ __bin_dir__ = os.path.join(__base_dir__, 'bin')
 __lib_dir__ = os.path.join(__base_dir__, 'lib')
 __module_dir__ = os.path.join(__lib_dir__, 'fb_tools')
 __init_py__ = os.path.join(__module_dir__, '__init__.py')
+
+
 __local_usr_dir__ = Path(__base_dir__) / 'usr'
 __share_dir__ = Path(sys.base_prefix) / 'share'
 __locale_dir__ = __share_dir__ / 'locale'
