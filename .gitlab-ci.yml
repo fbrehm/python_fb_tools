@@ -7,7 +7,7 @@ include:
 
 variables:
   EXPIRE_ARTIFACTS_IN: '1 week'
-  PKG_NAME: 'fb_tools'
+  PKG_NAME: 'fb-tools'
   PYTHON_ADDITIONAL_PACKAGES: 'python3-fb-logging python3-chardet'
   PYTHON_INIT_FILE: 'lib/fb_tools/__init__.py'
   PYTHON_TEST_PATHS: 'bin/* lib test setup.py'
