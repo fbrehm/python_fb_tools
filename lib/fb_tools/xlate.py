@@ -114,11 +114,22 @@ def format_list(lst, do_repr=False, style='standard', locale=DEFAULT_LOCALE):
 
 if __name__ == '__main__':
 
-    print(_('Module directory: {!r}').format(__module_dir__))
-    print(_('Base directory: {!r}').format(__base_dir__))
-    print(_('Locale directory: {!r}').format(LOCALE_DIR))
-    print(_('Locale domain: {!r}').format(DOMAIN))
-    print(_('Found .mo-file: {!r}').format(__mo_file__))
+    out_list = []
+    out_list.append([_('Module directory:'), str(__module_dir__)])
+    out_list.append([_('Base directory:'), str(__base_dir__)])
+    out_list.append([_('Locale directory:'), LOCALE_DIR])
+    out_list.append([_('Locale domain:'), DOMAIN])
+    out_list.append([_('Found .mo-file:'), __mo_file__])
+
+    max_len = 1
+    for pair in out_list:
+        if len(pair[0]) > max_len:
+            max_len = len(pair[0])
+
+    template = '{{label:<{}}} {{val!r}}'.format(max_len)
+    for pair in out_list:
+        print(template.format(label=pair[0], val=pair[1]))
+
 
 # =============================================================================
 

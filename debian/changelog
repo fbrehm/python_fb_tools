@@ -1,3 +1,15 @@
+fb-tools (2.6.0) UNRELEASED; urgency=medium
+
+  * Adding workflow build-packages using a shared workflow.
+  * Formatting output list in lib/fb_tools/xlate.py
+  * Deactivating Github workflow packages.
+  * Fixing template.spec and .gitlab-ci.yml
+  * Renaming lib/fb_tools/collections.py => lib/fb_tools/colcts.py
+  * Adding symlink lib/fb_tools/collections.py => lib/fb_tools/colcts.py
+    for backword compatibility.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Sun, 30 Jun 2024 12:24:05 +0200
+
 fb-tools (2.5.3) all; urgency=medium
 
   * Fixing lib/fb_tools/handling_obj.py.
