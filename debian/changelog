@@ -1,4 +1,4 @@
-fb-tools (2.6.0) UNRELEASED; urgency=medium
+fb-tools (2.6.0) all; urgency=medium
 
   * Adding workflow build-packages using a shared workflow.
   * Formatting output list in lib/fb_tools/xlate.py
