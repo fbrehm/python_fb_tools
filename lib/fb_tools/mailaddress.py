@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for the MailAddress object.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2022 by Frank Brehm, Berlin
-@summary: The module for the MailAddress object.
+@copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
 # Standard modules
+import copy
 import logging
 import re
-import copy
-
 try:
     from collections.abc import MutableSequence
 except ImportError:
@@ -22,16 +22,13 @@ except ImportError:
 import six
 
 # Own modules
-from .errors import InvalidMailAddressError
+from .common import is_sequence, pp, to_bool, to_str
 from .errors import EmptyMailAddressError
-
-from .common import to_str, to_bool, is_sequence, pp
-
-from .obj import FbGenericBaseObject, FbBaseObject
-
+from .errors import InvalidMailAddressError
+from .obj import FbBaseObject, FbGenericBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '0.8.4'
+__version__ = '2.0.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -39,6 +36,7 @@ _ = XLATOR.gettext
 
 # =============================================================================
 def convert_attr(value):
+    """Convert a value into a string."""
     if isinstance(value, six.string_types):
         return to_str(value).lower().strip()
     return value
@@ -46,14 +44,12 @@ def convert_attr(value):
 
 # =============================================================================
 class MailAddress(FbGenericBaseObject):
-    """
-    Class for encapsulating a mail simple address.
-    """
+    """Class for encapsulating a mail simple address."""
 
     pat_valid_domain = r'@((?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+[a-z][a-z]+)'
 
-    pat_valid_user = r'([a-z0-9](?:[a-z0-9_\-\.\+]*[a-z0-9])?'
-    pat_valid_user += r'(?:\+[a-z0-9][a-z0-9_\-\.]*[a-z0-9])*)'
+    pat_valid_user = r'([a-z0-9](?:[a-z0-9_\-\.\+=/]*[a-z0-9=\-_])?'
+    pat_valid_user += r'(?:\+[a-z0-9][a-z0-9_\-\.=/]*[a-z0-9=\-_])*)'
 
     pat_valid_address = pat_valid_user + pat_valid_domain
 
@@ -64,9 +60,9 @@ class MailAddress(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     @classmethod
     def valid_address(cls, address, raise_on_failure=False, verbose=0):
-
+        """Check the validity of a mail address."""
         if not address:
-            e = InvalidMailAddressError(address, _("Empty address."))
+            e = InvalidMailAddressError(address, _('Empty address.'))
             if raise_on_failure:
                 raise e
             if verbose > 2:
@@ -75,7 +71,7 @@ class MailAddress(FbGenericBaseObject):
 
         addr = to_str(address)
         if not isinstance(addr, str):
-            e = InvalidMailAddressError(address, _("Wrong type."))
+            e = InvalidMailAddressError(address, _('Wrong type.'))
             if raise_on_failure:
                 raise e
             if verbose > 2:
@@ -85,7 +81,7 @@ class MailAddress(FbGenericBaseObject):
         if cls.re_valid_address.search(addr):
             return True
 
-        e = InvalidMailAddressError(address, _("Invalid address."))
+        e = InvalidMailAddressError(address, _('Invalid address.'))
         if raise_on_failure:
             raise e
         if verbose > 2:
@@ -94,7 +90,7 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __init__(self, user=None, domain=None, verbose=0, empty_ok=False):
-
+        """Initialise a MailAddress object."""
         self._user = ''
         self._domain = ''
         self._verbose = 0
@@ -103,12 +99,12 @@ class MailAddress(FbGenericBaseObject):
         self.empty_ok = empty_ok
 
         if self.verbose > 3:
-            msg = _("Given user: {u!r}, given domain: {d!r}.")
+            msg = _('Given user: {u!r}, given domain: {d!r}.')
             LOG.debug(msg.format(u=user, d=domain))
 
         if user:
             if not isinstance(user, six.string_types):
-                msg = _("Invalid mail address.")
+                msg = _('Invalid mail address.')
                 raise InvalidMailAddressError(user, msg)
             user = to_str(user)
 
@@ -125,7 +121,7 @@ class MailAddress(FbGenericBaseObject):
                     self._domain = match.group(1)
                     return
                 if not self.re_valid_user.search(user):
-                    msg = _("Invalid user/mailbox name.")
+                    msg = _('Invalid user/mailbox name.')
                     raise InvalidMailAddressError(user, msg)
                 self._user = addr
                 return
@@ -140,14 +136,14 @@ class MailAddress(FbGenericBaseObject):
         if user:
             c_user = convert_attr(user)
             if not self.re_valid_user.search(c_user):
-                msg = _("Invalid user/mailbox name.")
+                msg = _('Invalid user/mailbox name.')
                 raise InvalidMailAddressError(user, msg)
         else:
             c_user = None
 
         c_domain = convert_attr(domain)
         if not self.re_valid_domain.search('@' + c_domain):
-            msg = _("Invalid domain.")
+            msg = _('Invalid domain.')
             raise InvalidMailAddressError(domain, msg)
 
         self._user = c_user
@@ -164,7 +160,7 @@ class MailAddress(FbGenericBaseObject):
         self.empty_ok = empty_ok
 
         if self.verbose > 3:
-            msg = _("Given user: {u!r}, given domain: {d!r}.")
+            msg = _('Given user: {u!r}, given domain: {d!r}.')
             LOG.debug(msg.format(u=user, d=domain))
 
         if user:
@@ -176,7 +172,7 @@ class MailAddress(FbGenericBaseObject):
     # -----------------------------------------------------------
     @property
     def user(self):
-        """The user part of the address."""
+        """Return the user part of the address."""
         if self._user is None:
             return ''
         return self._user
@@ -184,7 +180,7 @@ class MailAddress(FbGenericBaseObject):
     # -----------------------------------------------------------
     @property
     def domain(self):
-        """The domain part of the address."""
+        """Return the domain part of the address."""
         if self._domain is None:
             return ''
         return self._domain
@@ -192,7 +188,7 @@ class MailAddress(FbGenericBaseObject):
     # -----------------------------------------------------------
     @property
     def verbose(self):
-        """The verbosity level."""
+        """Return the verbosity level."""
         return getattr(self, '_verbose', 0)
 
     @verbose.setter
@@ -201,7 +197,7 @@ class MailAddress(FbGenericBaseObject):
         if v >= 0:
             self._verbose = v
         else:
-            msg = _("Wrong verbose level {!r}, must be >= 0").format(value)
+            msg = _('Wrong verbose level {!r}, must be >= 0').format(value)
             raise ValueError(msg)
 
     # -----------------------------------------------------------
@@ -217,7 +213,7 @@ class MailAddress(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -225,7 +221,6 @@ class MailAddress(FbGenericBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(MailAddress, self).as_dict(short=short)
 
         res['user'] = self.user
@@ -238,17 +233,16 @@ class MailAddress(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def as_tuple(self):
         """
-        Transforms the elements of the object into a tuple
+        Transform the elements of the object into a tuple.
 
         @return: structure as tuple
         @rtype:  tuple
         """
-
         return (self.user, self.domain, self.verbose, self.empty_ok)
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string."""
         if not self.user and not self.domain:
             return ''
 
@@ -262,7 +256,7 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def str_for_access(self):
-
+        """Typecast into a string for access mappings."""
         if not self.user and not self.domain:
             return ''
 
@@ -276,26 +270,26 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __repr__(self):
-        """Typecasting into a string for reproduction."""
-
-        out = "<%s(" % (self.__class__.__name__)
+        """Typecast into a string for reproduction."""
+        out = '<%s(' % (self.__class__.__name__)
 
         fields = []
-        fields.append("user={!r}".format(self.user))
-        fields.append("domain={!r}".format(self.domain))
+        fields.append('user={!r}'.format(self.user))
+        fields.append('domain={!r}'.format(self.domain))
 
-        out += ", ".join(fields) + ")>"
+        out += ', '.join(fields) + ')>'
         return out
 
     # -------------------------------------------------------------------------
     def __hash__(self):
+        """Return e hash value of the current object."""
         return hash(str(self).lower())
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
-
+        """Compare for equality."""
         if self.verbose > 5:
-            msg = _("Checking equality {self!r} with {other!r} ...")
+            msg = _('Checking equality {self!r} with {other!r} ...')
             LOG.debug(msg.format(self=self, other=other))
 
         if not isinstance(other, MailAddress):
@@ -342,21 +336,21 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __ne__(self, other):
-
+        """Compare for non-equality."""
         if self == other:
             return False
         return True
 
     # -------------------------------------------------------------------------
     def __lt__(self, other):
-
+        """Compare, whether the current address is less than another."""
         if not isinstance(other, MailAddress):
-            msg = _("Object {o!r} for comparing is not a {c} object.").format(
+            msg = _('Object {o!r} for comparing is not a {c} object.').format(
                 o=other, c='MailAddress')
             raise TypeError(msg)
 
         if self.verbose > 5:
-            msg = _("Comparing {self!r} with {other!r} ...")
+            msg = _('Comparing {self!r} with {other!r} ...')
             LOG.debug(msg.format(self=self, other=other))
 
         if MailAddress is not other.__class__.__mro__[0]:
@@ -411,7 +405,7 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __gt__(self, other):
-
+        """Compare, whether the current address is greater than another."""
         if self == other:
             return False
         if self < other:
@@ -420,7 +414,7 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __le__(self, other):
-
+        """Compare, whether the current address is less or equal than another."""
         if self == other:
             return True
         if self < other:
@@ -429,7 +423,7 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __ge__(self, other):
-
+        """Compare, whether the current address is greater or equal than another."""
         if self == other:
             return True
         if self < other:
@@ -438,8 +432,7 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __copy__(self):
-        "Implementing a wrapper for copy.copy()."
-
+        """Return a copy of the current address."""
         addr = MailAddress(empty_ok=True)
 
         addr._user = self.user
@@ -452,9 +445,7 @@ class MailAddress(FbGenericBaseObject):
 
 # =============================================================================
 class QualifiedMailAddress(MailAddress):
-    """
-    Class for encapsulating a mail address with an optional Name.
-    """
+    """Class for encapsulating a mail address with an optional Name."""
 
     pat_valid_name = r'("[^"]*"|[^",;<>@|]*)'
     pat_valid_full_address = r'^\s*' + pat_valid_name + r'\s*<'
@@ -468,9 +459,9 @@ class QualifiedMailAddress(MailAddress):
     # -------------------------------------------------------------------------
     @classmethod
     def valid_full_address(cls, address, raise_on_failure=False, verbose=0):
-
+        """Check the validity of a full qualified mail address."""
         if not address:
-            e = InvalidMailAddressError(address, _("Empty address."))
+            e = InvalidMailAddressError(address, _('Empty address.'))
             if raise_on_failure:
                 raise e
             if verbose > 2:
@@ -479,7 +470,7 @@ class QualifiedMailAddress(MailAddress):
 
         addr = to_str(address)
         if not isinstance(addr, str):
-            e = InvalidMailAddressError(address, _("Wrong type."))
+            e = InvalidMailAddressError(address, _('Wrong type.'))
             if raise_on_failure:
                 raise e
             if verbose > 2:
@@ -487,17 +478,17 @@ class QualifiedMailAddress(MailAddress):
             return False
 
         if verbose > 4:
-            LOG.debug(_("Evaluating address {!r} ...").format(addr))
-            LOG.debug(_("Search pattern simple: {}").format(cls.re_valid_address))
+            LOG.debug(_('Evaluating address {!r} ...').format(addr))
+            LOG.debug(_('Search pattern simple: {}').format(cls.re_valid_address))
         if cls.re_valid_address.search(addr):
             return True
 
         if verbose > 4:
-            LOG.debug(_("Search pattern full: {}").format(cls.re_valid_full_address))
+            LOG.debug(_('Search pattern full: {}').format(cls.re_valid_full_address))
         if cls.re_valid_full_address.match(addr):
             return True
 
-        e = InvalidMailAddressError(address, _("Invalid address."))
+        e = InvalidMailAddressError(address, _('Invalid address.'))
         if raise_on_failure:
             raise e
         if verbose > 2:
@@ -507,17 +498,17 @@ class QualifiedMailAddress(MailAddress):
     # -------------------------------------------------------------------------
     def __init__(
             self, address=None, *, user=None, domain=None, name=None, verbose=0, empty_ok=False):
-
+        """Initialise a QualifiedMailAddress object."""
         self._name = None
 
         if verbose > 3:
-            msg = "Given - address: {a!r}, user: {u!r}, domain: {d!r}, full name: {n!r}."
+            msg = 'Given - address: {a!r}, user: {u!r}, domain: {d!r}, full name: {n!r}.'
             LOG.debug(msg.format(a=address, u=user, d=domain, n=name))
 
         if address:
             if user or domain or name:
                 param_list = ('user', 'domain', 'name')
-                msg = _("Parameters {lst} may not be given, if parameter {a!r} was given.")
+                msg = _('Parameters {lst} may not be given, if parameter {a!r} was given.')
                 msg = msg.format(lst=format_list(param_list, do_repr=True), a='address')
                 raise RuntimeError(msg)
             return self._init_from_address(address, verbose=verbose, empty_ok=empty_ok)
@@ -528,7 +519,7 @@ class QualifiedMailAddress(MailAddress):
         if name:
             _name = to_str(name).strip()
             if not isinstance(_name, six.string_types):
-                msg = _("Invalid full user name.")
+                msg = _('Invalid full user name.')
                 raise InvalidMailAddressError(name, msg)
             if _name:
                 self._name = _name
@@ -537,7 +528,7 @@ class QualifiedMailAddress(MailAddress):
     def _init_from_address(self, address, verbose=0, empty_ok=False):
 
         if not self.valid_full_address(address, raise_on_failure=True, verbose=verbose):
-            raise InvalidMailAddressError(address, _("Invalid address."))
+            raise InvalidMailAddressError(address, _('Invalid address.'))
 
         user = None
         domain = None
@@ -560,7 +551,7 @@ class QualifiedMailAddress(MailAddress):
 
         match = self.re_valid_address.search(address)
         if not match:
-            raise InvalidMailAddressError(address, _("Invalid address."))
+            raise InvalidMailAddressError(address, _('Invalid address.'))
 
         user = match.group(1).strip().lower()
         domain = match.group(2).strip().lower()
@@ -570,13 +561,13 @@ class QualifiedMailAddress(MailAddress):
     # -----------------------------------------------------------
     @property
     def name(self):
-        """The full and elaborate name of the owner of the mail address."""
+        """Return the full and elaborate name of the owner of the mail address."""
         return self._name
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -584,7 +575,6 @@ class QualifiedMailAddress(MailAddress):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(QualifiedMailAddress, self).as_dict(short=short)
 
         res['name'] = self.name
@@ -594,23 +584,21 @@ class QualifiedMailAddress(MailAddress):
     # -------------------------------------------------------------------------
     def as_tuple(self):
         """
-        Transforms the elements of the object into a tuple
+        Transform the elements of the object into a tuple.
 
         @return: structure as tuple
         @rtype:  tuple
         """
-
         return (self.user, self.domain, self.name, self.verbose, self.empty_ok)
 
     # -------------------------------------------------------------------------
     def simple(self):
-
+        """Return a copy of the current address as a simple MailAddress object."""
         return super(QualifiedMailAddress, self).__copy__()
 
     # -------------------------------------------------------------------------
     def __copy__(self):
-        "Implementing a wrapper for copy.copy()."
-
+        """Return a copy of the current address."""
         addr = self.__class__(empty_ok=True)
 
         addr._user = self.user
@@ -623,7 +611,7 @@ class QualifiedMailAddress(MailAddress):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string."""
         no_addr = 'undisclosed recipient'
 
         address = super(QualifiedMailAddress, self).__str__()
@@ -646,23 +634,22 @@ class QualifiedMailAddress(MailAddress):
 
     # -------------------------------------------------------------------------
     def __repr__(self):
-        """Typecasting into a string for reproduction."""
-
-        out = "<%s(" % (self.__class__.__name__)
+        """Typecast into a string for reproduction."""
+        out = '<%s(' % (self.__class__.__name__)
 
         fields = []
-        fields.append("user={!r}".format(self.user))
-        fields.append("domain={!r}".format(self.domain))
-        fields.append("name={!r}".format(self.name))
+        fields.append('user={!r}'.format(self.user))
+        fields.append('domain={!r}'.format(self.domain))
+        fields.append('name={!r}'.format(self.name))
 
-        out += ", ".join(fields) + ")>"
+        out += ', '.join(fields) + ')>'
         return out
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
-
+        """Compare for equality."""
         if self.verbose > 5:
-            msg = _("Checking equality {self!r} with {other!r} ...")
+            msg = _('Checking equality {self!r} with {other!r} ...')
             LOG.debug(msg.format(self=self, other=other))
 
         if not isinstance(other, MailAddress):
@@ -684,14 +671,14 @@ class QualifiedMailAddress(MailAddress):
 
     # -------------------------------------------------------------------------
     def __lt__(self, other):
-
+        """Compare, whether the current address is less than another."""
         if not isinstance(other, MailAddress):
-            msg = _("Object {o!r} for comparing is not a {c} object.").format(
+            msg = _('Object {o!r} for comparing is not a {c} object.').format(
                 o=other, c='MailAddress')
             raise TypeError(msg)
 
         if self.verbose > 5:
-            msg = _("Comparing {self!r} with {other!r} ...")
+            msg = _('Comparing {self!r} with {other!r} ...')
             LOG.debug(msg.format(self=self, other=other))
 
         self_simple = self.simple()
@@ -716,15 +703,13 @@ class QualifiedMailAddress(MailAddress):
 
 # =============================================================================
 class MailAddressList(FbBaseObject, MutableSequence):
-    """
-    A list containing MailAddress or QualifiedMailAddress objects.
-    """
+    """A list containing MailAddress or QualifiedMailAddress objects."""
 
     # -------------------------------------------------------------------------
     def __init__(
         self, *addresses, appname=None, verbose=0, version=__version__, base_dir=None,
             empty_ok=False, may_simple=True, initialized=None):
-
+        """Initialise a MailAddressList object."""
         self._addresses = []
         self._empty_ok = False
         self._may_simple = True
@@ -745,7 +730,10 @@ class MailAddressList(FbBaseObject, MutableSequence):
     # -----------------------------------------------------------
     @property
     def empty_ok(self):
-        """Is an empty mail address valid or should there be raised an exceptiom."""
+        """Return, whether an empty address is okay.
+
+        Is an empty mail address valid or should there be raised an exceptiom.
+        """
         return self._empty_ok
 
     @empty_ok.setter
@@ -755,9 +743,12 @@ class MailAddressList(FbBaseObject, MutableSequence):
     # -----------------------------------------------------------
     @property
     def may_simple(self):
-        """May an address be inserted/appanded as a simple MailAddress, if there is
+        """Return, whether simple mail addresses are allowed.
+
+        May an address be inserted/appanded as a simple MailAddress, if there is
         no explicit verbose user name, or should it be always as a QualifiedMailAddress
-        object."""
+        object.
+        """
         return self._may_simple
 
     @may_simple.setter
@@ -767,7 +758,7 @@ class MailAddressList(FbBaseObject, MutableSequence):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -775,7 +766,6 @@ class MailAddressList(FbBaseObject, MutableSequence):
         @return: structure as dict or list
         @rtype:  dict or list
         """
-
         res = super(MailAddressList, self).as_dict(short=short)
         res['_addresses'] = []
         res['empty_ok'] = self.empty_ok
@@ -788,8 +778,7 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def as_list(self, as_str=False):
-        """Typecasting into a list object."""
-
+        """Typecast into a list object."""
         res = []
         for address in self:
             if as_str:
@@ -801,45 +790,42 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """Typecasting into a str object."""
-
+        """Typecast into a str object."""
         return pp(self.as_list(True))
 
     # -------------------------------------------------------------------------
     def __repr__(self):
-        """Typecasting into a string for reproduction."""
-
-        out = "<%s(" % (self.__class__.__name__)
+        """Typecast into a string for reproduction."""
+        out = '<%s(' % (self.__class__.__name__)
 
         fields = []
-        fields.append("appname={!r}".format(self.appname))
-        fields.append("verbose={!r}".format(self.verbose))
-        fields.append("version={!r}".format(self.version))
-        fields.append("empty_ok={!r}".format(self.empty_ok))
-        fields.append("may_simple={!r}".format(self.may_simple))
+        fields.append('appname={!r}'.format(self.appname))
+        fields.append('verbose={!r}'.format(self.verbose))
+        fields.append('version={!r}'.format(self.version))
+        fields.append('empty_ok={!r}'.format(self.empty_ok))
+        fields.append('may_simple={!r}'.format(self.may_simple))
 
         for address in self:
-            fields.append("{!r}".format(address))
+            fields.append('{!r}'.format(address))
 
-        out += ", ".join(fields) + ")>"
+        out += ', '.join(fields) + ')>'
         return out
 
     # -------------------------------------------------------------------------
     def _to_address(self, address):
-        """Converting given address into a usable MailAddress or QualifiedMailAddress object."""
-
+        """Convert given address into a usable MailAddress or QualifiedMailAddress object."""
         if isinstance(address, MailAddress):
             if self.verbose > 5:
-                LOG.debug("Trying to use address {!r} ...".format(address))
+                LOG.debug('Trying to use address {!r} ...'.format(address))
             if not self.may_simple and not isinstance(address, QualifiedMailAddress):
                 addr = QualifiedMailAddress(
                     user=address.user, domain=address.domain,
                     verbose=self.verbose, empty_ok=self.empty_ok)
                 if self.verbose > 4:
-                    LOG.debug("Using qualified address {!r} ...".format(addr))
+                    LOG.debug('Using qualified address {!r} ...'.format(addr))
                 return addr
             if self.verbose > 4:
-                LOG.debug("Using address {!r} ...".format(address))
+                LOG.debug('Using address {!r} ...'.format(address))
             return address
 
         addr = QualifiedMailAddress(address, verbose=self.verbose, empty_ok=self.empty_ok)
@@ -849,15 +835,15 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def append(self, address):
-
+        """Append the given address."""
         addr = self._to_address(address)
         self._addresses.append(addr)
 
     # -------------------------------------------------------------------------
     def __copy__(self):
-
+        """Return a copy of the current address list."""
         if self.verbose > 1:
-            LOG.debug("Copying myself ...")
+            LOG.debug('Copying myself ...')
 
         new_list = self.__class__(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
@@ -871,7 +857,7 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def __reversed__(self):
-
+        """Return a reversed copy of the current address list."""
         new_list = self.__class__(
             appname=self.appname, verbose=self.verbose, base_dir=self.base_dir,
             empty_ok=self.empty_ok, may_simple=self.may_simple, initialized=False)
@@ -884,9 +870,9 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def __add__(self, other):
-
+        """Return a copy of the current address list with the other list appended."""
         if not is_sequence(other):
-            msg = _("Given object {o!r} is not a sequence type, but a {t!r} type instead.")
+            msg = _('Given object {o!r} is not a sequence type, but a {t!r} type instead.')
             raise TypeError(msg.format(o=other, t=other.__class__.__qualname__))
 
         result = self.__copy__()
@@ -898,9 +884,9 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def __iadd__(self, other):
-
+        """Append the other list to the current address list."""
         if not is_sequence(other):
-            msg = _("Given object {o!r} is not a sequence type, but a {t!r} type instead.")
+            msg = _('Given object {o!r} is not a sequence type, but a {t!r} type instead.')
             raise TypeError(msg.format(o=other, t=other.__class__.__qualname__))
 
         for addr in other:
@@ -908,14 +894,14 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def index(self, address, *args):
-
+        """Get the position of the first occurence of the given address."""
         i = None
         j = None
         addr = self._to_address(address)
 
         if len(args) > 0:
             if len(args) > 2:
-                raise TypeError(_("{m} takes at most {max} arguments ({n} given).").format(
+                raise TypeError(_('{m} takes at most {max} arguments ({n} given).').format(
                     m='index()', max=3, n=len(args) + 1))
             i = int(args[0])
             if len(args) > 1:
@@ -955,12 +941,12 @@ class MailAddressList(FbBaseObject, MutableSequence):
             if item == addr:
                 return index
 
-        msg = _("Mail address {} is not in address list.").format(addr)
+        msg = _('Mail address {} is not in address list.').format(addr)
         raise ValueError(msg)
 
     # -------------------------------------------------------------------------
     def __contains__(self, address):
-
+        """Return, whether the given address is existing in current list."""
         if not self._addresses:
             return False
 
@@ -973,7 +959,7 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def count(self, address):
-
+        """Return the number of given mail address in current list."""
         if not self._addresses:
             return 0
 
@@ -987,45 +973,46 @@ class MailAddressList(FbBaseObject, MutableSequence):
 
     # -------------------------------------------------------------------------
     def __len__(self):
+        """Return the number of mail addresses in current list."""
         return len(self._addresses)
 
     # -------------------------------------------------------------------------
     def __getitem__(self, key):
+        """Return the mail address with given index."""
         return self._addresses.__getitem__(key)
 
     # -------------------------------------------------------------------------
     def __setitem__(self, key, address):
-
+        """Set the given mail address with given index."""
         addr = self._to_address(address)
         self._addresses.__setitem__(key, addr)
 
     # -------------------------------------------------------------------------
     def __delitem__(self, key):
-
+        """Delete the mail address on given index."""
         del self._addresses[key]
 
     # -------------------------------------------------------------------------
     def __iter__(self):
-
+        """Return iterator for mail addresses in list."""
         for addr in self._addresses:
             yield addr
 
     # -------------------------------------------------------------------------
     def insert(self, index, address):
-
+        """Insert given mail address in list on given index."""
         addr = self._to_address(address)
         self._addresses.insert(index, addr)
 
     # -------------------------------------------------------------------------
     def clear(self):
-        "Remove all items from the MailAddressList."
-
+        """Remove all items from the MailAddressList."""
         self._addresses = []
 
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

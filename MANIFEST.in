@@ -3,3 +3,5 @@ include test/*.sh
 include test/do_sleep
 include LICENSE
 include README.md
+recursive-include locale *
+

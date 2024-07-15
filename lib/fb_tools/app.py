@@ -1,23 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: The module for a base application object.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2022 by Frank Brehm, Berlin
-@summary: The module for a base application object.
+@copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
 # Standard modules
-import sys
-import os
-import logging
-import re
-import traceback
 import argparse
+import copy
 import getpass
+import logging
+import os
+import re
 import signal
+import sys
 import time
+import traceback
 
 # Third party modules
 
@@ -25,20 +27,18 @@ import time
 from fb_logging.colored import ColoredFormatter
 
 from . import __version__ as __pkg_version__
-
+from .argparse_actions import TimeoutOptionAction
+from .common import terminal_can_colors
 from .errors import FbAppError
 from .errors import FunctionNotImplementedError
-
-from .common import terminal_can_colors
-
 from .handling_obj import HandlingObject
-
-from .xlate import __module_dir__ as __xlate_module_dir__
+from .xlate import DOMAIN, LOCALE_DIR, XLATOR
 from .xlate import __base_dir__ as __xlate_base_dir__
+from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
-from .xlate import XLATOR, LOCALE_DIR, DOMAIN
+from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '1.6.0'
+__version__ = '2.2.2'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -57,21 +57,27 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class BaseApplication(HandlingObject):
-    """
-    Class for the base application objects.
-    """
+    """Class for the base application objects."""
 
     re_prefix = re.compile(r'^[a-z0-9][a-z0-9_]*$', re.IGNORECASE)
     re_anum = re.compile(r'[^A-Z0-9_]+', re.IGNORECASE)
 
-    default_force_desc_msg = _("Forced execution - whatever it means.")
+    default_force_desc_msg = _('Forced execution - whatever it means.')
+
+    show_assume_options = False
+    show_console_timeout_option = False
+    show_force_option = False
+    show_quiet_option = True
+    show_simulate_option = True
+
+    do_init_logging = True
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__pkg_version__, base_dir=None,
-            terminal_has_colors=False, initialized=False, usage=None, description=None,
-            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
-
+        self, version=__pkg_version__, usage=None, description=None, testing_args=None,
+            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None,
+            initialized=None, *args, **kwargs):
+        """Initialise a BaseApplication object."""
         self.arg_parser = None
         """
         @ivar: argparser object to parse commandline parameters
@@ -103,6 +109,12 @@ class BaseApplication(HandlingObject):
         @type: str
         """
 
+        self._testing_args = testing_args
+        """
+        @ivar: Command line arguments to use for testing purposes.
+        @type: None or list of strings
+        """
+
         self._argparse_epilog = argparse_epilog
         """
         @ivar: an epilog displayed at the end of the argparse help screen
@@ -132,25 +144,22 @@ class BaseApplication(HandlingObject):
         """
 
         super(BaseApplication, self).__init__(
-            appname=appname,
-            verbose=verbose,
             version=version,
-            base_dir=base_dir,
-            terminal_has_colors=terminal_has_colors,
             initialized=False,
+            *args, **kwargs
         )
 
         if env_prefix:
             ep = str(env_prefix).strip()
             if not ep:
-                msg = _("Invalid env_prefix {!r} given - it may not be empty.").format(env_prefix)
+                msg = _('Invalid env_prefix {!r} given - it may not be empty.').format(env_prefix)
                 raise FbAppError(msg)
             match = self.re_prefix.search(ep)
             if not match:
                 msg = _(
-                    "Invalid characters found in env_prefix {!r}, only "
-                    "alphanumeric characters and digits and underscore "
-                    "(this not as the first character) are allowed.").format(env_prefix)
+                    'Invalid characters found in env_prefix {!r}, only '
+                    'alphanumeric characters and digits and underscore '
+                    '(this not as the first character) are allowed.').format(env_prefix)
                 raise FbAppError(msg)
             self._env_prefix = ep
         else:
@@ -158,7 +167,7 @@ class BaseApplication(HandlingObject):
             self._env_prefix = self.re_anum.sub('_', ep)
 
         if not self.description:
-            self._description = _("Unknown and undescriped application.")
+            self._description = _('Unknown and undescriped application.')
 
         if not hasattr(self, '_force_desc_msg'):
             self._force_desc_msg = self.default_force_desc_msg
@@ -171,10 +180,13 @@ class BaseApplication(HandlingObject):
 
         self.post_init()
 
+        if initialized:
+            self.initialized = True
+
     # -----------------------------------------------------------
     @property
     def exit_value(self):
-        """The return value of the application for exiting with sys.exit()."""
+        """Get the return value of the application for exiting with sys.exit()."""
         return self._exit_value
 
     @exit_value.setter
@@ -183,11 +195,12 @@ class BaseApplication(HandlingObject):
         if v >= 0:
             self._exit_value = v
         else:
-            LOG.warning(_("Wrong exit_value {!r}, must be >= 0.").format(value))
+            LOG.warning(_('Wrong exit_value {!r}, must be >= 0.').format(value))
 
     # -----------------------------------------------------------
     @property
     def force_desc_msg(self):
+        """Get the help text for the --force command line option."""
         msg = getattr(self, '_force_desc_msg', None)
         if not msg:
             msg = self.default_force_desc_msg
@@ -196,7 +209,7 @@ class BaseApplication(HandlingObject):
     # -----------------------------------------------------------
     @property
     def exitvalue(self):
-        """The return value of the application for exiting with sys.exit()."""
+        """Get the return value of the application for exiting with sys.exit()."""
         return self._exit_value
 
     @exitvalue.setter
@@ -206,48 +219,56 @@ class BaseApplication(HandlingObject):
     # -----------------------------------------------------------
     @property
     def usage(self):
-        """The usage text used on argparse."""
+        """Get the usage text used on argparse."""
         return self._usage
 
     # -----------------------------------------------------------
     @property
     def description(self):
-        """A short text describing the application."""
+        """Get a short text describing the application."""
         return self._description
 
     # -----------------------------------------------------------
     @property
+    def testing_args(self):
+        """Get command line arguments to use for testing purposes."""
+        return self._testing_args
+
+    # -----------------------------------------------------------
+    @property
     def argparse_epilog(self):
-        """An epilog displayed at the end of the argparse help screen."""
+        """Get the epilog displayed at the end of the argparse help screen."""
         return self._argparse_epilog
 
     # -----------------------------------------------------------
     @property
     def argparse_prefix_chars(self):
-        """The set of characters that prefix optional arguments."""
+        """Get the set of characters that prefix optional arguments."""
         return self._argparse_prefix_chars
 
     # -----------------------------------------------------------
     @property
     def env_prefix(self):
-        """A prefix for environment variables to detect them."""
+        """Get a prefix for environment variables to detect them."""
         return self._env_prefix
 
     # -----------------------------------------------------------
     @property
     def usage_term(self):
-        """The localized version of 'usage: '"""
+        """Get the localized version of 'usage: '."""
         return 'Usage: '
 
     # -----------------------------------------------------------
     @property
     def usage_term_len(self):
-        """The length of the localized version of 'usage: '"""
+        """Get the length of the localized version of 'usage: '."""
         return len(self.usage_term)
 
     # -------------------------------------------------------------------------
-    def exit(self, retval=-1, msg=None, trace=False):
+    def exit(self, retval=-1, msg=None, trace=False):                       # noqa A003
         """
+        Exit the current application.
+
         Universal method to call sys.exit(). If fake_exit is set, a
         FakeExitError exception is raised instead (useful for unittests.)
 
@@ -261,7 +282,6 @@ class BaseApplication(HandlingObject):
         @return: None
 
         """
-
         retval = int(retval)
         trace = bool(trace)
 
@@ -278,9 +298,9 @@ class BaseApplication(HandlingObject):
                     LOG.info(msg)
             if not has_handlers:
                 if hasattr(sys.stderr, 'buffer'):
-                    sys.stderr.buffer.write(str(msg) + "\n")
+                    sys.stderr.buffer.write(str(msg) + '\n')
                 else:
-                    sys.stderr.write(str(msg) + "\n")
+                    sys.stderr.write(str(msg) + '\n')
 
         if trace:
             if has_handlers:
@@ -296,7 +316,7 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -304,19 +324,27 @@ class BaseApplication(HandlingObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(BaseApplication, self).as_dict(short=short)
         res['argparse_epilog'] = self.argparse_epilog
         res['argparse_prefix_chars'] = self.argparse_prefix_chars
+        res['args'] = copy.copy(self.args.__dict__)
         res['description'] = self.description
+        res['do_init_logging'] = self.do_init_logging
         res['env_prefix'] = self.env_prefix
         res['exit_value'] = self.exit_value
-        res['usage'] = self.usage
         res['force_desc_msg'] = self.force_desc_msg
+        res['show_assume_options'] = self.show_assume_options
+        res['show_console_timeout_option'] = self.show_console_timeout_option
+        res['show_force_option'] = self.show_force_option
+        res['show_quiet_option'] = self.show_quiet_option
+        res['show_simulate_option'] = self.show_simulate_option
+        res['testing_args'] = self.testing_args
+        res['usage'] = self.usage
         if 'xlate' not in res:
             res['xlate'] = {}
         res['xlate']['fb_tools'] = {
             '__module_dir__': __xlate_module_dir__,
+            '__lib_dir__': __xlate_lib_dir__,
             '__base_dir__': __xlate_base_dir__,
             'LOCALE_DIR': LOCALE_DIR,
             'DOMAIN': DOMAIN,
@@ -326,14 +354,41 @@ class BaseApplication(HandlingObject):
         return res
 
     # -------------------------------------------------------------------------
+    def _get_log_formatter(self, is_term=True):
+
+        # create formatter
+        if is_term:
+            format_str = ''
+            if self.verbose > 1:
+                format_str = '[%(asctime)s]: '
+            format_str += self.appname + ': '
+        else:
+            format_str = '[%(asctime)s]: ' + self.appname + ': '
+        if self.verbose:
+            if self.verbose > 1:
+                format_str += '%(name)s(%(lineno)d) %(funcName)s() '
+            else:
+                format_str += '%(name)s '
+        format_str += '%(levelname)s - %(message)s'
+        if is_term and self.terminal_has_colors:
+            formatter = ColoredFormatter(format_str)
+        else:
+            formatter = logging.Formatter(format_str)
+
+        return formatter
+
+    # -------------------------------------------------------------------------
     def init_logging(self):
         """
         Initialize the logger object.
+
         It creates a colored loghandler with all output to STDERR.
         Maybe overridden in descendant classes.
 
         @return: None
         """
+        if not self.do_init_logging:
+            return
 
         log_level = logging.INFO
         if self.verbose:
@@ -345,22 +400,7 @@ class BaseApplication(HandlingObject):
         root_logger = logging.getLogger()
         root_logger.setLevel(root_loglevel)
 
-        # create formatter
-        format_str = ''
-        if self.verbose:
-            format_str = '[%(asctime)s]: '
-        format_str += self.appname + ': '
-        if self.verbose:
-            if self.verbose > 1:
-                format_str += '%(name)s(%(lineno)d) %(funcName)s() '
-            else:
-                format_str += '%(name)s '
-        format_str += '%(levelname)s - %(message)s'
-        formatter = None
-        if self.terminal_has_colors:
-            formatter = ColoredFormatter(format_str)
-        else:
-            formatter = logging.Formatter(format_str)
+        formatter = self._get_log_formatter()
 
         # create log handler for console output
         lh_console = logging.StreamHandler(sys.stderr)
@@ -381,14 +421,14 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def terminal_can_color(self):
         """
-        Method to detect, whether the current terminal (stdout and stderr)
-        is able to perform ANSI color sequences.
+        Detect, whether the current terminal is able to perform ANSI color sequences.
+
+        This will be done for both stdout and stderr.
 
         @return: both stdout and stderr can perform ANSI color sequences
         @rtype: bool
 
         """
-
         term_debug = False
         if self.verbose > 3:
             term_debug = True
@@ -397,28 +437,30 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def post_init(self):
         """
-        Method to execute before calling run(). Here could be done some
-        finishing actions after reading in commandline parameters,
-        configuration a.s.o.
+        Execute some actions after initialising.
+
+        Here could be done some finishing actions after reading in
+        commandline parameters, configuration a.s.o.
 
         This method could be overwritten by descendant classes, these
         methhods should allways include a call to post_init() of the
         parent class.
 
         """
-
         self.init_logging()
 
         self.perform_arg_parser()
 
     # -------------------------------------------------------------------------
     def get_secret(self, prompt, item_name):
-
-        LOG.debug(_("Trying to get {} via console ...").format(item_name))
+        """Get a secret as input from console."""
+        LOG.debug(_('Trying to get {} via console ...').format(item_name))
 
         # ------------------------
         def signal_handler(signum, frame):
             """
+            React to an alarm signal.
+
             Handler as a callback function for getting a signal from somewhere.
 
             @param signum: the gotten signal number
@@ -427,19 +469,18 @@ class BaseApplication(HandlingObject):
             @type frame: None or a frame object
 
             """
-
-            signame = "{}".format(signum)
-            msg = _("Got a signal {}.").format(signum)
+            signame = '{}'.format(signum)
+            msg = _('Got a signal {}.').format(signum)
             if signum in SIGNAL_NAMES:
                 signame = SIGNAL_NAMES[signum]
-                msg = _("Got a signal {n!r} ({s}).").format(
+                msg = _('Got a signal {n!r} ({s}).').format(
                     n=signame, s=signum)
             LOG.debug(msg)
 
             if signum in (
                     signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
                     signal.SIGTERM, signal.SIGKILL, signal.SIGQUIT):
-                LOG.info(_("Exit on signal {n!r} ({s}).").format(
+                LOG.info(_('Exit on signal {n!r} ({s}).').format(
                     n=signame, s=signum))
                 self.exit(1)
 
@@ -447,13 +488,13 @@ class BaseApplication(HandlingObject):
         old_handlers = {}
 
         if self.verbose > 2:
-            LOG.debug(_("Tweaking signal handlers."))
+            LOG.debug(_('Tweaking signal handlers.'))
         for signum in (
                 signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
                 signal.SIGTERM, signal.SIGQUIT):
             if self.verbose > 3:
                 signame = SIGNAL_NAMES[signum]
-                LOG.debug(_("Setting signal handler for {n!r} ({s}).").format(
+                LOG.debug(_('Setting signal handler for {n!r} ({s}).').format(
                     n=signame, s=signum))
             old_handlers[signum] = signal.signal(signum, signal_handler)
 
@@ -464,14 +505,14 @@ class BaseApplication(HandlingObject):
 
             while True:
 
-                p = _("Enter ") + prompt + ': '
+                p = _('Enter ') + prompt + ': '
                 while True:
                     secret = getpass.getpass(prompt=p)
                     secret = secret.strip()
                     if secret != '':
                         break
 
-                p = _("Repeat enter ") + prompt + ': '
+                p = _('Repeat enter ') + prompt + ': '
                 while True:
                     secret_repeat = getpass.getpass(prompt=p)
                     secret_repeat = secret_repeat.strip()
@@ -481,43 +522,44 @@ class BaseApplication(HandlingObject):
                 if secret == secret_repeat:
                     break
 
-                LOG.error(_("{n} and repeated {n} did not match.").format(n=item_name))
+                LOG.error(_('{n} and repeated {n} did not match.').format(n=item_name))
 
         finally:
             if self.verbose > 2:
-                LOG.debug(_("Restoring original signal handlers."))
+                LOG.debug(_('Restoring original signal handlers.'))
             for signum in old_handlers.keys():
                 signal.signal(signum, old_handlers[signum])
 
         if self.force:
-            LOG.debug(_("Got {n!r}: {s!r}").format(n=item_name, s=secret))
+            LOG.debug(_('Got {n!r}: {s!r}').format(n=item_name, s=secret))
 
         return secret
 
     # -------------------------------------------------------------------------
     def pre_run(self):
         """
-        Dummy function to run before the main routine.
-        Could be overwritten by descendant classes.
+        Execute some actions before the main routine.
 
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def _run(self):
         """
+        Execute the main actions of the application.
+
         Dummy function as main routine.
 
         MUST be overwritten by descendant classes.
-
         """
-
         raise FunctionNotImplementedError('_run()', self.__class__.__name__)
 
     # -------------------------------------------------------------------------
     def __call__(self):
         """
+        Call the main run method.
+
         Helper method to make the resulting object callable, e.g.::
 
             app = PBApplication(...)
@@ -526,21 +568,20 @@ class BaseApplication(HandlingObject):
         @return: None
 
         """
-
         self.run()
 
     # -------------------------------------------------------------------------
     def run(self):
         """
+        Execute the main actions of the application.
+
         The visible start point of this object.
 
         @return: None
-
         """
-
         if not self.initialized:
             self.handle_error(
-                _("The application is not completely initialized."), '', True)
+                _('The application is not completely initialized.'), '', True)
             self.exit(9)
 
         try:
@@ -551,7 +592,7 @@ class BaseApplication(HandlingObject):
 
         if not self.initialized:
             raise FbAppError(
-                _("Object {!r} seems not to be completely initialized.").format(
+                _('Object {!r} seems not to be completely initialized.').format(
                     self.__class__.__name__))
 
         try:
@@ -561,7 +602,7 @@ class BaseApplication(HandlingObject):
             self.exit_value = 99
 
         if self.verbose > 1:
-            LOG.info(_("Ending."))
+            LOG.info(_('Ending.'))
 
         try:
             self.post_run()
@@ -574,23 +615,22 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def post_run(self):
         """
-        Dummy function to run after the main routine.
-        Could be overwritten by descendant classes.
+        Execute some actions after the main routine.
 
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         if self.verbose > 1:
-            LOG.info(_("Executing {} ...").format('post_run()'))
+            LOG.info(_('Executing {} ...').format('post_run()'))
 
     # -------------------------------------------------------------------------
     def _init_arg_parser(self):
         """
+        Initialise the argument parser.
+
         Local called method to initiate the argument parser.
 
         @raise PBApplicationError: on some errors
-
         """
-
         self.arg_parser = argparse.ArgumentParser(
             prog=self.appname,
             description=self.description,
@@ -604,74 +644,99 @@ class BaseApplication(HandlingObject):
 
         general_group = self.arg_parser.add_argument_group(_('General options'))
 
-        general_group.add_argument(
-            '-s', "--simulate", action="store_true", dest="simulate",
-            help=_("Simulation mode, nothing is really done.")
-        )
+        if self.show_simulate_option:
+            general_group.add_argument(
+                '-s', '--simulate', action='store_true', dest='simulate',
+                help=_('Simulation mode, nothing is really done.')
+            )
+
+        if self.show_force_option:
+            general_group.add_argument(
+                '-f', '--force', action='store_true', dest='force',
+                help=self.force_desc_msg,
+            )
+
+        if self.show_assume_options:
+            assume_group = general_group.add_mutually_exclusive_group()
+
+            assume_group.add_argument(
+                '--yes', '--assume-yes', action='store_true', dest='assume_yes',
+                help=_("Automatically answer '{}' for all questions.").format(
+                    self.colored(_('Yes'), 'CYAN'))
+            )
+
+            assume_group.add_argument(
+                '--no', '--assume-no', action='store_true', dest='assume_no',
+                help=_("Automatically answer '{}' for all questions.").format(
+                    self.colored(_('No'), 'CYAN'))
+            )
+
+        if self.show_console_timeout_option:
+            general_group.add_argument(
+                '--console-timeout', metavar=_('SECONDS'), dest='console_timeout', type=int,
+                action=TimeoutOptionAction, max_timeout=self.max_prompt_timeout,
+                help=_('The timeout in seconds for console input. Default: {}').format(
+                    self.default_prompt_timeout)
+            )
 
         general_group.add_argument(
-            '-f', "--force", action="store_true", dest="force",
-            help=self.force_desc_msg,
-        )
-
-        general_group.add_argument(
-            '--color', action="store", dest='color', const='yes',
+            '--color', action='store', dest='color', const='yes',
             default='auto', nargs='?', choices=['yes', 'no', 'auto'],
-            help=_("Use colored output for messages."),
+            help=_('Use colored output for messages.'),
         )
 
-        verbose_group = general_group.add_mutually_exclusive_group()
-
-        verbose_group.add_argument(
-            "-v", "--verbose", action="count", dest='verbose',
-            help=_('Increase the verbosity level'),
-        )
-
-        verbose_group.add_argument(
-            "-q", "--quiet", action="store_true", dest='quiet',
-            help=_('Silent execution, only warnings and errors are emitted.'),
-        )
+        verbose_help = _('Increase the verbosity level')
+        if self.show_quiet_option:
+            verbose_group = general_group.add_mutually_exclusive_group()
+            verbose_group.add_argument(
+                '-v', '--verbose', action='count', dest='verbose',
+                help=verbose_help,
+            )
+            verbose_group.add_argument(
+                '-q', '--quiet', action='store_true', dest='quiet',
+                help=_('Silent execution, only warnings and errors are emitted.'),
+            )
+        else:
+            general_group.add_argument(
+                '-v', '--verbose', action='count', dest='verbose',
+                help=verbose_help,
+            )
 
         general_group.add_argument(
-            "-h", "--help", action='help', dest='help',
+            '-h', '--help', action='help', dest='help',
             help=_('Show this help message and exit.')
         )
         general_group.add_argument(
-            "--usage", action='store_true', dest='usage',
-            help=_("Display brief usage message and exit.")
+            '--usage', action='store_true', dest='usage',
+            help=_('Display brief usage message and exit.')
         )
-        v_msg = _("Version of %(prog)s: {}").format(self.version)
+        v_msg = _('Version of %(prog)s: {}').format(self.version)
         general_group.add_argument(
-            "-V", '--version', action='version', version=v_msg,
+            '-V', '--version', action='version', version=v_msg,
             help=_("Show program's version number and exit.")
         )
 
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """
-        Public available method to initiate the argument parser.
+        Initialise the argument parser - the public available method.
 
         Note::
              avoid adding the general options '--verbose', '--help', '--usage'
              and '--version'. These options are allways added after executing
              this method.
 
-        Descendant classes may override this method.
-
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def _perform_arg_parser(self):
-        """
-        Underlaying method for parsing arguments.
-        """
+        """Parse the command line options."""
+        self.args = self.arg_parser.parse_args(self.testing_args)
 
-        self.args = self.arg_parser.parse_args()
-
-        if self.args.simulate:
-            self.simulate = True
+        if hasattr(self.args, 'simulate'):
+            self.simulate = getattr(self.args, 'simulate', True)
 
         if self.args.usage:
             self.arg_parser.print_usage(sys.stdout)
@@ -680,11 +745,22 @@ class BaseApplication(HandlingObject):
         if self.args.verbose is not None and self.args.verbose > self.verbose:
             self.verbose = self.args.verbose
 
-        if self.args.force:
-            self.force = self.args.force
+        if hasattr(self.args, 'force'):
+            self.force = getattr(self.args, 'force', False)
 
-        if self.args.quiet:
-            self.quiet = self.args.quiet
+        if hasattr(self.args, 'assume_yes'):
+            if self.args.assume_yes:
+                self.assumed_answer = True
+        if hasattr(self.args, 'assume_no'):
+            if self.args.assume_no:
+                self.assumed_answer = False
+
+        if hasattr(self.args, 'quiet') and self.args.quiet:
+            self.quiet = True
+
+        prompt_timeout = getattr(self.args, 'console_timeout', None)
+        if prompt_timeout is not None:
+            self.prompt_timeout = prompt_timeout
 
         if self.args.color == 'yes':
             self._terminal_has_colors = True
@@ -696,24 +772,19 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
         """
-        Public available method to execute some actions after parsing
-        the command line parameters.
+        Parse the command line options - public available method.
 
-        Descendant classes may override this method.
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def _init_env(self):
         """
-        Initialization of self.env by application specific environment
-        variables.
+        Initialise self.env by application specific environment variables.
 
         It calls self.init_env(), after it has done his job.
-
         """
-
         for (key, value) in list(os.environ.items()):
 
             if not key.startswith(self.env_prefix):
@@ -727,26 +798,24 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def init_env(self):
         """
+        Initialise self.env by application specific environment variables.
+
         Public available method to initiate self.env additional to the implicit
         initialization done by this module.
         Maybe it can be used to import environment variables, their
         names not starting with self.env_prefix.
 
         Currently a dummy method, which ca be overriden by descendant classes.
-
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def _perform_env(self):
         """
-        Method to do some useful things with the found environment.
+        Do some useful things with the found environment.
 
         It calls self.perform_env(), after it has done his job.
-
         """
-
         # try to detect verbosity level from environment
         if 'VERBOSE' in self.env and self.env['VERBOSE']:
             v = 0
@@ -762,28 +831,25 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def perform_env(self):
         """
-        Public available method to perform found environment variables after
-        initialization of self.env.
+        Do some useful things with the found environment - public available method.
 
-        Currently a dummy method, which ca be overriden by descendant classes.
-
+        This is a dummy method an could be overwritten by descendant classes.
         """
-
         pass
 
     # -------------------------------------------------------------------------
     def countdown(self, number=5, delay=1, prompt=None):
-
+        """Perform a countdown at the console."""
         if prompt:
             prompt = str(prompt).strip()
         if not prompt:
-            prompt = _("Starting in:")
+            prompt = _('Starting in:')
         prompt = self.colored(prompt, 'YELLOW')
 
         try:
             if not self.force:
                 i = number
-                out = self.colored("%d" % (i), 'RED')
+                out = self.colored('%d' % (i), 'RED')
                 msg = '\n{p} {o}'.format(p=prompt, o=out)
                 sys.stdout.write(msg)
                 sys.stdout.flush()
@@ -792,23 +858,23 @@ class BaseApplication(HandlingObject):
                     sys.stdout.flush()
                     time.sleep(delay)
                     i -= 1
-                    out = self.colored("{}".format(i), 'RED')
+                    out = self.colored('{}'.format(i), 'RED')
                     sys.stdout.write(out)
                     sys.stdout.flush()
-                sys.stdout.write("\n")
+                sys.stdout.write('\n')
                 sys.stdout.flush()
         except KeyboardInterrupt:
-            sys.stderr.write("\n")
-            LOG.warning(_("Aborted by user interrupt."))
+            sys.stderr.write('\n')
+            LOG.warning(_('Aborted by user interrupt.'))
             sys.exit(99)
 
         go = self.colored('Go go go ...', 'GREEN')
-        sys.stdout.write("\n%s\n\n" % (go))
+        sys.stdout.write('\n%s\n\n' % (go))
 
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

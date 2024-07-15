@@ -1,42 +1,40 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: Module for a extended handler module, which has additional methods for locking.
+
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2021 by Frank Brehm, Berlin
-@summary: Module for a extended handler module, which has additional
-          methods for locking
+@copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
 # Standard modules
-import sys
-import os
-import logging
-import time
-import errno
-import traceback
 import datetime
+import errno
 import fcntl
-
+import logging
+import os
+import sys
+import time
+import traceback
+from numbers import Number
 try:
     from pathlib import Path
 except ImportError:
     from pathlib2 import Path
 
-from numbers import Number
-
 # Third party modules
 from six import reraise
 
 # Own modules
+from . import BaseHandler
 from ..common import to_utf8
 from ..errors import CouldntOccupyLockfileError, HandlerError
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
-from . import BaseHandler
 
-__version__ = '0.7.8'
+__version__ = '2.0.4'
 
 LOG = logging.getLogger(__name__)
 
@@ -54,6 +52,8 @@ ngettext = XLATOR.ngettext
 # =============================================================================
 class LockHandlerError(HandlerError):
     """
+    General exception class.
+
     Base exception class for all exceptions belonging to locking issues
     in this module
     """
@@ -64,6 +64,8 @@ class LockHandlerError(HandlerError):
 # =============================================================================
 class LockObjectError(LockHandlerError):
     """
+    General exception class for LockObject.
+
     Special exception class for exceptions raising inside methods of
     the LockObject.
     """
@@ -74,6 +76,8 @@ class LockObjectError(LockHandlerError):
 # =============================================================================
 class LockdirNotExistsError(LockHandlerError):
     """
+    Exception class for not existing lockdir.
+
     Exception class for the case, that the parent directory of the lockfile
     (lockdir) doesn't exists.
     """
@@ -81,19 +85,17 @@ class LockdirNotExistsError(LockHandlerError):
     # -------------------------------------------------------------------------
     def __init__(self, lockdir):
         """
-        Constructor.
+        Create a LockdirNotExistsError object..
 
         @param lockdir: the directory, wich doesn't exists.
         @type lockdir: str
 
         """
-
         self.lockdir = lockdir
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """Typecasting into a string for error output."""
-
+        """Typecaste into a string for error output."""
         return _("Locking directory {!r} doesn't exists or is not a directory.").format(
             str(self.lockdir))
 
@@ -101,6 +103,8 @@ class LockdirNotExistsError(LockHandlerError):
 # =============================================================================
 class LockdirNotWriteableError(LockHandlerError):
     """
+    Exception class for not writeable directoriy.
+
     Exception class for the case, that the parent directory of the lockfile
     (lockdir) isn't writeable for the current process.
     """
@@ -108,19 +112,17 @@ class LockdirNotWriteableError(LockHandlerError):
     # -------------------------------------------------------------------------
     def __init__(self, lockdir):
         """
-        Constructor.
+        Create an LockdirNotWriteableError object.
 
         @param lockdir: the directory, wich isn't writeable
         @type lockdir: str
 
         """
-
         self.lockdir = lockdir
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """Typecasting into a string for error output."""
-
+        """Typecaste into a string for error output."""
         return _("Locking directory {!r} isn't writeable.").format(
             str(self.lockdir))
 
@@ -128,8 +130,9 @@ class LockdirNotWriteableError(LockHandlerError):
 # =============================================================================
 class LockObject(FbBaseObject):
     """
-    Capsulation class as a result of a successful lock action. It contains all
-    important informations about the lock.
+    Capsulation class as a result of a successful lock action.
+
+    It contains all important informations about the lock.
 
     It can be used for holding these informations and, if desired, to remove
     the lock automatically, if the current instance of LockObject is removed.
@@ -139,10 +142,10 @@ class LockObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def __init__(
         self, lockfile, ctime=None, mtime=None, fcontent=None, fd=None, simulate=False,
-            autoremove=False, appname=None, verbose=0, version=__version__,
-            base_dir=None, silent=False):
+            autoremove=False, version=__version__, silent=False, initialized=False,
+            *args, **kwargs):
         """
-        Initialisation of the LockObject object.
+        Initialise a LockObject object.
 
         @raise LockObjectError: on a uncoverable error.
 
@@ -160,25 +163,19 @@ class LockObject(FbBaseObject):
         @type simulate: bool
         @param autoremove: removing the lockfile on deleting the current object
         @type autoremove: bool
-        @param appname: name of the current running application
-        @type appname: str
-        @param verbose: verbose level
-        @type verbose: int
         @param version: the version string of the current object or application
         @type version: str
-        @param base_dir: the base directory of all operations
-        @type base_dir: str
         @param silent: Remove silently the lockfile (except on verbose level >= 2)
         @type silent: bool
 
         @return: None
         """
-
         self._fd = None
 
         super(LockObject, self).__init__(
-            appname=appname, verbose=verbose, version=version,
-            base_dir=base_dir, initialized=False,
+            version=version,
+            initialized=False,
+            *args, **kwargs,
         )
 
         self._simulate = bool(simulate)
@@ -186,7 +183,7 @@ class LockObject(FbBaseObject):
         self._silent = bool(silent)
 
         if not lockfile:
-            raise LockObjectError(_("No lockfile given on init of a LockObject object."))
+            raise LockObjectError(_('No lockfile given on init of a LockObject object.'))
 
         lfile = Path(lockfile)
 
@@ -200,7 +197,7 @@ class LockObject(FbBaseObject):
         else:
             if not lfile.is_file():
                 raise LockObjectError(_(
-                    "Lockfile {!r} is not a regular file.").format(str(lockfile)))
+                    'Lockfile {!r} is not a regular file.').format(str(lockfile)))
 
         if fd is not None:
             self._fd = fd
@@ -233,43 +230,43 @@ class LockObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def lockfile(self):
-        """The file, which represents the lock."""
+        """Return the file, which represents the lock."""
         return self._lockfile
 
     # -----------------------------------------------------------
     @property
     def lockdir(self):
-        """The parent directory of the lockfile."""
+        """Return the parent directory of the lockfile."""
         return self.lockfile.parent
 
     # -----------------------------------------------------------
     @property
     def ctime(self):
-        """The creation time of the lockfile."""
+        """Return the creation time of the lockfile."""
         return self._ctime
 
     # -----------------------------------------------------------
     @property
     def mtime(self):
-        """The last modification time of the lockfile."""
+        """Return the last modification time of the lockfile."""
         return self._mtime
 
     # -----------------------------------------------------------
     @property
     def fcontent(self):
-        """The content of the lockfile."""
+        """Return the content of the lockfile."""
         return self._fcontent
 
     # -----------------------------------------------------------
     @property
     def fd(self):
-        "The numeric file descriptor of the lockfile."
+        """Return the numeric file descriptor of the lockfile."""
         return self._fd
 
     # -----------------------------------------------------------
     @property
     def simulate(self):
-        """Don't execute actions, only display them."""
+        """Do not execute actions, only display them."""
         return self._simulate
 
     @simulate.setter
@@ -279,7 +276,7 @@ class LockObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def autoremove(self):
-        """Removing the lockfile on deleting the current object."""
+        """Remove the lockfile on deleting the current object."""
         return self._autoremove
 
     @autoremove.setter
@@ -299,7 +296,7 @@ class LockObject(FbBaseObject):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -307,7 +304,6 @@ class LockObject(FbBaseObject):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(LockObject, self).as_dict(short=short)
         res['lockfile'] = self.lockfile
         res['lockdir'] = self.lockdir
@@ -323,40 +319,38 @@ class LockObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def __repr__(self):
-        """Typecasting into a string for reproduction."""
-
+        """Typecast  the current objectinto a string for reproduction."""
         out = super(LockObject, self).__repr__()[:-2]
 
         fields = []
-        fields.append("lockfile={!r}".format(self.lockfile))
+        fields.append('lockfile={!r}'.format(self.lockfile))
         if self.fcontent:
-            fields.append("fcontent={!r}".format(self.fcontent))
-        fields.append("ctime={!r}".format(self.ctime))
-        fields.append("mtime={!r}".format(self.mtime))
-        fields.append("fcontent={!r}".format(self.fcontent))
-        fields.append("fd={!r}".format(self.fd))
-        fields.append("simulate={!r}".format(self.simulate))
-        fields.append("autoremove={!r}".format(self.autoremove))
-        fields.append("silent={!r}".format(self.silent))
+            fields.append('fcontent={!r}'.format(self.fcontent))
+        fields.append('ctime={!r}'.format(self.ctime))
+        fields.append('mtime={!r}'.format(self.mtime))
+        fields.append('fcontent={!r}'.format(self.fcontent))
+        fields.append('fd={!r}'.format(self.fd))
+        fields.append('simulate={!r}'.format(self.simulate))
+        fields.append('autoremove={!r}'.format(self.autoremove))
+        fields.append('silent={!r}'.format(self.silent))
 
         if fields:
-            out += ', ' + ", ".join(fields)
-        out += ")>"
+            out += ', ' + ', '.join(fields)
+        out += ')>'
         return out
 
     # -------------------------------------------------------------------------
     def __del__(self):
-        """Destructor.
+        """Delete this object - a destructor.
 
         Removes the lockfile, if self.autoremove is True
 
         """
-
         if not getattr(self, '_initialized', False):
             return
 
         if self.fd is not None:
-            msg = _("Closing file descriptor {} ...").format(self.fd)
+            msg = _('Closing file descriptor {} ...').format(self.fd)
             if self.silent:
                 if self.verbose >= 2:
                     LOG.debug(msg)
@@ -367,7 +361,7 @@ class LockObject(FbBaseObject):
 
         if self.autoremove and self.exists:
 
-            msg = _("Automatic removing of {!r} ...").format(self.lockfile)
+            msg = _('Automatic removing of {!r} ...').format(self.lockfile)
             if self.silent:
                 if self.verbose >= 2:
                     LOG.debug(msg)
@@ -379,8 +373,7 @@ class LockObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def exists(self):
-        """Returns, whether the lockfile exists or not."""
-
+        """Return, whether the lockfile exists or not."""
         if self.simulate:
             return True
 
@@ -388,18 +381,15 @@ class LockObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def stat(self):
-        """The path information of the lockfile (like os.stat())."""
+        """Return the path information of the lockfile (like os.stat)."""
         if not self.exists():
             return None
         return self.lockfile.stat()
 
     # -------------------------------------------------------------------------
     def refresh(self):
-        """
-        Refreshes the atime and mtime of the lockfile to the current time.
-        """
-
-        msg = _("Refreshing atime and mtime of {!r} to the current timestamp.").format(
+        """Refresh the atime and mtime of the lockfile to the current time."""
+        msg = _('Refreshing atime and mtime of {!r} to the current timestamp.').format(
             str(self.lockfile))
         LOG.debug(msg)
 
@@ -411,7 +401,8 @@ class LockObject(FbBaseObject):
 
 # =============================================================================
 class LockHandler(BaseHandler):
-    """
+    """A handler class for locking.
+
     Handler class with additional properties and methods to create,
     check and remove lock files.
     """
@@ -424,10 +415,9 @@ class LockHandler(BaseHandler):
             lockretry_max_delay=DEFAULT_LOCKRETRY_MAX_DELAY,
             max_lockfile_age=DEFAULT_MAX_LOCKFILE_AGE,
             locking_use_pid=DEFAULT_LOCKING_USE_PID,
-            stay_opened=True, appname=None, verbose=0, version=__version__, base_dir=None,
-            simulate=False, sudo=False, quiet=False, silent=False, *targs, **kwargs):
-        """
-        Initialisation of the locking handler object.
+            stay_opened=True, version=__version__,
+            silent=False, initialized=False, *args, **kwargs):
+        """Initialise the locking handler object.
 
         @raise LockdirNotExistsError: if the lockdir (or base_dir) doesn't exists
         @raise LockHandlerError: on a uncoverable error.
@@ -456,32 +446,21 @@ class LockHandler(BaseHandler):
         @type locking_use_pid: bool
         @param stay_opened: should the lockfile stay opened after creation
         @@type stay_opened: bool
-        @param appname: name of the current running application
-        @type appname: str
-        @param verbose: verbose level
-        @type verbose: int
         @param version: the version string of the current object or application
         @type version: str
-        @param base_dir: the base directory of all operations
-        @type base_dir: str
-        @param simulate: don't execute actions, only display them
-        @type simulate: bool
-        @param sudo: should the command executed by sudo by default
-        @type sudo: bool
-        @param quiet: don't display ouput of action after calling
-        @type quiet: bool
         @param silent: Create and remove silently the lockfile (except on verbose level >= 2)
         @type silent: bool
 
         @return: None
 
         """
-
         self._stay_opened = bool(stay_opened)
+        self._silent = bool(silent)
 
         super(LockHandler, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            initialized=False, simulate=simulate, sudo=sudo, quiet=quiet,
+            version=version,
+            initialized=False,
+            *args, **kwargs,
         )
 
         self._lockdir = None
@@ -503,12 +482,10 @@ class LockHandler(BaseHandler):
         self._locking_use_pid = DEFAULT_LOCKING_USE_PID
         self.locking_use_pid = locking_use_pid
 
-        self._silent = bool(silent)
-
     # -----------------------------------------------------------
     @property
     def lockdir(self):
-        """The directory for searching and creating the lockfiles."""
+        """Return the directory for searching and creating the lockfiles."""
         if self._lockdir:
             return self._lockdir
         return self.base_dir
@@ -528,20 +505,18 @@ class LockHandler(BaseHandler):
     # -----------------------------------------------------------
     @property
     def lockretry_delay_start(self):
-        """
-        The first delay in seconds after an unsuccessful lockfile creation.
-        """
+        """Return the first delay in seconds after an unsuccessful lockfile creation."""
         return self._lockretry_delay_start
 
     @lockretry_delay_start.setter
     def lockretry_delay_start(self, value):
         if not isinstance(value, Number):
-            msg = _("Value {val!r} for {what} is not a Number.").format(
+            msg = _('Value {val!r} for {what} is not a Number.').format(
                 val=value, what='lockretry_delay_start')
             raise LockHandlerError(msg)
 
         if value <= 0:
-            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
+            msg = _('The value for {what} must be greater than zero (is {val!r}).').format(
                 val=value, what='lockretry_delay_start')
             raise LockHandlerError(msg)
 
@@ -550,20 +525,18 @@ class LockHandler(BaseHandler):
     # -----------------------------------------------------------
     @property
     def lockretry_delay_increase(self):
-        """
-        The seconds to increase the delay in every wait cycle.
-        """
+        """Return the seconds to increase the delay in every wait cycle."""
         return self._lockretry_delay_increase
 
     @lockretry_delay_increase.setter
     def lockretry_delay_increase(self, value):
         if not isinstance(value, Number):
-            msg = _("Value {val!r} for {what} is not a Number.").format(
+            msg = _('Value {val!r} for {what} is not a Number.').format(
                 val=value, what='lockretry_delay_increase')
             raise LockHandlerError(msg)
 
         if value < 0:
-            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
+            msg = _('The value for {what} must be greater than zero (is {val!r}).').format(
                 val=value, what='lockretry_delay_increase')
             raise LockHandlerError(msg)
 
@@ -572,20 +545,18 @@ class LockHandler(BaseHandler):
     # -----------------------------------------------------------
     @property
     def lockretry_max_delay(self):
-        """
-        The total maximum delay in seconds for trying to create a lockfile.
-        """
+        """Return ttotal maximum delay in seconds for trying to create a lockfile."""
         return self._lockretry_max_delay
 
     @lockretry_max_delay.setter
     def lockretry_max_delay(self, value):
         if not isinstance(value, Number):
-            msg = _("Value {val!r} for {what} is not a Number.").format(
+            msg = _('Value {val!r} for {what} is not a Number.').format(
                 val=value, what='lockretry_max_delay')
             raise LockHandlerError(msg)
 
         if value <= 0:
-            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
+            msg = _('The value for {what} must be greater than zero (is {val!r}).').format(
                 val=value, what='lockretry_max_delay')
             raise LockHandlerError(msg)
 
@@ -594,7 +565,8 @@ class LockHandler(BaseHandler):
     # -----------------------------------------------------------
     @property
     def max_lockfile_age(self):
-        """
+        """Return the maximum age of the lockfile (in seconds).
+
         The maximum age of the lockfile (in seconds), for the existing lockfile
         is valid (if locking_use_pid is False).
         """
@@ -603,12 +575,12 @@ class LockHandler(BaseHandler):
     @max_lockfile_age.setter
     def max_lockfile_age(self, value):
         if not isinstance(value, Number):
-            msg = _("Value {val!r} for {what} is not a Number.").format(
+            msg = _('Value {val!r} for {what} is not a Number.').format(
                 val=value, what='max_lockfile_age')
             raise LockHandlerError(msg)
 
         if value <= 0:
-            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
+            msg = _('The value for {what} must be greater than zero (is {val!r}).').format(
                 val=value, what='max_lockfile_age')
             raise LockHandlerError(msg)
 
@@ -617,9 +589,7 @@ class LockHandler(BaseHandler):
     # -----------------------------------------------------------
     @property
     def locking_use_pid(self):
-        """
-        Write the PID of creating process into the fresh created lockfile.
-        """
+        """Write the PID of creating process into the fresh created lockfile."""
         return self._locking_use_pid
 
     @locking_use_pid.setter
@@ -629,9 +599,9 @@ class LockHandler(BaseHandler):
     # -----------------------------------------------------------
     @property
     def stay_opened(self):
-        """
-        Should the lockfile stay opened after creation. If yes, then it will be closed
-        on deleting the LockObject.
+        """Return, whether the the lockfile should stay opened after creation.
+
+        If yes, then it will be closed on deleting the LockObject.
         """
         return self._stay_opened
 
@@ -652,7 +622,7 @@ class LockHandler(BaseHandler):
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -660,7 +630,6 @@ class LockHandler(BaseHandler):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(LockHandler, self).as_dict(short=short)
         res['lockdir'] = self.lockdir
         res['lockretry_delay_start'] = self.lockretry_delay_start
@@ -675,46 +644,45 @@ class LockHandler(BaseHandler):
 
     # -------------------------------------------------------------------------
     def __repr__(self):
-        """Typecasting into a string for reproduction."""
-
+        """Typecaste into a string for reproduction."""
         out = super(LockHandler, self).__repr__()[:-2]
 
         fields = []
         if self._lockdir:
-            fields.append("lockdir=%r" % (self.lockdir))
-        fields.append("lockretry_delay_start=%r" % (self.lockretry_delay_start))
-        fields.append("lockretry_delay_increase=%r" % (self.lockretry_delay_increase))
-        fields.append("lockretry_max_delay=%r" % (self.lockretry_max_delay))
-        fields.append("max_lockfile_age=%r" % (self.max_lockfile_age))
-        fields.append("locking_use_pid=%r" % (self.locking_use_pid))
-        fields.append("silent=%r" % (self.silent))
-        fields.append("stay_opened=%r" % (self.stay_opened))
+            fields.append('lockdir=%r' % (self.lockdir))
+        fields.append('lockretry_delay_start=%r' % (self.lockretry_delay_start))
+        fields.append('lockretry_delay_increase=%r' % (self.lockretry_delay_increase))
+        fields.append('lockretry_max_delay=%r' % (self.lockretry_max_delay))
+        fields.append('max_lockfile_age=%r' % (self.max_lockfile_age))
+        fields.append('locking_use_pid=%r' % (self.locking_use_pid))
+        fields.append('silent=%r' % (self.silent))
+        fields.append('stay_opened=%r' % (self.stay_opened))
 
         if fields:
-            out += ', ' + ", ".join(fields)
-        out += ")>"
+            out += ', ' + ', '.join(fields)
+        out += ')>'
         return out
 
     # -------------------------------------------------------------------------
     def check_for_number(self, value, default, what, must_gt_zero=False, must_ge_zero=False):
-
+        """Check the given value for a numeric value."""
         if value is None:
             return default
 
         if not isinstance(value, Number):
-            msg = _("Value {val!r} for {what} is not a Number.").format(
+            msg = _('Value {val!r} for {what} is not a Number.').format(
                 val=value, what=what)
             raise LockHandlerError(msg)
 
         if must_gt_zero and value <= 0:
-            msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
+            msg = _('The value for {what} must be greater than zero (is {val!r}).').format(
                 val=value, what=what)
             raise LockHandlerError(msg)
 
         if must_ge_zero and value < 0:
             msg = _(
-                "The value for {what} must be greater than "
-                "or equal to zero (is {val!r}).").format(
+                'The value for {what} must be greater than '
+                'or equal to zero (is {val!r}).').format(
                 val=value, what=what)
             raise LockHandlerError(msg)
 
@@ -725,7 +693,7 @@ class LockHandler(BaseHandler):
         self, lockfile, delay_start=None, delay_increase=None, max_delay=None,
             use_pid=None, max_age=None, pid=None, raise_on_fail=True, stay_opened=None):
         """
-        Tries to create the given lockfile exclusive.
+        Try to create the given lockfile exclusive.
 
         If the lockfile exists and is valid, it waits a total maximum
         of max_delay seconds an increasing amount of seconds to get exclusive
@@ -771,7 +739,6 @@ class LockHandler(BaseHandler):
         @rtype: LockObject or None
 
         """
-
         delay_start = self.check_for_number(
             delay_start, self.lockretry_delay_start,
             what='delay_start', must_gt_zero=True)
@@ -798,7 +765,7 @@ class LockHandler(BaseHandler):
         else:
             pid = int(pid)
             if pid <= 0:
-                msg = _("Invalid PID {} given on calling create_lockfile().").format(pid)
+                msg = _('Invalid PID {} given on calling create_lockfile().').format(pid)
                 raise LockHandlerError(msg)
 
         lfile = Path(lockfile)
@@ -807,7 +774,7 @@ class LockHandler(BaseHandler):
 
         lockdir = lfile.parent
         if self.verbose > 1:
-            LOG.debug(_("Using lock directory {!r} ...").format(str(lockdir)))
+            LOG.debug(_('Using lock directory {!r} ...').format(str(lockdir)))
         if not lockdir.is_dir():
             raise LockdirNotExistsError(lockdir)
 
@@ -815,7 +782,7 @@ class LockHandler(BaseHandler):
         if lfile.exists():
             lfile = lfile.resolve()
 
-        LOG.debug(_("Trying to lock lockfile {!r} ...").format(str(lockfile)))
+        LOG.debug(_('Trying to lock lockfile {!r} ...').format(str(lockfile)))
 
         if not os.access(str(lockdir), os.W_OK):
             msg = _("Locking directory {!r} isn't writeable.").format(str(lockdir))
@@ -856,12 +823,12 @@ class LockHandler(BaseHandler):
                 counter += 1
 
                 if self.verbose > 3:
-                    LOG.debug(_("Current time difference: {:0.3f} seconds.").format(time_diff))
+                    LOG.debug(_('Current time difference: {:0.3f} seconds.').format(time_diff))
                 if time_diff >= max_delay:
                     break
 
                 # Try creating lockfile exclusive
-                LOG.debug(_("Try {try_nr} on creating lockfile {lfile!r} ...").format(
+                LOG.debug(_('Try {try_nr} on creating lockfile {lfile!r} ...').format(
                     try_nr=counter, lfile=str(lockfile)))
                 fd = self._create_lockfile(lockfile)
                 if fd is not None:
@@ -872,12 +839,12 @@ class LockHandler(BaseHandler):
                 if not self.check_lockfile(lockfile, max_age, use_pid):
                     # No other process is using this lockfile
                     if lockfile.exists():
-                        LOG.info(_("Removing lockfile {!r} ...").format(str(lockfile)))
+                        LOG.info(_('Removing lockfile {!r} ...').format(str(lockfile)))
                     try:
                         if not self.simulate:
                             lockfile.unlink()
                     except Exception as e:
-                        msg = _("Error on removing lockfile {lfile!r}: {err}").format(
+                        msg = _('Error on removing lockfile {lfile!r}: {err}').format(
                             lfile=str(lockfile), err=e)
                         LOG.error(msg)
                         time.sleep(delay)
@@ -890,7 +857,7 @@ class LockHandler(BaseHandler):
 
                 # No success, then retry later
                 if self.verbose > 2:
-                    LOG.debug(_("Sleeping for {:0.1f} seconds.").format(float(delay)))
+                    LOG.debug(_('Sleeping for {:0.1f} seconds.').format(float(delay)))
                 time.sleep(delay)
                 delay += delay_increase
 
@@ -905,13 +872,13 @@ class LockHandler(BaseHandler):
                 return None
 
             # or an int for success
-            msg = _("Got a lock for lockfile {!r}.").format(str(lockfile))
+            msg = _('Got a lock for lockfile {!r}.').format(str(lockfile))
             if self.silent:
                 LOG.debug(msg)
             else:
                 LOG.info(msg)
-            out = to_utf8("{}\n".format(pid))
-            LOG.debug(_("Write {what!r} in lockfile {lfile!r} ...").format(
+            out = to_utf8('{}\n'.format(pid))
+            LOG.debug(_('Write {what!r} in lockfile {lfile!r} ...').format(
                 what=out, lfile=str(lockfile)))
 
         finally:
@@ -920,11 +887,11 @@ class LockHandler(BaseHandler):
                 os.write(fd, out)
 
                 if stay_opened:
-                    LOG.debug(_("Seeking and syncing {!r} ...").format(str(lockfile)))
+                    LOG.debug(_('Seeking and syncing {!r} ...').format(str(lockfile)))
                     os.lseek(fd, 0, 0)
                     os.fsync(fd)
                 else:
-                    LOG.debug(_("Closing {!r} ...").format(str(lockfile)))
+                    LOG.debug(_('Closing {!r} ...').format(str(lockfile)))
                     os.close(fd)
                     fd = None
 
@@ -941,18 +908,17 @@ class LockHandler(BaseHandler):
     # -------------------------------------------------------------------------
     def _create_lockfile(self, lockfile):
         """
-        Handles exclusive creation of a lockfile.
+        Handle exclusive the creation of a lockfile.
 
         @return: a file decriptor of the opened lockfile (if possible),
                  or None, if it isn't.
         @rtype: int or None
 
         """
-
         if self.verbose > 1:
-            LOG.debug(_("Trying to open {!r} exclusive ...").format(str(lockfile)))
+            LOG.debug(_('Trying to open {!r} exclusive ...').format(str(lockfile)))
         if self.simulate:
-            LOG.debug(_("Simulation mode, no real creation of a lockfile."))
+            LOG.debug(_('Simulation mode, no real creation of a lockfile.'))
             return -1
 
         fd = None
@@ -960,7 +926,7 @@ class LockHandler(BaseHandler):
             fd = os.open(str(lockfile), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError as e:
-            msg = _("Error on creating lockfile {lfile!r}: {err}").format(
+            msg = _('Error on creating lockfile {lfile!r}: {err}').format(
                 lfile=str(lockfile), err=e)
             if e.errno == errno.EEXIST:
                 LOG.debug(msg)
@@ -974,7 +940,7 @@ class LockHandler(BaseHandler):
     # -------------------------------------------------------------------------
     def remove_lockfile(self, lockfile):
         """
-        Removing lockfile.
+        Remove the lockfile.
 
         @param lockfile: the lockfile to remove.
         @type lockfile: str or pathlib.Path
@@ -983,7 +949,6 @@ class LockHandler(BaseHandler):
         @rtype: bool
 
         """
-
         lfile = Path(lockfile)
         if not lfile.is_absolute():
             lfile = self.lockdir / lfile
@@ -993,7 +958,7 @@ class LockHandler(BaseHandler):
             LOG.debug(_("Lockfile {!r} to remove doesn't exists.").format(str(lfile)))
             return True
 
-        LOG.info(_("Removing lockfile {!r} ...").format(str(lfile)))
+        LOG.info(_('Removing lockfile {!r} ...').format(str(lfile)))
         if self.simulate:
             LOG.debug(_("Simulation mode - lockfile won't removed."))
             return True
@@ -1001,11 +966,11 @@ class LockHandler(BaseHandler):
         try:
             lfile.unlink()
         except Exception as e:
-            LOG.error(_("Error on removing lockfile {lfile!r}: {err}").format(
+            LOG.error(_('Error on removing lockfile {lfile!r}: {err}').format(
                 lfile=str(lockfile), err=e))
             if self.verbose:
                 tb = traceback.format_exc()
-                LOG.debug("Stacktrace:\n" + tb)
+                LOG.debug('Stacktrace:\n' + tb)
             return False
 
         return True
@@ -1013,7 +978,7 @@ class LockHandler(BaseHandler):
     # -------------------------------------------------------------------------
     def check_lockfile(self, lockfile, max_age=None, use_pid=None):
         """
-        Checks the validity of the given lockfile.
+        Check the validity of the given lockfile.
 
         If use_pid is True, and there is a PID inside the lockfile, then
         this PID is checked for a running process.
@@ -1036,7 +1001,6 @@ class LockHandler(BaseHandler):
         @rtype: bool
 
         """
-
         lfile = Path(lockfile)
 
         if use_pid is None:
@@ -1048,38 +1012,38 @@ class LockHandler(BaseHandler):
             max_age = self.max_lockfile_age
         else:
             if not isinstance(max_age, Number):
-                msg = _("Value {val!r} for {what} is not a Number.").format(
+                msg = _('Value {val!r} for {what} is not a Number.').format(
                     val=max_age, what='max_age')
                 raise LockHandlerError(msg)
             if max_age <= 0:
-                msg = _("The value for {what} must be greater than zero (is {val!r}).").format(
+                msg = _('The value for {what} must be greater than zero (is {val!r}).').format(
                     val=max_age, what='max_age')
                 raise LockHandlerError(msg)
 
-        LOG.debug(_("Checking lockfile {!r} ...").format(str(lfile)))
+        LOG.debug(_('Checking lockfile {!r} ...').format(str(lfile)))
 
         if not lfile.exists():
             LOG.debug(_("Lockfile {!r} doesn't exists.").format(str(lfile)))
             return False
 
         if not os.access(str(lfile), os.R_OK):
-            LOG.warning(_("No read access for lockfile {!r}.").format(str(lfile)))
+            LOG.warning(_('No read access for lockfile {!r}.').format(str(lfile)))
             return True
 
         if not os.access(str(lfile), os.W_OK):
-            LOG.warning(_("No write access for lockfile {!r}.").format(str(lfile)))
+            LOG.warning(_('No write access for lockfile {!r}.').format(str(lfile)))
             return True
 
         if use_pid:
             pid = self.get_pid_from_file(lfile, True)
             if pid is None:
-                LOG.warning(_("Unusable lockfile {!r}.").format(str(lfile)))
+                LOG.warning(_('Unusable lockfile {!r}.').format(str(lfile)))
             else:
                 if self.dead(pid):
-                    LOG.warning(_("Process with PID {} is unfortunately dead.").format(pid))
+                    LOG.warning(_('Process with PID {} is unfortunately dead.').format(pid))
                     return False
                 else:
-                    LOG.debug(_("Process with PID {} is still running.").format(pid))
+                    LOG.debug(_('Process with PID {} is still running.').format(pid))
                     return True
 
         fstat = None
@@ -1087,26 +1051,26 @@ class LockHandler(BaseHandler):
             fstat = lfile.stat()
         except OSError as e:
             if e.errno == errno.ENOENT:
-                LOG.info(_("Could not stat for file {lfile!r}: {err}").format(
+                LOG.info(_('Could not stat for file {lfile!r}: {err}').format(
                     lfile=str(lfile), err=e.strerror))
                 return False
             raise
 
         age = time.time() - fstat.st_mtime
         if age >= max_age:
-            LOG.debug(_("Lockfile {lfile!r} is older than {max} seconds ({age} seconds).").format(
+            LOG.debug(_('Lockfile {lfile!r} is older than {max} seconds ({age} seconds).').format(
                 lfile=str(lfile), max=max_age, age=age))
             return False
         msg = _(
-            "Lockfile {lfile!r} is {age} seconds old, but not old enough "
-            "({max} seconds).").format(lfile=str(lfile), max=max_age, age=age)
+            'Lockfile {lfile!r} is {age} seconds old, but not old enough '
+            '({max} seconds).').format(lfile=str(lfile), max=max_age, age=age)
         LOG.debug(msg)
         return True
 
     # -------------------------------------------------------------------------
     def get_pid_from_file(self, pidfile, force=False):
         """
-        Tries to read the PID of some process from the given file.
+        Try to read the PID of some process from the given file.
 
         @raise LockHandlerError: if the pidfile could not be read
 
@@ -1120,16 +1084,15 @@ class LockHandler(BaseHandler):
         @rtype: int (or None)
 
         """
-
         pfile = Path(pidfile)
         fh = None
 
         if self.verbose > 1:
-            LOG.debug(_("Trying to open pidfile {!r} ...").format(str(pfile)))
+            LOG.debug(_('Trying to open pidfile {!r} ...').format(str(pfile)))
         try:
-            fh = pfile.open("rb")
+            fh = pfile.open('rb')
         except Exception as e:
-            msg = _("Could not open pidfile {!r} for reading:").format(str(pfile))
+            msg = _('Could not open pidfile {!r} for reading:').format(str(pfile))
             msg += ' ' + str(e)
             if force:
                 LOG.warning(msg)
@@ -1141,8 +1104,8 @@ class LockHandler(BaseHandler):
         fh.close()
 
         content = content.strip()
-        if content == "":
-            msg = _("First line of pidfile {!r} was empty.").format(str(pfile))
+        if content == '':
+            msg = _('First line of pidfile {!r} was empty.').format(str(pfile))
             if force:
                 LOG.warning(msg)
                 return None
@@ -1153,7 +1116,7 @@ class LockHandler(BaseHandler):
         try:
             pid = int(content)
         except Exception as e:
-            msg = _("Could not interprete {cont!r} as a PID from {file!r}: {err}").format(
+            msg = _('Could not interprete {cont!r} as a PID from {file!r}: {err}').format(
                 cont=content, file=str(pfile), err=e)
             if force:
                 LOG.warning(msg)
@@ -1162,7 +1125,7 @@ class LockHandler(BaseHandler):
                 raise LockHandlerError(msg)
 
         if pid <= 0:
-            msg = _("Invalid PID {pid} in {file!r} found.").format(pid=pid, file=str(pfile))
+            msg = _('Invalid PID {pid} in {file!r} found.').format(pid=pid, file=str(pfile))
             if force:
                 LOG.warning(msg)
                 return None
@@ -1174,7 +1137,7 @@ class LockHandler(BaseHandler):
     # -------------------------------------------------------------------------
     def kill(self, pid, signal=0):
         """
-        Sends a signal to a process.
+        Send a signal to a process.
 
         @raise OSError: on some unpredictable errors
 
@@ -1189,7 +1152,6 @@ class LockHandler(BaseHandler):
         @rtype: bool
 
         """
-
         try:
             return os.kill(pid, signal)
         except OSError as e:
@@ -1206,7 +1168,7 @@ class LockHandler(BaseHandler):
     # -------------------------------------------------------------------------
     def dead(self, pid):
         """
-        Gives back, whether the process with the given pid is dead
+        Give back, whether the process with the given pid is dead.
 
         @raise OSError: on some unpredictable errors
 
@@ -1217,7 +1179,6 @@ class LockHandler(BaseHandler):
         @rtype: bool
 
         """
-
         if self.kill(pid):
             return True
 
@@ -1237,7 +1198,7 @@ class LockHandler(BaseHandler):
 
 
 # =============================================================================
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

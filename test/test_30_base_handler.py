@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''
+"""
+@summary: Test script (and module) for unit tests on base handler object.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2021 Frank Brehm, Berlin
+@copyright: © 2024 Frank Brehm, Berlin
 @license: GPL3
-@summary: test script (and module) for unit tests on base handler object
-'''
+"""
 
+import logging
 import os
 import sys
-import logging
+import textwrap
 
 try:
     import unittest2 as unittest
@@ -22,9 +24,9 @@ from babel.dates import LOCALTZ
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 sys.path.insert(0, libdir)
 
-from general import FbToolsTestcase, get_arg_verbose, init_root_logger
-
 from fb_tools.common import to_bool
+
+from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
 LOG = logging.getLogger('test_base_handler')
 
@@ -35,33 +37,41 @@ if 'EXEC_LONG_TESTS' in os.environ and os.environ['EXEC_LONG_TESTS'] != '':
 
 # =============================================================================
 class TestFbBaseHandler(FbToolsTestcase):
+    """Testcase for unit tests on module fb_tools.handler and class BaseHandler."""
 
     # -------------------------------------------------------------------------
     def setUp(self):
+        """Execute this on setting up before calling each particular test method."""
+        if self.verbose >= 1:
+            print()
 
         self.test_file = None
 
     # -------------------------------------------------------------------------
     def tearDown(self):
-
+        """Tear down routine for calling each particular test method."""
         if self.test_file is not None:
             if os.path.exists(self.test_file):
-                LOG.debug("Removing {!r} ...".format(self.test_file))
+                LOG.debug('Removing {!r} ...'.format(self.test_file))
                 os.remove(self.test_file)
 
     # -------------------------------------------------------------------------
     def test_import(self):
+        """Test import of fb_tools.handler."""
+        LOG.info(self.get_method_doc())
 
-        LOG.info("Testing import of fb_tools.handler ...")
-        import fb_tools.handler                                             # noqa
+        import fb_tools.handler
+        LOG.debug('Version of fb_tools.handler: {!r}'.format(
+            fb_tools.handler.__version__))
 
-        LOG.info("Testing import of BaseHandler from fb_tools.handler ...")
-        from fb_tools.handler import BaseHandler                            # noqa
+        LOG.info('Test import of BaseHandler from fb_tools.handler ...')
+        from fb_tools.handler import BaseHandler
+        LOG.debug('Description of BaseHandler: ' + textwrap.dedent(BaseHandler.__doc__))
 
     # -------------------------------------------------------------------------
     def test_generic_base_handler(self):
-
-        LOG.info("Testing init of a base handler object.")
+        """Test init of a base handler object."""
+        LOG.info(self.get_method_doc())
 
         import fb_tools.handler
         from fb_tools.handler import BaseHandler
@@ -71,8 +81,8 @@ class TestFbBaseHandler(FbToolsTestcase):
             appname=self.appname,
             verbose=self.verbose,
         )
-        LOG.debug("BaseHandler %%r: {!r}".format(hdlr))
-        LOG.debug("BaseHandler %%s: {}".format(hdlr))
+        LOG.debug('BaseHandler %%r: {!r}'.format(hdlr))
+        LOG.debug('BaseHandler %%s: {}'.format(hdlr))
 
         # from HandlingObject
         self.assertEqual(hdlr.appname, self.appname)
@@ -111,17 +121,17 @@ class TestFbBaseHandler(FbToolsTestcase):
             hdlr.sudo = True
             self.assertTrue(hdlr.sudo)
 
-        LOG.debug("Setting timezone to {!r}".format('America/Los_Angeles'))
+        LOG.debug('Setting timezone to {!r}'.format('America/Los_Angeles'))
         hdlr.set_tz('America/Los_Angeles')
         tz_name = LOCALTZ.zone
-        LOG.debug("Setting timezone to {!r}".format(tz_name))
+        LOG.debug('Setting timezone to {!r}'.format(tz_name))
         hdlr.set_tz(tz_name)
 
     # -------------------------------------------------------------------------
-    @unittest.skipUnless(EXEC_LONG_TESTS, "Long terming tests are not executed.")
+    @unittest.skipUnless(EXEC_LONG_TESTS, 'Long terming tests are not executed.')
     def test_call_sync(self):
-
-        LOG.info("Testing synchronous execution of a shell script.")
+        """Test synchronous execution of a shell script."""
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import pp
         from fb_tools.errors import CommandNotFoundError
@@ -134,7 +144,7 @@ class TestFbBaseHandler(FbToolsTestcase):
         if not os.path.exists(call_script):
             raise CommandNotFoundError(call_script)
 
-        LOG.debug("Trying to execute {!r} synchronous ...".format(call_script))
+        LOG.debug('Trying to execute {!r} synchronous ...'.format(call_script))
 
         hdlr = BaseHandler(
             appname=self.appname,
@@ -143,23 +153,23 @@ class TestFbBaseHandler(FbToolsTestcase):
 
         proc = hdlr.call([call_script])
 
-        LOG.debug("Got back a {} object.".format(proc.__class__.__name__))
+        LOG.debug('Got back a {} object.'.format(proc.__class__.__name__))
         self.assertIsInstance(proc, CompletedProcess)
 
-        LOG.debug("Got return value: {}.".format(proc.returncode))
-        LOG.debug("Got proc args:\n{}.".format(pp(proc.args)))
-        LOG.debug("Got STDOUT: {!r}".format(proc.stdout))
-        LOG.debug("Got STDERR: {!r}".format(proc.stderr))
+        LOG.debug('Got return value: {}.'.format(proc.returncode))
+        LOG.debug('Got proc args:\n{}.'.format(pp(proc.args)))
+        LOG.debug('Got STDOUT: {!r}'.format(proc.stdout))
+        LOG.debug('Got STDERR: {!r}'.format(proc.stderr))
 
         self.assertEqual(proc.returncode, 0)
         self.assertIsNotNone(proc.stdout)
         self.assertIsNotNone(proc.stderr)
 
     # -------------------------------------------------------------------------
-    @unittest.skipUnless(EXEC_LONG_TESTS, "Long terming tests are not executed.")
+    @unittest.skipUnless(EXEC_LONG_TESTS, 'Long terming tests are not executed.')
     def test_call_async(self):
-
-        LOG.info("Testing asynchronous execution of a shell script.")
+        """Test asynchronous execution of a shell script."""
+        LOG.info(self.get_method_doc())
 
         from fb_tools.common import pp
         from fb_tools.errors import CommandNotFoundError
@@ -172,7 +182,7 @@ class TestFbBaseHandler(FbToolsTestcase):
         if not os.path.exists(call_script):
             raise CommandNotFoundError(call_script)
 
-        LOG.debug("Trying to execute {!r} asynchronous ...".format(call_script))
+        LOG.debug('Trying to execute {!r} asynchronous ...'.format(call_script))
 
         hdlr = BaseHandler(
             appname=self.appname,
@@ -180,17 +190,17 @@ class TestFbBaseHandler(FbToolsTestcase):
         )
 
         def heartbeat():
-            LOG.debug("Do you hear my heartbeat?")
+            LOG.debug('Do you hear my heartbeat?')
 
         proc = hdlr.call([call_script], hb_handler=heartbeat, hb_interval=1)
 
-        LOG.debug("Got back a {} object.".format(proc.__class__.__name__))
+        LOG.debug('Got back a {} object.'.format(proc.__class__.__name__))
         self.assertIsInstance(proc, CompletedProcess)
 
-        LOG.debug("Got return value: {}.".format(proc.returncode))
-        LOG.debug("Got proc args:\n{}.".format(pp(proc.args)))
-        LOG.debug("Got STDOUT: {!r}".format(proc.stdout))
-        LOG.debug("Got STDERR: {!r}".format(proc.stderr))
+        LOG.debug('Got return value: {}.'.format(proc.returncode))
+        LOG.debug('Got proc args:\n{}.'.format(pp(proc.args)))
+        LOG.debug('Got STDOUT: {!r}'.format(proc.stdout))
+        LOG.debug('Got STDERR: {!r}'.format(proc.stderr))
 
         self.assertEqual(proc.returncode, 0)
         self.assertIsNotNone(proc.stdout)
@@ -205,7 +215,7 @@ if __name__ == '__main__':
         verbose = 0
     init_root_logger(verbose)
 
-    LOG.info("Starting tests ...")
+    LOG.info('Starting tests ...')
 
     suite = unittest.TestSuite()
 

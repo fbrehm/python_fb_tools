@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: A module for providing a configuration for the ddns-update script.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2021 by Frank Brehm, Berlin
-@summary: A module for providing a configuration for the ddns-update script
+@copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
 # Standard module
+import datetime
 import logging
 import re
-
 try:
     from pathlib import Path
 except ImportError:
@@ -20,13 +21,15 @@ except ImportError:
 # Third party modules
 
 # Own modules
+from .. import DEFAULT_ENCODING
+from ..common import is_sequence
+from ..common import timeinterval2delta
 from ..common import to_bool
-
-from ..config import ConfigError, BaseConfiguration
-
+from ..errors import InvalidTimeIntervalError
+from ..multi_config import BaseMultiConfig
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.4.4'
+__version__ = '3.1.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -34,25 +37,15 @@ _ = XLATOR.gettext
 
 
 # =============================================================================
-class DdnsConfigError(ConfigError):
-    """Base error class for all exceptions happened during
-    execution this configured application"""
-
-    pass
-
-
-# =============================================================================
-class DdnsConfiguration(BaseConfiguration):
-    """
-    A class for providing a configuration for the GetVmApplication class
-    and methods to read it from configuration files.
-    """
+class DdnsConfiguration(BaseMultiConfig):
+    """A configuration class for DDNS application classes."""
 
     default_working_dir = Path('/var/lib/ddns')
-    default_logfile = Path('/var/log/ddnss/ddnss-update.log')
+    default_logfile = Path('/var/log/ddns/ddnss-update.log')
 
     default_get_ipv4_url = 'https://ip4.ddnss.de/jsonip.php'
     default_get_ipv6_url = 'https://ip6.ddnss.de/jsonip.php'
+    default_upd_url = 'https://www.ddnss.de/upd.php'
     default_upd_ipv4_url = 'https://ip4.ddnss.de/upd.php'
     default_upd_ipv6_url = 'https://ip6.ddnss.de/upd.php'
 
@@ -63,10 +56,35 @@ class DdnsConfiguration(BaseConfiguration):
 
     valid_protocols = ('any', 'both', 'ipv4', 'ipv6')
 
+    # Standard interval for forced updating a domain
+    default_forced_update_interval = 7 * 24 * 60 * 60
+
+    re_domains_selector = re.compile(r'[,;\s]+')
+    re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
+    re_with_mx = re.compile(r'^\s*with[_-]?mx\s*$', re.IGNORECASE)
+    re_get_url = re.compile(r'^\s*get[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
+    re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]?url\s*$', re.IGNORECASE)
+    re_upd_url_ipv = re.compile(r'^\s*upd(?:ate)?[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
+    re_forced_update_interval = re.compile(
+        r'^^\s*forced[_-]?update[_-]?intervall?\s*$', re.IGNORECASE)
+
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None,
-            encoding=None, config_dir=None, config_file=None, initialized=False):
+            self, appname=None, verbose=0, version=__version__, base_dir=None,
+            append_appname_to_stems=True, config_dir=None, additional_stems=None,
+            additional_cfgdirs=None, additional_config_file=None, encoding=DEFAULT_ENCODING,
+            use_chardet=True, initialized=False):
+        """Initialise a DdnsConfiguration object."""
+        add_stems = []
+        if additional_stems:
+            if is_sequence(additional_stems):
+                for stem in additional_stems:
+                    add_stems.append(stem)
+            else:
+                add_stems.append(additional_stems)
+
+        if 'ddns' not in add_stems:
+            add_stems.append('ddns')
 
         self.working_dir = self.default_working_dir
         self.logfile = self.default_logfile
@@ -77,17 +95,23 @@ class DdnsConfiguration(BaseConfiguration):
         self.with_mx = False
         self.get_ipv4_url = self.default_get_ipv4_url
         self.get_ipv6_url = self.default_get_ipv6_url
+        self.upd_url = self.default_upd_url
         self.upd_ipv4_url = self.default_upd_ipv4_url
         self.upd_ipv6_url = self.default_upd_ipv6_url
         self._timeout = self.default_timeout
         self.protocol = 'any'
         self.ipv4_cache_basename = self.default_ipv4_cache_basename
         self.ipv6_cache_basename = self.default_ipv6_cache_basename
+        self.forced_update_interval = datetime.timedelta(
+            seconds=self.default_forced_update_interval)
 
         super(DdnsConfiguration, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            encoding=encoding, config_dir=config_dir, config_file=config_file, initialized=False,
-        )
+            append_appname_to_stems=append_appname_to_stems, config_dir=config_dir,
+            additional_stems=add_stems, additional_cfgdirs=additional_cfgdirs,
+            encoding=DEFAULT_ENCODING, additional_config_file=additional_config_file,
+            use_chardet=use_chardet, raise_on_error=True, ensure_privacy=False,
+            initialized=False)
 
         if initialized:
             self.initialized = True
@@ -95,7 +119,7 @@ class DdnsConfiguration(BaseConfiguration):
     # -------------------------------------------------------------------------
     @property
     def timeout(self):
-        """The timeout in seconds for Web requests."""
+        """Return the timeout in seconds for Web requests."""
         return self._timeout
 
     @timeout.setter
@@ -105,7 +129,7 @@ class DdnsConfiguration(BaseConfiguration):
             return
         val = int(value)
         err_msg = _(
-            "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600.")
+            'Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600.')
         if val <= 0 or val > 3600:
             msg = err_msg.format(value)
             raise ValueError(msg)
@@ -114,19 +138,19 @@ class DdnsConfiguration(BaseConfiguration):
     # -------------------------------------------------------------------------
     @property
     def ipv4_cache_file(self):
-        """Filename (as Path-object) for storing the current public IPv4 address."""
+        """Return the Filename (as Path-object) for storing the current public IPv4 address."""
         return self.working_dir / self.ipv4_cache_basename
 
     # -------------------------------------------------------------------------
     @property
     def ipv6_cache_file(self):
-        """Filename (as Path-object) for storing the current public IPv6 address."""
+        """Return the Filename (as Path-object) for storing the current public IPv6 address."""
         return self.working_dir / self.ipv6_cache_basename
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
-        Transforms the elements of the object into a dict
+        Transform the elements of the object into a dict.
 
         @param short: don't include local properties in resulting dict.
         @type short: bool
@@ -134,7 +158,6 @@ class DdnsConfiguration(BaseConfiguration):
         @return: structure as dict
         @rtype:  dict
         """
-
         res = super(DdnsConfiguration, self).as_dict(short=short)
 
         res['ddns_pwd'] = None
@@ -148,6 +171,7 @@ class DdnsConfiguration(BaseConfiguration):
         res['default_logfile'] = self.default_logfile
         res['default_get_ipv4_url'] = self.default_get_ipv4_url
         res['default_get_ipv6_url'] = self.default_get_ipv6_url
+        res['default_upd_url'] = self.default_upd_url
         res['default_upd_ipv4_url'] = self.default_upd_ipv4_url
         res['default_upd_ipv6_url'] = self.default_upd_ipv6_url
         res['default_timeout'] = self.default_timeout
@@ -161,95 +185,119 @@ class DdnsConfiguration(BaseConfiguration):
         return res
 
     # -------------------------------------------------------------------------
-    def eval_config_section(self, config, section_name):
+    def eval_section(self, section_name):
+        """Evaluate config sections for DDNS."""
+        super(DdnsConfiguration, self).eval_section(section_name)
 
-        super(DdnsConfiguration, self).eval_config_section(config, section_name)
+        sn = section_name.lower()
 
-        if section_name.lower() == 'ddns':
-            self._eval_config_ddns(config, section_name)
-            return
+        if sn == 'ddns':
+            section = self.cfg[section_name]
+            return self._eval_config_ddns(section_name, section)
 
-        if section_name.lower() == 'files':
-            self._eval_config_files(config, section_name)
-            return
-
-        if self.verbose > 1:
-            LOG.debug("Unhandled configuration section {!r}.".format(section_name))
+        if sn == 'files':
+            section = self.cfg[section_name]
+            return self._eval_config_files(section_name, section)
 
     # -------------------------------------------------------------------------
-    def _eval_config_ddns(self, config, section_name):
+    def _eval_config_ddns(self, section_name, section):
 
         if self.verbose > 1:
-            LOG.debug("Checking config section {!r} ...".format(section_name))
+            LOG.debug('Checking config section {!r} ...'.format(section_name))
 
-        re_domains = re.compile(r'[,;\s]+')
-        re_all_domains = re.compile(r'^all[_-]?domains$', re.IGNORECASE)
-        re_with_mx = re.compile(r'^\s*with[_-]?mx\s*$', re.IGNORECASE)
-        re_get_url = re.compile(r'^\s*get[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
-        re_upd_url = re.compile(r'^\s*upd(?:ate)?[_-]?ipv([46])[_-]?url\s*$', re.IGNORECASE)
+        for key in section.keys():
+            value = section[key]
 
-        for (key, value) in config.items(section_name):
-
-            if key.lower() == 'user' and value.strip():
-                self.ddns_user = value.strip()
-                continue
-            elif (key.lower() == 'pwd' or key.lower() == 'password') and value.strip():
-                self.ddns_pwd = value.strip()
-                continue
-            elif key.lower() == 'domains':
-                domains_str = value.strip()
-                if domains_str:
-                    self.domains = re_domains.split(domains_str)
-                continue
-            elif re_all_domains.match(key) and value.strip():
-                self.all_domains = to_bool(value.strip())
-                continue
-            elif re_with_mx.match(key) and value.strip():
-                self.with_mx = to_bool(value.strip())
-                continue
-            elif key.lower() == 'timeout':
-                try:
-                    self.timeout = value
-                except (ValueError, KeyError) as e:
-                    msg = _("Invalid value {!r} as timeout:").format(value) + ' ' + str(e)
-                    LOG.error(msg)
-                continue
-            match = re_get_url.match(key)
-            if match and value.strip():
-                setattr(self, 'get_ipv{}_url'.format(match.group(1)), value.strip())
-                continue
-            match = re_upd_url.match(key)
-            if match and value.strip():
-                setattr(self, 'upd_ipv{}_url'.format(match.group(1)), value.strip())
-                continue
-            if key.lower() == 'protocol' and value.strip():
-                p = value.strip().lower()
-                if p not in self.valid_protocols:
-                    LOG.error(_(
-                        "Invalid value {ur} for protocols to update, valid protocols "
-                        "are: ").format(value) + format_list(self.valid_protocols, do_repr=True))
-                else:
-                    if p == 'both':
-                        p = 'any'
-                    self.protocol = p
-                continue
-
-            LOG.warning(_(
-                "Unknown configuration option {o!r} with value {v!r} in "
-                "section {s!r}.").format(o=key, v=value, s=section_name))
+            self._eval_config_ddns_value(key, value, section_name)
 
         return
 
     # -------------------------------------------------------------------------
-    def _eval_config_files(self, config, section_name):
+    def _eval_config_ddns_value(self, key, value, section_name):
+
+        if key.lower() == 'user' and value.strip():
+            self.ddns_user = value.strip()
+            return
+
+        if (key.lower() == 'pwd' or key.lower() == 'password') and value.strip():
+            self.ddns_pwd = value.strip()
+            return
+
+        if key.lower() == 'domains':
+            domains_str = value.strip()
+            if domains_str:
+                self.domains = self.re_domains_selector.split(domains_str)
+            return
+
+        if self.re_all_domains.match(key) and value.strip():
+            self.all_domains = to_bool(value.strip())
+            return
+
+        if self.re_with_mx.match(key) and value.strip():
+            self.with_mx = to_bool(value.strip())
+            return
+
+        if key.lower() == 'timeout':
+            try:
+                self.timeout = value
+            except (ValueError, KeyError) as e:
+                msg = _('Invalid value {!r} as timeout:').format(value) + ' ' + str(e)
+                LOG.error(msg)
+            return
+
+        match = self.re_get_url.match(key)
+        if match and value.strip():
+            setattr(self, 'get_ipv{}_url'.format(match.group(1)), value.strip())
+            return
+
+        match = self.re_upd_url.match(key)
+        if match and value.strip():
+            setattr(self, 'upd_url', value.strip())
+            return
+
+        match = self.re_upd_url_ipv.match(key)
+        if match and value.strip():
+            setattr(self, 'upd_ipv{}_url'.format(match.group(1)), value.strip())
+            return
+
+        if key.lower() == 'protocol' and value.strip():
+            p = value.strip().lower()
+            if p not in self.valid_protocols:
+                LOG.error(_(
+                    'Invalid value {u!r} for protocols to update in section {s!r}, valid '
+                    'protocols are: ').format(u=value, s=section_name) + format_list(
+                        self.valid_protocols, do_repr=True))
+            else:
+                if p == 'both':
+                    p = 'any'
+                self.protocol = p
+            return
+
+        match = self.re_forced_update_interval.match(key)
+        if match:
+            try:
+                interval = timeinterval2delta(value)
+                self.forced_update_interval = interval
+            except InvalidTimeIntervalError as e:
+                LOG.error(_('Invalid forced update interval in section {!r}:').format(
+                    section_name) + ' ' + str(e))
+            return
+
+        LOG.warning(_(
+            'Unknown configuration option {o!r} with value {v!r} in '
+            'section {s!r}.').format(o=key, v=value, s=section_name))
+
+    # -------------------------------------------------------------------------
+    def _eval_config_files(self, section_name, section):
 
         if self.verbose > 1:
-            LOG.debug("Checking config section {!r} ...".format(section_name))
+            LOG.debug('Checking config section {!r} ...'.format(section_name))
 
         re_work_dir = re.compile(r'^\s*work(ing)?[_-]?dir(ectory)?\ſ*', re.IGNORECASE)
         re_logfile = re.compile(r'^\s*log[_-]?file\s*$', re.IGNORECASE)
 
-        for (key, value) in config.items(section_name):
+        for key in section.keys():
+            value = section[key]
 
             if re_work_dir.match(key) and value.strip():
                 p = Path(value.strip())
@@ -257,8 +305,8 @@ class DdnsConfiguration(BaseConfiguration):
                     self.working_dir = p
                 else:
                     LOG.error(_(
-                        "The path to the working directory must be an absolute path "
-                        "(given: {!r}).").format(value))
+                        'The path to the working directory must be an absolute path '
+                        '(given: {!r}).').format(value))
                 continue
 
             if re_logfile.match(key) and value.strip():
@@ -267,20 +315,20 @@ class DdnsConfiguration(BaseConfiguration):
                     self.logfile = p
                 else:
                     LOG.error(_(
-                        "The path to the logfile must be an absolute path "
-                        "(given: {!r}).").format(value))
+                        'The path to the logfile must be an absolute path '
+                        '(given: {!r}).').format(value))
                 continue
 
             LOG.warning(_(
-                "Unknown configuration option {o!r} with value {v!r} in "
-                "section {s!r}.").format(o=key, v=value, s=section_name))
+                'Unknown configuration option {o!r} with value {v!r} in '
+                'section {s!r}.').format(o=key, v=value, s=section_name))
 
         return
 
 
 # =============================================================================
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     pass
 

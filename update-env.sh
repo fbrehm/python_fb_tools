@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2317  # Don't warn about unreachable commands in this file
 
 set -e
 set -u
@@ -22,7 +23,7 @@ BASE_DIR=$( dirname "$0" )
 cd "${BASE_DIR}"
 BASE_DIR=$( readlink -f . )
 
-declare -a VALID_PY_VERSIONS=("3.10" "3.9" "3.8" "3.7" "3.6")
+declare -a VALID_PY_VERSIONS=("3.11" "3.10" "3.9" "3.8" "3.7" "3.6")
 
 PIP_OPTIONS=
 export VIRTUAL_ENV_DISABLE_PROMPT=y
@@ -249,7 +250,7 @@ get_options() {
     if type -t msgfmt >/dev/null ; then
         :
     else
-        echo "Command '${RED}msgfmt${NORMAL}' not found, please install package '${YELLOW}gettext${NORMAL}' or appropriate." >&2
+        error "Command '${RED}msgfmt${NORMAL}' not found, please install package '${YELLOW}gettext${NORMAL}' or appropriate."
         exit 6
     fi
 
@@ -327,6 +328,12 @@ upgrade_modules() {
     empty_line
     pip install ${PIP_OPTIONS} --upgrade --upgrade-strategy eager --requirement requirements.txt
     empty_line
+    if [[ -f requirements-lint.txt ]] ; then
+        info "Installing and/or upgrading necessary modules for linting …"
+        empty_line
+        pip install ${PIP_OPTIONS} --upgrade --upgrade-strategy eager --requirement requirements-lint.txt
+        empty_line
+    fi
 }
 
 #------------------------------------------------------------------------------

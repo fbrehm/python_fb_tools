@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
+@summary: Module for some common used error classes.
+
 @author: Frank Brehm
-@summary: module for some common used error classes
 """
 
 # Standard modules
 import errno
-import signal
 import os
+import signal
 
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '1.3.0'
+__version__ = '2.3.1'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -21,22 +22,62 @@ ngettext = XLATOR.ngettext
 
 # =============================================================================
 class FbError(Exception):
-    """
-    Base error class for all other self defined exceptions.
-    """
+    """Base error class for all other self defined exceptions."""
 
     pass
 
 
 # =============================================================================
+class ConfigError(FbError):
+    """Base error class for all exceptions happened during execution."""
+
+    pass
+
+
+# =============================================================================
+class MultiConfigError(ConfigError):
+    """Base error class for all exceptions in this module."""
+
+    pass
+
+
+# =============================================================================
+class MultiCfgLoaderNotFoundError(MultiConfigError, RuntimeError):
+    """Special error class for the case, that a loader method was not found."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, method):
+        """Initialise a MultiCfgLoaderNotFoundError exception."""
+        self.method = method
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """Typescast into a string."""
+        msg = _('Config loader method {!r} was not found.').format(self.method)
+        return msg
+
+
+# =============================================================================
+class MultiCfgParseError(MultiConfigError, ValueError):
+    """Exception class for parsing in BaseMultiConfig class.
+
+    It s raised, when a parse error of a loader module was raised and
+    BaseMultiConfig.raise_on_error was set to True.
+    """
+
+    pass
+
+# =============================================================================
 class BaseMailAddressError(FbError, ValueError):
     """Base Exception class for Mail address errors."""
+
     pass
 
 
 # =============================================================================
 class GeneralMailAddressError(BaseMailAddressError):
     """Class for a exception bcause of general mail address errors."""
+
     pass
 
 
@@ -46,8 +87,8 @@ class EmptyMailAddressError(BaseMailAddressError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
-        return _("Empty mail address.")
+        """Typecast into a string."""
+        return _('Empty mail address.')
 
 
 # =============================================================================
@@ -56,14 +97,14 @@ class InvalidMailAddressError(BaseMailAddressError):
 
     # -------------------------------------------------------------------------
     def __init__(self, address, msg=None):
-
+        """Initialise a InvalidMailAddressError exception."""
         self.address = address
         self.msg = msg
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
-        msg = _("Wrong mail address {a!r} ({c})").format(
+        """Typecast into a string."""
+        msg = _('Wrong mail address {a!r} ({c})').format(
             a=self.address, c=self.address.__class__.__name__)
         if self.msg:
             msg += ': ' + self.msg
@@ -73,35 +114,62 @@ class InvalidMailAddressError(BaseMailAddressError):
 
 
 # =============================================================================
+class InvalidTimeIntervalError(FbError, ValueError):
+    """Class for a exception in case of a malformed textual time intervall."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, interval):
+        """Initialise a InvalidTimeIntervalError  exception."""
+        self.interval = str(interval)
+
+    # -------------------------------------------------------------------------
+    def __str__(self):
+        """Typecast into a string."""
+        msg = _('Wrong time interval {!r}.').format(self.interval)
+        return msg
+
+
+# =============================================================================
 class FbHandlerError(FbError):
+    """Generic exception class for all handler classes."""
 
     pass
 
 
 # =============================================================================
 class FbAppError(FbHandlerError):
+    """Generic exception class for all application classes."""
+
+    pass
+
+
+# =============================================================================
+class AbortAppError(FbAppError):
+    """Special exception class interrupting the application."""
 
     pass
 
 
 # =============================================================================
 class FbCfgAppError(FbAppError):
+    """Generic exception class for all configured application classes."""
 
     pass
 
 
 # =============================================================================
 class HandlerError(FbHandlerError, RuntimeError):
-    """Base error class for all exceptions happened during
-    execution this handler"""
+    """Base error class for all exceptions happened during execution this handler."""
 
     pass
 
 
 # =============================================================================
 class ExpectedHandlerError(HandlerError):
-    """Base class for all errors, which could be expected in application object
-        and displayed without stack trace."""
+    """Generic exception class for expected exception in all application classes.
+
+    They should be displayed without stack trace.
+    """
 
     pass
 
@@ -122,17 +190,17 @@ class InterruptError(ExpectedHandlerError):
 
     # -------------------------------------------------------------------------
     def __init__(self, signum):
-
+        """Initialise a InterruptError exception."""
         self.signum = signum
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
-        signame = "{}".format(self.signum)
+        """Typecast into a string."""
+        signame = '{}'.format(self.signum)
         if self.signum in self.signal_names:
             signame = self.signal_names[self.signum] + '(' + signame + ')'
 
-        msg = _("Process with PID {pid} got signal {signal}.").format(
+        msg = _('Process with PID {pid} got signal {signal}.').format(
             pid=os.getpid(), signal=signame)
 
         return msg
@@ -165,26 +233,24 @@ class NetworkNotExistingError(ExpectedHandlerError):
 
     # -------------------------------------------------------------------------
     def __init__(self, net_name):
-
+        """Initialise a NetworkNotExistingError exception."""
         self.net_name = net_name
 
     # -------------------------------------------------------------------------
     def __str__(self):
-
-        msg = _("The network {!r} is not existing.").format(self.net_name)
+        """Typecast into a string."""
+        msg = _('The network {!r} is not existing.').format(self.net_name)
         return msg
 
 
 # =============================================================================
 class FunctionNotImplementedError(FbError, NotImplementedError):
-    """
-    Error class for not implemented functions.
-    """
+    """Error class for not implemented functions."""
 
     # -------------------------------------------------------------------------
     def __init__(self, function_name, class_name=None):
         """
-        Constructor.
+        Initialise a FunctionNotImplementedError exception.
 
         @param function_name: the name of the not implemented function
         @type function_name: str
@@ -192,7 +258,6 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
         @type class_name: str
 
         """
-
         self.function_name = function_name
         if not function_name:
             self.function_name = '__unkown_function__'
@@ -203,24 +268,19 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """
-        Typecasting into a string for error output.
-        """
-
-        msg = _("Method {func}() has to be overridden in class {cls!r}.")
+        """Typecast into a string for error output."""
+        msg = _('Method {func}() has to be overridden in class {cls!r}.')
         return msg.format(func=self.function_name, cls=self.class_name)
 
 
 # =============================================================================
 class IoTimeoutError(FbError, IOError):
-    """
-    Special error class indicating a timout error on a read/write operation
-    """
+    """Special error class indicating a timout error on a read/write operation."""
 
     # -------------------------------------------------------------------------
     def __init__(self, strerror, timeout, filename=None):
         """
-        Constructor.
+        Initialise an IoTimeoutError exception.
 
         @param strerror: the error message about the operation
         @type strerror: str
@@ -230,7 +290,6 @@ class IoTimeoutError(FbError, IOError):
         @type filename: str
 
         """
-
         t_o = None
         try:
             t_o = float(timeout)
@@ -239,7 +298,7 @@ class IoTimeoutError(FbError, IOError):
         self.timeout = t_o
 
         if t_o is not None:
-            strerror += _(" (timeout after {:0.1f} secs)").format(t_o)
+            strerror += _(' (timeout after {:0.1f} secs)').format(t_o)
 
         if filename is None:
             super(IoTimeoutError, self).__init__(errno.ETIMEDOUT, strerror)
@@ -250,14 +309,12 @@ class IoTimeoutError(FbError, IOError):
 
 # =============================================================================
 class ReadTimeoutError(IoTimeoutError):
-    """
-    Special error class indicating a timout error on reading of a file.
-    """
+    """Special error class indicating a timout error on reading of a file."""
 
     # -------------------------------------------------------------------------
     def __init__(self, timeout, filename):
         """
-        Constructor.
+        Initialise a ReadTimeoutError exception.
 
         @param timeout: the timout in seconds leading to the error
         @type timeout: float
@@ -265,21 +322,18 @@ class ReadTimeoutError(IoTimeoutError):
         @type filename: str
 
         """
-
-        strerror = _("Timeout error on reading")
+        strerror = _('Timeout error on reading')
         super(ReadTimeoutError, self).__init__(strerror, timeout, filename)
 
 
 # =============================================================================
 class WriteTimeoutError(IoTimeoutError):
-    """
-    Special error class indicating a timout error on a writing into a file.
-    """
+    """Special error class indicating a timout error on a writing into a file."""
 
     # -------------------------------------------------------------------------
     def __init__(self, timeout, filename):
         """
-        Constructor.
+        Initialise a WriteTimeoutError exception.
 
         @param timeout: the timout in seconds leading to the error
         @type timeout: float
@@ -287,46 +341,49 @@ class WriteTimeoutError(IoTimeoutError):
         @type filename: str
 
         """
-
-        strerror = _("Timeout error on writing")
+        strerror = _('Timeout error on writing')
         super(WriteTimeoutError, self).__init__(strerror, timeout, filename)
 
 
 # =============================================================================
-class CommandNotFoundError(HandlerError):
-    """
-    Special exception, if one ore more OS commands were not found.
+class TimeoutOnPromptError(AbortAppError, IoTimeoutError):
+    """Special exception class on timout on a prompt."""
 
-    """
+    # -------------------------------------------------------------------------
+    def __init__(self, timeout):
+        """Initialise a TimeoutOnPromptError exception."""
+        strerror = _('Timeout on answering on the console.')
+        super(TimeoutOnPromptError, self).__init__(strerror, timeout)
+
+
+# =============================================================================
+class CommandNotFoundError(HandlerError):
+    """Special exception, if one ore more OS commands were not found."""
 
     # -------------------------------------------------------------------------
     def __init__(self, cmd_list):
         """
-        Constructor.
+        Initialise a CommandNotFoundError exception.
 
         @param cmd_list: all not found OS commands.
         @type cmd_list: list
 
         """
-
         self.cmd_list = None
         if cmd_list is None:
-            self.cmd_list = [_("Unknown OS command.")]
+            self.cmd_list = [_('Unknown OS command.')]
         elif isinstance(cmd_list, list):
             self.cmd_list = cmd_list
         else:
             self.cmd_list = [cmd_list]
 
         if len(self.cmd_list) < 1:
-            raise ValueError(_("Empty command list given."))
+            raise ValueError(_('Empty command list given.'))
 
     # -------------------------------------------------------------------------
     def __str__(self):
-        """
-        Typecasting into a string for error output.
-        """
-
-        cmds = ', '.join(map(lambda x: ("'" + str(x) + "'"), self.cmd_list))
+        """Typecast into a string for error output."""
+        cmds = ', '.join((("'" + str(x) + "'") for x in self.cmd_list))
         msg = ngettext(
             'Could not found OS command:', 'Could not found OS commands:',
             len(self.cmd_list)) + cmds
@@ -336,15 +393,12 @@ class CommandNotFoundError(HandlerError):
 
 # =============================================================================
 class CouldntOccupyLockfileError(FbError):
-    """
-    Special error class indicating, that a lockfile couldn't coccupied
-    after a defined time.
-    """
+    """Special error class indicating, that a lockfile couldn't coccupied after a defined time."""
 
     # -----------------------------------------------------
     def __init__(self, lockfile, duration, tries):
         """
-        Constructor.
+        Initialise a CouldntOccupyLockfileError exception.
 
         @param lockfile: the lockfile, which could't be occupied.
         @type lockfile: str
@@ -354,21 +408,173 @@ class CouldntOccupyLockfileError(FbError):
         @type tries: int
 
         """
-
         self.lockfile = str(lockfile)
         self.duration = float(duration)
         self.tries = int(tries)
 
     # -----------------------------------------------------
     def __str__(self):
-
+        """Typecast into a string for error output."""
         return _("Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries.").format(
             lf=self.lockfile, d=self.duration, tries=self.tries)
 
 
 # =============================================================================
+class CommonPathError(FbError):
+    """Base error class for all errors relating filesystem paths."""
 
-if __name__ == "__main__":
+    # -----------------------------------------------------
+    def __init__(self, path, msg=None):
+        """
+        Initialise a CommonPathError exception.
+
+        @param path: The path having a problem.
+        @type path: str or Path
+        @param msg: the error message
+        @type msg: str or None
+
+        """
+        self.path = str(path)
+        self.msg = None
+        if msg is not None:
+            msg = str(msg).strip()
+            if msg != '':
+                self.msg = str(msg)
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('There is a problem with path {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class CommonDirectoryError(CommonPathError):
+    """Base error class for all errors relating directories."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('There is a problem with directory {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class DirectoryNotExistsError(CommonDirectoryError, FileNotFoundError):
+    """Special exception class, if a directory does not exists."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Directory {!r} does not exists').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class DirectoryNotDirError(CommonDirectoryError, NotADirectoryError):
+    """Special exception class, if path to a directory is not a directory."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Path {!r} is not a directory').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class DirectoryAccessError(CommonDirectoryError, NotADirectoryError):
+    """Special exception class, if a directory has insufficient access rights."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Invalid permissions for directory {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class CommonFileError(CommonPathError):
+    """Base error class for all errors relating files."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('There is a problem with file {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class FileNotExistsError(CommonFileError, FileNotFoundError):
+    """Special exception class, if a file does not exists."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('File {!r} does not exists').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class FileNotRegularFileError(CommonFileError, OSError):
+    """Special exception class, if path to a file is not a regular file."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Path {!r} is not a regular file').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+class FileAccessError(CommonFileError, PermissionError):
+    """Special exception class, if a file has insufficient access rights."""
+
+    # -----------------------------------------------------
+    def __str__(self):
+        """Typecast into a string for error output."""
+        msg = _('Invalid permissions for file {!r}').format(self.path)
+        if self.msg:
+            msg += ': ' + self.msg
+        else:
+            msg += '.'
+        return msg
+
+
+# =============================================================================
+
+if __name__ == '__main__':
     pass
 
 # =============================================================================

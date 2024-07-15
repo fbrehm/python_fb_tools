@@ -2,34 +2,44 @@
 # -*- coding: utf-8 -*-
 
 """
+@summary: Modules for common used objects, error classes and methods.
+
 @author: Frank Brehm
 @contact: frank@brehm-online.com
 @license: LGPL3+
-@copyright: © 2018 Frank Brehm, Berlin
-@summary: Modules for common used objects, error classes and methods.
+@copyright: © 2024 Frank Brehm, Berlin
 """
 from __future__ import print_function
 
-import os
-import sys
-import re
-import pprint
 import datetime
-import textwrap
-import glob
-import pathlib
+import os
+import pprint
+import re
 import subprocess
-
-# Third party modules
-from setuptools import setup
-from setuptools.command.install import install
+import sys
+import textwrap
+from pathlib import Path
 
 # own modules:
-__base_dir__ = os.path.abspath(os.path.dirname(__file__))
-__bin_dir__ = os.path.join(__base_dir__, 'bin')
-__lib_dir__ = os.path.join(__base_dir__, 'lib')
-__module_dir__ = os.path.join(__lib_dir__, 'fb_tools')
-__init_py__ = os.path.join(__module_dir__, '__init__.py')
+
+__base_dir__ = Path(os.path.abspath(os.path.dirname(__file__)))
+__bin_dir__ = __base_dir__ / 'bin'
+__lib_dir__ = __base_dir__ / 'lib'
+__module_dir__ = __lib_dir__ / 'fb_tools'
+__init_py__ = __module_dir__ / '__init__.py'
+__local_usr_dir__ = __base_dir__ / 'usr'
+__share_dir__ = Path(sys.base_prefix) / 'share'
+__local_share_dir__ = Path(str(__base_dir__) + str(__share_dir__)).relative_to(__base_dir__)
+__man_dir__ = Path('share/man')
+__local_man_dir__ = __local_share_dir__ / 'man'
+__man1_dir__ = __man_dir__ / 'man1'
+__local_man1_dir__ = __local_man_dir__ / 'man1'
+__locale_dir__ = Path('share/locale')
+__local_locale_dir__ = __base_dir__ / 'locale'
+
+__debian_dir__ = __base_dir__ / 'debian'
+__changelog_file__ = __debian_dir__ / 'changelog'
+__readme_file__ = __base_dir__ / 'README.md'
 
 PATHS = {
     '__base_dir__': __base_dir__,
@@ -37,23 +47,47 @@ PATHS = {
     '__lib_dir__': __lib_dir__,
     '__module_dir__': __module_dir__,
     '__init_py__': __init_py__,
+    '__local_usr_dir__': __local_usr_dir__,
+    '__share_dir__': __share_dir__,
+    '__local_share_dir__': __local_share_dir__,
+    '__locale_dir__': __locale_dir__,
+    '__man_dir__': __man_dir__,
+    '__man1_dir__': __man1_dir__,
+    '__local_man_dir__': __local_man_dir__,
+    '__local_man1_dir__': __local_man1_dir__,
+    '__debian_dir__': __debian_dir__,
+    '__changelog_file__': __changelog_file__,
+    '__readme_file__': __readme_file__,
+    '__local_locale_dir__': __local_locale_dir__,
 }
+
+__verbose__ = False
+
 
 # -----------------------------------
 def pp(obj):
+    """Return a pretty print string of the given value."""
     pprinter = pprint.PrettyPrinter(indent=4)
     return pprinter.pformat(obj)
 
-#print("Paths:\n{}".format(pp(PATHS)))
 
-if os.path.exists(__module_dir__) and os.path.isfile(__init_py__):
-    sys.path.insert(0, os.path.abspath(__lib_dir__))
+if __verbose__:
+    print('Paths:\n{}'.format(pp(PATHS)))
+
+if __module_dir__.exists() and __init_py__.is_file():
+    sys.path.insert(0, str(__lib_dir__))
+
+# Third party modules
+from babel.messages import frontend as babel
 
 import fb_tools
 
-#from fb_tools.common import pp
+from setuptools import setup
+from setuptools.command.sdist import sdist
 
-ENCODING = "utf-8"
+# from fb_tools.common import pp
+
+ENCODING = 'utf-8'
 
 __packet_version__ = fb_tools.__version__
 
@@ -62,47 +96,37 @@ __debian_pkg_name__ = 'fb-tools'
 
 __author__ = 'Frank Brehm'
 __contact__ = 'frank@brehm-online.com'
-__copyright__ = '(C) 2018 Frank Brehm, Berlin'
+__copyright__ = '(C) 2024 Frank Brehm, Berlin'
 __license__ = 'LGPL3+'
 __url__ = 'https://github.com/fbrehm/python_fb_tools'
 
 
-__open_args__ = {}
-if sys.version_info[0] < 3:
-    __open_args__ = {'encoding': ENCODING, 'errors': 'surrogateescape'}
+__open_args__ = {'encoding': ENCODING, 'errors': 'surrogateescape'}
 
 # -----------------------------------
-def read(fname):
-
+def read(file2read):
+    """Read the given file and return its content."""
     content = None
 
-    if sys.version_info[0] < 3:
-        with open(fname, 'r') as fh:
-            content = fh.read()
-    else:
-        with open(fname, 'r', **__open_args__) as fh:
-            content = fh.read()
+    with file2read.open('r', **__open_args__) as fh:
+        content = fh.read()
 
     return content
 
 
 # -----------------------------------
-def is_python_file(filename):
-    if filename.endswith('.py'):
+def is_python_file(file2inspect):
+    """Return, whether the given file seems to be a Python source file."""
+    if file2inspect.suffix == '.py':
         return True
     else:
         return False
 
 
 # -----------------------------------
-__debian_dir__ = os.path.join(__base_dir__, 'debian')
-__changelog_file__ = os.path.join(__debian_dir__, 'changelog')
-__readme_file__ = os.path.join(__base_dir__, 'README.txt')
-
-
-# -----------------------------------
 def get_debian_version():
-    if not os.path.isfile(__changelog_file__):
+    """Return the latest package version fron Debian changelog file."""
+    if not __changelog_file__.is_file():
         return None
     changelog = read(__changelog_file__)
     first_row = changelog.splitlines()[0].strip()
@@ -114,6 +138,7 @@ def get_debian_version():
         return None
     return match.group(1).strip()
 
+
 __debian_version__ = get_debian_version()
 
 if __debian_version__ is not None and __debian_version__ != '':
@@ -121,16 +146,17 @@ if __debian_version__ is not None and __debian_version__ != '':
 
 # -----------------------------------
 def write_local_version():
-
-    local_version_file = os.path.join(__module_dir__, 'local_version.py')
+    """Write the local version file."""
+    local_version_file = __module_dir__ / 'local_version.py'
     local_version_file_content = textwrap.dedent('''\
         #!/usr/bin/python
         # -*- coding: utf-8 -*-
         """
+        @summary: Modules for common used objects, error classes and methods.
+
         @author: {author}
         @contact: {contact}
         @copyright: © {cur_year} by {author}, Berlin
-        @summary: Modules for common used objects, error classes and methods.
         """
 
         __author__ = '{author} <{contact}>'
@@ -147,13 +173,8 @@ def write_local_version():
         author=__author__, contact=__contact__, cur_year=cur_year,
         version=__packet_version__, license=__license__)
 
-    if sys.version_info[0] < 3:
-        with open(local_version_file, 'wt') as fh:
-            fh.write(content)
-    else:
-        content_bin = content.encode('utf-8')
-        with open(local_version_file, 'wb') as fh:
-            fh.write(content_bin)
+    with local_version_file.open('wt', **__open_args__) as fh:
+        fh.write(content)
 
 
 # Write lib/storage_tools/local_version.py
@@ -167,9 +188,9 @@ __requirements__ = [
 
 # -----------------------------------
 def read_requirements():
-
-    req_file = os.path.join(__base_dir__, 'requirements.txt')
-    if not os.path.isfile(req_file):
+    """Read the requiremments.txt file."""
+    req_file = __base_dir__ / 'requirements.txt'
+    if not req_file.is_file():
         return
 
     f_content = read(req_file)
@@ -191,7 +212,8 @@ def read_requirements():
         if module not in __requirements__:
             __requirements__.append(module)
 
-    # print("Found required modules: {}\n".format(pp(__requirements__)))
+    if __verbose__:
+        print('Found required modules: {}\n'.format(pp(__requirements__)))
 
 
 read_requirements()
@@ -200,48 +222,105 @@ read_requirements()
 __scripts__ = []
 
 def get_scripts():
-
-    fpattern = os.path.join(__bin_dir__, '*')
-    for fname in glob.glob(fpattern):
-        script_name = os.path.relpath(fname, __base_dir__)
-        if not os.path.isfile(fname):
+    """Collect binary script files from bin/."""
+    for script in __bin_dir__.glob('*'):
+        script_rel = str(script.relative_to(__base_dir__))
+        if not script.is_file():
             continue
-        if not os.access(fname, os.X_OK):
+        if not os.access(str(script), os.X_OK):
             continue
 
-        if script_name not in __scripts__:
-            __scripts__.append(script_name)
+        if script_rel not in __scripts__:
+            __scripts__.append(script_rel)
 
-    # print("Found scripts: {}\n".format(pp(__scripts__)))
+    if __verbose__:
+        print('Found scripts: {}\n'.format(pp(__scripts__)))
 
 
 get_scripts()
 
 # -----------------------------------
-MO_FILES = 'locale/*/LC_MESSAGES/*.mo'
-PO_FILES = 'locale/*/LC_MESSAGES/*.po'
+__data_files__ = []
+
+re_usr = re.compile(r'^usr/')
+re_man = re.compile(r'man/man\S+$')
+
+if __local_usr_dir__.is_dir():
+    usr_files = {}
+    for f in __local_usr_dir__.glob('**/*'):
+        if f.is_file():
+            relpath = Path(os.path.relpath(str(f), __base_dir__))
+            reldir = re_usr.sub('', str(relpath.parent))
+            # if re_man.search(str(reldir)):
+            #     continue
+            if str(reldir) not in usr_files:
+                usr_files[str(reldir)] = []
+            usr_files[str(reldir)].append(str(relpath))
+    for udir in usr_files.keys():
+        __data_files__.append((udir, usr_files[udir]))
+
+if __verbose__:
+    print('Found data files:\n' + pp(__data_files__) + '\n')
+
+# -----------------------------------
+# PO_FILES = 'locale/*/LC_MESSAGES/*.po'
+# __package_data__ = {}
 
 def create_mo_files():
+    """Compile the translation files."""
     mo_files = []
-    for po_path in glob.glob(PO_FILES):
-        mo = pathlib.Path(po_path.replace('.po', '.mo'))
-        if not mo.exists():
-            subprocess.call(['msgfmt', '-o', str(mo), po_path])
-        mo_files.append(str(mo))
+    for po_path in __local_locale_dir__.glob('**/*.po'):
+        po_path_rel = po_path.relative_to(__base_dir__)
+        mo_path = po_path_rel.with_suffix('.mo')
+        if not mo_path.exists():
+            subprocess.call(['msgfmt', '-o', str(mo_path), str(po_path)])
+        mo_files.append(mo_path)
 
-    # print("Found mo files: {}\n".format(pp(mo_files)))
+    if __verbose__:
+        print('Found mo files: {}\n'.format(pp(mo_files)))
     return mo_files
+
+
+__pkg_mo_paths__ = create_mo_files()
+__pkg_mo_files__ = []
+for mo_file in __pkg_mo_paths__:
+    __pkg_mo_files__.append(str(mo_file))
+
+for mo_file in __pkg_mo_paths__:
+    ltype = mo_file.parent.name
+    lname = mo_file.parent.parent.name
+    ldir = __locale_dir__ / lname / ltype
+    mo_file_rel = str(mo_file).lstrip('/')
+    __data_files__.append((str(ldir), [mo_file_rel]))
+
+if __verbose__:
+    print('Found data files:\n' + pp(__data_files__) + '\n')
+
+# -----------------------------------
+class Sdist(sdist):
+    """Custom ``sdist`` command to ensure that mo files are always created."""
+
+    def run(self):
+        """Compile the l18n catalog."""
+        self.run_command('compile_catalog')
+        # sdist is an old style class so super cannot be used.
+        sdist.run(self)
 
 
 # -----------------------------------
 setup(
     version=__packet_version__,
-    long_description=read('README.md'),
+    long_description=read(__readme_file__),
     scripts=__scripts__,
     requires=__requirements__,
     package_dir={'': 'lib'},
-    package_data = {
-        '': create_mo_files(),
+    data_files=__data_files__,
+    cmdclass={
+        'compile_catalog': babel.compile_catalog,
+        'extract_messages': babel.extract_messages,
+        'init_catalog': babel.init_catalog,
+        'update_catalog': babel.update_catalog,
+        'sdist': Sdist,
     },
 )
 

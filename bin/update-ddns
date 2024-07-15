@@ -1,46 +1,68 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+@summary: Update the A and/or AAAA record at ddns.de with the current IP address.
 
+@author: Frank Brehm
+@contact: frank.brehm@pixelpark.com
+@copyright: © 2024 by Frank Brehm, Berlin
+"""
 from __future__ import print_function
 
+import locale
+import os
 import sys
 
-if sys.version_info[0] != 3:
-    print("This script is intended to use with Python3.", file=sys.stderr)
-    print("You are using Python: {0}.{1}.{2}-{3}-{4}.\n".format(
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+
+__exp_py_version_major__ = 3
+__min_py_version_minor__ = 6
+
+if sys.version_info[0] != __exp_py_version_major__:
+    print('This script is intended to use with Python {}.'.format(
+        __exp_py_version_major__), file=sys.stderr)
+    print('You are using Python: {0}.{1}.{2}-{3}-{4}.'.format(
         *sys.version_info), file=sys.stderr)
     sys.exit(1)
 
-if sys.version_info[1] < 4:
-    print("A minimal Python version of 3.4 is necessary to execute this script.", file=sys.stderr)
-    print("You are using Python: {0}.{1}.{2}-{3}-{4}.\n".format(
+if sys.version_info[1] < __min_py_version_minor__:
+    print('A minimal Python version of {maj}.{min} is necessary to execute this script.'.format(
+        maj=__exp_py_version_major__, min=__min_py_version_minor__), file=sys.stderr)
+    print('You are using Python: {0}.{1}.{2}-{3}-{4}.'.format(
         *sys.version_info), file=sys.stderr)
     sys.exit(1)
 
-import os
-import logging
-import locale
-
-# own modules:
 cur_dir = os.getcwd()
 base_dir = cur_dir
 
-if sys.argv[0] != '' and sys.argv[0] != '-c':
-    bin_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
-else:
-    bin_dir = os.path.dirname(os.path.realpath(__file__))
-base_dir = os.path.abspath(os.path.join(bin_dir, '..'))
-lib_dir = os.path.join(base_dir, 'lib')
-module_dir = os.path.join(lib_dir, 'fb_tools')
-if os.path.exists(module_dir):
-    sys.path.insert(0, lib_dir)
+my_path = Path(__file__)
+my_real_path = my_path.resolve()
+bin_path = my_real_path.parent
+base_dir = bin_path.parent
+lib_dir = base_dir.joinpath('lib')
+module_dir = lib_dir.joinpath('fb_tools')
 
+# print("My path:      {!r}".format(str(my_path)))
+# print("My real path: {!r}".format(str(my_real_path)))
+# print("Bin path:     {!r}".format(str(bin_path)))
+# print("Base dir:     {!r}".format(str(base_dir)))
+# print("Lib dir:      {!r}".format(str(lib_dir)))
+# print("Module dir:   {!r}".format(str(module_dir)))
+
+if module_dir.exists():
+    sys.path.insert(0, str(lib_dir))
+
+# own modules:
 from fb_tools.ddns.update_app import UpdateDdnsApplication
+from fb_tools.xlate import XLATOR
 
-log = logging.getLogger(__name__)
+_ = XLATOR.gettext
 
 __author__ = 'Frank Brehm <frank@brehm-online.com>'
-__copyright__ = '(C) 2019 by Frank Brehm, Berlin'
+__copyright__ = '(C) 2024 by Frank Brehm, Berlin'
 
 appname = os.path.basename(sys.argv[0])
 
@@ -50,7 +72,7 @@ app = UpdateDdnsApplication(appname=appname, base_dir=base_dir)
 app.initialized = True
 
 if app.verbose > 2:
-    print("{c}-Object:\n{a}".format(c=app.__class__.__name__, a=app))
+    print(_('{c}-Object:\n{a}').format(c=app.__class__.__name__, a=app))
 
 app()
 
