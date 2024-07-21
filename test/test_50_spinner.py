@@ -34,6 +34,11 @@ EXEC_LONG_TESTS = False
 if 'EXEC_LONG_TESTS' in os.environ and os.environ['EXEC_LONG_TESTS'] != '':
     EXEC_LONG_TESTS = to_bool(os.environ['EXEC_LONG_TESTS'])
 
+SPINNER_TO_TEST = 'line'
+if 'SPINNER_TO_TEST' in os.environ:
+    SPINNER_TO_TEST = os.environ['SPINNER_TO_TEST'].strip()
+    if not SPINNER_TO_TEST:
+        SPINNER_TO_TEST = None
 
 # =============================================================================
 class TestSpinner(FbToolsTestcase):
@@ -60,9 +65,25 @@ class TestSpinner(FbToolsTestcase):
             fb_tools.spinner.__version__))
 
     # -------------------------------------------------------------------------
+    @unittest.skipUnless(SPINNER_TO_TEST, 'No spinner to test selected.')
+    def test_particular_spinner(self):
+        """Test execution of a particular spinner."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.spinner import Spinner
+
+        seconds_per_spinner = 10
+
+        msg = 'Testing spinner {!r}: '.format(SPINNER_TO_TEST)
+        with Spinner(msg, SPINNER_TO_TEST):
+            time.sleep(seconds_per_spinner)
+        print()
+        print('Continue ...')
+
+    # -------------------------------------------------------------------------
     @unittest.skipUnless(EXEC_LONG_TESTS, 'Long terming tests are not executed.')
-    def test_spinner(self):
-        """Test execution of a spinner."""
+    def test_all_spinners(self):
+        """Test execution of all spinners."""
         LOG.info(self.get_method_doc())
 
         import fb_tools.spinner
@@ -92,7 +113,8 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     suite.addTest(TestSpinner('test_import', verbose))
-    suite.addTest(TestSpinner('test_spinner', verbose))
+    suite.addTest(TestSpinner('test_particular_spinner', verbose))
+    suite.addTest(TestSpinner('test_all_spinners', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
