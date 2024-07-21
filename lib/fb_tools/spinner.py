@@ -49,7 +49,7 @@ CycleList = {
     'dots9': {'delay': 80, 'frames': '⢹⢺⢼⣸⣇⡧⡗⡏'},
     'dots10': {'delay': 80, 'frames': '⢄⢂⢁⡁⡈⡐⡠'},
     'dots11': {'delay': 100, 'frames': '⠁⠂⠄⡀⢀⠠⠐⠈'},
-    "dots12": {
+    'dots12': {
         'delay': 80,
         'frames': [
             '⢀⠀',
