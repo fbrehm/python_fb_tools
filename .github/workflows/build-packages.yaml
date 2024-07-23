@@ -56,7 +56,7 @@ jobs:
     needs:
       - prepare-image
     # uses: fbrehm/actions/.github/workflows/build-python-packages.yaml@main
-    uses: fbrehm/actions/.github/workflows/build-python-packages.yaml@build-el-7
+    uses: fbrehm/actions/.github/workflows/build-python-packages.yaml@923eb27aac0ab2fcf3fb19dcb8ff52e6c410f619
     with:
       has_i18n: true
       # test_python_versions: '["3.8", "3.9", "3.10", "3.11", "3.12"]'
