@@ -1,3 +1,9 @@
+fb-tools (2.6.3) UNRELEASED; urgency=medium
+
+  * Fixing search for locales dir in lib/fb_tools/xlate.py.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 25 Jul 2024 17:41:08 +0200
+
 fb-tools (2.6.2) all; urgency=medium
 
   * Adding module fb_tools.spinner
