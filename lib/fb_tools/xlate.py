@@ -35,13 +35,15 @@ DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '2.0.4'
+__version__ = '2.0.5'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
 __lib_dir__ = __module_dir__.parent
 __base_dir__ = __lib_dir__.parent
+
 LOCALE_DIR = __base_dir__ / 'locale'
+
 if LOCALE_DIR.is_dir():
     # Not installed, in development workdir
     LOCALE_DIR = str(LOCALE_DIR)
@@ -52,7 +54,8 @@ else:
         LOCALE_DIR = sys.prefix + '/share/locale'
     else:
         # Obviously in a virtual environment
-        LOCALE_DIR = __lib_dir__ / 'usr' / 'local' / 'share' / 'locale'
+        __base_dir__ = Path(sys.prefix)
+        LOCALE_DIR = __base_dir__ / 'share' / 'locale'
         if LOCALE_DIR.is_dir():
             LOCALE_DIR = str(LOCALE_DIR.resolve())
         else:
@@ -60,7 +63,7 @@ else:
             if LOCALE_DIR.is_dir():
                 LOCALE_DIR = str(LOCALE_DIR)
             else:
-                LOCALE_DIR = sys.prefix + '/share/locale'
+                LOCALE_DIR = str(__base_dir__.prefix / 'share' / 'locale')
 
 DEFAULT_LOCALE_DEF = 'en_US'
 DEFAULT_LOCALE = babel.core.default_locale()
@@ -116,6 +119,7 @@ if __name__ == '__main__':
 
     out_list = []
     out_list.append([_('Module directory:'), str(__module_dir__)])
+    out_list.append([_('Lib directory:'), str(__lib_dir__)])
     out_list.append([_('Base directory:'), str(__base_dir__)])
     out_list.append([_('Locale directory:'), LOCALE_DIR])
     out_list.append([_('Locale domain:'), DOMAIN])
