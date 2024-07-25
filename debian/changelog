@@ -1,4 +1,4 @@
-fb-tools (2.6.3) UNRELEASED; urgency=medium
+fb-tools (2.6.3) all; urgency=medium
 
   * Fixing search for locales dir in lib/fb_tools/xlate.py.
 
