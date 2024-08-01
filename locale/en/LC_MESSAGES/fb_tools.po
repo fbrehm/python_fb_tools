@@ -5,18 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.4.2\n"
+"Project-Id-Version: fb_tools 2.6.2\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2024-03-13 15:17+0100\n"
+"POT-Creation-Date: 2024-07-25 17:34+0200\n"
 "PO-Revision-Date: 2024-03-13 15:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en\n"
 "Language-Team: en <frank@brehm-online.com>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.14.0\n"
 
 #: bin/get-file-to-remove:72 bin/myip:75 bin/update-ddns:75
 msgid ""
@@ -118,11 +118,11 @@ msgstr ""
 msgid "Automatically answer '{}' for all questions."
 msgstr ""
 
-#: lib/fb_tools/app.py:665 lib/fb_tools/handling_obj.py:1048
+#: lib/fb_tools/app.py:665 lib/fb_tools/handling_obj.py:1065
 msgid "Yes"
 msgstr ""
 
-#: lib/fb_tools/app.py:671 lib/fb_tools/handling_obj.py:1046
+#: lib/fb_tools/app.py:671 lib/fb_tools/handling_obj.py:1063
 msgid "No"
 msgstr ""
 
@@ -265,47 +265,48 @@ msgstr ""
 msgid "Got a {c}: {e}."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:241
+#: lib/fb_tools/cfg_app.py:244
 msgid "file is not writeable."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:244
+#: lib/fb_tools/cfg_app.py:247
 msgid "no write access to directory."
 msgstr ""
 
-#: lib/fb_tools/cfg_app.py:246
+#: lib/fb_tools/cfg_app.py:249
 msgid "Start logging into file {!r} ..."
 msgstr "Start logging into file {!r} …"
 
-#: lib/fb_tools/collections.py:60
+#: lib/fb_tools/colcts.py:60 lib/fb_tools/collections.py:60
 msgid "Item {item!r} must be of type {must!r}, but is of type {cls!r} instead."
 msgstr ""
 
-#: lib/fb_tools/collections.py:78
+#: lib/fb_tools/colcts.py:78 lib/fb_tools/collections.py:78
 msgid "Object {o!r} is not a {e} object."
 msgstr ""
 
-#: lib/fb_tools/collections.py:96
+#: lib/fb_tools/colcts.py:96 lib/fb_tools/collections.py:96
 msgid "Key {key!r} must be of type {must!r}, but is of type {cls!r} instead."
 msgstr ""
 
-#: lib/fb_tools/collections.py:113
+#: lib/fb_tools/colcts.py:113 lib/fb_tools/collections.py:113
 msgid "Object is neither a {m} object, nor a sequential object, but a {o!r} object instead."
 msgstr ""
 
-#: lib/fb_tools/collections.py:132
+#: lib/fb_tools/colcts.py:132 lib/fb_tools/collections.py:132
 msgid "Key {!r} is not existing."
 msgstr ""
 
-#: lib/fb_tools/collections.py:151 lib/fb_tools/collections.py:170
+#: lib/fb_tools/colcts.py:151 lib/fb_tools/colcts.py:170 lib/fb_tools/collections.py:151
+#: lib/fb_tools/collections.py:170
 msgid "Could update {ex} with {i!r}: {m}"
 msgstr ""
 
-#: lib/fb_tools/collections.py:194
+#: lib/fb_tools/colcts.py:194 lib/fb_tools/collections.py:194
 msgid "Parameter {p!r} is not a sequence type, but a {c!r} object instead."
 msgstr ""
 
-#: lib/fb_tools/collections.py:1005
+#: lib/fb_tools/colcts.py:1005 lib/fb_tools/collections.py:1005
 msgid "The method {met}() expected at most {max} arguments, got {got}."
 msgstr ""
 
@@ -1297,148 +1298,148 @@ msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/fb_tools/handling_obj.py:303
+#: lib/fb_tools/handling_obj.py:304
 msgid "Wrong prompt timeout {v!r}, must be greater or equal to Null and less or equal to {max}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:326 lib/fb_tools/handling_obj.py:418
+#: lib/fb_tools/handling_obj.py:327 lib/fb_tools/handling_obj.py:427
 msgid "Wrong address family {!r} given. Valid values are:"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:339
+#: lib/fb_tools/handling_obj.py:346
 msgid "yes"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:346
+#: lib/fb_tools/handling_obj.py:353
 msgid "no"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:496
+#: lib/fb_tools/handling_obj.py:513
 msgid "Searching for command {!r} ..."
 msgstr "Searching for command {!r} …"
 
-#: lib/fb_tools/handling_obj.py:501
+#: lib/fb_tools/handling_obj.py:518
 msgid "Command {!r} doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:504 lib/fb_tools/handling_obj.py:528
+#: lib/fb_tools/handling_obj.py:521 lib/fb_tools/handling_obj.py:545
 msgid "Command {!r} is not executable."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:518
+#: lib/fb_tools/handling_obj.py:535
 msgid "Searching command in {!r} ..."
 msgstr "Searching command in {!r} …"
 
-#: lib/fb_tools/handling_obj.py:531
+#: lib/fb_tools/handling_obj.py:548
 msgid "Command {!r} not found."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:603
+#: lib/fb_tools/handling_obj.py:620
 msgid "STDIN and input arguments may not both be used."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:606
+#: lib/fb_tools/handling_obj.py:623
 msgid "Executing command args:"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:609
+#: lib/fb_tools/handling_obj.py:626
 msgid "Performing argument {!r}."
 msgstr ""
 
-#: lib/fb_tools/handler/__init__.py:241 lib/fb_tools/handling_obj.py:614
+#: lib/fb_tools/handler/__init__.py:241 lib/fb_tools/handling_obj.py:631
 msgid "Executing: {}"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:617
+#: lib/fb_tools/handling_obj.py:634
 msgid "Simulation mode, not executing: {}"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:625
+#: lib/fb_tools/handling_obj.py:642
 msgid "PID of process: {}"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:631
+#: lib/fb_tools/handling_obj.py:648
 msgid "{c} happened, killing process: {e}"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:733
+#: lib/fb_tools/handling_obj.py:750
 msgid "Nothing to do on signal."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:787 lib/fb_tools/handling_obj.py:876
+#: lib/fb_tools/handling_obj.py:804 lib/fb_tools/handling_obj.py:893
 msgid "File doesn't exists."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:790
+#: lib/fb_tools/handling_obj.py:807
 msgid "Read permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:793
+#: lib/fb_tools/handling_obj.py:810
 msgid "Reading file content of {!r} ..."
 msgstr "Reading file content of {!r} …"
 
-#: lib/fb_tools/handling_obj.py:881 lib/fb_tools/handling_obj.py:888
+#: lib/fb_tools/handling_obj.py:898 lib/fb_tools/handling_obj.py:905
 msgid "Write permission to {!r} denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:883 lib/fb_tools/handling_obj.py:890
+#: lib/fb_tools/handling_obj.py:900 lib/fb_tools/handling_obj.py:907
 msgid "Write permission denied."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:894
+#: lib/fb_tools/handling_obj.py:911
 msgid "Write {what!r} into {to!r}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:896
+#: lib/fb_tools/handling_obj.py:913
 msgid "Writing {!r} ..."
 msgstr "Writing {!r} …"
 
-#: lib/fb_tools/handling_obj.py:908
+#: lib/fb_tools/handling_obj.py:925
 msgid "Simulating write into {!r}."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:916
+#: lib/fb_tools/handling_obj.py:933
 msgid "Opening {!r} for write unbuffered ..."
 msgstr "Opening {!r} for write unbuffered …"
 
-#: lib/fb_tools/handler/lock.py:894 lib/fb_tools/handling_obj.py:920
+#: lib/fb_tools/handler/lock.py:894 lib/fb_tools/handling_obj.py:937
 msgid "Closing {!r} ..."
 msgstr "Closing {!r} …"
 
-#: lib/fb_tools/handling_obj.py:951
+#: lib/fb_tools/handling_obj.py:968
 msgid "Password:"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:954
+#: lib/fb_tools/handling_obj.py:971
 msgid "Repeat password:"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:968
+#: lib/fb_tools/handling_obj.py:985
 msgid "The entered passwords does not match."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:981 lib/fb_tools/handling_obj.py:1056
+#: lib/fb_tools/handling_obj.py:998 lib/fb_tools/handling_obj.py:1073
 msgid "Interrupted on demand."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:1006 lib/fb_tools/handling_obj.py:1011
-#: lib/fb_tools/handling_obj.py:1090 lib/fb_tools/handling_obj.py:1095
+#: lib/fb_tools/handling_obj.py:1023 lib/fb_tools/handling_obj.py:1028
+#: lib/fb_tools/handling_obj.py:1107 lib/fb_tools/handling_obj.py:1112
 msgid "Got a {}:"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:1041
+#: lib/fb_tools/handling_obj.py:1058
 msgid "Yes/No"
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:1049
+#: lib/fb_tools/handling_obj.py:1066
 msgid "Automatic answer: '{}'."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:1138 lib/fb_tools/handling_obj.py:1144
+#: lib/fb_tools/handling_obj.py:1155 lib/fb_tools/handling_obj.py:1161
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr ""
 
-#: lib/fb_tools/handling_obj.py:1207
+#: lib/fb_tools/handling_obj.py:1224
 msgid "Completed process"
 msgstr ""
 
@@ -1866,23 +1867,31 @@ msgstr ""
 msgid "No permission to signal the process {} ..."
 msgstr "No permission to signal the process {} …"
 
-#: lib/fb_tools/xlate.py:117
-msgid "Module directory: {!r}"
-msgstr ""
-
-#: lib/fb_tools/xlate.py:118
-msgid "Base directory: {!r}"
-msgstr ""
-
-#: lib/fb_tools/xlate.py:119
-msgid "Locale directory: {!r}"
-msgstr ""
-
-#: lib/fb_tools/xlate.py:120
-msgid "Locale domain: {!r}"
+#: lib/fb_tools/spinner.py:496
+msgid "Spinner {!r} not found."
 msgstr ""
 
 #: lib/fb_tools/xlate.py:121
-msgid "Found .mo-file: {!r}"
+msgid "Module directory:"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:122
+msgid "Lib directory:"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:123
+msgid "Base directory:"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:124
+msgid "Locale directory:"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:125
+msgid "Locale domain:"
+msgstr ""
+
+#: lib/fb_tools/xlate.py:126
+msgid "Found .mo-file:"
 msgstr ""
 
