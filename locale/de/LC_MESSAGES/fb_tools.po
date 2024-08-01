@@ -1,14 +1,14 @@
 # German translations for fb_tools.
 # Copyright (C) 2024 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2024.
+# Frank Brehm <frank@brehm-online.com>, 2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.6.2\n"
+"Project-Id-Version: fb_tools 2.6.3\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2024-07-25 17:34+0200\n"
-"PO-Revision-Date: 2024-07-25 17:35+0100\n"
+"POT-Creation-Date: 2024-08-01 17:58+0200\n"
+"PO-Revision-Date: 2024-08-01 18:00+0200\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de\n"
 "Language-Team: de <frank@brehm-online.com>\n"
@@ -130,7 +130,7 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: lib/fb_tools/app.py:676 lib/fb_tools/ddns/__init__.py:174
+#: lib/fb_tools/app.py:676 lib/fb_tools/ddns/__init__.py:192
 msgid "SECONDS"
 msgstr "SEKUNDEN"
 
@@ -388,35 +388,35 @@ msgstr "Fehler beim Parsen der Konfiguration"
 msgid "Checking config section {!r} ..."
 msgstr "Überprüfe Konfigurationsabschnitt {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:76
+#: lib/fb_tools/ddns/__init__.py:79
 msgid "This is a base DDNS related application."
 msgstr "Das ist eine DDNS-bezogene Basisanwendung."
 
-#: lib/fb_tools/ddns/__init__.py:99
+#: lib/fb_tools/ddns/__init__.py:103
 msgid "Invalid user agent {!r} given."
 msgstr "Ungültiger User-Agent {!r} übergeben."
 
-#: lib/fb_tools/ddns/__init__.py:128
+#: lib/fb_tools/ddns/__init__.py:146
 msgid "DDNS options"
 msgstr "DDNS-Optionen"
 
-#: lib/fb_tools/ddns/__init__.py:139 lib/fb_tools/ddns/__init__.py:142
+#: lib/fb_tools/ddns/__init__.py:157 lib/fb_tools/ddns/__init__.py:160
 msgid "Perform action only for {}."
 msgstr "Führe die Aktion nur für {} aus."
 
-#: lib/fb_tools/ddns/__init__.py:145
+#: lib/fb_tools/ddns/__init__.py:163
 msgid "The IP protocol, for which the action should be performed (one of {c}, default {d!r})."
 msgstr "Das IP-Protokoll, für das die Aktion ausgeführt werden soll (eins ais {c}, Vorgabe {d!r})."
 
-#: lib/fb_tools/ddns/__init__.py:159
+#: lib/fb_tools/ddns/__init__.py:177
 msgid "PROTOCOL"
 msgstr "PROTOKOLL"
 
-#: lib/fb_tools/ddns/__init__.py:164
+#: lib/fb_tools/ddns/__init__.py:182
 msgid "DIRECTORY"
 msgstr "VERZEICHNIS"
 
-#: lib/fb_tools/ddns/__init__.py:167
+#: lib/fb_tools/ddns/__init__.py:185
 msgid ""
 "The directory, where to read and write the cache files of the evaluated IP addresses (default: "
 "{!r})."
@@ -424,92 +424,100 @@ msgstr ""
 "Das Verzeichnis, von wo Cache-Dateien mit den ermittelten IP-Adresses und wohin sie auch "
 "geschrieben werden (Vorgabe: {!r})."
 
-#: lib/fb_tools/ddns/__init__.py:175
+#: lib/fb_tools/ddns/__init__.py:193
 msgid "The timeout in seconds for Web requests (default: {})."
 msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Web-Abfragen (Vorgabe: {})."
 
-#: lib/fb_tools/ddns/__init__.py:211 lib/fb_tools/ddns/config.py:244
+#: lib/fb_tools/ddns/__init__.py:199
+msgid ""
+"By default, every secure connection {app} makes is verified to be secure before the request "
+"takes place. This option makes {app} skip the verification step and proceed without checking."
+msgstr ""
+"Normalerweise wird von {app} jede sichere Verbindung vor der Abfrage überprüft, ob sie wirklich "
+"sicher ist. Diese Option veranlaßt {app}, diese Überprüfung zu überspringen und weiterzufahren."
+
+#: lib/fb_tools/ddns/__init__.py:237 lib/fb_tools/ddns/config.py:244
 msgid "Invalid value {!r} as timeout:"
 msgstr "Ungültiger Wert {!r} für die Zeit der Zeitüberschreitung:"
 
-#: lib/fb_tools/ddns/__init__.py:222
+#: lib/fb_tools/ddns/__init__.py:248
 msgid "Setting Loglevel of the {m} module to {ll}."
 msgstr "Setze Loglevel des {m}-Moduls auf {ll}."
 
-#: lib/fb_tools/ddns/__init__.py:233
+#: lib/fb_tools/ddns/__init__.py:262
 msgid "Trying to get my public IPv{} address."
 msgstr "Versuche meine öffentliche IPv{}-Adresse zu ermitteln."
 
-#: lib/fb_tools/ddns/__init__.py:245
+#: lib/fb_tools/ddns/__init__.py:274
 msgid "Got a response:"
 msgstr "Erhaltene Antwort:"
 
-#: lib/fb_tools/ddns/__init__.py:258
+#: lib/fb_tools/ddns/__init__.py:296
 msgid "Request method: {!r}"
 msgstr "Request-Methode: {!r}"
 
-#: lib/fb_tools/ddns/__init__.py:278
+#: lib/fb_tools/ddns/__init__.py:316
 msgid "Simulation mode, Request will not be sent."
 msgstr "Simulationsmodus, der Request wird nicht gesendet."
 
-#: lib/fb_tools/ddns/__init__.py:291
+#: lib/fb_tools/ddns/__init__.py:329
 msgid "Got a {c} on requesting {u!r}: {e}."
 msgstr "Habe ein {c} bei der Abfrage von {u!r} erhalten: {e}."
 
-#: lib/fb_tools/ddns/__init__.py:298
+#: lib/fb_tools/ddns/__init__.py:336
 msgid "Failed to parse the response"
 msgstr "Konnte Rückgabe nicht auswerten"
 
-#: lib/fb_tools/ddns/__init__.py:313
+#: lib/fb_tools/ddns/__init__.py:351
 msgid "Text response:"
 msgstr "Erhaltene textuelle Antwort:"
 
-#: lib/fb_tools/ddns/__init__.py:323
+#: lib/fb_tools/ddns/__init__.py:361
 msgid "Setting encoding of response to {!r}."
 msgstr "Setze Codierung der Antwort auf {!r}."
 
-#: lib/fb_tools/ddns/__init__.py:348
+#: lib/fb_tools/ddns/__init__.py:386
 msgid "Checking existence and accessibility of working directory {!r} ..."
 msgstr "Überprüfe Existenz und Verfügbarkeit des Arbeitverzeichnisses {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:360
+#: lib/fb_tools/ddns/__init__.py:398
 msgid "No read access"
 msgstr "Kein Lesezugriff"
 
-#: lib/fb_tools/ddns/__init__.py:364
+#: lib/fb_tools/ddns/__init__.py:402
 msgid "No write access"
 msgstr "Kein Schreinzugriff"
 
-#: lib/fb_tools/ddns/__init__.py:379
+#: lib/fb_tools/ddns/__init__.py:417
 msgid "Writing IP address {a!r} into {f!r} ..."
 msgstr "Schreibe IP-Adresse {a!r} nach {f!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:407
+#: lib/fb_tools/ddns/__init__.py:445
 msgid "File {!r} not found."
 msgstr "Datei {!r} nicht gefunden."
 
-#: lib/fb_tools/ddns/__init__.py:410
+#: lib/fb_tools/ddns/__init__.py:448
 msgid "Reading IP address from {!r}..."
 msgstr "Lese IP-Adresse aus {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:430
+#: lib/fb_tools/ddns/__init__.py:468
 msgid "Line {li!r} in {f!r} is not a valid IP address:"
 msgstr "Zeile {li!r} in {f!r} ist keine gültige IP-Adresse:"
 
-#: lib/fb_tools/ddns/__init__.py:456 lib/fb_tools/ddns/__init__.py:497
-#: lib/fb_tools/ddns/__init__.py:529
+#: lib/fb_tools/ddns/__init__.py:494 lib/fb_tools/ddns/__init__.py:535
+#: lib/fb_tools/ddns/__init__.py:567
 msgid "Using resolver:"
 msgstr "Verwende Resolver:"
 
-#: lib/fb_tools/ddns/__init__.py:467 lib/fb_tools/ddns/__init__.py:479
+#: lib/fb_tools/ddns/__init__.py:505 lib/fb_tools/ddns/__init__.py:517
 msgid "Did not found a {t} address for {n}:"
 msgstr "Fand keine {t}-Adresse für {n}:"
 
-#: lib/fb_tools/ddns/__init__.py:488 lib/fb_tools/ddns/__init__.py:520
+#: lib/fb_tools/ddns/__init__.py:526 lib/fb_tools/ddns/__init__.py:558
 msgid "Cannot execute {method}() - module {mod!r} could not imported."
 msgstr "Kann Methode {method]() nicht ausführen - das Modul {mod!r} konnte nicht importiert werden."
 
-#: lib/fb_tools/ddns/__init__.py:511 lib/fb_tools/ddns/__init__.py:541
+#: lib/fb_tools/ddns/__init__.py:549 lib/fb_tools/ddns/__init__.py:579
 msgid "Did not found a {t} entry for zone {z}:"
 msgstr "Fand keinen {t}-Eintrag für Zone {z}:"
 
