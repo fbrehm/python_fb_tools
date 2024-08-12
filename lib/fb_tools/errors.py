@@ -14,7 +14,7 @@ import signal
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.3.1'
+__version__ = '2.4.0'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -146,6 +146,13 @@ class FbAppError(FbHandlerError):
 # =============================================================================
 class AbortAppError(FbAppError):
     """Special exception class interrupting the application."""
+
+    pass
+
+
+# =============================================================================
+class ExitAppError(FbAppError):
+    """Special exception class exiting the application."""
 
     pass
 
