@@ -46,10 +46,11 @@ from .. import __version__ as GLOBAL_VERSION
 from ..argparse_actions import DirectoryOptionAction
 from ..cfg_app import FbConfigApplication
 from ..common import pp
+from ..common import to_bool
 from ..errors import IoTimeoutError
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.2.3'
+__version__ = '2.3.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -65,6 +66,8 @@ class BaseDdnsApplication(FbConfigApplication):
     work_directory_must_exists = False
     work_directory_must_be_writeable = False
 
+    default_verify_server_cert = True
+
     # -------------------------------------------------------------------------
     def __init__(
         self, appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
@@ -76,6 +79,7 @@ class BaseDdnsApplication(FbConfigApplication):
             description = _('This is a base DDNS related application.')
 
         self._user_agent = '{}/{}'.format(self.library_name, GLOBAL_VERSION)
+        self._verify_server_cert = self.default_verify_server_cert
 
         super(BaseDdnsApplication, self).__init__(
             appname=appname, verbose=verbose, version=version, base_dir=base_dir,
@@ -99,6 +103,19 @@ class BaseDdnsApplication(FbConfigApplication):
             raise DdnsAppError(_('Invalid user agent {!r} given.').format(value))
         self._user_agent = str(value).strip()
 
+    # -----------------------------------------------------------
+    @property
+    def verify_server_cert(self):
+        """Return whether to verify the SSL certificate of the requested server."""
+        return self._verify_server_cert
+
+    @verify_server_cert.setter
+    def verify_server_cert(self, value):
+        if value is None:
+            self._verify_server_cert = self.default_verify_server_cert
+            return
+        self._verify_server_cert = to_bool(value)
+
     # -------------------------------------------------------------------------
     @property
     def has_dns_module(self):
@@ -119,6 +136,7 @@ class BaseDdnsApplication(FbConfigApplication):
         res = super(BaseDdnsApplication, self).as_dict(short=short)
         res['has_dns_module'] = self.has_dns_module
         res['user_agent'] = self.user_agent
+        res['verify_server_cert'] = self.verify_server_cert
 
         return res
 
@@ -176,6 +194,14 @@ class BaseDdnsApplication(FbConfigApplication):
                 DdnsConfiguration.default_timeout),
         )
 
+        ddns_group.add_argument(
+            '-k', '--insecure', dest='insecure', action='store_true',
+            help=_(
+                'By default, every secure connection {app} makes is verified to be secure before '
+                'the request takes place. This option makes {app} skip the verification step and '
+                'proceed without checking.').format(app=self.appname),
+        )
+
         super(BaseDdnsApplication, self).init_arg_parser()
 
     # -------------------------------------------------------------------------
@@ -225,6 +251,9 @@ class BaseDdnsApplication(FbConfigApplication):
             logging.getLogger('requests').setLevel(logging.WARNING)
             self.loglevel_requests_set = True
 
+        if self.args.insecure:
+            self.verify_server_cert = False
+
         self.initialized = True
 
     # -------------------------------------------------------------------------
@@ -251,6 +280,15 @@ class BaseDdnsApplication(FbConfigApplication):
             self, url, method='GET', data=None, headers=None, may_simulate=False,
             return_json=True):
         """Perform the underlying Web request."""
+        verify = None
+        if url.startswith('https://'):
+            if self.verify_server_cert:
+                verify = True
+            else:
+                verify = False
+                urllib3.disable_warnings()
+            LOG.debug(f'Verifying remote server certificate: {verify!r}.')
+
         if headers is None:
             headers = {}
 
@@ -282,7 +320,7 @@ class BaseDdnsApplication(FbConfigApplication):
 
             session = requests.Session()
             response = session.request(
-                method, url, data=data, headers=headers, timeout=self.cfg.timeout)
+                method, url, data=data, headers=headers, timeout=self.cfg.timeout, verify=verify)
 
         except (
                 socket.timeout, urllib3.exceptions.ConnectTimeoutError,
