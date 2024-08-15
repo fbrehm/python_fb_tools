@@ -51,12 +51,17 @@ import six
 from . import DEFAULT_TERMINAL_HEIGHT, DEFAULT_TERMINAL_WIDTH
 from .common import caller_search_path, encode_or_bust, pp, to_bool, to_str
 from .common import indent, is_sequence
-from .errors import AbortAppError, TimeoutOnPromptError
-from .errors import InterruptError, IoTimeoutError, ReadTimeoutError, WriteTimeoutError
+from .errors import AbortAppError
+from .errors import ExitAppError
+from .errors import InterruptError
+from .errors import IoTimeoutError
+from .errors import ReadTimeoutError
+from .errors import TimeoutOnPromptError
+from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.2.5'
+__version__ = '2.3.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -941,7 +946,9 @@ class HandlingObject(FbBaseObject):
         return
 
     # -------------------------------------------------------------------------
-    def get_password(self, first_prompt=None, second_prompt=None, may_empty=True, repeat=True):
+    def get_password(
+            self, first_prompt=None, second_prompt=None, may_empty=True, repeat=True,
+            raise_on_exit=False):
         """
         Ask the user for a password on the console.
 
@@ -959,6 +966,9 @@ class HandlingObject(FbBaseObject):
         @param repeat: Asking for the password a second time, which must be equal
                        to the first given password.
         @type repeat: bool
+        @param raise_on_exit: raising an ExitAppError instead of exiting the application
+                              in different situations
+        @type raise_on_exit: bool
 
         @return: The entered password
         @rtype: str
@@ -977,10 +987,11 @@ class HandlingObject(FbBaseObject):
 
             if not self.quiet:
                 print()
-            ret_passwd = self._get_password(first_prompt, may_empty)
+            ret_passwd = self._get_password(first_prompt, may_empty, raise_on_exit=raise_on_exit)
             if ret_passwd:
                 if repeat:
-                    second_passwd = self._get_password(second_prompt, may_empty=False)
+                    second_passwd = self._get_password(
+                        second_prompt, may_empty=False, raise_on_exit=raise_on_exit)
                     if ret_passwd != second_passwd:
                         msg = _('The entered passwords does not match.')
                         LOG.error(msg)
@@ -990,7 +1001,7 @@ class HandlingObject(FbBaseObject):
         return ret_passwd
 
     # -------------------------------------------------------------------------
-    def _get_password(self, prompt, may_empty=True):
+    def _get_password(self, prompt, may_empty=True, raise_on_exit=False):
 
         def passwd_alarm_caller(signum, sigframe):
             raise TimeoutOnPromptError(self.prompt_timeout)
@@ -1021,13 +1032,19 @@ class HandlingObject(FbBaseObject):
 
         except (TimeoutOnPromptError, AbortAppError) as e:
             msg = _('Got a {}:').format(e.__class__.__name__) + ' ' + str(e)
-            LOG.error(msg)
-            sys.exit(10)
+            if raise_on_exit:
+                raise ExitAppError(msg)
+            else:
+                LOG.error(msg)
+                sys.exit(10)
 
         except KeyboardInterrupt:
             msg = _('Got a {}:').format('KeyboardInterrupt') + ' ' + msg_intr
-            LOG.error(msg)
-            sys.exit(10)
+            if raise_on_exit:
+                raise ExitAppError(msg)
+            else:
+                LOG.error(msg)
+                sys.exit(10)
 
         finally:
             signal.alarm(0)

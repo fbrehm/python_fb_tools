@@ -33,9 +33,13 @@ from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
 LOG = logging.getLogger('test_handling_object')
 
-EXEC_LONG_TESTS = True
+EXEC_LONG_TESTS = False
 if 'EXEC_LONG_TESTS' in os.environ and os.environ['EXEC_LONG_TESTS'] != '':
     EXEC_LONG_TESTS = to_bool(os.environ['EXEC_LONG_TESTS'])
+
+EXEC_CONSOLE_TESTS = sys.stdin.isatty()
+if 'EXEC_CONSOLE_TESTS' in os.environ and os.environ['EXEC_CONSOLE_TESTS'] != '':
+    EXEC_CONSOLE_TESTS = to_bool(os.environ['EXEC_CONSOLE_TESTS'])
 
 EXEC_DNS_DEPENDING_TESTS = False
 if 'EXEC_DNS_DEPENDING_TESTS' in os.environ and os.environ['EXEC_DNS_DEPENDING_TESTS'] != '':
@@ -628,6 +632,48 @@ class TestFbHandlingObject(FbToolsTestcase):
             LOG.debug('Got resolved address list: {!r}.'.format(addr_list))
             self.assertEqual(addr_list, exp_addresses)
 
+    # -------------------------------------------------------------------------
+    @unittest.skipUnless(
+        EXEC_CONSOLE_TESTS, 'Tests depending on a console are not executed.')
+    def test_get_password(self):
+        """Test method get_password() of class HandlingObject."""
+        LOG.info(self.get_method_doc())
+
+        import time
+
+        from fb_tools.errors import ExitAppError
+        from fb_tools.handling_obj import HandlingObject
+
+        hdlr = HandlingObject(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+        hdlr.prompt_timeout = 5
+
+        total_start = time.time()
+
+        leaps = 3
+        i = 0
+        while i < leaps:
+            i += 1
+            try:
+                start_time = time.time()
+                prompt = f'Password {i}: '
+                pwd = hdlr.get_password(prompt, repeat=False, raise_on_exit=True)
+            except ExitAppError as e:
+                LOG.info(str(e))
+            except KeyboardInterrupt as e:
+                LOG.info('Got a {c}: Interrupted on demand - {e}.'.format(
+                    c=e.__class__.__name__, e=e))
+            else:
+                LOG.debug('Got password: {!r}.'.format(pwd))
+            finally:
+                diff = time.time() - start_time
+                LOG.debug('Needed {:0.6f} seconds.'.format(diff))
+
+        diff = time.time() - total_start
+        LOG.info('Needed total {:0.6f} seconds.'.format(diff))
+
 
 # =============================================================================
 if __name__ == '__main__':
@@ -653,6 +699,7 @@ if __name__ == '__main__':
     suite.addTest(TestFbHandlingObject('test_get_command', verbose))
     suite.addTest(TestFbHandlingObject('test_get_int_addressfamily', verbose))
     suite.addTest(TestFbHandlingObject('test_get_address', verbose))
+    suite.addTest(TestFbHandlingObject('test_get_password', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

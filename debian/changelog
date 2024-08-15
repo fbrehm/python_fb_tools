@@ -1,3 +1,15 @@
+fb-tools (2.7.0) UNRELEASED; urgency=medium
+
+  * Adding exception 'ExitAppError'.
+  * Adding option to disable secure TLS verification in HTTPS of DynDNS
+    requests.
+  * Adding option to method get_password() to class HandlingObject for
+    raising an ExitAppError instead of exiting on KeyboardInterrupt.
+  * Adding script bin/show-spinner and its application module
+    fb_tools.show_spinner_app.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 15 Aug 2024 12:36:24 +0200
+
 fb-tools (2.6.3) all; urgency=medium
 
   * Fixing search for locales dir in lib/fb_tools/xlate.py.
