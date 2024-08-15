@@ -46,8 +46,8 @@ class ShowSpinnerApplication(BaseApplication):
             self, verbose=0, version=__global_version__, *arg, **kwargs):
         """Initialise of the show-spinnerapplication object."""
         desc = _(
-            'Shows one or more spinners and their names for demonstration purposes. '
-            'iIf no spinner is given, a random spinner will be displayed.')
+            'Shows one or more spinners, and their names, if multiple spinners should be shown. '
+            'If no spinner is given, a random spinner will be displayed.')
 
         self._show_time = None
         self._prompt = self.default_prompt
