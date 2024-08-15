@@ -1914,7 +1914,7 @@ msgstr "Keine Rechte zum Senden von Signalen an Prozess {} …"
 
 #: lib/fb_tools/spinner.py:496
 msgid "Spinner {!r} not found."
-msgstr "Spinne {!r} nicht gefunden."
+msgstr "Spinner {!r} nicht gefunden."
 
 #: lib/fb_tools/xlate.py:121
 msgid "Module directory:"

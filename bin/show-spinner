@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+@summary: Print a newline separated list of files generated from file globbing patterns.
+
+@author: Frank Brehm
+@contact: frank.brehm@pixelpark.com
+@copyright: © 2024 by Frank Brehm, Berlin
+"""
+from __future__ import print_function
+
+# Standard modules
+import locale
+import sys
+
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
+
+__exp_py_version_major__ = 3
+__min_py_version_minor__ = 6
+
+if sys.version_info[0] != __exp_py_version_major__:
+    print('This script is intended to use with Python {}.'.format(
+        __exp_py_version_major__), file=sys.stderr)
+    print('You are using Python: {0}.{1}.{2}-{3}-{4}.'.format(
+        *sys.version_info) + '\n', file=sys.stderr)
+    sys.exit(1)
+
+if sys.version_info[1] < __min_py_version_minor__:
+    print('A minimal Python version of {maj}.{min} is necessary to execute this script.'.format(
+        maj=__exp_py_version_major__, min=__min_py_version_minor__), file=sys.stderr)
+    print('You are using Python: {0}.{1}.{2}-{3}-{4}.'.format(
+        *sys.version_info) + '\n', file=sys.stderr)
+    sys.exit(1)
+
+my_path = Path(__file__)
+my_real_path = my_path.resolve()
+bin_path = my_real_path.parent
+base_dir = bin_path.parent
+lib_dir = base_dir.joinpath('lib')
+module_dir = lib_dir.joinpath('fb_tools')
+
+# print("My path:      {!r}".format(str(my_path)))
+# print("My real path: {!r}".format(str(my_real_path)))
+# print("Bin path:     {!r}".format(str(bin_path)))
+# print("Base dir:     {!r}".format(str(base_dir)))
+# print("Lib dir:      {!r}".format(str(lib_dir)))
+# print("Module dir:   {!r}".format(str(module_dir)))
+
+if module_dir.exists():
+    sys.path.insert(0, str(lib_dir))
+
+# own modules:
+from fb_tools.show_spinner_app import ShowSpinnerApplication
+from fb_tools.xlate import XLATOR
+
+_ = XLATOR.gettext
+
+__author__ = 'Frank Brehm <frank.brehm@pixelpark.com>'
+__copyright__ = '(C) 2024 by Frank Brehm, Pixelpark GmbH, Berlin'
+
+appname = my_path.name
+
+locale.setlocale(locale.LC_ALL, '')
+
+app = ShowSpinnerApplication(appname=appname, base_dir=base_dir)
+app.initialized = True
+
+if app.verbose > 2:
+    print(_('{c}-Object:\n{a}').format(c=app.__class__.__name__, a=app), file=sys.stderr)
+
+app()
+
+sys.exit(0)
+
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
