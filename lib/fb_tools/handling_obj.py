@@ -61,7 +61,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.4.0'
+__version__ = '2.4.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -182,8 +182,8 @@ class HandlingObject(FbBaseObject):
     * version        (str          - ro) (inherited)
 
     Public attributes:
-    * add_search_paths
-    * signals_dont_interrupt
+    * add_search_paths       Array of pathlib.Path
+    * signals_dont_interrupt Array of int
     """
 
     fileio_timeout = DEFAULT_FILEIO_TIMEOUT
@@ -333,6 +333,10 @@ class HandlingObject(FbBaseObject):
     def interrupted(self):
         """Return the flag indicating, that the current process was interrupted."""
         return self._interrupted
+
+    @interrupted.setter
+    def interrupted(self, value):
+        self._interrupted = bool(value)
 
     # -----------------------------------------------------------
     @property

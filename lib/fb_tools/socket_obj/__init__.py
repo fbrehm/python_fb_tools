@@ -56,7 +56,38 @@ MAX_REQUEST_QUEUE_SIZE = 5
 # =============================================================================
 @add_metaclass(ABCMeta)
 class GenericSocket(HandlingObject):
-    """Class for capsulation a generic socket somehow."""
+    """
+    Class for capsulation a generic socket somehow.
+
+    Properties:
+    * address_family     (str or int   - ro) (inherited)
+    * appname            (str          - rw) (inherited)
+    * assumed_answer     (None or bool - rw) (inherited)
+    * base_dir           (pathlib.Path - rw) (inherited)
+    * bonded             (bool         - ro)
+    * buffer_size        (int          - rw)
+    * connected          (bool         - ro)
+    * encoding           (str          - rw)
+    * fileno             (None or int  - rw)
+    * force              (bool         - rw) (inherited)
+    * initialized        (bool         - rw) (inherited)
+    * interrupted        (bool         - rw) (inherited)
+    * is_venv            (bool         - ro) (inherited)
+    * prompt_timeout     (int          - rw) (inherited)
+    * quiet              (bool         - rw) (inherited)
+    * request_queue_size (int          - rw)
+    * simulate           (bool         - rw) (inherited)
+    * timeout            (float        - rw)
+    * verbose            (int          - rw) (inherited)
+    * version            (str          - ro) (inherited)
+
+    Public attributes:
+    * add_search_paths       Array of pathlib.Path (inherited)
+    * client_address         object
+    * connection             socket.socket
+    * signals_dont_interrupt Array of int          (inherited)
+    * sock                   socket
+    """
 
     default_timeout = DEFAULT_SOCKET_TIMEOUT
     default_request_queue_size = DEFAULT_REQUEST_QUEUE_SIZE
@@ -90,7 +121,6 @@ class GenericSocket(HandlingObject):
         self._encoding = DEFAULT_ENCODING
         self._bonded = False
         self._connected = False
-        self._interrupted = False
         self._fileno = None
 
         super(GenericSocket, self).__init__(
@@ -181,20 +211,6 @@ class GenericSocket(HandlingObject):
     def bonded(self):
         """Get a flag indicating, that the socket is bonded for listening."""
         return self._bonded
-
-    # -----------------------------------------------------------
-    @property
-    def interrupted(self):
-        """
-        Get a flag indicating, that the communication was interrupted.
-
-        iThis happened, if the counterpart in communication has closed the current socket.
-        """
-        return self._interrupted
-
-    @interrupted.setter
-    def interrupted(self, value):
-        self._interrupted = bool(value)
 
     # -----------------------------------------------------------
     @property
@@ -312,7 +328,6 @@ class GenericSocket(HandlingObject):
         res['connected'] = self.connected
         res['encoding'] = self.encoding
         res['fileno'] = self.fileno
-        res['interrupted'] = self.interrupted
         res['request_queue_size'] = self.request_queue_size
         res['timeout'] = self.timeout
 
@@ -539,4 +554,4 @@ if __name__ == '__main__':
 
 # =============================================================================
 
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 list
