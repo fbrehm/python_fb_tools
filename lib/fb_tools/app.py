@@ -38,7 +38,7 @@ from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.2.2'
+__version__ = '2.3.0'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -57,7 +57,40 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class BaseApplication(HandlingObject):
-    """Class for the base application objects."""
+    """
+    Class for the base application objects.
+
+    Properties:
+    * address_family        (str or int   - ro) (inherited from HandlingObject)
+    * appname               (str          - rw) (inherited from FbBaseObject)
+    * argparse_epilog       (None or str  - ro)
+    * argparse_prefix_chars (str          - ro)
+    * assumed_answer        (None or bool - rw) (inherited from HandlingObject)
+    * base_dir              (pathlib.Path - rw) (inherited from FbBaseObject)
+    * description           (str          - ro)
+    * exit_value            (int          - rw)
+    * exitvalue             (int          - rw)
+    * force                 (bool         - rw) (inherited from HandlingObject)
+    * force_desc_msg        (None or str  - ro)
+    * initialized           (bool         - rw) (inherited from FbBaseObject)
+    * interrupted           (bool         - rw) (inherited from HandlingObject)
+    * is_venv               (bool         - ro) (inherited from HandlingObject)
+    * prompt_timeout        (int          - rw) (inherited from HandlingObject)
+    * quiet                 (bool         - rw) (inherited from HandlingObject)
+    * simulate              (bool         - rw) (inherited from HandlingObject)
+    * testing_args          (array od str - ro)
+    * usage                 (str          - ro)
+    * usage_term            None or int   - ro)
+    * verbose               (int          - rw) (inherited from FbBaseObject)
+    * version               (str          - ro) (inherited from FbBaseObject)
+
+    Public attributes:
+    * add_search_paths       Array of pathlib.Path   (inherited from HandlingObject)
+    * arg_parser             argparse.ArgumentParser
+    * args                   Namespace
+    * env                    Dict
+    * signals_dont_interrupt Array of int            (inherited from HandlingObject)
+    """
 
     re_prefix = re.compile(r'^[a-z0-9][a-z0-9_]*$', re.IGNORECASE)
     re_anum = re.compile(r'[^A-Z0-9_]+', re.IGNORECASE)
@@ -77,7 +110,55 @@ class BaseApplication(HandlingObject):
         self, version=__pkg_version__, usage=None, description=None, testing_args=None,
             argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None,
             initialized=None, *args, **kwargs):
-        """Initialise a BaseApplication object."""
+        """
+        Initialise a BaseApplication object.
+
+        @param appname: name of the current running application
+        @type: str
+        @param argparse_epilog: an epilog displayed at the end of the argparse help screen
+        @type: str
+        @param argparse_prefix_chars: The set of characters that prefix optional arguments.
+        @type: str
+        @param assumed_answer: The assumed answer to all yes/no questions
+        @type: bool or None
+        @param base_dir: base directory used for different purposes
+        @type: str or pathlib.Path
+        @param description: a short text describing the application
+        @type: str
+        @param env_prefix: a prefix for environment variables to detect them and to assign
+        @type: None or str
+        @param force: Forced execution of something
+        @type: bool
+        @param initialized: initialisation of this object is complete after init
+        @type: bool
+        @param quiet: Quiet execution
+        @type: bool
+        @param simulate: actions with changing a state are not executed
+        @type: bool
+        @param terminal_has_colors: has the current terminal colored output
+        @type: bool
+        @param testing_args: Command line arguments to use for testing purposes.
+        @type: None or list of strings
+        @param verbose: verbosity level (0 - 9)
+        @type: int
+        @type: usage: usage text used on argparse
+        @type: str
+        @param version: version string of the current object or application
+        @type: str
+        """
+        self._usage = usage
+        self._description = description
+        self._testing_args = testing_args
+        self._argparse_epilog = argparse_epilog
+        self._argparse_prefix_chars = argparse_prefix_chars
+        self._env_prefix = None
+
+        self._exit_value = 0
+        """
+        @ivar: return value of the application for exiting with sys.exit().
+        @type: int
+        """
+
         self.arg_parser = None
         """
         @ivar: argparser object to parse commandline parameters
@@ -91,56 +172,13 @@ class BaseApplication(HandlingObject):
         @type: Namespace
         """
 
-        self._exit_value = 0
-        """
-        @ivar: return value of the application for exiting with sys.exit().
-        @type: int
-        """
-
-        self._usage = usage
-        """
-        @ivar: usage text used on argparse
-        @type: str
-        """
-
-        self._description = description
-        """
-        @ivar: a short text describing the application
-        @type: str
-        """
-
-        self._testing_args = testing_args
-        """
-        @ivar: Command line arguments to use for testing purposes.
-        @type: None or list of strings
-        """
-
-        self._argparse_epilog = argparse_epilog
-        """
-        @ivar: an epilog displayed at the end of the argparse help screen
-        @type: str
-        """
-
-        self._argparse_prefix_chars = argparse_prefix_chars
-        """
-        @ivar: The set of characters that prefix optional arguments.
-        @type: str
-        """
-
         self.env = {}
         """
-        @ivar: a dictionary with all application specifiv environment variables,
+        @ivar: a dictionary with all application specific environment variables,
                they will detected by the env_prefix property of this object,
                and their names will transformed before saving their values in
                self.env by removing the env_prefix from the variable name.
         @type: dict
-        """
-
-        self._env_prefix = None
-        """
-        @ivar: a prefix for environment variables to detect them and to assign
-               their transformed names and their values in self.env
-        @type: str
         """
 
         super(BaseApplication, self).__init__(

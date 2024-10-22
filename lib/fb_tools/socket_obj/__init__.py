@@ -60,32 +60,32 @@ class GenericSocket(HandlingObject):
     Class for capsulation a generic socket somehow.
 
     Properties:
-    * address_family     (str or int   - ro) (inherited)
-    * appname            (str          - rw) (inherited)
-    * assumed_answer     (None or bool - rw) (inherited)
-    * base_dir           (pathlib.Path - rw) (inherited)
+    * address_family     (str or int   - ro) (inherited from HandlingObject)
+    * appname            (str          - rw) (inherited from FbBaseObject)
+    * assumed_answer     (None or bool - rw) (inherited from HandlingObject)
+    * base_dir           (pathlib.Path - rw) (inherited from FbBaseObject)
     * bonded             (bool         - ro)
     * buffer_size        (int          - rw)
     * connected          (bool         - ro)
     * encoding           (str          - rw)
     * fileno             (None or int  - rw)
-    * force              (bool         - rw) (inherited)
-    * initialized        (bool         - rw) (inherited)
-    * interrupted        (bool         - rw) (inherited)
-    * is_venv            (bool         - ro) (inherited)
-    * prompt_timeout     (int          - rw) (inherited)
-    * quiet              (bool         - rw) (inherited)
+    * force              (bool         - rw) (inherited from HandlingObject)
+    * initialized        (bool         - rw) (inherited from FbBaseObject)
+    * interrupted        (bool         - rw) (inherited from HandlingObject)
+    * is_venv            (bool         - ro) (inherited from HandlingObject)
+    * prompt_timeout     (int          - rw) (inherited from HandlingObject)
+    * quiet              (bool         - rw) (inherited from HandlingObject)
     * request_queue_size (int          - rw)
-    * simulate           (bool         - rw) (inherited)
+    * simulate           (bool         - rw) (inherited from HandlingObject)
     * timeout            (float        - rw)
-    * verbose            (int          - rw) (inherited)
-    * version            (str          - ro) (inherited)
+    * verbose            (int          - rw) (inherited from FbBaseObject)
+    * version            (str          - ro) (inherited from FbBaseObject)
 
     Public attributes:
-    * add_search_paths       Array of pathlib.Path (inherited)
+    * add_search_paths       Array of pathlib.Path (inherited from HandlingObject)
     * client_address         object
     * connection             socket.socket
-    * signals_dont_interrupt Array of int          (inherited)
+    * signals_dont_interrupt Array of int          (inherited from HandlingObject)
     * sock                   socket
     """
 
@@ -106,12 +106,32 @@ class GenericSocket(HandlingObject):
 
         @raise GenericSocketError: on a uncoverable error.
 
-        @param timeout: timeout in seconds for all opening and IO operations
-        @type timeout: int
-        @param request_queue_size: the maximum number of queued connections (between 0 and 5)
-        @type request_queue_size: int
+        @param appname: name of the current running application
+        @type: str
+        @param assumed_answer: The assumed answer to all yes/no questions.
+        @type: bool or None
+        @param base_dir: base directory used for different purposes
+        @type: str or pathlib.Path
         @param buffer_size: The size of the buffer for receiving data from sockets
         @type buffer_size: int
+        @param force: Forced execution of something
+        @type: bool
+        @param initialized: initialisation of this object is complete after init
+        @type: bool
+        @param quiet: Quiet execution
+        @type: bool
+        @param request_queue_size: the maximum number of queued connections (between 0 and 5)
+        @type request_queue_size: int
+        @param simulate: actions with changing a state are not executed
+        @type: bool
+        @param terminal_has_colors: has the current terminal colored output
+        @type: bool
+        @param timeout: timeout in seconds for all opening and IO operations
+        @type timeout: int
+        @param verbose: verbosity level (0 - 9)
+        @type: int
+        @param version: version string of the current object or application
+        @type: str
 
         @return: None
         """

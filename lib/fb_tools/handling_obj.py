@@ -168,18 +168,18 @@ class HandlingObject(FbBaseObject):
 
     Properties:
     * address_family (str or int   - ro)
-    * appname        (str          - rw) (inherited)
+    * appname        (str          - rw) (inherited from FbBaseObject)
     * assumed_answer (None or bool - rw)
-    * base_dir       (pathlib.Path - rw) (inherited)
+    * base_dir       (pathlib.Path - rw) (inherited from FbBaseObject)
     * force          (bool         - rw)
-    * initialized    (bool         - rw) (inherited)
+    * initialized    (bool         - rw) (inherited from FbBaseObject)
     * interrupted    (bool         - rw)
     * is_venv        (bool         - ro)
     * prompt_timeout (int          - rw)
     * quiet          (bool         - rw)
     * simulate       (bool         - rw)
-    * verbose        (int          - rw) (inherited)
-    * version        (str          - ro) (inherited)
+    * verbose        (int          - rw) (inherited from FbBaseObject)
+    * version        (str          - ro) (inherited from FbBaseObject)
 
     Public attributes:
     * add_search_paths       Array of pathlib.Path
@@ -208,15 +208,15 @@ class HandlingObject(FbBaseObject):
         """
         Initialise a HandlingObject.
 
-        @param appname: name of the current running application (inherited)
+        @param appname: name of the current running application
         @type: str
         @param assumed_answer: The assumed answer to all yes/no questions.
         @type: bool or None
-        @param base_dir: base directory used for different purposes (inherited)
+        @param base_dir: base directory used for different purposes
         @type: str or pathlib.Path
         @param force: Forced execution of something
         @type: bool
-        @param initialized: initialisation of this object is complete after init (inherited)
+        @param initialized: initialisation of this object is complete after init
         @type: bool
         @param quiet: Quiet execution
         @type: bool
@@ -224,9 +224,9 @@ class HandlingObject(FbBaseObject):
         @type: bool
         @param terminal_has_colors: has the current terminal colored output
         @type: bool
-        @param verbose: verbosity level (0 - 9) (inherited)
+        @param verbose: verbosity level (0 - 9)
         @type: int
-        @param version: version string of the current object or application (inherited)
+        @param version: version string of the current object or application
         @type: str
         """
         self.init_yes_no_lists()
