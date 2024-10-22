@@ -4,7 +4,7 @@
 @summary: The module for a base object with extended handling.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
+@contact: frank@brehm-online.com
 @copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import

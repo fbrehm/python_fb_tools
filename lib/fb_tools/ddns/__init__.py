@@ -4,7 +4,7 @@
 @summary: The base module for all DDNS related classes.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
+@contact: frank@brehm-online.com
 @copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import, print_function

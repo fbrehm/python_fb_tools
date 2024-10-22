@@ -4,7 +4,7 @@
 @summary: Print a newline separated list of files generated from file globbing patterns.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
+@contact: frank@brehm-online.com
 @copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import print_function
@@ -58,8 +58,8 @@ from fb_tools.xlate import XLATOR
 
 _ = XLATOR.gettext
 
-__author__ = 'Frank Brehm <frank.brehm@pixelpark.com>'
-__copyright__ = '(C) 2024 by Frank Brehm, Pixelpark GmbH, Berlin'
+__author__ = 'Frank Brehm <frank@brehm-online.com>'
+__copyright__ = '(C) 2024 by Frank Brehm, Berlin'
 
 appname = my_path.name
 

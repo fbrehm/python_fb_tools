@@ -4,7 +4,7 @@
 @summary: The module for common used functions.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
+@contact: frank@brehm-online.com
 @copyright: © 2024 by Frank Brehm, Berlin
 """
 

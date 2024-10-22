@@ -4,8 +4,8 @@
 @summary: Test script (and module) for unit tests on mailaddress class and objects.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
-@copyright: © 2024 Frank Brehm, Digitas Pixelpark GmbH Berlin
+@contact: frank@brehm-online.com
+@copyright: © 2024 Frank Brehm, Berlin
 @license: LGPL3
 """
 

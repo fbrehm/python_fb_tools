@@ -1,7 +1,7 @@
 # German translations for fb_tools.
 # Copyright (C) 2024 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2024.
+# Frank Brehm <frank@brehm-online.com>, 2024.
 #
 msgid ""
 msgstr ""

@@ -4,7 +4,7 @@
 @summary: Module providing functions for merging dicts an arrays.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
+@contact: frank@brehm-online.com
 """
 
 import itertools
