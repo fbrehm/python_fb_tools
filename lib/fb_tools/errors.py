@@ -14,7 +14,7 @@ import signal
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.4.0'
+__version__ = '2.5.0'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -577,6 +577,49 @@ class FileAccessError(CommonFileError, PermissionError):
         else:
             msg += '.'
         return msg
+
+
+# =============================================================================
+class GenericSocketError(FbError):
+    """Base error class for all special exceptions raised in a socket module."""
+
+    pass
+
+
+# =============================================================================
+class SocketReadTimeoutError(IoTimeoutError, GenericSocketError):
+    """Special error class indicating a timout error on a read operation on a socket."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, timeout, filename=None):
+        """
+        Initialise an SocketReadTimeoutError exception.
+
+        @param timeout: the timout in seconds leading to the error
+        @type timeout: float
+        @param filename: the filename of the socket leading to the error
+        @type filename: str
+        """
+        strerror = _('Timeout error on reading from socket')
+        super(SocketReadTimeoutError, self).__init__(strerror, timeout, filename)
+
+
+# =============================================================================
+class SocketWriteTimeoutError(IoTimeoutError, GenericSocketError):
+    """Special error class indicating a timout error on a write operation on a socket."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, timeout, filename=None):
+        """
+        Initialise an SocketWriteTimeoutError exception.
+
+        @param timeout: the timout in seconds leading to the error
+        @type timeout: float
+        @param filename: the filename of the socket leading to the error
+        @type filename: str
+        """
+        strerror = _('Timeout error on writing to socket')
+        super(SocketWriteTimeoutError, self).__init__(strerror, timeout, filename)
 
 
 # =============================================================================
