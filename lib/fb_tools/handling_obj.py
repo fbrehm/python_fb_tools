@@ -61,7 +61,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.3.0'
+__version__ = '2.4.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -163,7 +163,28 @@ class TimeoutExpiredError(SubprocessError):
 
 # =============================================================================
 class HandlingObject(FbBaseObject):
-    """Base class for an object with extend handling possibilities."""
+    """
+    Base class for an object with extend handling possibilities.
+
+    Properties:
+    * address_family (str or int   - ro)
+    * appname        (str          - rw) (inherited)
+    * assumed_answer (None or bool - rw)
+    * base_dir       (pathlib.Path - rw) (inherited)
+    * force          (bool         - rw)
+    * initialized    (bool         - rw) (inherited)
+    * interrupted    (bool         - rw)
+    * is_venv        (bool         - ro)
+    * prompt_timeout (int          - rw)
+    * quiet          (bool         - rw)
+    * simulate       (bool         - rw)
+    * verbose        (int          - rw) (inherited)
+    * version        (str          - ro) (inherited)
+
+    Public attributes:
+    * add_search_paths
+    * signals_dont_interrupt
+    """
 
     fileio_timeout = DEFAULT_FILEIO_TIMEOUT
     default_prompt_timeout = DEFAULT_PROMPT_TIMEOUT
@@ -184,7 +205,30 @@ class HandlingObject(FbBaseObject):
     def __init__(
         self, version=__version__, quiet=False, terminal_has_colors=False,
             simulate=None, force=None, assumed_answer=None, *args, **kwargs):
-        """Initialise a HandlingObject."""
+        """
+        Initialise a HandlingObject.
+
+        @param appname: name of the current running application (inherited)
+        @type: str
+        @param assumed_answer: The assumed answer to all yes/no questions.
+        @type: bool or None
+        @param base_dir: base directory used for different purposes (inherited)
+        @type: str or pathlib.Path
+        @param force: Forced execution of something
+        @type: bool
+        @param initialized: initialisation of this object is complete after init (inherited)
+        @type: bool
+        @param quiet: Quiet execution
+        @type: bool
+        @param simulate: actions with changing a state are not executed
+        @type: bool
+        @param terminal_has_colors: has the current terminal colored output
+        @type: bool
+        @param verbose: verbosity level (0 - 9) (inherited)
+        @type: int
+        @param version: version string of the current object or application (inherited)
+        @type: str
+        """
         self.init_yes_no_lists()
 
         self._simulate = False
@@ -194,19 +238,23 @@ class HandlingObject(FbBaseObject):
         self._address_family = self.default_address_family
 
         self.add_search_paths = []
+        """
+        @ivar: Additional search paths of executing external commands
+        @type: Array of pathlib.Path
+        """
 
         self._prompt_timeout = self.default_prompt_timeout
 
         self._terminal_has_colors = bool(terminal_has_colors)
-        """
-        @ivar: flag, that the current terminal understands color ANSI codes
-        @type: bool
-        """
 
         self.signals_dont_interrupt = [
             signal.SIGUSR1,
             signal.SIGUSR2,
         ]
+        """
+        @ivar: Signal numbers, which do not lead to interrupt running task.
+        @type: Array of int
+        """
 
         self._interrupted = False
 
@@ -1142,11 +1190,17 @@ class CompletedProcess(object):
 
     This is returned by run().
 
-    Attributes:
-      args: The list or str args passed to run().
-      returncode: The exit code of the process, negative for signals.
-      stdout: The standard output (None if not captured).
-      stderr: The standard error (None if not captured).
+    Properties:
+    * duration (None or datetime.timediff - ro)
+    * end_dt   (None or datetime.datetime - ro)
+    * start_dt (None or datetime.datetime - ro)
+
+    Public Attributes:
+    * args
+    * encoding
+    * returncode
+    * stderr: The standard error (None if not captured).
+    * stdout: The standard output (None if not captured).
 
     This class was taken from subprocess.py of the standard library of Python 3.5.
     """
@@ -1157,8 +1211,22 @@ class CompletedProcess(object):
             start_dt=None, end_dt=None):
         """Initialize a CompletedProcess object."""
         self.args = args
+        """
+        @ivar: The list of str args passed to run().
+        @type: array of str
+        """
+
         self.returncode = returncode
+        """
+        @ivar: The exit code of the process, negative for signals.
+        @type: int
+        """
+
         self.encoding = encoding
+        """
+        @ivar: The encoding of stderr and stdout strings
+        @type: str
+        """
         if encoding is None:
             if locale.getpreferredencoding():
                 self.encoding = locale.getpreferredencoding()
@@ -1181,6 +1249,10 @@ class CompletedProcess(object):
             self._end_dt = end_dt
 
         self.stdout = stdout
+        """
+        @ivar: The standard output channel (None if not captured).
+        @type: None or str
+        """
         if stdout is not None:
             stdout = to_str(stdout, self.encoding)
             if stdout.strip() == '':
@@ -1189,6 +1261,10 @@ class CompletedProcess(object):
                 self.stdout = stdout
 
         self.stderr = stderr
+        """
+        @ivar: The standard error channel (None if not captured).
+        @type: None or str
+        """
         if stderr is not None:
             stderr = to_str(stderr, self.encoding)
             if stderr.strip() == '':
