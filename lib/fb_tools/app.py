@@ -61,7 +61,7 @@ class BaseApplication(HandlingObject):
     Class for the base application objects.
 
     Properties:
-    * address_family        (str or int   - ro) (inherited from HandlingObject)
+    * address_family        (str or int   - rw) (inherited from HandlingObject)
     * appname               (str          - rw) (inherited from FbBaseObject)
     * argparse_epilog       (None or str  - ro)
     * argparse_prefix_chars (str          - ro)

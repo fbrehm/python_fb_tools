@@ -38,7 +38,7 @@ from ..handling_obj import HandlingObject
 from ..xlate import XLATOR
 # from ..xlate import format_list
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class GenericSocket(HandlingObject):
     Class for capsulation a generic socket somehow.
 
     Properties:
-    * address_family     (str or int   - ro) (inherited from HandlingObject)
+    * address_family     (str or int   - rw) (inherited from HandlingObject)
     * appname            (str          - rw) (inherited from FbBaseObject)
     * assumed_answer     (None or bool - rw) (inherited from HandlingObject)
     * base_dir           (pathlib.Path - rw) (inherited from FbBaseObject)
@@ -107,31 +107,31 @@ class GenericSocket(HandlingObject):
         @raise GenericSocketError: on a uncoverable error.
 
         @param appname: name of the current running application
-        @type: str
+        @type appname: str
         @param assumed_answer: The assumed answer to all yes/no questions.
-        @type: bool or None
+        @type assumed_answer: bool or None
         @param base_dir: base directory used for different purposes
-        @type: str or pathlib.Path
+        @type base_dir: str or pathlib.Path
         @param buffer_size: The size of the buffer for receiving data from sockets
         @type buffer_size: int
         @param force: Forced execution of something
-        @type: bool
+        @type force: bool
         @param initialized: initialisation of this object is complete after init
-        @type: bool
+        @type initialized: bool
         @param quiet: Quiet execution
-        @type: bool
+        @type quiet: bool
         @param request_queue_size: the maximum number of queued connections (between 0 and 5)
         @type request_queue_size: int
         @param simulate: actions with changing a state are not executed
-        @type: bool
+        @type simulate: bool
         @param terminal_has_colors: has the current terminal colored output
-        @type: bool
+        @type terminal_has_colors: bool
         @param timeout: timeout in seconds for all opening and IO operations
         @type timeout: int
         @param verbose: verbosity level (0 - 9)
-        @type: int
+        @type verbose: int
         @param version: version string of the current object or application
-        @type: str
+        @type version: str
 
         @return: None
         """

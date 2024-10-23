@@ -61,7 +61,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.4.1'
+__version__ = '2.4.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -167,7 +167,7 @@ class HandlingObject(FbBaseObject):
     Base class for an object with extend handling possibilities.
 
     Properties:
-    * address_family (str or int   - ro)
+    * address_family (str or int   - rw)
     * appname        (str          - rw) (inherited from FbBaseObject)
     * assumed_answer (None or bool - rw)
     * base_dir       (pathlib.Path - rw) (inherited from FbBaseObject)
@@ -504,13 +504,37 @@ class HandlingObject(FbBaseObject):
         return family
 
     # -------------------------------------------------------------------------
-    def get_address(self, host, address_family=None):
+    def get_address(
+            self, host, address_family=None, port=None,
+            addr_type=0, proto=0, flags=0, as_socket_address=False):
         """
         Try to resolve the addresses of the given hostname and returns them as a list.
 
+        In the end it is a wrapper for socket.getaddrinfo().
+
         @param host: the hostname to resolve.
+        @type host: str or ipaddress
         @param address_family: Limit the result to the addresses of the given address family.
+        @type address_family: int, str or None
+        @param port: a string service name such as 'http' or a port number
+        @type port: str, int ir None
+        @param addr_type: specifies the communication semantics,
+                          maybe such like SOCK_STREAM or SOCK_DGRAM
+        @type addr_type: int
+        @param proto: specifies a particular protocol to be used
+        @type proto: int
+        @param flags: can be one or several of the AI_* constants, and will influence how
+                      results are computed and returned.
+        @type proto: int
+        @param as_socket_address: Return as a list of socket addresses
+                                  instead as a list of ipaddresses.
+        @type as_socket_address: bool
+
+        @return: list of resolved IP addresses
         """
+        if not host:
+            raise ValueError(_('No hostname or IP address given on calling get_address().'))
+
         af = self.get_address_famlily_int(address_family)
         if self.verbose > 3:
             LOG.debug(f'Got the integer address family {af!r} for {address_family!r}.')
@@ -521,17 +545,26 @@ class HandlingObject(FbBaseObject):
                 return []
             if af == socket.AF_INET6 and address.version == 4:
                 return []
+            if as_socket_address:
+                if address.version == 4:
+                    return [(str(address), 0)]
+                else:
+                    return [(str(address), 0, 0, 0)]
             return [address]
         except ValueError:
             pass
 
         addresses = []
-        addr_infos = socket.getaddrinfo(host, None, family=af)
+        addr_infos = socket.getaddrinfo(
+            host, port, family=af, type=addr_type, proto=proto, flags=flags)
         for addr_info in addr_infos:
             got_af = addr_info[0]
             if af and got_af != af:
                 continue
-            addr = ipaddress.ip_address(addr_info[4][0])
+            if as_socket_address:
+                addr = addr_info[4]
+            else:
+                addr = ipaddress.ip_address(addr_info[4][0])
             if addr not in addresses:
                 addresses.append(addr)
 
