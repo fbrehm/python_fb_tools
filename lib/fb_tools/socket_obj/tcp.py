@@ -17,7 +17,6 @@ import socket
 # Third party modules
 
 # Own modules
-
 from . import GenericSocket
 from .. import MAX_PORT_NUMBER
 from ..errors import GenericSocketError
@@ -106,6 +105,8 @@ class TcpSocket(GenericSocket):
                         If None is given, then the socket will listen on all local IP addresses -
                         not usable for client sockets.  Else a hostname is assumed.
         @type address: str or IPy.IP or None
+        @param port: the TCP port number, where to connect to or on which should be listened.
+        @type port: int
         @param address_family: the IP address family, may be socket.AF_INET or socket.AF_INET6 or
                                None (for both).  If None, in client mode will tried to connect
                                first to an IPv6 address, then IPv4 address.  If None in listening
@@ -115,6 +116,9 @@ class TcpSocket(GenericSocket):
                                    socket.getaddrinfo().
                                    See "man getaddrinfo" for more information.
         @type address_info_flags: int
+        @param version: version string of the current object or application
+        @type version: str
+
         @param appname: name of the current running application
         @type appname: str
         @param assumed_answer: The assumed answer to all yes/no questions.
@@ -123,12 +127,12 @@ class TcpSocket(GenericSocket):
         @type base_dir: str or pathlib.Path
         @param buffer_size: The size of the buffer for receiving data from sockets
         @type buffer_size: int
+        @param encoding: The used encoding for Byte-Strings.
+        @type encoding: str or None
         @param force: Forced execution of something
         @type force: bool
         @param initialized: initialisation of this object is complete after init
         @type initialized: bool
-        @param port: the TCP port number, where to connect to or on which should be listened.
-        @type port: int
         @param quiet: Quiet execution
         @type quiet: bool
         @param request_queue_size: the maximum number of queued connections (between 0 and 5)
@@ -141,8 +145,6 @@ class TcpSocket(GenericSocket):
         @type timeout: int
         @param verbose: verbosity level (0 - 9)
         @type verbose: int
-        @param version: version string of the current object or application
-        @type version: str
 
         @return: None
         """
@@ -470,4 +472,4 @@ if __name__ == '__main__':
 
 # =============================================================================
 
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 list

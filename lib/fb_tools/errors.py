@@ -14,7 +14,7 @@ import signal
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.5.0'
+__version__ = '2.5.1'
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -601,7 +601,10 @@ class SocketReadTimeoutError(IoTimeoutError, GenericSocketError):
         @type filename: str
         """
         strerror = _('Timeout error on reading from socket')
-        super(SocketReadTimeoutError, self).__init__(strerror, timeout, filename)
+        fn = None
+        if filename is not None:
+            fn = str(filename)
+        super(SocketReadTimeoutError, self).__init__(strerror, timeout, fn)
 
 
 # =============================================================================
@@ -619,7 +622,10 @@ class SocketWriteTimeoutError(IoTimeoutError, GenericSocketError):
         @type filename: str
         """
         strerror = _('Timeout error on writing to socket')
-        super(SocketWriteTimeoutError, self).__init__(strerror, timeout, filename)
+        fn = None
+        if filename is not None:
+            fn = str(filename)
+        super(SocketWriteTimeoutError, self).__init__(strerror, timeout, fn)
 
 
 # =============================================================================

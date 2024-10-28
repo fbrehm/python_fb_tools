@@ -36,9 +36,8 @@ from ..errors import GenericSocketError
 # from ..errors import SocketWriteTimeoutError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR
-# from ..xlate import format_list
 
-__version__ = '0.5.2'
+__version__ = '0.5.4'
 
 LOG = logging.getLogger(__name__)
 
@@ -106,32 +105,35 @@ class GenericSocket(HandlingObject):
 
         @raise GenericSocketError: on a uncoverable error.
 
+        @param version: version string of the current object or application
+        @type version: str
+        @param timeout: timeout in seconds for all opening and IO operations
+        @type timeout: int
+        @param request_queue_size: the maximum number of queued connections (between 0 and 5)
+        @type request_queue_size: int
+        @param buffer_size: The size of the buffer for receiving data from sockets
+        @type buffer_size: int
+        @param encoding: The used encoding for Byte-Strings.
+        @type encoding: str or None
+
         @param appname: name of the current running application
         @type appname: str
         @param assumed_answer: The assumed answer to all yes/no questions.
         @type assumed_answer: bool or None
         @param base_dir: base directory used for different purposes
         @type base_dir: str or pathlib.Path
-        @param buffer_size: The size of the buffer for receiving data from sockets
-        @type buffer_size: int
         @param force: Forced execution of something
         @type force: bool
         @param initialized: initialisation of this object is complete after init
         @type initialized: bool
         @param quiet: Quiet execution
         @type quiet: bool
-        @param request_queue_size: the maximum number of queued connections (between 0 and 5)
-        @type request_queue_size: int
         @param simulate: actions with changing a state are not executed
         @type simulate: bool
         @param terminal_has_colors: has the current terminal colored output
         @type terminal_has_colors: bool
-        @param timeout: timeout in seconds for all opening and IO operations
-        @type timeout: int
         @param verbose: verbosity level (0 - 9)
         @type verbose: int
-        @param version: version string of the current object or application
-        @type version: str
 
         @return: None
         """

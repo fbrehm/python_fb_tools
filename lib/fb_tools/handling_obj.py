@@ -61,7 +61,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.4.2'
+__version__ = '2.4.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -208,26 +208,27 @@ class HandlingObject(FbBaseObject):
         """
         Initialise a HandlingObject.
 
-        @param appname: name of the current running application
+        @param version: version string of the current object or application
         @type: str
-        @param assumed_answer: The assumed answer to all yes/no questions.
-        @type: bool or None
-        @param base_dir: base directory used for different purposes
-        @type: str or pathlib.Path
-        @param force: Forced execution of something
-        @type: bool
-        @param initialized: initialisation of this object is complete after init
-        @type: bool
         @param quiet: Quiet execution
-        @type: bool
-        @param simulate: actions with changing a state are not executed
         @type: bool
         @param terminal_has_colors: has the current terminal colored output
         @type: bool
+        @param simulate: actions with changing a state are not executed
+        @type: bool
+        @param force: Forced execution of something
+        @type: bool
+        @param assumed_answer: The assumed answer to all yes/no questions.
+        @type: bool or None
+
+        @param appname: name of the current running application
+        @type: str
+        @param base_dir: base directory used for different purposes
+        @type: str or pathlib.Path
+        @param initialized: initialisation of this object is complete after init
+        @type: bool
         @param verbose: verbosity level (0 - 9)
         @type: int
-        @param version: version string of the current object or application
-        @type: str
         """
         self.init_yes_no_lists()
 
