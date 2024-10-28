@@ -56,8 +56,8 @@ class TestSocketHandler(FbToolsTestcase):
         LOG.debug('Description of GenericSocket: ' + textwrap.dedent(GenericSocket.__doc__))
 
     # -------------------------------------------------------------------------
-    def test_object(self):
-        """Test instantiating a simple GenericSocket object."""
+    def test_base_object(self):
+        """Test instantiating a base GenericSocket object."""
         LOG.info(self.get_method_doc())
 
         from fb_tools.socket_obj import GenericSocket
@@ -69,6 +69,87 @@ class TestSocketHandler(FbToolsTestcase):
         e = cm.exception
         LOG.debug('{cls} raised on instantiate a GenericSocket: {err}'.format(
             cls=e.__class__.__name__, err=e))
+
+    # -------------------------------------------------------------------------
+    def test_minimal_object(self):
+        """Test instantiating a minimal inherited GenericSocket object."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools import DEFAULT_ENCODING, MAX_TIMEOUT
+        from fb_tools.obj import FbBaseObject
+        from fb_tools.socket_obj import GenericSocket
+        from fb_tools.socket_obj import MIN_BUFFER_SIZE, MAX_BUFFER_SIZE, MAX_REQUEST_QUEUE_SIZE
+
+        class TestSocket(GenericSocket):
+            """Test Socket class."""
+
+            def __init__(self, *args, **kwargs):
+                """Initialize it."""
+                super(TestSocket, self).__init__(*args, **kwargs,)
+
+            def connect(self):
+                pass
+
+            def bind(self):
+                pass
+
+        min_socket = TestSocket(appname=APPNAME, verbose=self.verbose)
+        LOG.debug('TestSocket %%r: {!r}'.format(min_socket))
+        LOG.debug('TestSocket %%s: {}'.format(min_socket))
+
+        if self.verbose >= 1:
+            print()
+        LOG.debug('Testing set timeout to 600.')
+        min_socket.timeout = 600
+        self.assertEqual(min_socket.timeout, 600)
+
+        for to in ('bla', -10, MAX_TIMEOUT + 1000):
+            with self.assertRaises(ValueError) as cm:
+                min_socket.timeout = to
+            e = cm.exception
+            LOG.debug('{cls} raised on setting timeout {to!r}: {err}'.format(
+                cls=e.__class__.__name__, to=to, err=e))
+
+        if self.verbose >= 1:
+            print()
+        for rqs in (0, 4):
+            LOG.debug('Testing set request_queue_size to {}.'.format(rqs))
+            min_socket.request_queue_size = rqs
+            self.assertEqual(min_socket.request_queue_size, rqs)
+        for rqs in ('bla', -5, MAX_REQUEST_QUEUE_SIZE * 3):
+            with self.assertRaises(ValueError) as cm:
+                min_socket.request_queue_size = rqs
+            e = cm.exception
+            LOG.debug('{cls} raised on setting request_queue_size {to!r}: {err}'.format(
+                cls=e.__class__.__name__, to=rqs, err=e))
+
+        if self.verbose >= 1:
+            print()
+        for bs in (2048, (1024 * 1024)):
+            LOG.debug('Testing set buffer_size to {}.'.format(bs))
+            min_socket.buffer_size = bs
+            self.assertEqual(min_socket.buffer_size, bs)
+        for bs in ('blub', -512, 0, MIN_BUFFER_SIZE - 10, MAX_BUFFER_SIZE * 5, 5120 + 10):
+            with self.assertRaises(ValueError) as cm:
+                min_socket.buffer_size = bs
+            e = cm.exception
+            LOG.debug('{cls} raised on setting buffer_size {to!r}: {err}'.format(
+                cls=e.__class__.__name__, to=bs, err=e))
+
+        if self.verbose >= 1:
+            print()
+        LOG.debug('Testing for default encoding {!r}.'.format(DEFAULT_ENCODING))
+        self.assertEqual(min_socket.encoding, DEFAULT_ENCODING)
+        for enc in ('utf-16', 'latin1'):
+            LOG.debug('Testing set encoding to {!r}.'.format(enc))
+            min_socket.encoding = enc
+            self.assertEqual(min_socket.encoding, enc)
+        for enc in (0, 'bla', FbBaseObject()):
+            with self.assertRaises(ValueError) as cm:
+                min_socket.encoding = enc
+            e = cm.exception
+            LOG.debug('{cls} raised on setting encoding {enc!r}: {err}'.format(
+                cls=e.__class__.__name__, enc=enc, err=e))
 
 
 # =============================================================================
@@ -84,7 +165,8 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     suite.addTest(TestSocketHandler('test_import', verbose))
-    suite.addTest(TestSocketHandler('test_object', verbose))
+    suite.addTest(TestSocketHandler('test_base_object', verbose))
+    suite.addTest(TestSocketHandler('test_minimal_object', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

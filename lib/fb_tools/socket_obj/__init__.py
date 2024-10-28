@@ -37,7 +37,7 @@ from ..errors import GenericSocketError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR
 
-__version__ = '0.5.4'
+__version__ = '0.5.5'
 
 LOG = logging.getLogger(__name__)
 
@@ -177,7 +177,7 @@ class GenericSocket(HandlingObject):
 
         self._input_buffer = ''
         if six.PY3:
-            self._input_buffer = bytes('', encoding)
+            self._input_buffer = bytes('', self.encoding)
         """
         @ivar: the input buffer for all reading actions
         @type: str
