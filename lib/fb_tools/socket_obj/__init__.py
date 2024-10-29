@@ -21,7 +21,6 @@ from abc import abstractmethod
 # Third party modules
 # from fb_logging.colored import colorstr
 
-import six
 from six import add_metaclass
 
 # Own modules
@@ -37,7 +36,7 @@ from ..errors import GenericSocketError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR
 
-__version__ = '0.5.5'
+__version__ = '0.6.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -47,9 +46,11 @@ ngettext = XLATOR.ngettext
 DEFAULT_SOCKET_TIMEOUT = 5
 DEFAULT_REQUEST_QUEUE_SIZE = 5
 DEFAULT_BUFFER_SIZE = 8192
+DEFAULT_POLLING_INTERVAL = 0.05
 MIN_BUFFER_SIZE = 512
 MAX_BUFFER_SIZE = (1024 * 1024 * 10)
 MAX_REQUEST_QUEUE_SIZE = 5
+MAX_POLLING_INTERVAL = 60.0
 
 
 # =============================================================================
@@ -72,6 +73,7 @@ class GenericSocket(HandlingObject):
     * initialized        (bool         - rw) (inherited from FbBaseObject)
     * interrupted        (bool         - rw) (inherited from HandlingObject)
     * is_venv            (bool         - ro) (inherited from HandlingObject)
+    * polling_interval   (float        - rw)
     * prompt_timeout     (int          - rw) (inherited from HandlingObject)
     * quiet              (bool         - rw) (inherited from HandlingObject)
     * request_queue_size (int          - rw)
@@ -94,12 +96,13 @@ class GenericSocket(HandlingObject):
     default_buffer_size = DEFAULT_BUFFER_SIZE
     min_buffer_size = MIN_BUFFER_SIZE
     max_buffer_size = MAX_BUFFER_SIZE
+    default_polling_interval = DEFAULT_POLLING_INTERVAL
 
     # -------------------------------------------------------------------------
     @abstractmethod
     def __init__(
         self, version=__version__, timeout=None, request_queue_size=None,
-            buffer_size=None, encoding=None, *args, **kwargs):
+            buffer_size=None, encoding=None, polling_interval=None, *args, **kwargs):
         """
         Initialize a GenericSocket object.
 
@@ -115,6 +118,8 @@ class GenericSocket(HandlingObject):
         @type buffer_size: int
         @param encoding: The used encoding for Byte-Strings.
         @type encoding: str or None
+        @param polling_interval: The interval in seconds between polling attempts from socket
+        @type polling_interval: float or None
 
         @param appname: name of the current running application
         @type appname: str
@@ -144,6 +149,7 @@ class GenericSocket(HandlingObject):
         self._bonded = False
         self._connected = False
         self._fileno = None
+        self._polling_interval = self.default_polling_interval
 
         self._input_buffer = ''
         """
@@ -180,9 +186,9 @@ class GenericSocket(HandlingObject):
         self.request_queue_size = request_queue_size
         self.buffer_size = buffer_size
         self.encoding = encoding
+        self.polling_interval = polling_interval
 
-        if six.PY3:
-            self._input_buffer = bytes('', self.encoding)
+        self._input_buffer = bytes('', self.encoding)
 
     # -----------------------------------------------------------
     @property
@@ -321,6 +327,32 @@ class GenericSocket(HandlingObject):
 
         self._encoding = enc
 
+    # -----------------------------------------------------------
+    @property
+    def polling_interval(self):
+        """Return the interval in seconds between polling attempts from socket."""
+        return self._polling_interval
+
+    @polling_interval.setter
+    def polling_interval(self, value):
+        if value is None:
+            self._polling_interval = self.default_polling_interval
+            return
+
+        v = float(value)
+        if v <= 0:
+            msg = _('An intervall between polling attempts from socket must be greater than zero.')
+            msg += ' ' + _('Given: {!r}').format(value)
+            raise ValueError(msg)
+
+        if v > MAX_POLLING_INTERVAL:
+            msg = _('The intervall between polling attempts from socket must be less '
+                    'or equal to {}.').format(MAX_POLLING_INTERVAL)
+            msg += ' ' + _('Given: {!r}').format(value)
+            raise ValueError(msg)
+
+        self._polling_interval = v
+
     # -------------------------------------------------------------------------
     @abstractmethod
     def connect(self):
@@ -351,6 +383,7 @@ class GenericSocket(HandlingObject):
         res['connected'] = self.connected
         res['encoding'] = self.encoding
         res['fileno'] = self.fileno
+        res['polling_interval'] = self.polling_interval
         res['request_queue_size'] = self.request_queue_size
         res['timeout'] = self.timeout
 
@@ -478,7 +511,67 @@ class GenericSocket(HandlingObject):
         return
 
     # -------------------------------------------------------------------------
-    def read_line(self, socket_has_data=False):
+    def read(self, socket_has_data=False, check_socket=True, binary=False):
+        """
+        Read complete data from socket and gives it back.
+
+        @param socket_has_data: assumes, that there are some data on the socket, that can be read.
+                                If False, then read_line() checks, with select, whether there are
+                                some data on the socket
+        @type socket_has_data: bool
+        @param check_socket: Checks whether some data on the socket, if socket_has_data is False
+        @type check_socket: bool
+        @param binary: if False, decode th read data from current encoding,
+                       else return a byte string
+        @type binary: bool
+
+        @return: the complete self._input_buffer including the EOL character
+        @rtype: str
+        """
+        # Checking, whether to read from socket
+        if not socket_has_data and check_socket:
+            if self.has_data():
+                socket_has_data = True
+
+        # Read in all data, they are even on socket.
+        if socket_has_data:
+            if self.verbose > 3:
+                LOG.debug(_('Socket has data.'))
+            if not self.connection:
+                self.accept()
+
+            while socket_has_data:
+                self._read()
+                if self.interrupted:
+                    socket_has_data = False
+                else:
+                    socket_has_data = self.has_data()
+        else:
+            if self.verbose > 3:
+                LOG.debug(_('Socket has no data.'))
+
+        if self.interrupted:
+            self.reset()
+
+        if self.verbose > 3:
+            LOG.debug(_('Get input buffer ...'))
+
+        if self._input_buffer:
+            if self.verbose > 3:
+                LOG.debug(_('Current input buffer: {!r}').format(self._input_buffer))
+            if binary:
+                ibuffer = self._input_buffer
+            else:
+                ibuffer = to_str(self._input_buffer, self.encoding)
+            self._input_buffer = bytes('', self.encoding)
+            return ibuffer
+
+        if binary:
+            return bytes('', self.encoding)
+        return ''
+
+    # -------------------------------------------------------------------------
+    def read_line(self, socket_has_data=False, check_socket=True):
         """
         Read exact one line of data from socket and gives it back.
 
@@ -492,77 +585,63 @@ class GenericSocket(HandlingObject):
         If there was more than one line read at once, the rest is saved
         self._input_buffer.
 
-        @param socket_has_data: assumes, that there are some data on the socket,
-                                that can be read. If False, then read_line()
-                                checks, with select, whether there are some data
-                                on the socket
+        @param socket_has_data: assumes, that there are some data on the socket, that can be read.
+                                If False, then read_line() checks, with select, whether there are
+                                some data on the socket
         @type socket_has_data: bool
+        @param check_socket: Checks whether some data on the socket, if socket_has_data is False
+        @type check_socket: bool
 
         @return: the first line from self._input_buffer including the
                  EOL character
         @rtype: str
         """
-        # Checking, whether to read from socket
-        if not socket_has_data:
-            if self.has_data():
-                socket_has_data = True
-
-        # Read in all data, they are even on socket.
-        if socket_has_data:
-            if not self.connection:
-                self.accept()
-            while socket_has_data:
-                self._read()
-                if self.interrupted:
-                    socket_has_data = False
-                else:
-                    socket_has_data = self.has_data()
-
-        if self.interrupted:
-            self.reset()
+        ibuffer = self.read(socket_has_data=socket_has_data, check_socket=check_socket)
 
         if self.verbose > 3:
-            LOG.debug(_('Performing input buffer ...'))
+            LOG.debug(_('Performing input buffer {!r}').format(ibuffer))
 
-        if self._input_buffer:
+        if not ibuffer:
+            return ''
+
+        match = RE_FIRST_LINE.search(ibuffer)
+        if match:
+            line = match.group(1) + match.group(2)
+            self._input_buffer = to_bytes(RE_FIRST_LINE.sub('', ibuffer), self.encoding)
             if self.verbose > 3:
-                LOG.debug(_('Current input buffer: {!r}').format(self._input_buffer))
-            ibuffer = to_str(self._input_buffer, self.encoding)
-            match = RE_FIRST_LINE.search(ibuffer)
-            if match:
-                line = match.group(1) + match.group(2)
-                self._input_buffer = to_bytes(
-                    RE_FIRST_LINE.sub('', ibuffer), self.encoding)
-                if self.verbose > 3:
-                    LOG.debug(_('Got a line: {!r}').format(line))
-                    LOG.debug(_(
-                        'Current input buffer after read_line(): {!r}').format(
-                        self._input_buffer))
-                return line
-            else:
-                return ''
+                LOG.debug(_('Got a line: {!r}').format(line))
+                LOG.debug(_('Current input buffer after read_line(): {!r}').format(
+                    self._input_buffer))
+            return line
 
         return ''
 
     # -------------------------------------------------------------------------
-    def has_data(self, polling_interval=0.05):
+    def has_data(self, polling_interval=None):
         """
         Check, whether the current socket has data in his input buffer, that can be read in.
+
+        @param polling_interval: The interval in seconds between polling attempts from socket
+        @type polling_interval: float or None
 
         @return: there are some data to read
         @rtype: bool
         """
         result = False
+        p_int = self.polling_interval
+        if polling_interval is not None:
+            p_int = polling_interval
 
         try:
             rlist, wlist, elist = select.select(
                 [self.fileno],
                 [],
                 [],
-                polling_interval
+                p_int
             )
             if self.fileno in rlist:
                 result = True
+
         except select.error as e:
             if e[0] == 4:
                 pass

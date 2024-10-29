@@ -22,7 +22,7 @@ from .. import MAX_PORT_NUMBER
 from ..errors import GenericSocketError
 from ..xlate import XLATOR
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -66,6 +66,7 @@ class TcpSocket(GenericSocket):
     * interrupted        (bool              - rw) (inherited from HandlingObject)
     * is_venv            (bool              - ro) (inherited from HandlingObject)
     * own_address        (ipaddress         - ro)
+    * polling_interval   (float             - rw) (inherited from GenericSocket)
     * port               (int               - rw)
     * prompt_timeout     (int               - rw) (inherited from HandlingObject)
     * quiet              (bool              - rw) (inherited from HandlingObject)
@@ -133,6 +134,8 @@ class TcpSocket(GenericSocket):
         @type force: bool
         @param initialized: initialisation of this object is complete after init
         @type initialized: bool
+        @param polling_interval: The interval in seconds between polling attempts from socket
+        @type polling_interval: float or None
         @param quiet: Quiet execution
         @type quiet: bool
         @param request_queue_size: the maximum number of queued connections (between 0 and 5)
@@ -183,25 +186,25 @@ class TcpSocket(GenericSocket):
     # -----------------------------------------------------------
     @property
     def address(self):
-        """The hostname or IP address, where to connect to or on which listening to."""
+        """Return the hostname or IP address, where to connect to or on which listening to."""
         return self._address
 
     # -----------------------------------------------------------
     @property
     def address_info_flags(self):
-        """Additional address information flags, used by socket.getaddrinfo()."""
+        """Return additional address information flags, used by socket.getaddrinfo()."""
         return self._address_info_flags
 
     # -----------------------------------------------------------
     @property
     def resolved_address(self):
-        """The resolved IP address, where to connect to or on which listening to."""
+        """Return the resolved IP address, where to connect to or on which listening to."""
         return self._resolved_address
 
     # -----------------------------------------------------------
     @property
     def port(self):
-        """The TCP port number, where to connect to or on which should be listened."""
+        """Return the TCP port number, where to connect to or on which should be listened."""
         return self._port
 
     @port.setter
@@ -216,19 +219,19 @@ class TcpSocket(GenericSocket):
     # -----------------------------------------------------------
     @property
     def used_addr_family(self):
-        """The used IP address family after connecting or binding."""
+        """Return the used IP address family after connecting or binding."""
         return self._used_addr_family
 
     # -----------------------------------------------------------
     @property
     def used_socket_type(self):
-        """The used socket type after connecting or binding."""
+        """Return the used socket type after connecting or binding."""
         return self._used_socket_type
 
     # -----------------------------------------------------------
     @property
     def used_protocol(self):
-        """The used IP protocol after connecting or binding."""
+        """Return the used IP protocol after connecting or binding."""
         return self._used_protocol
 
     # -----------------------------------------------------------
@@ -246,7 +249,7 @@ class TcpSocket(GenericSocket):
     # -----------------------------------------------------------
     @property
     def own_address(self):
-        """The socket’s own address."""
+        """Return the socket’s own address."""
         return self._own_address
 
     # -------------------------------------------------------------------------

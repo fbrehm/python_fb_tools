@@ -28,7 +28,7 @@ from . import GenericSocket
 from ..errors import GenericSocketError
 from ..xlate import XLATOR
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -106,6 +106,7 @@ class UnixSocket(GenericSocket):
     * owner_id           (int               - rw)
     * owner_name         (str               - ro)
     * was_bonded         (bool              - ro)
+    * polling_interval   (float             - rw) (inherited from GenericSocket)
     * prompt_timeout     (int               - rw) (inherited from HandlingObject)
     * quiet              (bool              - rw) (inherited from HandlingObject)
     * request_queue_size (int               - rw) (inherited from GenericSocket)
@@ -162,6 +163,8 @@ class UnixSocket(GenericSocket):
         @type force: bool
         @param initialized: initialisation of this object is complete after init
         @type initialized: bool
+        @param polling_interval: The interval in seconds between polling attempts from socket
+        @type polling_interval: float or None
         @param quiet: Quiet execution
         @type quiet: bool
         @param request_queue_size: the maximum number of queued connections (between 0 and 5)
@@ -454,9 +457,9 @@ class UnixSocket(GenericSocket):
         sock_stat = self.filename.stat()
 
         if self.mode is not None and sock_stat.st_mode != self.mode:
-            if self.verbose > 2:
-                LOG.debug(_('Setting permissions of {sock!r} to 0{mode} ...').format(
-                    sock=str(self.filename), mode=self.mode))
+            if self.verbose > 1:
+                LOG.debug(_('Setting permissions of {sock!r} to 0o{mode} ...').format(
+                    sock=str(self.filename), mode=self.mode_oct))
             self.filename.chmod(self.mode)
 
         do_chown = False
@@ -471,7 +474,7 @@ class UnixSocket(GenericSocket):
             if os.geteuid():
                 LOG.warn(_('Only root may change the ownership of a socket.'))
                 return
-            if self.verbose > 2:
+            if self.verbose > 1:
                 msg = _(
                     'Setting owner and group of {sock!r} to {uid}:{gid} '
                     '({owner}:{group}) ...').format(
@@ -495,9 +498,9 @@ class UnixSocket(GenericSocket):
             msg = _('The application is already bonded to {!r} ...').format(str(self.filename))
             raise UnixSocketError(msg)
 
-        self.sock.bind(self.filename)
+        self.sock.bind(str(self.filename))
 
-        if not os.path.exists(self.filename):
+        if not self.filename.exists():
             raise NoSocketFileError(self.filename)
 
         self._bonded = True
