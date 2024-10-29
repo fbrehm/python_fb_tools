@@ -186,7 +186,7 @@ class TestUnixSocketHandler(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_readwrite(self):
-        """Test instantiating a UnixSocket object."""
+        """Test reading from and writing to a UNIX socket file with a UnixSocket object."""
         LOG.info(self.get_method_doc())
 
         self.socketfile.unlink()
