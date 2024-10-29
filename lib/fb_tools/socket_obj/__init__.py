@@ -145,17 +145,11 @@ class GenericSocket(HandlingObject):
         self._connected = False
         self._fileno = None
 
-        super(GenericSocket, self).__init__(
-            version=version,
-            *args, **kwargs,
-        )
-
-        if timeout:
-            self.timeout = timeout
-
-        self.request_queue_size = request_queue_size
-        self.buffer_size = buffer_size
-        self.encoding = encoding
+        self._input_buffer = ''
+        """
+        @ivar: the input buffer for all reading actions
+        @type: str
+        """
 
         self.sock = None
         """
@@ -175,13 +169,20 @@ class GenericSocket(HandlingObject):
         @type: object
         """
 
-        self._input_buffer = ''
+        super(GenericSocket, self).__init__(
+            version=version,
+            *args, **kwargs,
+        )
+
+        if timeout:
+            self.timeout = timeout
+
+        self.request_queue_size = request_queue_size
+        self.buffer_size = buffer_size
+        self.encoding = encoding
+
         if six.PY3:
             self._input_buffer = bytes('', self.encoding)
-        """
-        @ivar: the input buffer for all reading actions
-        @type: str
-        """
 
     # -----------------------------------------------------------
     @property
@@ -358,11 +359,12 @@ class GenericSocket(HandlingObject):
     # -------------------------------------------------------------------------
     def close(self):
         """Close the current socket."""
-        if self.sock:
+        sock = getattr(self, 'sock', None)
+        if sock:
             if self.connected or self.bonded:
                 if self.verbose > 1:
                     LOG.debug(_('Closing socket ...'))
-                self.sock.close()
+                sock.close()
             self.sock = None
 
         self._connected = False

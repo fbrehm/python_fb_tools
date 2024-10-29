@@ -376,13 +376,13 @@ class UnixSocket(GenericSocket):
     @property
     def must_be_absolute(self):
         """Return, whether the socket file name must be an absolute file name."""
-        return self._must_be_absolute
+        return getattr(self, '_must_be_absolute', True)
 
     # -----------------------------------------------------------
     @property
     def was_bonded(self):
         """Flag, that the socket was bonded by the current object."""
-        return self._was_bonded
+        return getattr(self, '_was_bonded', False)
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=False):
