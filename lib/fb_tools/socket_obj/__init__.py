@@ -204,7 +204,7 @@ class GenericSocket(HandlingObject):
 
         v = float(value)
         if v <= 0:
-            msg = _('A timeout for a socket operation may not be equal or lass then zero.')
+            msg = _('A timeout for a socket operation may not be equal or less then zero.')
             msg += ' ' + _('Given: {!r}').format(value)
             raise ValueError(msg)
 
@@ -453,7 +453,7 @@ class GenericSocket(HandlingObject):
         msg_utf8 = to_bytes(message, self.encoding)
 
         if self.verbose > 3:
-            LOG.debug(_('Sending {!r}r to socket.').format(msg_utf8))
+            LOG.debug(_('Sending {!r} to socket.').format(msg_utf8))
 
         if self.bonded:
             self.connection.sendall(msg_utf8)

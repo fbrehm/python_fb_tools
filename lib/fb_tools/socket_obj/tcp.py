@@ -316,7 +316,7 @@ class TcpSocket(GenericSocket):
 
         if self.bonded:
             msg = _(
-                'The application is allready bonded to {addr!r}, port {port}.').format(
+                'The application is already bonded to address {addr!r}, port {port}.').format(
                 addr=self.address, port=self.port)
             raise TcpSocketError(msg)
 
