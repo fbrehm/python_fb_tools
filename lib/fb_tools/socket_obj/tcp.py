@@ -19,10 +19,11 @@ import socket
 # Own modules
 from . import GenericSocket
 from .. import MAX_PORT_NUMBER
+from ..common import pp
 from ..errors import GenericSocketError
 from ..xlate import XLATOR
 
-__version__ = '0.3.1'
+__version__ = '0.4.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -90,7 +91,7 @@ class TcpSocket(GenericSocket):
     """
 
     port_err_msg_min = _('The TCP port number must be a positive integer value, not {!r}.')
-    port_err_msg_max = _('The TCP port number must be less than {max}, not {cur!r}.')
+    port_err_msg_max = _('The TCP port number must be less than or equal to {max}, not {cur!r}.')
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -109,8 +110,8 @@ class TcpSocket(GenericSocket):
         @param port: the TCP port number, where to connect to or on which should be listened.
         @type port: int
         @param address_family: the IP address family, may be socket.AF_INET or socket.AF_INET6 or
-                               None (for both).  If None, in client mode will tried to connect
-                               first to an IPv6 address, then IPv4 address.  If None in listening
+                               None (for both). If None, in client mode will tried to connect
+                               first to an IPv6 address, then IPv4 address. If None in listening
                                mode it will listen on both IPv6 and IPv4.
         @type address_family: int or None
         @param address_info_flags: additional address information flags, used by
@@ -179,7 +180,8 @@ class TcpSocket(GenericSocket):
         self._used_socket_addr = None
         self._own_address = None
 
-        self.address_family = address_family
+        if address_family is not None:
+            self.address_family = address_family
 
         self.initialized = True
 
@@ -212,9 +214,10 @@ class TcpSocket(GenericSocket):
         v = int(value)
         if v < 1:
             raise TcpSocketError(self.port_err_msg_min.format(value))
-        if v >= MAX_PORT_NUMBER:
+        if v > MAX_PORT_NUMBER:
             msg = self.port_err_msg_max.format(max=MAX_PORT_NUMBER, cur=value)
             raise TcpSocketError(msg)
+        self._port = v
 
     # -----------------------------------------------------------
     @property
@@ -273,6 +276,13 @@ class TcpSocket(GenericSocket):
         res['own_address'] = self.own_address
 
         return res
+
+    # -------------------------------------------------------------------------
+    def socket_desc(self):
+        """Return a textual description of the used socket."""
+        if not self.used_socket_addr:
+            return 'TcpSocket ({h!r}, {p})'.format(h=self.address, p=self.port)
+        return 'TcpSocket {}'.format(self.used_socket_addr)
 
     # -------------------------------------------------------------------------
     def close(self):
@@ -406,11 +416,14 @@ class TcpSocket(GenericSocket):
         family = None
         socktype = socket.SOCK_STREAM
         proto = socket.IPPROTO_TCP
-        sockaddr = None
+        socketaddr = None
 
         addresses = self.get_address(
             self.address, port=self.port, addr_type=socktype,
             flags=ai_flags, as_socket_address=True)
+
+        if self.verbose > 2:
+            LOG.debug(_('Got socket addresses:') + '\n' + pp(addresses))
 
         if not addresses:
             msg = _('No valid address for host {!r} found.').format(str(self.address))
@@ -426,6 +439,9 @@ class TcpSocket(GenericSocket):
             else:
                 family = socket.AF_INET6
 
+            if self.verbose > 1:
+                LOG.debug(_('Binding to socket address {!r}.').format(socketaddr))
+
             try:
                 self.sock = socket.socket(family, socktype, proto)
             except socket.error as msg:
@@ -437,7 +453,7 @@ class TcpSocket(GenericSocket):
 
             try:
                 self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                self.sock.bind(sockaddr)
+                self.sock.bind(socketaddr)
                 self.sock.listen(self.request_queue_size)
             except socket.error as msg:
                 self.sock.close()
@@ -457,13 +473,12 @@ class TcpSocket(GenericSocket):
             raise CouldNotOpenTcpSocketError(msg)
 
         self._bonded = True
-        self._connected = True
         self.fileno = self.sock.fileno()
         self._used_addr_family = family
         self._used_socket_type = socktype
         self._used_protocol = proto
-        self._used_socket_addr = sockaddr
-        self._resolved_address = sockaddr[0]
+        self._used_socket_addr = socketaddr
+        self._resolved_address = socketaddr[0]
         self._own_address = self.sock.getsockname()
 
 

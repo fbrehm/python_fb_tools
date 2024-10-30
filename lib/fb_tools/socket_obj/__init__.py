@@ -36,7 +36,7 @@ from ..errors import GenericSocketError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR
 
-__version__ = '0.6.0'
+__version__ = '0.7.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -409,6 +409,11 @@ class GenericSocket(HandlingObject):
         self.close()
 
     # -------------------------------------------------------------------------
+    def socket_desc(self):
+        """Return a textual description of the used socket. Should be overridden."""
+        return 'unknown'
+
+    # -------------------------------------------------------------------------
     def reset(self):
         """Reset the socket after interruption of communication."""
         if self.verbose > 2:
@@ -464,6 +469,9 @@ class GenericSocket(HandlingObject):
         if not self.bonded:
             msg = _('Cannot accept connection, socket is not bonded.')
             raise GenericSocketError(msg)
+
+        if self.verbose > 1:
+            LOG.debug(_('Accept a connection ...'))
 
         connection, client_address = self.sock.accept()
         self.connection = connection

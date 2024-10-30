@@ -18,7 +18,7 @@ from threading import Thread
 
 LOG = logging.getLogger('listener_thread')
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 # =============================================================================
 class ListenerThread(Thread):
@@ -53,7 +53,7 @@ class ListenerThread(Thread):
                 cur_attempt += 1
                 if self.listener_sock.verbose > 2:
                     LOG.debug('Attempt {nr} on reading from socket {s!r} ...'.format(
-                        nr=cur_attempt, s=str(self.listener_sock.filename)))
+                        nr=cur_attempt, s=self.listener_sock.socket_desc()))
 
                 if self.listener_sock.has_data():
                     line = self.listener_sock.read_line()
@@ -69,7 +69,7 @@ class ListenerThread(Thread):
 
             else:
                 msg = 'Got not data from socket {s!r} after {at} reading attempts.'.format(
-                    s=str(self.listener_sock.filename), at=cur_attempt)
+                    s=self.listener_sock.socket_desc(), at=cur_attempt)
                 raise RuntimeError(msg)
 
         except BaseException:

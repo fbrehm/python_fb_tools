@@ -28,7 +28,7 @@ from . import GenericSocket
 from ..errors import GenericSocketError
 from ..xlate import XLATOR
 
-__version__ = '0.4.1'
+__version__ = '0.5.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -409,6 +409,11 @@ class UnixSocket(GenericSocket):
         res['was_bonded'] = self.was_bonded
 
         return res
+
+    # -------------------------------------------------------------------------
+    def socket_desc(self):
+        """Return a textual description of the used socket."""
+        return 'file://{}'.format(self.filename)
 
     # -------------------------------------------------------------------------
     def close(self):
