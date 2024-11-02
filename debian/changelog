@@ -1,4 +1,4 @@
-fb-tools (2.8.0) UNRELEASED; urgency=medium
+fb-tools (2.8.0) all; urgency=medium
 
   * Adding constant RE_FIRST_LINE to module fb_tools.common.
   * Extending method get_address() of class HandlingObject in module
