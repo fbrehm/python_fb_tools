@@ -4,7 +4,7 @@
 @summary: The module for common used functions.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
+@contact: frank@brehm-online.com
 @copyright: © 2024 by Frank Brehm, Berlin
 """
 
@@ -37,7 +37,7 @@ import six
 from .errors import InvalidTimeIntervalError
 from .xlate import XLATOR
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 
 _ = XLATOR.gettext
 
@@ -63,6 +63,8 @@ RE_TF_NAME = re.compile(r'[^a-z0-9_]+', re.IGNORECASE)
 RE_FQDN = re.compile(
     r'(?=^.{4,253}$)(^((?!-)[a-z0-9-]{1,63}(?<!-)\.)+[a-z]{2,63}\.?$)',
     re.IGNORECASE)
+
+RE_FIRST_LINE = re.compile(r'^([^\n]*)(\r?\n)')
 
 CUR_RADIX = locale.nl_langinfo(locale.RADIXCHAR)
 CUR_THOUSEP = locale.nl_langinfo(locale.THOUSEP)

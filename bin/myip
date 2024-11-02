@@ -4,7 +4,7 @@
 @summary: Prints the public NAT IPv4 address and/or the automatic assigned IPv6 address.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
+@contact: frank@brehm-online.com
 @copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import print_function

@@ -4,7 +4,7 @@
 @summary: A mixin module for the BaseMultiConfig class for methods reading config files.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
+@contact: frank@brehm-online.com
 @copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import

@@ -1,14 +1,14 @@
 # German translations for fb_tools.
 # Copyright (C) 2024 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2024.
+# Frank Brehm <frank@brehm-online.com>, 2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.6.3\n"
+"Project-Id-Version: fb_tools 2.8.0\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2024-08-15 11:59+0200\n"
-"PO-Revision-Date: 2024-08-15 11:50+0200\n"
+"POT-Creation-Date: 2024-10-30 18:13+0100\n"
+"PO-Revision-Date: 2024-10-30 17:40+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de\n"
 "Language-Team: de <frank@brehm-online.com>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: bin/get-file-to-remove:72 bin/myip:75 bin/show-spinner:72 bin/update-ddns:75
 msgid ""
@@ -26,15 +26,15 @@ msgstr ""
 "{c}-Objekt:\n"
 "{a}"
 
-#: lib/fb_tools/app.py:65
+#: lib/fb_tools/app.py:98
 msgid "Forced execution - whatever it means."
 msgstr "Forcierte Ausführung, was auch immer das bedeuten mag."
 
-#: lib/fb_tools/app.py:155
+#: lib/fb_tools/app.py:193
 msgid "Invalid env_prefix {!r} given - it may not be empty."
 msgstr "Ungültiger env_prefix {!r} übergeben - er darf nicht leer sein."
 
-#: lib/fb_tools/app.py:159
+#: lib/fb_tools/app.py:197
 msgid ""
 "Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
 "underscore (this not as the first character) are allowed."
@@ -42,136 +42,136 @@ msgstr ""
 "Ungültige Zeichen in env_prefix {!r} gefunden, nur alphanumerische Zeichen und Unterstriche "
 "(diese aber nicht als erstes Zeichen) sind erlaubt."
 
-#: lib/fb_tools/app.py:170
+#: lib/fb_tools/app.py:208
 msgid "Unknown and undescriped application."
 msgstr "Unbekannte und nicht beschriebene Anwendung."
 
-#: lib/fb_tools/app.py:198
+#: lib/fb_tools/app.py:236
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr "Falscher Wert für exit_value {!r}, muss größer als oder gleich Null sein."
 
-#: lib/fb_tools/app.py:457
+#: lib/fb_tools/app.py:495
 msgid "Trying to get {} via console ..."
 msgstr "Versuche {} über die Konsole zu bekommen …"
 
-#: lib/fb_tools/app.py:473 lib/fb_tools/show_spinner_app.py:225
+#: lib/fb_tools/app.py:511 lib/fb_tools/show_spinner_app.py:225
 msgid "Got a signal {}."
 msgstr "Erhielt ein Signal {}."
 
-#: lib/fb_tools/app.py:476 lib/fb_tools/show_spinner_app.py:228
+#: lib/fb_tools/app.py:514 lib/fb_tools/show_spinner_app.py:228
 msgid "Got a signal {n!r} ({s})."
 msgstr "Erhielt ein Signal {n!r} ({s})."
 
-#: lib/fb_tools/app.py:483 lib/fb_tools/show_spinner_app.py:237
+#: lib/fb_tools/app.py:521 lib/fb_tools/show_spinner_app.py:237
 msgid "Exit on signal {n!r} ({s})."
 msgstr "Beendigung auf Signal {n!r} ({s})."
 
-#: lib/fb_tools/app.py:491 lib/fb_tools/show_spinner_app.py:244
+#: lib/fb_tools/app.py:529 lib/fb_tools/show_spinner_app.py:244
 msgid "Tweaking signal handlers."
 msgstr "Schraube an den Signalhandlern."
 
-#: lib/fb_tools/app.py:497 lib/fb_tools/show_spinner_app.py:250
+#: lib/fb_tools/app.py:535 lib/fb_tools/show_spinner_app.py:250
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr "Setze Signalhandler für {n!r} ({s})."
 
-#: lib/fb_tools/app.py:508
+#: lib/fb_tools/app.py:546
 msgid "Enter "
 msgstr "Eingabe von "
 
-#: lib/fb_tools/app.py:515
+#: lib/fb_tools/app.py:553
 msgid "Repeat enter "
 msgstr "Wiederholen der Eingabe von "
 
-#: lib/fb_tools/app.py:525
+#: lib/fb_tools/app.py:563
 msgid "{n} and repeated {n} did not match."
 msgstr "{n} und das wiederholte {n} stimmen nicht überein."
 
-#: lib/fb_tools/app.py:529 lib/fb_tools/show_spinner_app.py:269
+#: lib/fb_tools/app.py:567 lib/fb_tools/show_spinner_app.py:269
 msgid "Restoring original signal handlers."
 msgstr "Stelle original Signalhandler wieder her."
 
-#: lib/fb_tools/app.py:534
+#: lib/fb_tools/app.py:572
 msgid "Got {n!r}: {s!r}"
 msgstr "Erhielt {n!r}: {s!r}"
 
-#: lib/fb_tools/app.py:584
+#: lib/fb_tools/app.py:622
 msgid "The application is not completely initialized."
 msgstr "Die Anwendung ist nicht vollständig initialisiert."
 
-#: lib/fb_tools/app.py:595
+#: lib/fb_tools/app.py:633
 msgid "Object {!r} seems not to be completely initialized."
 msgstr "Das {!r}-Objekt scheit noch nicht vollständig initialisiert zu sein."
 
-#: lib/fb_tools/app.py:605
+#: lib/fb_tools/app.py:643
 msgid "Ending."
 msgstr "Beenden."
 
-#: lib/fb_tools/app.py:623
+#: lib/fb_tools/app.py:661
 msgid "Executing {} ..."
 msgstr "Führe {} aus …"
 
-#: lib/fb_tools/app.py:645
+#: lib/fb_tools/app.py:683
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
-#: lib/fb_tools/app.py:650
+#: lib/fb_tools/app.py:688
 msgid "Simulation mode, nothing is really done."
 msgstr "Simulations-Modus, es wird nichts wirklich verändert."
 
-#: lib/fb_tools/app.py:664 lib/fb_tools/app.py:670
+#: lib/fb_tools/app.py:702 lib/fb_tools/app.py:708
 msgid "Automatically answer '{}' for all questions."
 msgstr "Automatisch alle Fragen mit {} beantworten."
 
-#: lib/fb_tools/app.py:665 lib/fb_tools/handling_obj.py:1082
+#: lib/fb_tools/app.py:703 lib/fb_tools/handling_obj.py:1168
 msgid "Yes"
 msgstr "Ja"
 
-#: lib/fb_tools/app.py:671 lib/fb_tools/handling_obj.py:1080
+#: lib/fb_tools/app.py:709 lib/fb_tools/handling_obj.py:1166
 msgid "No"
 msgstr "Nein"
 
-#: lib/fb_tools/app.py:676 lib/fb_tools/ddns/__init__.py:192 lib/fb_tools/show_spinner_app.py:138
+#: lib/fb_tools/app.py:714 lib/fb_tools/ddns/__init__.py:192 lib/fb_tools/show_spinner_app.py:138
 msgid "SECONDS"
 msgstr "SEKUNDEN"
 
-#: lib/fb_tools/app.py:678
+#: lib/fb_tools/app.py:716
 msgid "The timeout in seconds for console input. Default: {}"
 msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Konsolen-Eingaben Vorgabe: {}."
 
-#: lib/fb_tools/app.py:685
+#: lib/fb_tools/app.py:723
 msgid "Use colored output for messages."
 msgstr "Verwenden kolorierter Ausgabe für Mitteilungen."
 
-#: lib/fb_tools/app.py:688
+#: lib/fb_tools/app.py:726
 msgid "Increase the verbosity level"
 msgstr "Erhöhen des Ausführichkeits-Niveaus"
 
-#: lib/fb_tools/app.py:697
+#: lib/fb_tools/app.py:735
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr "Stillschweigende Ausführung, nur Warnungen und Fehler werden ausgegeben."
 
-#: lib/fb_tools/app.py:707
+#: lib/fb_tools/app.py:745
 msgid "Show this help message and exit."
 msgstr "Zeigt diesen Hilfe-Bildschirm und beendet sich."
 
-#: lib/fb_tools/app.py:711
+#: lib/fb_tools/app.py:749
 msgid "Display brief usage message and exit."
 msgstr "Zeigt eine kurze Darstellug zur Verwendung und beendet sich."
 
-#: lib/fb_tools/app.py:713
+#: lib/fb_tools/app.py:751
 #, python-format
 msgid "Version of %(prog)s: {}"
 msgstr "Version von %(prog)s: {}"
 
-#: lib/fb_tools/app.py:716
+#: lib/fb_tools/app.py:754
 msgid "Show program's version number and exit."
 msgstr "Stellt die Programm-Version dar und beendet sich."
 
-#: lib/fb_tools/app.py:846
+#: lib/fb_tools/app.py:884
 msgid "Starting in:"
 msgstr "Start in:"
 
-#: lib/fb_tools/app.py:868
+#: lib/fb_tools/app.py:906
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
 
@@ -316,31 +316,31 @@ msgstr "Der Parameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Ty
 msgid "The method {met}() expected at most {max} arguments, got {got}."
 msgstr "Die Methode {met}() erwartet höchstens {max} Argumente, hat aber {got} erhalten."
 
-#: lib/fb_tools/common.py:166
+#: lib/fb_tools/common.py:168
 msgid "{} is a tty."
 msgstr "{} ist ein tty."
 
-#: lib/fb_tools/common.py:170
+#: lib/fb_tools/common.py:172
 msgid "Platform is Windows and not ansi_term."
 msgstr "Die Plattform ist Windows und nicht ansi_term."
 
-#: lib/fb_tools/common.py:174
+#: lib/fb_tools/common.py:176
 msgid "{} is not a tty."
 msgstr "{} ist kein tty."
 
-#: lib/fb_tools/common.py:565
+#: lib/fb_tools/common.py:567
 msgid "Given value is {!r}."
 msgstr "Der übergebene Wert ist {!r}."
 
-#: lib/fb_tools/common.py:604
+#: lib/fb_tools/common.py:606
 msgid "Could not determine bytes in {!r}."
 msgstr "Konnte die Bytes nicht in {!r} ermitteln."
 
-#: lib/fb_tools/common.py:689
+#: lib/fb_tools/common.py:691
 msgid "Couldn't detect unit {!r}."
 msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
 
-#: lib/fb_tools/common.py:795
+#: lib/fb_tools/common.py:797
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
 
@@ -903,6 +903,14 @@ msgstr "Der Pfad {!r} ist keine reguläre Datei"
 msgid "Invalid permissions for file {!r}"
 msgstr "Ungültige Zugriffsrechte auf die Datei {!r}"
 
+#: lib/fb_tools/errors.py:603
+msgid "Timeout error on reading from socket"
+msgstr "Timeout-Fehler beim Lesen vom Sockel"
+
+#: lib/fb_tools/errors.py:624
+msgid "Timeout error on writing to socket"
+msgstr "Timeout-Fehler beim Schreiben auf den Sockel"
+
 #: lib/fb_tools/get_file_rm_app.py:62
 msgid "Value must be at least {m} - {v} was given."
 msgstr "Der Wert muss mindestens {m} sein - {v} wurde gegeben."
@@ -1337,150 +1345,154 @@ msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] "Das Kommando {c!r} timte nach einer Sekunde aus."
 msgstr[1] "Das Kommando {c!r} timte nach {s} Sekunden aus."
 
-#: lib/fb_tools/handling_obj.py:309
+#: lib/fb_tools/handling_obj.py:362
 msgid "Wrong prompt timeout {v!r}, must be greater or equal to Null and less or equal to {max}."
 msgstr ""
 "Falscher Eingabe-Timeout {v!r}, er muss größer oder gleich Null sowie kleiner oder gleich {max} "
 "sein."
 
-#: lib/fb_tools/handling_obj.py:332 lib/fb_tools/handling_obj.py:432
+#: lib/fb_tools/handling_obj.py:385 lib/fb_tools/handling_obj.py:485
 msgid "Wrong address family {!r} given. Valid values are:"
 msgstr "Ungültige Adressfamilie {!r} übergeben. Gültige Werte sind:"
 
-#: lib/fb_tools/handling_obj.py:351
+#: lib/fb_tools/handling_obj.py:404
 msgid "yes"
 msgstr "ja"
 
-#: lib/fb_tools/handling_obj.py:358
+#: lib/fb_tools/handling_obj.py:411
 msgid "no"
 msgstr "nein"
 
-#: lib/fb_tools/handling_obj.py:518
+#: lib/fb_tools/handling_obj.py:537
+msgid "No hostname or IP address given on calling get_address()."
+msgstr "Kein Hostname oder IP-Adresse beim Aufruf von get_address() übergeben."
+
+#: lib/fb_tools/handling_obj.py:604
 msgid "Searching for command {!r} ..."
 msgstr "Suche nach Befehl {!r} …"
 
-#: lib/fb_tools/handling_obj.py:523
+#: lib/fb_tools/handling_obj.py:609
 msgid "Command {!r} doesn't exists."
 msgstr "Das Befehl {!r} existiert nicht."
 
-#: lib/fb_tools/handling_obj.py:526 lib/fb_tools/handling_obj.py:550
+#: lib/fb_tools/handling_obj.py:612 lib/fb_tools/handling_obj.py:636
 msgid "Command {!r} is not executable."
 msgstr "Das Befehl {!r} ist nicht ausführbar."
 
-#: lib/fb_tools/handling_obj.py:540
+#: lib/fb_tools/handling_obj.py:626
 msgid "Searching command in {!r} ..."
 msgstr "Suche Befehl in {!r} …"
 
-#: lib/fb_tools/handling_obj.py:553
+#: lib/fb_tools/handling_obj.py:639
 msgid "Command {!r} not found."
 msgstr "Das Kommando {!r} wurde nicht gefunden."
 
-#: lib/fb_tools/handling_obj.py:625
+#: lib/fb_tools/handling_obj.py:711
 msgid "STDIN and input arguments may not both be used."
 msgstr "STDIN und Eingabe-Argumente dürfen nicht zusammen verwendet werden."
 
-#: lib/fb_tools/handling_obj.py:628
+#: lib/fb_tools/handling_obj.py:714
 msgid "Executing command args:"
 msgstr "Auszuführende Befehlsargumente:"
 
-#: lib/fb_tools/handling_obj.py:631
+#: lib/fb_tools/handling_obj.py:717
 msgid "Performing argument {!r}."
 msgstr "Verarbeite Argument {!r}."
 
-#: lib/fb_tools/handler/__init__.py:241 lib/fb_tools/handling_obj.py:636
+#: lib/fb_tools/handler/__init__.py:241 lib/fb_tools/handling_obj.py:722
 msgid "Executing: {}"
 msgstr "Ausführung: {}"
 
-#: lib/fb_tools/handling_obj.py:639
+#: lib/fb_tools/handling_obj.py:725
 msgid "Simulation mode, not executing: {}"
 msgstr "Simulations-Modus, führe nicht aus: {}"
 
-#: lib/fb_tools/handling_obj.py:647
+#: lib/fb_tools/handling_obj.py:733
 msgid "PID of process: {}"
 msgstr "PID des Prozesses: {}"
 
-#: lib/fb_tools/handling_obj.py:653
+#: lib/fb_tools/handling_obj.py:739
 msgid "{c} happened, killing process: {e}"
 msgstr "{} aufgetreten, töte Prozess: {e}"
 
-#: lib/fb_tools/handling_obj.py:755
+#: lib/fb_tools/handling_obj.py:841
 msgid "Nothing to do on signal."
 msgstr "Aud das Signal gibt es nichts zu tun."
 
-#: lib/fb_tools/handling_obj.py:809 lib/fb_tools/handling_obj.py:898
+#: lib/fb_tools/handling_obj.py:895 lib/fb_tools/handling_obj.py:984
 msgid "File doesn't exists."
 msgstr "Die Datei existiert nicht."
 
-#: lib/fb_tools/handling_obj.py:812
+#: lib/fb_tools/handling_obj.py:898
 msgid "Read permission denied."
 msgstr "Lesezugriff verboten."
 
-#: lib/fb_tools/handling_obj.py:815
+#: lib/fb_tools/handling_obj.py:901
 msgid "Reading file content of {!r} ..."
 msgstr "Lese Inhalt der Datei {!r} …"
 
-#: lib/fb_tools/handling_obj.py:903 lib/fb_tools/handling_obj.py:910
+#: lib/fb_tools/handling_obj.py:989 lib/fb_tools/handling_obj.py:996
 msgid "Write permission to {!r} denied."
 msgstr "Schreibzugriff auf {!r} verboten."
 
-#: lib/fb_tools/handling_obj.py:905 lib/fb_tools/handling_obj.py:912
+#: lib/fb_tools/handling_obj.py:991 lib/fb_tools/handling_obj.py:998
 msgid "Write permission denied."
 msgstr "Schreibzugriff verboten."
 
-#: lib/fb_tools/handling_obj.py:916
+#: lib/fb_tools/handling_obj.py:1002
 msgid "Write {what!r} into {to!r}."
 msgstr "Schreibe {what!r} nach {to!r}."
 
-#: lib/fb_tools/handling_obj.py:918
+#: lib/fb_tools/handling_obj.py:1004
 msgid "Writing {!r} ..."
 msgstr "Schreibe {!r} …"
 
-#: lib/fb_tools/handling_obj.py:930
+#: lib/fb_tools/handling_obj.py:1016
 msgid "Simulating write into {!r}."
 msgstr "Simuliere das Schreiben nach {!r}."
 
-#: lib/fb_tools/handling_obj.py:938
+#: lib/fb_tools/handling_obj.py:1024
 msgid "Opening {!r} for write unbuffered ..."
 msgstr "Öffne {!r} zum ungepufferten Schreiben …"
 
-#: lib/fb_tools/handler/lock.py:894 lib/fb_tools/handling_obj.py:942
+#: lib/fb_tools/handler/lock.py:894 lib/fb_tools/handling_obj.py:1028
 msgid "Closing {!r} ..."
 msgstr "Schließe {!r} …"
 
-#: lib/fb_tools/handling_obj.py:978
+#: lib/fb_tools/handling_obj.py:1064
 msgid "Password:"
 msgstr "Passwort:"
 
-#: lib/fb_tools/handling_obj.py:981
+#: lib/fb_tools/handling_obj.py:1067
 msgid "Repeat password:"
 msgstr "Passwort Wiederholung:"
 
-#: lib/fb_tools/handling_obj.py:996
+#: lib/fb_tools/handling_obj.py:1082
 msgid "The entered passwords does not match."
 msgstr "Die eingegebenen Passwörter stimmen nicht überein."
 
-#: lib/fb_tools/handling_obj.py:1009 lib/fb_tools/handling_obj.py:1090
+#: lib/fb_tools/handling_obj.py:1095 lib/fb_tools/handling_obj.py:1176
 msgid "Interrupted on demand."
 msgstr "Abbruch auf Verlangen."
 
-#: lib/fb_tools/handling_obj.py:1034 lib/fb_tools/handling_obj.py:1042
-#: lib/fb_tools/handling_obj.py:1124 lib/fb_tools/handling_obj.py:1129
+#: lib/fb_tools/handling_obj.py:1120 lib/fb_tools/handling_obj.py:1128
+#: lib/fb_tools/handling_obj.py:1210 lib/fb_tools/handling_obj.py:1215
 msgid "Got a {}:"
 msgstr "Habe ein {} erhalten:"
 
-#: lib/fb_tools/handling_obj.py:1075
+#: lib/fb_tools/handling_obj.py:1161
 msgid "Yes/No"
 msgstr "Ja/Nein"
 
-#: lib/fb_tools/handling_obj.py:1083
+#: lib/fb_tools/handling_obj.py:1169
 msgid "Automatic answer: '{}'."
 msgstr "Automatische Antwort: '{}'."
 
-#: lib/fb_tools/handling_obj.py:1172 lib/fb_tools/handling_obj.py:1178
+#: lib/fb_tools/handling_obj.py:1278 lib/fb_tools/handling_obj.py:1284
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr "Der Parameter {t!r} muss ein {e} ein, statt dessen wurde {v!r} übergeben."
 
-#: lib/fb_tools/handling_obj.py:1241
+#: lib/fb_tools/handling_obj.py:1355
 msgid "Completed process"
 msgstr "Fertiggestellter Prozess"
 
@@ -1513,7 +1525,7 @@ msgstr "Ungültiger Nutzer- bzw. Postfachname."
 msgid "Invalid domain."
 msgstr "Ungültige Domäne."
 
-#: lib/fb_tools/mailaddress.py:200 lib/fb_tools/obj.py:247 lib/fb_tools/obj.py:303
+#: lib/fb_tools/mailaddress.py:200 lib/fb_tools/obj.py:254 lib/fb_tools/obj.py:299
 msgid "Wrong verbose level {!r}, must be >= 0"
 msgstr "Falsches Ausführlichkeits-Niveau, muss größer als oder gleich Null sein"
 
@@ -1796,11 +1808,11 @@ msgstr "unbestimmter Fehler."
 msgid "Exception happened"
 msgstr "Aufgetretene Ausnahme"
 
-#: lib/fb_tools/obj.py:327
+#: lib/fb_tools/obj.py:323
 msgid "Base directory {!r} does not exists."
 msgstr "Das Basis-Verzeichnis {!r} existiert nicht."
 
-#: lib/fb_tools/obj.py:330
+#: lib/fb_tools/obj.py:326
 msgid "Path for base directory {!r} is not a directory."
 msgstr "Der Pfad zum Basis-Verzeichnis {!r} is kein Verzeichnis"
 
@@ -1935,8 +1947,8 @@ msgstr "Optionen für {}"
 #: lib/fb_tools/show_spinner_app.py:132
 msgid "The prompt displayed before the spinner, if only one spinner should be shown. Default: {!r}."
 msgstr ""
-"Der Prompt, der vor dem Spinner angezeigt werden soll, wenn nur ein Spinner gezeigt werden "
-"soll. Vorgabe: {!r}."
+"Der Prompt, der vor dem Spinner angezeigt werden soll, wenn nur ein Spinner gezeigt werden soll."
+" Vorgabe: {!r}."
 
 #: lib/fb_tools/show_spinner_app.py:139
 msgid "The time in seconds for displaying each spinner."
@@ -1974,6 +1986,250 @@ msgstr "Spinner {!r}: "
 #: lib/fb_tools/show_spinner_app.py:285
 msgid "All available spinners:"
 msgstr "Alle verfügbaren Spinner:"
+
+#: lib/fb_tools/socket_obj/__init__.py:207
+msgid "A timeout for a socket operation may not be equal or less then zero."
+msgstr "Ein Timeout für eine Sockel-Operation darf nicht kleiner oder gleich Null sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:208 lib/fb_tools/socket_obj/__init__.py:214
+#: lib/fb_tools/socket_obj/__init__.py:260 lib/fb_tools/socket_obj/__init__.py:266
+#: lib/fb_tools/socket_obj/__init__.py:287 lib/fb_tools/socket_obj/__init__.py:293
+#: lib/fb_tools/socket_obj/__init__.py:299 lib/fb_tools/socket_obj/__init__.py:345
+#: lib/fb_tools/socket_obj/__init__.py:351
+msgid "Given: {!r}"
+msgstr "Übergeben: {!r}."
+
+#: lib/fb_tools/socket_obj/__init__.py:212
+msgid "The timeout for a socket operation must be less or equal to {}."
+msgstr "Ein Timeout für eine Sockel-Operation muss kleiner oder gleich {} sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:259
+msgid "The request queue size must be at least a non nagetive value."
+msgstr "Die Request-Queue-Größe muss einen nicht-negativen Wert haben."
+
+#: lib/fb_tools/socket_obj/__init__.py:264
+msgid "The request queue size must be less or equal to {}."
+msgstr "Die Request-Queue-Größe muss kleiner oder gleich {} sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:286
+msgid "The buffer size must be at least {} bytes."
+msgstr "Die Puffergröße muss wenigstens {} Bytes sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:291
+msgid "The buffer size must be less or equal to {} bytes."
+msgstr "Die Puffergröße muss kleiner oder gleich {} sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:298
+msgid "The buffer size must be a multiple of 512 bytes."
+msgstr "Die Puffergröße muss ein Vielfaches von 512 Bytes sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:325
+msgid "Did not found encoding {!r}."
+msgstr "Codierung {!r} nicht gefunden."
+
+#: lib/fb_tools/socket_obj/__init__.py:344
+msgid "An intervall between polling attempts from socket must be greater than zero."
+msgstr "Das Intervall zwischen den Abfrageversuchen vom Sockel muss größer als Null sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:349
+msgid "The intervall between polling attempts from socket must be less or equal to {}."
+msgstr "Das Intervall zwischen den Abfrageversuchen vom Sockel muss kleiner oder gleich {} sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:399
+msgid "Closing socket ..."
+msgstr "Schließe Sockel …"
+
+#: lib/fb_tools/socket_obj/__init__.py:420
+msgid "Resetting socket connection ..."
+msgstr "Setze Sockel-Verbindung zurück …"
+
+#: lib/fb_tools/socket_obj/__init__.py:437
+msgid "Cannot send message to the receipient, because the socket connection is interrupted."
+msgstr "Kann die Nachricht nicht zum Empfänger senden, da die Sockel-Verbindung unterbrochen wurde."
+
+#: lib/fb_tools/socket_obj/__init__.py:449
+msgid "Cannot send message to the receipient, because the socket connection is closed."
+msgstr "Kann die Nachricht nicht zum Empfänger senden, da die Sockel-Verbindung geschlossen wurde."
+
+#: lib/fb_tools/socket_obj/__init__.py:456
+msgid "Sending {!r} to socket."
+msgstr "Sende {!r} zum Sockel."
+
+#: lib/fb_tools/socket_obj/__init__.py:470
+msgid "Cannot accept connection, socket is not bonded."
+msgstr "Kann die Verbindung nicht accepten, da der Sockel nich gebunden ist."
+
+#: lib/fb_tools/socket_obj/__init__.py:474
+msgid "Accept a connection ..."
+msgstr "Accepte Verbindung …"
+
+#: lib/fb_tools/socket_obj/__init__.py:481
+msgid "Got a request from {!r}."
+msgstr "Habe einen Request von {!r} erhalten."
+
+#: lib/fb_tools/socket_obj/__init__.py:483
+msgid "Got a request from somewhere on the system."
+msgstr "Habe einen Request von irgendwo aus dem System erhalten."
+
+#: lib/fb_tools/socket_obj/__init__.py:503
+msgid "Trying to get data ..."
+msgstr "Versuche die Daten zu bekommen …"
+
+#: lib/fb_tools/socket_obj/__init__.py:512
+msgid "Got data: {!r}."
+msgstr "Erhaltene Daten: {!r}"
+
+#: lib/fb_tools/socket_obj/__init__.py:517
+msgid "Got EOF, counterpart has interrupted ..."
+msgstr "Habe EOF erhalten, die Gegnstelle hat unterbrochen …"
+
+#: lib/fb_tools/socket_obj/__init__.py:547
+msgid "Socket has data."
+msgstr "Der Sockel hat Daten."
+
+#: lib/fb_tools/socket_obj/__init__.py:559
+msgid "Socket has no data."
+msgstr "Der Sockel hat keine Daten."
+
+#: lib/fb_tools/socket_obj/__init__.py:565
+msgid "Get input buffer ..."
+msgstr "Eingabepuffer erhalten …"
+
+#: lib/fb_tools/socket_obj/__init__.py:569
+msgid "Current input buffer: {!r}"
+msgstr "Aktueller Eingabepuffer: {!r}"
+
+#: lib/fb_tools/socket_obj/__init__.py:610
+msgid "Performing input buffer {!r}"
+msgstr "Verarbeite Eingabepuffer {!r}"
+
+#: lib/fb_tools/socket_obj/__init__.py:620
+msgid "Got a line: {!r}"
+msgstr "Erhaltene Zeile: {!r}"
+
+#: lib/fb_tools/socket_obj/__init__.py:621
+msgid "Current input buffer after read_line(): {!r}"
+msgstr "Aktueller Eingabepuffer nach read_line(): {!r}"
+
+#: lib/fb_tools/socket_obj/tcp.py:93
+msgid "The TCP port number must be a positive integer value, not {!r}."
+msgstr "Die TCP-Portnummer muss ein positiver Integer-Wert sein, nicht {!r}."
+
+#: lib/fb_tools/socket_obj/tcp.py:94
+msgid "The TCP port number must be less than or equal to {max}, not {cur!r}."
+msgstr "Die TCP-Portnummer muss kleiner oder gleich {max} sein, nicht {cur!r}."
+
+#: lib/fb_tools/socket_obj/tcp.py:303
+msgid "Cannot connect to an undefined IP address or hostname."
+msgstr "Kann nicht zu einer undefinierter IP-Adresse oder Hostnamen verbinden."
+
+#: lib/fb_tools/socket_obj/tcp.py:307
+msgid "Connecting to address {addr!r}, port {port} by TCP ..."
+msgstr "Verbinde zu Adresse {addr!r}, Port {port} über TCP …"
+
+#: lib/fb_tools/socket_obj/tcp.py:312
+msgid "The socket is already connected to {addr!r}, port {port}."
+msgstr "Der Sockel ist bereits mit {addr!r}, Port {port} verbunden."
+
+#: lib/fb_tools/socket_obj/tcp.py:318 lib/fb_tools/socket_obj/tcp.py:405
+msgid "The application is already bonded to address {addr!r}, port {port}."
+msgstr "Die Anwendung ist bereits auf die Adresse {addr!r}, Port {port} gebunden."
+
+#: lib/fb_tools/socket_obj/tcp.py:342 lib/fb_tools/socket_obj/tcp.py:429
+msgid "No valid address for host {!r} found."
+msgstr "Keine gültige Adresse für Host {!r} gefunden."
+
+#: lib/fb_tools/socket_obj/tcp.py:397
+msgid "Creating a listening TCP socket on address {addr!r}, port {port} ..."
+msgstr "Erstelle einen Listener-TCP-Sockel auf Adresse {addr!r}, Port {port}  …"
+
+#: lib/fb_tools/socket_obj/tcp.py:401
+msgid "The socket is already connected to address {addr!r}, port {port}."
+msgstr "Der Sockel ist bereits mit Adresse {addr!r}, Port {port} verbunden."
+
+#: lib/fb_tools/socket_obj/tcp.py:426
+msgid "Got socket addresses:"
+msgstr "Erhaltene Sockel-Adresse:"
+
+#: lib/fb_tools/socket_obj/tcp.py:443
+msgid "Binding to socket address {!r}."
+msgstr "Binde an Sockel-Adresse {!r}."
+
+#: lib/fb_tools/socket_obj/unix.py:60
+msgid "The Unix socket file {!r} was not found."
+msgstr "Die Unix-Sockel-Datei {!r} wurde nicht gefunden."
+
+#: lib/fb_tools/socket_obj/unix.py:76
+msgid "Invalid permissions to connect to Unix socket {!r}."
+msgstr "Ungültige Zugriffsrechte auf den Unix-Sockel {!r}."
+
+#: lib/fb_tools/socket_obj/unix.py:224
+msgid "A UNIX socket filename may not be None."
+msgstr "Eine Unix-Sockel-Datei darf nicht None sein."
+
+#: lib/fb_tools/socket_obj/unix.py:229
+msgid "The UNIX socket filename {!r} must be an absolute filename."
+msgstr "Der Unix-Sockel-Dateiname {!r} muss ein absoluter Pfad sein."
+
+#: lib/fb_tools/socket_obj/unix.py:249
+msgid "Wrong socket mode {!r}:"
+msgstr "Ungültiger Sockel-Mode {!r}:"
+
+#: lib/fb_tools/socket_obj/unix.py:285
+msgid "Invalid UID {!r} for socket owner given."
+msgstr "Ungültige UID {!r} für den Sockel-Besitzer übergeben."
+
+#: lib/fb_tools/socket_obj/unix.py:303
+msgid "Username {!r} as the owner for the UNIX socket file not found."
+msgstr "Der Nutzername {!r} als Besitzer der Unix-Sockel-Datei wurde nicht gefunden."
+
+#: lib/fb_tools/socket_obj/unix.py:338
+msgid "Invalid GID {!r} for socket file group given."
+msgstr "Ungültige GID {!r} für die Gruppe der Unix-Sockel-Datei übergeben."
+
+#: lib/fb_tools/socket_obj/unix.py:356
+msgid "Groupname {!r} as the group for the UNIX socket file not found."
+msgstr "Der Gruppenname {!r} als Gruppe der Unix-Sockel-Datei wurde nicht gefunden."
+
+#: lib/fb_tools/socket_obj/unix.py:425
+msgid "Removing socket file {!r} ..."
+msgstr "Lösche Sockel-Datei {!r} …"
+
+#: lib/fb_tools/socket_obj/unix.py:434
+msgid "Connecting to Unix Domain Socket {!r} ..."
+msgstr "Verbinde mit Unix-Domain-Sockel {!r} …"
+
+#: lib/fb_tools/socket_obj/unix.py:437 lib/fb_tools/socket_obj/unix.py:499
+msgid "The socket is already connected to {!r} ..."
+msgstr "Der Sockel ist bereits mit {!r} verbunden …"
+
+#: lib/fb_tools/socket_obj/unix.py:441 lib/fb_tools/socket_obj/unix.py:503
+msgid "The application is already bonded to {!r} ..."
+msgstr "Die Anwendung ist bereits an {!r} gebunden …"
+
+#: lib/fb_tools/socket_obj/unix.py:452
+msgid "Error connecting to Unix Socket {sock!r}: {e}"
+msgstr "Fehler beim Verbinden mit Unix-Sockel {sock!r}: {e}"
+
+#: lib/fb_tools/socket_obj/unix.py:466
+msgid "Setting permissions of {sock!r} to 0o{mode} ..."
+msgstr "Setze Rechte auf {sock!r} auf 0o{mode} …"
+
+#: lib/fb_tools/socket_obj/unix.py:480
+msgid "Only root may change the ownership of a socket."
+msgstr "Nur root darf die Besitzerschaft eines Sockels ändern."
+
+#: lib/fb_tools/socket_obj/unix.py:483
+msgid "Setting owner and group of {sock!r} to {uid}:{gid} ({owner}:{group}) ..."
+msgstr "Setze Besitzer und Gruppe von {sock!r} auf {uid}:{gid} ({owner}:{group}) …"
+
+#: lib/fb_tools/socket_obj/unix.py:496
+msgid "Creating and bind to Unix Socket {!r} ..."
+msgstr "Erstelle und binde an Unix-Sockel {!r} …"
+
+#: lib/fb_tools/socket_obj/unix.py:518
+msgid "Start listening on socket with a queue size of {}."
+msgstr "Starte Listening an Sockel mit einer Queue-Größe von {}."
 
 #: lib/fb_tools/spinner.py:496
 msgid "Spinner {!r} not found."

@@ -52,7 +52,10 @@ def init_root_logger(verbose=0):
             root_log.setLevel(logging.DEBUG)
 
     appname = os.path.basename(sys.argv[0])
-    format_str = appname + ': '
+    if verbose > 1:
+        format_str = '[%(asctime)s]: ' + appname + ': '
+    else:
+        format_str = appname + ': '
     if verbose:
         if verbose > 1:
             format_str += '%(name)s(%(lineno)d) %(funcName)s() '

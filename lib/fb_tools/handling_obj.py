@@ -4,7 +4,7 @@
 @summary: The module for a base object with extended handling.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
+@contact: frank@brehm-online.com
 @copyright: © 2024 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
@@ -61,7 +61,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.3.0'
+__version__ = '2.4.3'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -163,7 +163,28 @@ class TimeoutExpiredError(SubprocessError):
 
 # =============================================================================
 class HandlingObject(FbBaseObject):
-    """Base class for an object with extend handling possibilities."""
+    """
+    Base class for an object with extend handling possibilities.
+
+    Properties:
+    * address_family (str or int   - rw)
+    * appname        (str          - rw) (inherited from FbBaseObject)
+    * assumed_answer (None or bool - rw)
+    * base_dir       (pathlib.Path - rw) (inherited from FbBaseObject)
+    * force          (bool         - rw)
+    * initialized    (bool         - rw) (inherited from FbBaseObject)
+    * interrupted    (bool         - rw)
+    * is_venv        (bool         - ro)
+    * prompt_timeout (int          - rw)
+    * quiet          (bool         - rw)
+    * simulate       (bool         - rw)
+    * verbose        (int          - rw) (inherited from FbBaseObject)
+    * version        (str          - ro) (inherited from FbBaseObject)
+
+    Public attributes:
+    * add_search_paths       Array of pathlib.Path
+    * signals_dont_interrupt Array of int
+    """
 
     fileio_timeout = DEFAULT_FILEIO_TIMEOUT
     default_prompt_timeout = DEFAULT_PROMPT_TIMEOUT
@@ -184,7 +205,31 @@ class HandlingObject(FbBaseObject):
     def __init__(
         self, version=__version__, quiet=False, terminal_has_colors=False,
             simulate=None, force=None, assumed_answer=None, *args, **kwargs):
-        """Initialise a HandlingObject."""
+        """
+        Initialise a HandlingObject.
+
+        @param version: version string of the current object or application
+        @type: str
+        @param quiet: Quiet execution
+        @type: bool
+        @param terminal_has_colors: has the current terminal colored output
+        @type: bool
+        @param simulate: actions with changing a state are not executed
+        @type: bool
+        @param force: Forced execution of something
+        @type: bool
+        @param assumed_answer: The assumed answer to all yes/no questions.
+        @type: bool or None
+
+        @param appname: name of the current running application
+        @type: str
+        @param base_dir: base directory used for different purposes
+        @type: str or pathlib.Path
+        @param initialized: initialisation of this object is complete after init
+        @type: bool
+        @param verbose: verbosity level (0 - 9)
+        @type: int
+        """
         self.init_yes_no_lists()
 
         self._simulate = False
@@ -194,19 +239,23 @@ class HandlingObject(FbBaseObject):
         self._address_family = self.default_address_family
 
         self.add_search_paths = []
+        """
+        @ivar: Additional search paths of executing external commands
+        @type: Array of pathlib.Path
+        """
 
         self._prompt_timeout = self.default_prompt_timeout
 
         self._terminal_has_colors = bool(terminal_has_colors)
-        """
-        @ivar: flag, that the current terminal understands color ANSI codes
-        @type: bool
-        """
 
         self.signals_dont_interrupt = [
             signal.SIGUSR1,
             signal.SIGUSR2,
         ]
+        """
+        @ivar: Signal numbers, which do not lead to interrupt running task.
+        @type: Array of int
+        """
 
         self._interrupted = False
 
@@ -285,6 +334,10 @@ class HandlingObject(FbBaseObject):
     def interrupted(self):
         """Return the flag indicating, that the current process was interrupted."""
         return self._interrupted
+
+    @interrupted.setter
+    def interrupted(self, value):
+        self._interrupted = bool(value)
 
     # -----------------------------------------------------------
     @property
@@ -452,13 +505,37 @@ class HandlingObject(FbBaseObject):
         return family
 
     # -------------------------------------------------------------------------
-    def get_address(self, host, address_family=None):
+    def get_address(
+            self, host, address_family=None, port=None,
+            addr_type=0, proto=0, flags=0, as_socket_address=False):
         """
         Try to resolve the addresses of the given hostname and returns them as a list.
 
+        In the end it is a wrapper for socket.getaddrinfo().
+
         @param host: the hostname to resolve.
+        @type host: str or ipaddress
         @param address_family: Limit the result to the addresses of the given address family.
+        @type address_family: int, str or None
+        @param port: a string service name such as 'http' or a port number
+        @type port: str, int ir None
+        @param addr_type: specifies the communication semantics,
+                          maybe such like SOCK_STREAM or SOCK_DGRAM
+        @type addr_type: int
+        @param proto: specifies a particular protocol to be used
+        @type proto: int
+        @param flags: can be one or several of the AI_* constants, and will influence how
+                      results are computed and returned.
+        @type proto: int
+        @param as_socket_address: Return as a list of socket addresses
+                                  instead as a list of ipaddresses.
+        @type as_socket_address: bool
+
+        @return: list of resolved IP addresses
         """
+        if not host:
+            raise ValueError(_('No hostname or IP address given on calling get_address().'))
+
         af = self.get_address_famlily_int(address_family)
         if self.verbose > 3:
             LOG.debug(f'Got the integer address family {af!r} for {address_family!r}.')
@@ -469,17 +546,26 @@ class HandlingObject(FbBaseObject):
                 return []
             if af == socket.AF_INET6 and address.version == 4:
                 return []
+            if as_socket_address:
+                if address.version == 4:
+                    return [(str(address), 0)]
+                else:
+                    return [(str(address), 0, 0, 0)]
             return [address]
         except ValueError:
             pass
 
         addresses = []
-        addr_infos = socket.getaddrinfo(host, None, family=af)
+        addr_infos = socket.getaddrinfo(
+            host, port, family=af, type=addr_type, proto=proto, flags=flags)
         for addr_info in addr_infos:
             got_af = addr_info[0]
             if af and got_af != af:
                 continue
-            addr = ipaddress.ip_address(addr_info[4][0])
+            if as_socket_address:
+                addr = addr_info[4]
+            else:
+                addr = ipaddress.ip_address(addr_info[4][0])
             if addr not in addresses:
                 addresses.append(addr)
 
@@ -1142,11 +1228,17 @@ class CompletedProcess(object):
 
     This is returned by run().
 
-    Attributes:
-      args: The list or str args passed to run().
-      returncode: The exit code of the process, negative for signals.
-      stdout: The standard output (None if not captured).
-      stderr: The standard error (None if not captured).
+    Properties:
+    * duration (None or datetime.timediff - ro)
+    * end_dt   (None or datetime.datetime - ro)
+    * start_dt (None or datetime.datetime - ro)
+
+    Public Attributes:
+    * args
+    * encoding
+    * returncode
+    * stderr: The standard error (None if not captured).
+    * stdout: The standard output (None if not captured).
 
     This class was taken from subprocess.py of the standard library of Python 3.5.
     """
@@ -1157,8 +1249,22 @@ class CompletedProcess(object):
             start_dt=None, end_dt=None):
         """Initialize a CompletedProcess object."""
         self.args = args
+        """
+        @ivar: The list of str args passed to run().
+        @type: array of str
+        """
+
         self.returncode = returncode
+        """
+        @ivar: The exit code of the process, negative for signals.
+        @type: int
+        """
+
         self.encoding = encoding
+        """
+        @ivar: The encoding of stderr and stdout strings
+        @type: str
+        """
         if encoding is None:
             if locale.getpreferredencoding():
                 self.encoding = locale.getpreferredencoding()
@@ -1181,6 +1287,10 @@ class CompletedProcess(object):
             self._end_dt = end_dt
 
         self.stdout = stdout
+        """
+        @ivar: The standard output channel (None if not captured).
+        @type: None or str
+        """
         if stdout is not None:
             stdout = to_str(stdout, self.encoding)
             if stdout.strip() == '':
@@ -1189,6 +1299,10 @@ class CompletedProcess(object):
                 self.stdout = stdout
 
         self.stderr = stderr
+        """
+        @ivar: The standard error channel (None if not captured).
+        @type: None or str
+        """
         if stderr is not None:
             stderr = to_str(stderr, self.encoding)
             if stderr.strip() == '':

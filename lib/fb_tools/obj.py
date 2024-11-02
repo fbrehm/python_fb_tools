@@ -29,7 +29,7 @@ from .common import pp, to_bytes
 from .errors import FbError
 from .xlate import XLATOR
 
-__version__ = '2.0.2'
+__version__ = '2.1.0'
 
 LOG = logging.getLogger(__name__)
 
@@ -213,7 +213,18 @@ class FbGenericBaseObject(object):
 
 # =============================================================================
 class FbBaseObject(FbGenericBaseObject):
-    """Base class for all objects with some fundamental properties."""
+    """
+    Base class for all objects with some fundamental properties.
+
+    Properties:
+    * appname     (str - rw)
+    * base_dir    (pathlib.Path - rw)
+    * initialized (bool - rw)
+    * verbose     (int - rw)
+    * version     (str - ro)
+
+    Public attributes: None
+    """
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -222,44 +233,29 @@ class FbBaseObject(FbGenericBaseObject):
         """
         Initialise the base object.
 
+        @param appname: name of the current running applicatio
+        @type: str
+        @param base_dir: base directory used for different purposes
+        @type: str or pathlib.Path
+        @param initialized: initialisation of this object is complete after init
+        @type: bool
+        @param verbose: verbosity level (0 - 9)
+        @type: int
+        @param version: version string of the current object or application
+        @type: str
+
         Raises an exception on a uncoverable error.
         """
-        # Senseless comment to satisfy the linter.
-
-        """
-        @ivar: name of the current running application
-        @type: str
-        """
         self._appname = self.get_generic_appname(appname)
-
         self._version = version
-        """
-        @ivar: version string of the current object or application
-        @type: str
-        """
 
         self._verbose = int(verbose)
-        """
-        @ivar: verbosity level (0 - 9)
-        @type: int
-        """
         if self._verbose < 0:
             msg = _('Wrong verbose level {!r}, must be >= 0').format(verbose)
             raise ValueError(msg)
-
         self._initialized = False
-        """
-        @ivar: initialisation of this object is complete
-               after __init__() of this object
-        @type: bool
-        """
 
         self._base_dir = None
-        """
-        @ivar: base directory used for different purposes, must be an existent
-               directory. Defaults to directory of current script daemon.py.
-        @type: str or pathlib.Path
-        """
         if base_dir:
             self.base_dir = base_dir
         if not self._base_dir:
