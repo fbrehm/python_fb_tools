@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2024 Frank Brehm, Berlin
+@copyright: © 2025 Frank Brehm, Berlin
 @license: LGPL3
 """
 
@@ -1090,25 +1090,25 @@ if __name__ == '__main__':
 
     suite = unittest.TestSuite()
 
-    # suite.addTest(TestMailaddress('test_import', verbose))
-    # suite.addTest(TestMailaddress('test_object', verbose))
-    # suite.addTest(TestMailaddress('test_empty_address', verbose))
-    # suite.addTest(TestMailaddress('test_compare', verbose))
+    suite.addTest(TestMailaddress('test_import', verbose))
+    suite.addTest(TestMailaddress('test_object', verbose))
+    suite.addTest(TestMailaddress('test_empty_address', verbose))
+    suite.addTest(TestMailaddress('test_compare', verbose))
     suite.addTest(TestMailaddress('test_wrong_addresses', verbose))
-    # suite.addTest(TestMailaddress('test_wrong_user', verbose))
-    # suite.addTest(TestMailaddress('test_to_str', verbose))
-    # suite.addTest(TestMailaddress('test_sorting_simple', verbose))
-    # suite.addTest(TestMailaddress('test_qualified_address', verbose))
-    # suite.addTest(TestMailaddress('test_empty_qualified_address', verbose))
-    # suite.addTest(TestMailaddress('test_wrong_init_full_address', verbose))
+    suite.addTest(TestMailaddress('test_wrong_user', verbose))
+    suite.addTest(TestMailaddress('test_to_str', verbose))
+    suite.addTest(TestMailaddress('test_sorting_simple', verbose))
+    suite.addTest(TestMailaddress('test_qualified_address', verbose))
+    suite.addTest(TestMailaddress('test_empty_qualified_address', verbose))
+    suite.addTest(TestMailaddress('test_wrong_init_full_address', verbose))
     suite.addTest(TestMailaddress('test_wrong_qual_address', verbose))
-    # suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
-    # suite.addTest(TestMailaddress('test_equality', verbose))
-    # suite.addTest(TestMailaddress('test_lt', verbose))
-    # suite.addTest(TestMailaddress('test_gt', verbose))
-    # suite.addTest(TestMailaddress('test_le', verbose))
-    # suite.addTest(TestMailaddress('test_ge', verbose))
-    # suite.addTest(TestMailaddress('test_init_mailaddresslist', verbose))
+    suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
+    suite.addTest(TestMailaddress('test_equality', verbose))
+    suite.addTest(TestMailaddress('test_lt', verbose))
+    suite.addTest(TestMailaddress('test_gt', verbose))
+    suite.addTest(TestMailaddress('test_le', verbose))
+    suite.addTest(TestMailaddress('test_ge', verbose))
+    suite.addTest(TestMailaddress('test_init_mailaddresslist', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

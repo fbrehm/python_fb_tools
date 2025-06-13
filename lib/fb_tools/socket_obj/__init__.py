@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2024 by Frank Brehm, Berlin
+@copyright: © 2025 by Frank Brehm, Berlin
 @summary: modules for socket object classes
 """
 from __future__ import absolute_import

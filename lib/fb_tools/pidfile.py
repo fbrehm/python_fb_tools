@@ -7,7 +7,7 @@ It provides methods to define, check, create and remove a pidfile.
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2024 by Frank Brehm, Berlin
+@copyright: © 2025 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
