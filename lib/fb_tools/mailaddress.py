@@ -28,7 +28,7 @@ from .errors import InvalidMailAddressError
 from .obj import FbBaseObject, FbGenericBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.0.3'
+__version__ = '2.1.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -46,7 +46,8 @@ def convert_attr(value):
 class MailAddress(FbGenericBaseObject):
     """Class for encapsulating a mail simple address."""
 
-    pat_valid_domain = r'@((?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)+[a-z][a-z]+)'
+    pat_tld = r'(?:(?:[a-z][a-z]+)|(?:xn--[a-z0-9]+))'
+    pat_valid_domain = r'@((?:[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\.)*' + pat_tld + ')'
 
     pat_valid_user = r'([a-z0-9](?:[a-z0-9_\-\.\+=/]*[a-z0-9=\-_])?'
     pat_valid_user += r'(?:\+[a-z0-9][a-z0-9_\-\.=/]*[a-z0-9=\-_])*)'

@@ -187,6 +187,10 @@ class TestMailaddress(FbToolsTestcase):
             ('frank-uwe.61@banane.de', 'frank-uwe.61@banane.de'),
             ('frank_uwe@banane.de', 'frank_uwe@banane.de'),
             ('frank_uwe.61@banane.de', 'frank_uwe.61@banane.de'),
+            ('root@localhost', 'root@localhost'),
+            ('bla@uhu.xn--j1amh', 'bla@uhu.xn--j1amh'),
+            ('uhu@xn--nschknstrt-dcbfe.de', 'uhu@xn--nschknstrt-dcbfe.de'),
+            ('me@xn--fiqz9s', 'me@xn--fiqz9s'),
         )
 
         for pair in correct_addresses:
@@ -200,7 +204,7 @@ class TestMailaddress(FbToolsTestcase):
 
         wrong_addresses = (
             True, 1, ('uhu@banane.de', ), ['uhu@banane.de'], 'uhu:banane', 'uhu!banane', 'a@b@c',
-            'müller.de', 'ich@Müller.de', 'ich@mueller', '@uhu_banane.de', 'frank@uhu_banane.de',
+            'müller.de', 'ich@Müller.de', '@uhu_banane.de', 'frank@uhu_banane.de',
         )
 
         for addr in wrong_addresses:
@@ -496,7 +500,7 @@ class TestMailaddress(FbToolsTestcase):
 
         wrong_addresses = (
             True, 1, ('uhu@banane.de', ), ['uhu@banane.de'], 'uhu:banane', 'uhu!banane', 'a@b@c',
-            'müller.de', 'ich@Müller.de', 'ich@mueller', '@uhu_banane.de', 'frank@uhu_banane.de',
+            'müller.de', 'ich@Müller.de', 'ich@müller', '@uhu_banane.de', 'frank@uhu_banane.de',
             'frank.brehm', 'uhu_banane.de', '@uhu-banane.de', '"Frank Brehm <frank.uwe@banane.de>',
             'Frank Brehm" <frank.uwe@banane.de>', '<frank.uwe@banane.de> "Frank Brehm"',
             'Brehm < Frank <frank.uwe@banane.de>', 'Brehm < Frank <frank.uwe@banane.de>',
