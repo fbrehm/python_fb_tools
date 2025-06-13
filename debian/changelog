@@ -1,3 +1,24 @@
+fb-tools (2.8.0) all; urgency=medium
+
+  * Adding constant RE_FIRST_LINE to module fb_tools.common.
+  * Extending method get_address() of class HandlingObject in module
+    fb_tools.handling_obj.
+  * Adding classes GenericSocketError, SocketReadTimeoutError and
+    SocketWriteTimeoutError to module fb_tools.errors.
+  * Adding module fb_tools.socket_obj with abstract class GenericSocket.
+  * Adding module fb_tools.socket_obj.tcp for classes TcpSocket,
+    TcpSocketError and CouldNotOpenTcpSocketError.
+  * Adding module fb_tools.socket_obj.unix for classes UnixSocketError,
+    NoSocketFileError, NoPermissionsToSocketError and UnixSocket.
+  * Adding test scripts test/test_35_sockets.py,
+    test/test_36_unixsocket.py and test/test_37_tcpsocket.py for testing
+    the latter modules and classes.
+  * Substituting frank.brehm@pixelpark.com by frank@brehm-online.com in
+    script and module documentations.
+  * Extending module documentation.
+
+ -- Frank Brehm <frank@brehm-online.com>  Sat, 02 Nov 2024 09:49:47 +0100
+
 fb-tools (2.7.0) all; urgency=medium
 
   * Adding exception 'ExitAppError'.
