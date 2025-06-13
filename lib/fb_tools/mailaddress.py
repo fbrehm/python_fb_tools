@@ -28,7 +28,7 @@ from .errors import InvalidMailAddressError
 from .obj import FbBaseObject, FbGenericBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -60,7 +60,7 @@ class MailAddress(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     @classmethod
-    def valid_address(cls, address, raise_on_failure=False, verbose=0):
+    def valid_address(cls, address, raise_on_failure=False, verbose=0, no_user_ok=False):
         """Check the validity of a mail address."""
         if not address:
             e = InvalidMailAddressError(address, _('Empty address.'))
@@ -82,6 +82,10 @@ class MailAddress(FbGenericBaseObject):
         if cls.re_valid_address.search(addr):
             return True
 
+        if no_user_ok:
+            if cls.re_valid_domain.search(addr):
+                return True
+
         e = InvalidMailAddressError(address, _('Invalid address.'))
         if raise_on_failure:
             raise e
@@ -90,7 +94,7 @@ class MailAddress(FbGenericBaseObject):
         return False
 
     # -------------------------------------------------------------------------
-    def __init__(self, user=None, domain=None, verbose=0, empty_ok=False):
+    def __init__(self, user=None, domain=None, verbose=0, empty_ok=False, no_user_ok=False):
         """Initialise a MailAddress object."""
         self._user = ''
         self._domain = ''
@@ -112,10 +116,14 @@ class MailAddress(FbGenericBaseObject):
         if not domain:
             if user:
                 addr = convert_attr(user)
-                if self.valid_address(addr, verbose=self.verbose):
+                if self.valid_address(addr, verbose=self.verbose, no_user_ok=no_user_ok):
                     match = self.re_valid_address.search(addr)
-                    self._user = match.group(1)
-                    self._domain = match.group(2)
+                    if match:
+                        self._user = match.group(1)
+                        self._domain = match.group(2)
+                        return
+                    match = self.re_valid_domain.search(addr)
+                    self._domain = match.group(1)
                     return
                 match = self.re_valid_domain.search(addr)
                 if match:

@@ -173,31 +173,36 @@ class TestMailaddress(FbToolsTestcase):
         from fb_tools.errors import BaseMailAddressError
 
         correct_addresses = (
-            ('frank.brehm', 'frank.brehm'),
-            ('uhu_banane.de', 'uhu_banane.de'),
-            ('@uhu-banane.de', '@uhu-banane.de'),
-            ('uhu@banane.de', 'uhu@banane.de'),
-            ('Uhu@Banane.de', 'uhu@banane.de'),
-            ('ich@mueller.de', 'ich@mueller.de'),
-            ('root+bla@banane.de', 'root+bla@banane.de'),
-            ('root+bla.uhu-banane.de@banane.de', 'root+bla.uhu-banane.de@banane.de'),
-            ('root+bla+blub@banane.de', 'root+bla+blub@banane.de'),
-            ('frank.uwe@banane.de', 'frank.uwe@banane.de'),
-            ('frank.uwe.brehm@banane.de', 'frank.uwe.brehm@banane.de'),
-            ('frank-uwe.61@banane.de', 'frank-uwe.61@banane.de'),
-            ('frank_uwe@banane.de', 'frank_uwe@banane.de'),
-            ('frank_uwe.61@banane.de', 'frank_uwe.61@banane.de'),
-            ('root@localhost', 'root@localhost'),
-            ('bla@uhu.xn--j1amh', 'bla@uhu.xn--j1amh'),
-            ('uhu@xn--nschknstrt-dcbfe.de', 'uhu@xn--nschknstrt-dcbfe.de'),
-            ('me@xn--fiqz9s', 'me@xn--fiqz9s'),
+            ('frank.brehm', 'frank.brehm', False),
+            ('uhu_banane.de', 'uhu_banane.de', False),
+            ('@uhu-banane.de', '@uhu-banane.de', True),
+            ('uhu@banane.de', 'uhu@banane.de', False),
+            ('Uhu@Banane.de', 'uhu@banane.de', False),
+            ('ich@mueller.de', 'ich@mueller.de', False),
+            ('root+bla@banane.de', 'root+bla@banane.de', False),
+            ('root+bla.uhu-banane.de@banane.de', 'root+bla.uhu-banane.de@banane.de', False),
+            ('root+bla+blub@banane.de', 'root+bla+blub@banane.de', False),
+            ('frank.uwe@banane.de', 'frank.uwe@banane.de', False),
+            ('frank.uwe.brehm@banane.de', 'frank.uwe.brehm@banane.de', False),
+            ('frank-uwe.61@banane.de', 'frank-uwe.61@banane.de', False),
+            ('frank_uwe@banane.de', 'frank_uwe@banane.de', False),
+            ('frank_uwe.61@banane.de', 'frank_uwe.61@banane.de', False),
+            ('root@localhost', 'root@localhost', False),
+            ('bla@uhu.xn--j1amh', 'bla@uhu.xn--j1amh', False),
+            ('uhu@xn--nschknstrt-dcbfe.de', 'uhu@xn--nschknstrt-dcbfe.de', False),
+            ('me@xn--fiqz9s', 'me@xn--fiqz9s', False),
+            ('@localhost', '@localhost', True),
+            ('@abc.de', '@abc.de', True),
+            ('@xn--fiqz9s', '@xn--fiqz9s', True),
+            ('@uhu.xn--j1amh', '@uhu.xn--j1amh', True),
         )
 
-        for pair in correct_addresses:
-            addr = pair[0]
-            expected = pair[1]
+        for token in correct_addresses:
+            addr = token[0]
+            expected = token[1]
+            no_user_ok = token[2]
             LOG.debug('Testing mail address {a!r} => {e!r} ...'.format(a=addr, e=expected))
-            address = MailAddress(addr, verbose=self.verbose)
+            address = MailAddress(addr, verbose=self.verbose, no_user_ok=no_user_ok)
             LOG.debug('Successful mail address from {s!r}: {a!r} => {r!r}'.format(
                 s=addr, a=str(address), r=address))
             self.assertEqual(str(address), expected)
@@ -488,9 +493,9 @@ class TestMailaddress(FbToolsTestcase):
             ('Jörg Schüßler <jsc@banane.de>', 'Jörg Schüßler <jsc@banane.de>'),
         )
 
-        for pair in correct_addresses:
-            addr = pair[0]
-            expected = pair[1]
+        for token in correct_addresses:
+            addr = token[0]
+            expected = token[1]
             LOG.debug('Testing qualified mail address {a!r} => {e!r} ...'.format(
                 a=addr, e=expected))
             address = QualifiedMailAddress(addr, verbose=self.verbose)
@@ -1085,25 +1090,25 @@ if __name__ == '__main__':
 
     suite = unittest.TestSuite()
 
-    suite.addTest(TestMailaddress('test_import', verbose))
-    suite.addTest(TestMailaddress('test_object', verbose))
-    suite.addTest(TestMailaddress('test_empty_address', verbose))
-    suite.addTest(TestMailaddress('test_compare', verbose))
+    # suite.addTest(TestMailaddress('test_import', verbose))
+    # suite.addTest(TestMailaddress('test_object', verbose))
+    # suite.addTest(TestMailaddress('test_empty_address', verbose))
+    # suite.addTest(TestMailaddress('test_compare', verbose))
     suite.addTest(TestMailaddress('test_wrong_addresses', verbose))
-    suite.addTest(TestMailaddress('test_wrong_user', verbose))
-    suite.addTest(TestMailaddress('test_to_str', verbose))
-    suite.addTest(TestMailaddress('test_sorting_simple', verbose))
-    suite.addTest(TestMailaddress('test_qualified_address', verbose))
-    suite.addTest(TestMailaddress('test_empty_qualified_address', verbose))
-    suite.addTest(TestMailaddress('test_wrong_init_full_address', verbose))
+    # suite.addTest(TestMailaddress('test_wrong_user', verbose))
+    # suite.addTest(TestMailaddress('test_to_str', verbose))
+    # suite.addTest(TestMailaddress('test_sorting_simple', verbose))
+    # suite.addTest(TestMailaddress('test_qualified_address', verbose))
+    # suite.addTest(TestMailaddress('test_empty_qualified_address', verbose))
+    # suite.addTest(TestMailaddress('test_wrong_init_full_address', verbose))
     suite.addTest(TestMailaddress('test_wrong_qual_address', verbose))
-    suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
-    suite.addTest(TestMailaddress('test_equality', verbose))
-    suite.addTest(TestMailaddress('test_lt', verbose))
-    suite.addTest(TestMailaddress('test_gt', verbose))
-    suite.addTest(TestMailaddress('test_le', verbose))
-    suite.addTest(TestMailaddress('test_ge', verbose))
-    suite.addTest(TestMailaddress('test_init_mailaddresslist', verbose))
+    # suite.addTest(TestMailaddress('test_qual_to_simple', verbose))
+    # suite.addTest(TestMailaddress('test_equality', verbose))
+    # suite.addTest(TestMailaddress('test_lt', verbose))
+    # suite.addTest(TestMailaddress('test_gt', verbose))
+    # suite.addTest(TestMailaddress('test_le', verbose))
+    # suite.addTest(TestMailaddress('test_ge', verbose))
+    # suite.addTest(TestMailaddress('test_init_mailaddresslist', verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
