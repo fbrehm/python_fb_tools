@@ -1,4 +1,4 @@
-fb-tools (2.8.1) UNRELEASED; urgency=medium
+fb-tools (2.8.1) all; urgency=medium
 
   * Allowing wider range of domain part of mailaddresses.
   * Updating translations.
