@@ -1,3 +1,11 @@
+fb-tools (2.8.1) UNRELEASED; urgency=medium
+
+  * Allowing wider range of domain part of mailaddresses.
+  * Updating translations.
+  * Setting copyright year to 2025.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 13 Jun 2025 17:45:47 +0200
+
 fb-tools (2.8.0) all; urgency=medium
 
   * Adding constant RE_FIRST_LINE to module fb_tools.common.

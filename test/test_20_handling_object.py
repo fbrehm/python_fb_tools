@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2024 Frank Brehm, Berlin
+@copyright: © 2025 Frank Brehm, Berlin
 @license: GPL3
 """
 

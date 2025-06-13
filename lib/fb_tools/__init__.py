@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2024 by Frank Brehm, Berlin
+@copyright: © 2025 by Frank Brehm, Berlin
 """
 from __future__ import absolute_import
 
@@ -23,6 +23,6 @@ DEFAULT_TERMINAL_HEIGHT = 40
 from .mailaddress import MailAddress, MailAddressList, QualifiedMailAddress     # noqa: F401
 from .multi_config import BaseMultiConfig                                       # noqa: F401
 
-__version__ = '2.8.0'
+__version__ = '2.8.1'
 
 # vim: ts=4 et list
