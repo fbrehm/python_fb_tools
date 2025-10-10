@@ -40,7 +40,7 @@ name = "fb_tools"
 [tool.flit.external-data]
 directory = "data"
 
-# [project.scripts]
+[project.scripts]
 # dch2speclog = "fb_logging.dch2spl:main"
 
 [project.optional-dependencies]
