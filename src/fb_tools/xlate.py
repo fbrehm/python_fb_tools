@@ -26,16 +26,14 @@ import babel
 import babel.lists
 from babel.support import Translations
 
-try:
-    from packaging.version import Version
-except ImportError:
-    from distutils.version import LooseVersion as Version
+# from packaging.version import Version
+from semver import Version
 
 DOMAIN = 'fb_tools'
 
 LOG = logging.getLogger(__name__)
 
-__version__ = '2.0.5'
+__version__ = '2.1.0'
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
@@ -80,8 +78,8 @@ if __mo_file__:
 else:
     XLATOR = gettext.NullTranslations()
 
-CUR_BABEL_VERSION = Version(babel.__version__)
-NEWER_BABEL_VERSION = Version('2.6.0')
+CUR_BABEL_VERSION = Version.parse(babel.__version__)
+NEWER_BABEL_VERSION = Version.parse('2.6.0')
 
 SUPPORTED_LANGS = (
     'de',

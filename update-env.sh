@@ -509,8 +509,8 @@ upgrade_modules() {
     info "Installing and/or upgrading necessary modules …"
     empty_line
     # shellcheck disable=SC2086
-    pip install ${PIP_OPTIONS} --upgrade --upgrade-strategy eager --requirement requirements.txt
-    empty_line
+    # pip install ${PIP_OPTIONS} --upgrade --upgrade-strategy eager --requirement requirements.txt
+    # empty_line
     packages=$( pip3 list --outdated --exclude-editable --format json 2>/dev/null  | jq -r .[].name )
     if [[ -n "${packages}" ]] ; then
         msg="Packages to update:"
@@ -653,7 +653,7 @@ generate_manpages() {
         cmd="click-man --target \"${MAN_DIR}\" --man-version ${MAN_SECTION} \"${entrypoint}\""
         debug "Calling: ${cmd}"
         # shellcheck disable=SC2086
-        eval ${cmd}
+        eval ${cmd} || true
     done
 
 }

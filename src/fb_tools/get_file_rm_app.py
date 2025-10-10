@@ -13,8 +13,10 @@ from __future__ import absolute_import
 import argparse
 import datetime
 import glob
+import locale
 import logging
 import re
+import sys
 try:
     import pathlib
 except ImportError:
@@ -29,7 +31,7 @@ from .common import get_monday, pp
 from .errors import FbAppError
 from .xlate import XLATOR
 
-__version__ = '2.0.7'
+__version__ = '2.1.0'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -676,6 +678,26 @@ class GetFileRmApplication(BaseApplication):
         if self.verbose > 1:
             LOG.debug(_('Explored and assigned files:') + '\n' + pp(files))
         return files
+
+
+# =============================================================================
+
+def main():
+    """Entrypoint for get-file-to-remove."""
+    my_path = pathlib.Path(__file__)
+    appname = my_path.name
+
+    locale.setlocale(locale.LC_ALL, '')
+
+    app = GetFileRmApplication(appname=appname)
+    app.initialized = True
+
+    if app.verbose > 2:
+        print(_('{c}-Object:\n{a}').format(c=app.__class__.__name__, a=app), file=sys.stderr)
+
+    app()
+
+    sys.exit(0)
 
 
 # =============================================================================
