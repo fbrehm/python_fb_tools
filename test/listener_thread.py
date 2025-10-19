@@ -18,7 +18,7 @@ from threading import Thread
 
 LOG = logging.getLogger('listener_thread')
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 # =============================================================================
 class ListenerThread(Thread):
@@ -74,6 +74,7 @@ class ListenerThread(Thread):
 
         except BaseException:
             self.__status_queue.put(sys.exc_info())
+            raise
 
         self.__status_queue.put(None)
 

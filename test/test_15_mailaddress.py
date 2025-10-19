@@ -1009,7 +1009,7 @@ class TestMailaddress(FbToolsTestcase):
 
         LOG.debug('Testing copying of a MailAddressList.')
 
-        address_list = MailAddressList(verbose=self.verbose, initialized=True, *src)
+        address_list = MailAddressList(*src, verbose=self.verbose, initialized=True)
         copy_list = copy.copy(address_list)
         LOG.debug('Copied MailAddressList %r: {!r}'.format(copy_list))
         LOG.debug('Copied MailAddressList %s: {}'.format(copy_list))
@@ -1031,7 +1031,7 @@ class TestMailaddress(FbToolsTestcase):
 
         LOG.debug('Testing reversing of a MailAddressList.')
 
-        address_list = MailAddressList(verbose=self.verbose, initialized=True, *src)
+        address_list = MailAddressList(*src, verbose=self.verbose, initialized=True)
         reverse_list = reversed(address_list)
         LOG.debug('Reversed MailAddressList %r: {!r}'.format(reverse_list))
         LOG.debug('Reversed MailAddressList %s: {}'.format(reverse_list))
@@ -1043,7 +1043,7 @@ class TestMailaddress(FbToolsTestcase):
 
         src1 = [saddr1, saddr2]
         src2 = [saddr3]
-        alist1 = MailAddressList(verbose=self.verbose, initialized=True, *src1)
+        alist1 = MailAddressList(*src1, verbose=self.verbose, initialized=True)
         wrong_appenders = (None, 1, 'uhu')
 
         for appender in wrong_appenders:
@@ -1071,7 +1071,7 @@ class TestMailaddress(FbToolsTestcase):
         LOG.debug('Extended MailAddressList %r: {!r}'.format(alist_extended))
         self.assertEqual(len(alist_extended), 3)
 
-        alist2 = MailAddressList(verbose=self.verbose, initialized=True, *src2)
+        alist2 = MailAddressList(*src2, verbose=self.verbose, initialized=True)
 
         alist_extended = alist1 + alist2
         LOG.debug('Extended MailAddressList %r: {!r}'.format(alist_extended))
