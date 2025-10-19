@@ -16,9 +16,10 @@ import queue
 import sys
 from threading import Thread
 
-LOG = logging.getLogger('listener_thread')
+LOG = logging.getLogger("listener_thread")
 
-__version__ = '0.2.2'
+__version__ = "0.2.2"
+
 
 # =============================================================================
 class ListenerThread(Thread):
@@ -35,8 +36,9 @@ class ListenerThread(Thread):
         from fb_tools.socket_obj import GenericSocket
 
         if not isinstance(listener_sock, GenericSocket):
-            msg = 'Given socket is not a {o} object, but a {g} instead.'.format(
-                o='GenericSocket', g=listener_sock.__class__.__name__)
+            msg = "Given socket is not a {o} object, but a {g} instead.".format(
+                o="GenericSocket", g=listener_sock.__class__.__name__
+            )
             raise TypeError(msg)
 
         super(ListenerThread, self).__init__(*args, **kwargs)
@@ -52,24 +54,32 @@ class ListenerThread(Thread):
             while cur_attempt < max_attempts:
                 cur_attempt += 1
                 if self.listener_sock.verbose > 2:
-                    LOG.debug('Attempt {nr} on reading from socket {s!r} ...'.format(
-                        nr=cur_attempt, s=self.listener_sock.socket_desc()))
+                    LOG.debug(
+                        "Attempt {nr} on reading from socket {s!r} ...".format(
+                            nr=cur_attempt, s=self.listener_sock.socket_desc()
+                        )
+                    )
 
                 if self.listener_sock.has_data():
                     line = self.listener_sock.read_line()
                     break
 
             if line:
-                LOG.debug('Got line from socket after {at} attempts: {li!r}'.format(
-                    at=cur_attempt, li=line))
+                LOG.debug(
+                    "Got line from socket after {at} attempts: {li!r}".format(
+                        at=cur_attempt, li=line
+                    )
+                )
                 if line != self.msg2read:
-                    msg = 'Read wrong content - expected: {ex!r}, got {got!r}.'.format(
-                        ex=self.msg2read, got=line)
+                    msg = "Read wrong content - expected: {ex!r}, got {got!r}.".format(
+                        ex=self.msg2read, got=line
+                    )
                     raise RuntimeError(msg)
 
             else:
-                msg = 'Got not data from socket {s!r} after {at} reading attempts.'.format(
-                    s=self.listener_sock.socket_desc(), at=cur_attempt)
+                msg = "Got not data from socket {s!r} after {at} reading attempts.".format(
+                    s=self.listener_sock.socket_desc(), at=cur_attempt
+                )
                 raise RuntimeError(msg)
 
         except BaseException:
@@ -95,7 +105,7 @@ class ListenerThread(Thread):
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 
