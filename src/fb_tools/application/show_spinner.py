@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-@summary: The module for the show-spinner application class.
+@summary: Print a newline separated list of files generated from file globbing patterns.
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
@@ -11,23 +11,29 @@ from __future__ import absolute_import
 
 # Standard modules
 import copy
+import locale
 import logging
 import random
 import signal
 import sys
 import time
 
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
+
 # Third party modules
 
 # Own modules
-from . import __version__ as __global_version__
-from .app import BaseApplication
-from .app import SIGNAL_NAMES
-from .spinner import CycleList
-from .spinner import Spinner
-from .xlate import XLATOR
+from .. import __version__ as __global_version__
+from ..app import BaseApplication
+from ..app import SIGNAL_NAMES
+from ..spinner import CycleList
+from ..spinner import Spinner
+from ..xlate import XLATOR
 
-__version__ = "0.2.2"
+__version__ = "0.3.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -302,6 +308,25 @@ class ShowSpinnerApplication(BaseApplication):
 
         for spinner_name in self.all_spinners:
             print(spinner_name)
+
+
+# =============================================================================
+def main():
+    """Entrypoint for show-spinner."""
+    my_path = pathlib.Path(__file__)
+    appname = my_path.name
+
+    locale.setlocale(locale.LC_ALL, "")
+
+    app = ShowSpinnerApplication(appname=appname)
+    app.initialized = True
+
+    if app.verbose > 2:
+        print(_("{c}-Object:\n{a}").format(c=app.__class__.__name__, a=app), file=sys.stderr)
+
+    app()
+
+    sys.exit(0)
 
 
 # =============================================================================

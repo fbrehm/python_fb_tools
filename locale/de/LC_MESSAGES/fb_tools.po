@@ -2295,7 +2295,7 @@ msgstr "Man darf {!r} nur als einzigen Spinner angeben."
 #: lib/fb_tools/show_spinner_app.py:193
 #, python-brace-format
 msgid "Invalid spinner {!r} given."
-msgstr "Ungültiger Spinnet {!r} übergeben."
+msgstr "Ungültiger Spinner {!r} übergeben."
 
 #: lib/fb_tools/show_spinner_app.py:219
 #, python-brace-format

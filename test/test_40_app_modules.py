@@ -216,7 +216,7 @@ class TestAppModules(FbToolsTestcase):
         import fb_tools.application.get_file_rm
 
         LOG.info(
-            "Module version of fb_tools.get_file_rm_app is {!r}.".format(
+            "Module version of fb_tools.application.get_file_rm_app is {!r}.".format(
                 fb_tools.application.get_file_rm.__version__
             )
         )
@@ -238,6 +238,42 @@ class TestAppModules(FbToolsTestcase):
         LOG.debug("GetFileRmApplication %%r: {!r}".format(app))
         if self.verbose > 1:
             LOG.debug("GetFileRmApplication %%s: {}".format(app))
+
+        del app
+
+    # -------------------------------------------------------------------------
+    def test_import_show_spinner(self):
+        """Test importing module fb_tools.application.show_spinner."""
+        LOG.info("Testing import of fb_tools.application.show_spinner ...")
+        import fb_tools.application.show_spinner
+
+        LOG.info(
+            "Module version of fb_tools.application.show_spinner is {!r}.".format(
+                fb_tools.application.show_spinner.__version__
+            )
+        )
+
+    # -------------------------------------------------------------------------
+    def test_instance_show_spinner(self):
+        """Test create an instance of a ShowSpinnerApplication object."""
+        LOG.info("Test creating an instance of a ShowSpinnerApplication object.")
+
+        from fb_tools.application.show_spinner import ShowSpinnerApplication
+        spinner = "dots"
+
+        ShowSpinnerApplication.do_init_logging = False
+
+        app = ShowSpinnerApplication(
+            appname=self.appname,
+            testing_args=[spinner],
+            verbose=self.verbose,
+        )
+        LOG.debug("ShowSpinnerApplication %%r: {!r}".format(app))
+        if self.verbose > 1:
+            LOG.debug("ShowSpinnerApplication %%s: {}".format(app))
+
+        LOG.debug(f"Testing for spinner {spinner!r} is in the list of spinners to show.")
+        self.assertIn(spinner, app.spinners)
 
         del app
 
@@ -266,6 +302,8 @@ if __name__ == "__main__":
     suite.addTest(TestAppModules("test_instance_update_ddns_app", verbose))
     suite.addTest(TestAppModules("test_import_get_file_rm_app", verbose))
     suite.addTest(TestAppModules("test_instance_get_file_rm_app", verbose))
+    suite.addTest(TestAppModules("test_import_show_spinner", verbose))
+    suite.addTest(TestAppModules("test_instance_show_spinner", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

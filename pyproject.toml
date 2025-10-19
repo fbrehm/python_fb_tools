@@ -48,6 +48,7 @@ directory = "data"
 [project.scripts]
 get-file-to-remove = "fb_tools.application.get_file_rm:main"
 myip = "fb_tools.application.myip:main"
+show-spinner = "fb_tools.application.show_spinner:main"
 
 [project.optional-dependencies]
 development = [
