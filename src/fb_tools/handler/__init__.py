@@ -40,7 +40,7 @@ from ..errors import HandlerError
 from ..handling_obj import CompletedProcess, HandlingObject
 from ..xlate import XLATOR
 
-__version__ = '2.0.4'
+__version__ = '2.0.5'
 LOG = logging.getLogger(__name__)
 
 CHOWN_CMD = pathlib.Path('/bin/chown')
@@ -80,9 +80,10 @@ class BaseHandler(HandlingObject):
         self._sudo = False
 
         super(BaseHandler, self).__init__(
+            *args,
             version=version,
             initialized=False,
-            *args, **kwargs,
+            **kwargs,
         )
 
         self._chown_cmd = self.get_command('chown')

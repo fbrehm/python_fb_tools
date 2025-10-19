@@ -29,7 +29,7 @@ from ..errors import InvalidTimeIntervalError
 from ..multi_config import BaseMultiConfig
 from ..xlate import XLATOR, format_list
 
-__version__ = '3.1.1'
+__version__ = '3.1.2'
 
 LOG = logging.getLogger(__name__)
 
@@ -252,7 +252,7 @@ class DdnsConfiguration(BaseMultiConfig):
 
         match = self.re_upd_url.match(key)
         if match and value.strip():
-            setattr(self, 'upd_url', value.strip())
+            self.upd_url = value.strip()
             return
 
         match = self.re_upd_url_ipv.match(key)

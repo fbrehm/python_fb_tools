@@ -25,7 +25,7 @@ except ImportError:
 from . import MAX_TIMEOUT
 from .xlate import XLATOR
 
-__version__ = '2.1.3'
+__version__ = '2.1.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -44,7 +44,7 @@ class RegexOptionAction(argparse.Action):
             self._re_options = re_options
 
         super(RegexOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+            *args, option_strings=option_strings, **kwargs)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, pattern, option_string=None):
@@ -74,7 +74,7 @@ class DirectoryOptionAction(argparse.Action):
             self.must_exists = True
 
         super(DirectoryOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+            *args, option_strings=option_strings, **kwargs)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, given_path, option_string=None):
@@ -113,7 +113,7 @@ class LogFileOptionAction(argparse.Action):
     def __init__(self, option_strings, *args, **kwargs):
         """Initialise a LogFileOptionAction object."""
         super(LogFileOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+            *args, option_strings=option_strings, **kwargs)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, values, option_string=None):
@@ -157,7 +157,7 @@ class CfgFileOptionAction(argparse.Action):
     def __init__(self, option_strings, *args, **kwargs):
         """Initialise a CfgFileOptionAction object."""
         super(CfgFileOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+            *args, option_strings=option_strings, **kwargs)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, values, option_string=None):
@@ -185,7 +185,7 @@ class TimeoutOptionAction(argparse.Action):
     def __init__(self, option_strings, max_timeout=MAX_TIMEOUT, *args, **kwargs):
         """Initialise a TimeoutOptionAction object."""
         super(TimeoutOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+            *args, option_strings=option_strings, **kwargs)
         self.max_timeout = max_timeout
 
     # -------------------------------------------------------------------------

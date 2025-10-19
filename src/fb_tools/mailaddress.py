@@ -28,7 +28,7 @@ from .errors import InvalidMailAddressError
 from .obj import FbBaseObject, FbGenericBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -520,7 +520,8 @@ class QualifiedMailAddress(MailAddress):
                 msg = _('Parameters {lst} may not be given, if parameter {a!r} was given.')
                 msg = msg.format(lst=format_list(param_list, do_repr=True), a='address')
                 raise RuntimeError(msg)
-            return self._init_from_address(address, verbose=verbose, empty_ok=empty_ok)
+            self._init_from_address(address, verbose=verbose, empty_ok=empty_ok)
+            return
 
         super(QualifiedMailAddress, self).__init__(
             user=user, domain=domain, verbose=verbose, empty_ok=empty_ok)

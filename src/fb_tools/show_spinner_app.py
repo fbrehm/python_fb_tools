@@ -27,7 +27,7 @@ from .spinner import CycleList
 from .spinner import Spinner
 from .xlate import XLATOR
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -42,8 +42,7 @@ class ShowSpinnerApplication(BaseApplication):
     default_prompt = _('Waiting ... ')
 
     # -------------------------------------------------------------------------
-    def __init__(
-            self, verbose=0, version=__global_version__, *arg, **kwargs):
+    def __init__(self, verbose=0, version=__global_version__, *args, **kwargs):
         """Initialise of the show-spinnerapplication object."""
         desc = _(
             'Shows one or more spinners, and their names, if multiple spinners should be shown. '
@@ -56,10 +55,11 @@ class ShowSpinnerApplication(BaseApplication):
         self.all_spinners = sorted(CycleList.keys(), key=str.lower)
 
         super(ShowSpinnerApplication, self).__init__(
+            *args,
             description=desc,
             verbose=verbose,
             version=version,
-            *arg, **kwargs
+            **kwargs
         )
 
         self.initialized = True

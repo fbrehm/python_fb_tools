@@ -31,7 +31,7 @@ from .common import get_monday, pp
 from .errors import FbAppError
 from .xlate import XLATOR
 
-__version__ = '2.1.0'
+__version__ = '2.1.1'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -55,7 +55,7 @@ class KeepOptionAction(argparse.Action):
         self._min = min_val
 
         super(KeepOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+            *args, option_strings=option_strings, **kwargs)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, values, option_string=None):
@@ -137,7 +137,7 @@ class GetFileRmApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def __init__(
-            self, verbose=0, version=__global_version__, *arg, **kwargs):
+            self, verbose=0, version=__global_version__, *args, **kwargs):
         """Initialise of the get-file-to-remove application object."""
         desc = _(
             'Returns a newline separated list of files generated from file globbing patterns '
@@ -158,10 +158,11 @@ class GetFileRmApplication(BaseApplication):
         self.files = []
 
         super(GetFileRmApplication, self).__init__(
+            *args,
             description=desc,
             verbose=verbose,
             version=version,
-            *arg, **kwargs
+            **kwargs
         )
 
         self.initialized = True

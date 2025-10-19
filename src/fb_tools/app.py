@@ -38,7 +38,7 @@ from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.3.0'
+__version__ = '2.3.1'
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -182,9 +182,10 @@ class BaseApplication(HandlingObject):
         """
 
         super(BaseApplication, self).__init__(
+            *args,
             version=version,
             initialized=False,
-            *args, **kwargs
+            **kwargs
         )
 
         if env_prefix:

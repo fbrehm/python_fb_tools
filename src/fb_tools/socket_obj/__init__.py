@@ -36,7 +36,7 @@ from ..errors import GenericSocketError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR
 
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -176,8 +176,7 @@ class GenericSocket(HandlingObject):
         """
 
         super(GenericSocket, self).__init__(
-            version=version,
-            *args, **kwargs,
+            *args, version=version, **kwargs,
         )
 
         if timeout:

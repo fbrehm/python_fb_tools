@@ -28,7 +28,7 @@ from . import GenericSocket
 from ..errors import GenericSocketError
 from ..xlate import XLATOR
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -190,8 +190,7 @@ class UnixSocket(GenericSocket):
         self._must_be_absolute = bool(must_be_absolute)
 
         super(UnixSocket, self).__init__(
-            version=version,
-            *args, **kwargs,
+            *args, version=version, **kwargs,
         )
 
         self.filename = filename

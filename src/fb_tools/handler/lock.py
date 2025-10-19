@@ -34,7 +34,7 @@ from ..errors import CouldntOccupyLockfileError, HandlerError
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
 
-__version__ = '2.0.4'
+__version__ = '2.0.5'
 
 LOG = logging.getLogger(__name__)
 
@@ -173,9 +173,10 @@ class LockObject(FbBaseObject):
         self._fd = None
 
         super(LockObject, self).__init__(
+            *args,
             version=version,
             initialized=False,
-            *args, **kwargs,
+            **kwargs,
         )
 
         self._simulate = bool(simulate)
@@ -458,9 +459,10 @@ class LockHandler(BaseHandler):
         self._silent = bool(silent)
 
         super(LockHandler, self).__init__(
+            *args,
             version=version,
             initialized=False,
-            *args, **kwargs,
+            **kwargs,
         )
 
         self._lockdir = None

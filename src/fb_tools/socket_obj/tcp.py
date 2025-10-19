@@ -23,7 +23,7 @@ from ..common import pp
 from ..errors import GenericSocketError
 from ..xlate import XLATOR
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 LOG = logging.getLogger(__name__)
 
@@ -157,8 +157,7 @@ class TcpSocket(GenericSocket):
         self._port = None
 
         super(TcpSocket, self).__init__(
-            version=version,
-            *args, **kwargs,
+            *args, version=version, **kwargs,
         )
 
         self._address = address

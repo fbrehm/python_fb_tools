@@ -43,7 +43,7 @@ from ..errors import FileNotRegularFileError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.4.3'
+__version__ = '2.4.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -72,9 +72,10 @@ class UpdateDdnsStatus(HandlingObject):
         self._status_text = None
 
         super(UpdateDdnsStatus, self).__init__(
+            *args,
             version=version,
             initialized=False,
-            *args, **kwargs
+            **kwargs
         )
 
         if workdir:
@@ -380,10 +381,11 @@ class UpdateDdnsApplication(BaseDdnsApplication):
                 valid_proto_list, do_repr=True, style='or'), d='any')
 
         super(UpdateDdnsApplication, self).__init__(
+            *args,
             version=version,
             description=description,
             initialized=False,
-            *args, **kwargs
+            **kwargs
         )
 
         if initialized is None:

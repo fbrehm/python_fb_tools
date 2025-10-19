@@ -37,7 +37,7 @@ from .errors import MultiConfigError
 from .multi_config import BaseMultiConfig
 from .xlate import XLATOR
 
-__version__ = '2.3.1'
+__version__ = '2.3.2'
 LOG = logging.getLogger(__name__)
 
 
@@ -75,9 +75,10 @@ class FbConfigApplication(BaseApplication):
         self._cfg_encoding = cfg_encoding
 
         super(FbConfigApplication, self).__init__(
+            *args,
             version=version,
             initialized=False,
-            *args, **kwargs
+            **kwargs
         )
 
         if initialized:

@@ -21,7 +21,7 @@ from .. import __version__ as GLOBAL_VERSION
 from ..common import to_bool
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.9'
+__version__ = '2.0.10'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -56,10 +56,11 @@ class MyIpApplication(BaseDdnsApplication):
             '{d!r}).').format(c=format_list(valid_proto_list, do_repr=True, style='or'), d='any')
 
         super(MyIpApplication, self).__init__(
+            *args,
             version=version,
             description=description,
             initialized=False,
-            *args, **kwargs
+            **kwargs
         )
 
         if initialized is None:

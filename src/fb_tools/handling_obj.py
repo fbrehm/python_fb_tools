@@ -61,7 +61,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.4.3'
+__version__ = '2.4.4'
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -260,8 +260,7 @@ class HandlingObject(FbBaseObject):
         self._interrupted = False
 
         super(HandlingObject, self).__init__(
-            version=version,
-            *args, **kwargs,
+            *args, version=version, **kwargs,
         )
 
         if simulate is not None:
