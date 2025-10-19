@@ -68,7 +68,7 @@ jobs:
       additional_rpm_build_packages: ''
       password_file: ${{ needs.prepare-image.outputs.password_file }}
       key_id: ${{ needs.prepare-image.outputs.key_id }}
-      do_help2man: true
+      # do_help2man: true
       repo_dir: ${{ needs.prepare-image.outputs.repo_dir }}
       smtp_server_address: ${{ needs.prepare-image.outputs.smtp_server_address }}
       smtp_server_port: ${{ needs.prepare-image.outputs.smtp_server_port }}
