@@ -46,7 +46,7 @@ name = "fb_tools"
 directory = "data"
 
 [project.scripts]
-get-file-to-remove = "fb_tools.get_file_rm_app:main"
+get-file-to-remove = "fb_tools.application.get_file_rm:main"
 
 [project.optional-dependencies]
 development = [

@@ -26,13 +26,13 @@ except ImportError:
 # Third party modules
 
 # Own modules
-from . import __version__ as __global_version__
-from .app import BaseApplication
-from .common import get_monday, pp
-from .errors import FbAppError
-from .xlate import XLATOR
+from .. import __version__ as __global_version__
+from ..app import BaseApplication
+from ..common import get_monday, pp
+from ..errors import FbAppError
+from ..xlate import XLATOR
 
-__version__ = "2.1.2"
+__version__ = "2.2.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
