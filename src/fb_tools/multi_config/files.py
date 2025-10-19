@@ -22,7 +22,7 @@ from ..common import pp
 from ..errors import MultiConfigError
 from ..xlate import XLATOR, format_list
 
-__version__ = '0.3.3'
+__version__ = "0.3.4"
 
 LOG = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ ngettext = XLATOR.ngettext
 
 
 # =============================================================================
-class MultiCfgFilesMixin():
+class MultiCfgFilesMixin:
     """
     A mixin class for extending the BaseMultiConfig class.
 
@@ -41,14 +41,14 @@ class MultiCfgFilesMixin():
     # -------------------------------------------------------------------------
     def collect_config_files(self):
         """Collect all appropriate config file from different directories."""
-        LOG.debug(_('Collecting all configuration files.'))
+        LOG.debug(_("Collecting all configuration files."))
 
         self.config_files = []
         self.config_file_pattern = {}
 
         for cfg_dir in self.config_dirs:
             if self.verbose > 1:
-                msg = _('Discovering config directory {!r} ...').format(str(cfg_dir))
+                msg = _("Discovering config directory {!r} ...").format(str(cfg_dir))
                 LOG.debug(msg)
             self._eval_config_dir(cfg_dir)
 
@@ -57,7 +57,7 @@ class MultiCfgFilesMixin():
         self.check_privacy()
 
         if self.verbose > 2:
-            LOG.debug(_('Collected config files:') + '\n' + pp(self.config_files))
+            LOG.debug(_("Collected config files:") + "\n" + pp(self.config_files))
 
         self._cfgfiles_collected = True
 
@@ -70,11 +70,11 @@ class MultiCfgFilesMixin():
         if not self.ensure_privacy:
             return
 
-        LOG.debug(_('Checking permissions of config files ...'))
+        LOG.debug(_("Checking permissions of config files ..."))
 
         def is_relative_to_etc(cfile):
             try:
-                rel = cfile.relative_to('/etc')                 # noqa
+                rel = cfile.relative_to("/etc")  # noqa
                 return True
             except ValueError:
                 return False
@@ -86,14 +86,14 @@ class MultiCfgFilesMixin():
                 continue
 
             if self.verbose > 1:
-                LOG.debug(_('Checking permissions of {!r} ...').format(str(cfg_file)))
+                LOG.debug(_("Checking permissions of {!r} ...").format(str(cfg_file)))
 
             mode = cfg_file.stat().st_mode
             if self.verbose > 2:
-                msg = _('Found file permissions of {fn!r}: {mode:04o}')
+                msg = _("Found file permissions of {fn!r}: {mode:04o}")
                 LOG.debug(msg.format(fn=str(cfg_file), mode=mode))
             if (mode & stat.S_IRGRP) or (mode & stat.S_IROTH):
-                msg = _('File {fn!r} is readable by group or by others, found mode {mode:04o}.')
+                msg = _("File {fn!r} is readable by group or by others, found mode {mode:04o}.")
                 if self.raise_on_error:
                     raise MultiConfigError(msg.format(fn=str(cfg_file), mode=mode))
                 LOG.error(msg.format(fn=str(cfg_file), mode=mode))
@@ -102,7 +102,7 @@ class MultiCfgFilesMixin():
     def _eval_config_dir(self, cfg_dir):
 
         file_list = []
-        for found_file in cfg_dir.glob('*'):
+        for found_file in cfg_dir.glob("*"):
             file_list.append(found_file)
 
         avail_dir_names = []
@@ -110,17 +110,17 @@ class MultiCfgFilesMixin():
 
         for stem in self.stems:
 
-            avail_dir_names.append(cfg_dir / (stem + '.d'))
+            avail_dir_names.append(cfg_dir / (stem + ".d"))
 
             for type_name in self.available_cfg_types:
                 for ext_pattern in self.ext_patterns[type_name]:
-                    base_name_pattern = stem + '.' + ext_pattern
+                    base_name_pattern = stem + "." + ext_pattern
                     avail_file_names.append(str(cfg_dir / base_name_pattern))
 
         if self.verbose > 2:
-            msg = _('Possible usable config directories:') + '\n' + pp(avail_dir_names)
+            msg = _("Possible usable config directories:") + "\n" + pp(avail_dir_names)
             LOG.debug(msg)
-            msg = _('Possible usable config files:') + '\n' + pp(avail_file_names)
+            msg = _("Possible usable config files:") + "\n" + pp(avail_file_names)
             LOG.debug(msg)
 
         for fn in file_list:
@@ -130,13 +130,13 @@ class MultiCfgFilesMixin():
                     self._eval_whole_dir(fn)
                     continue
                 if self.verbose > 2:
-                    msg = _('Path {!r} is a unusable directory.').format(str(fn))
+                    msg = _("Path {!r} is a unusable directory.").format(str(fn))
                     LOG.debug(msg)
                 continue
 
             if not fn.is_file():
                 if self.verbose > 2:
-                    msg = _('Path {!r} is not a regular file.').format(str(fn))
+                    msg = _("Path {!r} is not a regular file.").format(str(fn))
                     LOG.debug(msg)
                 continue
 
@@ -150,25 +150,26 @@ class MultiCfgFilesMixin():
                 file_info = self._get_file_type(fn, raise_on_error=False)
                 if file_info is None:
                     if self.verbose > 2:
-                        msg = _('File {!r} is not useable.').format(str(fn))
+                        msg = _("File {!r} is not useable.").format(str(fn))
                         LOG.debug(msg)
                     continue
                 if self.verbose > 1:
-                    msg = _('Got file info for {!r}:').format(str(fn)) + '\n' + pp(file_info)
+                    msg = _("Got file info for {!r}:").format(str(fn)) + "\n" + pp(file_info)
                     LOG.debug(msg)
-                type_name = file_info['type_name']
+                type_name = file_info["type_name"]
                 self.append_config_file(
-                    fn, type_name=file_info['type_name'], method=file_info['method'])
+                    fn, type_name=file_info["type_name"], method=file_info["method"]
+                )
 
             elif self.verbose > 2:
-                msg = _('File {!r} is not useable.').format(str(fn))
+                msg = _("File {!r} is not useable.").format(str(fn))
                 LOG.debug(msg)
 
     # -------------------------------------------------------------------------
     def _get_file_type(self, fn, raise_on_error=None):
 
         if self.verbose > 1:
-            msg = _('Trying to detect file type of file {!r}.')
+            msg = _("Trying to detect file type of file {!r}.")
             LOG.debug(msg.format(str(fn)))
 
         if raise_on_error is None:
@@ -177,22 +178,21 @@ class MultiCfgFilesMixin():
         for type_name in self.available_cfg_types:
             for ext_pattern in self.ext_patterns[type_name]:
 
-                pat = r'\.' + ext_pattern + r'$'
+                pat = r"\." + ext_pattern + r"$"
                 if self.verbose > 3:
-                    msg = _('Checking file {fn!r} for pattern {pat!r}.')
+                    msg = _("Checking file {fn!r} for pattern {pat!r}.")
                     LOG.debug(msg.format(fn=fn.name, pat=pat))
 
                 if re.search(pat, fn.name, re.IGNORECASE):
                     method = self.ext_loader[ext_pattern]
                     if self.verbose > 1:
-                        msg = _('Found config file {fi!r}, loader method {m!r}.')
+                        msg = _("Found config file {fi!r}, loader method {m!r}.")
                         LOG.debug(msg.format(fi=str(fn), m=method))
-                    return {'type_name': type_name, 'method': method}
+                    return {"type_name": type_name, "method": method}
 
         msg = _(
-            'Did not found file type of config file {fn!r}. '
-            'Available config types are: {list}.').format(
-            fn=str(fn), list=format_list(self.available_cfg_types))
+            "Did not found file type of config file {fn!r}. " "Available config types are: {list}."
+        ).format(fn=str(fn), list=format_list(self.available_cfg_types))
         if raise_on_error:
             raise MultiConfigError(msg)
         LOG.debug(msg)
@@ -201,7 +201,8 @@ class MultiCfgFilesMixin():
 
     # -------------------------------------------------------------------------
     def add_config_file(
-            self, filename, prepend=False, type_name=None, method=None, raise_on_error=None):
+        self, filename, prepend=False, type_name=None, method=None, raise_on_error=None
+    ):
         """Append or prepend a file to the list of config files to use."""
         fn = Path(filename)
 
@@ -209,11 +210,11 @@ class MultiCfgFilesMixin():
             raise_on_error = self.raise_on_error
 
         if self.verbose > 3:
-            msg = _('Checking, whether {!r} is a possible config file.').format(str(fn))
+            msg = _("Checking, whether {!r} is a possible config file.").format(str(fn))
             LOG.debug(msg)
 
         if not fn.exists():
-            msg = _('File {!r} does not exists.').format(str(fn))
+            msg = _("File {!r} does not exists.").format(str(fn))
             if raise_on_error:
                 raise MultiConfigError(msg)
             if self.verbose > 2:
@@ -221,7 +222,7 @@ class MultiCfgFilesMixin():
             return False
 
         if not fn.is_file():
-            msg = _('Path {!r} is not a regular file.').format(str(fn))
+            msg = _("Path {!r} is not a regular file.").format(str(fn))
             if raise_on_error:
                 raise MultiConfigError(msg)
             if self.verbose > 2:
@@ -233,22 +234,22 @@ class MultiCfgFilesMixin():
             if file_info is None:
                 return False
             if self.verbose > 1:
-                msg = _('Got file info for {!r}:').format(str(fn)) + '\n' + pp(file_info)
+                msg = _("Got file info for {!r}:").format(str(fn)) + "\n" + pp(file_info)
                 LOG.debug(msg)
-            type_name = file_info['type_name']
-            method = file_info['method']
+            type_name = file_info["type_name"]
+            method = file_info["method"]
 
         if fn in self.config_files:
             self.config_files.remove(fn)
         if prepend:
-            msg = _('Prepending {!r} to config files.').format(str(fn))
+            msg = _("Prepending {!r} to config files.").format(str(fn))
             self.config_files.insert(0, fn)
         else:
-            msg = _('Appending {!r} to config files.').format(str(fn))
+            msg = _("Appending {!r} to config files.").format(str(fn))
             self.config_files.append(fn)
         if self.verbose > 1:
             LOG.debug(msg)
-            msg = _('Loading method of {fn!r} is: {m!r}.').format(fn=str(fn), m=method)
+            msg = _("Loading method of {fn!r} is: {m!r}.").format(fn=str(fn), m=method)
             LOG.debug(msg)
         self.config_file_methods[fn] = method
 
@@ -258,23 +259,29 @@ class MultiCfgFilesMixin():
     def append_config_file(self, filename, type_name=None, method=None, raise_on_error=None):
         """Append a file to the list of config files to use."""
         if self.verbose > 1:
-            msg = _('Trying to append file {!r} to the list of config files ...').format(
-                str(filename))
+            msg = _("Trying to append file {!r} to the list of config files ...").format(
+                str(filename)
+            )
             LOG.debug(msg)
         return self.add_config_file(
-            filename=filename, type_name=type_name, method=method,
-            raise_on_error=raise_on_error)
+            filename=filename, type_name=type_name, method=method, raise_on_error=raise_on_error
+        )
 
     # -------------------------------------------------------------------------
     def prepend_config_file(self, filename, type_name=None, method=None, raise_on_error=None):
         """Prepend a file to the list of config files to use."""
         if self.verbose > 1:
-            msg = _('Trying to prepend file {!r} to the list of config files ...').format(
-                str(filename))
+            msg = _("Trying to prepend file {!r} to the list of config files ...").format(
+                str(filename)
+            )
             LOG.debug(msg)
         return self.add_config_file(
-            filename=filename, prepend=True, type_name=type_name,
-            method=method, raise_on_error=raise_on_error)
+            filename=filename,
+            prepend=True,
+            type_name=type_name,
+            method=method,
+            raise_on_error=raise_on_error,
+        )
 
     # -------------------------------------------------------------------------
     def _set_additional_file(self, cfg_file):
@@ -283,7 +290,7 @@ class MultiCfgFilesMixin():
             return
 
         if self.verbose > 1:
-            msg = _('Trying to add additional config file {!r}.')
+            msg = _("Trying to add additional config file {!r}.")
             LOG.debug(msg.format(str(cfg_file)))
 
         self.append_config_file(cfg_file)
@@ -292,31 +299,31 @@ class MultiCfgFilesMixin():
     def _eval_whole_dir(self, dirname):
         """Take all possible config files in this directory independend of the filename stem."""
         if self.verbose > 1:
-            msg = _('Checking directory {!r} for all config files ...').format(str(dirname))
+            msg = _("Checking directory {!r} for all config files ...").format(str(dirname))
             LOG.debug(msg)
 
-        for found_file in dirname.glob('*'):
+        for found_file in dirname.glob("*"):
 
             if self.verbose > 1:
-                msg = _('Checking {!r} as a possible config file.').format(str(found_file))
+                msg = _("Checking {!r} as a possible config file.").format(str(found_file))
                 LOG.debug(msg)
 
             if not found_file.is_file():
                 if self.verbose > 1:
-                    msg = _('Path {!r} is not a regular file.').format(str(found_file))
+                    msg = _("Path {!r} is not a regular file.").format(str(found_file))
                     LOG.debug(msg)
                 continue
 
             file_info = self._get_file_type(found_file, raise_on_error=False)
             if file_info is None:
                 if self.verbose > 1:
-                    msg = _('File {!r} is not useable.').format(str(found_file))
+                    msg = _("File {!r} is not useable.").format(str(found_file))
                     LOG.debug(msg)
                 continue
             if self.verbose > 1:
-                msg = _('Got file info for {!r}:').format(str(found_file)) + '\n' + pp(file_info)
+                msg = _("Got file info for {!r}:").format(str(found_file)) + "\n" + pp(file_info)
                 LOG.debug(msg)
-            method = file_info['method']
+            method = file_info["method"]
 
             self.config_files.append(found_file)
             self.config_file_methods[found_file] = method
@@ -324,7 +331,7 @@ class MultiCfgFilesMixin():
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

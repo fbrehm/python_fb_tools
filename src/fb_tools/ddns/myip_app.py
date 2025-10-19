@@ -21,10 +21,11 @@ from .. import __version__ as GLOBAL_VERSION
 from ..common import to_bool
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.0.10'
+__version__ = "2.0.11"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
+
 
 # =============================================================================
 class MyIpApplication(BaseDdnsApplication):
@@ -38,29 +39,27 @@ class MyIpApplication(BaseDdnsApplication):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, version=GLOBAL_VERSION, initialized=None, description=None,
-            *args, **kwargs):
+        self, version=GLOBAL_VERSION, initialized=None, description=None, *args, **kwargs
+    ):
         """Initialise a MyIpApplication object."""
         self._write_ips = False
 
         if description is None:
             description = _(
-                'Tries to detect the public NAT IPv4 address and/or the automatic assigned '
-                'IPv6 address in a local network and print it out.')
+                "Tries to detect the public NAT IPv4 address and/or the automatic assigned "
+                "IPv6 address in a local network and print it out."
+            )
         valid_proto_list = copy.copy(DdnsConfiguration.valid_protocols)
 
-        self._ipv4_help = _('Use only {} to retreive the public IP address.').format('IPv4')
-        self._ipv6_help = _('Use only {} to retreive the public IP address.').format('IPv6')
+        self._ipv4_help = _("Use only {} to retreive the public IP address.").format("IPv4")
+        self._ipv6_help = _("Use only {} to retreive the public IP address.").format("IPv6")
         self._proto_help = _(
-            'The IP protocol, for which the public IP should be retrieved (one of {c}, default '
-            '{d!r}).').format(c=format_list(valid_proto_list, do_repr=True, style='or'), d='any')
+            "The IP protocol, for which the public IP should be retrieved (one of {c}, default "
+            "{d!r})."
+        ).format(c=format_list(valid_proto_list, do_repr=True, style="or"), d="any")
 
         super(MyIpApplication, self).__init__(
-            *args,
-            version=version,
-            description=description,
-            initialized=False,
-            **kwargs
+            *args, version=version, description=description, initialized=False, **kwargs
         )
 
         if initialized is None:
@@ -91,18 +90,22 @@ class MyIpApplication(BaseDdnsApplication):
         @rtype:  dict
         """
         res = super(MyIpApplication, self).as_dict(short=short)
-        res['write_ips'] = self.write_ips
+        res["write_ips"] = self.write_ips
 
         return res
 
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """Initiate th eargument parser."""
-        myip_group = self.arg_parser.add_argument_group(_('myip options'))
+        myip_group = self.arg_parser.add_argument_group(_("myip options"))
 
         myip_group.add_argument(
-            '-W', '--write', '--write-ips', action='store_true', dest='write_ips',
-            help=_('Write found public IPs into a cache file in working directory.')
+            "-W",
+            "--write",
+            "--write-ips",
+            action="store_true",
+            dest="write_ips",
+            help=_("Write found public IPs into a cache file in working directory."),
         )
 
         super(MyIpApplication, self).init_arg_parser()
@@ -135,12 +138,11 @@ class MyIpApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def _run(self):
 
-        LOG.debug(_('Starting {a!r}, version {v!r} ...').format(
-            a=self.appname, v=self.version))
+        LOG.debug(_("Starting {a!r}, version {v!r} ...").format(a=self.appname, v=self.version))
 
-        if self.cfg.protocol in ('any', 'both', 'ipv4'):
+        if self.cfg.protocol in ("any", "both", "ipv4"):
             self.print_my_ipv(4)
-        if self.cfg.protocol in ('any', 'both', 'ipv6'):
+        if self.cfg.protocol in ("any", "both", "ipv6"):
             self.print_my_ipv(6)
 
     # -------------------------------------------------------------------------
@@ -148,7 +150,7 @@ class MyIpApplication(BaseDdnsApplication):
         """Write back the current public IP to console."""
         my_ip = self.get_my_ipv(protocol)
         if my_ip:
-            print('IPv{p}: {i}'.format(p=protocol, i=my_ip))
+            print("IPv{p}: {i}".format(p=protocol, i=my_ip))
             if self.write_ips:
                 if protocol == 4:
                     self.write_ipv4_cache(my_ip)
@@ -157,7 +159,7 @@ class MyIpApplication(BaseDdnsApplication):
 
 
 # =============================================================================
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

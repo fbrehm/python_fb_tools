@@ -15,7 +15,7 @@ from ..errors import FbAppError
 from ..errors import MultiConfigError
 from ..xlate import XLATOR
 
-__version__ = '0.2.0'
+__version__ = "0.2.1"
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -49,8 +49,9 @@ class DdnsRequestError(DdnsAppError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        msg = _('Got an error {c} on requesting {u!r}: {m}').format(
-            c=self.code, u=self.url, m=self.content)
+        msg = _("Got an error {c} on requesting {u!r}: {m}").format(
+            c=self.code, u=self.url, m=self.content
+        )
         return msg
 
 
@@ -61,11 +62,11 @@ class InvalidUpdateStatusFileError(CommonFileError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('There is a problem with the update status file {!r}').format(self.path)
+        msg = _("There is a problem with the update status file {!r}").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -76,11 +77,11 @@ class WorkDirError(CommonDirectoryError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('There is a problem with the working directory {!r}').format(self.path)
+        msg = _("There is a problem with the working directory {!r}").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -91,11 +92,11 @@ class WorkDirNotExistsError(WorkDirError, FileNotFoundError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('Working directory {!r} does not exists').format(self.path)
+        msg = _("Working directory {!r} does not exists").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -106,11 +107,11 @@ class WorkDirNotDirError(WorkDirError, NotADirectoryError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('Path {!r} is not a directory').format(self.path)
+        msg = _("Path {!r} is not a directory").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -121,16 +122,16 @@ class WorkDirAccessError(WorkDirError, PermissionError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('Invalid permissions for working directory {!r}').format(self.path)
+        msg = _("Invalid permissions for working directory {!r}").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
 # =============================================================================
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

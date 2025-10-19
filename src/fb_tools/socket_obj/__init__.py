@@ -13,7 +13,6 @@ from __future__ import absolute_import
 # Standard modules
 import codecs
 import logging
-# import re
 import select
 from abc import ABCMeta
 from abc import abstractmethod
@@ -31,12 +30,10 @@ from ..common import to_bytes
 from ..common import to_str
 from ..errors import FunctionNotImplementedError
 from ..errors import GenericSocketError
-# from ..errors import SocketReadTimeoutError
-# from ..errors import SocketWriteTimeoutError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR
 
-__version__ = '0.7.1'
+__version__ = "0.7.2"
 
 LOG = logging.getLogger(__name__)
 
@@ -48,7 +45,7 @@ DEFAULT_REQUEST_QUEUE_SIZE = 5
 DEFAULT_BUFFER_SIZE = 8192
 DEFAULT_POLLING_INTERVAL = 0.05
 MIN_BUFFER_SIZE = 512
-MAX_BUFFER_SIZE = (1024 * 1024 * 10)
+MAX_BUFFER_SIZE = 1024 * 1024 * 10
 MAX_REQUEST_QUEUE_SIZE = 5
 MAX_POLLING_INTERVAL = 60.0
 
@@ -101,8 +98,16 @@ class GenericSocket(HandlingObject):
     # -------------------------------------------------------------------------
     @abstractmethod
     def __init__(
-        self, version=__version__, timeout=None, request_queue_size=None,
-            buffer_size=None, encoding=None, polling_interval=None, *args, **kwargs):
+        self,
+        version=__version__,
+        timeout=None,
+        request_queue_size=None,
+        buffer_size=None,
+        encoding=None,
+        polling_interval=None,
+        *args,
+        **kwargs,
+    ):
         """
         Initialize a GenericSocket object.
 
@@ -151,7 +156,7 @@ class GenericSocket(HandlingObject):
         self._fileno = None
         self._polling_interval = self.default_polling_interval
 
-        self._input_buffer = ''
+        self._input_buffer = ""
         """
         @ivar: the input buffer for all reading actions
         @type: str
@@ -176,7 +181,9 @@ class GenericSocket(HandlingObject):
         """
 
         super(GenericSocket, self).__init__(
-            *args, version=version, **kwargs,
+            *args,
+            version=version,
+            **kwargs,
         )
 
         if timeout:
@@ -187,7 +194,7 @@ class GenericSocket(HandlingObject):
         self.encoding = encoding
         self.polling_interval = polling_interval
 
-        self._input_buffer = bytes('', self.encoding)
+        self._input_buffer = bytes("", self.encoding)
 
     # -----------------------------------------------------------
     @property
@@ -203,14 +210,15 @@ class GenericSocket(HandlingObject):
 
         v = float(value)
         if v <= 0:
-            msg = _('A timeout for a socket operation may not be equal or less then zero.')
-            msg += ' ' + _('Given: {!r}').format(value)
+            msg = _("A timeout for a socket operation may not be equal or less then zero.")
+            msg += " " + _("Given: {!r}").format(value)
             raise ValueError(msg)
 
         if v > MAX_TIMEOUT:
-            msg = _('The timeout for a socket operation must be less or equal to {}.').format(
-                MAX_TIMEOUT)
-            msg += ' ' + _('Given: {!r}').format(value)
+            msg = _("The timeout for a socket operation must be less or equal to {}.").format(
+                MAX_TIMEOUT
+            )
+            msg += " " + _("Given: {!r}").format(value)
             raise ValueError(msg)
 
         self._timeout = v
@@ -255,14 +263,15 @@ class GenericSocket(HandlingObject):
         v = int(value)
 
         if v < 0:
-            msg = _('The request queue size must be at least a non nagetive value.')
-            msg += ' ' + _('Given: {!r}').format(value)
+            msg = _("The request queue size must be at least a non nagetive value.")
+            msg += " " + _("Given: {!r}").format(value)
             raise ValueError(msg)
 
         if v > self.max_request_queue_size:
-            msg = _('The request queue size must be less or equal to {}.').format(
-                self.max_request_queue_size)
-            msg += ' ' + _('Given: {!r}').format(value)
+            msg = _("The request queue size must be less or equal to {}.").format(
+                self.max_request_queue_size
+            )
+            msg += " " + _("Given: {!r}").format(value)
             raise ValueError(msg)
 
         self._request_queue_size = v
@@ -282,20 +291,21 @@ class GenericSocket(HandlingObject):
         v = int(value)
 
         if v < self.min_buffer_size:
-            msg = _('The buffer size must be at least {} bytes.').format(self.min_buffer_size)
-            msg += ' ' + _('Given: {!r}').format(value)
+            msg = _("The buffer size must be at least {} bytes.").format(self.min_buffer_size)
+            msg += " " + _("Given: {!r}").format(value)
             raise ValueError(msg)
 
         if v > self.max_buffer_size:
-            msg = _('The buffer size must be less or equal to {} bytes.').format(
-                self.max_buffer_size)
-            msg += ' ' + _('Given: {!r}').format(value)
+            msg = _("The buffer size must be less or equal to {} bytes.").format(
+                self.max_buffer_size
+            )
+            msg += " " + _("Given: {!r}").format(value)
             raise ValueError(msg)
 
         mod = v % 512
         if mod:
-            msg = _('The buffer size must be a multiple of 512 bytes.')
-            msg += ' ' + _('Given: {!r}').format(value)
+            msg = _("The buffer size must be a multiple of 512 bytes.")
+            msg += " " + _("Given: {!r}").format(value)
             raise ValueError(msg)
 
         self._buffer_size = v
@@ -321,7 +331,7 @@ class GenericSocket(HandlingObject):
             found_encoding = False
 
         if not found_encoding:
-            msg = _('Did not found encoding {!r}.').format(value)
+            msg = _("Did not found encoding {!r}.").format(value)
             raise ValueError(msg)
 
         self._encoding = enc
@@ -340,14 +350,16 @@ class GenericSocket(HandlingObject):
 
         v = float(value)
         if v <= 0:
-            msg = _('An intervall between polling attempts from socket must be greater than zero.')
-            msg += ' ' + _('Given: {!r}').format(value)
+            msg = _("An intervall between polling attempts from socket must be greater than zero.")
+            msg += " " + _("Given: {!r}").format(value)
             raise ValueError(msg)
 
         if v > MAX_POLLING_INTERVAL:
-            msg = _('The intervall between polling attempts from socket must be less '
-                    'or equal to {}.').format(MAX_POLLING_INTERVAL)
-            msg += ' ' + _('Given: {!r}').format(value)
+            msg = _(
+                "The intervall between polling attempts from socket must be less "
+                "or equal to {}."
+            ).format(MAX_POLLING_INTERVAL)
+            msg += " " + _("Given: {!r}").format(value)
             raise ValueError(msg)
 
         self._polling_interval = v
@@ -356,13 +368,13 @@ class GenericSocket(HandlingObject):
     @abstractmethod
     def connect(self):
         """Connect to the saved socket as a client."""
-        raise FunctionNotImplementedError('connect', self.__class__.__name__)
+        raise FunctionNotImplementedError("connect", self.__class__.__name__)
 
     # -------------------------------------------------------------------------
     @abstractmethod
     def bind(self):
         """Create the socket and listen on it."""
-        raise FunctionNotImplementedError('bind', self.__class__.__name__)
+        raise FunctionNotImplementedError("bind", self.__class__.__name__)
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=False):
@@ -377,25 +389,25 @@ class GenericSocket(HandlingObject):
         """
         res = super(GenericSocket, self).as_dict(short=short)
 
-        res['bonded'] = self.bonded
-        res['buffer_size'] = self.buffer_size
-        res['connected'] = self.connected
-        res['encoding'] = self.encoding
-        res['fileno'] = self.fileno
-        res['polling_interval'] = self.polling_interval
-        res['request_queue_size'] = self.request_queue_size
-        res['timeout'] = self.timeout
+        res["bonded"] = self.bonded
+        res["buffer_size"] = self.buffer_size
+        res["connected"] = self.connected
+        res["encoding"] = self.encoding
+        res["fileno"] = self.fileno
+        res["polling_interval"] = self.polling_interval
+        res["request_queue_size"] = self.request_queue_size
+        res["timeout"] = self.timeout
 
         return res
 
     # -------------------------------------------------------------------------
     def close(self):
         """Close the current socket."""
-        sock = getattr(self, 'sock', None)
+        sock = getattr(self, "sock", None)
         if sock:
             if self.connected or self.bonded:
                 if self.verbose > 1:
-                    LOG.debug(_('Closing socket ...'))
+                    LOG.debug(_("Closing socket ..."))
                 sock.close()
             self.sock = None
 
@@ -410,13 +422,13 @@ class GenericSocket(HandlingObject):
     # -------------------------------------------------------------------------
     def socket_desc(self):
         """Return a textual description of the used socket. Should be overridden."""
-        return 'unknown'
+        return "unknown"
 
     # -------------------------------------------------------------------------
     def reset(self):
         """Reset the socket after interruption of communication."""
         if self.verbose > 2:
-            LOG.debug(_('Resetting socket connection ...'))
+            LOG.debug(_("Resetting socket connection ..."))
 
         if self.connection:
             self.connection.close()
@@ -434,8 +446,9 @@ class GenericSocket(HandlingObject):
         """
         if self.interrupted:
             msg = _(
-                'Cannot send message to the receipient, because the socket '
-                'connection is interrupted.')
+                "Cannot send message to the receipient, because the socket "
+                "connection is interrupted."
+            )
             raise GenericSocketError(msg)
 
         ok = False
@@ -446,13 +459,14 @@ class GenericSocket(HandlingObject):
 
         if not ok:
             msg = _(
-                'Cannot send message to the receipient, because the socket connection is closed.')
+                "Cannot send message to the receipient, because the socket connection is closed."
+            )
             raise GenericSocketError(msg)
 
         msg_utf8 = to_bytes(message, self.encoding)
 
         if self.verbose > 3:
-            LOG.debug(_('Sending {!r} to socket.').format(msg_utf8))
+            LOG.debug(_("Sending {!r} to socket.").format(msg_utf8))
 
         if self.bonded:
             self.connection.sendall(msg_utf8)
@@ -466,20 +480,20 @@ class GenericSocket(HandlingObject):
             return
 
         if not self.bonded:
-            msg = _('Cannot accept connection, socket is not bonded.')
+            msg = _("Cannot accept connection, socket is not bonded.")
             raise GenericSocketError(msg)
 
         if self.verbose > 1:
-            LOG.debug(_('Accept a connection ...'))
+            LOG.debug(_("Accept a connection ..."))
 
         connection, client_address = self.sock.accept()
         self.connection = connection
         self.client_address = client_address
         cla = str(client_address)
         if cla:
-            cla = _('Got a request from {!r}.').format(cla)
+            cla = _("Got a request from {!r}.").format(cla)
         else:
-            cla = _('Got a request from somewhere on the system.')
+            cla = _("Got a request from somewhere on the system.")
         LOG.debug(cla)
 
     # -------------------------------------------------------------------------
@@ -499,8 +513,8 @@ class GenericSocket(HandlingObject):
         self.interrupted is set to True.
         """
         if self.verbose > 4:
-            LOG.debug(_('Trying to get data ...'))
-        data = ''
+            LOG.debug(_("Trying to get data ..."))
+        data = ""
         if self.bonded:
             data = self.connection.recv(self.buffer_size)
         else:
@@ -508,12 +522,12 @@ class GenericSocket(HandlingObject):
 
         if data:
             if self.verbose > 3:
-                LOG.debug(_('Got data: {!r}.').format(data))
+                LOG.debug(_("Got data: {!r}.").format(data))
             self._input_buffer += data
             return
 
         if self.verbose > 3:
-            LOG.debug(_('Got EOF, counterpart has interrupted ...'))
+            LOG.debug(_("Got EOF, counterpart has interrupted ..."))
         self.interrupted = True
         return
 
@@ -543,7 +557,7 @@ class GenericSocket(HandlingObject):
         # Read in all data, they are even on socket.
         if socket_has_data:
             if self.verbose > 3:
-                LOG.debug(_('Socket has data.'))
+                LOG.debug(_("Socket has data."))
             if not self.connection:
                 self.accept()
 
@@ -555,27 +569,27 @@ class GenericSocket(HandlingObject):
                     socket_has_data = self.has_data()
         else:
             if self.verbose > 3:
-                LOG.debug(_('Socket has no data.'))
+                LOG.debug(_("Socket has no data."))
 
         if self.interrupted:
             self.reset()
 
         if self.verbose > 3:
-            LOG.debug(_('Get input buffer ...'))
+            LOG.debug(_("Get input buffer ..."))
 
         if self._input_buffer:
             if self.verbose > 3:
-                LOG.debug(_('Current input buffer: {!r}').format(self._input_buffer))
+                LOG.debug(_("Current input buffer: {!r}").format(self._input_buffer))
             if binary:
                 ibuffer = self._input_buffer
             else:
                 ibuffer = to_str(self._input_buffer, self.encoding)
-            self._input_buffer = bytes('', self.encoding)
+            self._input_buffer = bytes("", self.encoding)
             return ibuffer
 
         if binary:
-            return bytes('', self.encoding)
-        return ''
+            return bytes("", self.encoding)
+        return ""
 
     # -------------------------------------------------------------------------
     def read_line(self, socket_has_data=False, check_socket=True):
@@ -606,22 +620,23 @@ class GenericSocket(HandlingObject):
         ibuffer = self.read(socket_has_data=socket_has_data, check_socket=check_socket)
 
         if self.verbose > 3:
-            LOG.debug(_('Performing input buffer {!r}').format(ibuffer))
+            LOG.debug(_("Performing input buffer {!r}").format(ibuffer))
 
         if not ibuffer:
-            return ''
+            return ""
 
         match = RE_FIRST_LINE.search(ibuffer)
         if match:
             line = match.group(1) + match.group(2)
-            self._input_buffer = to_bytes(RE_FIRST_LINE.sub('', ibuffer), self.encoding)
+            self._input_buffer = to_bytes(RE_FIRST_LINE.sub("", ibuffer), self.encoding)
             if self.verbose > 3:
-                LOG.debug(_('Got a line: {!r}').format(line))
-                LOG.debug(_('Current input buffer after read_line(): {!r}').format(
-                    self._input_buffer))
+                LOG.debug(_("Got a line: {!r}").format(line))
+                LOG.debug(
+                    _("Current input buffer after read_line(): {!r}").format(self._input_buffer)
+                )
             return line
 
-        return ''
+        return ""
 
     # -------------------------------------------------------------------------
     def has_data(self, polling_interval=None):
@@ -640,12 +655,7 @@ class GenericSocket(HandlingObject):
             p_int = polling_interval
 
         try:
-            rlist, wlist, elist = select.select(
-                [self.fileno],
-                [],
-                [],
-                p_int
-            )
+            rlist, wlist, elist = select.select([self.fileno], [], [], p_int)
             if self.fileno in rlist:
                 result = True
 
@@ -658,7 +668,7 @@ class GenericSocket(HandlingObject):
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

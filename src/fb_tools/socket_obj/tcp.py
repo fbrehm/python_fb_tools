@@ -23,7 +23,7 @@ from ..common import pp
 from ..errors import GenericSocketError
 from ..xlate import XLATOR
 
-__version__ = '0.4.1'
+__version__ = "0.4.2"
 
 LOG = logging.getLogger(__name__)
 
@@ -90,13 +90,20 @@ class TcpSocket(GenericSocket):
     * sock                   socket                (inherited from GenericSocket)
     """
 
-    port_err_msg_min = _('The TCP port number must be a positive integer value, not {!r}.')
-    port_err_msg_max = _('The TCP port number must be less than or equal to {max}, not {cur!r}.')
+    port_err_msg_min = _("The TCP port number must be a positive integer value, not {!r}.")
+    port_err_msg_max = _("The TCP port number must be less than or equal to {max}, not {cur!r}.")
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, address, port, address_family=None, address_info_flags=0,
-            version=__version__, *args, **kwargs):
+        self,
+        address,
+        port,
+        address_family=None,
+        address_info_flags=0,
+        version=__version__,
+        *args,
+        **kwargs,
+    ):
         """
         Initialise of the TcpSocket object.
 
@@ -157,7 +164,9 @@ class TcpSocket(GenericSocket):
         self._port = None
 
         super(TcpSocket, self).__init__(
-            *args, version=version, **kwargs,
+            *args,
+            version=version,
+            **kwargs,
         )
 
         self._address = address
@@ -264,15 +273,15 @@ class TcpSocket(GenericSocket):
         """
         res = super(TcpSocket, self).as_dict(short=short)
 
-        res['address'] = self.address
-        res['resolved_address'] = self.resolved_address
-        res['address_info_flags'] = self.address_info_flags
-        res['port'] = self.port
-        res['used_addr_family'] = self.used_addr_family
-        res['used_socket_type'] = self.used_socket_type
-        res['used_protocol'] = self.used_protocol
-        res['used_socket_addr'] = self.used_socket_addr
-        res['own_address'] = self.own_address
+        res["address"] = self.address
+        res["resolved_address"] = self.resolved_address
+        res["address_info_flags"] = self.address_info_flags
+        res["port"] = self.port
+        res["used_addr_family"] = self.used_addr_family
+        res["used_socket_type"] = self.used_socket_type
+        res["used_protocol"] = self.used_protocol
+        res["used_socket_addr"] = self.used_socket_addr
+        res["own_address"] = self.own_address
 
         return res
 
@@ -280,8 +289,8 @@ class TcpSocket(GenericSocket):
     def socket_desc(self):
         """Return a textual description of the used socket."""
         if not self.used_socket_addr:
-            return 'TcpSocket ({h!r}, {p})'.format(h=self.address, p=self.port)
-        return 'TcpSocket {}'.format(self.used_socket_addr)
+            return "TcpSocket ({h!r}, {p})".format(h=self.address, p=self.port)
+        return "TcpSocket {}".format(self.used_socket_addr)
 
     # -------------------------------------------------------------------------
     def close(self):
@@ -299,24 +308,26 @@ class TcpSocket(GenericSocket):
     def connect(self):
         """Connect to the TCP socket as a client."""
         if not self.address:
-            msg = _('Cannot connect to an undefined IP address or hostname.')
+            msg = _("Cannot connect to an undefined IP address or hostname.")
             raise TcpSocketError(msg)
 
         if self.verbose > 2:
-            LOG.debug(_(
-                'Connecting to address {addr!r}, port {port} by TCP ...').format(
-                addr=self.address, port=self.port))
+            LOG.debug(
+                _("Connecting to address {addr!r}, port {port} by TCP ...").format(
+                    addr=self.address, port=self.port
+                )
+            )
 
         if self.connected:
-            msg = _(
-                'The socket is already connected to {addr!r}, port {port}.').format(
-                addr=self.address, port=self.port)
+            msg = _("The socket is already connected to {addr!r}, port {port}.").format(
+                addr=self.address, port=self.port
+            )
             raise TcpSocketError(msg)
 
         if self.bonded:
-            msg = _(
-                'The application is already bonded to address {addr!r}, port {port}.').format(
-                addr=self.address, port=self.port)
+            msg = _("The application is already bonded to address {addr!r}, port {port}.").format(
+                addr=self.address, port=self.port
+            )
             raise TcpSocketError(msg)
 
         self.sock = None
@@ -334,15 +345,19 @@ class TcpSocket(GenericSocket):
 
         ai_flags = self.address_info_flags & ~socket.AI_PASSIVE
         addresses = self.get_address(
-            self.address, port=self.port, addr_type=socktype,
-            flags=ai_flags, as_socket_address=True)
+            self.address,
+            port=self.port,
+            addr_type=socktype,
+            flags=ai_flags,
+            as_socket_address=True,
+        )
 
         if not addresses:
-            msg = _('No valid address for host {!r} found.').format(str(self.address))
+            msg = _("No valid address for host {!r} found.").format(str(self.address))
             raise CouldNotOpenTcpSocketError(msg)
 
         last_err_msg = None
-        can_not_connect_msg = 'Could not connect to {addr!r} port {p} via TCP: {m}'
+        can_not_connect_msg = "Could not connect to {addr!r} port {p} via TCP: {m}"
 
         for socketaddr in addresses:
             ip_addr = ipaddress.ip_address(socketaddr[0])
@@ -355,7 +370,7 @@ class TcpSocket(GenericSocket):
                 self.sock = socket.socket(family, socktype, proto)
             except socket.error as msg:
                 if self.verbose > 3:
-                    LOG.debug('Could not create TCP socket: {}'.format(msg))
+                    LOG.debug("Could not create TCP socket: {}".format(msg))
                 last_err_msg = str(msg)
                 self.sock = None
                 continue
@@ -388,20 +403,20 @@ class TcpSocket(GenericSocket):
     # -------------------------------------------------------------------------
     def bind(self):
         """Create a TCP socket and listen on it."""
-        msg_args = {'addr': '*', 'port': self.port}
+        msg_args = {"addr": "*", "port": self.port}
         if self.address:
-            msg_args['addr'] = str(self.address)
+            msg_args["addr"] = str(self.address)
 
         if self.verbose > 1:
-            msg = _('Creating a listening TCP socket on address {addr!r}, port {port} ...')
+            msg = _("Creating a listening TCP socket on address {addr!r}, port {port} ...")
             LOG.debug(msg.format(**msg_args))
 
         if self.connected:
-            msg = _('The socket is already connected to address {addr!r}, port {port}.')
+            msg = _("The socket is already connected to address {addr!r}, port {port}.")
             raise TcpSocketError(msg.format(**msg_args))
 
         if self.bonded:
-            msg = _('The application is already bonded to address {addr!r}, port {port}.')
+            msg = _("The application is already bonded to address {addr!r}, port {port}.")
             raise TcpSocketError(msg.format(**msg_args))
 
         ai_flags = self.address_info_flags | socket.AI_PASSIVE
@@ -418,18 +433,22 @@ class TcpSocket(GenericSocket):
         socketaddr = None
 
         addresses = self.get_address(
-            self.address, port=self.port, addr_type=socktype,
-            flags=ai_flags, as_socket_address=True)
+            self.address,
+            port=self.port,
+            addr_type=socktype,
+            flags=ai_flags,
+            as_socket_address=True,
+        )
 
         if self.verbose > 2:
-            LOG.debug(_('Got socket addresses:') + '\n' + pp(addresses))
+            LOG.debug(_("Got socket addresses:") + "\n" + pp(addresses))
 
         if not addresses:
-            msg = _('No valid address for host {!r} found.').format(str(self.address))
+            msg = _("No valid address for host {!r} found.").format(str(self.address))
             raise CouldNotOpenTcpSocketError(msg)
 
         last_err_msg = None
-        can_not_bind_msg = 'Could not open listening TCP socket on {addr!r}, port {port}:'
+        can_not_bind_msg = "Could not open listening TCP socket on {addr!r}, port {port}:"
 
         for socketaddr in addresses:
             ip_addr = ipaddress.ip_address(socketaddr[0])
@@ -439,13 +458,13 @@ class TcpSocket(GenericSocket):
                 family = socket.AF_INET6
 
             if self.verbose > 1:
-                LOG.debug(_('Binding to socket address {!r}.').format(socketaddr))
+                LOG.debug(_("Binding to socket address {!r}.").format(socketaddr))
 
             try:
                 self.sock = socket.socket(family, socktype, proto)
             except socket.error as msg:
                 if self.verbose > 3:
-                    LOG.debug('Could not create TCP socket: {}'.format(msg))
+                    LOG.debug("Could not create TCP socket: {}".format(msg))
                 last_err_msg = str(msg)
                 self.sock = None
                 continue
@@ -457,7 +476,7 @@ class TcpSocket(GenericSocket):
             except socket.error as msg:
                 self.sock.close()
                 if self.verbose > 3:
-                    LOG.debug(can_not_bind_msg.format(**msg_args) + ' ' + str(msg))
+                    LOG.debug(can_not_bind_msg.format(**msg_args) + " " + str(msg))
                 last_err_msg = str(msg)
                 self.sock = None
                 continue
@@ -468,7 +487,7 @@ class TcpSocket(GenericSocket):
 
         # Could not open listening socket
         if self.sock is None:
-            msg = can_not_bind_msg.format(**msg_args) + ' ' + str(last_err_msg)
+            msg = can_not_bind_msg.format(**msg_args) + " " + str(last_err_msg)
             raise CouldNotOpenTcpSocketError(msg)
 
         self._bonded = True
@@ -483,7 +502,7 @@ class TcpSocket(GenericSocket):
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 
