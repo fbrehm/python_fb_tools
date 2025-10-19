@@ -145,13 +145,13 @@ class TestAppModules(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_import_myip_app(self):
-        """Test importing module fb_tools.ddns.myip_app."""
-        LOG.info("Testing import of fb_tools.ddns.myip_app ...")
-        import fb_tools.ddns.myip_app
+        """Test importing module fb_tools.application.myip."""
+        LOG.info("Testing import of fb_tools.application.myip...")
+        import fb_tools.application.myip
 
         LOG.info(
-            "Module version of fb_tools.ddns.myip_app is {!r}.".format(
-                fb_tools.ddns.myip_app.__version__
+            "Module version of fb_tools.application..myip is {!r}.".format(
+                fb_tools.application.myip.__version__
             )
         )
 
@@ -160,7 +160,7 @@ class TestAppModules(FbToolsTestcase):
         """Test create an instance of a MyIpApplication object."""
         LOG.info("Test creating an instance of a MyIpApplication object.")
 
-        from fb_tools.ddns.myip_app import MyIpApplication
+        from fb_tools.application.myip import MyIpApplication
         from fb_tools.ddns.config import DdnsConfiguration
 
         MyIpApplication.do_init_logging = False
@@ -211,8 +211,8 @@ class TestAppModules(FbToolsTestcase):
 
     # -------------------------------------------------------------------------
     def test_import_get_file_rm_app(self):
-        """Test importing module fb_tools.get_file_rm_app."""
-        LOG.info("Testing import of fb_tools.get_file_rm_app ...")
+        """Test importing module fb_tools.application.get_file_rm."""
+        LOG.info("Testing import of fb_tools.application.get_file_rm ...")
         import fb_tools.application.get_file_rm
 
         LOG.info(

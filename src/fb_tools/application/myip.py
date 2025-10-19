@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-@summary: The module for the classes of the myip application.
+@summary: Prints the public NAT IPv4 address and/or the automatic assigned IPv6 address.
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
@@ -11,17 +11,24 @@ from __future__ import absolute_import, print_function
 
 # Standard modules
 import copy
+import locale
 import logging
+import sys
+
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 # Own modules
-from . import BaseDdnsApplication
-from .config import DdnsConfiguration
-from .errors import WorkDirError
 from .. import __version__ as GLOBAL_VERSION
 from ..common import to_bool
+from ..ddns import BaseDdnsApplication
+from ..ddns.config import DdnsConfiguration
+from ..ddns.errors import WorkDirError
 from ..xlate import XLATOR, format_list
 
-__version__ = "2.0.11"
+__version__ = "2.1.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -156,6 +163,25 @@ class MyIpApplication(BaseDdnsApplication):
                     self.write_ipv4_cache(my_ip)
                 else:
                     self.write_ipv6_cache(my_ip)
+
+
+# =============================================================================
+def main():
+    """Entrypoint for myip."""
+    my_path = pathlib.Path(__file__)
+    appname = my_path.name
+
+    locale.setlocale(locale.LC_ALL, "")
+
+    app = MyIpApplication(appname=appname)
+    app.initialized = True
+
+    if app.verbose > 2:
+        print(_("{c}-Object:\n{a}").format(c=app.__class__.__name__, a=app), file=sys.stderr)
+
+    app()
+
+    sys.exit(0)
 
 
 # =============================================================================

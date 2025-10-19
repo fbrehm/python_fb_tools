@@ -712,8 +712,6 @@ class GetFileRmApplication(BaseApplication):
 
 
 # =============================================================================
-
-
 def main():
     """Entrypoint for get-file-to-remove."""
     my_path = pathlib.Path(__file__)
