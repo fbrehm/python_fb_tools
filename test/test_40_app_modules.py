@@ -213,11 +213,11 @@ class TestAppModules(FbToolsTestcase):
     def test_import_get_file_rm_app(self):
         """Test importing module fb_tools.get_file_rm_app."""
         LOG.info("Testing import of fb_tools.get_file_rm_app ...")
-        import fb_tools.get_file_rm_app
+        import fb_tools.application.get_file_rm
 
         LOG.info(
             "Module version of fb_tools.get_file_rm_app is {!r}.".format(
-                fb_tools.get_file_rm_app.__version__
+                fb_tools.application.get_file_rm.__version__
             )
         )
 
@@ -226,7 +226,7 @@ class TestAppModules(FbToolsTestcase):
         """Test create an instance of a GetFileRmApplication object."""
         LOG.info("Test creating an instance of a GetFileRmApplication object.")
 
-        from fb_tools.get_file_rm_app import GetFileRmApplication
+        from fb_tools.application.get_file_rm import GetFileRmApplication
 
         GetFileRmApplication.do_init_logging = False
 
