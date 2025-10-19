@@ -3,17 +3,15 @@
 include:
   - project: 'python/packaging'
     ref: main
-    # file: 'gitlab/create-all.yaml'
-    file: 'gitlab/pyproject-create-all.yaml'
+    file: 'gitlab/create-all.yaml'
 
 variables:
   EXPIRE_ARTIFACTS_IN: '1 week'
   PKG_NAME: 'fb-tools'
   PYTHON_ADDITIONAL_PACKAGES: 'python3-fb-logging python3-chardet'
-  PYTHON_INIT_FILE: 'src/fb_tools/__init__.py'
-  # PYTHON_TEST_PATHS: 'bin/* lib test setup.py'
-  PYTHON_TEST_PATHS: 'src'
-  SHELLSCRIPTS: 'compile-xlate-msgs.sh update-env.sh xtract-xlate-msgs.sh'
+  PYTHON_INIT_FILE: 'lib/fb_tools/__init__.py'
+  PYTHON_TEST_PATHS: 'bin/* lib test setup.py'
+  SHELLSCRIPTS: 'compile-xlate-msgs.sh update-env.sh xtract-xlate-msgs.sh get-debian-release get-debian-version get-rpm-release get-rpm-version'
   SSH_PRIV_KEY_YUM_REPO: 'nada'
   TEST_LOCALES: 'en_US.UTF-8 de_DE.UTF-8'
   UPDATE_ALL_PIP_MODULES: 'n'
@@ -30,6 +28,5 @@ variables:
   # YUM_REPO_DIR: "/srv/www/repo${YUM_REPO_DIR_HTTP}"
   YUM_REPO_GPG_KEY_PUB: 'nada'
   YUM_REPO_GPG_KEY_SEC: ''
-  REVISION: 1
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list

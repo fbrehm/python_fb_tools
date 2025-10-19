@@ -18,7 +18,7 @@ try:
 except ImportError:
     import unittest
 
-libdir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), '..', 'lib'))
+libdir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), '..', 'src'))
 sys.path.insert(0, libdir)
 
 from fb_tools.common import to_bool
