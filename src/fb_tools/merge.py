@@ -9,7 +9,7 @@
 
 import itertools
 
-__version__ = '2.0.2'
+__version__ = "2.0.3"
 
 
 # =============================================================================
@@ -28,7 +28,7 @@ def izip_longest(*args, **kwds):
     """
     # izip_longest('ABCD', 'xy', fillvalue='-') --> Ax By C- D-
 
-    fillvalue = kwds.get('fillvalue')
+    fillvalue = kwds.get("fillvalue")
     counter = [len(args) - 1]
 
     # ------------------
@@ -72,7 +72,7 @@ def merge_structure(a, b):
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

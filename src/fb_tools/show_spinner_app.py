@@ -27,26 +27,28 @@ from .spinner import CycleList
 from .spinner import Spinner
 from .xlate import XLATOR
 
-__version__ = '0.2.1'
+__version__ = "0.2.2"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
+
 
 # =============================================================================
 class ShowSpinnerApplication(BaseApplication):
     """Class for the show-spinner application object."""
 
     default_show_time = 6
-    default_spinner = 'random'
-    default_prompt = _('Waiting ... ')
+    default_spinner = "random"
+    default_prompt = _("Waiting ... ")
 
     # -------------------------------------------------------------------------
     def __init__(self, verbose=0, version=__global_version__, *args, **kwargs):
         """Initialise of the show-spinnerapplication object."""
         desc = _(
-            'Shows one or more spinners, and their names, if multiple spinners should be shown. '
-            'If no spinner is given, a random spinner will be displayed.')
+            "Shows one or more spinners, and their names, if multiple spinners should be shown. "
+            "If no spinner is given, a random spinner will be displayed."
+        )
 
         self._show_time = None
         self._prompt = self.default_prompt
@@ -55,11 +57,7 @@ class ShowSpinnerApplication(BaseApplication):
         self.all_spinners = sorted(CycleList.keys(), key=str.lower)
 
         super(ShowSpinnerApplication, self).__init__(
-            *args,
-            description=desc,
-            verbose=verbose,
-            version=version,
-            **kwargs
+            *args, description=desc, verbose=verbose, version=version, **kwargs
         )
 
         self.initialized = True
@@ -78,9 +76,7 @@ class ShowSpinnerApplication(BaseApplication):
 
         v = float(value)
         if v < 0:
-            msg = _(
-                'A negative time for showing the spinner {v!r} is not allowed.').format(
-                value)
+            msg = _("A negative time for showing the spinner {v!r} is not allowed.").format(value)
             raise ValueError(msg)
 
         if v == 0:
@@ -97,7 +93,7 @@ class ShowSpinnerApplication(BaseApplication):
     @prompt.setter
     def prompt(self, value):
         if value is None:
-            self._prompt = ''
+            self._prompt = ""
             return
 
         self._prompt = str(value)
@@ -115,8 +111,8 @@ class ShowSpinnerApplication(BaseApplication):
         """
         res = super(ShowSpinnerApplication, self).as_dict(short=short)
 
-        res['prompt'] = self.prompt
-        res['show_time'] = self.show_time
+        res["prompt"] = self.prompt
+        res["show_time"] = self.show_time
 
         return res
 
@@ -125,30 +121,41 @@ class ShowSpinnerApplication(BaseApplication):
         """Initialise the argument parser."""
         super(ShowSpinnerApplication, self).init_arg_parser()
 
-        app_group = self.arg_parser.add_argument_group(_('Options for {}').format(self.appname))
+        app_group = self.arg_parser.add_argument_group(_("Options for {}").format(self.appname))
 
         app_group.add_argument(
-            '-P', '--prompt', dest='prompt',
+            "-P",
+            "--prompt",
+            dest="prompt",
             help=_(
-                'The prompt displayed before the spinner, if only one spinner should be shown. '
-                'Default: {!r}.').format(self.default_prompt),
+                "The prompt displayed before the spinner, if only one spinner should be shown. "
+                "Default: {!r}."
+            ).format(self.default_prompt),
         )
 
         app_group.add_argument(
-            '-t', '--time', dest='time', metavar=_('SECONDS'), type=float,
-            help=_(
-                'The time in seconds for displaying each spinner.').format(
-                self.default_show_time),
+            "-t",
+            "--time",
+            dest="time",
+            metavar=_("SECONDS"),
+            type=float,
+            help=_("The time in seconds for displaying each spinner.").format(
+                self.default_show_time
+            ),
         )
 
         app_group.add_argument(
-            'spinnerei', metavar=_('SPINNER'), type=str, nargs='*',
+            "spinnerei",
+            metavar=_("SPINNER"),
+            type=str,
+            nargs="*",
             help=_(
-                'The spinners, which should be displayed. If not given, a random spinner will be '
-                'displayed, which is the same as giving {rand!r} as the name of the spinner. '
-                'If giving {list!r}, a simple list of all available spinners will be shown, '
-                'without displaying them. If giving {all!r}, all available spinners will be '
-                'shown.').format(rand='random', list='list', all='all'),
+                "The spinners, which should be displayed. If not given, a random spinner will be "
+                "displayed, which is the same as giving {rand!r} as the name of the spinner. "
+                "If giving {list!r}, a simple list of all available spinners will be shown, "
+                "without displaying them. If giving {all!r}, all available spinners will be "
+                "shown."
+            ).format(rand="random", list="list", all="all"),
         )
 
     # -------------------------------------------------------------------------
@@ -165,13 +172,13 @@ class ShowSpinnerApplication(BaseApplication):
                 self.arg_parser.print_usage(sys.stdout)
                 self.exit(1)
 
-        all_spinners = ['random'] + self.all_spinners
+        all_spinners = ["random"] + self.all_spinners
 
         if self.args.spinnerei:
             for spinner in self.args.spinnerei:
-                if spinner == 'all':
+                if spinner == "all":
                     if len(self.spinners):
-                        msg = _('You may give {!r} only as the only spinner.').format('all')
+                        msg = _("You may give {!r} only as the only spinner.").format("all")
                         LOG.error(msg)
                         self.arg_parser.print_usage(sys.stdout)
                         self.exit(1)
@@ -180,9 +187,9 @@ class ShowSpinnerApplication(BaseApplication):
                         self.show_time = self.default_show_time
                     continue
 
-                if spinner == 'list':
+                if spinner == "list":
                     if len(self.spinners):
-                        msg = _('You may give {!r} only as the only spinner.').format('list')
+                        msg = _("You may give {!r} only as the only spinner.").format("list")
                         LOG.error(msg)
                         self.arg_parser.print_usage(sys.stdout)
                         self.exit(1)
@@ -190,7 +197,7 @@ class ShowSpinnerApplication(BaseApplication):
                     continue
 
                 if spinner not in all_spinners:
-                    msg = _('Invalid spinner {!r} given.').format(spinner)
+                    msg = _("Invalid spinner {!r} given.").format(spinner)
                     LOG.error(msg)
                     self.arg_parser.print_usage(sys.stdout)
                     self.exit(1)
@@ -208,56 +215,63 @@ class ShowSpinnerApplication(BaseApplication):
         if self.show_time:
             show_time = self.show_time
 
-        if 'list' in self.spinners:
+        if "list" in self.spinners:
             self.list_spinners()
             self.exit(0)
 
-        if 'all' in self.spinners:
+        if "all" in self.spinners:
             self.spinners = copy.copy(self.all_spinners)
 
-        if len(self.spinners) > 1 or ('random' in self.spinners and self.args.prompt is None):
-            prompt = _('Spinner {!r}: ')
+        if len(self.spinners) > 1 or ("random" in self.spinners and self.args.prompt is None):
+            prompt = _("Spinner {!r}: ")
 
         # ---------------------
         def _signal_handler(signum, frame):
 
-            signame = '{}'.format(signum)
-            msg = _('Got a signal {}.').format(signum)
+            signame = "{}".format(signum)
+            msg = _("Got a signal {}.").format(signum)
             if signum in SIGNAL_NAMES:
                 signame = SIGNAL_NAMES[signum]
-                msg = _('Got a signal {n!r} ({s}).').format(
-                    n=signame, s=signum)
+                msg = _("Got a signal {n!r} ({s}).").format(n=signame, s=signum)
             LOG.debug(msg)
 
             if signum in (
-                    signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
-                    signal.SIGTERM, signal.SIGKILL, signal.SIGQUIT):
+                signal.SIGHUP,
+                signal.SIGINT,
+                signal.SIGABRT,
+                signal.SIGTERM,
+                signal.SIGKILL,
+                signal.SIGQUIT,
+            ):
                 print()
                 if self.verbose > 1:
-                    LOG.info(_('Exit on signal {n!r} ({s}).').format(n=signame, s=signum))
+                    LOG.info(_("Exit on signal {n!r} ({s}).").format(n=signame, s=signum))
                 self.exit(0)
 
         # ------------------------
         old_handlers = {}
 
         if self.verbose > 2:
-            LOG.debug(_('Tweaking signal handlers.'))
+            LOG.debug(_("Tweaking signal handlers."))
         for signum in (
-                signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
-                signal.SIGTERM, signal.SIGQUIT):
+            signal.SIGHUP,
+            signal.SIGINT,
+            signal.SIGABRT,
+            signal.SIGTERM,
+            signal.SIGQUIT,
+        ):
             if self.verbose > 3:
                 signame = SIGNAL_NAMES[signum]
-                LOG.debug(_('Setting signal handler for {n!r} ({s}).').format(
-                    n=signame, s=signum))
+                LOG.debug(_("Setting signal handler for {n!r} ({s}).").format(n=signame, s=signum))
             old_handlers[signum] = signal.signal(signum, _signal_handler)
 
         try:
             for spinner_name in self.spinners:
-                if spinner_name == 'random':
+                if spinner_name == "random":
                     spinner_name = self._get_random_spinner_name()
-                print(prompt.format(spinner_name), end='', flush=True)
+                print(prompt.format(spinner_name), end="", flush=True)
 
-                with Spinner('', spinner_name):
+                with Spinner("", spinner_name):
                     if self.show_time:
                         time.sleep(show_time)
                     else:
@@ -266,7 +280,7 @@ class ShowSpinnerApplication(BaseApplication):
                 print()
         finally:
             if self.verbose > 2:
-                LOG.debug(_('Restoring original signal handlers.'))
+                LOG.debug(_("Restoring original signal handlers."))
             for signum in old_handlers.keys():
                 signal.signal(signum, old_handlers[signum])
 
@@ -282,16 +296,16 @@ class ShowSpinnerApplication(BaseApplication):
     def list_spinners(self):
         """Print out a list of all available spinners."""
         if self.verbose:
-            title = _('All available spinners:')
+            title = _("All available spinners:")
             print(title)
-            print('-' * len(title))
+            print("-" * len(title))
 
         for spinner_name in self.all_spinners:
             print(spinner_name)
 
 
 # =============================================================================
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 
