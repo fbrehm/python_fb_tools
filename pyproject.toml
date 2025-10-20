@@ -53,7 +53,6 @@ show-spinner = "fb_tools.application.show_spinner:main"
 [project.optional-dependencies]
 development = [
     "black",
-    "click-man",
     "isort",
     "hjson",
 ]
