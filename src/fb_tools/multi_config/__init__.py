@@ -23,22 +23,25 @@ from pathlib import Path
 
 HAS_YAML = False
 try:
-    import yaml                                 # noqa:F401
+    import yaml  # noqa:F401
+
     HAS_YAML = True
 except ImportError:
     pass
 
 HAS_HJSON = False
 try:
-    import hjson                                # noqa:F401
+    import hjson  # noqa:F401
+
     HAS_HJSON = True
 except ImportError:
     pass
 
 HAS_TOML = False
 try:
-    import toml                                 # noqa:F401
-    from toml import TomlDecodeError            # noqa:F401
+    import toml  # noqa:F401
+    from toml import TomlDecodeError  # noqa:F401
+
     HAS_TOML = True
 except ImportError:
     pass
@@ -55,7 +58,7 @@ from ..handling_obj import HandlingObject
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
 
-__version__ = '2.2.1'
+__version__ = "2.2.2"
 
 LOG = logging.getLogger(__name__)
 
@@ -73,41 +76,42 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
     default_encoding = DEFAULT_ENCODING
 
     default_stems = []
-    default_config_dir = 'fb-tools'
+    default_config_dir = "fb-tools"
 
     default_loader_methods = {
-        'yaml': 'load_yaml',
-        'ini': 'load_ini',
-        'json': 'load_json',
-        'hjson': 'load_hjson',
+        "yaml": "load_yaml",
+        "ini": "load_ini",
+        "json": "load_json",
+        "hjson": "load_hjson",
     }
     default_type_extension_patterns = {
-        'yaml': [r'ya?ml'],
-        'ini': [r'ini', r'conf(?:ig)?', r'cfg'],
-        'json': [r'js(?:on)?'],
-        'hjson': [r'hjs(?:on)?'],
+        "yaml": [r"ya?ml"],
+        "ini": [r"ini", r"conf(?:ig)?", r"cfg"],
+        "json": [r"js(?:on)?"],
+        "hjson": [r"hjs(?:on)?"],
     }
 
-    available_cfg_types = ['ini', 'json']
-    default_ini_style_types = ['ini']
+    available_cfg_types = ["ini", "json"]
+    default_ini_style_types = ["ini"]
 
     if HAS_HJSON:
-        available_cfg_types.append('hjson')
+        available_cfg_types.append("hjson")
 
     if HAS_YAML:
-        available_cfg_types.append('yaml')
+        available_cfg_types.append("yaml")
 
     if HAS_TOML:
-        default_loader_methods['toml'] = 'load_toml'
-        default_type_extension_patterns['toml'] = [r'to?ml']
-        available_cfg_types.append('toml')
+        default_loader_methods["toml"] = "load_toml"
+        default_type_extension_patterns["toml"] = [r"to?ml"]
+        available_cfg_types.append("toml")
 
     re_invalid_stem = re.compile(re.escape(os.sep))
 
     re_common_prompt_timeout_key = re.compile(
-        r'^\s*(?:prompt|console)[_-]*timeout\s*$', re.IGNORECASE)
+        r"^\s*(?:prompt|console)[_-]*timeout\s*$", re.IGNORECASE
+    )
 
-    default_ini_default_section = '/'
+    default_ini_default_section = "/"
 
     default_logfile = None
 
@@ -119,10 +123,22 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None,
-            append_appname_to_stems=True, config_dir=None, additional_stems=None,
-            additional_cfgdirs=None, encoding=DEFAULT_ENCODING, additional_config_file=None,
-            use_chardet=True, raise_on_error=True, ensure_privacy=False, initialized=False):
+        self,
+        appname=None,
+        verbose=0,
+        version=__version__,
+        base_dir=None,
+        append_appname_to_stems=True,
+        config_dir=None,
+        additional_stems=None,
+        additional_cfgdirs=None,
+        encoding=DEFAULT_ENCODING,
+        additional_config_file=None,
+        use_chardet=True,
+        raise_on_error=True,
+        ensure_privacy=False,
+        initialized=False,
+    ):
         """Initialise a BaseMultiConfig object."""
         self._encoding = None
         self._config_dir = None
@@ -155,17 +171,20 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
         self.ext_patterns = {}
 
         super(BaseMultiConfig, self).__init__(
-            appname=appname, verbose=verbose, version=version,
-            base_dir=base_dir, initialized=False,
+            appname=appname,
+            verbose=verbose,
+            version=version,
+            base_dir=base_dir,
+            initialized=False,
         )
 
         if self.verbose > 1:
             if not HAS_YAML:
-                LOG.debug(_('{} configuration is not supported.').format('Yaml'))
+                LOG.debug(_("{} configuration is not supported.").format("Yaml"))
             if not HAS_HJSON:
-                LOG.debug(_('{} configuration is not supported.').format('HJson'))
+                LOG.debug(_("{} configuration is not supported.").format("HJson"))
             if not HAS_TOML:
-                LOG.debug(_('{} configuration is not supported.').format('Toml'))
+                LOG.debug(_("{} configuration is not supported.").format("Toml"))
 
         if encoding:
             self.encoding = encoding
@@ -196,9 +215,8 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
     def encoding(self, value):
         if not isinstance(value, str):
             msg = _(
-                'Encoding {v!r} must be a {s!r} object, '
-                'but is a {c!r} object instead.').format(
-                v=value, s='str', c=value.__class__.__name__)
+                "Encoding {v!r} must be a {s!r} object, " "but is a {c!r} object instead."
+            ).format(v=value, s="str", c=value.__class__.__name__)
             raise TypeError(msg)
 
         encoder = codecs.lookup(value)
@@ -218,21 +236,21 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
 
         cfg_file = Path(value)
         if not cfg_file.exists():
-            msg = _('Additional config file {!r} does not exists.')
+            msg = _("Additional config file {!r} does not exists.")
             if self.raise_on_error:
                 raise MultiConfigError(msg.format(str(cfg_file)))
             LOG.error(msg.format(str(cfg_file)))
             return
 
         if not cfg_file.is_file():
-            msg = _('Configuration file {!r} exists, but is not a regular file.')
+            msg = _("Configuration file {!r} exists, but is not a regular file.")
             if self.raise_on_error:
                 raise MultiConfigError(msg.format(str(cfg_file)))
             LOG.error(msg.format(str(cfg_file)))
             return
 
         if not os.access(cfg_file, os.R_OK):
-            msg = _('Configuration file {!r} is not readable.')
+            msg = _("Configuration file {!r} is not readable.")
             if self.raise_on_error:
                 raise MultiConfigError(msg.format(str(cfg_file)))
             LOG.error(msg.format(str(cfg_file)))
@@ -253,10 +271,10 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
     @config_dir.setter
     def config_dir(self, value):
         if value is None:
-            raise TypeError(_('A configuration directory may not be None.'))
+            raise TypeError(_("A configuration directory may not be None."))
         cdir = pathlib.Path(value)
         if cdir.is_absolute():
-            msg = _('Configuration directory {!r} may not be absolute.').format(str(cdir))
+            msg = _("Configuration directory {!r} may not be absolute.").format(str(cdir))
             raise MultiConfigError(msg)
         self._config_dir = cdir
 
@@ -280,7 +298,7 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
     @property
     def prompt_timeout(self):
         """Return the timeout in seconds for waiting for an answer on a prompt."""
-        return getattr(self, '_prompt_timeout', None)
+        return getattr(self, "_prompt_timeout", None)
 
     # -------------------------------------------------------------------------
     @property
@@ -336,7 +354,7 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
         if is_sequence(value):
             self._ini_delimiters = copy.copy(value)
             return
-        msg = _('Cannot use {!r} as delimiters for ini-files.').format(value)
+        msg = _("Cannot use {!r} as delimiters for ini-files.").format(value)
         raise TypeError(msg)
 
     # -------------------------------------------------------------------------
@@ -358,7 +376,7 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
         if is_sequence(value):
             self._ini_comment_prefixes = copy.copy(value)
             return
-        msg = _('Cannot use {!r} as comment prefixes for ini-files.').format(value)
+        msg = _("Cannot use {!r} as comment prefixes for ini-files.").format(value)
         raise TypeError(msg)
 
     # -------------------------------------------------------------------------
@@ -380,7 +398,7 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
         if is_sequence(value):
             self._ini_inline_comment_prefixes = copy.copy(value)
             return
-        msg = _('Cannot use {!r} as inline comment prefixes for ini-files.').format(value)
+        msg = _("Cannot use {!r} as inline comment prefixes for ini-files.").format(value)
         raise TypeError(msg)
 
     # -------------------------------------------------------------------------
@@ -460,33 +478,33 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
         @rtype:  dict
         """
         res = super(BaseMultiConfig, self).as_dict(short=short)
-        res['default_encoding'] = self.default_encoding
-        res['default_stems'] = self.default_stems
-        res['default_config_dir'] = self.default_config_dir
-        res['default_loader_methods'] = self.default_loader_methods
-        res['default_type_extension_patterns'] = self.default_type_extension_patterns
-        res['default_ini_style_types'] = self.default_ini_style_types
-        res['chardet_min_level_confidence'] = self.chardet_min_level_confidence
-        res['available_cfg_types'] = self.available_cfg_types
-        res['encoding'] = self.encoding
-        res['config_dir'] = self.config_dir
-        res['additional_config_file'] = self.additional_config_file
-        res['cfgfiles_collected'] = self.cfgfiles_collected
-        res['was_read'] = self.was_read
-        res['ini_allow_no_value'] = self.ini_allow_no_value
-        res['ini_delimiters'] = self.ini_delimiters
-        res['ini_comment_prefixes'] = self.ini_comment_prefixes
-        res['ini_inline_comment_prefixes'] = self.ini_inline_comment_prefixes
-        res['ini_extended_interpolation'] = self.ini_extended_interpolation
-        res['ini_strict'] = self.ini_strict
-        res['raise_on_error'] = self.raise_on_error
-        res['has_hjson'] = self.has_hjson
-        res['has_toml'] = self.has_toml
-        res['has_yaml'] = self.has_yaml
-        res['use_chardet'] = self.use_chardet
-        res['ensure_privacy'] = self.ensure_privacy
-        res['logfile'] = self.logfile
-        res['prompt_timeout'] = self.prompt_timeout
+        res["default_encoding"] = self.default_encoding
+        res["default_stems"] = self.default_stems
+        res["default_config_dir"] = self.default_config_dir
+        res["default_loader_methods"] = self.default_loader_methods
+        res["default_type_extension_patterns"] = self.default_type_extension_patterns
+        res["default_ini_style_types"] = self.default_ini_style_types
+        res["chardet_min_level_confidence"] = self.chardet_min_level_confidence
+        res["available_cfg_types"] = self.available_cfg_types
+        res["encoding"] = self.encoding
+        res["config_dir"] = self.config_dir
+        res["additional_config_file"] = self.additional_config_file
+        res["cfgfiles_collected"] = self.cfgfiles_collected
+        res["was_read"] = self.was_read
+        res["ini_allow_no_value"] = self.ini_allow_no_value
+        res["ini_delimiters"] = self.ini_delimiters
+        res["ini_comment_prefixes"] = self.ini_comment_prefixes
+        res["ini_inline_comment_prefixes"] = self.ini_inline_comment_prefixes
+        res["ini_extended_interpolation"] = self.ini_extended_interpolation
+        res["ini_strict"] = self.ini_strict
+        res["raise_on_error"] = self.raise_on_error
+        res["has_hjson"] = self.has_hjson
+        res["has_toml"] = self.has_toml
+        res["has_yaml"] = self.has_yaml
+        res["use_chardet"] = self.use_chardet
+        res["ensure_privacy"] = self.ensure_privacy
+        res["logfile"] = self.logfile
+        res["prompt_timeout"] = self.prompt_timeout
 
         return res
 
@@ -494,9 +512,9 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
     @classmethod
     def is_venv(cls):
         """Return whther application is running inside a virtual environment."""
-        if hasattr(sys, 'real_prefix'):
+        if hasattr(sys, "real_prefix"):
             return True
-        return (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+        return hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
 
     # -------------------------------------------------------------------------
     @classmethod
@@ -507,15 +525,15 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
         return True
 
     # -------------------------------------------------------------------------
-    def eval(self):                                                         # noqa: A003
+    def eval(self):  # noqa: A003
         """Evaluate configuration and store it in object properties."""
         if not self.was_read:
-            msg = _('Evaluation of configuration could only be happen after reading it.')
+            msg = _("Evaluation of configuration could only be happen after reading it.")
             raise RuntimeError(msg)
 
         for section_name in self.cfg.keys():
 
-            if section_name.lower() in ('default', 'global', 'common'):
+            if section_name.lower() in ("default", "global", "common"):
                 self.eval_global_section(section_name)
                 continue
             self.eval_section(section_name)
@@ -527,15 +545,15 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
         May be overridden in descendant classes.
         """
         if self.verbose > 1:
-            LOG.debug(_('Checking config section {!r} ...').format(section_name))
+            LOG.debug(_("Checking config section {!r} ...").format(section_name))
 
         max_timeout = HandlingObject.max_prompt_timeout
-        invalid_msg = _('Invalid value {val!r} in section {sec!r} for console timeout.')
+        invalid_msg = _("Invalid value {val!r} in section {sec!r} for console timeout.")
 
         config = self.cfg[section_name]
         for key in config.keys():
             value = config[key]
-            if key.lower() == 'verbose':
+            if key.lower() == "verbose":
                 val = 0
                 if value is None:
                     pass
@@ -553,20 +571,20 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
                     timeout = int(value)
                 except (ValueError, TypeError) as e:
                     msg = invalid_msg.format(val=value, sec=section_name)
-                    msg += ' ' + str(e)
+                    msg += " " + str(e)
                     LOG.error(msg)
                     continue
                 if timeout <= 0 or timeout > max_timeout:
                     msg = invalid_msg.format(val=value, sec=section_name)
-                    msg += ' ' + _(
-                        'A timeout must be greater than zero and less or equal to {}.').format(
-                        max_timeout)
+                    msg += " " + _(
+                        "A timeout must be greater than zero and less or equal to {}."
+                    ).format(max_timeout)
                     LOG.error(msg)
                     continue
                 self._prompt_timeout = timeout
                 continue
 
-            if key.lower() in ('logfile', 'log-file', 'log'):
+            if key.lower() in ("logfile", "log-file", "log"):
                 self.logfile = value
                 continue
 
@@ -581,7 +599,7 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

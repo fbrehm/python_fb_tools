@@ -13,6 +13,7 @@ from __future__ import absolute_import
 import codecs
 import logging
 from configparser import Error as ConfigParseError
+
 try:
     import pathlib
 except ImportError:
@@ -29,7 +30,7 @@ from .errors import ConfigError
 from .obj import FbBaseObject
 from .xlate import XLATOR
 
-__version__ = '2.1.2'
+__version__ = "2.1.3"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -47,16 +48,27 @@ class BaseConfiguration(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None,
-            encoding=DEFAULT_ENCODING, config_dir=None, config_file=None, initialized=False):
+        self,
+        appname=None,
+        verbose=0,
+        version=__version__,
+        base_dir=None,
+        encoding=DEFAULT_ENCODING,
+        config_dir=None,
+        config_file=None,
+        initialized=False,
+    ):
         """Initialise a BaseConfiguration object."""
         self._encoding = None
         self._config_dir = None
         self._config_file = None
 
         super(BaseConfiguration, self).__init__(
-            appname=appname, verbose=verbose, version=version,
-            base_dir=base_dir, initialized=False,
+            appname=appname,
+            verbose=verbose,
+            version=version,
+            base_dir=base_dir,
+            initialized=False,
         )
 
         if encoding:
@@ -67,12 +79,12 @@ class BaseConfiguration(FbBaseObject):
         if config_dir:
             self.config_dir = config_dir
         else:
-            self._config_dir = self.base_dir.joinpath('etc')
+            self._config_dir = self.base_dir.joinpath("etc")
 
         if config_file:
             self.config_file = config_file
         else:
-            self._config_file = self.config_dir.joinpath(self.appname + '.ini')
+            self._config_file = self.config_dir.joinpath(self.appname + ".ini")
 
         if initialized:
             self.initialized = True
@@ -87,9 +99,8 @@ class BaseConfiguration(FbBaseObject):
     def encoding(self, value):
         if not isinstance(value, str):
             msg = _(
-                'Encoding {v!r} must be a {s!r} object, '
-                'but is a {c!r} object instead.').format(
-                v=value, s='str', c=value.__class__.__name__)
+                "Encoding {v!r} must be a {s!r} object, " "but is a {c!r} object instead."
+            ).format(v=value, s="str", c=value.__class__.__name__)
             raise TypeError(msg)
 
         encoder = codecs.lookup(value)
@@ -104,7 +115,7 @@ class BaseConfiguration(FbBaseObject):
     @config_dir.setter
     def config_dir(self, value):
         if value is None:
-            raise TypeError(_('A configuration directory may not be None.'))
+            raise TypeError(_("A configuration directory may not be None."))
         cdir = pathlib.Path(value)
         if cdir.exists():
             self._config_dir = cdir.resolve()
@@ -120,21 +131,23 @@ class BaseConfiguration(FbBaseObject):
     @config_file.setter
     def config_file(self, value):
         if value is None:
-            raise TypeError(_('A configuration file may not be None.'))
+            raise TypeError(_("A configuration file may not be None."))
 
         cfile = pathlib.Path(value)
         if cfile.exists():
             if not cfile.is_file():
-                msg = _('Configuration file {!r} exists, but is not a regular file.').format(
-                    str(cfile))
+                msg = _("Configuration file {!r} exists, but is not a regular file.").format(
+                    str(cfile)
+                )
                 raise ConfigError(msg)
             self._config_file = cfile.resolve()
             return
         cfile = self.config_dir.joinpath(cfile)
         if cfile.exists():
             if not cfile.is_file():
-                msg = _('Configuration file {!r} exists, but is not a regular file.').format(
-                    str(cfile))
+                msg = _("Configuration file {!r} exists, but is not a regular file.").format(
+                    str(cfile)
+                )
                 raise ConfigError(msg)
             self._config_file = cfile.resolve()
             return
@@ -152,10 +165,10 @@ class BaseConfiguration(FbBaseObject):
         @rtype:  dict
         """
         res = super(BaseConfiguration, self).as_dict(short=short)
-        res['default_encoding'] = self.default_encoding
-        res['encoding'] = self.encoding
-        res['config_dir'] = self.config_dir
-        res['config_file'] = self.config_file
+        res["default_encoding"] = self.default_encoding
+        res["encoding"] = self.encoding
+        res["config_dir"] = self.config_dir
+        res["config_file"] = self.config_file
 
         return res
 
@@ -163,35 +176,35 @@ class BaseConfiguration(FbBaseObject):
     def read(self, error_if_not_exists=False):
         """Read the configuration file."""
         if self.verbose > 2:
-            LOG.debug(_('Searching for {!r} ...').format(self.config_file))
+            LOG.debug(_("Searching for {!r} ...").format(self.config_file))
         if not self.config_file.exists():
-            msg = _('Configuration file {!r} not found.').format(str(self.config_file))
+            msg = _("Configuration file {!r} not found.").format(str(self.config_file))
             if error_if_not_exists:
-                self.handle_error(msg, _('Configuration file error'))
+                self.handle_error(msg, _("Configuration file error"))
             else:
                 LOG.debug(msg)
             return
 
         open_opts = {}
         if six.PY3 and self.encoding:
-            open_opts['encoding'] = self.encoding
-            open_opts['errors'] = 'surrogateescape'
+            open_opts["encoding"] = self.encoding
+            open_opts["errors"] = "surrogateescape"
 
         if self.verbose > 1:
-            LOG.debug(_('Reading {!r} ...').format(self.config_file))
+            LOG.debug(_("Reading {!r} ...").format(self.config_file))
 
         config = configparser.ConfigParser()
         try:
-            with open(str(self.config_file), 'r', **open_opts) as fh:
-                stream = StringIO('[default]\n' + fh.read())
+            with open(str(self.config_file), "r", **open_opts) as fh:
+                stream = StringIO("[default]\n" + fh.read())
                 if six.PY2:
                     config.readfp(stream)
                 else:
                     config.read_file(stream)
         except ConfigParseError as e:
-            msg = _('Wrong configuration in {!r} found').format(str(self.config_file))
-            msg += ': ' + str(e)
-            self.handle_error(msg, _('Configuration parse error'))
+            msg = _("Wrong configuration in {!r} found").format(str(self.config_file))
+            msg += ": " + str(e)
+            self.handle_error(msg, _("Configuration parse error"))
             return
 
         self.eval_config(config)
@@ -201,7 +214,7 @@ class BaseConfiguration(FbBaseObject):
         """Evaluate all found configuration options."""
         for section_name in config.sections():
 
-            if section_name.lower() == 'default' or section_name.lower() == 'global':
+            if section_name.lower() == "default" or section_name.lower() == "global":
                 self.eval_config_global(config, section_name)
                 continue
 
@@ -214,10 +227,10 @@ class BaseConfiguration(FbBaseObject):
         May be overridden in descendant classes.
         """
         if self.verbose > 1:
-            LOG.debug(_('Checking config section {!r} ...').format(section_name))
+            LOG.debug(_("Checking config section {!r} ...").format(section_name))
 
-        for (key, value) in config.items(section_name):
-            if key.lower() == 'verbose':
+        for key, value in config.items(section_name):
+            if key.lower() == "verbose":
                 val = int(value)
                 if val > self.verbose:
                     self.verbose = val
@@ -233,7 +246,7 @@ class BaseConfiguration(FbBaseObject):
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

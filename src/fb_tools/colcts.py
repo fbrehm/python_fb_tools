@@ -29,7 +29,7 @@ from .errors import FbError
 from .obj import FbGenericBaseObject
 from .xlate import XLATOR
 
-__version__ = '2.0.2'
+__version__ = "2.0.3"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -48,7 +48,7 @@ class WrongItemTypeError(TypeError, FbCollectionsError):
     """Exeception class for the case, that a given parameter ist not of type str."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, item, expected='str'):
+    def __init__(self, item, expected="str"):
         """Initialise a WrongItemTypeError exception."""
         self.item = item
         self.expected = expected
@@ -57,7 +57,7 @@ class WrongItemTypeError(TypeError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _('Item {item!r} must be of type {must!r}, but is of type {cls!r} instead.')
+        msg = _("Item {item!r} must be of type {must!r}, but is of type {cls!r} instead.")
         return msg.format(item=self.item, must=self.expected, cls=self.item.__class__.__name__)
 
 
@@ -66,7 +66,7 @@ class WrongCompareSetClassError(TypeError, FbCollectionsError):
     """Exeception class for the case, that a given class ist not of an instance of CIStringSet."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, other, expected='CIStringSet'):
+    def __init__(self, other, expected="CIStringSet"):
         """Initialise a WrongCompareSetClassError exception."""
         self.other_class = other.__class__.__name__
         self.expected = expected
@@ -75,7 +75,7 @@ class WrongCompareSetClassError(TypeError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _('Object {o!r} is not a {e} object.')
+        msg = _("Object {o!r} is not a {e} object.")
         return msg.format(o=self.other_class, e=self.expected)
 
 
@@ -84,7 +84,7 @@ class WrongKeyTypeError(TypeError, FbCollectionsError):
     """Exeception if a given key is from wrong type."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, key, expected='str'):
+    def __init__(self, key, expected="str"):
         """Initialise a WrongKeyTypeError exception."""
         self.key = key
         self.expected = expected
@@ -93,7 +93,7 @@ class WrongKeyTypeError(TypeError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _('Key {key!r} must be of type {must!r}, but is of type {cls!r} instead.')
+        msg = _("Key {key!r} must be of type {must!r}, but is of type {cls!r} instead.")
         return msg.format(key=self.key, must=self.expected, cls=self.key.__class__.__name__)
 
 
@@ -111,9 +111,10 @@ class WrongUpdateClassError(TypeError, FbCollectionsError):
     def __str__(self):
         """Typecast into str."""
         msg = _(
-            'Object is neither a {m} object, nor a sequential object, '
-            'but a {o!r} object instead.')
-        return msg.format(o=self.other_class, m='Mapping')
+            "Object is neither a {m} object, nor a sequential object, "
+            "but a {o!r} object instead."
+        )
+        return msg.format(o=self.other_class, m="Mapping")
 
 
 # =============================================================================
@@ -129,7 +130,7 @@ class CaseInsensitiveKeyError(KeyError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _('Key {!r} is not existing.')
+        msg = _("Key {!r} is not existing.")
         return msg.format(self.key)
 
 
@@ -138,7 +139,7 @@ class CIInitfromSequenceError(TypeError, FbCollectionsError):
     """Exeception if an object for update is from the wrong type."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, item, emesg, expected='FrozenCIDict'):
+    def __init__(self, item, emesg, expected="FrozenCIDict"):
         """Initialise a CIInitfromSequenceError exception."""
         self.item = item
         self.emesg = emesg
@@ -148,7 +149,7 @@ class CIInitfromSequenceError(TypeError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _('Could update {ex} with {i!r}: {m}')
+        msg = _("Could update {ex} with {i!r}: {m}")
         return msg.format(ex=self.expected, i=self.item, m=self.emesg)
 
 
@@ -157,7 +158,7 @@ class CIInitfromTupleError(IndexError, FbCollectionsError):
     """Exeception if an object for update is from the wrong type."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, item, emesg, expected='FrozenCIDict'):
+    def __init__(self, item, emesg, expected="FrozenCIDict"):
         """Initialise a CIInitfromTupleError exception."""
         self.item = item
         self.emesg = emesg
@@ -167,7 +168,7 @@ class CIInitfromTupleError(IndexError, FbCollectionsError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into str."""
-        msg = _('Could update {ex} with {i!r}: {m}')
+        msg = _("Could update {ex} with {i!r}: {m}")
         return msg.format(ex=self.expected, i=self.item, m=self.emesg)
 
 
@@ -191,8 +192,8 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
             elif isinstance(iterable, FrozenCIStringSet):
                 ok = True
             if not ok:
-                msg = _('Parameter {p!r} is not a sequence type, but a {c!r} object instead.')
-                msg = msg.format(p='iterable', c=iterable.__class__.__qualname__)
+                msg = _("Parameter {p!r} is not a sequence type, but a {c!r} object instead.")
+                msg = msg.format(p="iterable", c=iterable.__class__.__qualname__)
                 raise TypeError(msg)
 
             for item in iterable:
@@ -364,14 +365,14 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
     def __str__(self):
         """Typecast into string."""
         if len(self) == 0:
-            return '{}()'.format(self.__class__.__name__)
+            return "{}()".format(self.__class__.__name__)
 
-        ret = '{}('.format(self.__class__.__name__)
+        ret = "{}(".format(self.__class__.__name__)
         if len(self):
-            ret += '['
-            ret += ', '.join(map(lambda x: '{!r}'.format(x), self.values()))        # noqa: C417
-            ret += ']'
-        ret += ')'
+            ret += "["
+            ret += ", ".join(map(lambda x: "{!r}".format(x), self.values()))  # noqa: C417
+            ret += "]"
+        ret += ")"
 
         return ret
 
@@ -510,7 +511,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
         """
         res = super(FrozenCIStringSet, self).as_dict(short=short)
 
-        res['items'] = self.values()
+        res["items"] = self.values()
 
         return res
 
@@ -522,6 +523,7 @@ class FrozenCIStringSet(Set, FbGenericBaseObject):
             ret.append(item)
 
         return ret
+
 
 # =============================================================================
 class CIStringSet(MutableSet, FrozenCIStringSet):
@@ -677,7 +679,7 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
     def pop(self):
         """Remove and return an arbitrary element from the set."""
         if len(self) == 0:
-            raise IndexError('pop() from empty list')
+            raise IndexError("pop() from empty list")
 
         key = self._items.keys()[0]
         value = self._items[key]
@@ -715,7 +717,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
             if isinstance(first_param, Mapping):
                 self._update_from_mapping(first_param)
-            elif first_param.__class__.__name__ == 'zip':
+            elif first_param.__class__.__name__ == "zip":
                 self._update_from_mapping(dict(first_param))
             elif is_sequence(first_param):
                 self._update_from_sequence(first_param)
@@ -733,8 +735,8 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
                 raise WrongKeyTypeError(key)
             lkey = key.lower()
             self._map[lkey] = {
-                'key': key,
-                'val': mapping[key],
+                "key": key,
+                "val": mapping[key],
             }
 
     # -------------------------------------------------------------------------
@@ -752,8 +754,8 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
                 raise WrongKeyTypeError(key)
             lkey = key.lower()
             self._map[lkey] = {
-                'key': key,
-                'val': value,
+                "key": key,
+                "val": value,
             }
 
     # -------------------------------------------------------------------------
@@ -773,7 +775,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
             raise WrongKeyTypeError(key)
         lkey = key.lower()
         if lkey in self._map:
-            return self._map[lkey]['val']
+            return self._map[lkey]["val"]
 
         raise CaseInsensitiveKeyError(key)
 
@@ -805,15 +807,15 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
     def __repr__(self):
         """Typecast into string for reproduction."""
         if len(self) == 0:
-            return '{}()'.format(self.__class__.__name__)
+            return "{}()".format(self.__class__.__name__)
 
-        ret = '{}({{'.format(self.__class__.__name__)
+        ret = "{}({{".format(self.__class__.__name__)
         kargs = []
         for pair in self.items():
-            arg = '{k!r}: {v!r}'.format(k=pair[0], v=pair[1])
+            arg = "{k!r}: {v!r}".format(k=pair[0], v=pair[1])
             kargs.append(arg)
-        ret += ', '.join(kargs)
-        ret += '})'
+        ret += ", ".join(kargs)
+        ret += "})"
 
         return ret
 
@@ -847,7 +849,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
         return res
 
     # -------------------------------------------------------------------------
-    def dict(self):                                                     # noqa: A003
+    def dict(self):  # noqa: A003
         """Typecast into a regular dict."""
         return self.as_dict(pure=True)
 
@@ -859,7 +861,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
         lkey = key.lower()
         if lkey in self._map:
-            return self._map[lkey]['key']
+            return self._map[lkey]["key"]
 
         raise CaseInsensitiveKeyError(key)
 
@@ -883,7 +885,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def keys(self):
         """Return a list with all keys in original notation."""
-        return list(map(lambda x: self._map[x]['key'], sorted(self._map.keys())))   # noqa: C417
+        return list(map(lambda x: self._map[x]["key"], sorted(self._map.keys())))  # noqa: C417
 
     # -------------------------------------------------------------------------
     def items(self):
@@ -894,8 +896,8 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
         item_list = []
 
         for lkey in sorted(self._map.keys()):
-            key = self._map[lkey]['key']
-            value = self._map[lkey]['val']
+            key = self._map[lkey]["key"]
+            value = self._map[lkey]["val"]
             item_list.append((key, value))
 
         return item_list
@@ -903,7 +905,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def values(self):
         """Return a list with all values of the current dict."""
-        return list(map(lambda x: self._map[x]['val'], sorted(self._map.keys())))   # noqa: C417
+        return list(map(lambda x: self._map[x]["val"], sorted(self._map.keys())))  # noqa: C417
 
     # -------------------------------------------------------------------------
     def __eq__(self, other):
@@ -948,6 +950,7 @@ class FrozenCIDict(Mapping, FbGenericBaseObject):
 
         return True
 
+
 # =============================================================================
 class CIDict(MutableMapping, FrozenCIDict):
     """
@@ -968,12 +971,12 @@ class CIDict(MutableMapping, FrozenCIDict):
 
         lkey = key.lower()
         self._map[lkey] = {
-            'key': key,
-            'val': value,
+            "key": key,
+            "val": value,
         }
 
     # -------------------------------------------------------------------------
-    def set(self, key, value):                                          # noqa: A003
+    def set(self, key, value):  # noqa: A003
         """Set the value of the given key."""
         self[key] = value
 
@@ -1002,8 +1005,9 @@ class CIDict(MutableMapping, FrozenCIDict):
             raise WrongKeyTypeError(key)
 
         if len(args) > 1:
-            msg = _('The method {met}() expected at most {max} arguments, got {got}.').format(
-                met='pop', max=2, got=(len(args) + 1))
+            msg = _("The method {met}() expected at most {max} arguments, got {got}.").format(
+                met="pop", max=2, got=(len(args) + 1)
+            )
             raise TypeError(msg)
 
         lkey = key.lower()
@@ -1012,7 +1016,7 @@ class CIDict(MutableMapping, FrozenCIDict):
                 return args[0]
             raise CaseInsensitiveKeyError(key)
 
-        val = self._map[lkey]['val']
+        val = self._map[lkey]["val"]
         del self._map[lkey]
 
         return val
@@ -1051,7 +1055,7 @@ class CIDict(MutableMapping, FrozenCIDict):
         """Update the current dict with the items of the other dict."""
         if isinstance(other, Mapping):
             self._update_from_mapping(other)
-        elif other.__class__.__name__ == 'zip':
+        elif other.__class__.__name__ == "zip":
             self._update_from_mapping(dict(other))
         elif is_sequence(other):
             self._update_from_sequence(other)
@@ -1061,7 +1065,7 @@ class CIDict(MutableMapping, FrozenCIDict):
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

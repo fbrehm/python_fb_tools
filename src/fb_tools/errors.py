@@ -14,7 +14,7 @@ import signal
 # Own modules
 from .xlate import XLATOR
 
-__version__ = '2.5.1'
+__version__ = "2.5.2"
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -53,7 +53,7 @@ class MultiCfgLoaderNotFoundError(MultiConfigError, RuntimeError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typescast into a string."""
-        msg = _('Config loader method {!r} was not found.').format(self.method)
+        msg = _("Config loader method {!r} was not found.").format(self.method)
         return msg
 
 
@@ -66,6 +66,7 @@ class MultiCfgParseError(MultiConfigError, ValueError):
     """
 
     pass
+
 
 # =============================================================================
 class BaseMailAddressError(FbError, ValueError):
@@ -88,7 +89,7 @@ class EmptyMailAddressError(BaseMailAddressError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        return _('Empty mail address.')
+        return _("Empty mail address.")
 
 
 # =============================================================================
@@ -104,12 +105,13 @@ class InvalidMailAddressError(BaseMailAddressError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        msg = _('Wrong mail address {a!r} ({c})').format(
-            a=self.address, c=self.address.__class__.__name__)
+        msg = _("Wrong mail address {a!r} ({c})").format(
+            a=self.address, c=self.address.__class__.__name__
+        )
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -125,7 +127,7 @@ class InvalidTimeIntervalError(FbError, ValueError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        msg = _('Wrong time interval {!r}.').format(self.interval)
+        msg = _("Wrong time interval {!r}.").format(self.interval)
         return msg
 
 
@@ -186,13 +188,13 @@ class InterruptError(ExpectedHandlerError):
     """Special error class for the case, the process was interrupted somehow."""
 
     signal_names = {
-        signal.SIGHUP: 'HUP',
-        signal.SIGINT: 'INT',
-        signal.SIGABRT: 'ABRT',
-        signal.SIGTERM: 'TERM',
-        signal.SIGKILL: 'KILL',
-        signal.SIGUSR1: 'USR1',
-        signal.SIGUSR2: 'USR2',
+        signal.SIGHUP: "HUP",
+        signal.SIGINT: "INT",
+        signal.SIGABRT: "ABRT",
+        signal.SIGTERM: "TERM",
+        signal.SIGKILL: "KILL",
+        signal.SIGUSR1: "USR1",
+        signal.SIGUSR2: "USR2",
     }
 
     # -------------------------------------------------------------------------
@@ -203,12 +205,13 @@ class InterruptError(ExpectedHandlerError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        signame = '{}'.format(self.signum)
+        signame = "{}".format(self.signum)
         if self.signum in self.signal_names:
-            signame = self.signal_names[self.signum] + '(' + signame + ')'
+            signame = self.signal_names[self.signum] + "(" + signame + ")"
 
-        msg = _('Process with PID {pid} got signal {signal}.').format(
-            pid=os.getpid(), signal=signame)
+        msg = _("Process with PID {pid} got signal {signal}.").format(
+            pid=os.getpid(), signal=signame
+        )
 
         return msg
 
@@ -246,7 +249,7 @@ class NetworkNotExistingError(ExpectedHandlerError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        msg = _('The network {!r} is not existing.').format(self.net_name)
+        msg = _("The network {!r} is not existing.").format(self.net_name)
         return msg
 
 
@@ -267,16 +270,16 @@ class FunctionNotImplementedError(FbError, NotImplementedError):
         """
         self.function_name = function_name
         if not function_name:
-            self.function_name = '__unkown_function__'
+            self.function_name = "__unkown_function__"
 
         self.class_name = class_name
         if not class_name:
-            self.class_name = '__unkown_class__'
+            self.class_name = "__unkown_class__"
 
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('Method {func}() has to be overridden in class {cls!r}.')
+        msg = _("Method {func}() has to be overridden in class {cls!r}.")
         return msg.format(func=self.function_name, cls=self.class_name)
 
 
@@ -305,13 +308,12 @@ class IoTimeoutError(FbError, IOError):
         self.timeout = t_o
 
         if t_o is not None:
-            strerror += _(' (timeout after {:0.1f} secs)').format(t_o)
+            strerror += _(" (timeout after {:0.1f} secs)").format(t_o)
 
         if filename is None:
             super(IoTimeoutError, self).__init__(errno.ETIMEDOUT, strerror)
         else:
-            super(IoTimeoutError, self).__init__(
-                errno.ETIMEDOUT, strerror, filename)
+            super(IoTimeoutError, self).__init__(errno.ETIMEDOUT, strerror, filename)
 
 
 # =============================================================================
@@ -329,7 +331,7 @@ class ReadTimeoutError(IoTimeoutError):
         @type filename: str
 
         """
-        strerror = _('Timeout error on reading')
+        strerror = _("Timeout error on reading")
         super(ReadTimeoutError, self).__init__(strerror, timeout, filename)
 
 
@@ -348,7 +350,7 @@ class WriteTimeoutError(IoTimeoutError):
         @type filename: str
 
         """
-        strerror = _('Timeout error on writing')
+        strerror = _("Timeout error on writing")
         super(WriteTimeoutError, self).__init__(strerror, timeout, filename)
 
 
@@ -359,7 +361,7 @@ class TimeoutOnPromptError(AbortAppError, IoTimeoutError):
     # -------------------------------------------------------------------------
     def __init__(self, timeout):
         """Initialise a TimeoutOnPromptError exception."""
-        strerror = _('Timeout on answering on the console.')
+        strerror = _("Timeout on answering on the console.")
         super(TimeoutOnPromptError, self).__init__(strerror, timeout)
 
 
@@ -378,22 +380,25 @@ class CommandNotFoundError(HandlerError):
         """
         self.cmd_list = None
         if cmd_list is None:
-            self.cmd_list = [_('Unknown OS command.')]
+            self.cmd_list = [_("Unknown OS command.")]
         elif isinstance(cmd_list, list):
             self.cmd_list = cmd_list
         else:
             self.cmd_list = [cmd_list]
 
         if len(self.cmd_list) < 1:
-            raise ValueError(_('Empty command list given.'))
+            raise ValueError(_("Empty command list given."))
 
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        cmds = ', '.join((("'" + str(x) + "'") for x in self.cmd_list))
-        msg = ngettext(
-            'Could not found OS command:', 'Could not found OS commands:',
-            len(self.cmd_list)) + cmds
+        cmds = ", ".join((("'" + str(x) + "'") for x in self.cmd_list))
+        msg = (
+            ngettext(
+                "Could not found OS command:", "Could not found OS commands:", len(self.cmd_list)
+            )
+            + cmds
+        )
 
         return msg
 
@@ -423,7 +428,8 @@ class CouldntOccupyLockfileError(FbError):
     def __str__(self):
         """Typecast into a string for error output."""
         return _("Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries.").format(
-            lf=self.lockfile, d=self.duration, tries=self.tries)
+            lf=self.lockfile, d=self.duration, tries=self.tries
+        )
 
 
 # =============================================================================
@@ -445,17 +451,17 @@ class CommonPathError(FbError):
         self.msg = None
         if msg is not None:
             msg = str(msg).strip()
-            if msg != '':
+            if msg != "":
                 self.msg = str(msg)
 
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('There is a problem with path {!r}').format(self.path)
+        msg = _("There is a problem with path {!r}").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -466,11 +472,11 @@ class CommonDirectoryError(CommonPathError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('There is a problem with directory {!r}').format(self.path)
+        msg = _("There is a problem with directory {!r}").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -481,11 +487,11 @@ class DirectoryNotExistsError(CommonDirectoryError, FileNotFoundError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('Directory {!r} does not exists').format(self.path)
+        msg = _("Directory {!r} does not exists").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -496,11 +502,11 @@ class DirectoryNotDirError(CommonDirectoryError, NotADirectoryError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('Path {!r} is not a directory').format(self.path)
+        msg = _("Path {!r} is not a directory").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -511,11 +517,11 @@ class DirectoryAccessError(CommonDirectoryError, NotADirectoryError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('Invalid permissions for directory {!r}').format(self.path)
+        msg = _("Invalid permissions for directory {!r}").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -526,11 +532,11 @@ class CommonFileError(CommonPathError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('There is a problem with file {!r}').format(self.path)
+        msg = _("There is a problem with file {!r}").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -541,11 +547,11 @@ class FileNotExistsError(CommonFileError, FileNotFoundError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('File {!r} does not exists').format(self.path)
+        msg = _("File {!r} does not exists").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -556,11 +562,11 @@ class FileNotRegularFileError(CommonFileError, OSError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('Path {!r} is not a regular file').format(self.path)
+        msg = _("Path {!r} is not a regular file").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -571,11 +577,11 @@ class FileAccessError(CommonFileError, PermissionError):
     # -----------------------------------------------------
     def __str__(self):
         """Typecast into a string for error output."""
-        msg = _('Invalid permissions for file {!r}').format(self.path)
+        msg = _("Invalid permissions for file {!r}").format(self.path)
         if self.msg:
-            msg += ': ' + self.msg
+            msg += ": " + self.msg
         else:
-            msg += '.'
+            msg += "."
         return msg
 
 
@@ -600,7 +606,7 @@ class SocketReadTimeoutError(IoTimeoutError, GenericSocketError):
         @param filename: the filename of the socket leading to the error
         @type filename: str
         """
-        strerror = _('Timeout error on reading from socket')
+        strerror = _("Timeout error on reading from socket")
         fn = None
         if filename is not None:
             fn = str(filename)
@@ -621,7 +627,7 @@ class SocketWriteTimeoutError(IoTimeoutError, GenericSocketError):
         @param filename: the filename of the socket leading to the error
         @type filename: str
         """
-        strerror = _('Timeout error on writing to socket')
+        strerror = _("Timeout error on writing to socket")
         fn = None
         if filename is not None:
             fn = str(filename)
@@ -630,7 +636,7 @@ class SocketWriteTimeoutError(IoTimeoutError, GenericSocketError):
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
 
 # =============================================================================

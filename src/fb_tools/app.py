@@ -38,18 +38,18 @@ from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = '2.3.0'
+__version__ = "2.3.2"
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
-    signal.SIGHUP: 'HUP',
-    signal.SIGINT: 'INT',
-    signal.SIGABRT: 'ABRT',
-    signal.SIGTERM: 'TERM',
-    signal.SIGKILL: 'KILL',
-    signal.SIGQUIT: 'QUIT',
-    signal.SIGUSR1: 'USR1',
-    signal.SIGUSR2: 'USR2',
+    signal.SIGHUP: "HUP",
+    signal.SIGINT: "INT",
+    signal.SIGABRT: "ABRT",
+    signal.SIGTERM: "TERM",
+    signal.SIGKILL: "KILL",
+    signal.SIGQUIT: "QUIT",
+    signal.SIGUSR1: "USR1",
+    signal.SIGUSR2: "USR2",
 }
 
 _ = XLATOR.gettext
@@ -92,10 +92,10 @@ class BaseApplication(HandlingObject):
     * signals_dont_interrupt Array of int            (inherited from HandlingObject)
     """
 
-    re_prefix = re.compile(r'^[a-z0-9][a-z0-9_]*$', re.IGNORECASE)
-    re_anum = re.compile(r'[^A-Z0-9_]+', re.IGNORECASE)
+    re_prefix = re.compile(r"^[a-z0-9][a-z0-9_]*$", re.IGNORECASE)
+    re_anum = re.compile(r"[^A-Z0-9_]+", re.IGNORECASE)
 
-    default_force_desc_msg = _('Forced execution - whatever it means.')
+    default_force_desc_msg = _("Forced execution - whatever it means.")
 
     show_assume_options = False
     show_console_timeout_option = False
@@ -107,9 +107,18 @@ class BaseApplication(HandlingObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, version=__pkg_version__, usage=None, description=None, testing_args=None,
-            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None,
-            initialized=None, *args, **kwargs):
+        self,
+        version=__pkg_version__,
+        usage=None,
+        description=None,
+        testing_args=None,
+        argparse_epilog=None,
+        argparse_prefix_chars="-",
+        env_prefix=None,
+        initialized=None,
+        *args,
+        **kwargs,
+    ):
         """
         Initialise a BaseApplication object.
 
@@ -181,33 +190,30 @@ class BaseApplication(HandlingObject):
         @type: dict
         """
 
-        super(BaseApplication, self).__init__(
-            version=version,
-            initialized=False,
-            *args, **kwargs
-        )
+        super(BaseApplication, self).__init__(*args, version=version, initialized=False, **kwargs)
 
         if env_prefix:
             ep = str(env_prefix).strip()
             if not ep:
-                msg = _('Invalid env_prefix {!r} given - it may not be empty.').format(env_prefix)
+                msg = _("Invalid env_prefix {!r} given - it may not be empty.").format(env_prefix)
                 raise FbAppError(msg)
             match = self.re_prefix.search(ep)
             if not match:
                 msg = _(
-                    'Invalid characters found in env_prefix {!r}, only '
-                    'alphanumeric characters and digits and underscore '
-                    '(this not as the first character) are allowed.').format(env_prefix)
+                    "Invalid characters found in env_prefix {!r}, only "
+                    "alphanumeric characters and digits and underscore "
+                    "(this not as the first character) are allowed."
+                ).format(env_prefix)
                 raise FbAppError(msg)
             self._env_prefix = ep
         else:
-            ep = self.appname.upper() + '_'
-            self._env_prefix = self.re_anum.sub('_', ep)
+            ep = self.appname.upper() + "_"
+            self._env_prefix = self.re_anum.sub("_", ep)
 
         if not self.description:
-            self._description = _('Unknown and undescriped application.')
+            self._description = _("Unknown and undescriped application.")
 
-        if not hasattr(self, '_force_desc_msg'):
+        if not hasattr(self, "_force_desc_msg"):
             self._force_desc_msg = self.default_force_desc_msg
 
         self._init_arg_parser()
@@ -233,13 +239,13 @@ class BaseApplication(HandlingObject):
         if v >= 0:
             self._exit_value = v
         else:
-            LOG.warning(_('Wrong exit_value {!r}, must be >= 0.').format(value))
+            LOG.warning(_("Wrong exit_value {!r}, must be >= 0.").format(value))
 
     # -----------------------------------------------------------
     @property
     def force_desc_msg(self):
         """Get the help text for the --force command line option."""
-        msg = getattr(self, '_force_desc_msg', None)
+        msg = getattr(self, "_force_desc_msg", None)
         if not msg:
             msg = self.default_force_desc_msg
         return msg
@@ -294,7 +300,7 @@ class BaseApplication(HandlingObject):
     @property
     def usage_term(self):
         """Get the localized version of 'usage: '."""
-        return 'Usage: '
+        return "Usage: "
 
     # -----------------------------------------------------------
     @property
@@ -303,7 +309,7 @@ class BaseApplication(HandlingObject):
         return len(self.usage_term)
 
     # -------------------------------------------------------------------------
-    def exit(self, retval=-1, msg=None, trace=False):                       # noqa A003
+    def exit(self, retval=-1, msg=None, trace=False):  # noqa A003
         """
         Exit the current application.
 
@@ -335,10 +341,10 @@ class BaseApplication(HandlingObject):
                 else:
                     LOG.info(msg)
             if not has_handlers:
-                if hasattr(sys.stderr, 'buffer'):
-                    sys.stderr.buffer.write(str(msg) + '\n')
+                if hasattr(sys.stderr, "buffer"):
+                    sys.stderr.buffer.write(str(msg) + "\n")
                 else:
-                    sys.stderr.write(str(msg) + '\n')
+                    sys.stderr.write(str(msg) + "\n")
 
         if trace:
             if has_handlers:
@@ -363,30 +369,30 @@ class BaseApplication(HandlingObject):
         @rtype:  dict
         """
         res = super(BaseApplication, self).as_dict(short=short)
-        res['argparse_epilog'] = self.argparse_epilog
-        res['argparse_prefix_chars'] = self.argparse_prefix_chars
-        res['args'] = copy.copy(self.args.__dict__)
-        res['description'] = self.description
-        res['do_init_logging'] = self.do_init_logging
-        res['env_prefix'] = self.env_prefix
-        res['exit_value'] = self.exit_value
-        res['force_desc_msg'] = self.force_desc_msg
-        res['show_assume_options'] = self.show_assume_options
-        res['show_console_timeout_option'] = self.show_console_timeout_option
-        res['show_force_option'] = self.show_force_option
-        res['show_quiet_option'] = self.show_quiet_option
-        res['show_simulate_option'] = self.show_simulate_option
-        res['testing_args'] = self.testing_args
-        res['usage'] = self.usage
-        if 'xlate' not in res:
-            res['xlate'] = {}
-        res['xlate']['fb_tools'] = {
-            '__module_dir__': __xlate_module_dir__,
-            '__lib_dir__': __xlate_lib_dir__,
-            '__base_dir__': __xlate_base_dir__,
-            'LOCALE_DIR': LOCALE_DIR,
-            'DOMAIN': DOMAIN,
-            '__mo_file__': __xlate_mo_file__,
+        res["argparse_epilog"] = self.argparse_epilog
+        res["argparse_prefix_chars"] = self.argparse_prefix_chars
+        res["args"] = copy.copy(self.args.__dict__)
+        res["description"] = self.description
+        res["do_init_logging"] = self.do_init_logging
+        res["env_prefix"] = self.env_prefix
+        res["exit_value"] = self.exit_value
+        res["force_desc_msg"] = self.force_desc_msg
+        res["show_assume_options"] = self.show_assume_options
+        res["show_console_timeout_option"] = self.show_console_timeout_option
+        res["show_force_option"] = self.show_force_option
+        res["show_quiet_option"] = self.show_quiet_option
+        res["show_simulate_option"] = self.show_simulate_option
+        res["testing_args"] = self.testing_args
+        res["usage"] = self.usage
+        if "xlate" not in res:
+            res["xlate"] = {}
+        res["xlate"]["fb_tools"] = {
+            "__module_dir__": __xlate_module_dir__,
+            "__lib_dir__": __xlate_lib_dir__,
+            "__base_dir__": __xlate_base_dir__,
+            "LOCALE_DIR": LOCALE_DIR,
+            "DOMAIN": DOMAIN,
+            "__mo_file__": __xlate_mo_file__,
         }
 
         return res
@@ -396,18 +402,18 @@ class BaseApplication(HandlingObject):
 
         # create formatter
         if is_term:
-            format_str = ''
+            format_str = ""
             if self.verbose > 1:
-                format_str = '[%(asctime)s]: '
-            format_str += self.appname + ': '
+                format_str = "[%(asctime)s]: "
+            format_str += self.appname + ": "
         else:
-            format_str = '[%(asctime)s]: ' + self.appname + ': '
+            format_str = "[%(asctime)s]: " + self.appname + ": "
         if self.verbose:
             if self.verbose > 1:
-                format_str += '%(name)s(%(lineno)d) %(funcName)s() '
+                format_str += "%(name)s(%(lineno)d) %(funcName)s() "
             else:
-                format_str += '%(name)s '
-        format_str += '%(levelname)s - %(message)s'
+                format_str += "%(name)s "
+        format_str += "%(levelname)s - %(message)s"
         if is_term and self.terminal_has_colors:
             formatter = ColoredFormatter(format_str)
         else:
@@ -448,7 +454,7 @@ class BaseApplication(HandlingObject):
         root_logger.addHandler(lh_console)
 
         if self.verbose < 3:
-            paramiko_logger = logging.getLogger('paramiko.transport')
+            paramiko_logger = logging.getLogger("paramiko.transport")
             if self.verbose < 1:
                 paramiko_logger.setLevel(logging.WARNING)
             else:
@@ -492,7 +498,7 @@ class BaseApplication(HandlingObject):
     # -------------------------------------------------------------------------
     def get_secret(self, prompt, item_name):
         """Get a secret as input from console."""
-        LOG.debug(_('Trying to get {} via console ...').format(item_name))
+        LOG.debug(_("Trying to get {} via console ...").format(item_name))
 
         # ------------------------
         def signal_handler(signum, frame):
@@ -507,33 +513,39 @@ class BaseApplication(HandlingObject):
             @type frame: None or a frame object
 
             """
-            signame = '{}'.format(signum)
-            msg = _('Got a signal {}.').format(signum)
+            signame = "{}".format(signum)
+            msg = _("Got a signal {}.").format(signum)
             if signum in SIGNAL_NAMES:
                 signame = SIGNAL_NAMES[signum]
-                msg = _('Got a signal {n!r} ({s}).').format(
-                    n=signame, s=signum)
+                msg = _("Got a signal {n!r} ({s}).").format(n=signame, s=signum)
             LOG.debug(msg)
 
             if signum in (
-                    signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
-                    signal.SIGTERM, signal.SIGKILL, signal.SIGQUIT):
-                LOG.info(_('Exit on signal {n!r} ({s}).').format(
-                    n=signame, s=signum))
+                signal.SIGHUP,
+                signal.SIGINT,
+                signal.SIGABRT,
+                signal.SIGTERM,
+                signal.SIGKILL,
+                signal.SIGQUIT,
+            ):
+                LOG.info(_("Exit on signal {n!r} ({s}).").format(n=signame, s=signum))
                 self.exit(1)
 
         # ------------------------
         old_handlers = {}
 
         if self.verbose > 2:
-            LOG.debug(_('Tweaking signal handlers.'))
+            LOG.debug(_("Tweaking signal handlers."))
         for signum in (
-                signal.SIGHUP, signal.SIGINT, signal.SIGABRT,
-                signal.SIGTERM, signal.SIGQUIT):
+            signal.SIGHUP,
+            signal.SIGINT,
+            signal.SIGABRT,
+            signal.SIGTERM,
+            signal.SIGQUIT,
+        ):
             if self.verbose > 3:
                 signame = SIGNAL_NAMES[signum]
-                LOG.debug(_('Setting signal handler for {n!r} ({s}).').format(
-                    n=signame, s=signum))
+                LOG.debug(_("Setting signal handler for {n!r} ({s}).").format(n=signame, s=signum))
             old_handlers[signum] = signal.signal(signum, signal_handler)
 
         secret = None
@@ -543,33 +555,33 @@ class BaseApplication(HandlingObject):
 
             while True:
 
-                p = _('Enter ') + prompt + ': '
+                p = _("Enter ") + prompt + ": "
                 while True:
                     secret = getpass.getpass(prompt=p)
                     secret = secret.strip()
-                    if secret != '':
+                    if secret != "":
                         break
 
-                p = _('Repeat enter ') + prompt + ': '
+                p = _("Repeat enter ") + prompt + ": "
                 while True:
                     secret_repeat = getpass.getpass(prompt=p)
                     secret_repeat = secret_repeat.strip()
-                    if secret_repeat != '':
+                    if secret_repeat != "":
                         break
 
                 if secret == secret_repeat:
                     break
 
-                LOG.error(_('{n} and repeated {n} did not match.').format(n=item_name))
+                LOG.error(_("{n} and repeated {n} did not match.").format(n=item_name))
 
         finally:
             if self.verbose > 2:
-                LOG.debug(_('Restoring original signal handlers.'))
+                LOG.debug(_("Restoring original signal handlers."))
             for signum in old_handlers.keys():
                 signal.signal(signum, old_handlers[signum])
 
         if self.force:
-            LOG.debug(_('Got {n!r}: {s!r}').format(n=item_name, s=secret))
+            LOG.debug(_("Got {n!r}: {s!r}").format(n=item_name, s=secret))
 
         return secret
 
@@ -591,7 +603,7 @@ class BaseApplication(HandlingObject):
 
         MUST be overwritten by descendant classes.
         """
-        raise FunctionNotImplementedError('_run()', self.__class__.__name__)
+        raise FunctionNotImplementedError("_run()", self.__class__.__name__)
 
     # -------------------------------------------------------------------------
     def __call__(self):
@@ -618,8 +630,7 @@ class BaseApplication(HandlingObject):
         @return: None
         """
         if not self.initialized:
-            self.handle_error(
-                _('The application is not completely initialized.'), '', True)
+            self.handle_error(_("The application is not completely initialized."), "", True)
             self.exit(9)
 
         try:
@@ -630,8 +641,10 @@ class BaseApplication(HandlingObject):
 
         if not self.initialized:
             raise FbAppError(
-                _('Object {!r} seems not to be completely initialized.').format(
-                    self.__class__.__name__))
+                _("Object {!r} seems not to be completely initialized.").format(
+                    self.__class__.__name__
+                )
+            )
 
         try:
             self._run()
@@ -640,7 +653,7 @@ class BaseApplication(HandlingObject):
             self.exit_value = 99
 
         if self.verbose > 1:
-            LOG.info(_('Ending.'))
+            LOG.info(_("Ending."))
 
         try:
             self.post_run()
@@ -658,7 +671,7 @@ class BaseApplication(HandlingObject):
         This is a dummy method an could be overwritten by descendant classes.
         """
         if self.verbose > 1:
-            LOG.info(_('Executing {} ...').format('post_run()'))
+            LOG.info(_("Executing {} ...").format("post_run()"))
 
     # -------------------------------------------------------------------------
     def _init_arg_parser(self):
@@ -680,17 +693,23 @@ class BaseApplication(HandlingObject):
 
         self.init_arg_parser()
 
-        general_group = self.arg_parser.add_argument_group(_('General options'))
+        general_group = self.arg_parser.add_argument_group(_("General options"))
 
         if self.show_simulate_option:
             general_group.add_argument(
-                '-s', '--simulate', action='store_true', dest='simulate',
-                help=_('Simulation mode, nothing is really done.')
+                "-s",
+                "--simulate",
+                action="store_true",
+                dest="simulate",
+                help=_("Simulation mode, nothing is really done."),
             )
 
         if self.show_force_option:
             general_group.add_argument(
-                '-f', '--force', action='store_true', dest='force',
+                "-f",
+                "--force",
+                action="store_true",
+                dest="force",
                 help=self.force_desc_msg,
             )
 
@@ -698,60 +717,91 @@ class BaseApplication(HandlingObject):
             assume_group = general_group.add_mutually_exclusive_group()
 
             assume_group.add_argument(
-                '--yes', '--assume-yes', action='store_true', dest='assume_yes',
+                "--yes",
+                "--assume-yes",
+                action="store_true",
+                dest="assume_yes",
                 help=_("Automatically answer '{}' for all questions.").format(
-                    self.colored(_('Yes'), 'CYAN'))
+                    self.colored(_("Yes"), "CYAN")
+                ),
             )
 
             assume_group.add_argument(
-                '--no', '--assume-no', action='store_true', dest='assume_no',
+                "--no",
+                "--assume-no",
+                action="store_true",
+                dest="assume_no",
                 help=_("Automatically answer '{}' for all questions.").format(
-                    self.colored(_('No'), 'CYAN'))
+                    self.colored(_("No"), "CYAN")
+                ),
             )
 
         if self.show_console_timeout_option:
             general_group.add_argument(
-                '--console-timeout', metavar=_('SECONDS'), dest='console_timeout', type=int,
-                action=TimeoutOptionAction, max_timeout=self.max_prompt_timeout,
-                help=_('The timeout in seconds for console input. Default: {}').format(
-                    self.default_prompt_timeout)
+                "--console-timeout",
+                metavar=_("SECONDS"),
+                dest="console_timeout",
+                type=int,
+                action=TimeoutOptionAction,
+                max_timeout=self.max_prompt_timeout,
+                help=_("The timeout in seconds for console input. Default: {}").format(
+                    self.default_prompt_timeout
+                ),
             )
 
         general_group.add_argument(
-            '--color', action='store', dest='color', const='yes',
-            default='auto', nargs='?', choices=['yes', 'no', 'auto'],
-            help=_('Use colored output for messages.'),
+            "--color",
+            action="store",
+            dest="color",
+            const="yes",
+            default="auto",
+            nargs="?",
+            choices=["yes", "no", "auto"],
+            help=_("Use colored output for messages."),
         )
 
-        verbose_help = _('Increase the verbosity level')
+        verbose_help = _("Increase the verbosity level")
         if self.show_quiet_option:
             verbose_group = general_group.add_mutually_exclusive_group()
             verbose_group.add_argument(
-                '-v', '--verbose', action='count', dest='verbose',
+                "-v",
+                "--verbose",
+                action="count",
+                dest="verbose",
                 help=verbose_help,
             )
             verbose_group.add_argument(
-                '-q', '--quiet', action='store_true', dest='quiet',
-                help=_('Silent execution, only warnings and errors are emitted.'),
+                "-q",
+                "--quiet",
+                action="store_true",
+                dest="quiet",
+                help=_("Silent execution, only warnings and errors are emitted."),
             )
         else:
             general_group.add_argument(
-                '-v', '--verbose', action='count', dest='verbose',
+                "-v",
+                "--verbose",
+                action="count",
+                dest="verbose",
                 help=verbose_help,
             )
 
         general_group.add_argument(
-            '-h', '--help', action='help', dest='help',
-            help=_('Show this help message and exit.')
+            "-h", "--help", action="help", dest="help", help=_("Show this help message and exit.")
         )
         general_group.add_argument(
-            '--usage', action='store_true', dest='usage',
-            help=_('Display brief usage message and exit.')
+            "--usage",
+            action="store_true",
+            dest="usage",
+            help=_("Display brief usage message and exit."),
         )
-        v_msg = _('Version of %(prog)s: {}').format(self.version)
+        v_msg = _("Version of %(prog)s: {}").format(self.version)
         general_group.add_argument(
-            '-V', '--version', action='version', version=v_msg,
-            help=_("Show program's version number and exit.")
+            "-V",
+            "--version",
+            action="version",
+            version=v_msg,
+            help=_("Show program's version number and exit."),
         )
 
     # -------------------------------------------------------------------------
@@ -773,8 +823,8 @@ class BaseApplication(HandlingObject):
         """Parse the command line options."""
         self.args = self.arg_parser.parse_args(self.testing_args)
 
-        if hasattr(self.args, 'simulate'):
-            self.simulate = getattr(self.args, 'simulate', True)
+        if hasattr(self.args, "simulate"):
+            self.simulate = getattr(self.args, "simulate", True)
 
         if self.args.usage:
             self.arg_parser.print_usage(sys.stdout)
@@ -783,26 +833,26 @@ class BaseApplication(HandlingObject):
         if self.args.verbose is not None and self.args.verbose > self.verbose:
             self.verbose = self.args.verbose
 
-        if hasattr(self.args, 'force'):
-            self.force = getattr(self.args, 'force', False)
+        if hasattr(self.args, "force"):
+            self.force = getattr(self.args, "force", False)
 
-        if hasattr(self.args, 'assume_yes'):
+        if hasattr(self.args, "assume_yes"):
             if self.args.assume_yes:
                 self.assumed_answer = True
-        if hasattr(self.args, 'assume_no'):
+        if hasattr(self.args, "assume_no"):
             if self.args.assume_no:
                 self.assumed_answer = False
 
-        if hasattr(self.args, 'quiet') and self.args.quiet:
+        if hasattr(self.args, "quiet") and self.args.quiet:
             self.quiet = True
 
-        prompt_timeout = getattr(self.args, 'console_timeout', None)
+        prompt_timeout = getattr(self.args, "console_timeout", None)
         if prompt_timeout is not None:
             self.prompt_timeout = prompt_timeout
 
-        if self.args.color == 'yes':
+        if self.args.color == "yes":
             self._terminal_has_colors = True
-        elif self.args.color == 'no':
+        elif self.args.color == "no":
             self._terminal_has_colors = False
         else:
             self._terminal_has_colors = self.terminal_can_color()
@@ -823,12 +873,12 @@ class BaseApplication(HandlingObject):
 
         It calls self.init_env(), after it has done his job.
         """
-        for (key, value) in list(os.environ.items()):
+        for key, value in list(os.environ.items()):
 
             if not key.startswith(self.env_prefix):
                 continue
 
-            newkey = key.replace(self.env_prefix, '', 1)
+            newkey = key.replace(self.env_prefix, "", 1)
             self.env[newkey] = value
 
         self.init_env()
@@ -855,10 +905,10 @@ class BaseApplication(HandlingObject):
         It calls self.perform_env(), after it has done his job.
         """
         # try to detect verbosity level from environment
-        if 'VERBOSE' in self.env and self.env['VERBOSE']:
+        if "VERBOSE" in self.env and self.env["VERBOSE"]:
             v = 0
             try:
-                v = int(self.env['VERBOSE'])
+                v = int(self.env["VERBOSE"])
             except ValueError:
                 v = 1
             if v > self.verbose:
@@ -881,38 +931,38 @@ class BaseApplication(HandlingObject):
         if prompt:
             prompt = str(prompt).strip()
         if not prompt:
-            prompt = _('Starting in:')
-        prompt = self.colored(prompt, 'YELLOW')
+            prompt = _("Starting in:")
+        prompt = self.colored(prompt, "YELLOW")
 
         try:
             if not self.force:
                 i = number
-                out = self.colored('%d' % (i), 'RED')
-                msg = '\n{p} {o}'.format(p=prompt, o=out)
+                out = self.colored("%d" % (i), "RED")
+                msg = "\n{p} {o}".format(p=prompt, o=out)
                 sys.stdout.write(msg)
                 sys.stdout.flush()
                 while i > 0:
-                    sys.stdout.write(' ')
+                    sys.stdout.write(" ")
                     sys.stdout.flush()
                     time.sleep(delay)
                     i -= 1
-                    out = self.colored('{}'.format(i), 'RED')
+                    out = self.colored("{}".format(i), "RED")
                     sys.stdout.write(out)
                     sys.stdout.flush()
-                sys.stdout.write('\n')
+                sys.stdout.write("\n")
                 sys.stdout.flush()
         except KeyboardInterrupt:
-            sys.stderr.write('\n')
-            LOG.warning(_('Aborted by user interrupt.'))
+            sys.stderr.write("\n")
+            LOG.warning(_("Aborted by user interrupt."))
             sys.exit(99)
 
-        go = self.colored('Go go go ...', 'GREEN')
-        sys.stdout.write('\n%s\n\n' % (go))
+        go = self.colored("Go go go ...", "GREEN")
+        sys.stdout.write("\n%s\n\n" % (go))
 
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

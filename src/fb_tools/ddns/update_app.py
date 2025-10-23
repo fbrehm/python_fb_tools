@@ -43,7 +43,7 @@ from ..errors import FileNotRegularFileError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = '2.4.3'
+__version__ = "2.4.5"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -57,13 +57,21 @@ class UpdateDdnsStatus(HandlingObject):
     It contains methods for reading or writing a status file.
     """
 
-    re_has_whitespace = re.compile(r'\s')
+    re_has_whitespace = re.compile(r"\s")
 
     # -------------------------------------------------------------------------
     def __init__(
-            self, domain, workdir=None, version=__version__, initialized=False,
-            timestamp=None, status_code=None, status_text=None,
-            *args, **kwargs):
+        self,
+        domain,
+        workdir=None,
+        version=__version__,
+        initialized=False,
+        timestamp=None,
+        status_code=None,
+        status_text=None,
+        *args,
+        **kwargs,
+    ):
         """Initialise a UpdateDdnsStatus object."""
         self._domain = None
         self._workdir = None
@@ -71,23 +79,20 @@ class UpdateDdnsStatus(HandlingObject):
         self._status_code = None
         self._status_text = None
 
-        super(UpdateDdnsStatus, self).__init__(
-            version=version,
-            initialized=False,
-            *args, **kwargs
-        )
+        super(UpdateDdnsStatus, self).__init__(*args, version=version, initialized=False, **kwargs)
 
         if workdir:
             self.workdir = workdir
         else:
-            self.workdir = self.base_dir / 'status'
+            self.workdir = self.base_dir / "status"
 
         if domain:
             self.domain = domain
 
         if not self.domain:
-            msg = _('No valid domain given on initialization of a {} object.').format(
-                self.__class__.__name__)
+            msg = _("No valid domain given on initialization of a {} object.").format(
+                self.__class__.__name__
+            )
             raise ValueError(msg)
 
         if status_code:
@@ -111,12 +116,12 @@ class UpdateDdnsStatus(HandlingObject):
             self._domain = None
             return
         val = str(value).strip()
-        if val == '':
+        if val == "":
             self._domain = None
             return
 
         if self.re_has_whitespace.search(val):
-            msg = _('Invalid domain {!r} given, whitespaces are not allowed.').format(value)
+            msg = _("Invalid domain {!r} given, whitespaces are not allowed.").format(value)
             raise ValueError(msg)
 
         self._domain = val
@@ -146,7 +151,7 @@ class UpdateDdnsStatus(HandlingObject):
         if not self.domain:
             return None
 
-        return 'status.update-ddns.{}.yaml'.format(self.domain)
+        return "status.update-ddns.{}.yaml".format(self.domain)
 
     # -------------------------------------------------------------------------
     @property
@@ -166,7 +171,7 @@ class UpdateDdnsStatus(HandlingObject):
     @timestamp.setter
     def timestamp(self, value):
         if value is None:
-            msg = _('A timestamp must not be None.')
+            msg = _("A timestamp must not be None.")
             raise TypeError(msg)
         self._timestamp = float(value)
 
@@ -201,7 +206,7 @@ class UpdateDdnsStatus(HandlingObject):
             self._status_text = None
             return
         val = str(value).strip()
-        if val == '':
+        if val == "":
             self._status_text = None
             return
         self._status_text = val
@@ -219,14 +224,14 @@ class UpdateDdnsStatus(HandlingObject):
         """
         res = super(UpdateDdnsStatus, self).as_dict(short=short)
 
-        res['domain'] = self.domain
-        res['filename_base'] = self.filename_base
-        res['filename_abs'] = self.filename_abs
-        res['status_code'] = self.status_code
-        res['status_text'] = self.status_text
-        res['timestamp'] = self.timestamp
-        res['update_date'] = self.update_date
-        res['workdir'] = self.workdir
+        res["domain"] = self.domain
+        res["filename_base"] = self.filename_base
+        res["filename_abs"] = self.filename_abs
+        res["status_code"] = self.status_code
+        res["status_text"] = self.status_text
+        res["timestamp"] = self.timestamp
+        res["update_date"] = self.update_date
+        res["workdir"] = self.workdir
 
         return res
 
@@ -238,11 +243,14 @@ class UpdateDdnsStatus(HandlingObject):
         Raise a kind of CommonDirectoryError, if it is not useable.
         """
         if self.verbose > 1:
-            LOG.debug(_('Checking working directory {d!r} for updating {what} ...').format(
-                d=str(self.workdir), what='DDNS'))
+            LOG.debug(
+                _("Checking working directory {d!r} for updating {what} ...").format(
+                    d=str(self.workdir), what="DDNS"
+                )
+            )
 
         if not isinstance(self.workdir, Path):
-            raise CommonDirectoryError(self.workdir, _('working directory is not a path object.'))
+            raise CommonDirectoryError(self.workdir, _("working directory is not a path object."))
 
         if not self.workdir.exists():
             raise DirectoryNotExistsError(self.workdir)
@@ -251,40 +259,38 @@ class UpdateDdnsStatus(HandlingObject):
             raise DirectoryNotDirError(self.workdir)
 
         if not os.access(self.workdir, os.R_OK | os.X_OK):
-            raise DirectoryAccessError(self.workdir, _('working directory is not readable.'))
+            raise DirectoryAccessError(self.workdir, _("working directory is not readable."))
 
         if check_writeable:
             if not os.access(self.workdir, os.W_OK):
-                raise DirectoryAccessError(self.workdir, _('working directory is not writeable.'))
+                raise DirectoryAccessError(self.workdir, _("working directory is not writeable."))
 
     # -------------------------------------------------------------------------
     def check_statusfile(self, check_writeable=False, raise_on_not_existing=False):
         """Check a status YAML file."""
         if self.verbose > 1:
-            LOG.debug(_('Checking update status file {!r} ...').format(str(self.filename_abs)))
+            LOG.debug(_("Checking update status file {!r} ...").format(str(self.filename_abs)))
 
         if not self.filename_abs.exists():
             if raise_on_not_existing:
                 raise FileNotExistsError(self.filename_abs)
-            LOG.debug(_('Update status file {!r} does not exists.').format(
-                str(self.filename_abs)))
+            LOG.debug(_("Update status file {!r} does not exists.").format(str(self.filename_abs)))
             return
 
         if not self.filename_abs.is_file():
             raise FileNotRegularFileError(self.filename_abs)
 
         if not os.access(self.filename_abs, os.R_OK):
-            raise FileAccessError(self.filename_abs, _('update status file is not readable.'))
+            raise FileAccessError(self.filename_abs, _("update status file is not readable."))
 
         if check_writeable:
             if not os.access(self.filename_abs, os.W_OK):
-                raise FileAccessError(
-                    self.filename_abs, _('update status file is not writeable.'))
+                raise FileAccessError(self.filename_abs, _("update status file is not writeable."))
 
     # -------------------------------------------------------------------------
     def write_status(self):
         """Write the current update status into a status YAML file."""
-        LOG.debug(_('Write status into {!r} ...').format(str(self.filename_abs)))
+        LOG.debug(_("Write status into {!r} ...").format(str(self.filename_abs)))
 
         if self.filename_abs.exists():
             self.check_statusfile(check_writeable=True)
@@ -292,51 +298,58 @@ class UpdateDdnsStatus(HandlingObject):
             self.check_workdir(check_writeable=True)
 
         data = {
-            'domain': self.domain,
-            'status_code': self.status_code,
-            'status_text': self.status_text,
-            'timestamp': self.timestamp,
-            'update_date': self.update_date.isoformat(' ')
+            "domain": self.domain,
+            "status_code": self.status_code,
+            "status_text": self.status_text,
+            "timestamp": self.timestamp,
+            "update_date": self.update_date.isoformat(" "),
         }
 
         if self.verbose > 1:
-            LOG.debug(_('Data to write in status file:') + '\n' + pp(data))
+            LOG.debug(_("Data to write in status file:") + "\n" + pp(data))
 
         if self.simulate:
-            msg = _('Simulation mode, file {!r} will not be written.').format(
-                str(self.filename_abs))
+            msg = _("Simulation mode, file {!r} will not be written.").format(
+                str(self.filename_abs)
+            )
             LOG.info(msg)
             return
 
-        with self.filename_abs.open('wt', encoding='utf-8', errors='surrogateescape') as fh:
+        with self.filename_abs.open("wt", encoding="utf-8", errors="surrogateescape") as fh:
             yaml.dump(
-                data, fh, Dumper=yaml.SafeDumper, explicit_start=True,
-                width=99, default_flow_style=False)
+                data,
+                fh,
+                Dumper=yaml.SafeDumper,
+                explicit_start=True,
+                width=99,
+                default_flow_style=False,
+            )
 
     # -------------------------------------------------------------------------
     def read_status(self):
         """Read the last update status from a status YAML file."""
-        LOG.debug(_('Read status from {!r} ...').format(str(self.filename_abs)))
+        LOG.debug(_("Read status from {!r} ...").format(str(self.filename_abs)))
 
         self.check_statusfile(raise_on_not_existing=True)
 
-        with self.filename_abs.open('rt', encoding='utf-8', errors='surrogateescape') as fh:
+        with self.filename_abs.open("rt", encoding="utf-8", errors="surrogateescape") as fh:
             data = yaml.safe_load(fh)
 
         if self.verbose > 1:
-            LOG.debug(_('Read data from YAML:') + '\n' + pp(data))
+            LOG.debug(_("Read data from YAML:") + "\n" + pp(data))
 
-        if 'status_code' in data:
-            self.status_code = data['status_code']
+        if "status_code" in data:
+            self.status_code = data["status_code"]
 
-        if 'status_text' in data:
-            self.status_text = data['status_text']
+        if "status_text" in data:
+            self.status_text = data["status_text"]
 
-        if 'timestamp' in data:
-            self.timestamp = data['timestamp']
+        if "timestamp" in data:
+            self.timestamp = data["timestamp"]
         else:
             raise InvalidUpdateStatusFileError(
-                self.filename_abs, _('no timestamp of last update found.'))
+                self.filename_abs, _("no timestamp of last update found.")
+            )
 
 
 # =============================================================================
@@ -348,12 +361,12 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     show_force_option = True
     show_simulate_option = True
 
-    default_logfile = Path('/var/log/ddns/ddnss-update.log')
+    default_logfile = Path("/var/log/ddns/ddnss-update.log")
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, version=GLOBAL_VERSION, initialized=None, description=None,
-            *args, **kwargs):
+        self, version=GLOBAL_VERSION, initialized=None, description=None, *args, **kwargs
+    ):
         """Initialise a UpdateDdnsApplication object."""
         self.last_ipv4_address = None
         self.last_ipv6_address = None
@@ -364,26 +377,24 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         self.forced_update_interval = DdnsConfiguration.default_forced_update_interval
         self.last_update_timestamp = None
 
-        self._force_desc_msg = _('Updating the DDNS records, even if seems not to be changed.')
+        self._force_desc_msg = _("Updating the DDNS records, even if seems not to be changed.")
 
         if description is None:
             description = _(
-                'Tries to update the A and/or AAAA record at ddns.de with the current '
-                'IP address.')
+                "Tries to update the A and/or AAAA record at ddns.de with the current "
+                "IP address."
+            )
         valid_proto_list = copy.copy(DdnsConfiguration.valid_protocols)
 
-        self._ipv4_help = _('Update only the {} record with the public IP address.').format('A')
-        self._ipv6_help = _('Update only the {} record with the public IP address.').format('AAAA')
+        self._ipv4_help = _("Update only the {} record with the public IP address.").format("A")
+        self._ipv6_help = _("Update only the {} record with the public IP address.").format("AAAA")
         self._proto_help = _(
-            'The IP protocol, for which the appropriate DNS record should be updated with the '
-            'public IP (one of {c}, default {d!r}).').format(c=format_list(
-                valid_proto_list, do_repr=True, style='or'), d='any')
+            "The IP protocol, for which the appropriate DNS record should be updated with the "
+            "public IP (one of {c}, default {d!r})."
+        ).format(c=format_list(valid_proto_list, do_repr=True, style="or"), d="any")
 
         super(UpdateDdnsApplication, self).__init__(
-            version=version,
-            description=description,
-            initialized=False,
-            *args, **kwargs
+            *args, version=version, description=description, initialized=False, **kwargs
         )
 
         if initialized is None:
@@ -395,28 +406,42 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """Initiate the argument parser."""
-        update_group = self.arg_parser.add_argument_group(_('Update DDNS options'))
+        update_group = self.arg_parser.add_argument_group(_("Update DDNS options"))
 
         update_group.add_argument(
-            '-U', '--user', metavar=_('USER'), dest='user',
-            help=_('The username to login at ddns.de.')
+            "-U",
+            "--user",
+            metavar=_("USER"),
+            dest="user",
+            help=_("The username to login at ddns.de."),
         )
 
         update_group.add_argument(
-            '-P', '--password', metavar=_('PASSWORD'), dest='password',
-            help=_('The password of the user to login at ddns.de.')
+            "-P",
+            "--password",
+            metavar=_("PASSWORD"),
+            dest="password",
+            help=_("The password of the user to login at ddns.de."),
         )
 
         domain_group = update_group.add_mutually_exclusive_group()
 
         domain_group.add_argument(
-            '-A', '--all', '--all-domains', action='store_true', dest='all_domains',
-            help=_('Update all domains, which are connected whith the given ddns account.'),
+            "-A",
+            "--all",
+            "--all-domains",
+            action="store_true",
+            dest="all_domains",
+            help=_("Update all domains, which are connected whith the given ddns account."),
         )
 
         domain_group.add_argument(
-            '-D', '--domain', nargs='+', metavar=_('DOMAIN'), dest='domains',
-            help=_('The particular domain(s), which should be updated (if not all).')
+            "-D",
+            "--domain",
+            nargs="+",
+            metavar=_("DOMAIN"),
+            dest="domains",
+            help=_("The particular domain(s), which should be updated (if not all)."),
         )
 
         super(UpdateDdnsApplication, self).init_arg_parser()
@@ -459,8 +484,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     # -------------------------------------------------------------------------
     def _run(self):
 
-        LOG.info(_('Starting {a!r}, version {v!r} ...').format(
-            a=self.appname, v=self.version))
+        LOG.info(_("Starting {a!r}, version {v!r} ...").format(a=self.appname, v=self.version))
 
         if self.cfg.all_domains:
             self.update_all()
@@ -472,17 +496,16 @@ class UpdateDdnsApplication(BaseDdnsApplication):
                 self.update_domain(domain)
         self.empty_line()
 
-        LOG.info(_('Ending {a!r}.').format(
-            a=self.appname, v=self.version))
+        LOG.info(_("Ending {a!r}.").format(a=self.appname, v=self.version))
 
     # -------------------------------------------------------------------------
     def pre_run(self):
         """Execute some actions before the main routine."""
         if self.verbose > 1:
-            LOG.debug(_('Actions before running.'))
+            LOG.debug(_("Actions before running."))
 
         if not self.cfg.all_domains and not self.cfg.domains:
-            msg = _('No domains to update given, but the option all domains is deactivated.')
+            msg = _("No domains to update given, but the option all domains is deactivated.")
             LOG.error(msg)
             self.exit(6)
 
@@ -502,13 +525,14 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             try:
                 my_ip_v4 = ipaddress.ip_address(current_address_v4)
                 self.current_ipv4_address = my_ip_v4
-                LOG.info(_('Found current {t} address {a}.').format(t='IPv4', a=my_ip_v4))
+                LOG.info(_("Found current {t} address {a}.").format(t="IPv4", a=my_ip_v4))
             except ValueError as e:
-                msg = _('Address {a!r} seems not to be a valid {w} address: {e}').format(
-                    a=current_address_v4, w='IPv4', e=e)
+                msg = _("Address {a!r} seems not to be a valid {w} address: {e}").format(
+                    a=current_address_v4, w="IPv4", e=e
+                )
                 LOG.error(msg)
         else:
-            LOG.error(_('Got no public {} address.').format('IPv4'))
+            LOG.error(_("Got no public {} address.").format("IPv4"))
         self.current_ipv4_address = my_ip_v4
 
         self.current_ipv6_address = None
@@ -518,13 +542,14 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             try:
                 my_ip_v6 = ipaddress.ip_address(current_address_v6)
                 self.current_ipv6_address = my_ip_v6
-                LOG.info(_('Found current {t} address {a}.').format(t='IPv6', a=my_ip_v6))
+                LOG.info(_("Found current {t} address {a}.").format(t="IPv6", a=my_ip_v6))
             except ValueError as e:
-                msg = _('Address {a!r} seems not to be a valid {w} address: {e}').format(
-                    a=current_address_v6, w='IPv6', e=e)
+                msg = _("Address {a!r} seems not to be a valid {w} address: {e}").format(
+                    a=current_address_v6, w="IPv6", e=e
+                )
                 LOG.error(msg)
         else:
-            LOG.error(_('Got no public {} address.').format('IPv5'))
+            LOG.error(_("Got no public {} address.").format("IPv5"))
         self.current_ipv6_address = my_ip_v6
 
         if not self.cfg.all_domains:
@@ -532,31 +557,41 @@ class UpdateDdnsApplication(BaseDdnsApplication):
                 addresses = self.resolve_address(domain)
                 self.cur_resolved_addresses[domain] = addresses
 
-        LOG.info(_('Currently configured dynamic addresses:') + '\n' + pp(
-            self.cur_resolved_addresses))
+        LOG.info(
+            _("Currently configured dynamic addresses:") + "\n" + pp(self.cur_resolved_addresses)
+        )
 
     # -------------------------------------------------------------------------
     def get_last_update(self, domain):
         """Try to get the timestamp of the last update of the domain."""
         update_status = UpdateDdnsStatus(
-            appname=self.appname, verbose=self.verbose, simulate=self.simulate,
-            domain=domain, workdir=self.cfg.working_dir)
+            appname=self.appname,
+            verbose=self.verbose,
+            simulate=self.simulate,
+            domain=domain,
+            workdir=self.cfg.working_dir,
+        )
 
         if not update_status.filename_abs.exists():
-            LOG.info(_('Did not found update status file {!r}.').format(
-                str(update_status.filename_abs)))
+            LOG.info(
+                _("Did not found update status file {!r}.").format(str(update_status.filename_abs))
+            )
             return
 
         try:
             update_status.read_status()
         except Exception as e:
-            msg = _('{c} - could not evaluate update status file {f!r}: {e}').format(
-                c=e.__class__.__name__, f=str(update_status.filename_abs), e=e)
+            msg = _("{c} - could not evaluate update status file {f!r}: {e}").format(
+                c=e.__class__.__name__, f=str(update_status.filename_abs), e=e
+            )
             LOG.error(msg)
             return
 
-        LOG.debug(_('Last update was at {dt} with status {st!r}.').format(
-            dt=update_status.update_date.isoformat(' '), st=update_status.status_code))
+        LOG.debug(
+            _("Last update was at {dt} with status {st!r}.").format(
+                dt=update_status.update_date.isoformat(" "), st=update_status.status_code
+            )
+        )
         self.last_update_timestamp = update_status.timestamp
 
     # -------------------------------------------------------------------------
@@ -564,7 +599,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         """Return, whether a domain should be updated on DDNSS."""
         do_update = False
 
-        if self.cfg.protocol in ('any', 'ipv4'):
+        if self.cfg.protocol in ("any", "ipv4"):
             if self.current_ipv4_address:
                 if self.current_ipv4_address not in self.cur_resolved_addresses[domain]:
                     do_update = True
@@ -573,7 +608,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
                     if addr.version == 4:
                         do_update = True
 
-        if self.cfg.protocol in ('any', 'ipv6'):
+        if self.cfg.protocol in ("any", "ipv6"):
             if self.current_ipv6_address:
                 if self.current_ipv6_address not in self.cur_resolved_addresses[domain]:
                     do_update = True
@@ -588,8 +623,11 @@ class UpdateDdnsApplication(BaseDdnsApplication):
             timediff = time.time() - self.last_update_timestamp
             if self.verbose:
                 delta = datetime.timedelta(seconds=timediff)
-                LOG.debug(_('Last update of domain {dom!r} is {delta} ago.').format(
-                    dom=domain, delta=delta))
+                LOG.debug(
+                    _("Last update of domain {dom!r} is {delta} ago.").format(
+                        dom=domain, delta=delta
+                    )
+                )
             if timediff >= self.forced_update_interval:
                 do_update = True
 
@@ -599,62 +637,66 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     def update_domain(self, domain):
         """Update an IPv4 addresses of the given domain."""
         self.empty_line()
-        LOG.debug(_('Checking the need for updating the given domain {!r}.').format(domain))
+        LOG.debug(_("Checking the need for updating the given domain {!r}.").format(domain))
 
         do_update = self.check_for_update_domain(domain)
 
         if not do_update:
             if self.force:
-                LOG.info(_(
-                    'Updating the DDNS records of domain {!r}, although if they seems not '
-                    'to be changed.').format(domain))
+                LOG.info(
+                    _(
+                        "Updating the DDNS records of domain {!r}, although if they seems not "
+                        "to be changed."
+                    ).format(domain)
+                )
             else:
-                LOG.info(_('Update of domain {!r} is not necessary.').format(domain))
+                LOG.info(_("Update of domain {!r} is not necessary.").format(domain))
                 return
         else:
-            LOG.info(_('Updating the DDNS records of domain {!r}.').format(domain))
+            LOG.info(_("Updating the DDNS records of domain {!r}.").format(domain))
 
         url = self.cfg.upd_url
 
         args = []
         args_out = []
 
-        arg = 'user=' + quote(self.cfg.ddns_user)
+        arg = "user=" + quote(self.cfg.ddns_user)
         args.append(arg)
         args_out.append(arg)
 
-        arg = 'pwd=' + quote(self.cfg.ddns_pwd)
+        arg = "pwd=" + quote(self.cfg.ddns_pwd)
         args.append(arg)
-        args_out.append('pwd=******')
+        args_out.append("pwd=******")
 
-        arg = 'host=' + quote(domain)
+        arg = "host=" + quote(domain)
         args.append(arg)
         args_out.append(arg)
 
-        if self.cfg.protocol in ('any', 'ipv4') and self.current_ipv4_address:
-            arg = 'ip=' + quote(str(self.current_ipv4_address))
+        if self.cfg.protocol in ("any", "ipv4") and self.current_ipv4_address:
+            arg = "ip=" + quote(str(self.current_ipv4_address))
             args.append(arg)
             args_out.append(arg)
 
-        if self.cfg.protocol in ('any', 'ipv6') and self.current_ipv6_address:
-            arg = 'ip6=' + quote(str(self.current_ipv6_address))
+        if self.cfg.protocol in ("any", "ipv6") and self.current_ipv6_address:
+            arg = "ip6=" + quote(str(self.current_ipv6_address))
             args.append(arg)
             args_out.append(arg)
 
         if self.cfg.with_mx:
-            args.append('mx=1')
+            args.append("mx=1")
             args.append(arg)
             args_out.append(arg)
 
-        url_out = url + '?' + '&'.join(args_out)
-        url += '?' + '&'.join(args)
-        LOG.debug('Update-URL: {}'.format(url_out))
+        url_out = url + "?" + "&".join(args_out)
+        url += "?" + "&".join(args)
+        LOG.debug("Update-URL: {}".format(url_out))
         # LOG.debug('Update-URL: {}'.format(url))
 
         if self.simulate:
             self.empty_line()
-            LOG.info(_('Simulation mode, update of domain {!r} will not be sended.').format(
-                domain))
+            LOG.info(
+                _("Simulation mode, update of domain {!r} will not be sended.").format(domain)
+            )
 
             return True
 
@@ -669,31 +711,36 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         status_code = resp[1]
         status_text = resp[2]
 
-        msg = _('No response from {}.').format('DDNSS')
+        msg = _("No response from {}.").format("DDNSS")
         if response:
-            msg = _('Response from {}:').format('DDNSS')
+            msg = _("Response from {}:").format("DDNSS")
 
-        msg_status = _('Status code: {c}, status text: {r!r}.').format(
-            c=status_code, r=status_text)
+        msg_status = _("Status code: {c}, status text: {r!r}.").format(
+            c=status_code, r=status_text
+        )
 
         if self.quiet:
-            LOG.info(msg + '\n' + msg_status + '\n' + response)
+            LOG.info(msg + "\n" + msg_status + "\n" + response)
         else:
             if response:
                 text_len = len(msg)
-                print(self.colored(msg, 'CYAN'))
-                self.line(text_len, color='CYAN')
+                print(self.colored(msg, "CYAN"))
+                self.line(text_len, color="CYAN")
                 print(response)
             else:
-                print(self.colored(msg, 'CYAN'))
+                print(self.colored(msg, "CYAN"))
 
         update_status = UpdateDdnsStatus(
-            appname=self.appname, verbose=self.verbose, simulate=self.simulate,
-            domain=domain, workdir=self.cfg.working_dir,
-            status_code=status_code, status_text=status_text,
+            appname=self.appname,
+            verbose=self.verbose,
+            simulate=self.simulate,
+            domain=domain,
+            workdir=self.cfg.working_dir,
+            status_code=status_code,
+            status_text=status_text,
         )
         if self.verbose > 3:
-            LOG.debug('UpdateDdnsStatus object:\n' + pp(update_status.as_dict()))
+            LOG.debug("UpdateDdnsStatus object:\n" + pp(update_status.as_dict()))
 
         update_status.write_status()
 
@@ -703,49 +750,50 @@ class UpdateDdnsApplication(BaseDdnsApplication):
     def update_all(self):
         """Update all domains at DDNSS with found dynamic external addresses."""
         self.empty_line()
-        LOG.info(_('Update all domains at {} with found dynamic external addresses ...').format(
-            'DDNSS'))
+        LOG.info(
+            _("Update all domains at {} with found dynamic external addresses ...").format("DDNSS")
+        )
 
         url = self.cfg.upd_url
 
         args = []
         args_out = []
 
-        arg = 'user=' + quote(self.cfg.ddns_user)
+        arg = "user=" + quote(self.cfg.ddns_user)
         args.append(arg)
         args_out.append(arg)
 
-        arg = 'pwd=' + quote(self.cfg.ddns_pwd)
+        arg = "pwd=" + quote(self.cfg.ddns_pwd)
         args.append(arg)
-        args_out.append('pwd=******')
+        args_out.append("pwd=******")
 
-        arg = 'host=all'
+        arg = "host=all"
         args.append(arg)
         args_out.append(arg)
 
-        if self.cfg.protocol in ('any', 'ipv4') and self.current_ipv4_address:
-            arg = 'ip=' + quote(str(self.current_ipv4_address))
+        if self.cfg.protocol in ("any", "ipv4") and self.current_ipv4_address:
+            arg = "ip=" + quote(str(self.current_ipv4_address))
             args.append(arg)
             args_out.append(arg)
 
-        if self.cfg.protocol in ('any', 'ipv6') and self.current_ipv6_address:
-            arg = 'ip6=' + quote(str(self.current_ipv6_address))
+        if self.cfg.protocol in ("any", "ipv6") and self.current_ipv6_address:
+            arg = "ip6=" + quote(str(self.current_ipv6_address))
             args.append(arg)
             args_out.append(arg)
 
         if self.cfg.with_mx:
-            args.append('mx=1')
+            args.append("mx=1")
             args.append(arg)
             args_out.append(arg)
 
-        url_out = url + '?' + '&'.join(args_out)
-        url += '?' + '&'.join(args)
-        LOG.debug('Update-URL: {}'.format(url_out))
+        url_out = url + "?" + "&".join(args_out)
+        url += "?" + "&".join(args)
+        LOG.debug("Update-URL: {}".format(url_out))
         # LOG.debug('Update-URL: {}'.format(url))
 
         if self.simulate:
             self.empty_line()
-            LOG.info(_('Simulation mode, update of all domains will not be sended.'))
+            LOG.info(_("Simulation mode, update of all domains will not be sended."))
 
             return True
 
@@ -760,29 +808,30 @@ class UpdateDdnsApplication(BaseDdnsApplication):
         status_code = resp[1]
         status_text = resp[2]
 
-        msg = _('No response from {}.').format('DDNSS')
+        msg = _("No response from {}.").format("DDNSS")
         if response:
-            msg = _('Response from {}:').format('DDNSS')
+            msg = _("Response from {}:").format("DDNSS")
 
-        msg_status = _('Status code: {c}, status text: {r!r}.').format(
-            c=status_code, r=status_text)
+        msg_status = _("Status code: {c}, status text: {r!r}.").format(
+            c=status_code, r=status_text
+        )
 
         if self.quiet:
-            LOG.info(msg + '\n' + msg_status + '\n' + response)
+            LOG.info(msg + "\n" + msg_status + "\n" + response)
         else:
             if response:
                 text_len = len(msg)
-                print(self.colored(msg, 'CYAN'))
-                self.line(text_len, color='CYAN')
+                print(self.colored(msg, "CYAN"))
+                self.line(text_len, color="CYAN")
                 print(response)
             else:
-                print(self.colored(msg, 'CYAN'))
+                print(self.colored(msg, "CYAN"))
 
         return True
 
 
 # =============================================================================
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

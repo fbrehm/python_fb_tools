@@ -29,9 +29,11 @@ except ImportError:
     import pathlib2 as pathlib
 from shlex import quote
 from subprocess import PIPE, Popen
+
 if sys.version_info[0] >= 3:
     from subprocess import SubprocessError, TimeoutExpired
 else:
+
     class SubprocessError(Exception):
         """Dummy exception for Python 2."""
 
@@ -41,6 +43,7 @@ else:
         """Dummy exception for Python 2."""
 
         pass
+
 
 # Third party modules
 from fb_logging.colored import colorstr
@@ -61,7 +64,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = '2.4.3'
+__version__ = "2.4.5"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -79,7 +82,7 @@ class ProcessCommunicationTimeout(IoTimeoutError, SubprocessError):
     # -------------------------------------------------------------------------
     def __init__(self, timeout):
         """Initialise a ProcessCommunicationTimeout exception."""
-        msg = _('Timeout on communicating with process.')
+        msg = _("Timeout on communicating with process.")
         super(ProcessCommunicationTimeout, self).__init__(msg, timeout)
 
 
@@ -105,8 +108,9 @@ class CalledProcessError(SubprocessError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into string."""
-        return _('Command {c!r} returned non-zero exit status {rc}.').format(
-            c=self.cmd, rc=self.returncode)
+        return _("Command {c!r} returned non-zero exit status {rc}.").format(
+            c=self.cmd, rc=self.returncode
+        )
 
     # -------------------------------------------------------------------------
     @property
@@ -144,8 +148,10 @@ class TimeoutExpiredError(SubprocessError):
     def __str__(self):
         """Typecast into string."""
         msg = ngettext(
-            'Command {c!r} timed out after {s} second.',
-            'Command {c!r} timed out after {s} seconds.', self.timeout)
+            "Command {c!r} timed out after {s} second.",
+            "Command {c!r} timed out after {s} seconds.",
+            self.timeout,
+        )
         return msg.format(c=self.cmd, s=self.timeout)
 
     # -------------------------------------------------------------------------
@@ -189,22 +195,38 @@ class HandlingObject(FbBaseObject):
     fileio_timeout = DEFAULT_FILEIO_TIMEOUT
     default_prompt_timeout = DEFAULT_PROMPT_TIMEOUT
     max_prompt_timeout = DEFAULT_MAX_PROMPT_TIMEOUT
-    default_address_family = 'any'
+    default_address_family = "any"
 
-    yes_list = ['y', 'yes']
-    no_list = ['n', 'no']
+    yes_list = ["y", "yes"]
+    no_list = ["n", "no"]
 
-    pattern_yes_no = r'^\s*(' + '|'.join(yes_list) + '|' + '|'.join(no_list) + r')?\s*$'
+    pattern_yes_no = r"^\s*(" + "|".join(yes_list) + "|" + "|".join(no_list) + r")?\s*$"
     re_yes_no = re.compile(pattern_yes_no, re.IGNORECASE)
 
-    valid_address_families = ('any', 0, socket.AF_INET, 'ipv4', 4, socket.AF_INET6, 'ipv6', 6)
+    valid_address_families = ("any", 0, socket.AF_INET, "ipv4", 4, socket.AF_INET6, "ipv6", 6)
     valid_address_families_out = (
-        "'any'", '0', 'socket.AF_INET', "'IPv4'", '4', 'socket.AF_INET6', "'IPv6'", '6')
+        "'any'",
+        "0",
+        "socket.AF_INET",
+        "'IPv4'",
+        "4",
+        "socket.AF_INET6",
+        "'IPv6'",
+        "6",
+    )
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, version=__version__, quiet=False, terminal_has_colors=False,
-            simulate=None, force=None, assumed_answer=None, *args, **kwargs):
+        self,
+        version=__version__,
+        quiet=False,
+        terminal_has_colors=False,
+        simulate=None,
+        force=None,
+        assumed_answer=None,
+        *args,
+        **kwargs,
+    ):
         """
         Initialise a HandlingObject.
 
@@ -260,8 +282,9 @@ class HandlingObject(FbBaseObject):
         self._interrupted = False
 
         super(HandlingObject, self).__init__(
+            *args,
             version=version,
-            *args, **kwargs,
+            **kwargs,
         )
 
         if simulate is not None:
@@ -312,7 +335,7 @@ class HandlingObject(FbBaseObject):
         If None, no answer is assumed.
         If True, then assuming 'yes', if False, then assuming 'no'.
         """
-        return getattr(self, '_assumed_answer', None)
+        return getattr(self, "_assumed_answer", None)
 
     @assumed_answer.setter
     def assumed_answer(self, value):
@@ -325,9 +348,9 @@ class HandlingObject(FbBaseObject):
     @property
     def is_venv(self):
         """Return whether the current application is running inside a virtual environment."""
-        if hasattr(sys, 'real_prefix'):
+        if hasattr(sys, "real_prefix"):
             return True
-        return (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+        return hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
 
     # -----------------------------------------------------------
     @property
@@ -353,15 +376,16 @@ class HandlingObject(FbBaseObject):
     @property
     def prompt_timeout(self):
         """Return the timeout in seconds for waiting for an answer on a prompt."""
-        return getattr(self, '_prompt_timeout', self.default_prompt_timeout)
+        return getattr(self, "_prompt_timeout", self.default_prompt_timeout)
 
     @prompt_timeout.setter
     def prompt_timeout(self, value):
         v = int(value)
         if v < 0 or v > self.max_prompt_timeout:
             msg = _(
-                'Wrong prompt timeout {v!r}, must be greater or equal to Null '
-                'and less or equal to {max}.').format(v=value, max=self.max_prompt_timeout)
+                "Wrong prompt timeout {v!r}, must be greater or equal to Null "
+                "and less or equal to {max}."
+            ).format(v=value, max=self.max_prompt_timeout)
             LOG.warning(msg)
         else:
             self._prompt_timeout = v
@@ -382,15 +406,15 @@ class HandlingObject(FbBaseObject):
         if isinstance(family, str):
             family = value.lower()
         if value not in self.valid_address_families:
-            msg = _('Wrong address family {!r} given. Valid values are:').format(value)
-            msg += ' ' + format_list(self.valid_address_families_out)
+            msg = _("Wrong address family {!r} given. Valid values are:").format(value)
+            msg += " " + format_list(self.valid_address_families_out)
             raise ValueError(msg)
-        if family == 'ipv4':
+        if family == "ipv4":
             family = socket.AF_INET
-        elif family == 'ipv6':
+        elif family == "ipv6":
             family = socket.AF_INET6
         elif family == 0:
-            family = 'any'
+            family = "any"
         elif family == 4:
             family = socket.AF_INET
         elif family == 6:
@@ -401,14 +425,14 @@ class HandlingObject(FbBaseObject):
     @classmethod
     def init_yes_no_lists(cls):
         """Initialise the lists for 'yes'- and 'no'-values by localized values."""
-        yes = _('yes')
+        yes = _("yes")
         if yes not in cls.yes_list:
             cls.yes_list.append(yes)
         yes_fc = yes[0]
         if yes_fc not in cls.yes_list:
             cls.yes_list.append(yes_fc)
 
-        no = _('no')
+        no = _("no")
         if no not in cls.no_list and no not in cls.yes_list:
             cls.no_list.append(no)
         no_fc = no[0]
@@ -416,7 +440,8 @@ class HandlingObject(FbBaseObject):
             cls.no_list.append(no_fc)
 
         cls.pattern_yes_no = (
-            r'^\s*(' + '|'.join(cls.yes_list) + '|' + '|'.join(cls.no_list) + r')?\s*$')
+            r"^\s*(" + "|".join(cls.yes_list) + "|" + "|".join(cls.no_list) + r")?\s*$"
+        )
         cls.re_yes_no = re.compile(cls.pattern_yes_no, re.IGNORECASE)
 
     # -------------------------------------------------------------------------
@@ -431,31 +456,31 @@ class HandlingObject(FbBaseObject):
         @rtype:  dict
         """
         res = super(HandlingObject, self).as_dict(short=short)
-        res['address_family'] = self.address_family
-        res['assumed_answer'] = self.assumed_answer
-        res['fileio_timeout'] = self.fileio_timeout
-        res['force'] = self.force
-        res['interrupted'] = self.interrupted
-        res['is_venv'] = self.is_venv
-        res['no_list'] = self.no_list
-        res['pattern_yes_no'] = self.pattern_yes_no
-        res['prompt_timeout'] = self.prompt_timeout
-        res['quiet'] = self.quiet
-        res['simulate'] = self.simulate
-        res['terminal_has_colors'] = self.terminal_has_colors
-        res['yes_list'] = self.yes_list
+        res["address_family"] = self.address_family
+        res["assumed_answer"] = self.assumed_answer
+        res["fileio_timeout"] = self.fileio_timeout
+        res["force"] = self.force
+        res["interrupted"] = self.interrupted
+        res["is_venv"] = self.is_venv
+        res["no_list"] = self.no_list
+        res["pattern_yes_no"] = self.pattern_yes_no
+        res["prompt_timeout"] = self.prompt_timeout
+        res["quiet"] = self.quiet
+        res["simulate"] = self.simulate
+        res["terminal_has_colors"] = self.terminal_has_colors
+        res["yes_list"] = self.yes_list
 
         return res
 
     # -------------------------------------------------------------------------
-    def line(self, width=None, linechar='-', color=None):
+    def line(self, width=None, linechar="-", color=None):
         """Print out an line on stdout, if not in quiet mode."""
         if self.quiet:
             return
 
         lchar = str(linechar).strip()
         if not lchar:
-            lchar = '-'
+            lchar = "-"
 
         if not width:
             term_size = shutil.get_terminal_size((DEFAULT_TERMINAL_WIDTH, DEFAULT_TERMINAL_HEIGHT))
@@ -482,22 +507,22 @@ class HandlingObject(FbBaseObject):
         if family is None:
             family = self.address_family
         elif family not in self.valid_address_families:
-            msg = _('Wrong address family {!r} given. Valid values are:').format(address_family)
-            msg += ' ' + format_list(['None'] + list(self.valid_address_families_out))
+            msg = _("Wrong address family {!r} given. Valid values are:").format(address_family)
+            msg += " " + format_list(["None"] + list(self.valid_address_families_out))
             raise ValueError(msg)
 
         if family is None:
             family = self.address_family
 
-        if family == 'any':
+        if family == "any":
             return 0
         elif family == 0:
             return 0
-        elif family == 'ipv4':
+        elif family == "ipv4":
             return socket.AF_INET
         elif family == 4:
             return socket.AF_INET
-        elif family == 'ipv6':
+        elif family == "ipv6":
             return socket.AF_INET6
         elif family == 6:
             return socket.AF_INET6
@@ -506,8 +531,15 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def get_address(
-            self, host, address_family=None, port=None,
-            addr_type=0, proto=0, flags=0, as_socket_address=False):
+        self,
+        host,
+        address_family=None,
+        port=None,
+        addr_type=0,
+        proto=0,
+        flags=0,
+        as_socket_address=False,
+    ):
         """
         Try to resolve the addresses of the given hostname and returns them as a list.
 
@@ -534,11 +566,11 @@ class HandlingObject(FbBaseObject):
         @return: list of resolved IP addresses
         """
         if not host:
-            raise ValueError(_('No hostname or IP address given on calling get_address().'))
+            raise ValueError(_("No hostname or IP address given on calling get_address()."))
 
         af = self.get_address_famlily_int(address_family)
         if self.verbose > 3:
-            LOG.debug(f'Got the integer address family {af!r} for {address_family!r}.')
+            LOG.debug(f"Got the integer address family {af!r} for {address_family!r}.")
 
         try:
             address = ipaddress.ip_address(host)
@@ -557,7 +589,8 @@ class HandlingObject(FbBaseObject):
 
         addresses = []
         addr_infos = socket.getaddrinfo(
-            host, port, family=af, type=addr_type, proto=proto, flags=flags)
+            host, port, family=af, type=addr_type, proto=proto, flags=flags
+        )
         for addr_info in addr_infos:
             got_af = addr_info[0]
             if af and got_af != af:
@@ -601,7 +634,7 @@ class HandlingObject(FbBaseObject):
         cmd = pathlib.Path(cmd)
 
         if self.verbose > 2:
-            LOG.debug(_('Searching for command {!r} ...').format(str(cmd)))
+            LOG.debug(_("Searching for command {!r} ...").format(str(cmd)))
 
         # Checking an absolute path
         if cmd.is_absolute():
@@ -609,7 +642,7 @@ class HandlingObject(FbBaseObject):
                 LOG.warning(_("Command {!r} doesn't exists.").format(str(cmd)))
                 return None
             if not os.access(str(cmd), os.X_OK):
-                msg = _('Command {!r} is not executable.').format(str(cmd))
+                msg = _("Command {!r} is not executable.").format(str(cmd))
                 LOG.warning(msg)
                 return None
             if resolve:
@@ -623,20 +656,20 @@ class HandlingObject(FbBaseObject):
         # Checking a relative path
         for d in caller_search_path(*additional_paths):
             if self.verbose > 3:
-                LOG.debug(_('Searching command in {!r} ...').format(str(d)))
+                LOG.debug(_("Searching command in {!r} ...").format(str(d)))
             p = d / cmd
             if p.exists():
                 if self.verbose > 2:
-                    LOG.debug('Found {!r} ...'.format(str(p)))
+                    LOG.debug("Found {!r} ...".format(str(p)))
                 if os.access(str(p), os.X_OK):
                     if resolve:
                         return p.resolve()
                     return p
                 else:
-                    LOG.debug(_('Command {!r} is not executable.').format(str(p)))
+                    LOG.debug(_("Command {!r} is not executable.").format(str(p)))
 
         # command not found, sorry
-        msg = _('Command {!r} not found.').format(str(cmd))
+        msg = _("Command {!r} not found.").format(str(cmd))
         if quiet:
             if self.verbose > 2:
                 LOG.debug(msg)
@@ -676,68 +709,68 @@ class HandlingObject(FbBaseObject):
         This method was taken from subprocess.py of the standard library of Python 3.5.
         """
         inp = None
-        if 'input' in kwargs:
-            inp = kwargs['input']
-            del kwargs['input']
+        if "input" in kwargs:
+            inp = kwargs["input"]
+            del kwargs["input"]
 
         timeout = None
-        if 'timeout' in kwargs:
-            timeout = kwargs['timeout']
-            del kwargs['timeout']
+        if "timeout" in kwargs:
+            timeout = kwargs["timeout"]
+            del kwargs["timeout"]
 
         check = False
-        if 'check' in kwargs:
-            check = bool(kwargs['check'])
-            del kwargs['check']
+        if "check" in kwargs:
+            check = bool(kwargs["check"])
+            del kwargs["check"]
 
         may_simulate = None
-        if 'may_simulate' in kwargs:
-            may_simulate = bool(kwargs['may_simulate'])
-            del kwargs['may_simulate']
+        if "may_simulate" in kwargs:
+            may_simulate = bool(kwargs["may_simulate"])
+            del kwargs["may_simulate"]
 
         if self.verbose >= 2:
             myargs = {
-                'input': inp,
-                'timeout': timeout,
-                'check': check,
-                'may_simulate': may_simulate,
-                'popenargs': popenargs,
-                'kwargs': kwargs,
+                "input": inp,
+                "timeout": timeout,
+                "check": check,
+                "may_simulate": may_simulate,
+                "popenargs": popenargs,
+                "kwargs": kwargs,
             }
-            LOG.debug('Args of run():\n{}'.format(pp(myargs)))
+            LOG.debug("Args of run():\n{}".format(pp(myargs)))
 
         if inp is not None:
-            if 'stdin' in kwargs:
-                raise ValueError(_('STDIN and input arguments may not both be used.'))
-            kwargs['stdin'] = PIPE
+            if "stdin" in kwargs:
+                raise ValueError(_("STDIN and input arguments may not both be used."))
+            kwargs["stdin"] = PIPE
 
-        LOG.debug(_('Executing command args:') + '\n' + pp(popenargs))
+        LOG.debug(_("Executing command args:") + "\n" + pp(popenargs))
         cmd_args = []
         for arg in popenargs[0]:
-            LOG.debug(_('Performing argument {!r}.').format(arg))
+            LOG.debug(_("Performing argument {!r}.").format(arg))
             cmd_args.append(quote(arg))
-        cmd_str = ' '.join(cmd_args)
+        cmd_str = " ".join(cmd_args)
 
-        cmd_str = ' '.join((quote(x) for x in popenargs[0]))
-        LOG.debug(_('Executing: {}').format(cmd_str))
+        cmd_str = " ".join((quote(x) for x in popenargs[0]))
+        LOG.debug(_("Executing: {}").format(cmd_str))
 
         if may_simulate and self.simulate:
-            LOG.info(_('Simulation mode, not executing: {}').format(cmd_str))
-            return CompletedProcess(popenargs, 0, 'Simulated execution.\n', '')
+            LOG.info(_("Simulation mode, not executing: {}").format(cmd_str))
+            return CompletedProcess(popenargs, 0, "Simulated execution.\n", "")
 
         process = None
         try:
             start_dt = datetime.datetime.now()
             process = Popen(*popenargs, **kwargs)
             if self.verbose > 0:
-                LOG.debug(_('PID of process: {}').format(process.pid))
+                LOG.debug(_("PID of process: {}").format(process.pid))
             try:
-                stdout, stderr = self._communicate(
-                    process, popenargs, inp=inp, timeout=timeout)
+                stdout, stderr = self._communicate(process, popenargs, inp=inp, timeout=timeout)
             except Exception as e:
                 if self.verbose > 2:
-                    LOG.debug(_('{c} happened, killing process: {e}').format(
-                        c=e.__class__.__name__, e=e))
+                    LOG.debug(
+                        _("{c} happened, killing process: {e}").format(c=e.__class__.__name__, e=e)
+                    )
                 process.poll()
                 if process.returncode is None:
                     process.kill()
@@ -763,10 +796,12 @@ class HandlingObject(FbBaseObject):
         end_dt = datetime.datetime.now()
         if six.PY3:
             return CompletedProcess(
-                process.args, retcode, stdout, stderr, start_dt=start_dt, end_dt=end_dt)
+                process.args, retcode, stdout, stderr, start_dt=start_dt, end_dt=end_dt
+            )
         else:
             return CompletedProcess(
-                popenargs, retcode, stdout, stderr, start_dt=start_dt, end_dt=end_dt)
+                popenargs, retcode, stdout, stderr, start_dt=start_dt, end_dt=end_dt
+            )
 
     # -------------------------------------------------------------------------
     def _communicate(self, process, popenargs, inp=None, timeout=None):
@@ -838,15 +873,14 @@ class HandlingObject(FbBaseObject):
 
         if signum in self.signals_dont_interrupt:
             self.handle_info(str(err))
-            LOG.info(_('Nothing to do on signal.'))
+            LOG.info(_("Nothing to do on signal."))
             return
 
         self._interrupted = True
         raise err
 
     # -------------------------------------------------------------------------
-    def read_file(
-            self, filename, timeout=None, binary=False, quiet=False, encoding='utf-8'):
+    def read_file(self, filename, timeout=None, binary=False, quiet=False, encoding="utf-8"):
         """
         Read the content of the given filename.
 
@@ -891,28 +925,26 @@ class HandlingObject(FbBaseObject):
         ifile = str(filename)
 
         if not os.path.isfile(ifile):
-            raise IOError(
-                errno.ENOENT, _("File doesn't exists."), ifile)
+            raise IOError(errno.ENOENT, _("File doesn't exists."), ifile)
         if not os.access(ifile, os.R_OK):
-            raise IOError(
-                errno.EACCES, _('Read permission denied.'), ifile)
+            raise IOError(errno.EACCES, _("Read permission denied."), ifile)
 
         if self.verbose > needed_verbose_level:
-            LOG.debug(_('Reading file content of {!r} ...').format(ifile))
+            LOG.debug(_("Reading file content of {!r} ...").format(ifile))
 
         signal.signal(signal.SIGALRM, read_alarm_caller)
         signal.alarm(timeout)
 
         open_args = {}
         if six.PY3 and not binary:
-            open_args['encoding'] = encoding
-            open_args['errors'] = 'surrogateescape'
+            open_args["encoding"] = encoding
+            open_args["errors"] = "surrogateescape"
 
-        mode = 'r'
-        content = ''
+        mode = "r"
+        content = ""
         if binary:
-            mode += 'b'
-            content = encode_or_bust('')
+            mode += "b"
+            content = encode_or_bust("")
 
         with open(ifile, mode, **open_args) as fh:
             for line in fh.readlines():
@@ -922,14 +954,14 @@ class HandlingObject(FbBaseObject):
         signal.alarm(0)
 
         if six.PY2 and not binary:
-            content = content.decode(encoding, 'replace')
+            content = content.decode(encoding, "replace")
 
         return content
 
     # -------------------------------------------------------------------------
     def write_file(
-            self, filename, content, timeout=None, must_exists=True,
-            quiet=False, encoding='utf-8'):
+        self, filename, content, timeout=None, must_exists=True, quiet=False, encoding="utf-8"
+    ):
         """
         Write the given content into the given filename.
 
@@ -986,22 +1018,22 @@ class HandlingObject(FbBaseObject):
         if os.path.exists(ofile):
             if not os.access(ofile, os.W_OK):
                 if self.simulate:
-                    LOG.error(_('Write permission to {!r} denied.').format(ofile))
+                    LOG.error(_("Write permission to {!r} denied.").format(ofile))
                 else:
-                    raise IOError(errno.EACCES, _('Write permission denied.'), ofile)
+                    raise IOError(errno.EACCES, _("Write permission denied."), ofile)
         else:
             parent_dir = os.path.dirname(ofile)
             if not os.access(parent_dir, os.W_OK):
                 if self.simulate:
-                    LOG.error(_('Write permission to {!r} denied.').format(parent_dir))
+                    LOG.error(_("Write permission to {!r} denied.").format(parent_dir))
                 else:
-                    raise IOError(errno.EACCES, _('Write permission denied.'), parent_dir)
+                    raise IOError(errno.EACCES, _("Write permission denied."), parent_dir)
 
         if self.verbose > verb_level1:
             if self.verbose > verb_level2:
-                LOG.debug(_('Write {what!r} into {to!r}.').format(what=content, to=ofile))
+                LOG.debug(_("Write {what!r} into {to!r}.").format(what=content, to=ofile))
             else:
-                LOG.debug(_('Writing {!r} ...').format(ofile))
+                LOG.debug(_("Writing {!r} ...").format(ofile))
 
         if isinstance(content, six.binary_type):
             content_bin = content
@@ -1013,7 +1045,7 @@ class HandlingObject(FbBaseObject):
 
         if self.simulate:
             if self.verbose > verb_level2:
-                LOG.debug(_('Simulating write into {!r}.').format(ofile))
+                LOG.debug(_("Simulating write into {!r}.").format(ofile))
             return
 
         signal.signal(signal.SIGALRM, write_alarm_caller)
@@ -1021,11 +1053,11 @@ class HandlingObject(FbBaseObject):
 
         # Open filename for writing unbuffered
         if self.verbose > verb_level3:
-            LOG.debug(_('Opening {!r} for write unbuffered ...').format(ofile))
-        with open(ofile, 'wb', 0) as fh:
+            LOG.debug(_("Opening {!r} for write unbuffered ...").format(ofile))
+        with open(ofile, "wb", 0) as fh:
             fh.write(content_bin)
             if self.verbose > verb_level3:
-                LOG.debug(_('Closing {!r} ...').format(ofile))
+                LOG.debug(_("Closing {!r} ...").format(ofile))
 
         signal.alarm(0)
 
@@ -1033,8 +1065,13 @@ class HandlingObject(FbBaseObject):
 
     # -------------------------------------------------------------------------
     def get_password(
-            self, first_prompt=None, second_prompt=None, may_empty=True, repeat=True,
-            raise_on_exit=False):
+        self,
+        first_prompt=None,
+        second_prompt=None,
+        may_empty=True,
+        repeat=True,
+        raise_on_exit=False,
+    ):
         """
         Ask the user for a password on the console.
 
@@ -1061,10 +1098,10 @@ class HandlingObject(FbBaseObject):
 
         """
         if not first_prompt:
-            first_prompt = _('Password:') + ' '
+            first_prompt = _("Password:") + " "
 
         if not second_prompt:
-            second_prompt = _('Repeat password:') + ' '
+            second_prompt = _("Repeat password:") + " "
 
         ret_passwd = None
         second_passwd = None
@@ -1077,9 +1114,10 @@ class HandlingObject(FbBaseObject):
             if ret_passwd:
                 if repeat:
                     second_passwd = self._get_password(
-                        second_prompt, may_empty=False, raise_on_exit=raise_on_exit)
+                        second_prompt, may_empty=False, raise_on_exit=raise_on_exit
+                    )
                     if ret_passwd != second_passwd:
-                        msg = _('The entered passwords does not match.')
+                        msg = _("The entered passwords does not match.")
                         LOG.error(msg)
                         continue
             break
@@ -1092,8 +1130,8 @@ class HandlingObject(FbBaseObject):
         def passwd_alarm_caller(signum, sigframe):
             raise TimeoutOnPromptError(self.prompt_timeout)
 
-        msg_intr = _('Interrupted on demand.')
-        ret_passwd = ''
+        msg_intr = _("Interrupted on demand.")
+        ret_passwd = ""
 
         try:
             signal.signal(signal.SIGALRM, passwd_alarm_caller)
@@ -1108,16 +1146,16 @@ class HandlingObject(FbBaseObject):
 
                 signal.alarm(self.prompt_timeout)
 
-                if ret_passwd == '':
+                if ret_passwd == "":
                     if may_empty:
-                        return ''
+                        return ""
                     else:
                         continue
                 else:
                     break
 
         except (TimeoutOnPromptError, AbortAppError) as e:
-            msg = _('Got a {}:').format(e.__class__.__name__) + ' ' + str(e)
+            msg = _("Got a {}:").format(e.__class__.__name__) + " " + str(e)
             if raise_on_exit:
                 raise ExitAppError(msg)
             else:
@@ -1125,7 +1163,7 @@ class HandlingObject(FbBaseObject):
                 sys.exit(10)
 
         except KeyboardInterrupt:
-            msg = _('Got a {}:').format('KeyboardInterrupt') + ' ' + msg_intr
+            msg = _("Got a {}:").format("KeyboardInterrupt") + " " + msg_intr
             if raise_on_exit:
                 raise ExitAppError(msg)
             else:
@@ -1158,27 +1196,27 @@ class HandlingObject(FbBaseObject):
 
         """
         if not prompt:
-            prompt = _('Yes/No') + ' '
+            prompt = _("Yes/No") + " "
 
         if self.assumed_answer is not None:
             ret = self.assumed_answer
             if not self.quiet:
-                answer = _('No')
+                answer = _("No")
                 if ret:
-                    answer = _('Yes')
-                answer = ' ' + _("Automatic answer: '{}'.").format(self.colored(answer, 'CYAN'))
+                    answer = _("Yes")
+                answer = " " + _("Automatic answer: '{}'.").format(self.colored(answer, "CYAN"))
                 print(prompt + answer)
             return ret
 
         def prompt_alarm_caller(signum, sigframe):
             raise TimeoutOnPromptError(self.prompt_timeout)
 
-        msg_intr = _('Interrupted on demand.')
+        msg_intr = _("Interrupted on demand.")
         try:
             signal.signal(signal.SIGALRM, prompt_alarm_caller)
             signal.alarm(self.prompt_timeout)
 
-            reply = ''
+            reply = ""
             while True:
                 try:
                     reply = input(prompt)
@@ -1207,12 +1245,12 @@ class HandlingObject(FbBaseObject):
 
         except (TimeoutOnPromptError, AbortAppError) as e:
             print()
-            msg = _('Got a {}:').format(e.__class__.__name__) + ' ' + str(e)
+            msg = _("Got a {}:").format(e.__class__.__name__) + " " + str(e)
             LOG.error(msg)
             sys.exit(10)
 
         except KeyboardInterrupt:
-            msg = _('Got a {}:').format('KeyboardInterrupt') + ' ' + msg_intr
+            msg = _("Got a {}:").format("KeyboardInterrupt") + " " + msg_intr
             print()
             LOG.error(msg)
             sys.exit(10)
@@ -1245,8 +1283,8 @@ class CompletedProcess(object):
 
     # -------------------------------------------------------------------------
     def __init__(
-            self, args, returncode, stdout=None, stderr=None, encoding=None,
-            start_dt=None, end_dt=None):
+        self, args, returncode, stdout=None, stderr=None, encoding=None, start_dt=None, end_dt=None
+    ):
         """Initialize a CompletedProcess object."""
         self.args = args
         """
@@ -1269,20 +1307,22 @@ class CompletedProcess(object):
             if locale.getpreferredencoding():
                 self.encoding = locale.getpreferredencoding()
             else:
-                self.encoding = 'utf-8'
+                self.encoding = "utf-8"
 
         self._start_dt = None
         self._end_dt = None
         if start_dt is not None:
             if not isinstance(start_dt, datetime.datetime):
-                msg = _('Parameter {t!r} must be a {e}, {v!r} was given.').format(
-                    t='start_dt', e='datetime.datetime', v=start_dt)
+                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t="start_dt", e="datetime.datetime", v=start_dt
+                )
                 raise TypeError(msg)
             self._start_dt = start_dt
         if end_dt is not None:
             if not isinstance(end_dt, datetime.datetime):
-                msg = _('Parameter {t!r} must be a {e}, {v!r} was given.').format(
-                    t='end_dt', e='datetime.datetime', v=end_dt)
+                msg = _("Parameter {t!r} must be a {e}, {v!r} was given.").format(
+                    t="end_dt", e="datetime.datetime", v=end_dt
+                )
                 raise TypeError(msg)
             self._end_dt = end_dt
 
@@ -1293,7 +1333,7 @@ class CompletedProcess(object):
         """
         if stdout is not None:
             stdout = to_str(stdout, self.encoding)
-            if stdout.strip() == '':
+            if stdout.strip() == "":
                 self.stdout = None
             else:
                 self.stdout = stdout
@@ -1305,7 +1345,7 @@ class CompletedProcess(object):
         """
         if stderr is not None:
             stderr = to_str(stderr, self.encoding)
-            if stderr.strip() == '':
+            if stderr.strip() == "":
                 self.stderr = None
             else:
                 self.stderr = stderr
@@ -1335,42 +1375,41 @@ class CompletedProcess(object):
     # -------------------------------------------------------------------------
     def __repr__(self):
         """Typecast into a string for reproduction."""
-        args = ['args={!r}'.format(self.args),
-                'returncode={!r}'.format(self.returncode)]
+        args = ["args={!r}".format(self.args), "returncode={!r}".format(self.returncode)]
         if self.start_dt is not None:
-            args.append('start_dt={!r}'.format(self.start_dt))
+            args.append("start_dt={!r}".format(self.start_dt))
         if self.end_dt is not None:
-            args.append('end_dt={!r}'.format(self.end_dt))
+            args.append("end_dt={!r}".format(self.end_dt))
         if self.stdout is not None or self.stderr is not None:
-            args.append('encoding={!r}'.format(self.encoding))
+            args.append("encoding={!r}".format(self.encoding))
         if self.stdout is not None:
-            args.append('stdout={!r}'.format(self.stdout))
+            args.append("stdout={!r}".format(self.stdout))
         if self.stderr is not None:
-            args.append('stderr={!r}'.format(self.stderr))
-        return '{}({})'.format(type(self).__name__, ', '.join(args))
+            args.append("stderr={!r}".format(self.stderr))
+        return "{}({})".format(type(self).__name__, ", ".join(args))
 
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string."""
-        out = _('Completed process') + ':\n'
-        out += '  args:       {!r}\n'.format(self.args)
-        out += '  returncode: {}\n'.format(self.returncode)
+        out = _("Completed process") + ":\n"
+        out += "  args:       {!r}\n".format(self.args)
+        out += "  returncode: {}\n".format(self.returncode)
         if self.start_dt is not None:
-            out += '  started:    {}\n'.format(self.start_dt.isoformat(' '))
+            out += "  started:    {}\n".format(self.start_dt.isoformat(" "))
         if self.end_dt is not None:
-            out += '  ended:      {}\n'.format(self.end_dt.isoformat(' '))
+            out += "  ended:      {}\n".format(self.end_dt.isoformat(" "))
         if self.duration is not None:
-            out += '  duration:   {}\n'.format(self.duration)
+            out += "  duration:   {}\n".format(self.duration)
         if self.stdout is not None or self.stderr is not None:
-            out += '  encoding:   {!r}\n'.format(self.encoding)
-        iind = '     '
-        ind = '              '
+            out += "  encoding:   {!r}\n".format(self.encoding)
+        iind = "     "
+        ind = "              "
         if self.stdout is not None:
             o = indent(self.stdout.rstrip(), ind, iind)
-            out += '  stdout:{}\n'.format(o)
+            out += "  stdout:{}\n".format(o)
         if self.stderr is not None:
             o = indent(self.stderr.rstrip(), ind, iind)
-            out += '  stderr:{}\n'.format(o)
+            out += "  stderr:{}\n".format(o)
         return out
 
     # -------------------------------------------------------------------------
@@ -1382,7 +1421,7 @@ class CompletedProcess(object):
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

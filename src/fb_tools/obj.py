@@ -16,6 +16,7 @@ import os
 import sys
 import traceback
 from abc import ABCMeta, abstractmethod
+
 try:
     import pathlib
 except ImportError:
@@ -29,7 +30,7 @@ from .common import pp, to_bytes
 from .errors import FbError
 from .xlate import XLATOR
 
-__version__ = '2.1.0'
+__version__ = "2.1.1"
 
 LOG = logging.getLogger(__name__)
 
@@ -55,9 +56,9 @@ class BasedirNotExistingError(FbBaseObjectError):
     # -------------------------------------------------------------------------
     def __str__(self):
         """Typecast into a string object."""
-        msg = _(
-            'The base directory {!r} is not existing or not '
-            'a directory.').format(str(self.dir_name))
+        msg = _("The base directory {!r} is not existing or not " "a directory.").format(
+            str(self.dir_name)
+        )
         return msg
 
 
@@ -92,7 +93,7 @@ class FbGenericBaseObject(object):
     @abstractmethod
     def __repr__(self):
         """Typecast into a string for reproduction."""
-        out = '<%s()>' % (self.__class__.__name__)
+        out = "<%s()>" % (self.__class__.__name__)
         return out
 
     # -------------------------------------------------------------------------
@@ -108,7 +109,7 @@ class FbGenericBaseObject(object):
         """
         res = {}
         for key in self.__dict__:
-            if short and key.startswith('_') and not key.startswith('__'):
+            if short and key.startswith("_") and not key.startswith("__"):
                 continue
             val = self.__dict__[key]
             if isinstance(val, FbGenericBaseObject):
@@ -116,13 +117,12 @@ class FbGenericBaseObject(object):
             else:
                 res[key] = val
 
-        res['__class_name__'] = self.__class__.__name__
+        res["__class_name__"] = self.__class__.__name__
 
         return res
 
     # -------------------------------------------------------------------------
-    def handle_error(
-            self, error_message=None, exception_name=None, do_traceback=False):
+    def handle_error(self, error_message=None, exception_name=None, do_traceback=False):
         """
         Handle an error gracefully.
 
@@ -138,7 +138,7 @@ class FbGenericBaseObject(object):
         """
         msg = str(error_message).strip()
         if not msg:
-            msg = _('undefined error.')
+            msg = _("undefined error.")
         title = None
 
         if isinstance(error_message, Exception):
@@ -147,8 +147,8 @@ class FbGenericBaseObject(object):
             if exception_name is not None:
                 title = exception_name.strip()
             else:
-                title = _('Exception happened')
-        msg = title + ': ' + msg
+                title = _("Exception happened")
+        msg = title + ": " + msg
 
         root_log = logging.getLogger()
         has_handlers = False
@@ -161,9 +161,9 @@ class FbGenericBaseObject(object):
                 LOG.error(traceback.format_exc())
         else:
             curdate = datetime.datetime.now()
-            curdate_str = '[' + curdate.isoformat(' ') + ']: '
-            msg = curdate_str + msg + '\n'
-            if hasattr(sys.stderr, 'buffer'):
+            curdate_str = "[" + curdate.isoformat(" ") + "]: "
+            msg = curdate_str + msg + "\n"
+            if hasattr(sys.stderr, "buffer"):
                 sys.stderr.buffer.write(to_bytes(msg))
             else:
                 sys.stderr.write(msg)
@@ -185,11 +185,11 @@ class FbGenericBaseObject(object):
         @type info_name: str
 
         """
-        msg = ''
+        msg = ""
         if info_name is not None:
             info_name = info_name.strip()
             if info_name:
-                msg = info_name + ': '
+                msg = info_name + ": "
         msg += str(message).strip()
 
         root_log = logging.getLogger()
@@ -201,9 +201,9 @@ class FbGenericBaseObject(object):
             LOG.info(msg)
         else:
             curdate = datetime.datetime.now()
-            curdate_str = '[' + curdate.isoformat(' ') + ']: '
-            msg = curdate_str + msg + '\n'
-            if hasattr(sys.stderr, 'buffer'):
+            curdate_str = "[" + curdate.isoformat(" ") + "]: "
+            msg = curdate_str + msg + "\n"
+            if hasattr(sys.stderr, "buffer"):
                 sys.stderr.buffer.write(to_bytes(msg))
             else:
                 sys.stderr.write(msg)
@@ -228,8 +228,8 @@ class FbBaseObject(FbGenericBaseObject):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, appname=None, verbose=0, version=__version__, base_dir=None,
-            initialized=False):
+        self, appname=None, verbose=0, version=__version__, base_dir=None, initialized=False
+    ):
         """
         Initialise the base object.
 
@@ -251,7 +251,7 @@ class FbBaseObject(FbGenericBaseObject):
 
         self._verbose = int(verbose)
         if self._verbose < 0:
-            msg = _('Wrong verbose level {!r}, must be >= 0').format(verbose)
+            msg = _("Wrong verbose level {!r}, must be >= 0").format(verbose)
             raise ValueError(msg)
         self._initialized = False
 
@@ -267,7 +267,7 @@ class FbBaseObject(FbGenericBaseObject):
     @property
     def appname(self):
         """Return the name of the current running application."""
-        if hasattr(self, '_appname'):
+        if hasattr(self, "_appname"):
             return self._appname
         return os.path.basename(sys.argv[0])
 
@@ -282,13 +282,13 @@ class FbBaseObject(FbGenericBaseObject):
     @property
     def version(self):
         """Return the version string of the current object or application."""
-        return getattr(self, '_version', __version__)
+        return getattr(self, "_version", __version__)
 
     # -----------------------------------------------------------
     @property
     def verbose(self):
         """Return the verbosity level."""
-        return getattr(self, '_verbose', 0)
+        return getattr(self, "_verbose", 0)
 
     @verbose.setter
     def verbose(self, value):
@@ -296,13 +296,13 @@ class FbBaseObject(FbGenericBaseObject):
         if v >= 0:
             self._verbose = v
         else:
-            LOG.warning(_('Wrong verbose level {!r}, must be >= 0').format(value))
+            LOG.warning(_("Wrong verbose level {!r}, must be >= 0").format(value))
 
     # -----------------------------------------------------------
     @property
     def initialized(self):
         """Return whther the initialisation of this object is complete."""
-        return getattr(self, '_initialized', False)
+        return getattr(self, "_initialized", False)
 
     @initialized.setter
     def initialized(self, value):
@@ -317,13 +317,13 @@ class FbBaseObject(FbGenericBaseObject):
     @base_dir.setter
     def base_dir(self, value):
         base_dir_path = pathlib.Path(value)
-        if str(base_dir_path).startswith('~'):
+        if str(base_dir_path).startswith("~"):
             base_dir_path = base_dir_path.expanduser()
         if not base_dir_path.exists():
-            msg = _('Base directory {!r} does not exists.').format(str(value))
+            msg = _("Base directory {!r} does not exists.").format(str(value))
             self.handle_error(msg, self.appname)
         elif not base_dir_path.is_dir():
-            msg = _('Path for base directory {!r} is not a directory.').format(str(value))
+            msg = _("Path for base directory {!r} is not a directory.").format(str(value))
             self.handle_error(msg, self.appname)
         else:
             self._base_dir = base_dir_path
@@ -331,16 +331,16 @@ class FbBaseObject(FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __repr__(self):
         """Typecasting into a string for reproduction."""
-        out = '<%s(' % (self.__class__.__name__)
+        out = "<%s(" % (self.__class__.__name__)
 
         fields = []
-        fields.append('appname={!r}'.format(self.appname))
-        fields.append('verbose={!r}'.format(self.verbose))
-        fields.append('version={!r}'.format(self.version))
-        fields.append('base_dir={!r}'.format(self.base_dir))
-        fields.append('initialized={!r}'.format(self.initialized))
+        fields.append("appname={!r}".format(self.appname))
+        fields.append("verbose={!r}".format(self.verbose))
+        fields.append("version={!r}".format(self.version))
+        fields.append("base_dir={!r}".format(self.base_dir))
+        fields.append("initialized={!r}".format(self.initialized))
 
-        out += ', '.join(fields) + ')>'
+        out += ", ".join(fields) + ")>"
         return out
 
     # -------------------------------------------------------------------------
@@ -356,18 +356,18 @@ class FbBaseObject(FbGenericBaseObject):
         """
         res = super(FbBaseObject, self).as_dict(short=short)
 
-        res['appname'] = self.appname
-        res['version'] = self.version
-        res['verbose'] = self.verbose
-        res['initialized'] = self.initialized
-        res['base_dir'] = self.base_dir
+        res["appname"] = self.appname
+        res["version"] = self.version
+        res["verbose"] = self.verbose
+        res["initialized"] = self.initialized
+        res["base_dir"] = self.base_dir
 
         return res
 
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 

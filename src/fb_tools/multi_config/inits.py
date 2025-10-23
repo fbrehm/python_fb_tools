@@ -24,7 +24,7 @@ import six
 from ..common import is_sequence, to_str
 from ..xlate import XLATOR
 
-__version__ = '0.2.0'
+__version__ = "0.2.1"
 
 LOG = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ ngettext = XLATOR.ngettext
 
 
 # =============================================================================
-class MultiCfgInitMixin():
+class MultiCfgInitMixin:
     """
     A mixin class for extending the BaseMultiConfig class.
 
@@ -45,25 +45,25 @@ class MultiCfgInitMixin():
 
         self.config_dirs = []
 
-        self.config_dirs.append(Path('/etc') / self.config_dir)
+        self.config_dirs.append(Path("/etc") / self.config_dir)
 
-        path = Path(os.path.expanduser('~')) / '.config' / self.config_dir
+        path = Path(os.path.expanduser("~")) / ".config" / self.config_dir
         if path in self.config_dirs:
             self.config_dirs.remove(path)
 
         self.config_dirs.append(path)
         if self.is_venv():
-            path = Path(sys.prefix) / 'etc'
+            path = Path(sys.prefix) / "etc"
             if path in self.config_dirs:
                 self.config_dirs.remove(path)
             self.config_dirs.append(path)
 
-        path = Path.cwd() / 'etc'
+        path = Path.cwd() / "etc"
         if path in self.config_dirs:
             self.config_dirs.remove(path)
         self.config_dirs.append(path)
 
-        path = self.base_dir / 'etc'
+        path = self.base_dir / "etc"
         if path in self.config_dirs:
             self.config_dirs.remove(path)
         self.config_dirs.append(path)
@@ -100,29 +100,28 @@ class MultiCfgInitMixin():
             if is_sequence(additional_stems):
                 for stem in additional_stems:
                     if not isinstance(stem, (six.string_types, six.binary_type, Path)):
-                        msg = _('Stem {!r} is not a String type.').format(stem)
+                        msg = _("Stem {!r} is not a String type.").format(stem)
                         raise TypeError(msg)
                     s = str(to_str(stem))
                     if not self.valid_stem(s):
-                        msg = _('File name stem {!r} is invalid.').format(s)
+                        msg = _("File name stem {!r} is invalid.").format(s)
                         raise ValueError(msg)
                     if s not in self.stems:
                         self.stems.append(s)
             else:
-                if not isinstance(additional_stems, (
-                        six.string_types, six.binary_type, Path)):
-                    msg = _('Stem {!r} is not a String type.').format(additional_stems)
+                if not isinstance(additional_stems, (six.string_types, six.binary_type, Path)):
+                    msg = _("Stem {!r} is not a String type.").format(additional_stems)
                     raise TypeError(msg)
                 s = str(to_str(additional_stems))
                 if not self.valid_stem(s):
-                    msg = _('File name stem {!r} is invalid.').format(s)
+                    msg = _("File name stem {!r} is invalid.").format(s)
                     raise ValueError(msg)
                 if s not in self.stems:
                     self.stems.append(s)
 
         if not self.stems or append_appname_to_stems:
             if not self.valid_stem(self.appname):
-                msg = _('File name stem {!r} is invalid.').format(self.appname)
+                msg = _("File name stem {!r} is invalid.").format(self.appname)
                 raise ValueError(msg)
             if self.appname not in self.stems:
                 self.stems.append(self.appname)
@@ -131,7 +130,7 @@ class MultiCfgInitMixin():
     def append_stem(self, stem):
         """Append the given stem to the list of basename stems."""
         if self.verbose > 2:
-            LOG.debug('Appending basename stem {!r} ...'.format(stem))
+            LOG.debug("Appending basename stem {!r} ...".format(stem))
 
         stems = []
 
@@ -155,7 +154,7 @@ class MultiCfgInitMixin():
     def prepend_stem(self, stem):
         """Put the given stem to the begin of the list of basename stems."""
         if self.verbose > 2:
-            LOG.debug('Prepending basename stem {!r} ...'.format(stem))
+            LOG.debug("Prepending basename stem {!r} ...".format(stem))
 
         stems = [stem]
 
@@ -168,15 +167,15 @@ class MultiCfgInitMixin():
     # -------------------------------------------------------------------------
     def _init_types(self):
         """Initialize configuration types and their assigned file extensions."""
-        invalid_msg = _('Invalid configuration type {t!r} - not found in {w!r}.')
+        invalid_msg = _("Invalid configuration type {t!r} - not found in {w!r}.")
 
         for cfg_type in self.available_cfg_types:
 
             if cfg_type not in self.default_loader_methods:
-                msg = invalid_msg.format(t=cfg_type, w='default_loader_methods')
+                msg = invalid_msg.format(t=cfg_type, w="default_loader_methods")
                 raise RuntimeError(msg)
             if cfg_type not in self.default_type_extension_patterns:
-                msg = invalid_msg.format(t=cfg_type, w='default_type_extension_patterns')
+                msg = invalid_msg.format(t=cfg_type, w="default_type_extension_patterns")
                 raise RuntimeError(msg)
 
             method = self.default_loader_methods[cfg_type]
@@ -196,7 +195,7 @@ class MultiCfgInitMixin():
             self.ext_patterns[type_name] = []
         self.ext_patterns[type_name].append(ext_pattern)
         self.ext_loader[ext_pattern] = loader_method_name
-        self.ext_re[ext_pattern] = re.compile(r'\.' + ext_pattern + r'$', re.IGNORECASE)
+        self.ext_re[ext_pattern] = re.compile(r"\." + ext_pattern + r"$", re.IGNORECASE)
         if ini_style is not None:
             if ini_style:
                 if ext_pattern not in self.ini_style_types:
@@ -208,7 +207,7 @@ class MultiCfgInitMixin():
 
 # =============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     pass
 
