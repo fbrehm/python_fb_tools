@@ -1,5 +1,5 @@
 %define version @@@Version@@@
-%define builddir python@@@py_version_nodot@@@_fb-tools-%{version}
+%define builddir python@@@py_version_nodot@@@-fb-tools-%{version}
 
 Name:           python@@@py_version_nodot@@@-fb-tools
 Version:        %{version}
