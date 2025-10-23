@@ -74,7 +74,7 @@ jobs:
       smtp_server_port: ${{ needs.prepare-image.outputs.smtp_server_port }}
       smtp_sender_address: ${{ needs.prepare-image.outputs.smtp_sender_address }}
       smtp_recipient_addresses: ${{ needs.prepare-image.outputs.smtp_recipient_addresses }}
-      revision: 2
+      revision: 3
     secrets:
       pypi_token: ${{ secrets.PYPI_TOKEN }}
       public_key: ${{ secrets.GPG_PUBLIC_KEY }}
