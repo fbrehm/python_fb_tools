@@ -21,6 +21,7 @@ BuildRequires:  python%{python3_pkgversion}-pytz
 BuildRequires:  python%{python3_pkgversion}-six
 BuildRequires:  python%{python3_pkgversion}-fb-logging >= 1.0.0
 BuildRequires:  python%{python3_pkgversion}-chardet
+BuildRequires:  python%{python3_pkgversion}-pyyaml
 BuildRequires:  pyproject-rpm-macros
 Requires:       python%{python3_pkgversion}
 Requires:       python%{python3_pkgversion}-libs
@@ -30,7 +31,8 @@ Requires:       python%{python3_pkgversion}-requests
 Requires:       python%{python3_pkgversion}-six
 Requires:       python%{python3_pkgversion}-fb-logging >= 1.0.0
 Requires:       python%{python3_pkgversion}-chardet
-Recommends:     python%{python3_pkgversion}-pyyaml
+Requires:       python%{python3_pkgversion}-pyyaml
+Requires:       python%{python3_pkgversion}-semver
 BuildArch:      noarch
 
 %description
