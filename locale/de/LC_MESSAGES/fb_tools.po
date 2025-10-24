@@ -1,24 +1,25 @@
 # German translations for fb_tools.
-# Copyright (C) 2024 Frank Brehm, Berlin
+# Copyright (C) 2025 Frank Brehm, Berlin
 # This file is distributed under the same license as the fb_tools project.
-# Frank Brehm <frank.brehm@pixelpark.com>, 2024.
+# Frank Brehm <frank@brehm-online.com>, 2025.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.4.2\n"
+"Project-Id-Version: fb_tools 2.8.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2024-03-13 15:17+0100\n"
-"PO-Revision-Date: 2024-03-13 15:30+0100\n"
+"POT-Creation-Date: 2025-06-13 17:47+0200\n"
+"PO-Revision-Date: 2024-10-30 17:40+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de\n"
 "Language-Team: de <frank@brehm-online.com>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.17.0\n"
 
-#: bin/get-file-to-remove:72 bin/myip:75 bin/update-ddns:75
+#: bin/get-file-to-remove:72 bin/myip:75 bin/show-spinner:72 bin/update-ddns:75
+#, python-brace-format
 msgid ""
 "{c}-Object:\n"
 "{a}"
@@ -26,15 +27,17 @@ msgstr ""
 "{c}-Objekt:\n"
 "{a}"
 
-#: lib/fb_tools/app.py:65
+#: lib/fb_tools/app.py:98
 msgid "Forced execution - whatever it means."
 msgstr "Forcierte Ausführung, was auch immer das bedeuten mag."
 
-#: lib/fb_tools/app.py:155
+#: lib/fb_tools/app.py:193
+#, python-brace-format
 msgid "Invalid env_prefix {!r} given - it may not be empty."
 msgstr "Ungültiger env_prefix {!r} übergeben - er darf nicht leer sein."
 
-#: lib/fb_tools/app.py:159
+#: lib/fb_tools/app.py:198
+#, python-brace-format
 msgid ""
 "Invalid characters found in env_prefix {!r}, only alphanumeric characters and digits and "
 "underscore (this not as the first character) are allowed."
@@ -42,198 +45,225 @@ msgstr ""
 "Ungültige Zeichen in env_prefix {!r} gefunden, nur alphanumerische Zeichen und Unterstriche "
 "(diese aber nicht als erstes Zeichen) sind erlaubt."
 
-#: lib/fb_tools/app.py:170
+#: lib/fb_tools/app.py:208
 msgid "Unknown and undescriped application."
 msgstr "Unbekannte und nicht beschriebene Anwendung."
 
-#: lib/fb_tools/app.py:198
+#: lib/fb_tools/app.py:236
+#, python-brace-format
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr "Falscher Wert für exit_value {!r}, muss größer als oder gleich Null sein."
 
-#: lib/fb_tools/app.py:457
+#: lib/fb_tools/app.py:495
+#, python-brace-format
 msgid "Trying to get {} via console ..."
 msgstr "Versuche {} über die Konsole zu bekommen …"
 
-#: lib/fb_tools/app.py:473
+#: lib/fb_tools/app.py:511 lib/fb_tools/show_spinner_app.py:225
+#, python-brace-format
 msgid "Got a signal {}."
 msgstr "Erhielt ein Signal {}."
 
-#: lib/fb_tools/app.py:476
+#: lib/fb_tools/app.py:514 lib/fb_tools/show_spinner_app.py:228
+#, python-brace-format
 msgid "Got a signal {n!r} ({s})."
 msgstr "Erhielt ein Signal {n!r} ({s})."
 
-#: lib/fb_tools/app.py:483
+#: lib/fb_tools/app.py:521 lib/fb_tools/show_spinner_app.py:237
+#, python-brace-format
 msgid "Exit on signal {n!r} ({s})."
 msgstr "Beendigung auf Signal {n!r} ({s})."
 
-#: lib/fb_tools/app.py:491
+#: lib/fb_tools/app.py:529 lib/fb_tools/show_spinner_app.py:244
 msgid "Tweaking signal handlers."
 msgstr "Schraube an den Signalhandlern."
 
-#: lib/fb_tools/app.py:497
+#: lib/fb_tools/app.py:535 lib/fb_tools/show_spinner_app.py:250
+#, python-brace-format
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr "Setze Signalhandler für {n!r} ({s})."
 
-#: lib/fb_tools/app.py:508
+#: lib/fb_tools/app.py:546
 msgid "Enter "
 msgstr "Eingabe von "
 
-#: lib/fb_tools/app.py:515
+#: lib/fb_tools/app.py:553
 msgid "Repeat enter "
 msgstr "Wiederholen der Eingabe von "
 
-#: lib/fb_tools/app.py:525
+#: lib/fb_tools/app.py:563
+#, python-brace-format
 msgid "{n} and repeated {n} did not match."
 msgstr "{n} und das wiederholte {n} stimmen nicht überein."
 
-#: lib/fb_tools/app.py:529
+#: lib/fb_tools/app.py:567 lib/fb_tools/show_spinner_app.py:269
 msgid "Restoring original signal handlers."
 msgstr "Stelle original Signalhandler wieder her."
 
-#: lib/fb_tools/app.py:534
+#: lib/fb_tools/app.py:572
+#, python-brace-format
 msgid "Got {n!r}: {s!r}"
 msgstr "Erhielt {n!r}: {s!r}"
 
-#: lib/fb_tools/app.py:584
+#: lib/fb_tools/app.py:622
 msgid "The application is not completely initialized."
 msgstr "Die Anwendung ist nicht vollständig initialisiert."
 
-#: lib/fb_tools/app.py:595
+#: lib/fb_tools/app.py:633
+#, python-brace-format
 msgid "Object {!r} seems not to be completely initialized."
 msgstr "Das {!r}-Objekt scheit noch nicht vollständig initialisiert zu sein."
 
-#: lib/fb_tools/app.py:605
+#: lib/fb_tools/app.py:643
 msgid "Ending."
 msgstr "Beenden."
 
-#: lib/fb_tools/app.py:623
+#: lib/fb_tools/app.py:661
+#, python-brace-format
 msgid "Executing {} ..."
 msgstr "Führe {} aus …"
 
-#: lib/fb_tools/app.py:645
+#: lib/fb_tools/app.py:683
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
-#: lib/fb_tools/app.py:650
+#: lib/fb_tools/app.py:688
 msgid "Simulation mode, nothing is really done."
 msgstr "Simulations-Modus, es wird nichts wirklich verändert."
 
-#: lib/fb_tools/app.py:664 lib/fb_tools/app.py:670
+#: lib/fb_tools/app.py:702 lib/fb_tools/app.py:708
+#, python-brace-format
 msgid "Automatically answer '{}' for all questions."
 msgstr "Automatisch alle Fragen mit {} beantworten."
 
-#: lib/fb_tools/app.py:665 lib/fb_tools/handling_obj.py:1048
+#: lib/fb_tools/app.py:703 lib/fb_tools/handling_obj.py:1168
 msgid "Yes"
 msgstr "Ja"
 
-#: lib/fb_tools/app.py:671 lib/fb_tools/handling_obj.py:1046
+#: lib/fb_tools/app.py:709 lib/fb_tools/handling_obj.py:1166
 msgid "No"
 msgstr "Nein"
 
-#: lib/fb_tools/app.py:676 lib/fb_tools/ddns/__init__.py:174
+#: lib/fb_tools/app.py:714 lib/fb_tools/ddns/__init__.py:192 lib/fb_tools/show_spinner_app.py:138
 msgid "SECONDS"
 msgstr "SEKUNDEN"
 
-#: lib/fb_tools/app.py:678
+#: lib/fb_tools/app.py:716
+#, python-brace-format
 msgid "The timeout in seconds for console input. Default: {}"
 msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Konsolen-Eingaben Vorgabe: {}."
 
-#: lib/fb_tools/app.py:685
+#: lib/fb_tools/app.py:723
 msgid "Use colored output for messages."
 msgstr "Verwenden kolorierter Ausgabe für Mitteilungen."
 
-#: lib/fb_tools/app.py:688
+#: lib/fb_tools/app.py:726
 msgid "Increase the verbosity level"
 msgstr "Erhöhen des Ausführichkeits-Niveaus"
 
-#: lib/fb_tools/app.py:697
+#: lib/fb_tools/app.py:735
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr "Stillschweigende Ausführung, nur Warnungen und Fehler werden ausgegeben."
 
-#: lib/fb_tools/app.py:707
+#: lib/fb_tools/app.py:745
 msgid "Show this help message and exit."
 msgstr "Zeigt diesen Hilfe-Bildschirm und beendet sich."
 
-#: lib/fb_tools/app.py:711
+#: lib/fb_tools/app.py:749
 msgid "Display brief usage message and exit."
 msgstr "Zeigt eine kurze Darstellug zur Verwendung und beendet sich."
 
-#: lib/fb_tools/app.py:713
-#, python-format
+#: lib/fb_tools/app.py:751
+#, python-brace-format, python-format
 msgid "Version of %(prog)s: {}"
 msgstr "Version von %(prog)s: {}"
 
-#: lib/fb_tools/app.py:716
+#: lib/fb_tools/app.py:754
 msgid "Show program's version number and exit."
 msgstr "Stellt die Programm-Version dar und beendet sich."
 
-#: lib/fb_tools/app.py:846
+#: lib/fb_tools/app.py:884
 msgid "Starting in:"
 msgstr "Start in:"
 
-#: lib/fb_tools/app.py:868
+#: lib/fb_tools/app.py:906
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
 
 #: lib/fb_tools/argparse_actions.py:58
+#, python-brace-format
 msgid "Got a {c} for pattern {p!r}: {e}"
 msgstr "Habe ein(e) {c} zum Suchmuster {p!r} erhalten: {e}"
 
 #: lib/fb_tools/argparse_actions.py:84
+#, python-brace-format
 msgid "The path {!r} must be an absolute path."
 msgstr "Der Pfad muss ein absoluter Pfad sein."
 
 #: lib/fb_tools/argparse_actions.py:90
+#, python-brace-format
 msgid "The directory {!r} does not exists."
 msgstr "Das Verzeichnis {!r} existiert nicht."
 
 #: lib/fb_tools/argparse_actions.py:94
+#, python-brace-format
 msgid "The given path {!r} exists, but is not a directory."
 msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
 
 #: lib/fb_tools/argparse_actions.py:98
+#, python-brace-format
 msgid "The given directory {!r} is not readable."
 msgstr "Das angegebene Verzeichnis {!r} ist nicht lesbar."
 
 #: lib/fb_tools/argparse_actions.py:102
+#, python-brace-format
 msgid "The given directory {!r} is not writeable."
 msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
 
 #: lib/fb_tools/argparse_actions.py:130
+#, python-brace-format
 msgid "Directory {!r} does not exists."
 msgstr "Das Verzeichnis {!r} existiert nicht."
 
 #: lib/fb_tools/argparse_actions.py:133
+#, python-brace-format
 msgid "Path {!r} exists, but is not a directory."
 msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
 
 #: lib/fb_tools/argparse_actions.py:139 lib/fb_tools/argparse_actions.py:174
 #: lib/fb_tools/get_file_rm_app.py:397
+#, python-brace-format
 msgid "File {!r} is not a regular file."
 msgstr "Die Datei {!r} ist keine reguläre Datei."
 
 #: lib/fb_tools/argparse_actions.py:142
+#, python-brace-format
 msgid "File {!r} is not writeable."
 msgstr "Die Datei {!r} ist nicht schreibbar."
 
 #: lib/fb_tools/argparse_actions.py:146
+#, python-brace-format
 msgid "Directory {!r} is not writeable."
 msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
 
 #: lib/fb_tools/argparse_actions.py:171 lib/fb_tools/get_file_rm_app.py:388
 #: lib/fb_tools/multi_config/files.py:216
+#, python-brace-format
 msgid "File {!r} does not exists."
 msgstr "Die Datei {!r} existiert nicht."
 
-#: lib/fb_tools/argparse_actions.py:197 lib/fb_tools/multi_config/__init__.py:561
+#: lib/fb_tools/argparse_actions.py:198 lib/fb_tools/multi_config/__init__.py:562
+#, python-brace-format
 msgid "A timeout must be greater than zero and less or equal to {}."
 msgstr "Ein Timeout muss größer als Null und kleiner oder gleich {} sein."
 
 #: lib/fb_tools/argparse_actions.py:202
+#, python-brace-format
 msgid "Wrong timeout {!r}:"
 msgstr "Ungültiger Timeout {!r}:"
 
 #: lib/fb_tools/cfg_app.py:61
+#, python-brace-format
 msgid "Parameter {cls!r} must be a subclass of {clinfo!r}."
 msgstr "Der Parameter {cls!r} muss eine von {clinfo!r} abgeleitete Klasse sein."
 
@@ -254,6 +284,7 @@ msgid "A logfile for storing all logging output."
 msgstr "Eine Logdatei, um alle Log-Ausgaben hineinzuschreiben."
 
 #: lib/fb_tools/cfg_app.py:152
+#, python-brace-format
 msgid "Default: {!r}."
 msgstr "Vorgabe: {!r}."
 
@@ -266,84 +297,102 @@ msgid "Error on reading configuration:"
 msgstr "Fehler beim Lesen der Konfiguration:"
 
 #: lib/fb_tools/cfg_app.py:219 lib/fb_tools/pidfile.py:503
+#, python-brace-format
 msgid "Got a {c}: {e}."
 msgstr "Hab eine(e) {c} erhalten: {e}."
 
-#: lib/fb_tools/cfg_app.py:241
+#: lib/fb_tools/cfg_app.py:244
 msgid "file is not writeable."
 msgstr "die Datei ist nicht schreibbar."
 
-#: lib/fb_tools/cfg_app.py:244
+#: lib/fb_tools/cfg_app.py:247
 msgid "no write access to directory."
 msgstr "kein Schreibzugriff auf das Verzeichnis."
 
-#: lib/fb_tools/cfg_app.py:246
+#: lib/fb_tools/cfg_app.py:249
+#, python-brace-format
 msgid "Start logging into file {!r} ..."
 msgstr "Beginne Logging in Datei {!r} …"
 
-#: lib/fb_tools/collections.py:60
+#: lib/fb_tools/colcts.py:60 lib/fb_tools/collections.py:60
+#, python-brace-format
 msgid "Item {item!r} must be of type {must!r}, but is of type {cls!r} instead."
 msgstr "Der Eintrag {item!r} muss vom Typ {must!r} sein, ist aber statt dessen vom Typ {cls!r}."
 
-#: lib/fb_tools/collections.py:78
+#: lib/fb_tools/colcts.py:78 lib/fb_tools/collections.py:78
+#, python-brace-format
 msgid "Object {o!r} is not a {e} object."
 msgstr "Das Objekt {o!r} ist kein {e}-Objekt."
 
-#: lib/fb_tools/collections.py:96
+#: lib/fb_tools/colcts.py:96 lib/fb_tools/collections.py:96
+#, python-brace-format
 msgid "Key {key!r} must be of type {must!r}, but is of type {cls!r} instead."
 msgstr "Der Schlüssel muss vom Typ {must!r} sein, ist aber statt dessen vom Typ {cls!r}."
 
-#: lib/fb_tools/collections.py:113
+#: lib/fb_tools/colcts.py:114 lib/fb_tools/collections.py:114
+#, python-brace-format
 msgid "Object is neither a {m} object, nor a sequential object, but a {o!r} object instead."
 msgstr ""
 "Das Objekt ist weder ein {m}-Objekt noch ein sequentielles Objekt, aber statt dessen vom Typ "
 "{o!r}."
 
-#: lib/fb_tools/collections.py:132
+#: lib/fb_tools/colcts.py:132 lib/fb_tools/collections.py:132
+#, python-brace-format
 msgid "Key {!r} is not existing."
 msgstr "Der Schlüssel {!r} existiert nicht."
 
-#: lib/fb_tools/collections.py:151 lib/fb_tools/collections.py:170
+#: lib/fb_tools/colcts.py:151 lib/fb_tools/colcts.py:170 lib/fb_tools/collections.py:151
+#: lib/fb_tools/collections.py:170
+#, python-brace-format
 msgid "Could update {ex} with {i!r}: {m}"
 msgstr "Konnte {ex} nicht mit {i!r} updaten: {m}"
 
-#: lib/fb_tools/collections.py:194
+#: lib/fb_tools/colcts.py:194 lib/fb_tools/collections.py:194
+#, python-brace-format
 msgid "Parameter {p!r} is not a sequence type, but a {c!r} object instead."
 msgstr "Der Parameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Typ {c!r}."
 
-#: lib/fb_tools/collections.py:1005
+#: lib/fb_tools/colcts.py:1005 lib/fb_tools/collections.py:1005
+#, python-brace-format
 msgid "The method {met}() expected at most {max} arguments, got {got}."
 msgstr "Die Methode {met}() erwartet höchstens {max} Argumente, hat aber {got} erhalten."
 
-#: lib/fb_tools/common.py:166
+#: lib/fb_tools/common.py:168
+#, python-brace-format
 msgid "{} is a tty."
 msgstr "{} ist ein tty."
 
-#: lib/fb_tools/common.py:170
+#: lib/fb_tools/common.py:172
 msgid "Platform is Windows and not ansi_term."
 msgstr "Die Plattform ist Windows und nicht ansi_term."
 
-#: lib/fb_tools/common.py:174
+#: lib/fb_tools/common.py:176
+#, python-brace-format
 msgid "{} is not a tty."
 msgstr "{} ist kein tty."
 
-#: lib/fb_tools/common.py:565
+#: lib/fb_tools/common.py:567
+#, python-brace-format
 msgid "Given value is {!r}."
 msgstr "Der übergebene Wert ist {!r}."
 
-#: lib/fb_tools/common.py:604
+#: lib/fb_tools/common.py:606
+#, python-brace-format
 msgid "Could not determine bytes in {!r}."
 msgstr "Konnte die Bytes nicht in {!r} ermitteln."
 
-#: lib/fb_tools/common.py:689
+#: lib/fb_tools/common.py:691
+#, python-brace-format
 msgid "Couldn't detect unit {!r}."
 msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
 
-#: lib/fb_tools/common.py:795
+#: lib/fb_tools/common.py:797
+#, python-brace-format
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
 
-#: lib/fb_tools/config.py:89 lib/fb_tools/multi_config/__init__.py:198
+#: lib/fb_tools/config.py:90 lib/fb_tools/multi_config/__init__.py:199
+#, python-brace-format
 msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
 msgstr "Die Kodierung {v!r} muss ein {s!r}-Objekt sein, ist aber statt dessen ein {c!r}-Objekt."
 
@@ -356,14 +405,17 @@ msgid "A configuration file may not be None."
 msgstr "Eine Konfigurations-Datei darf nicht None sein."
 
 #: lib/fb_tools/config.py:128 lib/fb_tools/config.py:136 lib/fb_tools/multi_config/__init__.py:228
+#, python-brace-format
 msgid "Configuration file {!r} exists, but is not a regular file."
 msgstr "Die Konfigurations-Datei {!r} existiert, ist aber keine reguläre Datei."
 
 #: lib/fb_tools/config.py:166
+#, python-brace-format
 msgid "Searching for {!r} ..."
 msgstr "Suche nach {!r} …"
 
 #: lib/fb_tools/config.py:168
+#, python-brace-format
 msgid "Configuration file {!r} not found."
 msgstr "Die Konfigurations-Datei {!r} wurde nicht gefunden."
 
@@ -372,10 +424,12 @@ msgid "Configuration file error"
 msgstr "Konfigurationsdatei-Fehler"
 
 #: lib/fb_tools/config.py:181
+#, python-brace-format
 msgid "Reading {!r} ..."
 msgstr "Lese {!r} …"
 
 #: lib/fb_tools/config.py:192
+#, python-brace-format
 msgid "Wrong configuration in {!r} found"
 msgstr "Falsche Konfiguration in {!r} gefunden"
 
@@ -384,38 +438,43 @@ msgid "Configuration parse error"
 msgstr "Fehler beim Parsen der Konfiguration"
 
 #: lib/fb_tools/config.py:217 lib/fb_tools/multi_config/__init__.py:530
+#, python-brace-format
 msgid "Checking config section {!r} ..."
 msgstr "Überprüfe Konfigurationsabschnitt {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:76
+#: lib/fb_tools/ddns/__init__.py:79
 msgid "This is a base DDNS related application."
 msgstr "Das ist eine DDNS-bezogene Basisanwendung."
 
-#: lib/fb_tools/ddns/__init__.py:99
+#: lib/fb_tools/ddns/__init__.py:103
+#, python-brace-format
 msgid "Invalid user agent {!r} given."
 msgstr "Ungültiger User-Agent {!r} übergeben."
 
-#: lib/fb_tools/ddns/__init__.py:128
+#: lib/fb_tools/ddns/__init__.py:146
 msgid "DDNS options"
 msgstr "DDNS-Optionen"
 
-#: lib/fb_tools/ddns/__init__.py:139 lib/fb_tools/ddns/__init__.py:142
+#: lib/fb_tools/ddns/__init__.py:157 lib/fb_tools/ddns/__init__.py:160
+#, python-brace-format
 msgid "Perform action only for {}."
 msgstr "Führe die Aktion nur für {} aus."
 
-#: lib/fb_tools/ddns/__init__.py:145
+#: lib/fb_tools/ddns/__init__.py:164
+#, python-brace-format
 msgid "The IP protocol, for which the action should be performed (one of {c}, default {d!r})."
 msgstr "Das IP-Protokoll, für das die Aktion ausgeführt werden soll (eins ais {c}, Vorgabe {d!r})."
 
-#: lib/fb_tools/ddns/__init__.py:159
+#: lib/fb_tools/ddns/__init__.py:177
 msgid "PROTOCOL"
 msgstr "PROTOKOLL"
 
-#: lib/fb_tools/ddns/__init__.py:164
+#: lib/fb_tools/ddns/__init__.py:182
 msgid "DIRECTORY"
 msgstr "VERZEICHNIS"
 
-#: lib/fb_tools/ddns/__init__.py:167
+#: lib/fb_tools/ddns/__init__.py:186
+#, python-brace-format
 msgid ""
 "The directory, where to read and write the cache files of the evaluated IP addresses (default: "
 "{!r})."
@@ -423,142 +482,179 @@ msgstr ""
 "Das Verzeichnis, von wo Cache-Dateien mit den ermittelten IP-Adresses und wohin sie auch "
 "geschrieben werden (Vorgabe: {!r})."
 
-#: lib/fb_tools/ddns/__init__.py:175
+#: lib/fb_tools/ddns/__init__.py:193
+#, python-brace-format
 msgid "The timeout in seconds for Web requests (default: {})."
 msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Web-Abfragen (Vorgabe: {})."
 
-#: lib/fb_tools/ddns/__init__.py:211 lib/fb_tools/ddns/config.py:244
+#: lib/fb_tools/ddns/__init__.py:200
+#, python-brace-format
+msgid ""
+"By default, every secure connection {app} makes is verified to be secure before the request "
+"takes place. This option makes {app} skip the verification step and proceed without checking."
+msgstr ""
+"Normalerweise wird von {app} jede sichere Verbindung vor der Abfrage überprüft, ob sie wirklich "
+"sicher ist. Diese Option veranlaßt {app}, diese Überprüfung zu überspringen und weiterzufahren."
+
+#: lib/fb_tools/ddns/__init__.py:237 lib/fb_tools/ddns/config.py:244
+#, python-brace-format
 msgid "Invalid value {!r} as timeout:"
 msgstr "Ungültiger Wert {!r} für die Zeit der Zeitüberschreitung:"
 
-#: lib/fb_tools/ddns/__init__.py:222
+#: lib/fb_tools/ddns/__init__.py:248
+#, python-brace-format
 msgid "Setting Loglevel of the {m} module to {ll}."
 msgstr "Setze Loglevel des {m}-Moduls auf {ll}."
 
-#: lib/fb_tools/ddns/__init__.py:233
+#: lib/fb_tools/ddns/__init__.py:262
+#, python-brace-format
 msgid "Trying to get my public IPv{} address."
 msgstr "Versuche meine öffentliche IPv{}-Adresse zu ermitteln."
 
-#: lib/fb_tools/ddns/__init__.py:245
+#: lib/fb_tools/ddns/__init__.py:274
 msgid "Got a response:"
 msgstr "Erhaltene Antwort:"
 
-#: lib/fb_tools/ddns/__init__.py:258
+#: lib/fb_tools/ddns/__init__.py:296
+#, python-brace-format
 msgid "Request method: {!r}"
 msgstr "Request-Methode: {!r}"
 
-#: lib/fb_tools/ddns/__init__.py:278
+#: lib/fb_tools/ddns/__init__.py:316
 msgid "Simulation mode, Request will not be sent."
 msgstr "Simulationsmodus, der Request wird nicht gesendet."
 
-#: lib/fb_tools/ddns/__init__.py:291
+#: lib/fb_tools/ddns/__init__.py:329
+#, python-brace-format
 msgid "Got a {c} on requesting {u!r}: {e}."
 msgstr "Habe ein {c} bei der Abfrage von {u!r} erhalten: {e}."
 
-#: lib/fb_tools/ddns/__init__.py:298
+#: lib/fb_tools/ddns/__init__.py:336
 msgid "Failed to parse the response"
 msgstr "Konnte Rückgabe nicht auswerten"
 
-#: lib/fb_tools/ddns/__init__.py:313
+#: lib/fb_tools/ddns/__init__.py:351
 msgid "Text response:"
 msgstr "Erhaltene textuelle Antwort:"
 
-#: lib/fb_tools/ddns/__init__.py:323
+#: lib/fb_tools/ddns/__init__.py:361
+#, python-brace-format
 msgid "Setting encoding of response to {!r}."
 msgstr "Setze Codierung der Antwort auf {!r}."
 
-#: lib/fb_tools/ddns/__init__.py:348
+#: lib/fb_tools/ddns/__init__.py:387
+#, python-brace-format
 msgid "Checking existence and accessibility of working directory {!r} ..."
 msgstr "Überprüfe Existenz und Verfügbarkeit des Arbeitverzeichnisses {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:360
+#: lib/fb_tools/ddns/__init__.py:398
 msgid "No read access"
 msgstr "Kein Lesezugriff"
 
-#: lib/fb_tools/ddns/__init__.py:364
+#: lib/fb_tools/ddns/__init__.py:402
 msgid "No write access"
 msgstr "Kein Schreinzugriff"
 
-#: lib/fb_tools/ddns/__init__.py:379
+#: lib/fb_tools/ddns/__init__.py:418
+#, python-brace-format
 msgid "Writing IP address {a!r} into {f!r} ..."
 msgstr "Schreibe IP-Adresse {a!r} nach {f!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:407
+#: lib/fb_tools/ddns/__init__.py:445
+#, python-brace-format
 msgid "File {!r} not found."
 msgstr "Datei {!r} nicht gefunden."
 
-#: lib/fb_tools/ddns/__init__.py:410
+#: lib/fb_tools/ddns/__init__.py:448
+#, python-brace-format
 msgid "Reading IP address from {!r}..."
 msgstr "Lese IP-Adresse aus {!r} …"
 
-#: lib/fb_tools/ddns/__init__.py:430
+#: lib/fb_tools/ddns/__init__.py:468
+#, python-brace-format
 msgid "Line {li!r} in {f!r} is not a valid IP address:"
 msgstr "Zeile {li!r} in {f!r} ist keine gültige IP-Adresse:"
 
-#: lib/fb_tools/ddns/__init__.py:456 lib/fb_tools/ddns/__init__.py:497
-#: lib/fb_tools/ddns/__init__.py:529
+#: lib/fb_tools/ddns/__init__.py:494 lib/fb_tools/ddns/__init__.py:535
+#: lib/fb_tools/ddns/__init__.py:567
 msgid "Using resolver:"
 msgstr "Verwende Resolver:"
 
-#: lib/fb_tools/ddns/__init__.py:467 lib/fb_tools/ddns/__init__.py:479
+#: lib/fb_tools/ddns/__init__.py:505 lib/fb_tools/ddns/__init__.py:517
+#, python-brace-format
 msgid "Did not found a {t} address for {n}:"
 msgstr "Fand keine {t}-Adresse für {n}:"
 
-#: lib/fb_tools/ddns/__init__.py:488 lib/fb_tools/ddns/__init__.py:520
+#: lib/fb_tools/ddns/__init__.py:526 lib/fb_tools/ddns/__init__.py:558
+#, python-brace-format
 msgid "Cannot execute {method}() - module {mod!r} could not imported."
 msgstr "Kann Methode {method]() nicht ausführen - das Modul {mod!r} konnte nicht importiert werden."
 
-#: lib/fb_tools/ddns/__init__.py:511 lib/fb_tools/ddns/__init__.py:541
+#: lib/fb_tools/ddns/__init__.py:549 lib/fb_tools/ddns/__init__.py:579
+#, python-brace-format
 msgid "Did not found a {t} entry for zone {z}:"
 msgstr "Fand keinen {t}-Eintrag für Zone {z}:"
 
-#: lib/fb_tools/ddns/config.py:131
+#: lib/fb_tools/ddns/config.py:132
+#, python-brace-format
 msgid "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600."
 msgstr ""
 "Ungültige Zeit {!r} für eine Zeitüberschreitung für aine Webabfrage, sie muss zwischen 0 und "
 "3600 Sekunden liegen."
 
-#: lib/fb_tools/ddns/config.py:266
+#: lib/fb_tools/ddns/config.py:267
+#, python-brace-format
 msgid "Invalid value {u!r} for protocols to update in section {s!r}, valid protocols are: "
-msgstr "Ungültiger Wert {u!r} für Protokolle zum Update in Abschnitt {s!r} angegeben, gültige Protokolle sind:"
+msgstr ""
+"Ungültiger Wert {u!r} für Protokolle zum Update in Abschnitt {s!r} angegeben, gültige Protokolle"
+" sind:"
 
 #: lib/fb_tools/ddns/config.py:282
+#, python-brace-format
 msgid "Invalid forced update interval in section {!r}:"
 msgstr "Ungültiges Intervall für forcierte Updates in Abschnitt {s!r} angegeben:"
 
-#: lib/fb_tools/ddns/config.py:286 lib/fb_tools/ddns/config.py:322
+#: lib/fb_tools/ddns/config.py:287 lib/fb_tools/ddns/config.py:323
+#, python-brace-format
 msgid "Unknown configuration option {o!r} with value {v!r} in section {s!r}."
 msgstr "Unbekannte Konfigurationsoption {o!r} mit dem Wert {v!r} in Abschnitt {s!r}."
 
-#: lib/fb_tools/ddns/config.py:307
+#: lib/fb_tools/ddns/config.py:308
+#, python-brace-format
 msgid "The path to the working directory must be an absolute path (given: {!r})."
 msgstr "Der Pfad zum Arbeitsverzeichnis muss ein absoluter Pfad sein (gegeben: {!r})."
 
-#: lib/fb_tools/ddns/config.py:317
+#: lib/fb_tools/ddns/config.py:318
+#, python-brace-format
 msgid "The path to the logfile must be an absolute path (given: {!r})."
 msgstr "Der Pfad zur Logdatei muss absolut sein (gegeben: {!r})."
 
 #: lib/fb_tools/ddns/errors.py:52
+#, python-brace-format
 msgid "Got an error {c} on requesting {u!r}: {m}"
 msgstr "Habe einen Fehler {c} beim Abfrage der URL {u!r} erhalten: {m}"
 
 #: lib/fb_tools/ddns/errors.py:64
+#, python-brace-format
 msgid "There is a problem with the update status file {!r}"
 msgstr "Es gibt ein Problem mit der Update-Statusdatei {!r}"
 
 #: lib/fb_tools/ddns/errors.py:79
+#, python-brace-format
 msgid "There is a problem with the working directory {!r}"
 msgstr "Es gibt ein Problem mit dem Arbeitsverzeichnis {!r}"
 
 #: lib/fb_tools/ddns/errors.py:94
+#, python-brace-format
 msgid "Working directory {!r} does not exists"
 msgstr "Das Arbeitsverzeichnis {!r} existiert nicht"
 
 #: lib/fb_tools/ddns/errors.py:124
+#, python-brace-format
 msgid "Invalid permissions for working directory {!r}"
 msgstr "Ungenügende Rechte für das Arbeitsverzeichnis {!r}"
 
-#: lib/fb_tools/ddns/myip_app.py:47
+#: lib/fb_tools/ddns/myip_app.py:48
 msgid ""
 "Tries to detect the public NAT IPv4 address and/or the automatic assigned IPv6 address in a "
 "local network and print it out."
@@ -567,10 +663,12 @@ msgstr ""
 " lokalem Netzwerk zu ermitten und zu zeigen."
 
 #: lib/fb_tools/ddns/myip_app.py:52 lib/fb_tools/ddns/myip_app.py:53
+#, python-brace-format
 msgid "Use only {} to retreive the public IP address."
 msgstr "Verwende nur {}, um die öffentliche IP-Adresse zu ermiteln."
 
-#: lib/fb_tools/ddns/myip_app.py:54
+#: lib/fb_tools/ddns/myip_app.py:55
+#, python-brace-format
 msgid "The IP protocol, for which the public IP should be retrieved (one of {c}, default {d!r})."
 msgstr ""
 "Das IP-Protokoll, für welches die öffentliche IP-Adresse ermittelt werden soll (eins aus {c}, "
@@ -585,14 +683,17 @@ msgid "Write found public IPs into a cache file in working directory."
 msgstr "Schreibe die gefundenen öffentliche IP-Adressen in eine Cache-Datei im Arbeitsverzeichnis zurück."
 
 #: lib/fb_tools/ddns/myip_app.py:137 lib/fb_tools/ddns/update_app.py:462
+#, python-brace-format
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr "Starte {a!r}, Version {v!r} …"
 
 #: lib/fb_tools/ddns/update_app.py:89
+#, python-brace-format
 msgid "No valid domain given on initialization of a {} object."
 msgstr "Keine gültige Domäne bei der Initialisierung eines {}-Objektes angegeben."
 
 #: lib/fb_tools/ddns/update_app.py:119
+#, python-brace-format
 msgid "Invalid domain {!r} given, whitespaces are not allowed."
 msgstr "Ungültige Domäne angegeben, Leerzeichen sind nicht erlaubt."
 
@@ -601,6 +702,7 @@ msgid "A timestamp must not be None."
 msgstr "Ein Timeout darf nicht None sein."
 
 #: lib/fb_tools/ddns/update_app.py:241
+#, python-brace-format
 msgid "Checking working directory {d!r} for updating {what} ..."
 msgstr "Überprüfe Arbeitsverzeichnis {d!r} zur Aktualisierung von {what} …"
 
@@ -617,10 +719,12 @@ msgid "working directory is not writeable."
 msgstr "Das Arbeitsverzeichnis ist nicht beschreibbar."
 
 #: lib/fb_tools/ddns/update_app.py:264
+#, python-brace-format
 msgid "Checking update status file {!r} ..."
 msgstr "Überprüfe Aktualisierungs-Statusdatei {!r} …"
 
 #: lib/fb_tools/ddns/update_app.py:269
+#, python-brace-format
 msgid "Update status file {!r} does not exists."
 msgstr "Die Aktualisierungs-Statusdatei {!r} existiert nicht."
 
@@ -633,6 +737,7 @@ msgid "update status file is not writeable."
 msgstr "die Aktualisierungs-Statusdatei ist nicht beschreibbar."
 
 #: lib/fb_tools/ddns/update_app.py:287
+#, python-brace-format
 msgid "Write status into {!r} ..."
 msgstr "Schreibe Status in {!r} …"
 
@@ -641,10 +746,12 @@ msgid "Data to write in status file:"
 msgstr "Daten, die in die Statusdatei geschrieben werden:"
 
 #: lib/fb_tools/ddns/update_app.py:306
+#, python-brace-format
 msgid "Simulation mode, file {!r} will not be written."
 msgstr "Simulationsmodus, die Datei {!r} wird nicht geschrieben."
 
 #: lib/fb_tools/ddns/update_app.py:319
+#, python-brace-format
 msgid "Read status from {!r} ..."
 msgstr "Lese Status aus {!r} …"
 
@@ -660,15 +767,17 @@ msgstr "kein Zeitstempel der letzten Aktualisierung gefunden."
 msgid "Updating the DDNS records, even if seems not to be changed."
 msgstr "Aktualisieren der DDNS-Einträge, auch wenn sie nicht verändert zu sein scheinen."
 
-#: lib/fb_tools/ddns/update_app.py:370
+#: lib/fb_tools/ddns/update_app.py:371
 msgid "Tries to update the A and/or AAAA record at ddns.de with the current IP address."
 msgstr "Versucht den A- bzw. AAAA-Eintrag bei ddns.de mit der aktuellen IP-Adresse zu aktualisieren."
 
 #: lib/fb_tools/ddns/update_app.py:375 lib/fb_tools/ddns/update_app.py:376
+#, python-brace-format
 msgid "Update only the {} record with the public IP address."
 msgstr "Aktualisiere nur den {}-Eintrag mit der aktuellen IP-Adresse."
 
-#: lib/fb_tools/ddns/update_app.py:377
+#: lib/fb_tools/ddns/update_app.py:378
+#, python-brace-format
 msgid ""
 "The IP protocol, for which the appropriate DNS record should be updated with the public IP (one "
 "of {c}, default {d!r})."
@@ -711,6 +820,7 @@ msgstr ""
 "sollen)."
 
 #: lib/fb_tools/ddns/update_app.py:475
+#, python-brace-format
 msgid "Ending {a!r}."
 msgstr "Beende {a!r}."
 
@@ -723,14 +833,17 @@ msgid "No domains to update given, but the option all domains is deactivated."
 msgstr "Keine Domänen zur Aktualisierungg angegeben, aber die Option 'für alle Domänen' ist deaktiviert."
 
 #: lib/fb_tools/ddns/update_app.py:505 lib/fb_tools/ddns/update_app.py:521
+#, python-brace-format
 msgid "Found current {t} address {a}."
 msgstr "Fand aktuell {t}-Adresse {a}."
 
 #: lib/fb_tools/ddns/update_app.py:507 lib/fb_tools/ddns/update_app.py:523
+#, python-brace-format
 msgid "Address {a!r} seems not to be a valid {w} address: {e}"
 msgstr "Die Adresse {a!r} scheint keine gültige {w}-Adresse zu sein: {e}"
 
 #: lib/fb_tools/ddns/update_app.py:511 lib/fb_tools/ddns/update_app.py:527
+#, python-brace-format
 msgid "Got no public {} address."
 msgstr "Keine öffentliche {}-Adresse gefunden."
 
@@ -739,54 +852,67 @@ msgid "Currently configured dynamic addresses:"
 msgstr "Aktuell konfigurierte dynamische Adressen:"
 
 #: lib/fb_tools/ddns/update_app.py:546
+#, python-brace-format
 msgid "Did not found update status file {!r}."
 msgstr "Aktualisierungs-Statusdatei {!r} nicht gefunden."
 
 #: lib/fb_tools/ddns/update_app.py:553
+#, python-brace-format
 msgid "{c} - could not evaluate update status file {f!r}: {e}"
 msgstr "{c} - konnte Aktualisierungs-Statusdatei {f!r} nicht auswerten: {e}"
 
 #: lib/fb_tools/ddns/update_app.py:558
+#, python-brace-format
 msgid "Last update was at {dt} with status {st!r}."
 msgstr "Die letzte Aktualisierung war {dt}  mit dem Status {st!r}."
 
 #: lib/fb_tools/ddns/update_app.py:591
+#, python-brace-format
 msgid "Last update of domain {dom!r} is {delta} ago."
 msgstr "Die letzte Aktualisierung der Domäne {dom!r} war vor {delta}."
 
 #: lib/fb_tools/ddns/update_app.py:602
+#, python-brace-format
 msgid "Checking the need for updating the given domain {!r}."
 msgstr "Überprüfe Notwendigkeit zum Aktualisieren der angegebenen Domäne {!r}."
 
-#: lib/fb_tools/ddns/update_app.py:608
+#: lib/fb_tools/ddns/update_app.py:609
+#, python-brace-format
 msgid "Updating the DDNS records of domain {!r}, although if they seems not to be changed."
 msgstr "Aktualisieren der DDNS-Einträge der Domäne {!r}, auch wenn sie nicht verändert zu sein scheinen."
 
 #: lib/fb_tools/ddns/update_app.py:612
+#, python-brace-format
 msgid "Update of domain {!r} is not necessary."
 msgstr "Die Aktualisierung der Domäne {!r} ist nicht notwendig."
 
 #: lib/fb_tools/ddns/update_app.py:615
+#, python-brace-format
 msgid "Updating the DDNS records of domain {!r}."
 msgstr "Aktualisiere DDNS-Einträge der Domäne {!r}."
 
 #: lib/fb_tools/ddns/update_app.py:656
+#, python-brace-format
 msgid "Simulation mode, update of domain {!r} will not be sended."
 msgstr "Simulationsmodus, die Aktualisierung der Domäne {!r} wird nicht gesendet."
 
 #: lib/fb_tools/ddns/update_app.py:672 lib/fb_tools/ddns/update_app.py:763
+#, python-brace-format
 msgid "No response from {}."
 msgstr "Keine Antwort von {}."
 
 #: lib/fb_tools/ddns/update_app.py:674 lib/fb_tools/ddns/update_app.py:765
+#, python-brace-format
 msgid "Response from {}:"
 msgstr "Antwort von {}:"
 
 #: lib/fb_tools/ddns/update_app.py:676 lib/fb_tools/ddns/update_app.py:767
+#, python-brace-format
 msgid "Status code: {c}, status text: {r!r}."
 msgstr "Statuscode: {c}, Statustext: {r!r}."
 
 #: lib/fb_tools/ddns/update_app.py:706
+#, python-brace-format
 msgid "Update all domains at {} with found dynamic external addresses ..."
 msgstr "Aktualisierung aller Domänen mit den gefundenen externen Adressen …"
 
@@ -795,6 +921,7 @@ msgid "Simulation mode, update of all domains will not be sended."
 msgstr "Simulationsmodus, die Aktualisierung aller Domänen wird nicht gesendet."
 
 #: lib/fb_tools/errors.py:56
+#, python-brace-format
 msgid "Config loader method {!r} was not found."
 msgstr "Die Konfigurations-Lade-Methode {!r} wurde nicht gefunden."
 
@@ -803,100 +930,126 @@ msgid "Empty mail address."
 msgstr "Leere Mailadresse."
 
 #: lib/fb_tools/errors.py:107
+#, python-brace-format
 msgid "Wrong mail address {a!r} ({c})"
 msgstr "Ungültige Mailadresse {a!r} ({c})"
 
 #: lib/fb_tools/errors.py:128
+#, python-brace-format
 msgid "Wrong time interval {!r}."
 msgstr "Ungültiges Zeitintervall"
 
-#: lib/fb_tools/errors.py:203
+#: lib/fb_tools/errors.py:210
+#, python-brace-format
 msgid "Process with PID {pid} got signal {signal}."
 msgstr "Der Prozess mit der PID {pid} hat das Signal {signal} erhalten."
 
-#: lib/fb_tools/errors.py:242
+#: lib/fb_tools/errors.py:249
+#, python-brace-format
 msgid "The network {!r} is not existing."
 msgstr "Das Netzerk {!r} existiert nicht."
 
-#: lib/fb_tools/errors.py:272
+#: lib/fb_tools/errors.py:279
+#, python-brace-format
 msgid "Method {func}() has to be overridden in class {cls!r}."
 msgstr "Die Methode {func}() der Klasse {cls!r} muss überschrieben werden."
 
-#: lib/fb_tools/errors.py:301
+#: lib/fb_tools/errors.py:308
+#, python-brace-format
 msgid " (timeout after {:0.1f} secs)"
 msgstr " (Timeout nach {:0.1f} Sekunden)"
 
-#: lib/fb_tools/errors.py:325
+#: lib/fb_tools/errors.py:332
 msgid "Timeout error on reading"
 msgstr "Timeout-Fehler beim Lesen"
 
-#: lib/fb_tools/errors.py:344
+#: lib/fb_tools/errors.py:351
 msgid "Timeout error on writing"
 msgstr "Timeout-Fehler beim Schreiben"
 
-#: lib/fb_tools/errors.py:355
+#: lib/fb_tools/errors.py:362
 msgid "Timeout on answering on the console."
 msgstr "Zeitüberschreitung beim Antworten an der Konsole."
 
-#: lib/fb_tools/errors.py:374
+#: lib/fb_tools/errors.py:381
 msgid "Unknown OS command."
 msgstr "Unbekanntes Betriebssystem-Kommando."
 
-#: lib/fb_tools/errors.py:381
+#: lib/fb_tools/errors.py:388
 msgid "Empty command list given."
 msgstr "Leere Kommando-Liste übergeben."
 
-#: lib/fb_tools/errors.py:389
+#: lib/fb_tools/errors.py:395
 msgid "Could not found OS command:"
 msgid_plural "Could not found OS commands:"
 msgstr[0] "Konnte das Betriebssystem-Kommando nicht finden:"
 msgstr[1] "Konnte die Betriebssystem-Kommandos nicht finden:"
 
-#: lib/fb_tools/errors.py:418
+#: lib/fb_tools/errors.py:425
+#, python-brace-format
 msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
 msgstr "Konnte die Lock-Datei {lf!r} nicht in {d:0.1f} Sekunden mit {tries} Versuchen vereinnahmen."
 
-#: lib/fb_tools/errors.py:447
+#: lib/fb_tools/errors.py:454
+#, python-brace-format
 msgid "There is a problem with path {!r}"
 msgstr "Es gibt ein Problem mit dem Pfad {!r}"
 
-#: lib/fb_tools/errors.py:462
+#: lib/fb_tools/errors.py:469
+#, python-brace-format
 msgid "There is a problem with directory {!r}"
 msgstr "Es gibt ein Problem mit dem Verzeichnis {!r}"
 
-#: lib/fb_tools/errors.py:477
+#: lib/fb_tools/errors.py:484
+#, python-brace-format
 msgid "Directory {!r} does not exists"
 msgstr "Das Verzeichnis {!r} existiert nicht"
 
-#: lib/fb_tools/ddns/errors.py:109 lib/fb_tools/errors.py:492
+#: lib/fb_tools/ddns/errors.py:109 lib/fb_tools/errors.py:499
+#, python-brace-format
 msgid "Path {!r} is not a directory"
 msgstr "Der Pfad {!r} ist kein Verzeichnis."
 
-#: lib/fb_tools/errors.py:507
+#: lib/fb_tools/errors.py:514
+#, python-brace-format
 msgid "Invalid permissions for directory {!r}"
 msgstr "Ungültige Zugriffsrechte auf das Verzeichnis {!r}"
 
-#: lib/fb_tools/errors.py:522
+#: lib/fb_tools/errors.py:529
+#, python-brace-format
 msgid "There is a problem with file {!r}"
 msgstr "Es gibt ein Problem mit der Datei {!r}"
 
-#: lib/fb_tools/errors.py:537
+#: lib/fb_tools/errors.py:544
+#, python-brace-format
 msgid "File {!r} does not exists"
 msgstr "Die Datei {!r} existiert nicht"
 
-#: lib/fb_tools/errors.py:552
+#: lib/fb_tools/errors.py:559
+#, python-brace-format
 msgid "Path {!r} is not a regular file"
 msgstr "Der Pfad {!r} ist keine reguläre Datei"
 
-#: lib/fb_tools/errors.py:567
+#: lib/fb_tools/errors.py:574
+#, python-brace-format
 msgid "Invalid permissions for file {!r}"
 msgstr "Ungültige Zugriffsrechte auf die Datei {!r}"
 
+#: lib/fb_tools/errors.py:603
+msgid "Timeout error on reading from socket"
+msgstr "Timeout-Fehler beim Lesen vom Sockel"
+
+#: lib/fb_tools/errors.py:624
+msgid "Timeout error on writing to socket"
+msgstr "Timeout-Fehler beim Schreiben auf den Sockel"
+
 #: lib/fb_tools/get_file_rm_app.py:62
+#, python-brace-format
 msgid "Value must be at least {m} - {v} was given."
 msgstr "Der Wert muss mindestens {m} sein - {v} wurde gegeben."
 
 #: lib/fb_tools/get_file_rm_app.py:104
+#, python-brace-format
 msgid "The given pattern {!r} is not a valid date pattern"
 msgstr "Das übergebene Muster {!r} is kein gültiges Datums-Muster"
 
@@ -905,7 +1058,7 @@ msgstr "Das übergebene Muster {!r} is kein gültiges Datums-Muster"
 msgid ". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
 msgstr ". Es muss exakt einmal '%Y', einmal '%m' und einmal '%d' angegeben werden."
 
-#: lib/fb_tools/get_file_rm_app.py:140
+#: lib/fb_tools/get_file_rm_app.py:141
 msgid ""
 "Returns a newline separated list of files generated from file globbing patterns given as "
 "arguments to this application, where all files are omitted, which should not be removed."
@@ -917,6 +1070,7 @@ msgstr ""
 #: lib/fb_tools/get_file_rm_app.py:179 lib/fb_tools/get_file_rm_app.py:195
 #: lib/fb_tools/get_file_rm_app.py:211 lib/fb_tools/get_file_rm_app.py:227
 #: lib/fb_tools/get_file_rm_app.py:243
+#, python-brace-format
 msgid "Wrong value {v!r} for {n}, must be >= {m}"
 msgstr "Ungültiger Wert {v!r} für {n}, muss größer als oder gleich {m} sein"
 
@@ -936,7 +1090,8 @@ msgstr "Optionen zum Aufbewahren"
 msgid "NR_FILES"
 msgstr "ANZAHL_DATEIEN"
 
-#: lib/fb_tools/get_file_rm_app.py:276
+#: lib/fb_tools/get_file_rm_app.py:277
+#, python-brace-format
 msgid "How many of the last files should be kept (default: {default}, minimum: {min})?"
 msgstr "Wieviele der letzten Dateien sollen aufbewahrt werden (Vorgabe: {default}, Minimum {min})?"
 
@@ -944,7 +1099,8 @@ msgstr "Wieviele der letzten Dateien sollen aufbewahrt werden (Vorgabe: {default
 msgid "DAYS"
 msgstr "TAGE"
 
-#: lib/fb_tools/get_file_rm_app.py:285
+#: lib/fb_tools/get_file_rm_app.py:286
+#, python-brace-format
 msgid "How many files one per day from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 "Wieviele Dateien (eine pro Tag) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
@@ -954,7 +1110,8 @@ msgstr ""
 msgid "WEEKS"
 msgstr "WOCHEN"
 
-#: lib/fb_tools/get_file_rm_app.py:294
+#: lib/fb_tools/get_file_rm_app.py:295
+#, python-brace-format
 msgid "How many files one per week from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 "Wieviele Dateien (eine pro Woche) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
@@ -964,7 +1121,8 @@ msgstr ""
 msgid "MONTHS"
 msgstr "MONATE"
 
-#: lib/fb_tools/get_file_rm_app.py:303
+#: lib/fb_tools/get_file_rm_app.py:304
+#, python-brace-format
 msgid "How many files one per month from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 "Wieviele Dateien (eine pro Monat) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
@@ -974,13 +1132,15 @@ msgstr ""
 msgid "YEARS"
 msgstr "JAHRE"
 
-#: lib/fb_tools/get_file_rm_app.py:312
+#: lib/fb_tools/get_file_rm_app.py:313
+#, python-brace-format
 msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 "Wieviele Dateien (eine pro Jahr) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
 "{default}, Minimum {min})?"
 
 #: lib/fb_tools/get_file_rm_app.py:343
+#, python-brace-format
 msgid "Resolving date pattern {!r}."
 msgstr "Löse Datumsmuster {!r} auf."
 
@@ -989,6 +1149,7 @@ msgid "Checking given files..."
 msgstr "Überprüfe übergebene Dateien …"
 
 #: lib/fb_tools/get_file_rm_app.py:369
+#, python-brace-format
 msgid "Checking given file {!r} ..."
 msgstr "Überprüfe übergebene Datei {!r} …"
 
@@ -997,26 +1158,32 @@ msgid "Resolved paths:"
 msgstr "Aufgelöste Pfade:"
 
 #: lib/fb_tools/get_file_rm_app.py:381
+#, python-brace-format
 msgid "File pattern {!r} does not match any files."
 msgstr "Das Dateimuster {!r} passt auf keine Dateien."
 
 #: lib/fb_tools/get_file_rm_app.py:386
+#, python-brace-format
 msgid "Checking {!r} ..."
 msgstr "Überprüfe {!r} …"
 
 #: lib/fb_tools/get_file_rm_app.py:392
+#, python-brace-format
 msgid "File {!r} is a regular file."
 msgstr "Die Datei {!r} ist eine reguläre Datei."
 
 #: lib/fb_tools/get_file_rm_app.py:395
+#, python-brace-format
 msgid "Path {!r} is a directory."
 msgstr "Der Pfad {!r} ist ein Verzeichnis."
 
 #: lib/fb_tools/get_file_rm_app.py:402
+#, python-brace-format
 msgid "File {fi!r} does not match pattern {pa!r}."
 msgstr "Die Datei {fi!r} passt nicht in das Dateimuster {pa!r}."
 
 #: lib/fb_tools/get_file_rm_app.py:412
+#, python-brace-format
 msgid "Date in file {fi!r} is not a valid date: {e}."
 msgstr "Das Datum in der Datei {fi!r} ist kein gültiges Datum: {e}."
 
@@ -1025,12 +1192,14 @@ msgid "Did not found any files to evaluate."
 msgstr "Fand keine Dateien zur Auswertung"
 
 #: lib/fb_tools/get_file_rm_app.py:495
+#, python-brace-format
 msgid "Keeping last file ..."
 msgid_plural "Keeping last {} files ..."
 msgstr[0] "Behalte die letzte Datei …"
 msgstr[1] "Behalte die letzten {} Dateien …"
 
 #: lib/fb_tools/get_file_rm_app.py:501
+#, python-brace-format
 msgid "Keep last file {!r}."
 msgstr "Behalte die letzte Datei {!r}."
 
@@ -1043,6 +1212,7 @@ msgid "Files to keep for year:"
 msgstr "Dateien, die für Jahr zu behalten sind:"
 
 #: lib/fb_tools/get_file_rm_app.py:549
+#, python-brace-format
 msgid "Got last month: {!r}"
 msgstr "Ermittelter letzter Monat: {!r}"
 
@@ -1051,6 +1221,7 @@ msgid "Files to keep for month:"
 msgstr "Dateien, die für Monat zu behalten sind:"
 
 #: lib/fb_tools/get_file_rm_app.py:577
+#, python-brace-format
 msgid "Got last Monday: {!r}"
 msgstr "Ermittelter letzter Montag: {!r}"
 
@@ -1059,6 +1230,7 @@ msgid "Files to keep for week:"
 msgstr "Dateien, die für Woche zu behalten sind:"
 
 #: lib/fb_tools/get_file_rm_app.py:603
+#, python-brace-format
 msgid "Got last day: {!r}"
 msgstr "Ermittelter letzter Tag: {!r}"
 
@@ -1071,6 +1243,7 @@ msgid "Files to keep for day:"
 msgstr "Dateien, die für Tag zu behalten sind:"
 
 #: lib/fb_tools/get_file_rm_app.py:638
+#, python-brace-format
 msgid "Trying to get date of file {!r}."
 msgstr "Versuche das Datum aus der Datei {!r} zu entnehmen."
 
@@ -1079,22 +1252,27 @@ msgid "Explored and assigned files:"
 msgstr "Ermittelte und zugewiesene Dateien:"
 
 #: lib/fb_tools/handler/__init__.py:153
+#, python-brace-format
 msgid "Invalid time zone name {!r}."
 msgstr "Ungültiger Zeitzonenname {!r}."
 
 #: lib/fb_tools/handler/__init__.py:155
+#, python-brace-format
 msgid "Setting time zone to {!r}."
 msgstr "Setze Zeitzone auf {!r}."
 
 #: lib/fb_tools/handler/__init__.py:159
+#, python-brace-format
 msgid "Name of the time zone: {!r}."
 msgstr "Name der Zeitzone: {!r}."
 
 #: lib/fb_tools/handler/__init__.py:165
+#, python-brace-format
 msgid "{}-object not initialized."
 msgstr "Das {}-Objekt ist noch nicht initialisiert."
 
 #: lib/fb_tools/handler/__init__.py:167
+#, python-brace-format
 msgid "Method {} must be overridden in descendant classes."
 msgstr "Die Methode {} muss in abgeleiteten Klassen überschrieben werden."
 
@@ -1103,14 +1281,17 @@ msgid "Quiet execution."
 msgstr "Stillschweigende Ausführung."
 
 #: lib/fb_tools/handler/__init__.py:292
+#, python-brace-format
 msgid "Starting synchronous communication with '{}'."
 msgstr "Starte synchrone Kommunikation mit '{}'."
 
 #: lib/fb_tools/handler/__init__.py:296
+#, python-brace-format
 msgid "Finished communication with '{}'."
 msgstr "Kommunikation mit '{}' beendet."
 
 #: lib/fb_tools/handler/__init__.py:310
+#, python-brace-format
 msgid "Parameter {p!r} is not of type {t!r}."
 msgstr "Der Parameter {p!r} ist nicht vom Typ {t!r}."
 
@@ -1119,10 +1300,12 @@ msgid "Got completed process:"
 msgstr "Vollendeten Prozess erhalten:"
 
 #: lib/fb_tools/handler/__init__.py:319 lib/fb_tools/handler/__init__.py:330
+#, python-brace-format
 msgid "Output on {}:"
 msgstr "Ausgabe an {}:"
 
-#: lib/fb_tools/handler/__init__.py:351
+#: lib/fb_tools/handler/__init__.py:352
+#, python-brace-format
 msgid "Starting asynchronous communication with '{cmd}', heartbeat interval is {interval:0.1f} seconds."
 msgstr "Starte asynchrone Kommunikation mit '{cmd}', Herzschlag-Intervall ist {interval:0.1f} Sekunden."
 
@@ -1135,18 +1318,22 @@ msgid "Time to execute the heartbeat handler."
 msgstr "Es ist an der Zeit, den Herzschlag-Handler auszuführen."
 
 #: lib/fb_tools/handler/__init__.py:380
+#, python-brace-format
 msgid "Sleeping {:0.2f} seconds ..."
 msgstr "Schlafe für {:0.2f} Sekunden …"
 
 #: lib/fb_tools/handler/__init__.py:388 lib/fb_tools/handler/__init__.py:397
+#, python-brace-format
 msgid "   {w} is now: {o!r}"
 msgstr "   {w} ist jetzt: {o!r}"
 
 #: lib/fb_tools/handler/lock.py:99
+#, python-brace-format
 msgid "Locking directory {!r} doesn't exists or is not a directory."
 msgstr "Das Lockverzeichnis {!r} existiert entweder nicht oder ist kein Verzeichnis."
 
 #: lib/fb_tools/handler/lock.py:126 lib/fb_tools/handler/lock.py:788
+#, python-brace-format
 msgid "Locking directory {!r} isn't writeable."
 msgstr "Kein Schreibzugriff auf das Lockverzeichnis {!r}."
 
@@ -1154,89 +1341,110 @@ msgstr "Kein Schreibzugriff auf das Lockverzeichnis {!r}."
 msgid "No lockfile given on init of a LockObject object."
 msgstr "Keine Lockdatei bei der Initialisierung des LockObject-Ojektes angegeben."
 
-#: lib/fb_tools/handler/lock.py:192
+#: lib/fb_tools/handler/lock.py:193
+#, python-brace-format
 msgid "Lockfile {!r} doesn't exists, but don't worry, it's simulation mode."
 msgstr "Die Lockdatei {!r} existiert nicht, aber keine Sorge, wir sind im Simulationsmodus."
 
 #: lib/fb_tools/handler/lock.py:196 lib/fb_tools/handler/lock.py:1026
+#, python-brace-format
 msgid "Lockfile {!r} doesn't exists."
 msgstr "Die Lockdatei {!r} existiert nicht."
 
-#: lib/fb_tools/handler/lock.py:199
+#: lib/fb_tools/handler/lock.py:200
+#, python-brace-format
 msgid "Lockfile {!r} is not a regular file."
 msgstr "Die Lockdatei {!r} ist keine reguläre Datei."
 
 #: lib/fb_tools/handler/lock.py:353
+#, python-brace-format
 msgid "Closing file descriptor {} ..."
 msgstr "Schließe Datei-Deskriptor {} …"
 
 #: lib/fb_tools/handler/lock.py:364
+#, python-brace-format
 msgid "Automatic removing of {!r} ..."
 msgstr "Automatisches Löschen von {!r} …"
 
 #: lib/fb_tools/handler/lock.py:392
+#, python-brace-format
 msgid "Refreshing atime and mtime of {!r} to the current timestamp."
 msgstr "Setze atime und mtime von {!r} auf den aktuellen Zeitstempel."
 
 #: lib/fb_tools/handler/lock.py:514 lib/fb_tools/handler/lock.py:534 lib/fb_tools/handler/lock.py:554
 #: lib/fb_tools/handler/lock.py:578 lib/fb_tools/handler/lock.py:673 lib/fb_tools/handler/lock.py:1015
+#, python-brace-format
 msgid "Value {val!r} for {what} is not a Number."
 msgstr "Der Wert {val!r} für {what} ist keine Zahl."
 
 #: lib/fb_tools/handler/lock.py:519 lib/fb_tools/handler/lock.py:539 lib/fb_tools/handler/lock.py:559
 #: lib/fb_tools/handler/lock.py:583 lib/fb_tools/handler/lock.py:678 lib/fb_tools/handler/lock.py:1019
+#, python-brace-format
 msgid "The value for {what} must be greater than zero (is {val!r})."
 msgstr "Der Wert für {what} muss größer als Null sein (ist {val!r})."
 
-#: lib/fb_tools/handler/lock.py:683
+#: lib/fb_tools/handler/lock.py:684
+#, python-brace-format
 msgid "The value for {what} must be greater than or equal to zero (is {val!r})."
 msgstr "Der Wert für {what} muss größer als oder gleich Null sein (ist {val!r})."
 
 #: lib/fb_tools/handler/lock.py:768
+#, python-brace-format
 msgid "Invalid PID {} given on calling create_lockfile()."
 msgstr "Ungültige PID {} beim Aufruf von create_lockfile() übergeben."
 
 #: lib/fb_tools/handler/lock.py:777
+#, python-brace-format
 msgid "Using lock directory {!r} ..."
 msgstr "Verwende Lock-Verzeichnis {!r} …"
 
 #: lib/fb_tools/handler/lock.py:785
+#, python-brace-format
 msgid "Trying to lock lockfile {!r} ..."
 msgstr "Versuche Lockdatei {!r} zu okkupieren …"
 
 #: lib/fb_tools/handler/lock.py:826
+#, python-brace-format
 msgid "Current time difference: {:0.3f} seconds."
 msgstr "Aktuelle Zeitdifferenz: {:0.3f} Sekunden."
 
 #: lib/fb_tools/handler/lock.py:831
+#, python-brace-format
 msgid "Try {try_nr} on creating lockfile {lfile!r} ..."
 msgstr "Versuch Nummer {try_nr} zum Erstellen der Lockdatei {lfile!r} …"
 
 #: lib/fb_tools/handler/lock.py:842 lib/fb_tools/handler/lock.py:961
+#, python-brace-format
 msgid "Removing lockfile {!r} ..."
 msgstr "Lösche Lockdatei {!r} …"
 
 #: lib/fb_tools/handler/lock.py:847 lib/fb_tools/handler/lock.py:969
+#, python-brace-format
 msgid "Error on removing lockfile {lfile!r}: {err}"
 msgstr "Fehler beim Löschen der Lockdatei {lfile!r): {err}"
 
 #: lib/fb_tools/handler/lock.py:860
+#, python-brace-format
 msgid "Sleeping for {:0.1f} seconds."
 msgstr "Schlafe für {:0.1f} Sekunden."
 
 #: lib/fb_tools/handler/lock.py:875
+#, python-brace-format
 msgid "Got a lock for lockfile {!r}."
 msgstr "Habe einen Lock für die Lockdatei {!r} erhalten."
 
 #: lib/fb_tools/handler/lock.py:881
+#, python-brace-format
 msgid "Write {what!r} in lockfile {lfile!r} ..."
 msgstr "Schreibe {what!r} in Lockdatei {lfile!r} …"
 
 #: lib/fb_tools/handler/lock.py:890
+#, python-brace-format
 msgid "Seeking and syncing {!r} ..."
 msgstr "Seeken und synchronisieren von {!r} …"
 
 #: lib/fb_tools/handler/lock.py:919
+#, python-brace-format
 msgid "Trying to open {!r} exclusive ..."
 msgstr "Versuche {!r} exklusiv zu öffnen …"
 
@@ -1245,10 +1453,12 @@ msgid "Simulation mode, no real creation of a lockfile."
 msgstr "Simulationsmodus, Lockdatei wird in Wirklichkeit nicht erstellt."
 
 #: lib/fb_tools/handler/lock.py:929
+#, python-brace-format
 msgid "Error on creating lockfile {lfile!r}: {err}"
 msgstr "Fehler beim Erstellen der Lockdatei {lfile!r}: {err}"
 
 #: lib/fb_tools/handler/lock.py:958
+#, python-brace-format
 msgid "Lockfile {!r} to remove doesn't exists."
 msgstr "Die zu löschende Lockdatei {!r} existiert nicht."
 
@@ -1257,325 +1467,386 @@ msgid "Simulation mode - lockfile won't removed."
 msgstr "Simulationsmodus - die Lockdatei wird nicht gelöscht."
 
 #: lib/fb_tools/handler/lock.py:1023
+#, python-brace-format
 msgid "Checking lockfile {!r} ..."
 msgstr "Überprüfe Lockdatei {!r} …"
 
 #: lib/fb_tools/handler/lock.py:1030
+#, python-brace-format
 msgid "No read access for lockfile {!r}."
 msgstr "Kein Lesezugriff auf Lockdatei {!r}."
 
 #: lib/fb_tools/handler/lock.py:1034
+#, python-brace-format
 msgid "No write access for lockfile {!r}."
 msgstr "Kein Schreibzugriff auf Lockdatei {!r}."
 
 #: lib/fb_tools/handler/lock.py:1040
+#, python-brace-format
 msgid "Unusable lockfile {!r}."
 msgstr "Nicht verwendungsfähige Lockdatei {!r}."
 
 #: lib/fb_tools/handler/lock.py:1043
+#, python-brace-format
 msgid "Process with PID {} is unfortunately dead."
 msgstr "Der Prozess mit der PID {} ist unglücklicherweise verstorben."
 
 #: lib/fb_tools/handler/lock.py:1046
+#, python-brace-format
 msgid "Process with PID {} is still running."
 msgstr "Der Prozess mit der PID {} läuft aktuell noch."
 
 #: lib/fb_tools/handler/lock.py:1054
+#, python-brace-format
 msgid "Could not stat for file {lfile!r}: {err}"
 msgstr "Konnte Stat-Daten für Datei {lfile!r} nicht ermitteln: {err}"
 
 #: lib/fb_tools/handler/lock.py:1061
+#, python-brace-format
 msgid "Lockfile {lfile!r} is older than {max} seconds ({age} seconds)."
 msgstr "Die Lockdatei {lfile!r} ist älter als {max} Sekunden ({age} Sekunden)."
 
-#: lib/fb_tools/handler/lock.py:1064
+#: lib/fb_tools/handler/lock.py:1065
+#, python-brace-format
 msgid "Lockfile {lfile!r} is {age} seconds old, but not old enough ({max} seconds)."
 msgstr "Die Lockdatei {lfile!r} ist {age} Sekunden alt, aber nicht alte genug ({max} Sekunden)."
 
 #: lib/fb_tools/handler/lock.py:1091
+#, python-brace-format
 msgid "Trying to open pidfile {!r} ..."
 msgstr "Versuche PID-Datei {!r} zu öffnen …"
 
 #: lib/fb_tools/handler/lock.py:1095
+#, python-brace-format
 msgid "Could not open pidfile {!r} for reading:"
 msgstr "Konnte PID-Datei {!r} nicht zum Lesen öffnen:"
 
 #: lib/fb_tools/handler/lock.py:1108
+#, python-brace-format
 msgid "First line of pidfile {!r} was empty."
 msgstr "Die erste Zeile der PID-Datei {!r} war leer."
 
 #: lib/fb_tools/handler/lock.py:1119
+#, python-brace-format
 msgid "Could not interprete {cont!r} as a PID from {file!r}: {err}"
 msgstr "Konnte {cont!r} nicht als PID (in {file!r}) interpretieren: {err}"
 
 #: lib/fb_tools/handler/lock.py:1128
+#, python-brace-format
 msgid "Invalid PID {pid} in {file!r} found."
 msgstr "Ungültige PID {pid} in Datei {file!r} gefunden."
 
-#: lib/fb_tools/handling_obj.py:77
+#: lib/fb_tools/handling_obj.py:82
 msgid "Timeout on communicating with process."
 msgstr "Zeitüberschreitung in der Kommunikation mit einem Prozess."
 
-#: lib/fb_tools/handling_obj.py:103
+#: lib/fb_tools/handling_obj.py:108
+#, python-brace-format
 msgid "Command {c!r} returned non-zero exit status {rc}."
 msgstr "Das Kommando {c!r} gab den Nicht-Null Wert {rc} zurück."
 
-#: lib/fb_tools/handling_obj.py:141
+#: lib/fb_tools/handling_obj.py:147
+#, python-brace-format
 msgid "Command {c!r} timed out after {s} second."
 msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] "Das Kommando {c!r} timte nach einer Sekunde aus."
 msgstr[1] "Das Kommando {c!r} timte nach {s} Sekunden aus."
 
-#: lib/fb_tools/handling_obj.py:303
+#: lib/fb_tools/handling_obj.py:363
+#, python-brace-format
 msgid "Wrong prompt timeout {v!r}, must be greater or equal to Null and less or equal to {max}."
 msgstr ""
 "Falscher Eingabe-Timeout {v!r}, er muss größer oder gleich Null sowie kleiner oder gleich {max} "
 "sein."
 
-#: lib/fb_tools/handling_obj.py:326 lib/fb_tools/handling_obj.py:418
+#: lib/fb_tools/handling_obj.py:385 lib/fb_tools/handling_obj.py:485
+#, python-brace-format
 msgid "Wrong address family {!r} given. Valid values are:"
 msgstr "Ungültige Adressfamilie {!r} übergeben. Gültige Werte sind:"
 
-#: lib/fb_tools/handling_obj.py:339
+#: lib/fb_tools/handling_obj.py:404
 msgid "yes"
 msgstr "ja"
 
-#: lib/fb_tools/handling_obj.py:346
+#: lib/fb_tools/handling_obj.py:411
 msgid "no"
 msgstr "nein"
 
-#: lib/fb_tools/handling_obj.py:496
+#: lib/fb_tools/handling_obj.py:537
+msgid "No hostname or IP address given on calling get_address()."
+msgstr "Kein Hostname oder IP-Adresse beim Aufruf von get_address() übergeben."
+
+#: lib/fb_tools/handling_obj.py:604
+#, python-brace-format
 msgid "Searching for command {!r} ..."
 msgstr "Suche nach Befehl {!r} …"
 
-#: lib/fb_tools/handling_obj.py:501
+#: lib/fb_tools/handling_obj.py:609
+#, python-brace-format
 msgid "Command {!r} doesn't exists."
 msgstr "Das Befehl {!r} existiert nicht."
 
-#: lib/fb_tools/handling_obj.py:504 lib/fb_tools/handling_obj.py:528
+#: lib/fb_tools/handling_obj.py:612 lib/fb_tools/handling_obj.py:636
+#, python-brace-format
 msgid "Command {!r} is not executable."
 msgstr "Das Befehl {!r} ist nicht ausführbar."
 
-#: lib/fb_tools/handling_obj.py:518
+#: lib/fb_tools/handling_obj.py:626
+#, python-brace-format
 msgid "Searching command in {!r} ..."
 msgstr "Suche Befehl in {!r} …"
 
-#: lib/fb_tools/handling_obj.py:531
+#: lib/fb_tools/handling_obj.py:639
+#, python-brace-format
 msgid "Command {!r} not found."
 msgstr "Das Kommando {!r} wurde nicht gefunden."
 
-#: lib/fb_tools/handling_obj.py:603
+#: lib/fb_tools/handling_obj.py:711
 msgid "STDIN and input arguments may not both be used."
 msgstr "STDIN und Eingabe-Argumente dürfen nicht zusammen verwendet werden."
 
-#: lib/fb_tools/handling_obj.py:606
+#: lib/fb_tools/handling_obj.py:714
 msgid "Executing command args:"
 msgstr "Auszuführende Befehlsargumente:"
 
-#: lib/fb_tools/handling_obj.py:609
+#: lib/fb_tools/handling_obj.py:717
+#, python-brace-format
 msgid "Performing argument {!r}."
 msgstr "Verarbeite Argument {!r}."
 
-#: lib/fb_tools/handler/__init__.py:241 lib/fb_tools/handling_obj.py:614
+#: lib/fb_tools/handler/__init__.py:241 lib/fb_tools/handling_obj.py:722
+#, python-brace-format
 msgid "Executing: {}"
 msgstr "Ausführung: {}"
 
-#: lib/fb_tools/handling_obj.py:617
+#: lib/fb_tools/handling_obj.py:725
+#, python-brace-format
 msgid "Simulation mode, not executing: {}"
 msgstr "Simulations-Modus, führe nicht aus: {}"
 
-#: lib/fb_tools/handling_obj.py:625
+#: lib/fb_tools/handling_obj.py:733
+#, python-brace-format
 msgid "PID of process: {}"
 msgstr "PID des Prozesses: {}"
 
-#: lib/fb_tools/handling_obj.py:631
+#: lib/fb_tools/handling_obj.py:739
+#, python-brace-format
 msgid "{c} happened, killing process: {e}"
 msgstr "{} aufgetreten, töte Prozess: {e}"
 
-#: lib/fb_tools/handling_obj.py:733
+#: lib/fb_tools/handling_obj.py:841
 msgid "Nothing to do on signal."
 msgstr "Aud das Signal gibt es nichts zu tun."
 
-#: lib/fb_tools/handling_obj.py:787 lib/fb_tools/handling_obj.py:876
+#: lib/fb_tools/handling_obj.py:895 lib/fb_tools/handling_obj.py:984
 msgid "File doesn't exists."
 msgstr "Die Datei existiert nicht."
 
-#: lib/fb_tools/handling_obj.py:790
+#: lib/fb_tools/handling_obj.py:898
 msgid "Read permission denied."
 msgstr "Lesezugriff verboten."
 
-#: lib/fb_tools/handling_obj.py:793
+#: lib/fb_tools/handling_obj.py:901
+#, python-brace-format
 msgid "Reading file content of {!r} ..."
 msgstr "Lese Inhalt der Datei {!r} …"
 
-#: lib/fb_tools/handling_obj.py:881 lib/fb_tools/handling_obj.py:888
+#: lib/fb_tools/handling_obj.py:989 lib/fb_tools/handling_obj.py:996
+#, python-brace-format
 msgid "Write permission to {!r} denied."
 msgstr "Schreibzugriff auf {!r} verboten."
 
-#: lib/fb_tools/handling_obj.py:883 lib/fb_tools/handling_obj.py:890
+#: lib/fb_tools/handling_obj.py:991 lib/fb_tools/handling_obj.py:998
 msgid "Write permission denied."
 msgstr "Schreibzugriff verboten."
 
-#: lib/fb_tools/handling_obj.py:894
+#: lib/fb_tools/handling_obj.py:1002
+#, python-brace-format
 msgid "Write {what!r} into {to!r}."
 msgstr "Schreibe {what!r} nach {to!r}."
 
-#: lib/fb_tools/handling_obj.py:896
+#: lib/fb_tools/handling_obj.py:1004
+#, python-brace-format
 msgid "Writing {!r} ..."
 msgstr "Schreibe {!r} …"
 
-#: lib/fb_tools/handling_obj.py:908
+#: lib/fb_tools/handling_obj.py:1016
+#, python-brace-format
 msgid "Simulating write into {!r}."
 msgstr "Simuliere das Schreiben nach {!r}."
 
-#: lib/fb_tools/handling_obj.py:916
+#: lib/fb_tools/handling_obj.py:1024
+#, python-brace-format
 msgid "Opening {!r} for write unbuffered ..."
 msgstr "Öffne {!r} zum ungepufferten Schreiben …"
 
-#: lib/fb_tools/handler/lock.py:894 lib/fb_tools/handling_obj.py:920
+#: lib/fb_tools/handler/lock.py:894 lib/fb_tools/handling_obj.py:1028
+#, python-brace-format
 msgid "Closing {!r} ..."
 msgstr "Schließe {!r} …"
 
-#: lib/fb_tools/handling_obj.py:951
+#: lib/fb_tools/handling_obj.py:1064
 msgid "Password:"
 msgstr "Passwort:"
 
-#: lib/fb_tools/handling_obj.py:954
+#: lib/fb_tools/handling_obj.py:1067
 msgid "Repeat password:"
 msgstr "Passwort Wiederholung:"
 
-#: lib/fb_tools/handling_obj.py:968
+#: lib/fb_tools/handling_obj.py:1082
 msgid "The entered passwords does not match."
 msgstr "Die eingegebenen Passwörter stimmen nicht überein."
 
-#: lib/fb_tools/handling_obj.py:981 lib/fb_tools/handling_obj.py:1056
+#: lib/fb_tools/handling_obj.py:1095 lib/fb_tools/handling_obj.py:1176
 msgid "Interrupted on demand."
 msgstr "Abbruch auf Verlangen."
 
-#: lib/fb_tools/handling_obj.py:1006 lib/fb_tools/handling_obj.py:1011
-#: lib/fb_tools/handling_obj.py:1090 lib/fb_tools/handling_obj.py:1095
+#: lib/fb_tools/handling_obj.py:1120 lib/fb_tools/handling_obj.py:1128
+#: lib/fb_tools/handling_obj.py:1210 lib/fb_tools/handling_obj.py:1215
+#, python-brace-format
 msgid "Got a {}:"
 msgstr "Habe ein {} erhalten:"
 
-#: lib/fb_tools/handling_obj.py:1041
+#: lib/fb_tools/handling_obj.py:1161
 msgid "Yes/No"
 msgstr "Ja/Nein"
 
-#: lib/fb_tools/handling_obj.py:1049
+#: lib/fb_tools/handling_obj.py:1169
+#, python-brace-format
 msgid "Automatic answer: '{}'."
 msgstr "Automatische Antwort: '{}'."
 
-#: lib/fb_tools/handling_obj.py:1138 lib/fb_tools/handling_obj.py:1144
+#: lib/fb_tools/handling_obj.py:1278 lib/fb_tools/handling_obj.py:1284
+#, python-brace-format
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr "Der Parameter {t!r} muss ein {e} ein, statt dessen wurde {v!r} übergeben."
 
-#: lib/fb_tools/handling_obj.py:1207
+#: lib/fb_tools/handling_obj.py:1355
 msgid "Completed process"
 msgstr "Fertiggestellter Prozess"
 
-#: lib/fb_tools/mailaddress.py:65 lib/fb_tools/mailaddress.py:464
+#: lib/fb_tools/mailaddress.py:66 lib/fb_tools/mailaddress.py:473
 msgid "Empty address."
 msgstr "Leere Adresse."
 
-#: lib/fb_tools/mailaddress.py:74 lib/fb_tools/mailaddress.py:473
+#: lib/fb_tools/mailaddress.py:75 lib/fb_tools/mailaddress.py:482
 msgid "Wrong type."
 msgstr "Falscher Typ."
 
-#: lib/fb_tools/mailaddress.py:84 lib/fb_tools/mailaddress.py:491 lib/fb_tools/mailaddress.py:531
-#: lib/fb_tools/mailaddress.py:554
+#: lib/fb_tools/mailaddress.py:89 lib/fb_tools/mailaddress.py:500 lib/fb_tools/mailaddress.py:540
+#: lib/fb_tools/mailaddress.py:563
 msgid "Invalid address."
 msgstr "Ungültige Adresse."
 
-#: lib/fb_tools/mailaddress.py:102 lib/fb_tools/mailaddress.py:163
+#: lib/fb_tools/mailaddress.py:107 lib/fb_tools/mailaddress.py:172
+#, python-brace-format
 msgid "Given user: {u!r}, given domain: {d!r}."
 msgstr "Gegebener Nutzer: {u!r}, gegebene Domäne: {d!r}."
 
-#: lib/fb_tools/mailaddress.py:107
+#: lib/fb_tools/mailaddress.py:112
 msgid "Invalid mail address."
 msgstr "Ungültige Mailadresse."
 
-#: lib/fb_tools/mailaddress.py:124 lib/fb_tools/mailaddress.py:139
+#: lib/fb_tools/mailaddress.py:133 lib/fb_tools/mailaddress.py:148
 msgid "Invalid user/mailbox name."
 msgstr "Ungültiger Nutzer- bzw. Postfachname."
 
-#: lib/fb_tools/mailaddress.py:146
+#: lib/fb_tools/mailaddress.py:155
 msgid "Invalid domain."
 msgstr "Ungültige Domäne."
 
-#: lib/fb_tools/mailaddress.py:200 lib/fb_tools/obj.py:247 lib/fb_tools/obj.py:303
+#: lib/fb_tools/mailaddress.py:209 lib/fb_tools/obj.py:254 lib/fb_tools/obj.py:299
+#, python-brace-format
 msgid "Wrong verbose level {!r}, must be >= 0"
 msgstr "Falsches Ausführlichkeits-Niveau, muss größer als oder gleich Null sein"
 
-#: lib/fb_tools/mailaddress.py:292 lib/fb_tools/mailaddress.py:652
+#: lib/fb_tools/mailaddress.py:301 lib/fb_tools/mailaddress.py:661
+#, python-brace-format
 msgid "Checking equality {self!r} with {other!r} ..."
 msgstr "Vergleiche Gleichheit von {self!r} mit {other!r} …"
 
-#: lib/fb_tools/mailaddress.py:348 lib/fb_tools/mailaddress.py:676
+#: lib/fb_tools/mailaddress.py:357 lib/fb_tools/mailaddress.py:685
+#, python-brace-format
 msgid "Object {o!r} for comparing is not a {c} object."
 msgstr "Das Vergleichsobjekt {o!r} ist kein {c}-Objekt."
 
-#: lib/fb_tools/mailaddress.py:353 lib/fb_tools/mailaddress.py:681
+#: lib/fb_tools/mailaddress.py:362 lib/fb_tools/mailaddress.py:690
+#, python-brace-format
 msgid "Comparing {self!r} with {other!r} ..."
 msgstr "Vergleiche {self!r} mit {other!r} …"
 
-#: lib/fb_tools/mailaddress.py:481
+#: lib/fb_tools/mailaddress.py:490
+#, python-brace-format
 msgid "Evaluating address {!r} ..."
 msgstr "Untersuche Adresse {!r} …"
 
-#: lib/fb_tools/mailaddress.py:482
+#: lib/fb_tools/mailaddress.py:491
+#, python-brace-format
 msgid "Search pattern simple: {}"
 msgstr "Einfaches Suchmuster: {}"
 
-#: lib/fb_tools/mailaddress.py:487
+#: lib/fb_tools/mailaddress.py:496
+#, python-brace-format
 msgid "Search pattern full: {}"
 msgstr "Vollständiges Suchmuster: {}"
 
-#: lib/fb_tools/mailaddress.py:511
+#: lib/fb_tools/mailaddress.py:520
+#, python-brace-format
 msgid "Parameters {lst} may not be given, if parameter {a!r} was given."
 msgstr "Die Parameter {lst} dürfen nicht übergeben werden, wenn der Parameter {a!r} angegeben wurde."
 
-#: lib/fb_tools/mailaddress.py:522
+#: lib/fb_tools/mailaddress.py:531
 msgid "Invalid full user name."
 msgstr "Ungültiger vollständiger Nutzername."
 
-#: lib/fb_tools/mailaddress.py:875 lib/fb_tools/mailaddress.py:889
+#: lib/fb_tools/mailaddress.py:884 lib/fb_tools/mailaddress.py:898
+#, python-brace-format
 msgid "Given object {o!r} is not a sequence type, but a {t!r} type instead."
 msgstr "Das übergebene Objekt {o!r} ist kein sequentieller Typ, aber statt dessen vom Typ {t!r}."
 
-#: lib/fb_tools/mailaddress.py:904
+#: lib/fb_tools/mailaddress.py:913
+#, python-brace-format
 msgid "{m} takes at most {max} arguments ({n} given)."
 msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
 
-#: lib/fb_tools/mailaddress.py:944
+#: lib/fb_tools/mailaddress.py:953
+#, python-brace-format
 msgid "Mail address {} is not in address list."
 msgstr "Die Mailadresse {} ist nicht in der Adressliste."
 
 #: lib/fb_tools/multi_config/__init__.py:164 lib/fb_tools/multi_config/__init__.py:166
 #: lib/fb_tools/multi_config/__init__.py:168
+#, python-brace-format
 msgid "{} configuration is not supported."
 msgstr "{}-Konfiguration wird nicht unterstützt."
 
 #: lib/fb_tools/multi_config/__init__.py:221
+#, python-brace-format
 msgid "Additional config file {!r} does not exists."
 msgstr "Die zusätzliche Konfigurationsdatei {!r} existiert nicht."
 
 #: lib/fb_tools/multi_config/__init__.py:235
+#, python-brace-format
 msgid "Configuration file {!r} is not readable."
 msgstr "Die Konfigurations-Datei {!r} ist nicht lesbar."
 
 #: lib/fb_tools/multi_config/__init__.py:259
+#, python-brace-format
 msgid "Configuration directory {!r} may not be absolute."
 msgstr "Das Konfigurations-Verzeichnis {!r} darf nicht absolut sein."
 
 #: lib/fb_tools/multi_config/__init__.py:339
+#, python-brace-format
 msgid "Cannot use {!r} as delimiters for ini-files."
 msgstr "Kann {!r} nicht als Trennzeichen für ini-Dateien verwenden."
 
 #: lib/fb_tools/multi_config/__init__.py:361
+#, python-brace-format
 msgid "Cannot use {!r} as comment prefixes for ini-files."
 msgstr "Kann {!r} nicht als Kommentar-Präfix für ini-Dateien verwenden."
 
 #: lib/fb_tools/multi_config/__init__.py:383
+#, python-brace-format
 msgid "Cannot use {!r} as inline comment prefixes for ini-files."
 msgstr "Kann {!r} nicht als Inline-Kommentar-Präfix für ini-Dateien verwenden."
 
@@ -1584,6 +1855,7 @@ msgid "Evaluation of configuration could only be happen after reading it."
 msgstr "Die Evaluierung der Konfiguration kann erst erfolgen, nachdem die gelesen wurde."
 
 #: lib/fb_tools/multi_config/__init__.py:533
+#, python-brace-format
 msgid "Invalid value {val!r} in section {sec!r} for console timeout."
 msgstr "Ungültiger Wert {val!r} für Konsolen-Timeout in Abschnitt {sec!r}."
 
@@ -1592,6 +1864,7 @@ msgid "Collecting all configuration files."
 msgstr "Sammle alle Konfigurationsdateien."
 
 #: lib/fb_tools/multi_config/files.py:51
+#, python-brace-format
 msgid "Discovering config directory {!r} ..."
 msgstr "Untersuche Konfigurations-Verzeichnis {!r} …"
 
@@ -1604,14 +1877,17 @@ msgid "Checking permissions of config files ..."
 msgstr "Überprüfe Rechte auf Konfigurationsdateien …"
 
 #: lib/fb_tools/multi_config/files.py:89
+#, python-brace-format
 msgid "Checking permissions of {!r} ..."
 msgstr "Überprüfe Rechte auf {!r} …"
 
 #: lib/fb_tools/multi_config/files.py:93
+#, python-brace-format
 msgid "Found file permissions of {fn!r}: {mode:04o}"
 msgstr "Fand Datei-Rechte auf {fn!r}: {mode:04o}"
 
 #: lib/fb_tools/multi_config/files.py:96
+#, python-brace-format
 msgid "File {fn!r} is readable by group or by others, found mode {mode:04o}."
 msgstr "Die Datei {fn!r} ist für die Gruppe oder für andere lesbar, gefundener Modus {mode:04o}."
 
@@ -1624,98 +1900,121 @@ msgid "Possible usable config files:"
 msgstr "Möglicherweise verwendbare Konfigurationsdateien:"
 
 #: lib/fb_tools/multi_config/files.py:133
+#, python-brace-format
 msgid "Path {!r} is a unusable directory."
 msgstr "Der Pfad {!r} ist ein nicht verwendbares Verzeichnis."
 
 #: lib/fb_tools/multi_config/files.py:139 lib/fb_tools/multi_config/files.py:224
 #: lib/fb_tools/multi_config/files.py:306
+#, python-brace-format
 msgid "Path {!r} is not a regular file."
 msgstr "Der Pfad {!r} ist keine reguläre Datei."
 
 #: lib/fb_tools/multi_config/files.py:153 lib/fb_tools/multi_config/files.py:164
 #: lib/fb_tools/multi_config/files.py:313
+#, python-brace-format
 msgid "File {!r} is not useable."
 msgstr "Die Datei {!r} ist nicht verwendbar."
 
 #: lib/fb_tools/multi_config/files.py:157 lib/fb_tools/multi_config/files.py:236
 #: lib/fb_tools/multi_config/files.py:317
+#, python-brace-format
 msgid "Got file info for {!r}:"
 msgstr "Erhaltene Dateiinformationen für {!r}:"
 
 #: lib/fb_tools/multi_config/files.py:171
+#, python-brace-format
 msgid "Trying to detect file type of file {!r}."
 msgstr "Versuche den Dateityp der Datei {!r} zu ermitteln."
 
 #: lib/fb_tools/multi_config/files.py:182
+#, python-brace-format
 msgid "Checking file {fn!r} for pattern {pat!r}."
 msgstr "Überprüfe Datei {fn!r} nach Muster {pat!r}."
 
 #: lib/fb_tools/multi_config/files.py:188
+#, python-brace-format
 msgid "Found config file {fi!r}, loader method {m!r}."
 msgstr "Fand Konfigurationsdatei {fi!r}, Lademethode {m!r}."
 
-#: lib/fb_tools/multi_config/files.py:192
+#: lib/fb_tools/multi_config/files.py:193
+#, python-brace-format
 msgid "Did not found file type of config file {fn!r}. Available config types are: {list}."
 msgstr "Keinen Dateityp der Datei {fn!r} gefunden. Verfügbare Konfigurationstypen sind: {list}."
 
 #: lib/fb_tools/multi_config/files.py:212
+#, python-brace-format
 msgid "Checking, whether {!r} is a possible config file."
 msgstr "Teste, ob {!r} möglicherweise eine Konfigurationsdatei ist."
 
 #: lib/fb_tools/multi_config/files.py:244
+#, python-brace-format
 msgid "Prepending {!r} to config files."
 msgstr "Füge {!r} an den Anfang der Liste der Konfigurationsdateien ein."
 
 #: lib/fb_tools/multi_config/files.py:247
+#, python-brace-format
 msgid "Appending {!r} to config files."
 msgstr "Hänge {!r} am Ende der Liste der Konfigurationsdateien an."
 
 #: lib/fb_tools/multi_config/files.py:251
+#, python-brace-format
 msgid "Loading method of {fn!r} is: {m!r}."
 msgstr "Lade-Methode von{fn!r} ist: {m!r}."
 
 #: lib/fb_tools/multi_config/files.py:261
+#, python-brace-format
 msgid "Trying to append file {!r} to the list of config files ..."
 msgstr "Versuche die Datei {!r} an die Liste der Konfigurationsdateien anzuhängen …"
 
 #: lib/fb_tools/multi_config/files.py:272
+#, python-brace-format
 msgid "Trying to prepend file {!r} to the list of config files ..."
 msgstr "Versuche die Datei {!r} am Anfang der Liste der Konfigurationsdateien einzufügen …"
 
 #: lib/fb_tools/multi_config/files.py:286
+#, python-brace-format
 msgid "Trying to add additional config file {!r}."
 msgstr "Versuche die zusätzliche Konfigurationsdatei {!r} hinzuzufügen."
 
 #: lib/fb_tools/multi_config/files.py:295
+#, python-brace-format
 msgid "Checking directory {!r} for all config files ..."
 msgstr "Überprüfe das Verzeichnis {!r} nach allen Konfigurationsdateien …."
 
 #: lib/fb_tools/multi_config/files.py:301
+#, python-brace-format
 msgid "Checking {!r} as a possible config file."
 msgstr "Teste, ob {!r} möglicherweise eine Konfigurationsdatei ist."
 
 #: lib/fb_tools/multi_config/inits.py:103 lib/fb_tools/multi_config/inits.py:114
+#, python-brace-format
 msgid "Stem {!r} is not a String type."
 msgstr "Der Konfigurations-Namens-Stamm {!r} ist kein String-Typ."
 
 #: lib/fb_tools/multi_config/inits.py:107 lib/fb_tools/multi_config/inits.py:118
 #: lib/fb_tools/multi_config/inits.py:125
+#, python-brace-format
 msgid "File name stem {!r} is invalid."
 msgstr "der Konfigurations-Namens-Stamm {!r} ist ungültig."
 
 #: lib/fb_tools/multi_config/inits.py:171
+#, python-brace-format
 msgid "Invalid configuration type {t!r} - not found in {w!r}."
 msgstr "Ungültiger Konfigurationstyp {t!r} - wurde nicht in {w!r} gefunden."
 
 #: lib/fb_tools/multi_config/read.py:73
+#, python-brace-format
 msgid "Reading configuration file {!r} ..."
 msgstr "Lese Konfigurationsdatei {!r} …"
 
 #: lib/fb_tools/multi_config/read.py:77
+#, python-brace-format
 msgid "Using loading method {!r}."
 msgstr "Verwende Lade-Methode {!r}."
 
 #: lib/fb_tools/multi_config/read.py:85
+#, python-brace-format
 msgid "Read config from {fn!r}:"
 msgstr "Von {fn!r} gelesene Konfiguration:"
 
@@ -1723,7 +2022,8 @@ msgstr "Von {fn!r} gelesene Konfiguration:"
 msgid "Read merged config:"
 msgstr "Gelesene und zusammengeführte Konfiguration:"
 
-#: lib/fb_tools/multi_config/read.py:103
+#: lib/fb_tools/multi_config/read.py:104
+#, python-brace-format
 msgid ""
 "Character set detection by module {mod!r} for file {fn!r} should not be used, using character "
 "set {enc!r}."
@@ -1732,11 +2032,12 @@ msgstr ""
 "werden, verwende Zeichensatz {enc!r}."
 
 #: lib/fb_tools/multi_config/read.py:110
+#, python-brace-format
 msgid "Trying to detect character set of file {fn!r} ..."
 msgstr "Versuche den Zeichensatz der Datei {fn!r} zu ermitteln …"
 
-#: lib/fb_tools/multi_config/read.py:121
-#, python-format
+#: lib/fb_tools/multi_config/read.py:122
+#, python-brace-format, python-format
 msgid ""
 "The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, using character set "
 "{cs_def!r} instead of {cs_found!r}."
@@ -1745,35 +2046,42 @@ msgstr ""
 "Zeichensatz {cs_def!r} anstelle von {cs_found!r}."
 
 #: lib/fb_tools/multi_config/read.py:131
+#, python-brace-format
 msgid "Got {what} on detecting cheracter set of {fn!r}: {e}"
 msgstr "Erhielt {what} bei der Zeichensatzerkennung von {fn!r}: {e}."
 
-#: lib/fb_tools/multi_config/read.py:136
+#: lib/fb_tools/multi_config/read.py:137
+#, python-brace-format
 msgid "Found character set {cs!r} for file {fn!r} with a confidence of {con:0.1f}%."
 msgstr "Fand Zeichensatz {cs!r} für die Datei {fn!r} mit einer Zuverlässigkeit von {con:0.1f}%."
 
 #: lib/fb_tools/multi_config/read.py:146 lib/fb_tools/multi_config/read.py:176
 #: lib/fb_tools/multi_config/read.py:210 lib/fb_tools/multi_config/read.py:267
 #: lib/fb_tools/multi_config/read.py:293
+#, python-brace-format
 msgid "Reading {tp} file {fn!r} ..."
 msgstr "Lese {tp}-Datei {fn!r} …"
 
 #: lib/fb_tools/multi_config/read.py:157 lib/fb_tools/multi_config/read.py:191
 #: lib/fb_tools/multi_config/read.py:274 lib/fb_tools/multi_config/read.py:307
+#, python-brace-format
 msgid "{what} parse error in {fn!r}, line {line}, column {col}: {msg}"
 msgstr "{what} Parse-Fehler in {fn!r}, Zeine {line}, Spalte {col}: {msg}"
 
 #: lib/fb_tools/multi_config/read.py:164 lib/fb_tools/multi_config/read.py:198
 #: lib/fb_tools/multi_config/read.py:245 lib/fb_tools/multi_config/read.py:281
 #: lib/fb_tools/multi_config/read.py:311 lib/fb_tools/multi_config/read.py:318
+#, python-brace-format
 msgid "Got {what} on reading and parsing {fn!r}: {e}"
 msgstr "Habe {what} beim Lesen und Parsen von {fn!r} erhalten: {e}."
 
 #: lib/fb_tools/multi_config/read.py:227
+#, python-brace-format
 msgid "Arguments on initializing {}:"
 msgstr "Argumente zur Initialisierung von {}:"
 
-#: lib/fb_tools/obj.py:58
+#: lib/fb_tools/obj.py:59
+#, python-brace-format
 msgid "The base directory {!r} is not existing or not a directory."
 msgstr "Das Basis-Verzeichnis {!r} existiert nicht oder ist kein Verzeichnis."
 
@@ -1785,39 +2093,48 @@ msgstr "unbestimmter Fehler."
 msgid "Exception happened"
 msgstr "Aufgetretene Ausnahme"
 
-#: lib/fb_tools/obj.py:327
+#: lib/fb_tools/obj.py:323
+#, python-brace-format
 msgid "Base directory {!r} does not exists."
 msgstr "Das Basis-Verzeichnis {!r} existiert nicht."
 
-#: lib/fb_tools/obj.py:330
+#: lib/fb_tools/obj.py:326
+#, python-brace-format
 msgid "Path for base directory {!r} is not a directory."
 msgstr "Der Pfad zum Basis-Verzeichnis {!r} is kein Verzeichnis"
 
 #: lib/fb_tools/pidfile.py:69
+#, python-brace-format
 msgid "Invalid pidfile {f!r} given: {r}"
 msgstr "Ungültige PID-Datei {f!r} übergeben: {r}"
 
 #: lib/fb_tools/pidfile.py:72
+#, python-brace-format
 msgid "Invalid pidfile {!r} given."
 msgstr "Ungültige PID-Datei {!r} übergeben."
 
-#: lib/fb_tools/pidfile.py:96
+#: lib/fb_tools/pidfile.py:97
+#, python-brace-format
 msgid "The pidfile {f!r} is currently in use by the application with the PID {p}."
 msgstr "Die PID-Datei {f!r} wird gegenwärtig von der Anwendung mit der PID {p} verwendet."
 
-#: lib/fb_tools/pidfile.py:163
+#: lib/fb_tools/pidfile.py:164
+#, python-brace-format
 msgid "No filename given on initializing {} object."
 msgstr "Kein Dateiname bei der Initialisierung des {}-Ojektes angegeben."
 
 #: lib/fb_tools/pidfile.py:281
+#, python-brace-format
 msgid "Pidfile {!r} doesn't exists, not removing."
 msgstr "Die PID-Datei {!r} existiert nicht, und wird deshalb auch nicht gelöscht."
 
 #: lib/fb_tools/pidfile.py:287
+#, python-brace-format
 msgid "Auto removing disabled, don't deleting {!r}."
 msgstr "Automatisches Löschen deaktiviert, {!r} wird nicht gelöscht."
 
 #: lib/fb_tools/pidfile.py:292
+#, python-brace-format
 msgid "Removing pidfile {!r} ..."
 msgstr "Lösche PID-Datei {!r} …"
 
@@ -1826,54 +2143,67 @@ msgid "Just kidding ..."
 msgstr "Ich mach doch nur Spaß …"
 
 #: lib/fb_tools/pidfile.py:300
+#, python-brace-format
 msgid "Could not delete pidfile {f!r}: {e}"
 msgstr "Konnte PID-Datei {f!r} nicht löschen: {e}"
 
 #: lib/fb_tools/pidfile.py:319 lib/fb_tools/pidfile.py:382
+#, python-brace-format
 msgid "Invalid PID {p} for creating pidfile {f!r} given."
 msgstr "Ungültige PID {p} zur Erstellung der PID-Datei {f!r} übergeben."
 
 #: lib/fb_tools/pidfile.py:327
+#, python-brace-format
 msgid "Deleting pidfile {!r} ..."
 msgstr "Lösche PID-Datei {!r} …"
 
 #: lib/fb_tools/pidfile.py:337
+#, python-brace-format
 msgid "Trying opening {!r} exclusive ..."
 msgstr "Versuche {!r} exklusiv zu öffnen …"
 
 #: lib/fb_tools/pidfile.py:340 lib/fb_tools/pidfile.py:392
+#, python-brace-format
 msgid "Simulation mode - don't real writing in {!r}."
 msgstr "Simulationsmodus - es wird nicht wirklich nach {!r} geschrieben."
 
 #: lib/fb_tools/pidfile.py:351
+#, python-brace-format
 msgid "Error on creating pidfile {f!r}: {e}"
 msgstr "Fehler beim Erstellen der PID-Datei {f!r}: {e}"
 
 #: lib/fb_tools/pidfile.py:355 lib/fb_tools/pidfile.py:398
+#, python-brace-format
 msgid "Writing {p} into {f!r} ..."
 msgstr "Schreibe {p} nach {f!r} …"
 
 #: lib/fb_tools/pidfile.py:376
+#, python-brace-format
 msgid "Calling {} on a not self created pidfile."
 msgstr "Aufruf von {} bei einer nicht selbst erstellten PID-Datei."
 
 #: lib/fb_tools/pidfile.py:389
+#, python-brace-format
 msgid "Trying opening {!r} for recreate ..."
 msgstr "Versuche {!r} zum Wiedererstellen zu öffnen …"
 
 #: lib/fb_tools/pidfile.py:404
+#, python-brace-format
 msgid "Error on recreating pidfile {f!r}: {e}"
 msgstr "Fehler beim Wiedererstellen der PID-Datei {f!r}: {e}"
 
 #: lib/fb_tools/pidfile.py:430
+#, python-brace-format
 msgid "Pidfile parent directory {!r} doesn't exists."
 msgstr "Das Eltern-Verzeichnis der PID-Datei {!r} existiert nicht."
 
 #: lib/fb_tools/pidfile.py:434
+#, python-brace-format
 msgid "Pidfile parent directory {!r} is not a directory."
 msgstr "Das Eltern-Verzeichnis der PID-Datei {!r} is kein Verzeichnis"
 
 #: lib/fb_tools/pidfile.py:438
+#, python-brace-format
 msgid "No write access to pidfile parent directory {!r}."
 msgstr "Kein Schreibzugriff auf das Eltern-Verzeichnis der PID-Datei {!r}."
 
@@ -1882,42 +2212,410 @@ msgid "It is not a regular file."
 msgstr "Es ist keine reguläre Datei."
 
 #: lib/fb_tools/pidfile.py:463
+#, python-brace-format
 msgid "Reading content of pidfile {!r} ..."
 msgstr "Lese Inhalt der PID-Datei {!r} …"
 
 #: lib/fb_tools/pidfile.py:484
+#, python-brace-format
 msgid "No useful information found in pidfile {f!r}: {z!r}"
 msgstr "Keine sinnvollen Informationen in der PID-Datei {f!r} gefunden: {z!r}"
 
 #: lib/fb_tools/pidfile.py:489
+#, python-brace-format
 msgid "Trying check for process with PID {} ..."
 msgstr "Versuche den Prozess mit der PID {} zu überprüfen …"
 
 #: lib/fb_tools/pidfile.py:495
+#, python-brace-format
 msgid "Process with PID {} anonymous died."
 msgstr "Der Prozess mit der PID {} ist anonym verstorben."
 
 #: lib/fb_tools/pidfile.py:499
+#, python-brace-format
 msgid "No permission to signal the process {} ..."
 msgstr "Keine Rechte zum Senden von Signalen an Prozess {} …"
 
-#: lib/fb_tools/xlate.py:117
-msgid "Module directory: {!r}"
-msgstr "Modul-Verzeichnis: {!r}"
+#: lib/fb_tools/show_spinner_app.py:42
+msgid "Waiting ... "
+msgstr "Warten … "
 
-#: lib/fb_tools/xlate.py:118
-msgid "Base directory: {!r}"
-msgstr "Basis-Verzeichnis: {!r}"
+#: lib/fb_tools/show_spinner_app.py:49
+msgid ""
+"Shows one or more spinners, and their names, if multiple spinners should be shown. If no spinner"
+" is given, a random spinner will be displayed."
+msgstr ""
+"Zeigt einen oder mehrere Spinner, sowie deren Namen, wenn mehrere Spinner dargestellt werden "
+"sollen. Wenn kein Spinner angegeben wird, wird ein zufällig ausgewählter anhgezeigt."
 
-#: lib/fb_tools/xlate.py:119
-msgid "Locale directory: {!r}"
-msgstr "Verzeichnis für Locales: {!r}"
+#: lib/fb_tools/show_spinner_app.py:82
+#, python-brace-format
+msgid "A negative time for showing the spinner {v!r} is not allowed."
+msgstr "Eine negative Zeitangabe zum Zeigen der Spinne {v!r} ist nicht gestattet."
 
-#: lib/fb_tools/xlate.py:120
-msgid "Locale domain: {!r}"
-msgstr "Locale-Domäne: {!r}"
+#: lib/fb_tools/show_spinner_app.py:128
+#, python-brace-format
+msgid "Options for {}"
+msgstr "Optionen für {}"
+
+#: lib/fb_tools/show_spinner_app.py:133
+#, python-brace-format
+msgid "The prompt displayed before the spinner, if only one spinner should be shown. Default: {!r}."
+msgstr ""
+"Der Prompt, der vor dem Spinner angezeigt werden soll, wenn nur ein Spinner gezeigt werden soll."
+" Vorgabe: {!r}."
+
+#: lib/fb_tools/show_spinner_app.py:140
+msgid "The time in seconds for displaying each spinner."
+msgstr "Die Zeit in Sekunden, die ein Spinner gezeigt werden soll."
+
+#: lib/fb_tools/show_spinner_app.py:145
+msgid "SPINNER"
+msgstr "SPINNER"
+
+#: lib/fb_tools/show_spinner_app.py:147
+#, python-brace-format
+msgid ""
+"The spinners, which should be displayed. If not given, a random spinner will be displayed, which"
+" is the same as giving {rand!r} as the name of the spinner. If giving {list!r}, a simple list of"
+" all available spinners will be shown, without displaying them. If giving {all!r}, all available"
+" spinners will be shown."
+msgstr ""
+"Die Spinner, die gezeigt werden sollen. Wenn keiner angegeben wird, wird ein zufällig "
+"ausgewählter angezeigt, was identisch ist mit der einmaligen Angabe von {rand!r} als "
+"Spinnername. Wird {list!r} angegeben, wird eine einfache Liste der verfügbaren Spinnernamen "
+"ausgegeben, ohne die Spinner selbst anzuzeigen. Wird {all!r} angegeben, werden alle verfügbaren "
+"Spinner dargestellt."
+
+#: lib/fb_tools/show_spinner_app.py:174 lib/fb_tools/show_spinner_app.py:185
+#, python-brace-format
+msgid "You may give {!r} only as the only spinner."
+msgstr "Man darf {!r} nur als einzigen Spinner angeben."
+
+#: lib/fb_tools/show_spinner_app.py:193
+#, python-brace-format
+msgid "Invalid spinner {!r} given."
+msgstr "Ungültiger Spinner {!r} übergeben."
+
+#: lib/fb_tools/show_spinner_app.py:219
+#, python-brace-format
+msgid "Spinner {!r}: "
+msgstr "Spinner {!r}: "
+
+#: lib/fb_tools/show_spinner_app.py:285
+msgid "All available spinners:"
+msgstr "Alle verfügbaren Spinner:"
+
+#: lib/fb_tools/socket_obj/__init__.py:207
+msgid "A timeout for a socket operation may not be equal or less then zero."
+msgstr "Ein Timeout für eine Sockel-Operation darf nicht kleiner oder gleich Null sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:208 lib/fb_tools/socket_obj/__init__.py:214
+#: lib/fb_tools/socket_obj/__init__.py:260 lib/fb_tools/socket_obj/__init__.py:266
+#: lib/fb_tools/socket_obj/__init__.py:287 lib/fb_tools/socket_obj/__init__.py:293
+#: lib/fb_tools/socket_obj/__init__.py:299 lib/fb_tools/socket_obj/__init__.py:345
+#: lib/fb_tools/socket_obj/__init__.py:351
+#, python-brace-format
+msgid "Given: {!r}"
+msgstr "Übergeben: {!r}."
+
+#: lib/fb_tools/socket_obj/__init__.py:212
+#, python-brace-format
+msgid "The timeout for a socket operation must be less or equal to {}."
+msgstr "Ein Timeout für eine Sockel-Operation muss kleiner oder gleich {} sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:259
+msgid "The request queue size must be at least a non nagetive value."
+msgstr "Die Request-Queue-Größe muss einen nicht-negativen Wert haben."
+
+#: lib/fb_tools/socket_obj/__init__.py:264
+#, python-brace-format
+msgid "The request queue size must be less or equal to {}."
+msgstr "Die Request-Queue-Größe muss kleiner oder gleich {} sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:286
+#, python-brace-format
+msgid "The buffer size must be at least {} bytes."
+msgstr "Die Puffergröße muss wenigstens {} Bytes sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:291
+#, python-brace-format
+msgid "The buffer size must be less or equal to {} bytes."
+msgstr "Die Puffergröße muss kleiner oder gleich {} sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:298
+msgid "The buffer size must be a multiple of 512 bytes."
+msgstr "Die Puffergröße muss ein Vielfaches von 512 Bytes sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:325
+#, python-brace-format
+msgid "Did not found encoding {!r}."
+msgstr "Codierung {!r} nicht gefunden."
+
+#: lib/fb_tools/socket_obj/__init__.py:344
+msgid "An intervall between polling attempts from socket must be greater than zero."
+msgstr "Das Intervall zwischen den Abfrageversuchen vom Sockel muss größer als Null sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:349
+#, python-brace-format
+msgid "The intervall between polling attempts from socket must be less or equal to {}."
+msgstr "Das Intervall zwischen den Abfrageversuchen vom Sockel muss kleiner oder gleich {} sein."
+
+#: lib/fb_tools/socket_obj/__init__.py:399
+msgid "Closing socket ..."
+msgstr "Schließe Sockel …"
+
+#: lib/fb_tools/socket_obj/__init__.py:420
+msgid "Resetting socket connection ..."
+msgstr "Setze Sockel-Verbindung zurück …"
+
+#: lib/fb_tools/socket_obj/__init__.py:438
+msgid "Cannot send message to the receipient, because the socket connection is interrupted."
+msgstr "Kann die Nachricht nicht zum Empfänger senden, da die Sockel-Verbindung unterbrochen wurde."
+
+#: lib/fb_tools/socket_obj/__init__.py:450
+msgid "Cannot send message to the receipient, because the socket connection is closed."
+msgstr "Kann die Nachricht nicht zum Empfänger senden, da die Sockel-Verbindung geschlossen wurde."
+
+#: lib/fb_tools/socket_obj/__init__.py:456
+#, python-brace-format
+msgid "Sending {!r} to socket."
+msgstr "Sende {!r} zum Sockel."
+
+#: lib/fb_tools/socket_obj/__init__.py:470
+msgid "Cannot accept connection, socket is not bonded."
+msgstr "Kann die Verbindung nicht accepten, da der Sockel nich gebunden ist."
+
+#: lib/fb_tools/socket_obj/__init__.py:474
+msgid "Accept a connection ..."
+msgstr "Accepte Verbindung …"
+
+#: lib/fb_tools/socket_obj/__init__.py:481
+#, python-brace-format
+msgid "Got a request from {!r}."
+msgstr "Habe einen Request von {!r} erhalten."
+
+#: lib/fb_tools/socket_obj/__init__.py:483
+msgid "Got a request from somewhere on the system."
+msgstr "Habe einen Request von irgendwo aus dem System erhalten."
+
+#: lib/fb_tools/socket_obj/__init__.py:503
+msgid "Trying to get data ..."
+msgstr "Versuche die Daten zu bekommen …"
+
+#: lib/fb_tools/socket_obj/__init__.py:512
+#, python-brace-format
+msgid "Got data: {!r}."
+msgstr "Erhaltene Daten: {!r}"
+
+#: lib/fb_tools/socket_obj/__init__.py:517
+msgid "Got EOF, counterpart has interrupted ..."
+msgstr "Habe EOF erhalten, die Gegnstelle hat unterbrochen …"
+
+#: lib/fb_tools/socket_obj/__init__.py:547
+msgid "Socket has data."
+msgstr "Der Sockel hat Daten."
+
+#: lib/fb_tools/socket_obj/__init__.py:559
+msgid "Socket has no data."
+msgstr "Der Sockel hat keine Daten."
+
+#: lib/fb_tools/socket_obj/__init__.py:565
+msgid "Get input buffer ..."
+msgstr "Eingabepuffer erhalten …"
+
+#: lib/fb_tools/socket_obj/__init__.py:569
+#, python-brace-format
+msgid "Current input buffer: {!r}"
+msgstr "Aktueller Eingabepuffer: {!r}"
+
+#: lib/fb_tools/socket_obj/__init__.py:610
+#, python-brace-format
+msgid "Performing input buffer {!r}"
+msgstr "Verarbeite Eingabepuffer {!r}"
+
+#: lib/fb_tools/socket_obj/__init__.py:620
+#, python-brace-format
+msgid "Got a line: {!r}"
+msgstr "Erhaltene Zeile: {!r}"
+
+#: lib/fb_tools/socket_obj/__init__.py:621
+#, python-brace-format
+msgid "Current input buffer after read_line(): {!r}"
+msgstr "Aktueller Eingabepuffer nach read_line(): {!r}"
+
+#: lib/fb_tools/socket_obj/tcp.py:93
+#, python-brace-format
+msgid "The TCP port number must be a positive integer value, not {!r}."
+msgstr "Die TCP-Portnummer muss ein positiver Integer-Wert sein, nicht {!r}."
+
+#: lib/fb_tools/socket_obj/tcp.py:94
+#, python-brace-format
+msgid "The TCP port number must be less than or equal to {max}, not {cur!r}."
+msgstr "Die TCP-Portnummer muss kleiner oder gleich {max} sein, nicht {cur!r}."
+
+#: lib/fb_tools/socket_obj/tcp.py:303
+msgid "Cannot connect to an undefined IP address or hostname."
+msgstr "Kann nicht zu einer undefinierter IP-Adresse oder Hostnamen verbinden."
+
+#: lib/fb_tools/socket_obj/tcp.py:308
+#, python-brace-format
+msgid "Connecting to address {addr!r}, port {port} by TCP ..."
+msgstr "Verbinde zu Adresse {addr!r}, Port {port} über TCP …"
+
+#: lib/fb_tools/socket_obj/tcp.py:313
+#, python-brace-format
+msgid "The socket is already connected to {addr!r}, port {port}."
+msgstr "Der Sockel ist bereits mit {addr!r}, Port {port} verbunden."
+
+#: lib/fb_tools/socket_obj/tcp.py:319 lib/fb_tools/socket_obj/tcp.py:405
+#, python-brace-format
+msgid "The application is already bonded to address {addr!r}, port {port}."
+msgstr "Die Anwendung ist bereits auf die Adresse {addr!r}, Port {port} gebunden."
+
+#: lib/fb_tools/socket_obj/tcp.py:342 lib/fb_tools/socket_obj/tcp.py:429
+#, python-brace-format
+msgid "No valid address for host {!r} found."
+msgstr "Keine gültige Adresse für Host {!r} gefunden."
+
+#: lib/fb_tools/socket_obj/tcp.py:397
+#, python-brace-format
+msgid "Creating a listening TCP socket on address {addr!r}, port {port} ..."
+msgstr "Erstelle einen Listener-TCP-Sockel auf Adresse {addr!r}, Port {port}  …"
+
+#: lib/fb_tools/socket_obj/tcp.py:401
+#, python-brace-format
+msgid "The socket is already connected to address {addr!r}, port {port}."
+msgstr "Der Sockel ist bereits mit Adresse {addr!r}, Port {port} verbunden."
+
+#: lib/fb_tools/socket_obj/tcp.py:426
+msgid "Got socket addresses:"
+msgstr "Erhaltene Sockel-Adresse:"
+
+#: lib/fb_tools/socket_obj/tcp.py:443
+#, python-brace-format
+msgid "Binding to socket address {!r}."
+msgstr "Binde an Sockel-Adresse {!r}."
+
+#: lib/fb_tools/socket_obj/unix.py:60
+#, python-brace-format
+msgid "The Unix socket file {!r} was not found."
+msgstr "Die Unix-Sockel-Datei {!r} wurde nicht gefunden."
+
+#: lib/fb_tools/socket_obj/unix.py:76
+#, python-brace-format
+msgid "Invalid permissions to connect to Unix socket {!r}."
+msgstr "Ungültige Zugriffsrechte auf den Unix-Sockel {!r}."
+
+#: lib/fb_tools/socket_obj/unix.py:224
+msgid "A UNIX socket filename may not be None."
+msgstr "Eine Unix-Sockel-Datei darf nicht None sein."
+
+#: lib/fb_tools/socket_obj/unix.py:229
+#, python-brace-format
+msgid "The UNIX socket filename {!r} must be an absolute filename."
+msgstr "Der Unix-Sockel-Dateiname {!r} muss ein absoluter Pfad sein."
+
+#: lib/fb_tools/socket_obj/unix.py:249
+#, python-brace-format
+msgid "Wrong socket mode {!r}:"
+msgstr "Ungültiger Sockel-Mode {!r}:"
+
+#: lib/fb_tools/socket_obj/unix.py:285
+#, python-brace-format
+msgid "Invalid UID {!r} for socket owner given."
+msgstr "Ungültige UID {!r} für den Sockel-Besitzer übergeben."
+
+#: lib/fb_tools/socket_obj/unix.py:303
+#, python-brace-format
+msgid "Username {!r} as the owner for the UNIX socket file not found."
+msgstr "Der Nutzername {!r} als Besitzer der Unix-Sockel-Datei wurde nicht gefunden."
+
+#: lib/fb_tools/socket_obj/unix.py:338
+#, python-brace-format
+msgid "Invalid GID {!r} for socket file group given."
+msgstr "Ungültige GID {!r} für die Gruppe der Unix-Sockel-Datei übergeben."
+
+#: lib/fb_tools/socket_obj/unix.py:356
+#, python-brace-format
+msgid "Groupname {!r} as the group for the UNIX socket file not found."
+msgstr "Der Gruppenname {!r} als Gruppe der Unix-Sockel-Datei wurde nicht gefunden."
+
+#: lib/fb_tools/socket_obj/unix.py:425
+#, python-brace-format
+msgid "Removing socket file {!r} ..."
+msgstr "Lösche Sockel-Datei {!r} …"
+
+#: lib/fb_tools/socket_obj/unix.py:434
+#, python-brace-format
+msgid "Connecting to Unix Domain Socket {!r} ..."
+msgstr "Verbinde mit Unix-Domain-Sockel {!r} …"
+
+#: lib/fb_tools/socket_obj/unix.py:437 lib/fb_tools/socket_obj/unix.py:499
+#, python-brace-format
+msgid "The socket is already connected to {!r} ..."
+msgstr "Der Sockel ist bereits mit {!r} verbunden …"
+
+#: lib/fb_tools/socket_obj/unix.py:441 lib/fb_tools/socket_obj/unix.py:503
+#, python-brace-format
+msgid "The application is already bonded to {!r} ..."
+msgstr "Die Anwendung ist bereits an {!r} gebunden …"
+
+#: lib/fb_tools/socket_obj/unix.py:452
+#, python-brace-format
+msgid "Error connecting to Unix Socket {sock!r}: {e}"
+msgstr "Fehler beim Verbinden mit Unix-Sockel {sock!r}: {e}"
+
+#: lib/fb_tools/socket_obj/unix.py:466
+#, python-brace-format
+msgid "Setting permissions of {sock!r} to 0o{mode} ..."
+msgstr "Setze Rechte auf {sock!r} auf 0o{mode} …"
+
+#: lib/fb_tools/socket_obj/unix.py:480
+msgid "Only root may change the ownership of a socket."
+msgstr "Nur root darf die Besitzerschaft eines Sockels ändern."
+
+#: lib/fb_tools/socket_obj/unix.py:484
+#, python-brace-format
+msgid "Setting owner and group of {sock!r} to {uid}:{gid} ({owner}:{group}) ..."
+msgstr "Setze Besitzer und Gruppe von {sock!r} auf {uid}:{gid} ({owner}:{group}) …"
+
+#: lib/fb_tools/socket_obj/unix.py:496
+#, python-brace-format
+msgid "Creating and bind to Unix Socket {!r} ..."
+msgstr "Erstelle und binde an Unix-Sockel {!r} …"
+
+#: lib/fb_tools/socket_obj/unix.py:518
+#, python-brace-format
+msgid "Start listening on socket with a queue size of {}."
+msgstr "Starte Listening an Sockel mit einer Queue-Größe von {}."
+
+#: lib/fb_tools/spinner.py:496
+#, python-brace-format
+msgid "Spinner {!r} not found."
+msgstr "Spinner {!r} nicht gefunden."
 
 #: lib/fb_tools/xlate.py:121
-msgid "Found .mo-file: {!r}"
-msgstr "Gefundene .mo-Datei: {!r}"
+msgid "Module directory:"
+msgstr "Modul-Verzeichnis:"
+
+#: lib/fb_tools/xlate.py:122
+msgid "Lib directory:"
+msgstr "Lib-Verzeichnis:"
+
+#: lib/fb_tools/xlate.py:123
+msgid "Base directory:"
+msgstr "Basis-Verzeichnis:"
+
+#: lib/fb_tools/xlate.py:124
+msgid "Locale directory:"
+msgstr "Verzeichnis für Locales:"
+
+#: lib/fb_tools/xlate.py:125
+msgid "Locale domain:"
+msgstr "Locale-Domäne:"
+
+#: lib/fb_tools/xlate.py:126
+msgid "Found .mo-file:"
+msgstr "Gefundene .mo-Datei:"
 

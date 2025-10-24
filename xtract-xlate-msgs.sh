@@ -10,12 +10,12 @@ locale_dir="locale"
 locale_domain="fb_tools"
 pot_file="${locale_dir}/${locale_domain}.pot"
 po_with="99"
-my_address="${DEBEMAIL:-frank@brehm-online.com}"
+my_address="frank@brehm-online.com"
 
 pkg_version=$( head -n 1 debian/changelog | sed -e 's/^[^(]*(//' -e 's/).*//' )
 echo "Package-Version: '${pkg_version}'"
 
-pybabel extract bin/* lib \
+pybabel extract src \
     -o "${pot_file}" \
     -F etc/babel.ini \
     --width=${po_with} \

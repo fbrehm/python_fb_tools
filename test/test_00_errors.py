@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2024 Frank Brehm, Berlin
+@copyright: © 2025 Frank Brehm, Berlin
 @license: GPL3
 """
 
@@ -18,12 +18,12 @@ try:
 except ImportError:
     import unittest
 
-libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib'))
+libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, libdir)
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
-LOG = logging.getLogger('test_errors')
+LOG = logging.getLogger("test_errors")
 
 
 # =============================================================================
@@ -43,8 +43,7 @@ class TestFbErrors(FbToolsTestcase):
 
         import fb_tools.errors
 
-        LOG.info('Module version of fb_tools.errors is {!r}.'.format(
-            fb_tools.errors.__version__))
+        LOG.info("Module version of fb_tools.errors is {!r}.".format(fb_tools.errors.__version__))
 
     # -------------------------------------------------------------------------
     def test_fb_error(self):
@@ -54,9 +53,9 @@ class TestFbErrors(FbToolsTestcase):
         from fb_tools.errors import FbError
 
         with self.assertRaises(FbError) as cm:
-            raise FbError('Bla blub')
+            raise FbError("Bla blub")
         e = cm.exception
-        LOG.debug('%s raised: %s', e.__class__.__name__, e)
+        LOG.debug("%s raised: %s", e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_func_not_implemented(self):
@@ -66,10 +65,9 @@ class TestFbErrors(FbToolsTestcase):
         from fb_tools.errors import FunctionNotImplementedError
 
         with self.assertRaises(FunctionNotImplementedError) as cm:
-            raise FunctionNotImplementedError(
-                'test_func_not_implemented', 'test_errors')
+            raise FunctionNotImplementedError("test_func_not_implemented", "test_errors")
         e = cm.exception
-        LOG.debug('%s raised: %s', e.__class__.__name__, e)
+        LOG.debug("%s raised: %s", e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_io_timeout_error(self):
@@ -79,9 +77,9 @@ class TestFbErrors(FbToolsTestcase):
         from fb_tools.errors import IoTimeoutError
 
         with self.assertRaises(IoTimeoutError) as cm:
-            raise IoTimeoutError('Test IO error', 2.5, '/etc/shadow')
+            raise IoTimeoutError("Test IO error", 2.5, "/etc/shadow")
         e = cm.exception
-        LOG.debug('%s raised: %s', e.__class__.__name__, e)
+        LOG.debug("%s raised: %s", e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_read_timeout_error(self):
@@ -91,9 +89,9 @@ class TestFbErrors(FbToolsTestcase):
         from fb_tools.errors import ReadTimeoutError
 
         with self.assertRaises(ReadTimeoutError) as cm:
-            raise ReadTimeoutError(2.55, '/etc/shadow')
+            raise ReadTimeoutError(2.55, "/etc/shadow")
         e = cm.exception
-        LOG.debug('%s raised: %s', e.__class__.__name__, e)
+        LOG.debug("%s raised: %s", e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_write_timeout_error(self):
@@ -103,9 +101,9 @@ class TestFbErrors(FbToolsTestcase):
         from fb_tools.errors import WriteTimeoutError
 
         with self.assertRaises(WriteTimeoutError) as cm:
-            raise WriteTimeoutError(5, '/etc/shadow')
+            raise WriteTimeoutError(5, "/etc/shadow")
         e = cm.exception
-        LOG.debug('%s raised: %s', e.__class__.__name__, e)
+        LOG.debug("%s raised: %s", e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_invalid_time_interval_error(self):
@@ -115,30 +113,30 @@ class TestFbErrors(FbToolsTestcase):
         from fb_tools.errors import InvalidTimeIntervalError
 
         with self.assertRaises(InvalidTimeIntervalError) as cm:
-            raise InvalidTimeIntervalError('bla')
+            raise InvalidTimeIntervalError("bla")
         e = cm.exception
-        LOG.debug('{c} raised: {e}'.format(c=e.__class__.__name__, e=e))
+        LOG.debug("{c} raised: {e}".format(c=e.__class__.__name__, e=e))
 
 
 # =============================================================================
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     verbose = get_arg_verbose()
     if verbose is None:
         verbose = 0
     init_root_logger(verbose)
 
-    LOG.info('Starting tests ...')
+    LOG.info("Starting tests ...")
 
     suite = unittest.TestSuite()
 
-    suite.addTest(TestFbErrors('test_import', verbose))
-    suite.addTest(TestFbErrors('test_fb_error', verbose))
-    suite.addTest(TestFbErrors('test_func_not_implemented', verbose))
-    suite.addTest(TestFbErrors('test_io_timeout_error', verbose))
-    suite.addTest(TestFbErrors('test_read_timeout_error', verbose))
-    suite.addTest(TestFbErrors('test_write_timeout_error', verbose))
-    suite.addTest(TestFbErrors('test_invalid_time_interval_error', verbose))
+    suite.addTest(TestFbErrors("test_import", verbose))
+    suite.addTest(TestFbErrors("test_fb_error", verbose))
+    suite.addTest(TestFbErrors("test_func_not_implemented", verbose))
+    suite.addTest(TestFbErrors("test_io_timeout_error", verbose))
+    suite.addTest(TestFbErrors("test_read_timeout_error", verbose))
+    suite.addTest(TestFbErrors("test_write_timeout_error", verbose))
+    suite.addTest(TestFbErrors("test_invalid_time_interval_error", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

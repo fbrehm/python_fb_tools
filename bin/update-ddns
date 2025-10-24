@@ -4,8 +4,8 @@
 @summary: Update the A and/or AAAA record at ddns.de with the current IP address.
 
 @author: Frank Brehm
-@contact: frank.brehm@pixelpark.com
-@copyright: © 2024 by Frank Brehm, Berlin
+@contact: frank@brehm-online.com
+@copyright: © 2025 by Frank Brehm, Berlin
 """
 from __future__ import print_function
 
@@ -62,7 +62,7 @@ from fb_tools.xlate import XLATOR
 _ = XLATOR.gettext
 
 __author__ = 'Frank Brehm <frank@brehm-online.com>'
-__copyright__ = '(C) 2024 by Frank Brehm, Berlin'
+__copyright__ = '(C) 2025 by Frank Brehm, Berlin'
 
 appname = os.path.basename(sys.argv[0])
 
