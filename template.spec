@@ -58,7 +58,7 @@ echo "Pwd: $( pwd )"
 
 %install
 %pyproject_install
-%pyproject_save_files fb_logging
+%pyproject_save_files fb_tools
 
 echo "Whats in '%{builddir}':"
 ls -lA '%{builddir}'
