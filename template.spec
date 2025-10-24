@@ -66,7 +66,7 @@ ls -lA '%{builddir}'
 echo "Whats in '%{buildroot}':"
 ls -lA '%{buildroot}'
 
-%files
+%files -f %{pyproject_files}
 %defattr(-,root,root,-)
 %license LICENSE
 %doc LICENSE README.md pyproject.toml debian/changelog
