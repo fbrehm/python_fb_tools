@@ -1,3 +1,18 @@
+fb-tools (2.9.0) UNRELEASED; urgency=medium
+
+  * Renaming directory 'lib' => 'src'.
+  * Adding pyproject.toml
+  * Updating for new directory structure.
+  * Removing setup.py, requirements-test*.txt, get-debian*, get-rpm-*
+    and all in bin-build.
+  * Changing Github workflow 'build-packages' and and .gitlab-ci.yaml to new
+    shared workfloww.
+  * Exec black on all Python sources
+  * Moving all application modules into src/fb_tools/application and
+    make entrypoints of them.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Mon, 27 Oct 2025 13:39:40 +0100
+
 fb-tools (2.8.1) all; urgency=medium
 
   * Allowing wider range of domain part of mailaddresses.
