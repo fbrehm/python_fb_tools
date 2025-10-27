@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-@summary: The module for the classes of the update-ddns application.
+@summary: Update the A and/or AAAA record at ddns.de with the current IP address.
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
@@ -13,10 +13,12 @@ from __future__ import absolute_import, print_function
 import copy
 import datetime
 import ipaddress
+import locale
 import logging
 import os
 import re
 import time
+import sys
 from pathlib import Path
 
 # Third party module
@@ -27,12 +29,12 @@ from six.moves.urllib.parse import quote
 import yaml
 
 # Own modules
-from . import BaseDdnsApplication
-from .config import DdnsConfiguration
-from .errors import DdnsAppError
-from .errors import InvalidUpdateStatusFileError
 from .. import __version__ as GLOBAL_VERSION
 from ..common import pp
+from ..ddns import BaseDdnsApplication
+from ..ddns.config import DdnsConfiguration
+from ..ddns.errors import DdnsAppError
+from ..ddns.errors import InvalidUpdateStatusFileError
 from ..errors import CommonDirectoryError
 from ..errors import DirectoryAccessError
 from ..errors import DirectoryNotDirError
@@ -43,7 +45,7 @@ from ..errors import FileNotRegularFileError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = "2.4.5"
+__version__ = "2.5.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -831,9 +833,28 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 
 
 # =============================================================================
+def main():
+    """Entrypoint for myip."""
+    my_path = Path(__file__)
+    appname = my_path.name
+
+    locale.setlocale(locale.LC_ALL, "")
+
+    app = UpdateDdnsApplication(appname=appname)
+    app.initialized = True
+
+    if app.verbose > 2:
+        print(_("{c}-Object:\n{a}").format(c=app.__class__.__name__, a=app), file=sys.stderr)
+
+    app()
+
+    sys.exit(0)
+
+
+# =============================================================================
 if __name__ == "__main__":
 
-    pass
+    main()
 
 # =============================================================================
 
