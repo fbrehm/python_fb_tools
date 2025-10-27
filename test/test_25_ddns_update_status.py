@@ -80,7 +80,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         """Test importing and instantiating an empty UpdateDdnsStatus object."""
         LOG.info(self.get_method_doc())
 
-        from fb_tools.ddns.update_app import UpdateDdnsStatus
+        from fb_tools.application.update_ddns import UpdateDdnsStatus
 
         LOG.debug("Description of UpdateDdnsStatus: " + textwrap.dedent(UpdateDdnsStatus.__doc__))
 
@@ -110,7 +110,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         """Test method check_workdir() of a UpdateDdnsStatus object."""
         LOG.info(self.get_method_doc())
 
-        from fb_tools.ddns.update_app import UpdateDdnsStatus
+        from fb_tools.application.update_ddns import UpdateDdnsStatus
         from fb_tools.errors import CommonDirectoryError
 
         LOG.debug("Testing valid working directory {!r} ...".format(self.work_dir))
@@ -154,7 +154,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         """Test writingg an update status YAML file."""
         LOG.info(self.get_method_doc())
 
-        from fb_tools.ddns.update_app import UpdateDdnsStatus
+        from fb_tools.application.update_ddns import UpdateDdnsStatus
 
         update_status = UpdateDdnsStatus(
             appname=self.appname,
@@ -174,7 +174,7 @@ class TestDdnsUpdateStatus(FbToolsTestcase):
         """Test reading an update status YAML file."""
         LOG.info(self.get_method_doc())
 
-        from fb_tools.ddns.update_app import UpdateDdnsStatus
+        from fb_tools.application.update_ddns import UpdateDdnsStatus
 
         update_status = UpdateDdnsStatus(
             appname=self.appname,
