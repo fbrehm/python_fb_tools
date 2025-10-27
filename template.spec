@@ -71,6 +71,6 @@ ls -lA '%{buildroot}'
 %license LICENSE
 %doc LICENSE README.md pyproject.toml debian/changelog
 %{_bindir}/*
-%{_mandir}/*
+%{_datadir}/*
 
 %changelog
