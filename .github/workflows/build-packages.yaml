@@ -65,7 +65,7 @@ jobs:
       # el_versions: 'el-9 el-10'
       el_versions: 'el-9'
       additional_debian_build_packages: 'python3-fb-logging python3-click python3-semver pybuild-plugin-pyproject flit'
-      additional_rpm_build_packages: ''
+      additional_rpm_build_packages: 'python3-fb-logging python3-pyyaml'
       password_file: ${{ needs.prepare-image.outputs.password_file }}
       key_id: ${{ needs.prepare-image.outputs.key_id }}
       # do_help2man: true
