@@ -20,7 +20,7 @@ try:
 except ImportError:
     import unittest
 
-libdir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), '..', 'lib'))
+libdir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), "..", "src"))
 sys.path.insert(0, libdir)
 
 from fb_tools.common import pp, to_utf8
@@ -28,7 +28,7 @@ from fb_tools.common import pp, to_utf8
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
 
-APPNAME = 'test_lock'
+APPNAME = "test_lock"
 
 LOG = logging.getLogger(APPNAME)
 
@@ -43,28 +43,28 @@ class TestLockHandler(FbToolsTestcase):
         if self.verbose >= 1:
             print()
 
-        self.lock_dir = '/tmp'
-        self.lock_basename = 'test-{}.lock'.format(os.getpid())
+        self.lock_dir = "/tmp"
+        self.lock_basename = "test-{}.lock".format(os.getpid())
         self.lock_file = os.path.join(self.lock_dir, self.lock_basename)
 
     # -------------------------------------------------------------------------
     def tearDown(self):
         """Tear down routine for calling each particular test method."""
         if os.path.exists(self.lock_file):
-            LOG.debug('Removing {!r} ...'.format(self.lock_file))
+            LOG.debug("Removing {!r} ...".format(self.lock_file))
             os.remove(self.lock_file)
 
     # -------------------------------------------------------------------------
     def create_lockfile(self, content):
         """Create a temporary lockfile."""
-        (fd, filename) = tempfile.mkstemp(suffix='.lock', prefix='test-', dir=self.lock_dir)
+        (fd, filename) = tempfile.mkstemp(suffix=".lock", prefix="test-", dir=self.lock_dir)
 
-        LOG.debug('Created temporary file {!r}, writing in it.'.format(filename))
+        LOG.debug("Created temporary file {!r}, writing in it.".format(filename))
         content = to_utf8(str(content))
         os.write(fd, content)
         os.close(fd)
 
-        LOG.debug('Created test lockfile: {!r}.'.format(filename))
+        LOG.debug("Created test lockfile: {!r}.".format(filename))
 
         return filename
 
@@ -72,7 +72,7 @@ class TestLockHandler(FbToolsTestcase):
     def remove_lockfile(self, filename):
         """Remove the temporary lockfile."""
         if os.path.exists(filename):
-            LOG.debug('Removing test lockfile {!r} ...'.format(filename))
+            LOG.debug("Removing test lockfile {!r} ...".format(filename))
             os.remove(filename)
         else:
             LOG.debug("Lockfile {!r} doesn't exists.".format(filename))
@@ -82,26 +82,32 @@ class TestLockHandler(FbToolsTestcase):
         """Test import of fb_tools.handler.lock."""
         LOG.info(self.get_method_doc())
 
-        LOG.info('Testing import of fb_tools.handler.lock ...')
+        LOG.info("Testing import of fb_tools.handler.lock ...")
         import fb_tools.handler.lock
-        LOG.debug('Version of fb_tools.handler.lock: {!r}'.format(
-            fb_tools.handler.lock.__version__))
+
+        LOG.debug(
+            "Version of fb_tools.handler.lock: {!r}".format(fb_tools.handler.lock.__version__)
+        )
 
         from fb_tools.handler.lock import LockHandlerError
+
         doc_str = textwrap.dedent(LockHandlerError.__doc__).strip()
-        LOG.debug('Description of LockHandlerError: ' + doc_str)
+        LOG.debug("Description of LockHandlerError: " + doc_str)
 
         from fb_tools.handler.lock import LockdirNotExistsError
+
         doc_str = textwrap.dedent(LockdirNotExistsError.__doc__).strip()
-        LOG.debug('Description of LockdirNotExistsError: ' + doc_str)
+        LOG.debug("Description of LockdirNotExistsError: " + doc_str)
 
         from fb_tools.handler.lock import LockdirNotWriteableError
+
         doc_str = textwrap.dedent(LockdirNotWriteableError.__doc__).strip()
-        LOG.debug('Description of LockdirNotWriteableError: ' + doc_str)
+        LOG.debug("Description of LockdirNotWriteableError: " + doc_str)
 
         from fb_tools.handler.lock import LockHandler
+
         doc_str = textwrap.dedent(LockHandler.__doc__).strip()
-        LOG.debug('Description of LockHandler: ' + doc_str)
+        LOG.debug("Description of LockHandler: " + doc_str)
 
     # -------------------------------------------------------------------------
     def test_could_not_occupy_lockfile_error(self):
@@ -111,9 +117,9 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.errors import CouldntOccupyLockfileError
 
         with self.assertRaises(CouldntOccupyLockfileError) as cm:
-            raise CouldntOccupyLockfileError('/var/lock/bla.lock', 9.1, 5)
+            raise CouldntOccupyLockfileError("/var/lock/bla.lock", 9.1, 5)
         e = cm.exception
-        LOG.debug('%s raised: %s', e.__class__.__name__, e)
+        LOG.debug("%s raised: %s", e.__class__.__name__, e)
 
     # -------------------------------------------------------------------------
     def test_object(self):
@@ -123,12 +129,12 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.handler.lock import LockHandler
 
         locker = LockHandler(
-            appname='test_base_object',
+            appname="test_base_object",
             verbose=self.verbose,
-            lockdir='/tmp',
+            lockdir="/tmp",
         )
-        LOG.debug('LockHandler %%r:\n{!r}'.format(locker))
-        LOG.debug('LockHandler %%s:\n{}'.format(locker))
+        LOG.debug("LockHandler %%r:\n{!r}".format(locker))
+        LOG.debug("LockHandler %%s:\n{}".format(locker))
 
     # -------------------------------------------------------------------------
     def test_simple_lockfile(self):
@@ -138,13 +144,13 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.handler.lock import LockHandler
 
         locker = LockHandler(
-            appname='test_base_object',
+            appname="test_base_object",
             verbose=self.verbose,
             lockdir=self.lock_dir,
         )
-        LOG.debug('Creating lockfile {!r} ...'.format(self.lock_file))
+        LOG.debug("Creating lockfile {!r} ...".format(self.lock_file))
         lock = locker.create_lockfile(self.lock_basename)
-        LOG.debug('Removing lockfile {!r} ...'.format(self.lock_file))
+        LOG.debug("Removing lockfile {!r} ...".format(self.lock_file))
         del lock
         locker.remove_lockfile(self.lock_basename)
 
@@ -156,18 +162,18 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.handler.lock import LockHandler
 
         locker = LockHandler(
-            appname='test_lock',
+            appname="test_lock",
             verbose=self.verbose,
             lockdir=self.lock_dir,
         )
         try:
-            LOG.debug('Creating lockfile {!r} ...'.format(self.lock_file))
+            LOG.debug("Creating lockfile {!r} ...".format(self.lock_file))
             lock = locker.create_lockfile(self.lock_basename)
-            LOG.debug('PbLock object %%r: {!r}'.format(lock))
-            LOG.debug('PbLock object %%s:\n{}'.format(lock))
+            LOG.debug("PbLock object %%r: {!r}".format(lock))
+            LOG.debug("PbLock object %%s:\n{}".format(lock))
             lock = None
         finally:
-            LOG.debug('Removing lockfile {!r} ...'.format(self.lock_file))
+            LOG.debug("Removing lockfile {!r} ...".format(self.lock_file))
             locker.remove_lockfile(self.lock_basename)
 
     # -------------------------------------------------------------------------
@@ -178,31 +184,31 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.handler.lock import LockHandler
 
         locker = LockHandler(
-            appname='test_lock',
+            appname="test_lock",
             verbose=self.verbose,
             lockdir=self.lock_dir,
         )
         try:
-            LOG.debug('Creating lockfile %r ...', self.lock_file)
+            LOG.debug("Creating lockfile %r ...", self.lock_file)
             lock = locker.create_lockfile(self.lock_basename)
-            LOG.debug('Current ctime: %s' % (lock.ctime.isoformat(' ')))
-            LOG.debug('Current mtime: %s' % (lock.mtime.isoformat(' ')))
+            LOG.debug("Current ctime: %s" % (lock.ctime.isoformat(" ")))
+            LOG.debug("Current mtime: %s" % (lock.mtime.isoformat(" ")))
             if self.verbose > 2:
-                LOG.debug('Current lock object before refreshing:\n{}'.format(pp(lock.as_dict())))
+                LOG.debug("Current lock object before refreshing:\n{}".format(pp(lock.as_dict())))
             mtime1 = lock.stat().st_mtime
-            LOG.debug('Sleeping two seconds ...')
+            LOG.debug("Sleeping two seconds ...")
             time.sleep(2)
             lock.refresh()
-            LOG.debug('New mtime: %s' % (lock.mtime.isoformat(' ')))
+            LOG.debug("New mtime: %s" % (lock.mtime.isoformat(" ")))
             if self.verbose > 2:
-                LOG.debug('Current lock object after refreshing:\n{}'.format(pp(lock.as_dict())))
+                LOG.debug("Current lock object after refreshing:\n{}".format(pp(lock.as_dict())))
             mtime2 = lock.stat().st_mtime
             tdiff = mtime2 - mtime1
-            LOG.debug('Got a time difference between mtimes of %0.3f seconds.' % (tdiff))
+            LOG.debug("Got a time difference between mtimes of %0.3f seconds." % (tdiff))
             self.assertGreater(mtime2, mtime1)
             lock = None
         finally:
-            LOG.debug('Removing lockfile %r ...', self.lock_file)
+            LOG.debug("Removing lockfile %r ...", self.lock_file)
             locker.remove_lockfile(self.lock_basename)
 
     # -------------------------------------------------------------------------
@@ -214,9 +220,9 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.handler.lock import LockdirNotExistsError
         from fb_tools.handler.lock import LockdirNotWriteableError
 
-        ldir = '/etc/passwd'
+        ldir = "/etc/passwd"
         locker = LockHandler(
-            appname='test_lock',
+            appname="test_lock",
             verbose=self.verbose,
             lockdir=ldir,
         )
@@ -224,25 +230,23 @@ class TestLockHandler(FbToolsTestcase):
             lock = locker.create_lockfile(self.lock_basename)
             lock = None
         e = cm.exception
-        LOG.debug(
-            '%s raised as expected on lockdir = %r: %s.',
-            'LockdirNotExistsError', ldir, e)
+        LOG.debug("%s raised as expected on lockdir = %r: %s.", "LockdirNotExistsError", ldir, e)
         del locker
 
         if os.getegid():
-            ldir = '/var'
+            ldir = "/var"
             locker = LockHandler(
-                appname='test_lock',
+                appname="test_lock",
                 verbose=self.verbose,
                 lockdir=ldir,
             )
             with self.assertRaises(LockdirNotWriteableError) as cm:
-                lock = locker.create_lockfile(self.lock_basename)               # noqa
+                lock = locker.create_lockfile(self.lock_basename)  # noqa
                 del lock
             e = cm.exception
             LOG.debug(
-                '%s raised as expected on lockdir = %r: %s.',
-                'LockdirNotWriteableError', ldir, e)
+                "%s raised as expected on lockdir = %r: %s.", "LockdirNotWriteableError", ldir, e
+            )
 
     # -------------------------------------------------------------------------
     def test_valid_lockfile(self):
@@ -252,10 +256,10 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.handler.lock import LockHandler
         from fb_tools.errors import CouldntOccupyLockfileError
 
-        content = '%d\n' % (os.getpid())
+        content = "%d\n" % (os.getpid())
 
         locker = LockHandler(
-            appname='test_lock',
+            appname="test_lock",
             verbose=self.verbose,
             lockdir=self.lock_dir,
         )
@@ -266,15 +270,10 @@ class TestLockHandler(FbToolsTestcase):
         try:
             with self.assertRaises(CouldntOccupyLockfileError) as cm:
                 result = locker.create_lockfile(
-                    lockfile,
-                    delay_start=0.2,
-                    delay_increase=0.4,
-                    max_delay=5
+                    lockfile, delay_start=0.2, delay_increase=0.4, max_delay=5
                 )
             e = cm.exception
-            LOG.debug(
-                '%s raised as expected on an valid lockfile: %s',
-                e.__class__.__name__, e)
+            LOG.debug("%s raised as expected on an valid lockfile: %s", e.__class__.__name__, e)
             self.assertEqual(lockfile, e.lockfile)
             if result:
                 self.fail("PbLockHandler shouldn't be able to create the lockfile.")
@@ -291,27 +290,26 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.errors import CouldntOccupyLockfileError
 
         locker = LockHandler(
-            appname='test_lock',
+            appname="test_lock",
             verbose=self.verbose,
             lockdir=self.lock_dir,
         )
 
-        content = '\n\n'
+        content = "\n\n"
         lockfile = self.create_lockfile(content)
         result = None
 
         try:
             with self.assertRaises(CouldntOccupyLockfileError) as cm:
-                result = locker.create_lockfile(                        # noqa
-                    lockfile,
-                    delay_start=0.2,
-                    delay_increase=0.4,
-                    max_delay=5
+                result = locker.create_lockfile(  # noqa
+                    lockfile, delay_start=0.2, delay_increase=0.4, max_delay=5
                 )
             e = cm.exception
             LOG.debug(
-                '%s raised as expected on an invalid lockfile (empty lines): %s',
-                e.__class__.__name__, e)
+                "%s raised as expected on an invalid lockfile (empty lines): %s",
+                e.__class__.__name__,
+                e,
+            )
             del result
 
         finally:
@@ -326,31 +324,30 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.errors import CouldntOccupyLockfileError
 
         locker = LockHandler(
-            appname='test_lock',
+            appname="test_lock",
             verbose=self.verbose,
             lockdir=self.lock_dir,
         )
 
-        content = 'Bli bla blub\n\n'
+        content = "Bli bla blub\n\n"
         lockfile = self.create_lockfile(content)
         result = None
 
         try:
             with self.assertRaises(CouldntOccupyLockfileError) as cm:
                 result = locker.create_lockfile(
-                    lockfile,
-                    delay_start=0.2,
-                    delay_increase=0.4,
-                    max_delay=5
+                    lockfile, delay_start=0.2, delay_increase=0.4, max_delay=5
                 )
             e = cm.exception
             LOG.debug(
-                '%s raised as expected on an invalid lockfile (non-numeric): %s',
-                e.__class__.__name__, e)
+                "%s raised as expected on an invalid lockfile (non-numeric): %s",
+                e.__class__.__name__,
+                e,
+            )
 
             locker.remove_lockfile(lockfile)
             if result:
-                self.fail('LockHandler should not be able to create the lockfile.')
+                self.fail("LockHandler should not be able to create the lockfile.")
                 result = None
 
         finally:
@@ -364,54 +361,51 @@ class TestLockHandler(FbToolsTestcase):
         from fb_tools.handler.lock import LockHandler
 
         locker = LockHandler(
-            appname='test_lock',
+            appname="test_lock",
             verbose=self.verbose,
             lockdir=self.lock_dir,
         )
 
-        content = '123456\n\n'
+        content = "123456\n\n"
         lockfile = self.create_lockfile(content)
         result = None
 
         try:
             result = locker.create_lockfile(
-                lockfile,
-                delay_start=0.2,
-                delay_increase=0.4,
-                max_delay=5
+                lockfile, delay_start=0.2, delay_increase=0.4, max_delay=5
             )
             locker.remove_lockfile(lockfile)
             if not result:
-                self.fail('PbLockHandler should be able to create the lockfile.')
+                self.fail("PbLockHandler should be able to create the lockfile.")
             result = None
         finally:
             self.remove_lockfile(lockfile)
 
 
 # =============================================================================
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     verbose = get_arg_verbose()
     if verbose is None:
         verbose = 0
     init_root_logger(verbose)
 
-    LOG.info('Starting tests ...')
+    LOG.info("Starting tests ...")
 
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
 
-    suite.addTest(TestLockHandler('test_import', verbose))
-    suite.addTest(TestLockHandler('test_could_not_occupy_lockfile_error', verbose))
-    suite.addTest(TestLockHandler('test_object', verbose))
-    suite.addTest(TestLockHandler('test_simple_lockfile', verbose))
-    suite.addTest(TestLockHandler('test_lockobject', verbose))
-    suite.addTest(TestLockHandler('test_refresh_lockobject', verbose))
-    suite.addTest(TestLockHandler('test_invalid_dir', verbose))
-    suite.addTest(TestLockHandler('test_valid_lockfile', verbose))
-    suite.addTest(TestLockHandler('test_invalid_lockfile1', verbose))
-    suite.addTest(TestLockHandler('test_invalid_lockfile2', verbose))
-    suite.addTest(TestLockHandler('test_invalid_lockfile3', verbose))
+    suite.addTest(TestLockHandler("test_import", verbose))
+    suite.addTest(TestLockHandler("test_could_not_occupy_lockfile_error", verbose))
+    suite.addTest(TestLockHandler("test_object", verbose))
+    suite.addTest(TestLockHandler("test_simple_lockfile", verbose))
+    suite.addTest(TestLockHandler("test_lockobject", verbose))
+    suite.addTest(TestLockHandler("test_refresh_lockobject", verbose))
+    suite.addTest(TestLockHandler("test_invalid_dir", verbose))
+    suite.addTest(TestLockHandler("test_valid_lockfile", verbose))
+    suite.addTest(TestLockHandler("test_invalid_lockfile1", verbose))
+    suite.addTest(TestLockHandler("test_invalid_lockfile2", verbose))
+    suite.addTest(TestLockHandler("test_invalid_lockfile3", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
