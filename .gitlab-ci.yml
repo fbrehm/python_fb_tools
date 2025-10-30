@@ -12,6 +12,7 @@ variables:
   PYTHON_INIT_FILE: 'src/fb_tools/__init__.py'
   # PYTHON_TEST_PATHS: 'bin/* lib test setup.py'
   PYTHON_TEST_PATHS: 'src'
+  BUILD_RPMS_FOR: 'el-9 el-10'
   SHELLSCRIPTS: 'compile-xlate-msgs.sh update-env.sh xtract-xlate-msgs.sh'
   SSH_PRIV_KEY_YUM_REPO: 'nada'
   TEST_LOCALES: 'en_US.UTF-8 de_DE.UTF-8'

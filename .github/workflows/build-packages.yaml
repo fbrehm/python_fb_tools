@@ -62,8 +62,7 @@ jobs:
       # test_python_versions: '["3.8", "3.10", "3.11", "3.12" "3.13"]'
       libdir: src/fb_tools
       # debian_versions: 'Debian-Bookworm Debian-Trixie Ubuntu-Focal Ubuntu-Jammy'
-      # el_versions: 'el-9 el-10'
-      el_versions: 'el-9'
+      el_versions: 'el-9 el-10'
       additional_debian_build_packages: >
         flit
         pybuild-plugin-pyproject
