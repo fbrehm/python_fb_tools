@@ -1,4 +1,4 @@
-fb-tools (2.9.0) UNRELEASED; urgency=medium
+fb-tools (2.9.0) all; urgency=medium
 
   * Renaming directory 'lib' => 'src'.
   * Adding pyproject.toml
