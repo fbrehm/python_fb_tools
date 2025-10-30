@@ -13,12 +13,8 @@ from __future__ import absolute_import, print_function
 import copy
 import locale
 import logging
+import pathlib
 import sys
-
-try:
-    import pathlib
-except ImportError:
-    import pathlib2 as pathlib
 
 # Own modules
 from .. import __version__ as GLOBAL_VERSION
@@ -28,7 +24,7 @@ from ..ddns.config import DdnsConfiguration
 from ..ddns.errors import WorkDirError
 from ..xlate import XLATOR, format_list
 
-__version__ = "2.1.0"
+__version__ = "2.1.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -187,7 +183,7 @@ def main():
 # =============================================================================
 if __name__ == "__main__":
 
-    pass
+    main()
 
 # =============================================================================
 

@@ -55,7 +55,7 @@ jobs:
     name: "Calling shared build workflow"
     needs:
       - prepare-image
-    uses: fbrehm/actions/.github/workflows/pyproject-build-packages.yaml@develop
+    uses: fbrehm/actions/.github/workflows/pyproject-build-packages.yaml@main
     with:
       has_i18n: true
       # test_python_versions: '["3.8", "3.9", "3.10", "3.11", "3.12" "3.13"]'
@@ -64,8 +64,13 @@ jobs:
       # debian_versions: 'Debian-Bookworm Debian-Trixie Ubuntu-Focal Ubuntu-Jammy'
       # el_versions: 'el-9 el-10'
       el_versions: 'el-9'
-      additional_debian_build_packages: 'python3-fb-logging python3-click python3-semver pybuild-plugin-pyproject flit'
-      additional_rpm_build_packages: ''
+      additional_debian_build_packages: >
+        flit
+        pybuild-plugin-pyproject
+        python3-fb-logging
+        python3-semver
+        python3-yaml
+      additional_rpm_build_packages: 'python3-fb-logging python3-pyyaml'
       password_file: ${{ needs.prepare-image.outputs.password_file }}
       key_id: ${{ needs.prepare-image.outputs.key_id }}
       # do_help2man: true
@@ -74,7 +79,7 @@ jobs:
       smtp_server_port: ${{ needs.prepare-image.outputs.smtp_server_port }}
       smtp_sender_address: ${{ needs.prepare-image.outputs.smtp_sender_address }}
       smtp_recipient_addresses: ${{ needs.prepare-image.outputs.smtp_recipient_addresses }}
-      revision: 3
+      revision: 1
     secrets:
       pypi_token: ${{ secrets.PYPI_TOKEN }}
       public_key: ${{ secrets.GPG_PUBLIC_KEY }}

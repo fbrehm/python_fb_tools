@@ -179,12 +179,12 @@ class TestAppModules(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_import_update_ddns_app(self):
         """Test importing module fb_tools.ddns.update_app."""
-        LOG.info("Testing import of fb_tools.ddns.update_app ...")
-        import fb_tools.ddns.update_app
+        LOG.info("Testing import of fb_tools.application.update_ddns ...")
+        import fb_tools.application.update_ddns
 
         LOG.info(
-            "Module version of fb_tools.ddns.update_app is {!r}.".format(
-                fb_tools.ddns.update_app.__version__
+            "Module version of fb_tools.application.update_ddns is {!r}.".format(
+                fb_tools.application.update_ddns.__version__
             )
         )
 
@@ -193,7 +193,7 @@ class TestAppModules(FbToolsTestcase):
         """Test create an instance of a UpdateDdnsApplication object."""
         LOG.info("Test creating an instance of a UpdateDdnsApplication object.")
 
-        from fb_tools.ddns.update_app import UpdateDdnsApplication
+        from fb_tools.application.update_ddns import UpdateDdnsApplication
         from fb_tools.ddns.config import DdnsConfiguration
 
         UpdateDdnsApplication.do_init_logging = False
