@@ -1,4 +1,4 @@
-fb-tools (2.9.1) UNRELEASED; urgency=medium
+fb-tools (2.9.1) all; urgency=medium
 
   * Fixing src/fb_tools/xlate.py for conflicting semver dependency.
 
