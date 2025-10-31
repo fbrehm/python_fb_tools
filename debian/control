@@ -33,7 +33,10 @@ Depends: python3-six,
          python3-tz,
          ${misc:Depends},
          ${python3:Depends}
-Recommends: python3-yaml, python3-toml
+Recommends: python3-toml
+Provides: fb-tools
+Conflicts: fb-tools
+Replaces: fb-tools
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python3 modules for this package.
