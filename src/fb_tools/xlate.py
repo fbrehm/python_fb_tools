@@ -27,14 +27,16 @@ import babel
 import babel.lists
 from babel.support import Translations
 
-# from packaging.version import Version
-from semver import Version
+try:
+    from semver import Version
+except ImportError:
+    from semver import VersionInfo as Version
 
 DOMAIN = "fb_tools"
 
 LOG = logging.getLogger(__name__)
 
-__version__ = "2.1.1"
+__version__ = "2.1.2"
 
 __me__ = Path(__file__).resolve()
 __module_dir__ = __me__.parent
