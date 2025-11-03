@@ -183,6 +183,81 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Fixing Github workflow.
 
+## [2.3.5] - 2024-02-04
+
+### Fixed
+
+* Fixing Github workflow.
+
+## [2.3.4} - 2024-02-04
+
+### Added
+
+* Adding tests for Python 3.12 to CI tests.
+* Adding distros Debian 13 (trixie) and Ubuntu 24.04 (Noble Numbat) to
+  Github workflow packages for building OS packages.
+
+### Changed
+
+* Simplyfying init of some classes.
+* Using Python 3.12 for CI linter tests.
+* Updating external Guthub actions.
+
+### Removed
+
+* Removing deprecated OS versions Ubuntu 18.04 (Bionic Beaver) and
+  Enterprise Linux 7 from Github workflow.
+
+## [2.3.3] - 2023-10-09
+
+### Changed
+
+* Simplyfication init of different application classes.
+* Applying flake8 rules to differenbt test scripts.
+
+### Fixed
+
+* Fixing `lib/fb_tools/cfg_app.py` for additional config file.
+
+## [2.3.2] - 2023-10-06
+
+### Fixed
+
+* Fixing runtime error in `lib/fb_tools/multi_config/files.py`.
+
+## [2.3.1] - 2023-10-06
+
+### Added
+
+* Adding test script for importing application modules
+* Adding class property to BaseApplication whether `init_logging` should
+  executed or not.
+* Adding possibility to assining testing command line arguments to
+  BaseApplication.
+
+### Fixwd
+
+* Fixing internal imports.
+* Fixing deprecated imports.
+
+## [2.3.0] - 2023-10-05
+
+### Added
+
+* Adding possibility in module `fb_tools.multi_config` to read all
+  config files in a directory named by the config file stem.
+
+### Changed
+
+* Moving all exception classes from module `fb_tools.multi_config` to
+  `fb_tools.errors`.
+* Splitting module `fb_tools.multi_config` into different mixin modules.
+* Expanding tests for class `BaseMultiConfig`.
+* Updating translations.
+
+### Fixwd
+
+* Fixing Github workflow for linting.
 
 
 
