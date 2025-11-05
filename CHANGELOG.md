@@ -259,6 +259,132 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Fixing Github workflow for linting.
 
+## [2.2.5] - 2023-07-19
+
+### Added
+
+* Adding Debian 12 (bookworm) for building binary packages on Github.
+
+### Changed
+
+* Better search for localisation files.
+* Disable false shellcheck error.
+
+## [2.2.4] - 2023-06-13
+
+### Changed
+
+* Making command line option `--quiet` optional.
+
+## [2.2.3] - 2023-05-31
+
+### Changed
+
+* Applying additional linter tests to Github workflow.
+* Fixing countless linter errors.
+* Updating copyright year where applicable.
+
+## [2.2.2] - 2023-02-06
+
+### Added
+
+* Adding quiet as an init parameter for application objects.
+
+### Changed
+
+* Do not update all pip modules in `.gitlab-ci.yml`.
+* Updating containers in `.github/workflows/packages.yaml`.
+* Updating list of shellscripts in `.gitlab-ci.yml`.
+* Changing version of used shared pipeline.
+
+### Fixed
+
+* Fixing get-debian-release for shellcheck errors.
+
+## [2.2.1] - 2022-12-30
+
+### Added
+
+* Adding signing of all Debian packages in Githaub workflow
+
+### Changed
+
+* Using shared pipelines in .gitlab-ci.yml
+* Updating package dependencies in template.spec and debian/control
+
+## [2.2.0] - 2022-11-22
+
+### Changed
+
+* Renaming locale definitions `de_DE` => and `en_US` => en.
+* Changing `LOCALE_DIR` in `lib/fb_tools/xlate.py`.
+* Updating setup files.
+
+### Fixed
+
+* Fixing `lib/fb_tools/ddns/__init__.py` for strange encoding.
+
+## [2.1.2] - 2022-11-02
+
+### Fixed
+
+* Fixing and updating setup files.
+
+## [2.1.1] - 2022-11-01
+
+### Changed
+
+* Extending tests in CI jobs by Python 3.11.
+
+### Fixed
+
+* Fixing imports in `lib/fb_tools/cfg_app.py`.
+
+## [2.1.0] - 2022-10-14
+
+### Added
+
+* Adding common commandline options for assumed answers.
+* Adding class TimeoutOptionAction to module `fb_tools.argparse_actions`.
+* Adding exceptions AbortAppError and TimeoutOnPromptError to module `fb_tools.errors`.
+* Adding properties `prompt_timeout` and `init_yes_no_lists` and methods `get_password()`
+  and `ask_for_yes_or_no()` to class HandlingObject in module `fb_tools.handling_obj`.
+* Adding optional common commandline option for the timeout of console input.
+
+### Changed
+
+* Updating documentation in all Python modules.
+* Making visibiliy of some common options optional.
+
+## [2.0.3] - 2022-09-21
+
+### Changed
+
+* Changes on help display of command line options.
+
+## [2.0.2] - 2022-08-30
+
+### Removed
+
+* Removing last dependencies to pyvmomi.
+
+## [2.0.1] - 2022-07-27
+
+### Changed
+
+* Refactoring `.gitlab-ci.yml`.
+
+## [2.0.0] - 2022-07-27
+
+### Changed
+
+* Applying flake8 rules to setup.py.
+* Generating man pages of scripts in bin/ in all CI environments.
+
+### Removed
+
+* Removing all VSpere modules and applications in favor of the
+  separate Python package `fb_vmware`.
 
 
 
