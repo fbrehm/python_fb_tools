@@ -2,8 +2,7 @@
 
 include:
   - project: 'python/packaging'
-    ref: develop
-    # file: 'gitlab/create-all.yaml'
+    ref: main
     file: 'gitlab/pyproject-create-all.yaml'
 
 variables:
@@ -13,6 +12,7 @@ variables:
   PYTHON_INIT_FILE: 'src/fb_tools/__init__.py'
   # PYTHON_TEST_PATHS: 'bin/* lib test setup.py'
   PYTHON_TEST_PATHS: 'src'
+  BUILD_RPMS_FOR: 'el-9 el-10'
   SHELLSCRIPTS: 'compile-xlate-msgs.sh update-env.sh xtract-xlate-msgs.sh'
   SSH_PRIV_KEY_YUM_REPO: 'nada'
   TEST_LOCALES: 'en_US.UTF-8 de_DE.UTF-8'
@@ -30,6 +30,6 @@ variables:
   # YUM_REPO_DIR: "/srv/www/repo${YUM_REPO_DIR_HTTP}"
   YUM_REPO_GPG_KEY_PUB: 'nada'
   YUM_REPO_GPG_KEY_SEC: ''
-  REVISION: 6
+  REVISION: 1
 
 # vim: et tabstop=2 expandtab shiftwidth=2 softtabstop=2 list
