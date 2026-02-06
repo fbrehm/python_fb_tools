@@ -35,7 +35,7 @@ from ..errors import CouldntOccupyLockfileError, HandlerError
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
 
-__version__ = "2.0.6"
+__version__ = "2.1.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -48,6 +48,14 @@ DEFAULT_LOCKING_USE_PID = True
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
+
+
+# =============================================================================
+def utcfromtimestamp(timestamp):
+    """Provide a substitute for datetime.datetime.utcfromtimestamp."""
+    return datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc) + datetime.timedelta(
+        seconds=timestamp
+    )
 
 
 # =============================================================================
@@ -232,9 +240,9 @@ class LockObject(FbBaseObject):
             if lfile.exists():
                 fstat = self.stat()
                 if not self.ctime:
-                    self._ctime = datetime.datetime.utcfromtimestamp(fstat.st_ctime)
+                    self._ctime = utcfromtimestamp(fstat.st_ctime)
                 if not self.mtime:
-                    self._mtime = datetime.datetime.utcfromtimestamp(fstat.st_mtime)
+                    self._mtime = utcfromtimestamp(fstat.st_mtime)
             else:
                 if not self.ctime:
                     self._ctime = datetime.datetime.utcnow()
@@ -413,7 +421,7 @@ class LockObject(FbBaseObject):
         if not self.simulate:
             os.utime(str(self.lockfile), None)
 
-        self._mtime = datetime.datetime.utcfromtimestamp(self.stat().st_mtime)
+        self._mtime = utcfromtimestamp(self.stat().st_mtime)
 
 
 # =============================================================================

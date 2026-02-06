@@ -225,7 +225,7 @@ class TestFbCommon(FbToolsTestcase):
             locale.setlocale(locale.LC_ALL, german)
         except Exception as e:
             LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
-            return True
+            return
 
         LOG.debug("Setting to locale {!r} to be secure.".format("C"))
         locale.setlocale(locale.LC_ALL, "C")
@@ -503,7 +503,7 @@ class TestFbCommon(FbToolsTestcase):
             locale.setlocale(locale.LC_ALL, german)
         except Exception as e:
             LOG.warning("Got a {c}: {e}".format(c=e.__class__.__name__, e=e))
-            return True
+            return
 
         # use German locale; name might vary with platform
         LOG.debug("Switching to german locale {!r}.".format(german))
