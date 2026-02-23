@@ -32,7 +32,7 @@ from ..xlate import DEFAULT_LOCALE
 from ..xlate import XLATOR
 from ..xlate import format_list
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ("json", "hjson", "yaml")
@@ -272,28 +272,14 @@ class CfgConvertApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self,
-        from_type=None,
-        to_type=None,
-        appname=None,
-        verbose=0,
-        version=GLOBAL_VERSION,
-        base_dir=None,
-        initialized=False,
-        usage=None,
-        description=None,
-        argparse_epilog=None,
-        argparse_prefix_chars="-",
-        env_prefix=None,
+        self, from_type=None, to_type=None, verbose=0, version=GLOBAL_VERSION, *args, **kwargs
     ):
         """Initialize the application object."""
-        desc = description
-        if not desc:
-            desc = _(
-                "Converts the given configuration file from the given input format "
-                "into the given output format and print it out to {o} "
-                "or into a given output file."
-            ).format(o="STDOUT")
+        desc = _(
+            "Converts the given configuration file from the given input format "
+            "into the given output format and print it out to {o} "
+            "or into a given output file."
+        ).format(o="STDOUT")
 
         self.cfg_files = []
         self._from_type = None
@@ -327,12 +313,7 @@ class CfgConvertApplication(BaseApplication):
         self._hjson_sort_keys = False
 
         super(CfgConvertApplication, self).__init__(
-            appname=appname,
-            verbose=verbose,
-            version=version,
-            base_dir=base_dir,
-            description=desc,
-            initialized=False,
+            *args, description=desc, verbose=verbose, version=version, **kwargs
         )
 
         self.fileio_timeout = 10
