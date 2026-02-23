@@ -7,6 +7,7 @@
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 # Standard modules
@@ -23,12 +24,13 @@ import shutil
 import signal
 import socket
 import sys
+from shlex import quote
+from subprocess import PIPE, Popen
+
 try:
     import pathlib
 except ImportError:
     import pathlib2 as pathlib
-from shlex import quote
-from subprocess import PIPE, Popen
 
 if sys.version_info[0] >= 3:
     from subprocess import SubprocessError, TimeoutExpired

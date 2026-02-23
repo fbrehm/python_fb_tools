@@ -7,6 +7,7 @@
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 UTF8_ENCODING = "utf-8"

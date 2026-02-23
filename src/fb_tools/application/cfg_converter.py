@@ -5,8 +5,9 @@
 
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2024 by Frank Brehm, Berlin
+@copyright: © 2026 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import, print_function
 
 # Standard modules
@@ -14,6 +15,7 @@ import argparse
 import copy
 import errno
 import importlib
+import locale
 import logging
 import os
 import sys
@@ -22,23 +24,22 @@ from pathlib import Path
 # Third party modules
 
 # Own modules
-from . import __version__ as GLOBAL_VERSION
-from .app import BaseApplication
-from .common import pp, to_bool
-from .errors import FbAppError
-from .xlate import DEFAULT_LOCALE
-from .xlate import XLATOR
-from .xlate import format_list
+from .. import __version__ as GLOBAL_VERSION
+from ..app import BaseApplication
+from ..common import pp, to_bool
+from ..errors import FbAppError
+from ..xlate import DEFAULT_LOCALE
+from ..xlate import XLATOR
+from ..xlate import format_list
 
-
-__version__ = '0.5.0'
+__version__ = "0.6.0"
 LOG = logging.getLogger(__name__)
 
-SUPPORTED_CFG_TYPES = ('json', 'hjson', 'yaml')
+SUPPORTED_CFG_TYPES = ("json", "hjson", "yaml")
 CFG_TYPE_MODULE = {
-    'json': 'json',
-    'hjson': 'hjson',
-    'yaml': 'yaml',
+    "json": "json",
+    "hjson": "hjson",
+    "yaml": "yaml",
 }
 
 _ = XLATOR.gettext
@@ -76,9 +77,8 @@ class InputFileNotExistingError(InputFileError):
     # -------------------------------------------------------------------------
     def __init__(self, filename):
         """Initialise a InputFileNotExistingError exception."""
-        msg = _('The input file is not existing')
-        super(InputFileNotExistingError, self).__init__(
-            errno.ENOENT, msg, filename)
+        msg = _("The input file is not existing")
+        super(InputFileNotExistingError, self).__init__(errno.ENOENT, msg, filename)
 
 
 # =============================================================================
@@ -88,9 +88,8 @@ class InputFileNotReadableError(InputFileError):
     # -------------------------------------------------------------------------
     def __init__(self, filename):
         """Initialise a InputFileNotReadableError exception."""
-        msg = _('The input file is not readable')
-        super(InputFileNotReadableError, self).__init__(
-            errno.EACCES, msg, filename)
+        msg = _("The input file is not readable")
+        super(InputFileNotReadableError, self).__init__(errno.EACCES, msg, filename)
 
 
 # =============================================================================
@@ -102,22 +101,21 @@ class CfgTypeOptionAction(argparse.Action):
         """Initialise a CfgTypeOptionAction object."""
         self.supported_types = copy.copy(supported_types)
 
-        super(CfgTypeOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+        super(CfgTypeOptionAction, self).__init__(*args, **kwargs, option_strings=option_strings)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, cfg_type, option_string=None):
         """Parse the configuration type option."""
         if cfg_type is None:
-            msg = _('The configuration file type may not be None.')
+            msg = _("The configuration file type may not be None.")
             raise argparse.ArgumentError(self, msg)
 
         cfg_type_clean = cfg_type.strip().lower()
         if cfg_type_clean not in self.supported_types:
-            msg = _(
-                'The configuration file type must be one of {lst}, given {g!r}.').format(
-                    lst=format_list(self.supported_types, do_repr=True, locale=DEFAULT_LOCALE),
-                    g=cfg_type)
+            msg = _("The configuration file type must be one of {lst}, given {g!r}.").format(
+                lst=format_list(self.supported_types, do_repr=True, locale=DEFAULT_LOCALE),
+                g=cfg_type,
+            )
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, cfg_type_clean)
@@ -131,14 +129,13 @@ class InputFileOptionAction(argparse.Action):
     # -------------------------------------------------------------------------
     def __init__(self, option_strings, *args, **kwargs):
         """Initialise a InputFileOptionAction object."""
-        super(InputFileOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+        super(InputFileOptionAction, self).__init__(*args, **kwargs, option_strings=option_strings)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, filename, option_string=None):
         """Parse the input file option."""
-        if filename is None or filename == '-' or filename == '':
-            setattr(namespace, self.dest, '-')
+        if filename is None or filename == "-" or filename == "":
+            setattr(namespace, self.dest, "-")
             return
         path = Path(filename)
         if not path.exists():
@@ -158,13 +155,14 @@ class OutputFileOptionAction(argparse.Action):
     def __init__(self, option_strings, *args, **kwargs):
         """Initialise a OutputFileOptionAction object."""
         super(OutputFileOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+            *args, **kwargs, option_strings=option_strings
+        )
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, filename, option_string=None):
         """Parse the output file option."""
-        if filename is None or filename == '-' or filename == '':
-            setattr(namespace, self.dest, '-')
+        if filename is None or filename == "-" or filename == "":
+            setattr(namespace, self.dest, "-")
             return
         path = Path(filename)
         setattr(namespace, self.dest, path)
@@ -180,20 +178,21 @@ class RangeOptionAction(argparse.Action):
         self._min_val = min_val
         self._max_val = max_val
 
-        super(RangeOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+        super(RangeOptionAction, self).__init__(*args, **kwargs, option_strings=option_strings)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, value, option_string=None):
         """Parse the range option."""
         if value < self._min_val:
-            msg = _('The value for {opt!r} may be at least {m}, {v} were given.').format(
-                opt=option_string, m=self._min_val, v=value)
+            msg = _("The value for {opt!r} may be at least {m}, {v} were given.").format(
+                opt=option_string, m=self._min_val, v=value
+            )
             raise argparse.ArgumentError(self, msg)
 
         if value > self._max_val:
-            msg = _('The value for {opt!r} may be at most {m}, {v} were given.').format(
-                opt=option_string, m=self._max_val, v=value)
+            msg = _("The value for {opt!r} may be at most {m}, {v} were given.").format(
+                opt=option_string, m=self._max_val, v=value
+            )
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, value)
@@ -208,8 +207,7 @@ class YamlStyleOptionAction(argparse.Action):
         """Initialise a YamlStyleOptionAction object."""
         self.supported_styles = copy.copy(supported_styles)
 
-        super(YamlStyleOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+        super(YamlStyleOptionAction, self).__init__(*args, **kwargs, option_strings=option_strings)
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, style, option_string=None):
@@ -220,9 +218,10 @@ class YamlStyleOptionAction(argparse.Action):
 
         style_clean = style.strip()
         if style_clean not in self.supported_styles:
-            msg = _('The YAML style type must be one of {opt}, given {g!r}.').format(
+            msg = _("The YAML style type must be one of {opt}, given {g!r}.").format(
                 opt=format_list(self.supported_styles, do_repr=True, locale=DEFAULT_LOCALE),
-                g=style)
+                g=style,
+            )
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, style_clean)
@@ -238,27 +237,29 @@ class CfgConvertApplication(BaseApplication):
     mod_spec = None
 
     loader_methods = {
-        'yaml': 'load_yaml',
-        'json': 'load_json',
-        'hjson': 'load_hjson',
+        "yaml": "load_yaml",
+        "json": "load_json",
+        "hjson": "load_hjson",
     }
 
     dumper_methods = {
-        'yaml': 'dump_yaml',
-        'json': 'dump_json',
-        'hjson': 'dump_hjson',
+        "yaml": "dump_yaml",
+        "json": "dump_json",
+        "hjson": "dump_hjson",
     }
 
-    yaml_avail_styles = (None, '', "'", '"', '|', '>')
-    yaml_avail_linebreaks = (None, '\n', '\r', '\r\n')
+    yaml_avail_styles = (None, "", "'", '"', "|", ">")
+    yaml_avail_linebreaks = (None, "\n", "\r", "\r\n")
 
     json_indent_help = _(
         "The indention of the {} output. If given an positive integer value, these "
-        "number of spaces are indented. I given '0', a negative integer or  an empty "
+        "number of spaces are indented. I given '0', a negative integer or an empty "
         "string (''), only newlines are inserted. If a non empty string is given, this "
         "will be used as indention to each level. If omitted, the most compact form without "
         "newlines will be generated."
     )
+
+    json_sort_help = _("Dictionaries will be outputted sorted by key.")
 
     for cfg_type in SUPPORTED_CFG_TYPES:
         module_name = CFG_TYPE_MODULE[cfg_type]
@@ -271,30 +272,41 @@ class CfgConvertApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, from_type=None, to_type=None,
-            appname=None, verbose=0, version=GLOBAL_VERSION, base_dir=None,
-            initialized=False, usage=None, description=None,
-            argparse_epilog=None, argparse_prefix_chars='-', env_prefix=None):
+        self,
+        from_type=None,
+        to_type=None,
+        appname=None,
+        verbose=0,
+        version=GLOBAL_VERSION,
+        base_dir=None,
+        initialized=False,
+        usage=None,
+        description=None,
+        argparse_epilog=None,
+        argparse_prefix_chars="-",
+        env_prefix=None,
+    ):
         """Initialize the application object."""
         desc = description
         if not desc:
             desc = _(
-                'Converts the given configuration file from the given input format '
-                'into the given output format and print it out to {o} '
-                'or into a given output file.').format(o='STDOUT')
+                "Converts the given configuration file from the given input format "
+                "into the given output format and print it out to {o} "
+                "or into a given output file."
+            ).format(o="STDOUT")
 
         self.cfg_files = []
         self._from_type = None
         self._to_type = None
-        self._input_file = '-'
-        self._output = '-'
+        self._input_file = "-"
+        self._output = "-"
         self.cfg_content = None
         self.cfg_modules = {}
 
         self.from_type = from_type
         self.to_type = to_type
 
-        self._cfg_encoding = 'utf-8'
+        self._cfg_encoding = "utf-8"
 
         self._yaml_width = 99
         self._yaml_indent = 2
@@ -315,8 +327,12 @@ class CfgConvertApplication(BaseApplication):
         self._hjson_sort_keys = False
 
         super(CfgConvertApplication, self).__init__(
-            appname=appname, verbose=verbose, version=version, base_dir=base_dir,
-            description=desc, initialized=False,
+            appname=appname,
+            verbose=verbose,
+            version=version,
+            base_dir=base_dir,
+            description=desc,
+            initialized=False,
         )
 
         self.fileio_timeout = 10
@@ -336,7 +352,7 @@ class CfgConvertApplication(BaseApplication):
             return
         v = str(value).strip().lower()
         if v not in self.supported_cfg_types:
-            msg = _('Invalid input configuration type {!r}').format(value)
+            msg = _("Invalid input configuration type {!r}").format(value)
             raise WrongCfgTypeError(msg)
         self._from_type = v
 
@@ -353,7 +369,7 @@ class CfgConvertApplication(BaseApplication):
             return
         v = str(value).strip().lower()
         if v not in self.supported_cfg_types:
-            msg = _('Invalid target configuration type {!r}').format(value)
+            msg = _("Invalid target configuration type {!r}").format(value)
             raise WrongCfgTypeError(msg)
         self._to_type = v
 
@@ -366,13 +382,13 @@ class CfgConvertApplication(BaseApplication):
     @input_file.setter
     def input_file(self, value):
         if value is None:
-            self._input_file = '-'
+            self._input_file = "-"
             return
         path = value
         if not isinstance(value, Path):
             v = str(value).strip()
-            if v == '':
-                self._input_file = '-'
+            if v == "":
+                self._input_file = "-"
                 return
             path = Path(v)
 
@@ -391,13 +407,13 @@ class CfgConvertApplication(BaseApplication):
     @output.setter
     def output(self, value):
         if value is None:
-            self._output = '-'
+            self._output = "-"
             return
         path = value
         if not isinstance(value, Path):
             v = str(value).strip()
-            if v == '':
-                self._output = '-'
+            if v == "":
+                self._output = "-"
                 return
             path = Path(v)
 
@@ -414,13 +430,15 @@ class CfgConvertApplication(BaseApplication):
         v = int(value)
         if v < 10:
             msg = _(
-                'The maximum width of generated YAML files must be at least '
-                '{m} characters, {v!r} are given.').format(m=10, v=value)
+                "The maximum width of generated YAML files must be at least "
+                "{m} characters, {v!r} are given."
+            ).format(m=10, v=value)
             raise ValueError(msg)
         if v > 4000:
             msg = _(
-                'The maximum width of generated YAML files must be at most '
-                '{m} characters, {v!r} are given.').format(m=4000, v=value)
+                "The maximum width of generated YAML files must be at most "
+                "{m} characters, {v!r} are given."
+            ).format(m=4000, v=value)
             raise ValueError(msg)
         self._yaml_width = v
 
@@ -435,13 +453,15 @@ class CfgConvertApplication(BaseApplication):
         v = int(value)
         if v < 2:
             msg = _(
-                'The indention of generated YAML files must be at least '
-                '{m} characters, {v!r} are given.').format(m=2, v=value)
+                "The indention of generated YAML files must be at least "
+                "{m} characters, {v!r} are given."
+            ).format(m=2, v=value)
             raise ValueError(msg)
         if v > 40:
             msg = _(
-                'The indention of generated YAML files must be at most '
-                '{m} characters, {v!r} are given.').format(m=40, v=value)
+                "The indention of generated YAML files must be at most "
+                "{m} characters, {v!r} are given."
+            ).format(m=40, v=value)
             raise ValueError(msg)
         self._yaml_indent = v
 
@@ -480,8 +500,8 @@ class CfgConvertApplication(BaseApplication):
         if v not in self.yaml_avail_styles:
             style_list = format_list(self.yaml_avail_styles, do_repr=True, locale=DEFAULT_LOCALE)
             msg = _(
-                'The default style on ouput YAML must be one of {lst}, '
-                'but {v!r} was given.').format(lst=style_list, v=value)
+                "The default style on ouput YAML must be one of {lst}, " "but {v!r} was given."
+            ).format(lst=style_list, v=value)
             raise ValueError(msg)
 
         self._yaml_default_style = v
@@ -531,8 +551,8 @@ class CfgConvertApplication(BaseApplication):
         if v not in self.yaml_avail_linebreaks:
             lb_list = format_list(self.yaml_avail_linebreaks, do_repr=True, locale=DEFAULT_LOCALE)
             msg = _(
-                'The linebreak used in ouput YAML must be one of {lst}, '
-                'but {v!r} was given.').format(lst=lb_list, v=value)
+                "The linebreak used in ouput YAML must be one of {lst}, " "but {v!r} was given."
+            ).format(lst=lb_list, v=value)
             raise ValueError(msg)
 
         self._yaml_line_break = v
@@ -590,26 +610,26 @@ class CfgConvertApplication(BaseApplication):
         """
         res = super(CfgConvertApplication, self).as_dict(short=short)
 
-        res['from_type'] = self.from_type
-        res['to_type'] = self.to_type
-        res['input_file'] = self.input_file
-        res['output'] = self.output
-        res['supported_cfg_types'] = self.supported_cfg_types
-        res['yaml_avail_styles'] = self.yaml_avail_styles
-        res['yaml_width'] = self.yaml_width
-        res['yaml_indent'] = self.yaml_indent
-        res['yaml_canonical'] = self.yaml_canonical
-        res['yaml_default_flow_style'] = self.yaml_default_flow_style
-        res['yaml_default_style'] = self.yaml_default_style
-        res['yaml_allow_unicode'] = self.yaml_allow_unicode
-        res['yaml_avail_linebreaks'] = self.yaml_avail_linebreaks
-        res['yaml_line_break'] = self.yaml_line_break
-        res['yaml_explicit_start'] = self.yaml_explicit_start
-        res['yaml_explicit_end'] = self.yaml_explicit_end
-        res['json_ensure_ascii'] = self.json_ensure_ascii
-        res['json_sort_keys'] = self.json_sort_keys
-        res['hjson_ensure_ascii'] = self.hjson_ensure_ascii
-        res['hjson_sort_keys'] = self.hjson_sort_keys
+        res["from_type"] = self.from_type
+        res["to_type"] = self.to_type
+        res["input_file"] = self.input_file
+        res["output"] = self.output
+        res["supported_cfg_types"] = self.supported_cfg_types
+        res["yaml_avail_styles"] = self.yaml_avail_styles
+        res["yaml_width"] = self.yaml_width
+        res["yaml_indent"] = self.yaml_indent
+        res["yaml_canonical"] = self.yaml_canonical
+        res["yaml_default_flow_style"] = self.yaml_default_flow_style
+        res["yaml_default_style"] = self.yaml_default_style
+        res["yaml_allow_unicode"] = self.yaml_allow_unicode
+        res["yaml_avail_linebreaks"] = self.yaml_avail_linebreaks
+        res["yaml_line_break"] = self.yaml_line_break
+        res["yaml_explicit_start"] = self.yaml_explicit_start
+        res["yaml_explicit_end"] = self.yaml_explicit_end
+        res["json_ensure_ascii"] = self.json_ensure_ascii
+        res["json_sort_keys"] = self.json_sort_keys
+        res["hjson_ensure_ascii"] = self.hjson_ensure_ascii
+        res["hjson_sort_keys"] = self.hjson_sort_keys
 
         return res
 
@@ -624,13 +644,13 @@ class CfgConvertApplication(BaseApplication):
 
         module_name = CFG_TYPE_MODULE[self.from_type]
         if module_name not in self.cfg_modules:
-            LOG.debug(_('Loading module {!r} ...').format(module_name))
+            LOG.debug(_("Loading module {!r} ...").format(module_name))
             mod = importlib.import_module(module_name)
             self.cfg_modules[module_name] = mod
 
         module_name = CFG_TYPE_MODULE[self.to_type]
         if module_name not in self.cfg_modules:
-            LOG.debug(_('Loading module {!r} ...').format(module_name))
+            LOG.debug(_("Loading module {!r} ...").format(module_name))
             mod = importlib.import_module(module_name)
             self.cfg_modules[module_name] = mod
 
@@ -641,46 +661,65 @@ class CfgConvertApplication(BaseApplication):
         """Initialise the argument parser."""
         super(CfgConvertApplication, self).init_arg_parser()
 
-        file_group = self.arg_parser.add_argument_group(_('File options'))
+        file_group = self.arg_parser.add_argument_group(_("File options"))
 
         file_group.add_argument(
-            '-i', '--input', metavar=_('FILE'), dest='input',
-            action=InputFileOptionAction, help=_(
-                'The filename of the input file. Use {i!r} to read from {f} '
-                '(which is the default).').format(i='-', f='STDIN'),
+            "-i",
+            "--input",
+            metavar=_("FILE"),
+            dest="input",
+            action=InputFileOptionAction,
+            help=_(
+                "The filename of the input file. Use {i!r} to read from {f} "
+                "(which is the default)."
+            ).format(i="-", f="STDIN"),
         )
 
         file_group.add_argument(
-            '-o', '--output', metavar=_('FILE'), dest='output',
-            action=OutputFileOptionAction, help=_(
-                'The filename of the output file. Use {i!r} to write to {f} '
-                '(which is the default).').format(i='-', f='STDOUT'),
+            "-o",
+            "--output",
+            metavar=_("FILE"),
+            dest="output",
+            action=OutputFileOptionAction,
+            help=_(
+                "The filename of the output file. Use {i!r} to write to {f} "
+                "(which is the default)."
+            ).format(i="-", f="STDOUT"),
         )
 
         if not self.from_type or not self.to_type:
 
-            conv_group = self.arg_parser.add_argument_group(_('Converting options'))
+            conv_group = self.arg_parser.add_argument_group(_("Converting options"))
             type_list = format_list(
-                self.supported_cfg_types, do_repr=True, style='or', locale=DEFAULT_LOCALE)
+                self.supported_cfg_types, do_repr=True, style="or", locale=DEFAULT_LOCALE
+            )
 
             if not self.from_type:
                 conv_group.add_argument(
-                    '-F', '--from-type', metavar=_('CFG_TYPE'), dest='from_type',
-                    required=True, action=CfgTypeOptionAction,
+                    "-F",
+                    "--from-type",
+                    metavar=_("CFG_TYPE"),
+                    dest="from_type",
+                    required=True,
+                    action=CfgTypeOptionAction,
                     supported_types=self.supported_cfg_types,
-                    help=_(
-                        'The configuration type of the source, must be one '
-                        'of {}.').format(type_list),
+                    help=_("The configuration type of the source, must be one " "of {}.").format(
+                        type_list
+                    ),
                 )
 
             if not self.to_type:
                 conv_group.add_argument(
-                    '-T', '--to-type', metavar=_('CFG_TYPE'), dest='to_type',
-                    required=True, action=CfgTypeOptionAction,
+                    "-T",
+                    "--to-type",
+                    metavar=_("CFG_TYPE"),
+                    dest="to_type",
+                    required=True,
+                    action=CfgTypeOptionAction,
                     supported_types=self.supported_cfg_types,
-                    help=_(
-                        'The configuration type of the target, must be one '
-                        'of {}.').format(type_list),
+                    help=_("The configuration type of the target, must be one " "of {}.").format(
+                        type_list
+                    ),
                 )
 
         self._init_yaml_args()
@@ -690,155 +729,202 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def _init_yaml_args(self):
         """Define commandline options for converting into YAML format."""
-        if self.to_type and self.to_type != 'yaml':
+        if self.to_type and self.to_type != "yaml":
             return
 
-        yaml_group = self.arg_parser.add_argument_group(_('YAML output options'))
+        yaml_group = self.arg_parser.add_argument_group(_("YAML output options"))
 
         yaml_group.add_argument(
-            '--yaml-with', metavar='INT', dest='yaml_width', type=int,
-            action=RangeOptionAction, min_val=10, max_val=4000,
-            help=_('The maximum width of generated lines on YAML output (Default: {}).').format(
-                self.yaml_width))
+            "--yaml-with",
+            metavar="INT",
+            dest="yaml_width",
+            type=int,
+            action=RangeOptionAction,
+            min_val=10,
+            max_val=4000,
+            help=_("The maximum width of generated lines on YAML output (Default: {}).").format(
+                self.yaml_width
+            ),
+        )
 
         yaml_group.add_argument(
-            '--yaml-indent', metavar='INT', dest='yaml_indent', type=int,
-            action=RangeOptionAction, min_val=2, max_val=9,
-            help=_('The indention of generated YAML output (Default: {}).').format(
-                self.yaml_indent))
+            "--yaml-indent",
+            metavar="INT",
+            dest="yaml_indent",
+            type=int,
+            action=RangeOptionAction,
+            min_val=2,
+            max_val=9,
+            help=_("The indention of generated YAML output (Default: {}).").format(
+                self.yaml_indent
+            ),
+        )
 
         yaml_group.add_argument(
-            '--yaml-canonical', action='store_true', dest='yaml_canonical',
-            help=_('Include export tag type in YAML output.'))
+            "--yaml-canonical",
+            action="store_true",
+            dest="yaml_canonical",
+            help=_("Include export tag type in YAML output."),
+        )
 
         yaml_group.add_argument(
-            '--yaml-flow-style', action='store_true', dest='yaml_flow_style',
-            help=_('Print a collection as flow in YAML output.'))
+            "--yaml-flow-style",
+            action="store_true",
+            dest="yaml_flow_style",
+            help=_("Print a collection as flow in YAML output."),
+        )
 
         style_list = format_list(self.yaml_avail_styles, do_repr=True, locale=DEFAULT_LOCALE)
         yaml_group.add_argument(
-            '--yaml-style', dest='yaml_style', nargs='?', metavar=_('STYLE'),
-            supported_styles=self.yaml_avail_styles, action=YamlStyleOptionAction,
-            help=_('The style of the scalars in YAML output, may be be one of {}.').format(
-                style_list))
+            "--yaml-style",
+            dest="yaml_style",
+            nargs="?",
+            metavar=_("STYLE"),
+            supported_styles=self.yaml_avail_styles,
+            action=YamlStyleOptionAction,
+            help=_("The style of the scalars in YAML output, may be be one of {}.").format(
+                style_list
+            ),
+        )
 
         yaml_group.add_argument(
-            '--yaml-no-explicit-start', action='store_true', dest='yaml_no_explicit_start',
-            help=_("Don't print an explicit start marker in YAML output."))
+            "--yaml-no-explicit-start",
+            action="store_true",
+            dest="yaml_no_explicit_start",
+            help=_("Don't print an explicit start marker in YAML output."),
+        )
 
         yaml_group.add_argument(
-            '--yaml-explicit-end', action='store_true', dest='yaml_explicit_end',
-            help=_('Print an explicit end marker in YAML output.'))
+            "--yaml-explicit-end",
+            action="store_true",
+            dest="yaml_explicit_end",
+            help=_("Print an explicit end marker in YAML output."),
+        )
 
     # -------------------------------------------------------------------------
     def _init_json_args(self):
         """Define commandline options for converting into JSON format."""
-        if self.to_type and self.to_type != 'json':
+        if self.to_type and self.to_type != "json":
             return
 
-        json_group = self.arg_parser.add_argument_group(_('JSON output options'))
+        json_group = self.arg_parser.add_argument_group(_("JSON output options"))
 
         json_group.add_argument(
-            '--json-ensure-ascii', action='store_true', dest='json_ensure_ascii',
+            "--json-ensure-ascii",
+            action="store_true",
+            dest="json_ensure_ascii",
             help=_(
-                'The {} output is guaranteed to have all incoming '
-                'non-ASCII characters escaped.').format('JSON'))
+                "The {} output is guaranteed to have all incoming " "non-ASCII characters escaped."
+            ).format("JSON"),
+        )
 
         json_group.add_argument(
-            '--json-indent', metavar='INDENT', dest='json_indent',
+            "--json-indent",
+            metavar="INDENT",
+            dest="json_indent",
             help=self.json_indent_help.format("JSON"),
         )
 
         json_group.add_argument(
-            '--json-sort-keys', action='store_true', dest='json_sort_keys',
-            help=_('The keys of dictionaries will be sorted in {} output.').format('JSON'))
+            "--json-sort-keys",
+            action="store_true",
+            dest="json_sort_keys",
+            help=self.json_sort_help,
+        )
 
     # -------------------------------------------------------------------------
     def _init_hjson_args(self):
         """Define commandline options for converting into HJSON format."""
-        if self.to_type and self.to_type != 'hjson':
+        if self.to_type and self.to_type != "hjson":
             return
 
-        hjson_group = self.arg_parser.add_argument_group(_('HJSON output options'))
+        hjson_group = self.arg_parser.add_argument_group(_("HJSON output options"))
 
         hjson_group.add_argument(
-            '--hjson-ensure-ascii', action='store_true', dest='hjson_ensure_ascii',
+            "--hjson-ensure-ascii",
+            action="store_true",
+            dest="hjson_ensure_ascii",
             help=_(
-                'The {} output is guaranteed to have all incoming '
-                'non-ASCII characters escaped.').format('HJSON'))
+                "The {} output is guaranteed to have all incoming " "non-ASCII characters escaped."
+            ).format("HJSON"),
+        )
 
         hjson_group.add_argument(
-            '--hjson-indent', metavar='INDENT', dest='hjson_indent',
+            "--hjson-indent",
+            metavar="INDENT",
+            dest="hjson_indent",
             help=self.json_indent_help.format("HJSON"),
         )
 
         hjson_group.add_argument(
-            '--hjson-sort-keys', action='store_true', dest='hjson_sort_keys',
-            help=_('The keys of dictionaries will be sorted in {} output.').format('HJSON'))
+            "--hjson-sort-keys",
+            action="store_true",
+            dest="hjson_sort_keys",
+            help=self.json_sort_help,
+        )
 
     # -------------------------------------------------------------------------
     def perform_arg_parser(self):
         """Parse the command line options."""
-        from_type = getattr(self.args, 'from_type', None)
+        from_type = getattr(self.args, "from_type", None)
         if from_type:
             self.from_type = from_type
 
-        to_type = getattr(self.args, 'to_type', None)
+        to_type = getattr(self.args, "to_type", None)
         if to_type:
             self.to_type = to_type
 
-        self.input_file = getattr(self.args, 'input', None)
-        self.output = getattr(self.args, 'output', None)
+        self.input_file = getattr(self.args, "input", None)
+        self.output = getattr(self.args, "output", None)
 
-        val = getattr(self.args, 'yaml_width', None)
+        val = getattr(self.args, "yaml_width", None)
         if val is not None:
             self.yaml_width = val
 
-        val = getattr(self.args, 'yaml_indent', None)
+        val = getattr(self.args, "yaml_indent", None)
         if val is not None:
             self.yaml_indent = val
 
-        if getattr(self.args, 'yaml_canonical', False):
+        if getattr(self.args, "yaml_canonical", False):
             self.yaml_canonical = True
 
-        if getattr(self.args, 'yaml_flow_style', False):
+        if getattr(self.args, "yaml_flow_style", False):
             self.yaml_default_flow_style = True
 
-        val = getattr(self.args, 'yaml_style', None)
+        val = getattr(self.args, "yaml_style", None)
         if val is not None:
             self.yaml_default_style = val
 
-        if getattr(self.args, 'yaml_no_explicit_start', False):
+        if getattr(self.args, "yaml_no_explicit_start", False):
             self.yaml_explicit_start = False
 
-        if getattr(self.args, 'yaml_explicit_end', False):
+        if getattr(self.args, "yaml_explicit_end", False):
             self.yaml_explicit_end = True
 
-        if getattr(self.args, 'json_ensure_ascii', False):
+        if getattr(self.args, "json_ensure_ascii", False):
             self.json_ensure_ascii = True
 
-        val = getattr(self.args, 'json_indent', None)
+        val = getattr(self.args, "json_indent", None)
         if val is not None:
             self.json_indent = val
 
-        if getattr(self.args, 'json_sort_keys', False):
+        if getattr(self.args, "json_sort_keys", False):
             self.json_sort_keys = True
 
-        if getattr(self.args, 'hjson_ensure_ascii', False):
+        if getattr(self.args, "hjson_ensure_ascii", False):
             self.hjson_ensure_ascii = True
 
-        val = getattr(self.args, 'hjson_indent', None)
+        val = getattr(self.args, "hjson_indent", None)
         if val is not None:
             self.hjson_indent = val
 
-        if getattr(self.args, 'hjson_sort_keys', False):
+        if getattr(self.args, "hjson_sort_keys", False):
             self.hjson_sort_keys = True
 
     # -------------------------------------------------------------------------
     def _run(self):
 
-        LOG.debug(_('Starting {a!r}, version {v!r} ...').format(
-            a=self.appname, v=self.version))
+        LOG.debug(_("Starting {a!r}, version {v!r} ...").format(a=self.appname, v=self.version))
         ret = 0
 
         try:
@@ -850,22 +936,13 @@ class CfgConvertApplication(BaseApplication):
 
         self.save()
 
-#        ret = 99
-#        try:
-#            ret = self.get_vms()
-#        finally:
-#            # Aufräumen ...
-#            LOG.debug(_("Closing ..."))
-#            self.vsphere.disconnect()
-#            self.vsphere = None
-
         self.exit(ret)
 
     # -------------------------------------------------------------------------
     def load(self):
         """Load config file."""
         content = None
-        if self.input_file == '-':
+        if self.input_file == "-":
             content = sys.stdin.read()
         else:
             content = self.read_file(self.input_file)
@@ -874,23 +951,23 @@ class CfgConvertApplication(BaseApplication):
         lmethod(self, content)
 
         if self.verbose > 1:
-            msg = _('Interpreted content of {!r}:').format(self.input_file)
-            LOG.debug(msg + '\n' + pp(self.cfg_content))
+            msg = _("Interpreted content of {!r}:").format(self.input_file)
+            LOG.debug(msg + "\n" + pp(self.cfg_content))
 
     # -------------------------------------------------------------------------
     def load_yaml(self, content):
         """Load config file in YAML format."""
-        LOG.debug(_('Loading content from {!r} format.').format('YAML'))
+        LOG.debug(_("Loading content from {!r} format.").format("YAML"))
 
-        mod = self.cfg_modules['yaml']
+        mod = self.cfg_modules["yaml"]
 
         docs = []
         try:
             for doc in mod.safe_load_all(content):
                 docs.append(doc)
         except Exception as e:
-            if e.__class__.__name__ == 'ParserError':
-                raise WrongCfgTypeError('YAML ParseError: ' + str(e))
+            if e.__class__.__name__ == "ParserError":
+                raise WrongCfgTypeError("YAML ParseError: " + str(e))
             raise
         if not docs:
             self.cfg_content = None
@@ -902,14 +979,14 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def load_json(self, content):
         """Load config file in JSON format."""
-        LOG.debug(_('Loading content from {!r} format.').format('JSON'))
+        LOG.debug(_("Loading content from {!r} format.").format("JSON"))
 
-        mod = self.cfg_modules['json']
+        mod = self.cfg_modules["json"]
         try:
             doc = mod.loads(content)
         except Exception as e:
-            if e.__class__.__name__ == 'JSONDecodeError':
-                raise WrongCfgTypeError('JSONDecodeError: ' + str(e))
+            if e.__class__.__name__ == "JSONDecodeError":
+                raise WrongCfgTypeError("JSONDecodeError: " + str(e))
             raise
 
         self.cfg_content = doc
@@ -917,14 +994,14 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def load_hjson(self, content):
         """Load config file in HJSON format."""
-        LOG.debug(_('Loading content from {!r} format.').format('HJSON'))
+        LOG.debug(_("Loading content from {!r} format.").format("HJSON"))
 
-        mod = self.cfg_modules['hjson']
+        mod = self.cfg_modules["hjson"]
         try:
             doc = mod.loads(content)
         except Exception as e:
-            if e.__class__.__name__ == 'HjsonDecodeError':
-                raise WrongCfgTypeError('HjsonDecodeError: ' + str(e))
+            if e.__class__.__name__ == "HjsonDecodeError":
+                raise WrongCfgTypeError("HjsonDecodeError: " + str(e))
             raise
 
         self.cfg_content = doc
@@ -936,9 +1013,9 @@ class CfgConvertApplication(BaseApplication):
         content = dmethod(self)
 
         if self.verbose > 2:
-            LOG.debug(_('Generated output:') + '\n' + content)
+            LOG.debug(_("Generated output:") + "\n" + content)
 
-        if self.output == '-':
+        if self.output == "-":
             print(content)
         else:
             self.write_file(self.output, content)
@@ -946,15 +1023,20 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def dump_yaml(self):
         """Return content of config file in YAML format."""
-        LOG.debug(_('Dumping content to {!r} format.').format('YAML'))
+        LOG.debug(_("Dumping content to {!r} format.").format("YAML"))
 
-        mod = self.cfg_modules['yaml']
+        mod = self.cfg_modules["yaml"]
         content = mod.dump(
             self.cfg_content,
-            width=self.yaml_width, indent=self.yaml_indent, canonical=self.yaml_canonical,
-            default_flow_style=self.yaml_default_flow_style, default_style=self.yaml_default_style,
-            allow_unicode=self.yaml_allow_unicode, line_break=self.yaml_line_break,
-            explicit_start=self.yaml_explicit_start, explicit_end=self.yaml_explicit_end,
+            width=self.yaml_width,
+            indent=self.yaml_indent,
+            canonical=self.yaml_canonical,
+            default_flow_style=self.yaml_default_flow_style,
+            default_style=self.yaml_default_style,
+            allow_unicode=self.yaml_allow_unicode,
+            line_break=self.yaml_line_break,
+            explicit_start=self.yaml_explicit_start,
+            explicit_end=self.yaml_explicit_end,
         )
 
         return content
@@ -962,24 +1044,24 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def dump_json(self):
         """Return content of config file in JSON format."""
-        LOG.debug(_('Dumping content to {!r} format.').format('JSON'))
+        LOG.debug(_("Dumping content to {!r} format.").format("JSON"))
 
-        mod = self.cfg_modules['json']
-        item_separator = ', '
-        key_separator = ': '
+        mod = self.cfg_modules["json"]
+        item_separator = ", "
+        key_separator = ": "
         ind = self.json_indent
 
         if ind is None:
-            item_separator = ','
-            key_separator = ':'
+            item_separator = ","
+            key_separator = ":"
         else:
-            if ind == '':
-                item_separator = ','
+            if ind == "":
+                item_separator = ","
             else:
                 try:
                     ind_int = int(self.json_indent)
                     if ind_int <= 0:
-                        item_separator = ','
+                        item_separator = ","
                     ind = ind_int
                 except Exception:
                     pass
@@ -989,16 +1071,17 @@ class CfgConvertApplication(BaseApplication):
             ensure_ascii=self.json_ensure_ascii,
             indent=ind,
             separators=(item_separator, key_separator),
-            sort_keys=self.json_sort_keys)
+            sort_keys=self.json_sort_keys,
+        )
 
         return content
 
     # -------------------------------------------------------------------------
     def dump_hjson(self):
         """Return content of config file in HJSON format."""
-        LOG.debug(_('Dumping content to {!r} format.').format('HJSON'))
+        LOG.debug(_("Dumping content to {!r} format.").format("HJSON"))
 
-        mod = self.cfg_modules['hjson']
+        mod = self.cfg_modules["hjson"]
         ind = self.hjson_indent
         try:
             ind_int = int(ind)
@@ -1010,13 +1093,33 @@ class CfgConvertApplication(BaseApplication):
             self.cfg_content,
             ensure_ascii=self.hjson_ensure_ascii,
             indent=ind,
-            sort_keys=self.hjson_sort_keys)
+            sort_keys=self.hjson_sort_keys,
+        )
 
         return content
 
 
 # =============================================================================
-if __name__ == '__main__':
+def main():
+    """Entrypoint for config-convert."""
+    my_path = Path(__file__)
+    appname = my_path.name
+
+    locale.setlocale(locale.LC_ALL, "")
+
+    app = CfgConvertApplication(appname=appname)
+    app.initialized = True
+
+    if app.verbose > 2:
+        print(_("{c}-Object:\n{a}").format(c=app.__class__.__name__, a=app), file=sys.stderr)
+
+    app()
+
+    sys.exit(0)
+
+
+# =============================================================================
+if __name__ == "__main__":
 
     pass
 
