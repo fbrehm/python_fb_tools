@@ -1,3 +1,9 @@
+fb-tools (2.9.5) all; urgency=medium
+
+  * Renaming directory test => tests.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 24 Feb 2026 10:27:30 +0100
+
 fb-tools (2.9.4) all; urgency=medium
 
   * Non change release for triggering build pipelines.
