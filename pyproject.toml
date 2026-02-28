@@ -57,6 +57,8 @@ development = [
     "black",
     "isort",
     "hjson",
+    "tomli",
+    "tomli-w",
 ]
 
 lint = [
