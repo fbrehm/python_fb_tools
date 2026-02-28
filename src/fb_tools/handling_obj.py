@@ -175,19 +175,20 @@ class HandlingObject(FbBaseObject):
     Base class for an object with extend handling possibilities.
 
     Properties:
-    * address_family (str or int   - rw)
-    * appname        (str          - rw) (inherited from FbBaseObject)
-    * assumed_answer (None or bool - rw)
-    * base_dir       (pathlib.Path - rw) (inherited from FbBaseObject)
-    * force          (bool         - rw)
-    * initialized    (bool         - rw) (inherited from FbBaseObject)
-    * interrupted    (bool         - rw)
-    * is_venv        (bool         - ro)
-    * prompt_timeout (int          - rw)
-    * quiet          (bool         - rw)
-    * simulate       (bool         - rw)
-    * verbose        (int          - rw) (inherited from FbBaseObject)
-    * version        (str          - ro) (inherited from FbBaseObject)
+    * address_family      (str or int   - rw)
+    * appname             (str          - rw) (inherited from FbBaseObject)
+    * assumed_answer      (None or bool - rw)
+    * base_dir            (pathlib.Path - rw) (inherited from FbBaseObject)
+    * force               (bool         - rw)
+    * initialized         (bool         - rw) (inherited from FbBaseObject)
+    * interrupted         (bool         - rw)
+    * is_venv             (bool         - ro)
+    * prompt_timeout      (int          - rw)
+    * quiet               (bool         - rw)
+    * simulate            (bool         - rw)
+    * terminal_has_colors (bool         - rw)
+    * verbose             (int          - rw) (inherited from FbBaseObject)
+    * version             (str          - ro) (inherited from FbBaseObject)
 
     Public attributes:
     * add_search_paths       Array of pathlib.Path
