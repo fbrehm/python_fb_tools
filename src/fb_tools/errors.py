@@ -14,7 +14,7 @@ import signal
 # Own modules
 from .xlate import XLATOR
 
-__version__ = "2.5.2"
+__version__ = "2.6.0"
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -30,6 +30,13 @@ class FbError(Exception):
 # =============================================================================
 class ConfigError(FbError):
     """Base error class for all exceptions happened during execution."""
+
+    pass
+
+
+# =============================================================================
+class ConfigDetectionError(ConfigError, RuntimeError):
+    """Special error class for the case, that the type of the config could not be found."""
 
     pass
 
