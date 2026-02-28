@@ -60,9 +60,7 @@ class TestFbAnyConfig(FbToolsTestcase):
         LOG.info(self.get_method_doc())
         import fb_tools.any_config
 
-        LOG.debug(
-            "Version of fb_tools.any_config: {!r}.".format(fb_tools.any_config.__version__)
-        )
+        LOG.debug("Version of fb_tools.any_config: {!r}.".format(fb_tools.any_config.__version__))
 
         LOG.info("Testing import of AnyConfigHandler from fb_tools.any_config ...")
         from fb_tools.any_config import AnyConfigHandler

@@ -25,7 +25,7 @@ from .handling_obj import HandlingObject
 from .obj import FbBaseObject
 from .xlate import XLATOR
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 LOG = logging.getLogger(__name__)
 
@@ -102,7 +102,7 @@ class AnyConfigHandler(HandlingObject):
         "json": [r"js(?:on)?"],
         "hjson": [r"hjs(?:on)?"],
         "yaml": [r"ya?ml"],
-        "toml": ["to?ml"]
+        "toml": ["to?ml"],
     }
 
     type_order = ("ini", "yaml", "json", "hjson", "toml")
@@ -210,7 +210,8 @@ class AnyConfigHandler(HandlingObject):
         if file_name is None:
             raise ConfigDetectionError(
                 _("Could not detect file type by a file name of type {}.").format(
-                    self.colored("None", "red"))
+                    self.colored("None", "red")
+                )
             )
 
         file_name = str(file_name)
