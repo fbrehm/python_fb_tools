@@ -28,6 +28,7 @@ from .. import __version__ as GLOBAL_VERSION
 from ..app import BaseApplication
 from ..common import pp, to_bool
 from ..errors import FbAppError
+from ..multi_config import BaseMultiConfig
 from ..xlate import DEFAULT_LOCALE
 from ..xlate import XLATOR
 from ..xlate import format_list
@@ -39,6 +40,22 @@ SUPPORTED_CFG_TYPES = ("json", "hjson", "yaml")
 CFG_TYPE_MODULE = {
     "json": "json",
     "hjson": "hjson",
+    "yaml": "yaml",
+}
+
+CFG_TYPE_READER_MODULE = {
+    "inifile": "configparser",
+    "json": "json",
+    "hjson": "hjson",
+    "toml": "tomli",
+    "yaml": "yaml",
+}
+
+CFG_TYPE_WRITER_MODULE = {
+    "dump": "pprint",
+    "json": "json",
+    "hjson": "hjson",
+    "toml": "tomli_w",
     "yaml": "yaml",
 }
 
@@ -232,21 +249,33 @@ class YamlStyleOptionAction(argparse.Action):
 class CfgConvertApplication(BaseApplication):
     """Class for the application objects."""
 
-    supported_cfg_types = []
+    # supported_cfg_types = []
+    supported_read_cfg_types = []
+    supported_write_cfg_types = []
     module_name = None
     mod_spec = None
 
     loader_methods = {
-        "yaml": "load_yaml",
+        "ini": "load_iniparser",
         "json": "load_json",
         "hjson": "load_hjson",
+        "toml": "load_toml",
+        "yaml": "load_yaml",
     }
 
     dumper_methods = {
-        "yaml": "dump_yaml",
+        "dump": "dump_pprint",
         "json": "dump_json",
         "hjson": "dump_hjson",
+        "toml": "dump_toml",
+        "yaml": "dump_yaml",
     }
+
+    default_width = 99
+
+    type_extension_patterns = copy.copy(BaseMultiConfig.default_type_extension_patterns)
+    if "toml" not in type_extension_patterns:
+        type_extension_patterns["toml"] = ["to?ml"]
 
     yaml_avail_styles = (None, "", "'", '"', "|", ">")
     yaml_avail_linebreaks = (None, "\n", "\r", "\r\n")
@@ -260,19 +289,32 @@ class CfgConvertApplication(BaseApplication):
     )
 
     json_sort_help = _("Dictionaries will be outputted sorted by key.")
+    width_help_epilog = _("If not given, the available screen width will be taken.")
 
-    for cfg_type in SUPPORTED_CFG_TYPES:
-        module_name = CFG_TYPE_MODULE[cfg_type]
+    for cfg_type in CFG_TYPE_READER_MODULE:
+        module_name = SUPPORTED_CFG_TYPES[cfg_type]
         mod_spec = importlib.util.find_spec(module_name)
         if mod_spec:
-            supported_cfg_types.append(cfg_type)
+            supported_read_cfg_types.append(cfg_type)
+
+    for cfg_type in CFG_TYPE_WRITER_MODULE:
+        module_name = CFG_TYPE_WRITER_MODULE[cfg_type]
+        mod_spec = importlib.util.find_spec(module_name)
+        if mod_spec:
+            supported_write_cfg_types.append(cfg_type)
+
+    # for cfg_type in SUPPORTED_CFG_TYPES:
+    #     module_name = CFG_TYPE_MODULE[cfg_type]
+    #     mod_spec = importlib.util.find_spec(module_name)
+    #     if mod_spec:
+    #         supported_cfg_types.append(cfg_type)
 
     del module_name
     del mod_spec
 
     # -------------------------------------------------------------------------
     def __init__(
-        self, from_type=None, to_type=None, verbose=0, version=GLOBAL_VERSION, *args, **kwargs
+        self, verbose=0, version=GLOBAL_VERSION, *args, **kwargs
     ):
         """Initialize the application object."""
         desc = _(
@@ -289,12 +331,12 @@ class CfgConvertApplication(BaseApplication):
         self.cfg_content = None
         self.cfg_modules = {}
 
-        self.from_type = from_type
-        self.to_type = to_type
-
         self._cfg_encoding = "utf-8"
 
-        self._yaml_width = 99
+        self._dump_with = None
+        self._dump_indent = 4
+
+        self._yaml_width = None
         self._yaml_indent = 2
         self._yaml_canonical = False
         self._yaml_default_flow_style = False
@@ -399,6 +441,29 @@ class CfgConvertApplication(BaseApplication):
             path = Path(v)
 
         self._output = path
+
+    # -------------------------------------------------------------------------
+    @property
+    def dump_width(self):
+        """Maximum width of generated lines on YAML output."""
+        return self._dump_width
+
+    @dump_width.setter
+    def dump_width(self, value):
+        v = int(value)
+        if v < 10:
+            msg = _(
+                "The maximum width of generated YAML files must be at least "
+                "{m} characters, {v!r} are given."
+            ).format(m=10, v=value)
+            raise ValueError(msg)
+        if v > 4000:
+            msg = _(
+                "The maximum width of generated YAML files must be at most "
+                "{m} characters, {v!r} are given."
+            ).format(m=4000, v=value)
+            raise ValueError(msg)
+        self._yaml_width = v
 
     # -------------------------------------------------------------------------
     @property
@@ -595,7 +660,8 @@ class CfgConvertApplication(BaseApplication):
         res["to_type"] = self.to_type
         res["input_file"] = self.input_file
         res["output"] = self.output
-        res["supported_cfg_types"] = self.supported_cfg_types
+        res["supported_read_cfg_types"] = self.supported_read_cfg_types
+        res["supported_write_cfg_types"] = self.supported_write_cfg_types
         res["yaml_avail_styles"] = self.yaml_avail_styles
         res["yaml_width"] = self.yaml_width
         res["yaml_indent"] = self.yaml_indent
@@ -623,13 +689,13 @@ class CfgConvertApplication(BaseApplication):
 
         self.perform_arg_parser()
 
-        module_name = CFG_TYPE_MODULE[self.from_type]
+        module_name = CFG_TYPE_READER_MODULE[self.from_type]
         if module_name not in self.cfg_modules:
             LOG.debug(_("Loading module {!r} ...").format(module_name))
             mod = importlib.import_module(module_name)
             self.cfg_modules[module_name] = mod
 
-        module_name = CFG_TYPE_MODULE[self.to_type]
+        module_name = CFG_TYPE_WRITER_MODULE[self.to_type]
         if module_name not in self.cfg_modules:
             LOG.debug(_("Loading module {!r} ...").format(module_name))
             mod = importlib.import_module(module_name)
@@ -642,11 +708,53 @@ class CfgConvertApplication(BaseApplication):
         """Initialise the argument parser."""
         super(CfgConvertApplication, self).init_arg_parser()
 
-        file_group = self.arg_parser.add_argument_group(_("File options"))
+        conv_group = self.arg_parser.add_argument_group(_("Converting options"))
 
-        file_group.add_argument(
-            "-i",
-            "--input",
+        read_type_list = format_list(
+            self.supported_read_cfg_types, do_repr=True, style="or", locale=DEFAULT_LOCALE
+        )
+        conv_group.add_argument(
+            "-F",
+            "--from-type",
+            metavar=_("CFG_TYPE"),
+            dest="from_type",
+            action=CfgTypeOptionAction,
+            supported_types=self.supported_read_cfg_types,
+            help=_("The configuration type of the source, must be one of {}.").format(
+                read_type_list
+            ),
+        )
+
+        write_type_list = format_list(
+            self.supported_write_cfg_types, do_repr=True, style="or", locale=DEFAULT_LOCALE
+        )
+        conv_group.add_argument(
+            "-T",
+            "--to-type",
+            metavar=_("CFG_TYPE"),
+            dest="to_type",
+            action=CfgTypeOptionAction,
+            supported_types=self.supported_write_cfg_types,
+            help=_("The configuration type of the target, must be one " "of {}.").format(
+                type_list
+            ),
+        )
+
+        if "dump" in self.supported_write_cfg_types:
+            self._init_dump_args()
+        if "yaml" in self.supported_write_cfg_types:
+            self._init_yaml_args()
+        if "json" in self.supported_write_cfg_types:
+            self._init_json_args()
+        if "hjson" in self.supported_write_cfg_types:
+            self._init_hjson_args()
+        if "toml" in self.supported_write_cfg_types:
+            self._init_toml_args()
+
+        # file_group = self.arg_parser.add_argument_group(_("File options"))
+
+        self.arg_parser.add_argument(
+            "input",
             metavar=_("FILE"),
             dest="input",
             action=InputFileOptionAction,
@@ -656,9 +764,8 @@ class CfgConvertApplication(BaseApplication):
             ).format(i="-", f="STDIN"),
         )
 
-        file_group.add_argument(
-            "-o",
-            "--output",
+        self.arg_parser.add_argument(
+            "output",
             metavar=_("FILE"),
             dest="output",
             action=OutputFileOptionAction,
@@ -668,52 +775,36 @@ class CfgConvertApplication(BaseApplication):
             ).format(i="-", f="STDOUT"),
         )
 
-        if not self.from_type or not self.to_type:
+    # -------------------------------------------------------------------------
+    def __init_dump_args(self):
+    """Define commandline options for dumping out the read config."""
+        dumping_group = self.arg_parser.add_argument_group(_("Dump output options"))
 
-            conv_group = self.arg_parser.add_argument_group(_("Converting options"))
-            type_list = format_list(
-                self.supported_cfg_types, do_repr=True, style="or", locale=DEFAULT_LOCALE
-            )
+        width_help = (
+            _("The maximum width of generated lines on dumping output.") + " " +
+            self.width_help_epilog
+        )
 
-            if not self.from_type:
-                conv_group.add_argument(
-                    "-F",
-                    "--from-type",
-                    metavar=_("CFG_TYPE"),
-                    dest="from_type",
-                    required=True,
-                    action=CfgTypeOptionAction,
-                    supported_types=self.supported_cfg_types,
-                    help=_("The configuration type of the source, must be one " "of {}.").format(
-                        type_list
-                    ),
-                )
-
-            if not self.to_type:
-                conv_group.add_argument(
-                    "-T",
-                    "--to-type",
-                    metavar=_("CFG_TYPE"),
-                    dest="to_type",
-                    required=True,
-                    action=CfgTypeOptionAction,
-                    supported_types=self.supported_cfg_types,
-                    help=_("The configuration type of the target, must be one " "of {}.").format(
-                        type_list
-                    ),
-                )
-
-        self._init_yaml_args()
-        self._init_json_args()
-        self._init_hjson_args()
+        dumping_group.add_argument(
+            "--dump-with",
+            metavar="INT",
+            dest="dump_width",
+            type=int,
+            action=RangeOptionAction,
+            min_val=10,
+            max_val=4000,
+            help=width_help,
+        )
 
     # -------------------------------------------------------------------------
     def _init_yaml_args(self):
         """Define commandline options for converting into YAML format."""
-        if self.to_type and self.to_type != "yaml":
-            return
-
         yaml_group = self.arg_parser.add_argument_group(_("YAML output options"))
+
+        width_help = (
+            _("The maximum width of generated lines on YAML output.") + " " +
+            self.width_help_epilog
+        )
 
         yaml_group.add_argument(
             "--yaml-with",
@@ -723,9 +814,7 @@ class CfgConvertApplication(BaseApplication):
             action=RangeOptionAction,
             min_val=10,
             max_val=4000,
-            help=_("The maximum width of generated lines on YAML output (Default: {}).").format(
-                self.yaml_width
-            ),
+            help=width_help,
         )
 
         yaml_group.add_argument(
