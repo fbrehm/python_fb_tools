@@ -65,7 +65,7 @@ class AnyConfigHandler(HandlingObject):
     * is_venv             (bool         - ro) (inherited from HandlingObject)
     * prompt_timeout      (int          - rw) (inherited from HandlingObject)
     * quiet               (bool         - rw) (inherited from HandlingObject)
-    * Fraise_on_error     (bool         - rw)
+    * raise_on_error      (bool         - rw)
     * simulate            (bool         - rw) (inherited from HandlingObject)
     * terminal_has_colors (bool         - rw) (inherited from HandlingObject)
     * use_chardet         (bool         - rw)
@@ -209,13 +209,14 @@ class AnyConfigHandler(HandlingObject):
 
         if file_name is None:
             raise ConfigDetectionError(
-                _("Could not detect file type by a file name of type None.")
+                _("Could not detect file type by a file name of type {}.").format(
+                    self.colored("None", "red"))
             )
 
         file_name = str(file_name)
         if file_name == "-":
             raise ConfigDetectionError(
-                _("Could not detect file type by file name {!r}.").format("-")
+                _("Could not detect file type by file name '{}'.").format(self.colored("-", "red"))
             )
 
         for config_type in self.type_order:
@@ -223,7 +224,9 @@ class AnyConfigHandler(HandlingObject):
                 continue
 
             for cfg_pattern in self.type_extension_patterns[config_type]:
-                pattern = r"\\." + cfg_pattern + "$"
+                pattern = r"\." + cfg_pattern + "$"
+                if self.verbose > 4:
+                    LOG.debug(f"Searching for pattern {pattern!r} in file name {file_name!r} ...")
                 if re.search(pattern, file_name, re.IGNORECASE):
                     return config_type
 
@@ -231,7 +234,7 @@ class AnyConfigHandler(HandlingObject):
             return None
 
         raise ConfigDetectionError(
-            _("Could not detect file type of file {!r}.").format(file_name)
+            _("Could not detect file type of file '{}'.").format(self.colored(file_name, "red"))
         )
 
 

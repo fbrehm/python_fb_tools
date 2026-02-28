@@ -83,6 +83,59 @@ class TestFbAnyConfig(FbToolsTestcase):
         LOG.debug("AnyConfigHandler %%r: {!r}".format(cfg))
         LOG.debug("AnyConfigHandler %%s: {}".format(cfg))
 
+    # -------------------------------------------------------------------------
+    def test_guess_config_type_by_name(self):
+        """Test detecting config type by file extension."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.any_config import AnyConfigHandler
+        from fb_tools.errors import ConfigDetectionError
+
+        terminal_has_colors = False
+        if self.verbose:
+            terminal_has_colors = True
+
+        cfg_handler = AnyConfigHandler(
+            appname=self.appname,
+            verbose=self.verbose,
+            terminal_has_colors=terminal_has_colors,
+        )
+
+        for fname in (None, "-", "", "bla.blub", 1, "bla.jsn", "bla.configuration"):
+            LOG.debug("Testing raise ConfigDetectionError in filename {!r} ...".format(fname))
+            with self.assertRaises(ConfigDetectionError) as cm:
+                ftype = cfg_handler.guess_config_type_by_name(fname, raise_on_error=True)
+                LOG.error("This should have not been visible for {!r} ...".format(fname))
+            e = cm.exception
+            LOG.debug("%s raised: %s", e.__class__.__name__, e)
+
+        if self.verbose >= 1:
+            print()
+
+        test_data = (
+            ("config.ini", "ini"),
+            ("config.conf", "ini"),
+            (Path("config.config"), "ini"),
+            ("config.INI", "ini"),
+            ("config.cfg", "ini"),
+            ("config.js", "json"),
+            ("config.json", "json"),
+            ("config.hjs", "hjson"),
+            ("config.Hjson", "hjson"),
+            ("config.yml", "yaml"),
+            ("config.yaml", "yaml"),
+            ("config.toml", "toml"),
+            ("config.tml", "toml"),
+        )
+
+        for test_pair in test_data:
+            fname = test_pair[0]
+            exp_type = test_pair[1]
+
+            LOG.debug(f"Test config file {fname!r} for type {exp_type!r} ...")
+            got_type = cfg_handler.guess_config_type_by_name(fname, raise_on_error=True)
+            LOG.debug(f"Got config type {got_type!r} for config file {fname!r}.")
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -98,6 +151,7 @@ if __name__ == "__main__":
 
     suite.addTest(TestFbAnyConfig("test_import", verbose))
     suite.addTest(TestFbAnyConfig("test_object", verbose))
+    suite.addTest(TestFbAnyConfig("test_guess_config_type_by_name", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
