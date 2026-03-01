@@ -25,7 +25,7 @@ from ..xlate import XLATOR
 # from ..common import is_sequence, pp, to_bool, to_str
 # from ..xlate import XLATOR, format_list
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -150,6 +150,23 @@ class BaseConfigOptions(FbGenericBaseObject):
             doc = prop.__doc__
 
         return doc
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def get_default_value(cls, prop_name):
+        """Return the default value of the given property."""
+        props = cls.properties()
+        if prop_name not in props:
+            msg = _("Wrong property {p!r} for class {c!r} given.").format(
+                p=prop_name, c=cls.__name__)
+            raise ValueError(msg)
+
+        val = None
+        if prop_name in cls._defaults:
+            val = cls._defaults[prop_name]
+
+        return val
+
 
 # =============================================================================
 
