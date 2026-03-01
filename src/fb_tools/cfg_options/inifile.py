@@ -21,7 +21,7 @@ from . import BaseConfigOptions
 from ..common import is_sequence, pp, to_bool, to_str
 from ..xlate import XLATOR
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -56,42 +56,6 @@ class ConfigOptionsInifile(BaseConfigOptions):
     _doc["strict"] = _(
         "Perform strict parsing of inifiles without duplicated sections or options."
     )
-
-    # -------------------------------------------------------------------------
-#    def __init__(
-#            self,
-#            allow_no_value=None,
-#            comment_prefixes=None,
-#            delimiters=None,
-#            extended_interpolation=None,
-#            inline_comment_prefixes=None,
-#            strict=None,
-#        ):
-#        """Initialize the ConfigOptionsInifile object."""
-#        self._allow_no_value = self._defaults["allow_no_value"]
-#        self._comment_prefixes = self._defaults["comment_prefixes"]
-#        self._delimiters = self._defaults["delimiters"]
-#        self._extended_interpolation = self._defaults["extended_interpolation"]
-#        self._inline_comment_prefixes = None
-#        self._strict = self._defaults["strict"]
-#
-#        if allow_no_value is not None:
-#            self.allow_no_value = allow_no_value
-#
-#        if comment_prefixes is not None:
-#            self.comment_prefixes = comment_prefixes
-#
-#        if extended_interpolation is not None:
-#            self.extended_interpolation = extended_interpolation
-#
-#        if delimiters is not None:
-#            self.delimiters = delimiters
-#
-#        if inline_comment_prefixes is not None:
-#            self.inline_comment_prefixes = inline_comment_prefixes
-#
-#        if strict is not None:
-#            self.strict = strict
 
     # -------------------------------------------------------------------------
     @property
@@ -208,31 +172,6 @@ class ConfigOptionsInifile(BaseConfigOptions):
         """Typecasting into a string for reproduction."""
         return super(ConfigOptionsInifile, self).__repr__()
 
-#        out = "<%s(" % (self.__class__.__name__)
-#
-#        fields = []
-#
-#        if self.allow_no_value != self._defaults["allow_no_value"]:
-#            fields.append("allow_no_value={!r}".format(self.allow_no_value))
-#
-#        if self.comment_prefixes != self._defaults["comment_prefixes"]:
-#            fields.append("comment_prefixes={!r}".format(self.comment_prefixes))
-#
-#        if self.delimiters != self._defaults["delimiters"]:
-#            fields.append("delimiters={!r}".format(self.delimiters))
-#
-#        if self.extended_interpolation != self._defaults["extended_interpolation"]:
-#            fields.append("extended_interpolation={!r}".format(self.extended_interpolation))
-#
-#        if self.inline_comment_prefixes is not None:
-#            fields.append("inline_comment_prefixes={!r}".format(self.inline_comment_prefixes))
-#
-#        if self.strict != self._defaults["strict"]:
-#            fields.append("strict={!r}".format(self.strict))
-#
-#        out += ", ".join(fields) + ")>"
-#        return out
-
 
 # =============================================================================
 def main():
@@ -255,21 +194,6 @@ def main():
         option = cfg_options.argparse_option(prop_name)
         doc = cfg_options.get_property_doc(prop_name)
         print(f"{option} => {doc}")
-
-    # if len(props) > 0:
-    #     prop_name = list(props)[0]
-    #     prop = getattr(cfg_options.__class__, prop_name)
-    #     doc = prop.__doc__
-    #     print("Description of property {p!r}: {d}".format(
-    #         p=prop_name, d=prop.__doc__))
-    #     # pdict = {}
-    #     # for attr_name in prop.__dict__:
-    #     #     pdict[attr_name] = prop.__dict__[attr_name].__class__.__name__
-    #     # out = "All attributes of property {!r}:\n".format(prop_name)
-    #     # out += pp(pdict)
-    #     # print(out)
-    # else:
-    #     print("Did not found any properties for class {!r}.".format("ConfigOptionsInifile"))
 
     return 0
 
