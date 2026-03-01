@@ -134,6 +134,46 @@ class TestFbAnyConfig(FbToolsTestcase):
             got_type = cfg_handler.guess_config_type_by_name(fname, raise_on_error=True)
             LOG.debug(f"Got config type {got_type!r} for config file {fname!r}.")
 
+    # -------------------------------------------------------------------------
+    def test_read_cfg_files(self):
+        """Test reading of configuration files."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.any_config import AnyConfigHandler
+
+        terminal_has_colors = False
+        if self.verbose:
+            terminal_has_colors = True
+
+        cfg_handler = AnyConfigHandler(
+            appname=self.appname,
+            verbose=self.verbose,
+            terminal_has_colors=terminal_has_colors,
+        )
+
+        config_files = (
+            "test_multicfg-additional.ini",
+            "test_multicfg-additional.uhu",
+            "test_multicfg-latin1.ini",
+            "test_multicfg-utf-16.ini",
+            "test_multicfg-utf-32.ini",
+            "test_multicfg-utf8.ini",
+            "test_multicfg-utf8.yaml",
+            "test_multicfg.hjson",
+            "test_multicfg.ini",
+            "test_multicfg.js",
+            "test_multicfg.toml",
+            "test_multicfg.yaml",
+        )
+
+        for base_file in config_files:
+            if self.verbose:
+                print()
+
+            path = self.test_cfg_dir / base_file
+            LOG.info("Testing for file {!r} ...".format(str(path)))
+            config = cfg_handler.load_file(path)
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -150,6 +190,7 @@ if __name__ == "__main__":
     suite.addTest(TestFbAnyConfig("test_import", verbose))
     suite.addTest(TestFbAnyConfig("test_object", verbose))
     suite.addTest(TestFbAnyConfig("test_guess_config_type_by_name", verbose))
+    suite.addTest(TestFbAnyConfig("test_read_cfg_files", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

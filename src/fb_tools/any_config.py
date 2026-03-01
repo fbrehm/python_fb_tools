@@ -16,16 +16,22 @@ import logging
 import os
 import re
 import sys
+from pathlib import Path
+
+# Third party modules
+import chardet
 
 # Own modules
 from . import DEFAULT_ENCODING
 from .common import to_bool
 from .errors import ConfigDetectionError
+from .errors import ConfigWrongTypeError
+from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .obj import FbBaseObject
 from .xlate import XLATOR
 
-__version__ = "0.1.1"
+__version__ = "0.2.1"
 
 LOG = logging.getLogger(__name__)
 
@@ -71,6 +77,11 @@ class AnyConfigHandler(HandlingObject):
     * use_chardet         (bool         - rw)
     * verbose             (int          - rw) (inherited from FbBaseObject)
     * version             (str          - ro) (inherited from FbBaseObject)
+
+    Public attributes:
+    * add_search_paths          (Array of pathlib.Path) (inherited from HandlingObject)
+    * cfg_modules               (Array of str)
+    * signals_dont_interrupt    (Array of int)          (inherited from HandlingObject)
     """
 
     default_encoding = DEFAULT_ENCODING
@@ -82,7 +93,7 @@ class AnyConfigHandler(HandlingObject):
     default_width = 99
 
     loader_methods = {
-        "ini": "load_iniparser",
+        "ini": "load_inifile",
         "json": "load_json",
         "hjson": "load_hjson",
         "toml": "load_toml",
@@ -136,6 +147,8 @@ class AnyConfigHandler(HandlingObject):
         self._encoding = DEFAULT_ENCODING
         self._use_chardet = to_bool(use_chardet)
         self._raise_on_error = to_bool(raise_on_error)
+
+        self.cfg_modules = set()
 
         super(AnyConfigHandler, self).__init__(*args, **kwargs)
 
@@ -192,12 +205,238 @@ class AnyConfigHandler(HandlingObject):
 
         res["default_encoding"] = self.default_encoding
         res["chardet_min_level_confidence"] = self.chardet_min_level_confidence
-        # res["config_modules"] = self.config_modules
+        res["cfg_modules"] = self.cfg_modules
         res["encoding"] = self.encoding
         res["raise_on_error"] = self.raise_on_error
         res["use_chardet"] = self.use_chardet
 
         return res
+
+    # -------------------------------------------------------------------------
+    def detect_file_encoding(self, cfg_file, force=False):
+        """Try to detect the encoding of the given file."""
+        if not force and not self.use_chardet:
+            if self.verbose > 2:
+                LOG.debug(
+                    _(
+                        "Character set detection by module {mod!r} for file {fn!r} should not be "
+                        "used, using character set {enc!r}."
+                    ).format(mod="chardet", fn=str(cfg_file), enc=self.encoding)
+                )
+            return self.encoding
+
+        if self.verbose > 1:
+            LOG.debug(
+                _("Trying to detect character set of file {fn!r} ...").format(fn=str(cfg_file))
+            )
+
+        encoding = self.encoding
+        confidence = 1
+        try:
+            rawdata = cfg_file.read_bytes()
+            chardet_result = chardet.detect(rawdata)
+            confidence = chardet_result["confidence"]
+            if confidence < self.chardet_min_level_confidence:
+                if chardet_result["encoding"] != self.encoding:
+                    msg = _(
+                        "The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, "
+                        "using character set {cs_def!r} instead of {cs_found!r}."
+                    ).format(
+                        con=(chardet_result["confidence"] * 100),
+                        lim=(self.chardet_min_level_confidence * 100),
+                        cs_def=self.encoding,
+                        cs_found=chardet_result["encoding"],
+                    )
+                    LOG.warn(msg)
+                return self.encoding
+            encoding = chardet_result["encoding"]
+        except Exception as e:
+            msg = _("Got {what} on detecting cheracter set of {fn!r}: {e}").format(
+                what=e.__class__.__name__, fn=str(cfg_file), e=e
+            )
+            LOG.error(msg)
+
+        if self.verbose > 1:
+            msg = _(
+                "Found character set {cs} for file {fn} with a confidence of {con:0.1f}%."
+            ).format(
+                cs=self.colored(encoding, "cyan"),
+                fn=self.colored(str(cfg_file), "cyan"),
+                con=(confidence * 100))
+            LOG.debug(msg)
+
+        return encoding
+
+    # -------------------------------------------------------------------------
+    def load_file(self, file_name, config_type=None):
+        """
+        Try to read the given file and return the read content as a dict.
+
+        If the config_type is not given, then it tries to detect the config type first
+        by the file name, and if this was not successful, it tries to apply a
+        configuration type after another, and if return the read configuration
+        and configuration type on the first success.
+        """
+        if config_type is None or str(config_type) == "":
+            config_type = None
+        else:
+            config_type = str(config_type)
+
+        if file_name is None or str(file_name) in ("", "-"):
+            content = sys.stdin.read()
+        else:
+            cfg_file = Path(file_name)
+            encoding = self.detect_file_encoding(cfg_file)
+            try:
+                content = self.read_file(cfg_file, encoding=encoding)
+            except (ReadTimeoutError, IOError) as e:
+                msg = _("Got a {c}: {e}.").format(c=e.__class__.__name__, e=e)
+                raise ConfigError(msg)
+
+        if config_type:
+            config = self.load_config(content, config_type=config_type)
+            return (config_type, config)
+
+        if file_name is not None and str(file_name) not in ("", "-"):
+            config_type = self.guess_config_type_by_name(file_name, raise_on_error=False)
+
+        if config_type:
+            if self.verbose > 1:
+                LOG.debug(_("Detected configuration type {t} by file name {f}.").format(
+                    t=self.colored(config_type, "cyan"),
+                    f=self.colored(str(file_name), "cyan")
+                ))
+            config = self.load_config(content, config_type=config_type)
+            return (config_type, config)
+
+        config, cfg_type = self.try_load_config(content)
+        msg = _("Detected configuration type {t} from file '{f}'.").format(
+            t=self.colored(cfg_type, "cyan"),
+            f=self.colored(str(file_name), "cyan")
+        )
+        LOG.debug(msg)
+        return (cfg_type, config)
+
+    # -------------------------------------------------------------------------
+    def load_config(self, content, config_type, raise_on_error=None):
+        """Trying to load the given file content as a configuration of a given type."""
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        if config_type not in self.loader_methods:
+            msg = _("Invalid configuration type '{}' given on calling load_config().").format(
+                self.colored(config_type, "red")
+            )
+            raise ValueError(msg)
+        lmethod = getattr(self.__class__, self.loader_methods[config_type])
+        if not lmethod:
+            raise RuntimeError(_("Loader method {m} not defined in class {c}.").format(
+                m=self.colored(self.loader_methods[config_type], "red"),
+                c=self.colored(self.__class__.__name__, "cyan"))
+            )
+
+        self.init_loader_module(config_type)
+        config = lmethod(self, content, raise_on_error=raise_on_error)
+        return config
+
+    # -------------------------------------------------------------------------
+    def load_inifile(self, content, raise_on_error=None):
+        """Load configuration in Windows inifile format."""
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        return {}
+
+    # -------------------------------------------------------------------------
+    def load_json(self, content, raise_on_error=None):
+        """Load configuration in JSON format."""
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        return {}
+
+    # -------------------------------------------------------------------------
+    def load_hjson(self, content, raise_on_error=None):
+        """Load configuration in HJSON format."""
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        return {}
+
+    # -------------------------------------------------------------------------
+    def load_toml(self, content, raise_on_error=None):
+        """Load configuration in TOML format."""
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        return {}
+
+    # -------------------------------------------------------------------------
+    def load_yaml(self, content, raise_on_error=None):
+        """Load configuration in YAML format."""
+        LOG.debug(_("Loading content from {!r} format.").format("YAML"))
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        try:
+            docs = []
+
+            for doc in mod.safe_load_all(content):
+                docs.append(doc)
+        except Exception as e:
+            if e.__class__.__name__ == "ParserError":
+                if raise_on_error:
+                    raise ConfigWrongTypeError("YAML ParseError: " + str(e))
+                else:
+                    LOG.error("YAML ParseError: " + str(e))
+                    return None
+            raise
+        if not docs:
+            return None
+
+        if len(docs) == 1:
+            return docs[0]
+        return docs
+
+    # -------------------------------------------------------------------------
+    def init_loader_module(self, config_type):
+        """Import the necessary loader modules for this configuration type."""
+        module = CFG_TYPE_READER_MODULE[config_type]
+        if module in self.cfg_modules:
+            return
+
+        LOG.debug(_("Trying to load module {} ...").format(
+            self.colored(module, "cyan"))
+        )
+        mod = importlib.import_module(module)
+        if mod:
+            self.cfg_modules.add(module)
+
+    # -------------------------------------------------------------------------
+    def init_dumper_module(self, config_type):
+        """Import the necessary dumper modules for this configuration type."""
+        module = CFG_TYPE_WRITER_MODULE[config_type]
+        if module in self.cfg_modules:
+            return
+
+        LOG.debug(_("Trying to load module {} ...").format(
+            self.colored(module, "cyan"))
+        )
+        mod = importlib.import_module(module)
+        if mod:
+            self.cfg_modules.add(module)
 
     # -------------------------------------------------------------------------
     def guess_config_type_by_name(self, file_name, raise_on_error=None):
