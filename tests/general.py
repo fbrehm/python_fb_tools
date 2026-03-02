@@ -75,6 +75,16 @@ def init_root_logger(verbose=0):
 
     root_log.addHandler(lh_console)
 
+    if verbose < 3:
+        paramiko_logger = logging.getLogger("paramiko.transport")
+        chardet_logger = logging.getLogger("chardet.charsetprober")
+        if verbose < 1:
+            paramiko_logger.setLevel(logging.WARNING)
+            chardet_logger.setLevel(logging.WARNING)
+        else:
+            paramiko_logger.setLevel(logging.INFO)
+            chardet_logger.setLevel(logging.INFO)
+
 
 # =============================================================================
 def currentFuncName(n=0):

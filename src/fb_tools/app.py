@@ -39,7 +39,7 @@ from .xlate import __lib_dir__ as __xlate_lib_dir__
 from .xlate import __mo_file__ as __xlate_mo_file__
 from .xlate import __module_dir__ as __xlate_module_dir__
 
-__version__ = "2.3.2"
+__version__ = "2.3.3"
 LOG = logging.getLogger(__name__)
 
 SIGNAL_NAMES = {
@@ -456,10 +456,13 @@ class BaseApplication(HandlingObject):
 
         if self.verbose < 3:
             paramiko_logger = logging.getLogger("paramiko.transport")
+            chardet_logger = logging.getLogger("chardet.charsetprober")
             if self.verbose < 1:
                 paramiko_logger.setLevel(logging.WARNING)
+                chardet_logger.setLevel(logging.WARNING)
             else:
                 paramiko_logger.setLevel(logging.INFO)
+                chardet_logger.setLevel(logging.INFO)
 
         return
 

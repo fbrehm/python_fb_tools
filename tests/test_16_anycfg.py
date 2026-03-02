@@ -11,9 +11,7 @@
 
 import logging
 import os
-import stat
 import sys
-import tempfile
 import textwrap
 from pathlib import Path
 
@@ -25,9 +23,9 @@ except ImportError:
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, libdir)
 
-from fb_tools.common import is_sequence
+# from fb_tools.common import is_sequence
 from fb_tools.common import pp
-from fb_tools.common import to_str
+# from fb_tools.common import to_str
 
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
@@ -103,7 +101,7 @@ class TestFbAnyConfig(FbToolsTestcase):
             LOG.debug("Testing raise ConfigDetectionError in filename {!r} ...".format(fname))
             with self.assertRaises(ConfigDetectionError) as cm:
                 ftype = cfg_handler.guess_config_type_by_name(fname, raise_on_error=True)
-                LOG.error("This should have not been visible for {!r} ...".format(fname))
+                LOG.error("This should have not been visible for {!r} ...".format(ftype))
             e = cm.exception
             LOG.debug("%s raised: %s", e.__class__.__name__, e)
 
@@ -164,6 +162,7 @@ class TestFbAnyConfig(FbToolsTestcase):
             "test_multicfg.js",
             "test_multicfg.toml",
             "test_multicfg.yaml",
+            "test_multicfg.uhu",
         )
 
         for base_file in config_files:
@@ -173,6 +172,7 @@ class TestFbAnyConfig(FbToolsTestcase):
             path = self.test_cfg_dir / base_file
             LOG.info("Testing for file {!r} ...".format(str(path)))
             config = cfg_handler.load_file(path)
+            LOG.debug("Read configuration:\n" + pp(config))
 
 
 # =============================================================================

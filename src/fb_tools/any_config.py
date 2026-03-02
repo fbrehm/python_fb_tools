@@ -11,9 +11,9 @@
 from __future__ import absolute_import
 
 # Standard module
+import codecs
 import importlib
 import logging
-import os
 import re
 import sys
 from configparser import ExtendedInterpolation
@@ -32,13 +32,13 @@ from .cfg_options.toml import ConfigOptionsToml
 from .cfg_options.yaml import ConfigOptionsYaml
 from .common import pp, to_bool
 from .errors import ConfigDetectionError
+from .errors import ConfigError
 from .errors import ConfigWrongTypeError
 from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
-from .obj import FbBaseObject
 from .xlate import XLATOR
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -282,7 +282,8 @@ class AnyConfigHandler(HandlingObject):
             ).format(
                 cs=self.colored(encoding, "cyan"),
                 fn=self.colored(str(cfg_file), "cyan"),
-                con=(confidence * 100))
+                con=(confidence * 100),
+            )
             LOG.debug(msg)
 
         return encoding
@@ -327,24 +328,76 @@ class AnyConfigHandler(HandlingObject):
 
         if config_type:
             if self.verbose > 1:
-                LOG.debug(_("Detected configuration type {t} by file name {f}.").format(
-                    t=self.colored(config_type, "cyan"),
-                    f=self.colored(str(file_name), "cyan")
-                ))
+                LOG.info(
+                    _("Detected configuration type {t} by file name {f}.").format(
+                        t=self.colored(config_type, "cyan"), f=self.colored(str(file_name), "cyan")
+                    )
+                )
             config = self.load_config(content, config_type=config_type, source=source)
             return (config_type, config)
 
-        config, cfg_type = self.try_load_config(content)
+        config, cfg_type = self.try_load_config(content, source=source)
         msg = _("Detected configuration type {t} from file '{f}'.").format(
-            t=self.colored(cfg_type, "cyan"),
-            f=self.colored(str(file_name), "cyan")
+            t=self.colored(cfg_type, "cyan"), f=self.colored(str(file_name), "cyan")
         )
-        LOG.debug(msg)
+        LOG.info(msg)
         return (cfg_type, config)
 
     # -------------------------------------------------------------------------
+    def try_load_config(self, content, raise_on_error=None, source="-"):
+        """Try to apply one config loader after another to the content, until one works."""
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        config = None
+        count_types = len(self.type_order)
+        i = 0
+
+        for config_type in self.type_order:
+            i += 1
+            lmethod = getattr(self.__class__, self.loader_methods[config_type])
+            if not lmethod:
+                raise RuntimeError(
+                    _("Loader method {m} not defined in class {c}.").format(
+                        m=self.colored(self.loader_methods[config_type], "red"),
+                        c=self.colored(self.__class__.__name__, "cyan"),
+                    )
+                )
+
+            self.init_loader_module(config_type)
+
+            try:
+                config = lmethod(self, content, raise_on_error=True, source=source)
+            except ConfigWrongTypeError as e:
+                msg = _("Unable to parse '{f}' as {t}: {e}").format(
+                    f=self.colored(source, "cyan"), t=self.colored(config_type, "cyan"), e=e
+                )
+                LOG.debug(msg)
+                if i >= count_types:
+                    msg = _("Could not detect file type by file content from '{}'.").format(
+                        self.colored(source, "red")
+                    )
+                    if raise_on_error:
+                        raise ConfigDetectionError(msg)
+                    else:
+                        LOG.error(msg)
+                        return (None, None)
+            else:
+                if self.verbose > 1:
+                    msg = _("Loaded configuration of type {}:").format(
+                        self.colored(config_type, "cyan")
+                    )
+                    msg += " " + pp(config)
+                    LOG.debug(msg)
+                break
+
+        return (config, config_type)
+
+    # -------------------------------------------------------------------------
     def load_config(self, content, config_type, raise_on_error=None, source="-"):
-        """Trying to load the given file content as a configuration of a given type."""
+        """Try to load the given file content as a configuration of a given type."""
         if raise_on_error is None:
             raise_on_error = self.raise_on_error
         else:
@@ -357,9 +410,11 @@ class AnyConfigHandler(HandlingObject):
             raise ValueError(msg)
         lmethod = getattr(self.__class__, self.loader_methods[config_type])
         if not lmethod:
-            raise RuntimeError(_("Loader method {m} not defined in class {c}.").format(
-                m=self.colored(self.loader_methods[config_type], "red"),
-                c=self.colored(self.__class__.__name__, "cyan"))
+            raise RuntimeError(
+                _("Loader method {m} not defined in class {c}.").format(
+                    m=self.colored(self.loader_methods[config_type], "red"),
+                    c=self.colored(self.__class__.__name__, "cyan"),
+                )
             )
 
         self.init_loader_module(config_type)
@@ -384,7 +439,8 @@ class AnyConfigHandler(HandlingObject):
         if ext_interpolation:
             kargs["interpolation"] = ExtendedInterpolation
 
-        LOG.debug("Loaded modules: " + pp(self.cfg_modules))
+        if self.verbose > 1:
+            LOG.debug("Loaded modules: " + pp(self.cfg_modules))
 
         mod = self.cfg_modules["configparser"]
 
@@ -396,7 +452,17 @@ class AnyConfigHandler(HandlingObject):
 
         cfg = {}
         parser = mod.ConfigParser(**kargs)
-        parser.read_string(content, source)
+        try:
+            parser.read_string(content, source)
+        except mod.Error as e:
+            msg = _("{what} on parsing: {e}").format(
+                what=self.colored(e.__class__.__name__, "red"), e=e
+            )
+            if raise_on_error:
+                raise ConfigWrongTypeError(msg)
+            else:
+                LOG.error(msg)
+                return None
 
         for section in parser.sections():
             if section not in cfg:
@@ -415,7 +481,23 @@ class AnyConfigHandler(HandlingObject):
         else:
             raise_on_error = bool(raise_on_error)
 
-        return {}
+        mod = self.cfg_modules["json"]
+
+        cfg = {}
+
+        try:
+            cfg = mod.loads(content)
+        except mod.JSONDecodeError as e:
+            msg = _("{what} parse error in '{fn}', line {line}, column {col}: {msg}").format(
+                fn=self.colored(source, "red"), line=e.lineno, col=e.colno, msg=e.msg
+            )
+            if raise_on_error:
+                raise ConfigWrongTypeError(msg)
+            else:
+                LOG.error(msg)
+                return None
+
+        return cfg
 
     # -------------------------------------------------------------------------
     def load_hjson(self, content, raise_on_error=None, source="-"):
@@ -446,6 +528,8 @@ class AnyConfigHandler(HandlingObject):
         else:
             raise_on_error = bool(raise_on_error)
 
+        mod = self.cfg_modules["yaml"]
+
         try:
             docs = []
 
@@ -458,7 +542,7 @@ class AnyConfigHandler(HandlingObject):
                 else:
                     LOG.error("YAML ParseError: " + str(e))
                     return None
-            raise
+
         if not docs:
             return None
 
@@ -473,9 +557,7 @@ class AnyConfigHandler(HandlingObject):
         if module in self.cfg_modules:
             return
 
-        LOG.debug(_("Trying to load module {} ...").format(
-            self.colored(module, "cyan"))
-        )
+        LOG.debug(_("Trying to load module {} ...").format(self.colored(module, "cyan")))
         mod = importlib.__import__(module, globals(), locals(), [], 0)
         if mod:
             self.cfg_modules[module] = mod
@@ -487,16 +569,14 @@ class AnyConfigHandler(HandlingObject):
         if module in self.cfg_modules:
             return
 
-        LOG.debug(_("Trying to load module {} ...").format(
-            self.colored(module, "cyan"))
-        )
+        LOG.debug(_("Trying to load module {} ...").format(self.colored(module, "cyan")))
         mod = importlib.__import__(module, globals(), locals(), [], 0)
         if mod:
             self.cfg_modules[module] = mod
 
     # -------------------------------------------------------------------------
     def guess_config_type_by_name(self, file_name, raise_on_error=None):
-        """Trying to guess the configuration type by the name of the configuration file."""
+        """Try to guess the configuration type by the name of the configuration file."""
         if raise_on_error is None:
             raise_on_error = self.raise_on_error
         else:
