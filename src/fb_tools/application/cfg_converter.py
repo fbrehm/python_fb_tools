@@ -33,7 +33,7 @@ from ..xlate import DEFAULT_LOCALE
 from ..xlate import XLATOR
 from ..xlate import format_list
 
-__version__ = "0.7.0"
+__version__ = "0.7.1"
 LOG = logging.getLogger(__name__)
 
 SUPPORTED_CFG_TYPES = ("json", "hjson", "yaml")
@@ -313,9 +313,7 @@ class CfgConvertApplication(BaseApplication):
     del mod_spec
 
     # -------------------------------------------------------------------------
-    def __init__(
-        self, verbose=0, version=GLOBAL_VERSION, *args, **kwargs
-    ):
+    def __init__(self, verbose=0, version=GLOBAL_VERSION, *args, **kwargs):
         """Initialize the application object."""
         desc = _(
             "Converts the given configuration file from the given input format "
@@ -736,7 +734,7 @@ class CfgConvertApplication(BaseApplication):
             action=CfgTypeOptionAction,
             supported_types=self.supported_write_cfg_types,
             help=_("The configuration type of the target, must be one " "of {}.").format(
-                type_list
+                write_type_list
             ),
         )
 
@@ -776,13 +774,14 @@ class CfgConvertApplication(BaseApplication):
         )
 
     # -------------------------------------------------------------------------
-    def __init_dump_args(self):
-    """Define commandline options for dumping out the read config."""
+    def _init_dump_args(self):
+        """Define commandline options for dumping out the read config."""
         dumping_group = self.arg_parser.add_argument_group(_("Dump output options"))
 
         width_help = (
-            _("The maximum width of generated lines on dumping output.") + " " +
-            self.width_help_epilog
+            _("The maximum width of generated lines on dumping output.")
+            + " "
+            + self.width_help_epilog
         )
 
         dumping_group.add_argument(
@@ -802,8 +801,9 @@ class CfgConvertApplication(BaseApplication):
         yaml_group = self.arg_parser.add_argument_group(_("YAML output options"))
 
         width_help = (
-            _("The maximum width of generated lines on YAML output.") + " " +
-            self.width_help_epilog
+            _("The maximum width of generated lines on YAML output.")
+            + " "
+            + self.width_help_epilog
         )
 
         yaml_group.add_argument(
@@ -884,7 +884,7 @@ class CfgConvertApplication(BaseApplication):
             action="store_true",
             dest="json_ensure_ascii",
             help=_(
-                "The {} output is guaranteed to have all incoming " "non-ASCII characters escaped."
+                "The {} output is guaranteed to have all incoming non-ASCII characters escaped."
             ).format("JSON"),
         )
 
