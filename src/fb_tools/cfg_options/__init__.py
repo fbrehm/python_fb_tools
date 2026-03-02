@@ -25,7 +25,7 @@ from ..xlate import XLATOR
 # from ..common import is_sequence, pp, to_bool, to_str
 # from ..xlate import XLATOR, format_list
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -81,8 +81,6 @@ class BaseConfigOptions(FbGenericBaseObject):
         @rtype:  dict
         """
         res = super(BaseConfigOptions, self).as_dict(short=short)
-
-        res["properties"] = self.properties()
 
         props = self.property_dict()
         for prop_name in props:

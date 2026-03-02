@@ -16,6 +16,7 @@ import logging
 import os
 import re
 import sys
+from configparser import ExtendedInterpolation
 from pathlib import Path
 
 # Third party modules
@@ -23,7 +24,13 @@ import chardet
 
 # Own modules
 from . import DEFAULT_ENCODING
-from .common import to_bool
+from .cfg_options.dump import ConfigOptionsDump
+from .cfg_options.hjson import ConfigOptionsHJson
+from .cfg_options.inifile import ConfigOptionsInifile
+from .cfg_options.json import ConfigOptionsJson
+from .cfg_options.toml import ConfigOptionsToml
+from .cfg_options.yaml import ConfigOptionsYaml
+from .common import pp, to_bool
 from .errors import ConfigDetectionError
 from .errors import ConfigWrongTypeError
 from .errors import ReadTimeoutError
@@ -31,7 +38,7 @@ from .handling_obj import HandlingObject
 from .obj import FbBaseObject
 from .xlate import XLATOR
 
-__version__ = "0.2.1"
+__version__ = "0.3.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -81,6 +88,12 @@ class AnyConfigHandler(HandlingObject):
     Public attributes:
     * add_search_paths          (Array of pathlib.Path) (inherited from HandlingObject)
     * cfg_modules               (Array of str)
+    * options_dump              (ConfigOptionsDump)
+    * options_hjson             (ConfigOptionsHJson)
+    * options_inifile           (ConfigOptionsInifile)
+    * options_json              (ConfigOptionsJson)
+    * options_toml              (ConfigOptionsToml)
+    * options_yaml              (ConfigOptionsYaml)
     * signals_dont_interrupt    (Array of int)          (inherited from HandlingObject)
     """
 
@@ -148,7 +161,14 @@ class AnyConfigHandler(HandlingObject):
         self._use_chardet = to_bool(use_chardet)
         self._raise_on_error = to_bool(raise_on_error)
 
-        self.cfg_modules = set()
+        self.cfg_modules = {}
+
+        self.options_dump = ConfigOptionsDump()
+        self.options_hjson = ConfigOptionsHJson()
+        self.options_inifile = ConfigOptionsInifile()
+        self.options_json = ConfigOptionsJson()
+        self.options_toml = ConfigOptionsToml()
+        self.options_yaml = ConfigOptionsYaml()
 
         super(AnyConfigHandler, self).__init__(*args, **kwargs)
 
@@ -284,8 +304,10 @@ class AnyConfigHandler(HandlingObject):
 
         if file_name is None or str(file_name) in ("", "-"):
             content = sys.stdin.read()
+            source = "-"
         else:
             cfg_file = Path(file_name)
+            source = str(cfg_file)
             encoding = self.detect_file_encoding(cfg_file)
             try:
                 content = self.read_file(cfg_file, encoding=encoding)
@@ -293,8 +315,11 @@ class AnyConfigHandler(HandlingObject):
                 msg = _("Got a {c}: {e}.").format(c=e.__class__.__name__, e=e)
                 raise ConfigError(msg)
 
+        if self.verbose > 1:
+            LOG.debug(_("Read configuration:") + "\n" + content)
+
         if config_type:
-            config = self.load_config(content, config_type=config_type)
+            config = self.load_config(content, config_type=config_type, source=source)
             return (config_type, config)
 
         if file_name is not None and str(file_name) not in ("", "-"):
@@ -306,7 +331,7 @@ class AnyConfigHandler(HandlingObject):
                     t=self.colored(config_type, "cyan"),
                     f=self.colored(str(file_name), "cyan")
                 ))
-            config = self.load_config(content, config_type=config_type)
+            config = self.load_config(content, config_type=config_type, source=source)
             return (config_type, config)
 
         config, cfg_type = self.try_load_config(content)
@@ -318,7 +343,7 @@ class AnyConfigHandler(HandlingObject):
         return (cfg_type, config)
 
     # -------------------------------------------------------------------------
-    def load_config(self, content, config_type, raise_on_error=None):
+    def load_config(self, content, config_type, raise_on_error=None, source="-"):
         """Trying to load the given file content as a configuration of a given type."""
         if raise_on_error is None:
             raise_on_error = self.raise_on_error
@@ -338,21 +363,52 @@ class AnyConfigHandler(HandlingObject):
             )
 
         self.init_loader_module(config_type)
-        config = lmethod(self, content, raise_on_error=raise_on_error)
+        config = lmethod(self, content, raise_on_error=raise_on_error, source=source)
+
+        if self.verbose > 1:
+            LOG.debug(_("Loaded configuration:") + " " + pp(config))
+
         return config
 
     # -------------------------------------------------------------------------
-    def load_inifile(self, content, raise_on_error=None):
+    def load_inifile(self, content, raise_on_error=None, source="-"):
         """Load configuration in Windows inifile format."""
         if raise_on_error is None:
             raise_on_error = self.raise_on_error
         else:
             raise_on_error = bool(raise_on_error)
 
-        return {}
+        kargs = self.options_inifile.property_dict()
+        ext_interpolation = kargs["extended_interpolation"]
+        del kargs["extended_interpolation"]
+        if ext_interpolation:
+            kargs["interpolation"] = ExtendedInterpolation
+
+        LOG.debug("Loaded modules: " + pp(self.cfg_modules))
+
+        mod = self.cfg_modules["configparser"]
+
+        if self.verbose > 1:
+            LOG.debug(_("Arguments on initializing {}:").format("ConfigParser") + "\n" + pp(kargs))
+
+        if self.verbose > 1:
+            LOG.debug("Evaluating inifile cntent:\n" + content)
+
+        cfg = {}
+        parser = mod.ConfigParser(**kargs)
+        parser.read_string(content, source)
+
+        for section in parser.sections():
+            if section not in cfg:
+                cfg[section] = {}
+            for key, value in parser.items(section):
+                k = key.lower()
+                cfg[section][k] = value
+
+        return cfg
 
     # -------------------------------------------------------------------------
-    def load_json(self, content, raise_on_error=None):
+    def load_json(self, content, raise_on_error=None, source="-"):
         """Load configuration in JSON format."""
         if raise_on_error is None:
             raise_on_error = self.raise_on_error
@@ -362,7 +418,7 @@ class AnyConfigHandler(HandlingObject):
         return {}
 
     # -------------------------------------------------------------------------
-    def load_hjson(self, content, raise_on_error=None):
+    def load_hjson(self, content, raise_on_error=None, source="-"):
         """Load configuration in HJSON format."""
         if raise_on_error is None:
             raise_on_error = self.raise_on_error
@@ -372,7 +428,7 @@ class AnyConfigHandler(HandlingObject):
         return {}
 
     # -------------------------------------------------------------------------
-    def load_toml(self, content, raise_on_error=None):
+    def load_toml(self, content, raise_on_error=None, source="-"):
         """Load configuration in TOML format."""
         if raise_on_error is None:
             raise_on_error = self.raise_on_error
@@ -382,7 +438,7 @@ class AnyConfigHandler(HandlingObject):
         return {}
 
     # -------------------------------------------------------------------------
-    def load_yaml(self, content, raise_on_error=None):
+    def load_yaml(self, content, raise_on_error=None, source="-"):
         """Load configuration in YAML format."""
         LOG.debug(_("Loading content from {!r} format.").format("YAML"))
         if raise_on_error is None:
@@ -420,9 +476,9 @@ class AnyConfigHandler(HandlingObject):
         LOG.debug(_("Trying to load module {} ...").format(
             self.colored(module, "cyan"))
         )
-        mod = importlib.import_module(module)
+        mod = importlib.__import__(module, globals(), locals(), [], 0)
         if mod:
-            self.cfg_modules.add(module)
+            self.cfg_modules[module] = mod
 
     # -------------------------------------------------------------------------
     def init_dumper_module(self, config_type):
@@ -434,9 +490,9 @@ class AnyConfigHandler(HandlingObject):
         LOG.debug(_("Trying to load module {} ...").format(
             self.colored(module, "cyan"))
         )
-        mod = importlib.import_module(module)
+        mod = importlib.__import__(module, globals(), locals(), [], 0)
         if mod:
-            self.cfg_modules.add(module)
+            self.cfg_modules[module] = mod
 
     # -------------------------------------------------------------------------
     def guess_config_type_by_name(self, file_name, raise_on_error=None):
