@@ -11,14 +11,10 @@
 from __future__ import absolute_import
 
 # Standard modules
-import copy
-import locale
 import logging
-from pathlib import Path
 
 # Own modules
 from . import BaseConfigOptions
-from ..common import is_sequence, pp, to_bool, to_str
 from ..xlate import XLATOR
 
 __version__ = "0.1.0"
