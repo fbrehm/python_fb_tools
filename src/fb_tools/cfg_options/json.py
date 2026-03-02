@@ -11,17 +11,14 @@
 from __future__ import absolute_import
 
 # Standard modules
-import copy
-import locale
 import logging
-from pathlib import Path
 
 # Own modules
 from . import BaseConfigOptions
-from ..common import is_sequence, pp, to_bool, to_str
+from ..common import to_bool
 from ..xlate import XLATOR
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -50,7 +47,6 @@ class ConfigOptionsJson(BaseConfigOptions):
         "newlines will be generated."
     ).format("JSON")
     _doc["sort_keys"] = _("Dictionaries will be outputted sorted by key.")
-
 
     # -------------------------------------------------------------------------
     @property

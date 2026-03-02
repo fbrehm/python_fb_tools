@@ -20,7 +20,7 @@ from ..xlate import DEFAULT_LOCALE
 from ..xlate import XLATOR
 from ..xlate import format_list
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -55,7 +55,8 @@ class ConfigOptionsYaml(BaseConfigOptions):
     _doc["flow_style"] = _("Print a collection as flow in YAML output.")
     _doc["indent"] = _("The indention of each level of the YAML output.")
     _doc["style"] = _("The style of the scalars in YAML output, may be be one of {}.").format(
-        style_list_xlated)
+        style_list_xlated
+    )
     _doc["width"] = _("The maximum width of generated lines on YAML output.")
 
     # -------------------------------------------------------------------------

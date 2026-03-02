@@ -25,7 +25,7 @@ from ..xlate import XLATOR
 # from ..common import is_sequence, pp, to_bool, to_str
 # from ..xlate import XLATOR, format_list
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -53,7 +53,8 @@ class BaseConfigOptions(FbGenericBaseObject):
         for arg_name in kwargs:
             if arg_name not in properties:
                 msg = _("Unknown attribute {a!r} for class {c!r}.").format(
-                    a=arg_name, c=self.__class__.__name__)
+                    a=arg_name, c=self.__class__.__name__
+                )
                 raise AttributeError(msg)
             arg_val = kwargs[arg_name]
             setattr(self, arg_name, arg_val)
@@ -126,7 +127,8 @@ class BaseConfigOptions(FbGenericBaseObject):
         props = cls.properties()
         if prop_name not in props:
             msg = _("Wrong property {p!r} for class {c!r} given.").format(
-                p=prop_name, c=cls.__name__)
+                p=prop_name, c=cls.__name__
+            )
             raise ValueError(msg)
 
         option = "--" + cls._argparse_prefix + "-" + re.sub(r"_", "-", prop_name)
@@ -139,7 +141,8 @@ class BaseConfigOptions(FbGenericBaseObject):
         props = cls.properties()
         if prop_name not in props:
             msg = _("Wrong property {p!r} for class {c!r} given.").format(
-                p=prop_name, c=cls.__name__)
+                p=prop_name, c=cls.__name__
+            )
             raise ValueError(msg)
 
         doc = "Unknown documentation."
@@ -158,7 +161,8 @@ class BaseConfigOptions(FbGenericBaseObject):
         props = cls.properties()
         if prop_name not in props:
             msg = _("Wrong property {p!r} for class {c!r} given.").format(
-                p=prop_name, c=cls.__name__)
+                p=prop_name, c=cls.__name__
+            )
             raise ValueError(msg)
 
         val = None

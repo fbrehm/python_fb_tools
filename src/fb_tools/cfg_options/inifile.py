@@ -14,14 +14,13 @@ from __future__ import absolute_import
 import copy
 import locale
 import logging
-from pathlib import Path
 
 # Own modules
 from . import BaseConfigOptions
-from ..common import is_sequence, pp, to_bool, to_str
+from ..common import is_sequence, pp, to_bool
 from ..xlate import XLATOR
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -35,8 +34,8 @@ class ConfigOptionsInifile(BaseConfigOptions):
 
     _defaults = {}
     _defaults["allow_no_value"] = False
-    _defaults["comment_prefixes"] = ('#', ';')
-    _defaults["delimiters"] = ('=', ':')
+    _defaults["comment_prefixes"] = ("#", ";")
+    _defaults["delimiters"] = ("=", ":")
     _defaults["empty_lines_in_values"] = True
     _defaults["extended_interpolation"] = False
     _defaults["inline_comment_prefixes"] = None
@@ -50,9 +49,7 @@ class ConfigOptionsInifile(BaseConfigOptions):
     )
     _doc["empty_lines_in_values"] = _("Allow multi-line values in inifiles.")
     _doc["extended_interpolation"] = _("Use ExtendedInterpolation for interpolation of inifiles.")
-    _doc["inline_comment_prefixes"] = _(
-        "The inline prefixes for comment lines in ini-files."
-    )
+    _doc["inline_comment_prefixes"] = _("The inline prefixes for comment lines in ini-files.")
     _doc["strict"] = _(
         "Perform strict parsing of inifiles without duplicated sections or options."
     )
@@ -135,7 +132,7 @@ class ConfigOptionsInifile(BaseConfigOptions):
 
     # -------------------------------------------------------------------------
     @property
-    def extended_interpolation(self): 
+    def extended_interpolation(self):
         """Use ExtendedInterpolation for interpolation of inifiles."""
         return self._extended_interpolation
 
@@ -176,9 +173,6 @@ class ConfigOptionsInifile(BaseConfigOptions):
 # =============================================================================
 def main():
     """Entrypoint for test-config-options."""
-    my_path = Path(__file__)
-    appname = my_path.name
-
     locale.setlocale(locale.LC_ALL, "")
 
     cfg_options = ConfigOptionsInifile()
@@ -190,7 +184,7 @@ def main():
     print("repr(): {!r}".format(cfg_options))
     print()
 
-    for prop_name in sorted(list(cfg_options.properties()), key=str.lower):
+    for prop_name in sorted(cfg_options.properties(), key=str.lower):
         option = cfg_options.argparse_option(prop_name)
         doc = cfg_options.get_property_doc(prop_name)
         print(f"{option} => {doc}")
