@@ -12,6 +12,7 @@ from __future__ import absolute_import
 
 # Standard module
 import codecs
+import copy
 import importlib
 import logging
 import re
@@ -38,7 +39,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -51,6 +52,11 @@ CFG_TYPE_READER_MODULE = {
     "toml": "tomli",
     "yaml": "yaml",
 }
+
+# if sys.version_info["major"] > 3 or (
+#     sys.version_info["major"] == 3 and sys.version_info["minor"] >= 11
+if sys.version_info.major > 3 or (sys.version_info.major == 3 and sys.version_info.minor >= 11):
+    CFG_TYPE_READER_MODULE["toml"] = "tomllib"
 
 CFG_TYPE_WRITER_MODULE = {
     "dump": "pprint",
@@ -101,6 +107,8 @@ class AnyConfigHandler(HandlingObject):
 
     chardet_min_level_confidence = 1.0 / 3
 
+    modules_read = {}
+    modules_write = {}
     supported_read_cfg_types = []
     supported_write_cfg_types = []
     default_width = 99
@@ -142,12 +150,14 @@ class AnyConfigHandler(HandlingObject):
         mod_spec = importlib.util.find_spec(module_name)
         if mod_spec:
             supported_read_cfg_types.append(cfg_type)
+            modules_read[cfg_type] = module_name
 
     for cfg_type in CFG_TYPE_WRITER_MODULE:
         module_name = CFG_TYPE_WRITER_MODULE[cfg_type]
         mod_spec = importlib.util.find_spec(module_name)
         if mod_spec:
             supported_write_cfg_types.append(cfg_type)
+            modules_write[cfg_type] = module_name
 
     del module_name
     del mod_spec
@@ -227,7 +237,11 @@ class AnyConfigHandler(HandlingObject):
         res["chardet_min_level_confidence"] = self.chardet_min_level_confidence
         res["cfg_modules"] = self.cfg_modules
         res["encoding"] = self.encoding
+        res["modules_read"] = copy.copy(self.modules_read)
+        res["modules_write"] = copy.copy(self.modules_write)
         res["raise_on_error"] = self.raise_on_error
+        res["supported_read_cfg_types"] = self.supported_read_cfg_types
+        res["supported_write_cfg_types"] = self.supported_write_cfg_types
         res["use_chardet"] = self.use_chardet
 
         return res
@@ -245,7 +259,7 @@ class AnyConfigHandler(HandlingObject):
                 )
             return self.encoding
 
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug(
                 _("Trying to detect character set of file {fn!r} ...").format(fn=str(cfg_file))
             )
@@ -316,7 +330,7 @@ class AnyConfigHandler(HandlingObject):
                 msg = _("Got a {c}: {e}.").format(c=e.__class__.__name__, e=e)
                 raise ConfigError(msg)
 
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug(_("Read configuration:") + "\n" + content)
 
         if config_type:
@@ -442,19 +456,20 @@ class AnyConfigHandler(HandlingObject):
         if self.verbose > 1:
             LOG.debug("Loaded modules: " + pp(self.cfg_modules))
 
-        mod = self.cfg_modules["configparser"]
+        module_name = self.modules_read["ini"]
+        module = self.cfg_modules[module_name]
 
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug(_("Arguments on initializing {}:").format("ConfigParser") + "\n" + pp(kargs))
 
-        if self.verbose > 1:
-            LOG.debug("Evaluating inifile cntent:\n" + content)
+        if self.verbose > 2:
+            LOG.debug("Evaluating inifile content:\n" + content)
 
         cfg = {}
-        parser = mod.ConfigParser(**kargs)
+        parser = module.ConfigParser(**kargs)
         try:
             parser.read_string(content, source)
-        except mod.Error as e:
+        except module.Error as e:
             msg = _("{what} on parsing: {e}").format(
                 what=self.colored(e.__class__.__name__, "red"), e=e
             )
@@ -481,15 +496,20 @@ class AnyConfigHandler(HandlingObject):
         else:
             raise_on_error = bool(raise_on_error)
 
-        mod = self.cfg_modules["json"]
+        module_name = self.modules_read["json"]
+        module = self.cfg_modules[module_name]
 
         cfg = {}
 
         try:
-            cfg = mod.loads(content)
-        except mod.JSONDecodeError as e:
+            cfg = module.loads(content)
+        except module.JSONDecodeError as e:
             msg = _("{what} parse error in '{fn}', line {line}, column {col}: {msg}").format(
-                fn=self.colored(source, "red"), line=e.lineno, col=e.colno, msg=e.msg
+                what=e.__class__.__name__,
+                fn=self.colored(e.doc, "red"),
+                line=e.lineno,
+                col=e.colno,
+                msg=e.msg,
             )
             if raise_on_error:
                 raise ConfigWrongTypeError(msg)
@@ -507,7 +527,28 @@ class AnyConfigHandler(HandlingObject):
         else:
             raise_on_error = bool(raise_on_error)
 
-        return {}
+        module_name = self.modules_read["hjson"]
+        module = self.cfg_modules[module_name]
+
+        cfg = {}
+
+        try:
+            cfg = module.loads(content)
+        except module.HjsonDecodeError as e:
+            msg = _("{what} parse error in '{fn}', line {line}, column {col}: {msg}").format(
+                what=e.__class__.__name__,
+                fn=self.colored(e.doc, "red"),
+                line=e.lineno,
+                col=e.colno,
+                msg=e.msg,
+            )
+            if raise_on_error:
+                raise ConfigWrongTypeError(msg)
+            else:
+                LOG.error(msg)
+                return None
+
+        return cfg
 
     # -------------------------------------------------------------------------
     def load_toml(self, content, raise_on_error=None, source="-"):
@@ -517,7 +558,28 @@ class AnyConfigHandler(HandlingObject):
         else:
             raise_on_error = bool(raise_on_error)
 
-        return {}
+        module_name = self.modules_read["toml"]
+        module = self.cfg_modules[module_name]
+
+        cfg = {}
+
+        try:
+            cfg = module.loads(content)
+        except module.TOMLDecodeError as e:
+            msg = _("{what} parse error in '{fn}', line {line}, column {col}: {msg}").format(
+                what=e.__class__.__name__,
+                fn=self.colored(e.doc, "red"),
+                line=e.lineno,
+                col=e.colno,
+                msg=e.msg,
+            )
+            if raise_on_error:
+                raise ConfigWrongTypeError(msg)
+            else:
+                LOG.error(msg)
+                return None
+
+        return cfg
 
     # -------------------------------------------------------------------------
     def load_yaml(self, content, raise_on_error=None, source="-"):
@@ -528,20 +590,23 @@ class AnyConfigHandler(HandlingObject):
         else:
             raise_on_error = bool(raise_on_error)
 
-        mod = self.cfg_modules["yaml"]
+        module_name = self.modules_read["yaml"]
+        module = self.cfg_modules[module_name]
 
         try:
             docs = []
 
-            for doc in mod.safe_load_all(content):
+            for doc in module.safe_load_all(content):
                 docs.append(doc)
-        except Exception as e:
-            if e.__class__.__name__ == "ParserError":
-                if raise_on_error:
-                    raise ConfigWrongTypeError("YAML ParseError: " + str(e))
-                else:
-                    LOG.error("YAML ParseError: " + str(e))
-                    return None
+        except module.YAMLError as e:
+            msg = _("{what} in '{fn}': {msg}").format(
+                what=e.__class__.__name__, fn=self.colored(source, "red"), msg=str(e)
+            )
+            if raise_on_error:
+                raise ConfigWrongTypeError(msg)
+            else:
+                LOG.error(msg)
+                return None
 
         if not docs:
             return None
@@ -553,14 +618,14 @@ class AnyConfigHandler(HandlingObject):
     # -------------------------------------------------------------------------
     def init_loader_module(self, config_type):
         """Import the necessary loader modules for this configuration type."""
-        module = CFG_TYPE_READER_MODULE[config_type]
-        if module in self.cfg_modules:
+        module_name = self.modules_read[config_type]
+        if module_name in self.cfg_modules:
             return
 
-        LOG.debug(_("Trying to load module {} ...").format(self.colored(module, "cyan")))
-        mod = importlib.__import__(module, globals(), locals(), [], 0)
-        if mod:
-            self.cfg_modules[module] = mod
+        LOG.debug(_("Trying to load module {} ...").format(self.colored(module_name, "cyan")))
+        module = importlib.__import__(module_name, globals(), locals(), [], 0)
+        if module:
+            self.cfg_modules[module_name] = module
 
     # -------------------------------------------------------------------------
     def init_dumper_module(self, config_type):
