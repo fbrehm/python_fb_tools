@@ -39,7 +39,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -53,8 +53,6 @@ CFG_TYPE_READER_MODULE = {
     "yaml": "yaml",
 }
 
-# if sys.version_info["major"] > 3 or (
-#     sys.version_info["major"] == 3 and sys.version_info["minor"] >= 11
 if sys.version_info.major > 3 or (sys.version_info.major == 3 and sys.version_info.minor >= 11):
     CFG_TYPE_READER_MODULE["toml"] = "tomllib"
 
@@ -434,7 +432,7 @@ class AnyConfigHandler(HandlingObject):
         self.init_loader_module(config_type)
         config = lmethod(self, content, raise_on_error=raise_on_error, source=source)
 
-        if self.verbose > 1:
+        if self.verbose > 2:
             LOG.debug(_("Loaded configuration:") + " " + pp(config))
 
         return config
@@ -616,6 +614,107 @@ class AnyConfigHandler(HandlingObject):
         return docs
 
     # -------------------------------------------------------------------------
+    def dump_file(self, config, file_name, config_type=None):
+        """
+        Try to write the given config into the given file in the given config type.
+
+        If the config_type is not given, then it tries to detect the config type
+        by the file name. If this is not successful, then a ConfigDetectionError
+        is raised.
+
+        If an invalid config_type was given, a ValueError is raised.
+
+        If the the config could not be written, then a IOError is raised.
+        """
+        if config_type is None or str(config_type) == "":
+            config_type = None
+        else:
+            config_type = str(config_type)
+
+        if config_type is None:
+            if file_name is None or str(file_name) in ("", "-"):
+                msg = _(
+                    "Cannot use STDOUT to dump the configuration, if no configuration "
+                    "type was given."
+                )
+                raise ConfigDetectionError(msg)
+
+            config_type = self.guess_config_type_by_name(file_name, raise_on_error=True)
+
+        if config_type not in self.modules_write:
+            msg = _("Invalid configuration type {} for dumping given.").format(
+                self.colored(repr(config_type), "red")
+            )
+            raise ConfigWrongTypeError(msg)
+
+        content = self.dump_config(
+            self, config, config_type, raise_on_error=True, target=str(file_name))
+
+    # -------------------------------------------------------------------------
+    def dump_config(self, config, config_type, raise_on_error=None, target="-"):
+        """Try to generate the content of a config file by the given config and config_type."""
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        if config_type not in self.modules_write:
+            msg = _("Invalid configuration type {} for dumping given.").format(
+                self.colored(repr(config_type), "red")
+            )
+            raise ValueError(msg)
+
+        dmethod = getattr(self.__class__, self.dumper_methods[config_type])
+
+        if not dmethod:
+            raise RuntimeError(
+                _("Dumper method {m} not defined in class {c}.").format(
+                    m=self.colored(self.dumper_methods[config_type], "red"),
+                    c=self.colored(self.__class__.__name__, "cyan"),
+                )
+            )
+
+        self.init_dumper_module(config_type)
+        content = dmethod(self, config, raise_on_error=raise_on_error, target=target)
+
+        if self.verbose > 2:
+            LOG.debug(_("Dumped configuration:") + "\n" + content)
+
+        return content
+
+    # -------------------------------------------------------------------------
+    def dump_pprint(self, config, raise_on_error, target):
+        """Return a pretty print dump of the given configuration."""
+        return pp(config) + "\n"
+
+    # -------------------------------------------------------------------------
+    def dump_json(self, config, raise_on_error, target):
+        """Return a Json formatted dump of the given configuration."""
+        return '{ "config_type": "json" }\n'
+
+    # -------------------------------------------------------------------------
+    def dump_hjson(self, config, raise_on_error, target):
+        """Return a HJson formatted dump of the given configuration."""
+        return '{ "config_type": "hjson" }\n'
+
+    # -------------------------------------------------------------------------
+    def dump_toml(self, config, raise_on_error, target):
+        """Return a HJson formatted dump of the given configuration."""
+        content = "[General]\n"
+        content += 'config_type = "hjson"\n'
+
+        return content
+
+    # -------------------------------------------------------------------------
+    def dump_yaml(self, config, raise_on_error, target):
+        """Return a YAML formatted dump of the given configuration."""
+        content = "---\n"
+        content += "General:\n"
+        content += "  config_type: 'hjson'\n"
+
+        return content
+
+    # -------------------------------------------------------------------------
     def init_loader_module(self, config_type):
         """Import the necessary loader modules for this configuration type."""
         module_name = self.modules_read[config_type]
@@ -630,14 +729,14 @@ class AnyConfigHandler(HandlingObject):
     # -------------------------------------------------------------------------
     def init_dumper_module(self, config_type):
         """Import the necessary dumper modules for this configuration type."""
-        module = CFG_TYPE_WRITER_MODULE[config_type]
-        if module in self.cfg_modules:
+        module_name = self.modules_write[config_type]
+        if module_name in self.cfg_modules:
             return
 
-        LOG.debug(_("Trying to load module {} ...").format(self.colored(module, "cyan")))
-        mod = importlib.__import__(module, globals(), locals(), [], 0)
-        if mod:
-            self.cfg_modules[module] = mod
+        LOG.debug(_("Trying to load module {} ...").format(self.colored(module_name, "cyan")))
+        module = importlib.__import__(module_name, globals(), locals(), [], 0)
+        if module:
+            self.cfg_modules[module_name] = module
 
     # -------------------------------------------------------------------------
     def guess_config_type_by_name(self, file_name, raise_on_error=None):

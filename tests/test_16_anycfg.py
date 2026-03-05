@@ -9,6 +9,7 @@
 @license: GPL3
 """
 
+import copy
 import logging
 import os
 import sys
@@ -174,6 +175,40 @@ class TestFbAnyConfig(FbToolsTestcase):
             config = cfg_handler.load_file(path)
             LOG.debug("Read configuration:\n" + pp(config))
 
+    # -------------------------------------------------------------------------
+    def test_dump_cfg(self):
+        """Test generate dumps of different configs."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.any_config import AnyConfigHandler
+
+        terminal_has_colors = False
+        if self.verbose:
+            terminal_has_colors = True
+
+        cfg_handler = AnyConfigHandler(
+            appname=self.appname,
+            verbose=self.verbose,
+            terminal_has_colors=terminal_has_colors,
+        )
+
+        testing_types = [
+            "dump",
+            "json",
+            "hjson",
+            "toml",
+            "yaml",
+        ]
+
+        config = { "General": {"testing_types": testing_types } }
+
+        for testing_type in testing_types:
+            LOG.debug(f"Try to dump config as {testing_type!r}.")
+            cfg = copy.copy(config)
+            cfg["General"]["test_type"] = testing_type
+
+            content = cfg_handler.dump_config(config, testing_type)
+            LOG.debug("Generated output:\n" + content)
 
 # =============================================================================
 if __name__ == "__main__":
@@ -191,6 +226,7 @@ if __name__ == "__main__":
     suite.addTest(TestFbAnyConfig("test_object", verbose))
     suite.addTest(TestFbAnyConfig("test_guess_config_type_by_name", verbose))
     suite.addTest(TestFbAnyConfig("test_read_cfg_files", verbose))
+    suite.addTest(TestFbAnyConfig("test_dump_cfg", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
