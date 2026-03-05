@@ -16,6 +16,7 @@ import copy
 import importlib
 import logging
 import re
+import shutil
 import sys
 from configparser import ExtendedInterpolation
 from pathlib import Path
@@ -25,6 +26,7 @@ import chardet
 
 # Own modules
 from . import DEFAULT_ENCODING
+from . import DEFAULT_TERMINAL_HEIGHT, DEFAULT_TERMINAL_WIDTH
 from .cfg_options.dump import ConfigOptionsDump
 from .cfg_options.hjson import ConfigOptionsHJson
 from .cfg_options.inifile import ConfigOptionsInifile
@@ -39,7 +41,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.6.0"
+__version__ = "0.6.1"
 
 LOG = logging.getLogger(__name__)
 
@@ -178,6 +180,8 @@ class AnyConfigHandler(HandlingObject):
         self.options_toml = ConfigOptionsToml()
         self.options_yaml = ConfigOptionsYaml()
 
+        self.set_width_to_termsize()
+
         super(AnyConfigHandler, self).__init__(*args, **kwargs)
 
         self.initialized = True
@@ -243,6 +247,14 @@ class AnyConfigHandler(HandlingObject):
         res["use_chardet"] = self.use_chardet
 
         return res
+
+    # -------------------------------------------------------------------------
+    def set_width_to_termsize(self):
+        """Set the width of dump and yaml output to the width of the terminal."""
+        term_size = shutil.get_terminal_size((DEFAULT_TERMINAL_WIDTH, DEFAULT_TERMINAL_HEIGHT))
+
+        self.options_dump.width = term_size.columns
+        self.options_yaml.width = term_size.columns
 
     # -------------------------------------------------------------------------
     def detect_file_encoding(self, cfg_file, force=False):
@@ -648,7 +660,8 @@ class AnyConfigHandler(HandlingObject):
             raise ConfigWrongTypeError(msg)
 
         content = self.dump_config(
-            self, config, config_type, raise_on_error=True, target=str(file_name))
+            self, config, config_type, raise_on_error=True, target=str(file_name)
+        )
 
     # -------------------------------------------------------------------------
     def dump_config(self, config, config_type, raise_on_error=None, target="-"):
@@ -678,30 +691,60 @@ class AnyConfigHandler(HandlingObject):
         content = dmethod(self, config, raise_on_error=raise_on_error, target=target)
 
         if self.verbose > 2:
-            LOG.debug(_("Dumped configuration:") + "\n" + content)
+            LOG.debug(_("Dumped configuration:") + "\n" + content + "\n")
 
         return content
 
     # -------------------------------------------------------------------------
     def dump_pprint(self, config, raise_on_error, target):
         """Return a pretty print dump of the given configuration."""
-        return pp(config) + "\n"
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        module_name = self.modules_write["dump"]
+        module = self.cfg_modules[module_name]
+
+        kwargs = {
+            "indent": self.options_dump.indent,
+            "width": self.options_dump.width,
+            "depth": self.options_dump.depth,
+            "compact": self.options_dump.compact,
+        }
+
+        if sys.version_info.major > 3 or (
+            sys.version_info.major == 3 and sys.version_info.minor >= 8
+        ):
+            kwargs["sort_dicts"] = self.options_dump.sort_dicts
+
+        if sys.version_info.major > 3 or (
+            sys.version_info.major == 3 and sys.version_info.minor >= 10
+        ):
+            kwargs["underscore_numbers"] = self.options_dump.underscore_numbers
+
+        if self.verbose > 1:
+            ppr = f"{module_name}.PrettyPrinter"
+            LOG.debug(f"Init arguments of {ppr}: " + pp(kwargs))
+
+        pretty_printer = module.PrettyPrinter(**kwargs)
+        return pretty_printer.pformat(config)
 
     # -------------------------------------------------------------------------
     def dump_json(self, config, raise_on_error, target):
         """Return a Json formatted dump of the given configuration."""
-        return '{ "config_type": "json" }\n'
+        return '{ "config_type": "json" }'
 
     # -------------------------------------------------------------------------
     def dump_hjson(self, config, raise_on_error, target):
         """Return a HJson formatted dump of the given configuration."""
-        return '{ "config_type": "hjson" }\n'
+        return '{ "config_type": "hjson" }'
 
     # -------------------------------------------------------------------------
     def dump_toml(self, config, raise_on_error, target):
         """Return a HJson formatted dump of the given configuration."""
         content = "[General]\n"
-        content += 'config_type = "hjson"\n'
+        content += 'config_type = "hjson"'
 
         return content
 
@@ -710,7 +753,7 @@ class AnyConfigHandler(HandlingObject):
         """Return a YAML formatted dump of the given configuration."""
         content = "---\n"
         content += "General:\n"
-        content += "  config_type: 'hjson'\n"
+        content += "  config_type: 'hjson'"
 
         return content
 

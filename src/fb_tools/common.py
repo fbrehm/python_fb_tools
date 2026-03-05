@@ -18,6 +18,7 @@ import platform
 import pprint
 import random
 import re
+import shutil
 import string
 import sys
 
@@ -35,10 +36,11 @@ except ImportError:
 import six
 
 # Own modules
+from . import DEFAULT_TERMINAL_HEIGHT, DEFAULT_TERMINAL_WIDTH
 from .errors import InvalidTimeIntervalError
 from .xlate import XLATOR
 
-__version__ = "2.1.2"
+__version__ = "2.2.0"
 
 _ = XLATOR.gettext
 
@@ -110,14 +112,42 @@ RE_UNIT_TIME_YEAR = re.compile(r"\s*(\d+(?:\.\d*)?)\s*y(?:ears?)?(?:\s*,)?", re.
 
 
 # =============================================================================
-def pp(value, indent=4, width=99, depth=None):
+def pp(
+    value,
+    indent=4,
+    width=None,
+    depth=None,
+    compact=False,
+    sort_dicts=True,
+    underscore_numbers=False,
+):
     """
     Return a pretty print string of the given value.
 
     @return: pretty print string
     @rtype: str
     """
-    pretty_printer = pprint.PrettyPrinter(indent=indent, width=width, depth=depth)
+
+    if width is None:
+        term_size = shutil.get_terminal_size((DEFAULT_TERMINAL_WIDTH, DEFAULT_TERMINAL_HEIGHT))
+        width = term_size.columns
+
+    kwargs = {
+        "indent": indent,
+        "width": width,
+        "depth": depth,
+        "compact": compact,
+    }
+
+    if sys.version_info.major > 3 or (sys.version_info.major == 3 and sys.version_info.minor >= 8):
+        kwargs["sort_dicts"] = sort_dicts
+
+    if sys.version_info.major > 3 or (
+        sys.version_info.major == 3 and sys.version_info.minor >= 10
+    ):
+        kwargs["underscore_numbers"] = underscore_numbers
+
+    pretty_printer = pprint.PrettyPrinter(**kwargs)
     return pretty_printer.pformat(value)
 
 

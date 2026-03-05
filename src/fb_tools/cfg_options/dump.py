@@ -18,7 +18,7 @@ from . import BaseConfigOptions
 from ..common import to_bool
 from ..xlate import XLATOR
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -36,8 +36,8 @@ class ConfigOptionsDump(BaseConfigOptions):
     _defaults["compact"] = False
     _defaults["depth"] = None
     _defaults["indent"] = 4
-    _defaults["sort_dicts"] = False
-    _defaults["underscore_number"] = False
+    _defaults["sort_dicts"] = True
+    _defaults["underscore_numbers"] = False
     _defaults["width"] = 99
 
     _doc = {}
@@ -48,7 +48,7 @@ class ConfigOptionsDump(BaseConfigOptions):
     _doc["depth"] = _("The number of nesting levels which may be printed.")
     _doc["indent"] = _("The amount of indentation added for each nesting level.")
     _doc["sort_dicts"] = _("Dictionaries will be outputted sorted by key.")
-    _doc["underscore_number"] = _(
+    _doc["underscore_numbers"] = _(
         "Integers will be formatted with the {!r} character for a thousands separator."
     ).format("_")
     _doc["width"] = _("The desired maximum number of characters per line in the output.")
@@ -112,13 +112,13 @@ class ConfigOptionsDump(BaseConfigOptions):
 
     # -------------------------------------------------------------------------
     @property
-    def underscore_number(self):
+    def underscore_numbers(self):
         """Integers will be formatted with the {!r} character for a thousands separator."""
-        return self._underscore_number
+        return self._underscore_numbers
 
-    @underscore_number.setter
-    def underscore_number(self, value):
-        self._underscore_number = to_bool(value)
+    @underscore_numbers.setter
+    def underscore_numbers(self, value):
+        self._underscore_numbers = to_bool(value)
 
     # -------------------------------------------------------------------------
     @property

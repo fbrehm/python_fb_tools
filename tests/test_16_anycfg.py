@@ -203,6 +203,9 @@ class TestFbAnyConfig(FbToolsTestcase):
         config = { "General": {"testing_types": testing_types } }
 
         for testing_type in testing_types:
+            if self.verbose >= 1:
+                print()
+
             LOG.debug(f"Try to dump config as {testing_type!r}.")
             cfg = copy.copy(config)
             cfg["General"]["test_type"] = testing_type
