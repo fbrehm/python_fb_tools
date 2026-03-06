@@ -15,12 +15,16 @@ import logging
 
 # Own modules
 from . import BaseConfigOptions
+from .. import MAX_INDENT
+from .. import MIN_INDENT
+from .. import MAX_TERM_WIDTH
+from .. import MIN_TERM_WIDTH
 from ..common import to_bool
 from ..xlate import DEFAULT_LOCALE
 from ..xlate import XLATOR
 from ..xlate import format_list
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -31,6 +35,11 @@ class ConfigOptionsYaml(BaseConfigOptions):
     """A class for encapsulating all options for generating a yaml output."""
 
     _argparse_prefix = "yaml"
+
+    min_width = MIN_TERM_WIDTH
+    max_width = MAX_TERM_WIDTH
+    min_indent = MIN_INDENT
+    max_indent = MAX_INDENT
 
     _defaults = {}
     _defaults["allow_unicode"] = True
@@ -188,17 +197,17 @@ class ConfigOptionsYaml(BaseConfigOptions):
             self._width = self._defaults["width"]
             return
         v = int(value)
-        if v < 10:
+        if v < self.min_width:
             msg = _(
                 "The maximum width of generated YAML output must be at least "
                 "{m} characters, {v!r} are given."
-            ).format(m=10, v=value)
+            ).format(m=self.min_width, v=value)
             raise ValueError(msg)
-        if v > 4000:
+        if v > self.max_width:
             msg = _(
                 "The maximum width of generated YAML output must be at most "
                 "{m} characters, {v!r} are given."
-            ).format(m=4000, v=value)
+            ).format(m=self.max_width, v=value)
             raise ValueError(msg)
         self._width = v
 

@@ -15,10 +15,12 @@ import logging
 
 # Own modules
 from . import BaseConfigOptions
+from .. import MAX_TERM_WIDTH
+from .. import MIN_TERM_WIDTH
 from ..common import to_bool
 from ..xlate import XLATOR
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -28,7 +30,8 @@ _ = XLATOR.gettext
 class ConfigOptionsDump(BaseConfigOptions):
     """A class for encapsulating all options for generating a dumped output."""
 
-    min_width = 10
+    min_width = MIN_TERM_WIDTH
+    max_width = MAX_TERM_WIDTH
 
     _argparse_prefix = "dump"
 
@@ -135,7 +138,12 @@ class ConfigOptionsDump(BaseConfigOptions):
         if width < self.min_width:
             msg = _(
                 "The value for the width must be an integer greater than {m}, {v} was given."
-            ).format(m=self.min_width, v=width)
+            ).format(m=self.min_width - 9, v=width)
+            raise ValueError(msg)
+        if v > self.max_width:
+            msg = _(
+                "The value for the width must be an integer less than {m}, {v} was given."
+            ).format(m=self.max_width + 1, v=value)
             raise ValueError(msg)
 
         self._width = width

@@ -19,6 +19,15 @@ DEFAULT_ENCODING = UTF8_ENCODING
 DEFAULT_TERMINAL_WIDTH = 99
 DEFAULT_TERMINAL_HEIGHT = 40
 
+# Minimal usable terminal size
+MIN_TERM_WIDTH = 10
+# Maximal usable terminal size
+MAX_TERM_WIDTH = 4000
+# Minimal indention of configuration files
+MIN_INDENT = 2
+# Maximal indention of configuration files
+MAX_INDENT = 12
+
 # Own modules
 
 from .mailaddress import MailAddress, MailAddressList, QualifiedMailAddress  # noqa: F401

@@ -24,40 +24,29 @@ from pathlib import Path
 # Third party modules
 
 # Own modules
+from .. import MAX_INDENT
+from .. import MIN_INDENT
+from .. import MAX_TERM_WIDTH
+from .. import MIN_TERM_WIDTH
 from .. import __version__ as GLOBAL_VERSION
+from ..any_config import AnyConfigHandler
 from ..app import BaseApplication
+from ..argparse_actions import InputFileOptionAction
+from ..argparse_actions import OutputFileOptionAction
+from ..argparse_actions import RangeOptionAction
 from ..common import pp, to_bool
+from ..errors import ConfigDetectionError
+from ..errors import ConfigError
+from ..errors import ConfigWrongTypeError
 from ..errors import FbAppError
-from ..multi_config import BaseMultiConfig
 from ..xlate import DEFAULT_LOCALE
 from ..xlate import XLATOR
 from ..xlate import format_list
 
-__version__ = "0.7.1"
+# from ..multi_config import BaseMultiConfig
+
+__version__ = "0.8.0"
 LOG = logging.getLogger(__name__)
-
-SUPPORTED_CFG_TYPES = ("json", "hjson", "yaml")
-CFG_TYPE_MODULE = {
-    "json": "json",
-    "hjson": "hjson",
-    "yaml": "yaml",
-}
-
-CFG_TYPE_READER_MODULE = {
-    "inifile": "configparser",
-    "json": "json",
-    "hjson": "hjson",
-    "toml": "tomli",
-    "yaml": "yaml",
-}
-
-CFG_TYPE_WRITER_MODULE = {
-    "dump": "pprint",
-    "json": "json",
-    "hjson": "hjson",
-    "toml": "tomli_w",
-    "yaml": "yaml",
-}
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -66,13 +55,6 @@ ngettext = XLATOR.ngettext
 # =============================================================================
 class CfgConvertError(FbAppError):
     """Base exception class for all exceptions in this application."""
-
-    pass
-
-
-# =============================================================================
-class WrongCfgTypeError(CfgConvertError, ValueError):
-    """Special exception class for the case of wrong configuration type."""
 
     pass
 
@@ -140,82 +122,6 @@ class CfgTypeOptionAction(argparse.Action):
 
 
 # =============================================================================
-class InputFileOptionAction(argparse.Action):
-    """An argparse action for a input file option."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, option_strings, *args, **kwargs):
-        """Initialise a InputFileOptionAction object."""
-        super(InputFileOptionAction, self).__init__(*args, **kwargs, option_strings=option_strings)
-
-    # -------------------------------------------------------------------------
-    def __call__(self, parser, namespace, filename, option_string=None):
-        """Parse the input file option."""
-        if filename is None or filename == "-" or filename == "":
-            setattr(namespace, self.dest, "-")
-            return
-        path = Path(filename)
-        if not path.exists():
-            err = InputFileNotExistingError(path)
-            raise argparse.ArgumentError(self, str(err))
-        if not os.access(str(path), os.R_OK):
-            err = InputFileNotReadableError(path)
-            raise argparse.ArgumentError(self, str(err))
-        setattr(namespace, self.dest, path)
-
-
-# =============================================================================
-class OutputFileOptionAction(argparse.Action):
-    """An argparse action for a output file option."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, option_strings, *args, **kwargs):
-        """Initialise a OutputFileOptionAction object."""
-        super(OutputFileOptionAction, self).__init__(
-            *args, **kwargs, option_strings=option_strings
-        )
-
-    # -------------------------------------------------------------------------
-    def __call__(self, parser, namespace, filename, option_string=None):
-        """Parse the output file option."""
-        if filename is None or filename == "-" or filename == "":
-            setattr(namespace, self.dest, "-")
-            return
-        path = Path(filename)
-        setattr(namespace, self.dest, path)
-
-
-# =============================================================================
-class RangeOptionAction(argparse.Action):
-    """An argparse action for a option in a numeric range."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, option_strings, min_val, max_val, *args, **kwargs):
-        """Initialise a RangeOptionAction object."""
-        self._min_val = min_val
-        self._max_val = max_val
-
-        super(RangeOptionAction, self).__init__(*args, **kwargs, option_strings=option_strings)
-
-    # -------------------------------------------------------------------------
-    def __call__(self, parser, namespace, value, option_string=None):
-        """Parse the range option."""
-        if value < self._min_val:
-            msg = _("The value for {opt!r} may be at least {m}, {v} were given.").format(
-                opt=option_string, m=self._min_val, v=value
-            )
-            raise argparse.ArgumentError(self, msg)
-
-        if value > self._max_val:
-            msg = _("The value for {opt!r} may be at most {m}, {v} were given.").format(
-                opt=option_string, m=self._max_val, v=value
-            )
-            raise argparse.ArgumentError(self, msg)
-
-        setattr(namespace, self.dest, value)
-
-
-# =============================================================================
 class YamlStyleOptionAction(argparse.Action):
     """An argparse action for YAML style options."""
 
@@ -249,59 +155,28 @@ class YamlStyleOptionAction(argparse.Action):
 class CfgConvertApplication(BaseApplication):
     """Class for the application objects."""
 
-    # supported_cfg_types = []
-    supported_read_cfg_types = []
-    supported_write_cfg_types = []
-    module_name = None
-    mod_spec = None
+    # json_indent_help = _(
+    #     "The indention of the {} output. If given an positive integer value, these "
+    #     "number of spaces are indented. I given '0', a negative integer or an empty "
+    #     "string (''), only newlines are inserted. If a non empty string is given, this "
+    #     "will be used as indention to each level. If omitted, the most compact form without "
+    #     "newlines will be generated."
+    # )
 
-    loader_methods = {
-        "ini": "load_iniparser",
-        "json": "load_json",
-        "hjson": "load_hjson",
-        "toml": "load_toml",
-        "yaml": "load_yaml",
-    }
+    # json_sort_help = _("Dictionaries will be outputted sorted by key.")
+    # width_help_epilog = _("If not given, the available screen width will be taken.")
 
-    dumper_methods = {
-        "dump": "dump_pprint",
-        "json": "dump_json",
-        "hjson": "dump_hjson",
-        "toml": "dump_toml",
-        "yaml": "dump_yaml",
-    }
+    # for cfg_type in CFG_TYPE_READER_MODULE:
+    #     module_name = SUPPORTED_CFG_TYPES[cfg_type]
+    #     mod_spec = importlib.util.find_spec(module_name)
+    #     if mod_spec:
+    #         supported_read_cfg_types.append(cfg_type)
 
-    default_width = 99
-
-    type_extension_patterns = copy.copy(BaseMultiConfig.default_type_extension_patterns)
-    if "toml" not in type_extension_patterns:
-        type_extension_patterns["toml"] = ["to?ml"]
-
-    yaml_avail_styles = (None, "", "'", '"', "|", ">")
-    yaml_avail_linebreaks = (None, "\n", "\r", "\r\n")
-
-    json_indent_help = _(
-        "The indention of the {} output. If given an positive integer value, these "
-        "number of spaces are indented. I given '0', a negative integer or an empty "
-        "string (''), only newlines are inserted. If a non empty string is given, this "
-        "will be used as indention to each level. If omitted, the most compact form without "
-        "newlines will be generated."
-    )
-
-    json_sort_help = _("Dictionaries will be outputted sorted by key.")
-    width_help_epilog = _("If not given, the available screen width will be taken.")
-
-    for cfg_type in CFG_TYPE_READER_MODULE:
-        module_name = SUPPORTED_CFG_TYPES[cfg_type]
-        mod_spec = importlib.util.find_spec(module_name)
-        if mod_spec:
-            supported_read_cfg_types.append(cfg_type)
-
-    for cfg_type in CFG_TYPE_WRITER_MODULE:
-        module_name = CFG_TYPE_WRITER_MODULE[cfg_type]
-        mod_spec = importlib.util.find_spec(module_name)
-        if mod_spec:
-            supported_write_cfg_types.append(cfg_type)
+    # for cfg_type in CFG_TYPE_WRITER_MODULE:
+    #     module_name = CFG_TYPE_WRITER_MODULE[cfg_type]
+    #     mod_spec = importlib.util.find_spec(module_name)
+    #     if mod_spec:
+    #         supported_write_cfg_types.append(cfg_type)
 
     # for cfg_type in SUPPORTED_CFG_TYPES:
     #     module_name = CFG_TYPE_MODULE[cfg_type]
@@ -309,8 +184,13 @@ class CfgConvertApplication(BaseApplication):
     #     if mod_spec:
     #         supported_cfg_types.append(cfg_type)
 
-    del module_name
-    del mod_spec
+    # del module_name
+    # del mod_spec
+
+    min_width = MIN_TERM_WIDTH
+    max_width = MAX_TERM_WIDTH
+    min_indent = MIN_INDENT
+    max_indent = MAX_INDENT
 
     # -------------------------------------------------------------------------
     def __init__(self, verbose=0, version=GLOBAL_VERSION, *args, **kwargs):
@@ -321,39 +201,23 @@ class CfgConvertApplication(BaseApplication):
             "or into a given output file."
         ).format(o="STDOUT")
 
-        self.cfg_files = []
         self._from_type = None
         self._to_type = None
         self._input_file = "-"
-        self._output = "-"
+        self._output_file = "-"
         self.cfg_content = None
-        self.cfg_modules = {}
 
-        self._cfg_encoding = "utf-8"
-
-        self._dump_with = None
-        self._dump_indent = 4
-
-        self._yaml_width = None
-        self._yaml_indent = 2
-        self._yaml_canonical = False
-        self._yaml_default_flow_style = False
-        self._yaml_default_style = None
-        self._yaml_allow_unicode = True
-        self._yaml_line_break = None
-        self._yaml_explicit_start = True
-        self._yaml_explicit_end = False
-
-        self._json_ensure_ascii = False
-        self.json_indent = None
-        self._json_sort_keys = False
-
-        self._hjson_ensure_ascii = False
-        self.hjson_indent = None
-        self._hjson_sort_keys = False
+        self.config_handler = None
 
         super(CfgConvertApplication, self).__init__(
             *args, description=desc, verbose=verbose, version=version, **kwargs
+        )
+
+        self.config_handler = AnyConfigHandler(
+            appname=self.appname,
+            base_dir=self.base_dir,
+            terminal_has_colors=self.terminal_has_colors,
+            verbose=self.verbose,
         )
 
         self.fileio_timeout = 10
@@ -372,7 +236,7 @@ class CfgConvertApplication(BaseApplication):
             self._from_type = None
             return
         v = str(value).strip().lower()
-        if v not in self.supported_cfg_types:
+        if v not in self.config_handler.supported_read_cfg_types:
             msg = _("Invalid input configuration type {!r}").format(value)
             raise WrongCfgTypeError(msg)
         self._from_type = v
@@ -389,7 +253,7 @@ class CfgConvertApplication(BaseApplication):
             self._to_type = None
             return
         v = str(value).strip().lower()
-        if v not in self.supported_cfg_types:
+        if v not in self.config_handler.supported_write_cfg_types:
             msg = _("Invalid target configuration type {!r}").format(value)
             raise WrongCfgTypeError(msg)
         self._to_type = v
@@ -408,7 +272,7 @@ class CfgConvertApplication(BaseApplication):
         path = value
         if not isinstance(value, Path):
             v = str(value).strip()
-            if v == "":
+            if v == "" or v == "-":
                 self._input_file = "-"
                 return
             path = Path(v)
@@ -421,225 +285,24 @@ class CfgConvertApplication(BaseApplication):
 
     # -------------------------------------------------------------------------
     @property
-    def output(self):
+    def output_file(self):
         """The file name of the output, the target configuration."""
-        return self._output
+        return self._output_file
 
-    @output.setter
-    def output(self, value):
+    @output_file.setter
+    def output_file(self, value):
         if value is None:
-            self._output = "-"
+            self._output_file = "-"
             return
         path = value
         if not isinstance(value, Path):
             v = str(value).strip()
-            if v == "":
-                self._output = "-"
+            if v == "" or v == "-":
+                self._output_file = "-"
                 return
             path = Path(v)
 
-        self._output = path
-
-    # -------------------------------------------------------------------------
-    @property
-    def dump_width(self):
-        """Maximum width of generated lines on YAML output."""
-        return self._dump_width
-
-    @dump_width.setter
-    def dump_width(self, value):
-        v = int(value)
-        if v < 10:
-            msg = _(
-                "The maximum width of generated YAML files must be at least "
-                "{m} characters, {v!r} are given."
-            ).format(m=10, v=value)
-            raise ValueError(msg)
-        if v > 4000:
-            msg = _(
-                "The maximum width of generated YAML files must be at most "
-                "{m} characters, {v!r} are given."
-            ).format(m=4000, v=value)
-            raise ValueError(msg)
-        self._yaml_width = v
-
-    # -------------------------------------------------------------------------
-    @property
-    def yaml_width(self):
-        """Maximum width of generated lines on YAML output."""
-        return self._yaml_width
-
-    @yaml_width.setter
-    def yaml_width(self, value):
-        v = int(value)
-        if v < 10:
-            msg = _(
-                "The maximum width of generated YAML files must be at least "
-                "{m} characters, {v!r} are given."
-            ).format(m=10, v=value)
-            raise ValueError(msg)
-        if v > 4000:
-            msg = _(
-                "The maximum width of generated YAML files must be at most "
-                "{m} characters, {v!r} are given."
-            ).format(m=4000, v=value)
-            raise ValueError(msg)
-        self._yaml_width = v
-
-    # -------------------------------------------------------------------------
-    @property
-    def yaml_indent(self):
-        """The indention of generated YAML output."""
-        return self._yaml_indent
-
-    @yaml_indent.setter
-    def yaml_indent(self, value):
-        v = int(value)
-        if v < 2:
-            msg = _(
-                "The indention of generated YAML files must be at least "
-                "{m} characters, {v!r} are given."
-            ).format(m=2, v=value)
-            raise ValueError(msg)
-        if v > 40:
-            msg = _(
-                "The indention of generated YAML files must be at most "
-                "{m} characters, {v!r} are given."
-            ).format(m=40, v=value)
-            raise ValueError(msg)
-        self._yaml_indent = v
-
-    # -------------------------------------------------------------------------
-    @property
-    def yaml_canonical(self):
-        """Output YAML in canonical style."""
-        return self._yaml_canonical
-
-    @yaml_canonical.setter
-    def yaml_canonical(self, value):
-        self._yaml_canonical = to_bool(value)
-
-    # -------------------------------------------------------------------------
-    @property
-    def yaml_default_flow_style(self):
-        """Output YAML in default flow style."""
-        return self._yaml_default_flow_style
-
-    @yaml_default_flow_style.setter
-    def yaml_default_flow_style(self, value):
-        self._yaml_default_flow_style = to_bool(value)
-
-    # -------------------------------------------------------------------------
-    @property
-    def yaml_default_style(self):
-        """Style for outputting YAML."""
-        return self._yaml_default_style
-
-    @yaml_default_style.setter
-    def yaml_default_style(self, value):
-        if value is None:
-            self._yaml_default_style = None
-            return
-        v = str(value).strip()
-        if v not in self.yaml_avail_styles:
-            style_list = format_list(self.yaml_avail_styles, do_repr=True, locale=DEFAULT_LOCALE)
-            msg = _(
-                "The default style on ouput YAML must be one of {lst}, " "but {v!r} was given."
-            ).format(lst=style_list, v=value)
-            raise ValueError(msg)
-
-        self._yaml_default_style = v
-
-    # -------------------------------------------------------------------------
-    @property
-    def yaml_allow_unicode(self):
-        """Are Unicode characters allowed in YAML output."""
-        return self._yaml_allow_unicode
-
-    @yaml_allow_unicode.setter
-    def yaml_allow_unicode(self, value):
-        self._yaml_allow_unicode = to_bool(value)
-
-    # -------------------------------------------------------------------------
-    @property
-    def yaml_explicit_start(self):
-        """Should be added an explicite start in YAML output."""
-        return self._yaml_explicit_start
-
-    @yaml_explicit_start.setter
-    def yaml_explicit_start(self, value):
-        self._yaml_explicit_start = to_bool(value)
-
-    # -------------------------------------------------------------------------
-    @property
-    def yaml_explicit_end(self):
-        """Should be added an explicite end in YAML output."""
-        return self._yaml_explicit_end
-
-    @yaml_explicit_end.setter
-    def yaml_explicit_end(self, value):
-        self._yaml_explicit_end = to_bool(value)
-
-    # -------------------------------------------------------------------------
-    @property
-    def yaml_line_break(self):
-        """The character(s) used for linebreak in YAML output."""
-        return self._yaml_line_break
-
-    @yaml_line_break.setter
-    def yaml_line_break(self, value):
-        if value is None:
-            self._yaml_line_break = None
-            return
-        v = str(value).strip()
-        if v not in self.yaml_avail_linebreaks:
-            lb_list = format_list(self.yaml_avail_linebreaks, do_repr=True, locale=DEFAULT_LOCALE)
-            msg = _(
-                "The linebreak used in ouput YAML must be one of {lst}, " "but {v!r} was given."
-            ).format(lst=lb_list, v=value)
-            raise ValueError(msg)
-
-        self._yaml_line_break = v
-
-    # -------------------------------------------------------------------------
-    @property
-    def json_ensure_ascii(self):
-        """Indicate, the JSON output is guaranteed to have all non-ASCII characters escaped."""
-        return self._json_ensure_ascii
-
-    @json_ensure_ascii.setter
-    def json_ensure_ascii(self, value):
-        self._json_ensure_ascii = to_bool(value)
-
-    # -------------------------------------------------------------------------
-    @property
-    def json_sort_keys(self):
-        """Return, whether Unicode characters are allowed in JSON output."""
-        return self._json_sort_keys
-
-    @json_sort_keys.setter
-    def json_sort_keys(self, value):
-        self._json_sort_keys = to_bool(value)
-
-    # -------------------------------------------------------------------------
-    @property
-    def hjson_ensure_ascii(self):
-        """Indicate, the HJSON output is guaranteed to have all non-ASCII characters escaped."""
-        return self._hjson_ensure_ascii
-
-    @hjson_ensure_ascii.setter
-    def hjson_ensure_ascii(self, value):
-        self._hjson_ensure_ascii = to_bool(value)
-
-    # -------------------------------------------------------------------------
-    @property
-    def hjson_sort_keys(self):
-        """Return, whether Unicode characters are allowed in HJSON output."""
-        return self._hjson_sort_keys
-
-    @hjson_sort_keys.setter
-    def hjson_sort_keys(self, value):
-        self._hjson_sort_keys = to_bool(value)
+        self._output_file = path
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -657,24 +320,7 @@ class CfgConvertApplication(BaseApplication):
         res["from_type"] = self.from_type
         res["to_type"] = self.to_type
         res["input_file"] = self.input_file
-        res["output"] = self.output
-        res["supported_read_cfg_types"] = self.supported_read_cfg_types
-        res["supported_write_cfg_types"] = self.supported_write_cfg_types
-        res["yaml_avail_styles"] = self.yaml_avail_styles
-        res["yaml_width"] = self.yaml_width
-        res["yaml_indent"] = self.yaml_indent
-        res["yaml_canonical"] = self.yaml_canonical
-        res["yaml_default_flow_style"] = self.yaml_default_flow_style
-        res["yaml_default_style"] = self.yaml_default_style
-        res["yaml_allow_unicode"] = self.yaml_allow_unicode
-        res["yaml_avail_linebreaks"] = self.yaml_avail_linebreaks
-        res["yaml_line_break"] = self.yaml_line_break
-        res["yaml_explicit_start"] = self.yaml_explicit_start
-        res["yaml_explicit_end"] = self.yaml_explicit_end
-        res["json_ensure_ascii"] = self.json_ensure_ascii
-        res["json_sort_keys"] = self.json_sort_keys
-        res["hjson_ensure_ascii"] = self.hjson_ensure_ascii
-        res["hjson_sort_keys"] = self.hjson_sort_keys
+        res["output_file"] = self.output_file
 
         return res
 
