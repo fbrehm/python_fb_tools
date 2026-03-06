@@ -20,7 +20,7 @@ from ..xlate import DEFAULT_LOCALE
 from ..xlate import XLATOR
 from ..xlate import format_list
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -39,6 +39,7 @@ class ConfigOptionsYaml(BaseConfigOptions):
     _defaults["explicit_start"] = True
     _defaults["flow_style"] = False
     _defaults["indent"] = 2
+    _defaults["line_break"] = None
     _defaults["style"] = None
     _defaults["width"] = 99
 
@@ -46,6 +47,7 @@ class ConfigOptionsYaml(BaseConfigOptions):
     avail_linebreaks = (None, "\n", "\r", "\r\n")
 
     style_list_xlated = format_list(avail_styles, do_repr=True, locale=DEFAULT_LOCALE)
+    linebreak_list_xlated = format_list(avail_linebreaks, do_repr=True, locale=DEFAULT_LOCALE)
 
     _doc = {}
     _doc["allow_unicode"] = _("Are Unicode characters allowed in YAML output.")
@@ -53,7 +55,9 @@ class ConfigOptionsYaml(BaseConfigOptions):
     _doc["explicit_end"] = _("Should be added an explicite end in YAML output.")
     _doc["explicit_start"] = _("Should be added an explicite start in YAML output.")
     _doc["flow_style"] = _("Print a collection as flow in YAML output.")
-    _doc["indent"] = _("The indention of each level of the YAML output.")
+    _doc["line_break"] = _(
+        "The linebreak used to generate the YAML output, must be one of {}."
+    ).format(linebreak_list_xlated)
     _doc["style"] = _("The style of the scalars in YAML output, may be be one of {}.").format(
         style_list_xlated
     )
@@ -131,6 +135,26 @@ class ConfigOptionsYaml(BaseConfigOptions):
             ).format(m=40, v=value)
             raise ValueError(msg)
         self._indent = v
+
+    # -------------------------------------------------------------------------
+    @property
+    def line_break(self):
+        """Style for outputting YAML."""
+        return self._line_break
+
+    @line_break.setter
+    def line_break(self, value):
+        if value is None:
+            self._line_break = None
+            return
+        v = str(value)
+        if v not in self.avail_linebreaks:
+            msg = _(
+                "The line break used to generate ouput YAML must be one of {lst}, "
+                "but {v!r} was given.").format(lst=self.linebreak_list_xlated, v=value)
+            raise ValueError(msg)
+
+        self._style = v
 
     # -------------------------------------------------------------------------
     @property

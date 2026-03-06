@@ -41,7 +41,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.6.2"
+__version__ = "0.6.3"
 
 LOG = logging.getLogger(__name__)
 
@@ -725,7 +725,7 @@ class AnyConfigHandler(HandlingObject):
 
         if self.verbose > 1:
             ppr = f"{module_name}.PrettyPrinter"
-            LOG.debug(f"Init arguments of {ppr}: " + pp(kwargs))
+            LOG.debug(f"Init arguments of {ppr}:\n" + pp(kwargs))
 
         pretty_printer = module.PrettyPrinter(**kwargs)
         return pretty_printer.pformat(config)
@@ -749,7 +749,7 @@ class AnyConfigHandler(HandlingObject):
 
         if self.verbose > 1:
             ppr = f"{module_name}.JSONEncoder"
-            LOG.debug(f"Init arguments of {ppr}: " + pp(kwargs))
+            LOG.debug(f"Init arguments of {ppr}:\n" + pp(kwargs))
 
         json_encoder = module.JSONEncoder(**kwargs)
         return json_encoder.encode(config)
@@ -773,7 +773,7 @@ class AnyConfigHandler(HandlingObject):
 
         if self.verbose > 1:
             ppr = f"{module_name}.HjsonEncoder"
-            LOG.debug(f"Init arguments of {ppr}: " + pp(kwargs))
+            LOG.debug(f"Init arguments of {ppr}:\n" + pp(kwargs))
 
         hjson_encoder = module.HjsonEncoder(**kwargs)
         return hjson_encoder.encode(config)
@@ -795,7 +795,7 @@ class AnyConfigHandler(HandlingObject):
 
         if self.verbose > 1:
             ppr = f"{module_name}.dumps()"
-            LOG.debug(f"Arguments of {ppr}: " + pp(kwargs))
+            LOG.debug(f"Arguments of {ppr}:\n" + pp(kwargs))
 
         return module.dumps(config, **kwargs)
 
@@ -818,12 +818,13 @@ class AnyConfigHandler(HandlingObject):
             "explicit_end": self.options_yaml.explicit_end,
             "explicit_start": self.options_yaml.explicit_start,
             "indent": self.options_yaml.indent,
+            "line_break": self.options_yaml.line_break,
             "width": self.options_yaml.width,
         }
 
         if self.verbose > 1:
             ppr = f"{module_name}.safe_dump()"
-            LOG.debug(f"Arguments of {ppr}: " + pp(kwargs))
+            LOG.debug(f"Arguments of {ppr}:\n" + pp(kwargs))
 
         return module.safe_dump(config, **kwargs)
 
