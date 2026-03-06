@@ -41,7 +41,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.6.1"
+__version__ = "0.6.2"
 
 LOG = logging.getLogger(__name__)
 
@@ -733,29 +733,99 @@ class AnyConfigHandler(HandlingObject):
     # -------------------------------------------------------------------------
     def dump_json(self, config, raise_on_error, target):
         """Return a Json formatted dump of the given configuration."""
-        return '{ "config_type": "json" }'
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        module_name = self.modules_write["json"]
+        module = self.cfg_modules[module_name]
+
+        kwargs = {
+            "ensure_ascii": self.options_json.ensure_ascii,
+            "indent": self.options_json.indent,
+            "sort_keys": self.options_json.sort_keys,
+        }
+
+        if self.verbose > 1:
+            ppr = f"{module_name}.JSONEncoder"
+            LOG.debug(f"Init arguments of {ppr}: " + pp(kwargs))
+
+        json_encoder = module.JSONEncoder(**kwargs)
+        return json_encoder.encode(config)
 
     # -------------------------------------------------------------------------
     def dump_hjson(self, config, raise_on_error, target):
         """Return a HJson formatted dump of the given configuration."""
-        return '{ "config_type": "hjson" }'
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
+
+        module_name = self.modules_write["hjson"]
+        module = self.cfg_modules[module_name]
+
+        kwargs = {
+            "ensure_ascii": self.options_hjson.ensure_ascii,
+            "indent": self.options_hjson.indent,
+            "sort_keys": self.options_hjson.sort_keys,
+        }
+
+        if self.verbose > 1:
+            ppr = f"{module_name}.HjsonEncoder"
+            LOG.debug(f"Init arguments of {ppr}: " + pp(kwargs))
+
+        hjson_encoder = module.HjsonEncoder(**kwargs)
+        return hjson_encoder.encode(config)
 
     # -------------------------------------------------------------------------
     def dump_toml(self, config, raise_on_error, target):
         """Return a HJson formatted dump of the given configuration."""
-        content = "[General]\n"
-        content += 'config_type = "hjson"'
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
 
-        return content
+        module_name = self.modules_write["hjson"]
+        module = self.cfg_modules[module_name]
+
+        kwargs = {
+            "indent": self.options_toml.indent,
+        }
+
+        if self.verbose > 1:
+            ppr = f"{module_name}.dumps()"
+            LOG.debug(f"Arguments of {ppr}: " + pp(kwargs))
+
+        return module.dumps(config, **kwargs)
 
     # -------------------------------------------------------------------------
     def dump_yaml(self, config, raise_on_error, target):
         """Return a YAML formatted dump of the given configuration."""
-        content = "---\n"
-        content += "General:\n"
-        content += "  config_type: 'hjson'"
+        if raise_on_error is None:
+            raise_on_error = self.raise_on_error
+        else:
+            raise_on_error = bool(raise_on_error)
 
-        return content
+        module_name = self.modules_write["yaml"]
+        module = self.cfg_modules[module_name]
+
+        kwargs = {
+            "allow_unicode": self.options_yaml.allow_unicode,
+            "canonical": self.options_yaml.canonical,
+            "default_flow_style": self.options_yaml.flow_style,
+            "default_style": self.options_yaml.style,
+            "explicit_end": self.options_yaml.explicit_end,
+            "explicit_start": self.options_yaml.explicit_start,
+            "indent": self.options_yaml.indent,
+            "width": self.options_yaml.width,
+        }
+
+        if self.verbose > 1:
+            ppr = f"{module_name}.safe_dump()"
+            LOG.debug(f"Arguments of {ppr}: " + pp(kwargs))
+
+        return module.safe_dump(config, **kwargs)
 
     # -------------------------------------------------------------------------
     def init_loader_module(self, config_type):
