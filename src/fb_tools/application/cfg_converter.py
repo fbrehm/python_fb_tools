@@ -34,6 +34,7 @@ from ..app import BaseApplication
 from ..argparse_actions import InputFileOptionAction
 from ..argparse_actions import OutputFileOptionAction
 from ..argparse_actions import RangeOptionAction
+from ..cfg_options.inifile import ConfigOptionsInifile
 from ..common import pp, to_bool
 from ..errors import ConfigDetectionError
 from ..errors import ConfigError
@@ -45,7 +46,7 @@ from ..xlate import format_list
 
 # from ..multi_config import BaseMultiConfig
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -210,7 +211,7 @@ class CfgConvertApplication(BaseApplication):
         self.config_handler = None
 
         super(CfgConvertApplication, self).__init__(
-            *args, description=desc, verbose=verbose, version=version, **kwargs
+            *args, initialized=False, description=desc, verbose=verbose, version=version, **kwargs
         )
 
         self.config_handler = AnyConfigHandler(
@@ -219,6 +220,7 @@ class CfgConvertApplication(BaseApplication):
             terminal_has_colors=self.terminal_has_colors,
             verbose=self.verbose,
         )
+        self.eval_args_cfg_types()
 
         self.fileio_timeout = 10
 
@@ -333,20 +335,6 @@ class CfgConvertApplication(BaseApplication):
 
         self.perform_arg_parser()
 
-        module_name = CFG_TYPE_READER_MODULE[self.from_type]
-        if module_name not in self.cfg_modules:
-            LOG.debug(_("Loading module {!r} ...").format(module_name))
-            mod = importlib.import_module(module_name)
-            self.cfg_modules[module_name] = mod
-
-        module_name = CFG_TYPE_WRITER_MODULE[self.to_type]
-        if module_name not in self.cfg_modules:
-            LOG.debug(_("Loading module {!r} ...").format(module_name))
-            mod = importlib.import_module(module_name)
-            self.cfg_modules[module_name] = mod
-
-        self.initialized = True
-
     # -------------------------------------------------------------------------
     def init_arg_parser(self):
         """Initialise the argument parser."""
@@ -355,7 +343,10 @@ class CfgConvertApplication(BaseApplication):
         conv_group = self.arg_parser.add_argument_group(_("Converting options"))
 
         read_type_list = format_list(
-            self.supported_read_cfg_types, do_repr=True, style="or", locale=DEFAULT_LOCALE
+            AnyConfigHandler.supported_read_cfg_types,
+            do_repr=True,
+            style="or",
+            locale=DEFAULT_LOCALE
         )
         conv_group.add_argument(
             "-F",
@@ -363,14 +354,17 @@ class CfgConvertApplication(BaseApplication):
             metavar=_("CFG_TYPE"),
             dest="from_type",
             action=CfgTypeOptionAction,
-            supported_types=self.supported_read_cfg_types,
+            supported_types=AnyConfigHandler.supported_read_cfg_types,
             help=_("The configuration type of the source, must be one of {}.").format(
                 read_type_list
             ),
         )
 
         write_type_list = format_list(
-            self.supported_write_cfg_types, do_repr=True, style="or", locale=DEFAULT_LOCALE
+            AnyConfigHandler.supported_write_cfg_types,
+            do_repr=True,
+            style="or",
+            locale=DEFAULT_LOCALE
         )
         conv_group.add_argument(
             "-T",
@@ -378,29 +372,33 @@ class CfgConvertApplication(BaseApplication):
             metavar=_("CFG_TYPE"),
             dest="to_type",
             action=CfgTypeOptionAction,
-            supported_types=self.supported_write_cfg_types,
+            supported_types=AnyConfigHandler.supported_write_cfg_types,
             help=_("The configuration type of the target, must be one " "of {}.").format(
                 write_type_list
             ),
         )
 
-        if "dump" in self.supported_write_cfg_types:
-            self._init_dump_args()
-        if "yaml" in self.supported_write_cfg_types:
-            self._init_yaml_args()
-        if "json" in self.supported_write_cfg_types:
-            self._init_json_args()
-        if "hjson" in self.supported_write_cfg_types:
-            self._init_hjson_args()
-        if "toml" in self.supported_write_cfg_types:
-            self._init_toml_args()
+        if "ini" in AnyConfigHandler.supported_read_cfg_types:
+            self._init_inifile_args()
+        # if "dump" in self.supported_write_cfg_types:
+        #     self._init_dump_args()
+        # if "yaml" in self.supported_write_cfg_types:
+        #     self._init_yaml_args()
+        # if "json" in self.supported_write_cfg_types:
+        #     self._init_json_args()
+        # if "hjson" in self.supported_write_cfg_types:
+        #     self._init_hjson_args()
+        # if "toml" in self.supported_write_cfg_types:
+        #     self._init_toml_args()
 
         # file_group = self.arg_parser.add_argument_group(_("File options"))
 
         self.arg_parser.add_argument(
-            "input",
-            metavar=_("FILE"),
-            dest="input",
+            "input_file",
+            metavar=_("INPUT_FILE"),
+            # dest="input_file",
+            nargs="?",
+            default="-",
             action=InputFileOptionAction,
             help=_(
                 "The filename of the input file. Use {i!r} to read from {f} "
@@ -409,14 +407,39 @@ class CfgConvertApplication(BaseApplication):
         )
 
         self.arg_parser.add_argument(
-            "output",
-            metavar=_("FILE"),
-            dest="output",
+            "output_file",
+            metavar=_("OUTPUT_FILE"),
+            # dest="output",
+            nargs="?",
+            default="-",
             action=OutputFileOptionAction,
             help=_(
                 "The filename of the output file. Use {i!r} to write to {f} "
                 "(which is the default)."
             ).format(i="-", f="STDOUT"),
+        )
+
+    # -------------------------------------------------------------------------
+    def _init_inifile_args(self):
+        """Define commandline options for reading inifiles."""
+        inifile_group = self.arg_parser.add_argument_group(_("Optinos for reading inifiles"))
+
+        inifile_group.add_argument(
+            ConfigOptionsInifile.argparse_option("allow_no_value"),
+            dest="inifile_allow_no_value",
+            action="store_true",
+            help=ConfigOptionsInifile.get_property_doc("allow_no_value")
+        )
+
+        prefix_list = ConfigOptionsInifile.get_default_value("comment_prefixes")
+        # prefix_list_out = format_list( prefix_list do_repr=True, style="or", locale=DEFAULT_LOCALE)
+        prefix_help = ConfigOptionsInifile.get_property_doc("comment_prefixes")
+        prefix_help += " " + _("Default: {!r}.").format("".join(prefix_list))
+        inifile_group.add_argument( 
+            ConfigOptionsInifile.argparse_option("comment_prefixes"),
+            metavar=_("PREFIXES"),
+            dest="inifile_comment_prefixes",
+            help=prefix_help,
         )
 
     # -------------------------------------------------------------------------
@@ -593,49 +616,49 @@ class CfgConvertApplication(BaseApplication):
         self.input_file = getattr(self.args, "input", None)
         self.output = getattr(self.args, "output", None)
 
-        val = getattr(self.args, "yaml_width", None)
-        if val is not None:
-            self.yaml_width = val
+        # val = getattr(self.args, "yaml_width", None)
+        # if val is not None:
+        #     self.yaml_width = val
 
-        val = getattr(self.args, "yaml_indent", None)
-        if val is not None:
-            self.yaml_indent = val
+        # val = getattr(self.args, "yaml_indent", None)
+        # if val is not None:
+        #     self.yaml_indent = val
 
-        if getattr(self.args, "yaml_canonical", False):
-            self.yaml_canonical = True
+        # if getattr(self.args, "yaml_canonical", False):
+        #     self.yaml_canonical = True
 
-        if getattr(self.args, "yaml_flow_style", False):
-            self.yaml_default_flow_style = True
+        # if getattr(self.args, "yaml_flow_style", False):
+        #     self.yaml_default_flow_style = True
 
-        val = getattr(self.args, "yaml_style", None)
-        if val is not None:
-            self.yaml_default_style = val
+        # val = getattr(self.args, "yaml_style", None)
+        # if val is not None:
+        #     self.yaml_default_style = val
 
-        if getattr(self.args, "yaml_no_explicit_start", False):
-            self.yaml_explicit_start = False
+        # if getattr(self.args, "yaml_no_explicit_start", False):
+        #     self.yaml_explicit_start = False
 
-        if getattr(self.args, "yaml_explicit_end", False):
-            self.yaml_explicit_end = True
+        # if getattr(self.args, "yaml_explicit_end", False):
+        #     self.yaml_explicit_end = True
 
-        if getattr(self.args, "json_ensure_ascii", False):
-            self.json_ensure_ascii = True
+        # if getattr(self.args, "json_ensure_ascii", False):
+        #     self.json_ensure_ascii = True
 
-        val = getattr(self.args, "json_indent", None)
-        if val is not None:
-            self.json_indent = val
+        # val = getattr(self.args, "json_indent", None)
+        # if val is not None:
+        #     self.json_indent = val
 
-        if getattr(self.args, "json_sort_keys", False):
-            self.json_sort_keys = True
+        # if getattr(self.args, "json_sort_keys", False):
+        #     self.json_sort_keys = True
 
-        if getattr(self.args, "hjson_ensure_ascii", False):
-            self.hjson_ensure_ascii = True
+        # if getattr(self.args, "hjson_ensure_ascii", False):
+        #     self.hjson_ensure_ascii = True
 
-        val = getattr(self.args, "hjson_indent", None)
-        if val is not None:
-            self.hjson_indent = val
+        # val = getattr(self.args, "hjson_indent", None)
+        # if val is not None:
+        #     self.hjson_indent = val
 
-        if getattr(self.args, "hjson_sort_keys", False):
-            self.hjson_sort_keys = True
+        # if getattr(self.args, "hjson_sort_keys", False):
+        #     self.hjson_sort_keys = True
 
     # -------------------------------------------------------------------------
     def _run(self):
@@ -643,14 +666,14 @@ class CfgConvertApplication(BaseApplication):
         LOG.debug(_("Starting {a!r}, version {v!r} ...").format(a=self.appname, v=self.version))
         ret = 0
 
-        try:
-            self.load()
-        except WrongCfgTypeError as e:
-            LOG.error(str(e))
-            self.exit(5)
-            return
+        # try:
+        #     self.load()
+        # except WrongCfgTypeError as e:
+        #     LOG.error(str(e))
+        #     self.exit(5)
+        #     return
 
-        self.save()
+        # self.save()
 
         self.exit(ret)
 
