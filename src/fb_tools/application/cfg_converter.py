@@ -34,6 +34,7 @@ from ..app import BaseApplication
 from ..argparse_actions import InputFileOptionAction
 from ..argparse_actions import OutputFileOptionAction
 from ..argparse_actions import RangeOptionAction
+from ..cfg_options.dump import ConfigOptionsDump
 from ..cfg_options.inifile import ConfigOptionsInifile
 from ..common import pp, to_bool
 from ..errors import ConfigDetectionError
@@ -46,7 +47,7 @@ from ..xlate import format_list
 
 # from ..multi_config import BaseMultiConfig
 
-__version__ = "0.8.1"
+__version__ = "0.8.2"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -346,7 +347,7 @@ class CfgConvertApplication(BaseApplication):
             AnyConfigHandler.supported_read_cfg_types,
             do_repr=True,
             style="or",
-            locale=DEFAULT_LOCALE
+            locale=DEFAULT_LOCALE,
         )
         conv_group.add_argument(
             "-F",
@@ -364,7 +365,7 @@ class CfgConvertApplication(BaseApplication):
             AnyConfigHandler.supported_write_cfg_types,
             do_repr=True,
             style="or",
-            locale=DEFAULT_LOCALE
+            locale=DEFAULT_LOCALE,
         )
         conv_group.add_argument(
             "-T",
@@ -378,10 +379,10 @@ class CfgConvertApplication(BaseApplication):
             ),
         )
 
+        if "dump" in AnyConfigHandler.supported_write_cfg_types:
+            self._init_dump_args()
         if "ini" in AnyConfigHandler.supported_read_cfg_types:
             self._init_inifile_args()
-        # if "dump" in self.supported_write_cfg_types:
-        #     self._init_dump_args()
         # if "yaml" in self.supported_write_cfg_types:
         #     self._init_yaml_args()
         # if "json" in self.supported_write_cfg_types:
@@ -422,24 +423,68 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def _init_inifile_args(self):
         """Define commandline options for reading inifiles."""
-        inifile_group = self.arg_parser.add_argument_group(_("Optinos for reading inifiles"))
+        inifile_group = self.arg_parser.add_argument_group(_("Options for reading inifiles"))
 
         inifile_group.add_argument(
             ConfigOptionsInifile.argparse_option("allow_no_value"),
             dest="inifile_allow_no_value",
             action="store_true",
-            help=ConfigOptionsInifile.get_property_doc("allow_no_value")
+            help=ConfigOptionsInifile.get_property_doc("allow_no_value"),
         )
 
         prefix_list = ConfigOptionsInifile.get_default_value("comment_prefixes")
         # prefix_list_out = format_list( prefix_list do_repr=True, style="or", locale=DEFAULT_LOCALE)
         prefix_help = ConfigOptionsInifile.get_property_doc("comment_prefixes")
         prefix_help += " " + _("Default: {!r}.").format("".join(prefix_list))
-        inifile_group.add_argument( 
+        inifile_group.add_argument(
             ConfigOptionsInifile.argparse_option("comment_prefixes"),
             metavar=_("PREFIXES"),
             dest="inifile_comment_prefixes",
             help=prefix_help,
+        )
+
+        delim_list = ConfigOptionsInifile.get_default_value("delimiters")
+        delim_help = ConfigOptionsInifile.get_property_doc("delimiters")
+        delim_help += _("Default: {!r}.").format("".join(delim_list))
+        inifile_group.add_argument(
+            ConfigOptionsInifile.argparse_option("delimiters"),
+            metavar=_("DELIMITERS"),
+            dest="inifile_delimiters",
+            help=prefix_help,
+        )
+
+        inifile_group.add_argument(
+            "--inifile-no-empty-lines-in-values",
+            dest="inifile_empty_lines_in_values",
+            action="store_false",
+            help=_("Don't allow multi-line values in inifiles."),
+        )
+
+        inifile_group.add_argument(
+            ConfigOptionsInifile.argparse_option("extended_interpolation"),
+            dest="inifile_extended_interpolation",
+            action="store_true",
+            help=ConfigOptionsInifile.get_property_doc("extended_interpolation"),
+        )
+
+        prefix_list = ConfigOptionsInifile.get_default_value("inline_comment_prefixes")
+        prefix_default = None
+        if prefix_list is not None:
+            prefix_default = "".join(prefix_default)
+        prefix_help = ConfigOptionsInifile.get_property_doc("inline_comment_prefixes")
+        prefix_help += " " + _("Default: {!r}.").format(prefix_default)
+        inifile_group.add_argument(
+            ConfigOptionsInifile.argparse_option("inline_comment_prefixes"),
+            metavar=_("PREFIXES"),
+            dest="inifile_inline_comment_prefixes",
+            help=prefix_help,
+        )
+
+        inifile_group.add_argument(
+            ConfigOptionsInifile.argparse_option("strict"),
+            dest="inifile_strict",
+            action="store_true",
+            help=ConfigOptionsInifile.get_property_doc("strict"),
         )
 
     # -------------------------------------------------------------------------
@@ -447,22 +492,68 @@ class CfgConvertApplication(BaseApplication):
         """Define commandline options for dumping out the read config."""
         dumping_group = self.arg_parser.add_argument_group(_("Dump output options"))
 
-        width_help = (
-            _("The maximum width of generated lines on dumping output.")
-            + " "
-            + self.width_help_epilog
+        indent_help = ConfigOptionsDump.get_property_doc("indent")
+        indent_default = ConfigOptionsDump.get_default_value("indent")
+        indent_help += " " + _("Default: {!r}.").format(indent_default)
+        dumping_group.add_argument(
+            ConfigOptionsDump.argparse_option("indent"),
+            metavar="INT",
+            dest="dump_indent",
+            type=int,
+            action=RangeOptionAction,
+            min_val=self.min_indent,
+            max_val=self.max_indent,
+            help=indent_help,
         )
 
+        width_help = ConfigOptionsDump.get_property_doc("width")
+        width_default = ConfigOptionsDump.get_default_value("width")
+        width_help += " " + _("Default: {!r}.").format(width_default)
+
         dumping_group.add_argument(
-            "--dump-with",
+            ConfigOptionsDump.argparse_option("width"),
             metavar="INT",
             dest="dump_width",
             type=int,
             action=RangeOptionAction,
-            min_val=10,
-            max_val=4000,
+            min_val=self.min_width,
+            max_val=self.max_width,
             help=width_help,
         )
+
+        dumping_group.add_argument(
+            ConfigOptionsDump.argparse_option("compact"),
+            dest="inifile_compact",
+            action="store_true",
+            help=ConfigOptionsDump.get_property_doc("compact"),
+        )
+
+        dumping_group.add_argument(
+            ConfigOptionsDump.argparse_option("depth"),
+            dest="dump_depth",
+            action="store_true",
+            help=ConfigOptionsDump.get_property_doc("depth"),
+        )
+
+        if sys.version_info.major > 3 or (
+            sys.version_info.major == 3 and sys.version_info.minor >= 8
+        ):
+            dumping_group.add_argument(
+                "--dump-no-sort-dicts",
+                dest="dump_sort_dicts",
+                action="store_false",
+                help=_("Dictionaries will not be outputted sorted by key."),
+            )
+
+        if sys.version_info.major > 3 or (
+            sys.version_info.major == 3 and sys.version_info.minor >= 11
+        ):
+            dumping_group.add_argument(
+                ConfigOptionsDump.argparse_option("underscore_numbers"),
+                dest="dump_underscore_numbers",
+                action="store_true",
+                help=ConfigOptionsDump.get_property_doc("underscore_numbers"),
+            )
 
     # -------------------------------------------------------------------------
     def _init_yaml_args(self):

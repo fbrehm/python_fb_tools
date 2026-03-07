@@ -12,15 +12,17 @@ from __future__ import absolute_import
 
 # Standard modules
 import logging
+import shutil
 
 # Own modules
 from . import BaseConfigOptions
+from .. import DEFAULT_TERMINAL_HEIGHT, DEFAULT_TERMINAL_WIDTH
 from .. import MAX_TERM_WIDTH
 from .. import MIN_TERM_WIDTH
 from ..common import to_bool
 from ..xlate import XLATOR
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -33,6 +35,8 @@ class ConfigOptionsDump(BaseConfigOptions):
     min_width = MIN_TERM_WIDTH
     max_width = MAX_TERM_WIDTH
 
+    term_size = shutil.get_terminal_size((DEFAULT_TERMINAL_WIDTH, DEFAULT_TERMINAL_HEIGHT))
+
     _argparse_prefix = "dump"
 
     _defaults = {}
@@ -41,7 +45,7 @@ class ConfigOptionsDump(BaseConfigOptions):
     _defaults["indent"] = 4
     _defaults["sort_dicts"] = True
     _defaults["underscore_numbers"] = False
-    _defaults["width"] = 99
+    _defaults["width"] = term_size.columns
 
     _doc = {}
     _doc["compact"] = _(

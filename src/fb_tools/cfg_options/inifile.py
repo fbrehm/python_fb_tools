@@ -20,7 +20,7 @@ from . import BaseConfigOptions
 from ..common import is_sequence, pp, to_bool
 from ..xlate import XLATOR
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -49,7 +49,7 @@ class ConfigOptionsInifile(BaseConfigOptions):
     )
     _doc["empty_lines_in_values"] = _("Allow multi-line values in inifiles.")
     _doc["extended_interpolation"] = _("Use ExtendedInterpolation for interpolation of inifiles.")
-    _doc["inline_comment_prefixes"] = _("The inline prefixes for comment lines in ini-files.")
+    _doc["inline_comment_prefixes"] = _("The inline prefixes for comment lines in inifiles.")
     _doc["strict"] = _(
         "Perform strict parsing of inifiles without duplicated sections or options."
     )
