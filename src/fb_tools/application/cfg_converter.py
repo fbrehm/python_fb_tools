@@ -50,7 +50,7 @@ from ..xlate import format_list
 
 # from ..multi_config import BaseMultiConfig
 
-__version__ = "0.8.3"
+__version__ = "0.9.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -203,7 +203,7 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     @property
     def input_file(self):
-        """The file name of the input, the source configuration."""
+        """Give the file name of the input, the source configuration."""
         return self._input_file
 
     @input_file.setter
@@ -228,7 +228,7 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     @property
     def output_file(self):
-        """The file name of the output, the target configuration."""
+        """Give the file name of the output, the target configuration."""
         return self._output_file
 
     @output_file.setter
@@ -671,7 +671,7 @@ class CfgConvertApplication(BaseApplication):
                 self.config_handler.options_inifile.allow_no_value = True
 
         if hasattr(self.args, "inifile_comment_prefixes"):
-            val = self.argsinifile_comment_prefixes
+            val = self.args.inifile_comment_prefixes
             if val:
                 self.config_handler.options_inifile.comment_prefixes = val
 
@@ -768,17 +768,82 @@ class CfgConvertApplication(BaseApplication):
         if self.verbose > 2:
             LOG.debug(_("Evaluate options for generating JSON output."))
 
+        val = getattr(self.args, "indent", None)
+        if val is not None:
+            try:
+                self.config_handler.options_json.indent = val
+            except ValueError as e:
+                LOG.error(str(e))
+                self.exit(1)
+
+        if hasattr(self.args, "json_ensure_ascii"):
+            val = self.args.json_ensure_ascii
+            if val:
+                self.config_handler.options_json.ensure_ascii = True
+
+        if hasattr(self.args, "json_sort_keys"):
+            val = self.args.json_sort_keys
+            if val:
+                self.config_handler.options_json.sort_keys = True
+
+        if self.verbose > 1:
+            LOG.debug(
+                _("Options for generating JSON output:")
+                + "\n"
+                + pp(self.config_handler.options_json.property_dict())
+            )
+
     # -------------------------------------------------------------------------
     def _eval_hjson_args(self):
         """Evaluate options for generating HJSON output."""
         if self.verbose > 2:
             LOG.debug(_("Evaluate options for generating HJSON output."))
 
+        val = getattr(self.args, "indent", None)
+        if val is not None:
+            try:
+                self.config_handler.options_hjson.indent = val
+            except ValueError as e:
+                LOG.error(str(e))
+                self.exit(1)
+
+        if hasattr(self.args, "hjson_ensure_ascii"):
+            val = self.args.hjson_ensure_ascii
+            if val:
+                self.config_handler.options_hjson.ensure_ascii = True
+
+        if hasattr(self.args, "hjson_sort_keys"):
+            val = self.args.hjson_sort_keys
+            if val:
+                self.config_handler.options_hjson.sort_keys = True
+
+        if self.verbose > 1:
+            LOG.debug(
+                _("Options for generating HJSON output:")
+                + "\n"
+                + pp(self.config_handler.options_hjson.property_dict())
+            )
+
     # -------------------------------------------------------------------------
     def _eval_toml_args(self):
         """Evaluate options for generating Toml output."""
         if self.verbose > 2:
             LOG.debug(_("Evaluate options for generating Toml output."))
+
+        val = getattr(self.args, "indent", None)
+        if val is not None:
+            try:
+                self.config_handler.options_toml.indent = val
+            except ValueError as e:
+                LOG.error(str(e))
+                self.exit(1)
+
+        if self.verbose > 1:
+            LOG.debug(
+                _("Options for generating TOML output:")
+                + "\n"
+                + pp(self.config_handler.options_toml.property_dict())
+            )
 
     # -------------------------------------------------------------------------
     def _run(self):
