@@ -144,7 +144,7 @@ class ConfigOptionsDump(BaseConfigOptions):
                 "The value for the width must be an integer greater than {m}, {v} was given."
             ).format(m=self.min_width - 9, v=width)
             raise ValueError(msg)
-        if v > self.max_width:
+        if width > self.max_width:
             msg = _(
                 "The value for the width must be an integer less than {m}, {v} was given."
             ).format(m=self.max_width + 1, v=value)

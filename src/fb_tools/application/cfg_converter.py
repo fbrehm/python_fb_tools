@@ -13,8 +13,6 @@ from __future__ import absolute_import, print_function
 # Standard modules
 import argparse
 import copy
-import errno
-import importlib
 import locale
 import logging
 import os
@@ -24,30 +22,35 @@ from pathlib import Path
 # Third party modules
 
 # Own modules
+from .. import DEFAULT_TERMINAL_WIDTH
 from .. import MAX_INDENT
-from .. import MIN_INDENT
 from .. import MAX_TERM_WIDTH
+from .. import MIN_INDENT
 from .. import MIN_TERM_WIDTH
 from .. import __version__ as GLOBAL_VERSION
 from ..any_config import AnyConfigHandler
 from ..app import BaseApplication
 from ..argparse_actions import InputFileOptionAction
+from ..argparse_actions import NonNegativeIntegerOptionAction
 from ..argparse_actions import OutputFileOptionAction
 from ..argparse_actions import RangeOptionAction
 from ..cfg_options.dump import ConfigOptionsDump
+from ..cfg_options.hjson import ConfigOptionsHJson
 from ..cfg_options.inifile import ConfigOptionsInifile
-from ..common import pp, to_bool
-from ..errors import ConfigDetectionError
-from ..errors import ConfigError
+from ..cfg_options.json import ConfigOptionsJson
+from ..cfg_options.yaml import ConfigOptionsYaml
+from ..common import pp
 from ..errors import ConfigWrongTypeError
 from ..errors import FbAppError
+from ..errors import InputFileNotExistingError
+from ..errors import InputFileNotReadableError
 from ..xlate import DEFAULT_LOCALE
 from ..xlate import XLATOR
 from ..xlate import format_list
 
 # from ..multi_config import BaseMultiConfig
 
-__version__ = "0.8.2"
+__version__ = "0.8.3"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -59,38 +62,6 @@ class CfgConvertError(FbAppError):
     """Base exception class for all exceptions in this application."""
 
     pass
-
-
-# =============================================================================
-class InputFileError(CfgConvertError, OSError):
-    """Special exception class for the case of errors with the input file."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, err_no, strerror, filename):
-        """Initialise a InputFileError exception."""
-        super(InputFileError, self).__init__(err_no, strerror, str(filename))
-
-
-# =============================================================================
-class InputFileNotExistingError(InputFileError):
-    """Class for a exception in case an input file is not existing."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, filename):
-        """Initialise a InputFileNotExistingError exception."""
-        msg = _("The input file is not existing")
-        super(InputFileNotExistingError, self).__init__(errno.ENOENT, msg, filename)
-
-
-# =============================================================================
-class InputFileNotReadableError(InputFileError):
-    """Class for a exception in case an input file is not readable."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, filename):
-        """Initialise a InputFileNotReadableError exception."""
-        msg = _("The input file is not readable")
-        super(InputFileNotReadableError, self).__init__(errno.EACCES, msg, filename)
 
 
 # =============================================================================
@@ -157,38 +128,6 @@ class YamlStyleOptionAction(argparse.Action):
 class CfgConvertApplication(BaseApplication):
     """Class for the application objects."""
 
-    # json_indent_help = _(
-    #     "The indention of the {} output. If given an positive integer value, these "
-    #     "number of spaces are indented. I given '0', a negative integer or an empty "
-    #     "string (''), only newlines are inserted. If a non empty string is given, this "
-    #     "will be used as indention to each level. If omitted, the most compact form without "
-    #     "newlines will be generated."
-    # )
-
-    # json_sort_help = _("Dictionaries will be outputted sorted by key.")
-    # width_help_epilog = _("If not given, the available screen width will be taken.")
-
-    # for cfg_type in CFG_TYPE_READER_MODULE:
-    #     module_name = SUPPORTED_CFG_TYPES[cfg_type]
-    #     mod_spec = importlib.util.find_spec(module_name)
-    #     if mod_spec:
-    #         supported_read_cfg_types.append(cfg_type)
-
-    # for cfg_type in CFG_TYPE_WRITER_MODULE:
-    #     module_name = CFG_TYPE_WRITER_MODULE[cfg_type]
-    #     mod_spec = importlib.util.find_spec(module_name)
-    #     if mod_spec:
-    #         supported_write_cfg_types.append(cfg_type)
-
-    # for cfg_type in SUPPORTED_CFG_TYPES:
-    #     module_name = CFG_TYPE_MODULE[cfg_type]
-    #     mod_spec = importlib.util.find_spec(module_name)
-    #     if mod_spec:
-    #         supported_cfg_types.append(cfg_type)
-
-    # del module_name
-    # del mod_spec
-
     min_width = MIN_TERM_WIDTH
     max_width = MAX_TERM_WIDTH
     min_indent = MIN_INDENT
@@ -239,9 +178,9 @@ class CfgConvertApplication(BaseApplication):
             self._from_type = None
             return
         v = str(value).strip().lower()
-        if v not in self.config_handler.supported_read_cfg_types:
+        if v not in AnyConfigHandler.supported_read_cfg_types:
             msg = _("Invalid input configuration type {!r}").format(value)
-            raise WrongCfgTypeError(msg)
+            raise ConfigWrongTypeError(msg)
         self._from_type = v
 
     # -------------------------------------------------------------------------
@@ -256,9 +195,9 @@ class CfgConvertApplication(BaseApplication):
             self._to_type = None
             return
         v = str(value).strip().lower()
-        if v not in self.config_handler.supported_write_cfg_types:
+        if v not in AnyConfigHandler.supported_write_cfg_types:
             msg = _("Invalid target configuration type {!r}").format(value)
-            raise WrongCfgTypeError(msg)
+            raise ConfigWrongTypeError(msg)
         self._to_type = v
 
     # -------------------------------------------------------------------------
@@ -379,25 +318,55 @@ class CfgConvertApplication(BaseApplication):
             ),
         )
 
+        width_help = _(
+            "The maximum number of characters per line in the output. The default is the width "
+            "of the current terminal. If this one cannot be evaluated, the default width is {}."
+        ).format(DEFAULT_TERMINAL_WIDTH)
+        conv_group.add_argument(
+            "-W",
+            "--width",
+            metavar="INT",
+            dest="width",
+            type=int,
+            action=RangeOptionAction,
+            min_val=self.min_width,
+            max_val=self.max_width,
+            help=width_help,
+        )
+
+        indent_help = _(
+            "The amount of indentation added for each nesting level. The default depends of the "
+            "output configuration type. For YAML output it is 2, JSON and HJSON it is None "
+            "(compact output), and for Dump and Toml is is 4."
+        )
+        conv_group.add_argument(
+            "-I",
+            "--indent",
+            metavar="INT",
+            dest="indent",
+            type=int,
+            action=RangeOptionAction,
+            min_val=0,
+            max_val=9,
+            help=indent_help,
+        )
+
         if "dump" in AnyConfigHandler.supported_write_cfg_types:
             self._init_dump_args()
         if "ini" in AnyConfigHandler.supported_read_cfg_types:
             self._init_inifile_args()
-        # if "yaml" in self.supported_write_cfg_types:
-        #     self._init_yaml_args()
-        # if "json" in self.supported_write_cfg_types:
-        #     self._init_json_args()
-        # if "hjson" in self.supported_write_cfg_types:
-        #     self._init_hjson_args()
-        # if "toml" in self.supported_write_cfg_types:
-        #     self._init_toml_args()
+        if "yaml" in AnyConfigHandler.supported_write_cfg_types:
+            self._init_yaml_args()
+        if "json" in AnyConfigHandler.supported_write_cfg_types:
+            self._init_json_args()
+        if "hjson" in AnyConfigHandler.supported_write_cfg_types:
+            self._init_hjson_args()
 
         # file_group = self.arg_parser.add_argument_group(_("File options"))
 
         self.arg_parser.add_argument(
             "input_file",
             metavar=_("INPUT_FILE"),
-            # dest="input_file",
             nargs="?",
             default="-",
             action=InputFileOptionAction,
@@ -410,7 +379,6 @@ class CfgConvertApplication(BaseApplication):
         self.arg_parser.add_argument(
             "output_file",
             metavar=_("OUTPUT_FILE"),
-            # dest="output",
             nargs="?",
             default="-",
             action=OutputFileOptionAction,
@@ -433,7 +401,6 @@ class CfgConvertApplication(BaseApplication):
         )
 
         prefix_list = ConfigOptionsInifile.get_default_value("comment_prefixes")
-        # prefix_list_out = format_list( prefix_list do_repr=True, style="or", locale=DEFAULT_LOCALE)
         prefix_help = ConfigOptionsInifile.get_property_doc("comment_prefixes")
         prefix_help += " " + _("Default: {!r}.").format("".join(prefix_list))
         inifile_group.add_argument(
@@ -492,38 +459,9 @@ class CfgConvertApplication(BaseApplication):
         """Define commandline options for dumping out the read config."""
         dumping_group = self.arg_parser.add_argument_group(_("Dump output options"))
 
-        indent_help = ConfigOptionsDump.get_property_doc("indent")
-        indent_default = ConfigOptionsDump.get_default_value("indent")
-        indent_help += " " + _("Default: {!r}.").format(indent_default)
-        dumping_group.add_argument(
-            ConfigOptionsDump.argparse_option("indent"),
-            metavar="INT",
-            dest="dump_indent",
-            type=int,
-            action=RangeOptionAction,
-            min_val=self.min_indent,
-            max_val=self.max_indent,
-            help=indent_help,
-        )
-
-        width_help = ConfigOptionsDump.get_property_doc("width")
-        width_default = ConfigOptionsDump.get_default_value("width")
-        width_help += " " + _("Default: {!r}.").format(width_default)
-
-        dumping_group.add_argument(
-            ConfigOptionsDump.argparse_option("width"),
-            metavar="INT",
-            dest="dump_width",
-            type=int,
-            action=RangeOptionAction,
-            min_val=self.min_width,
-            max_val=self.max_width,
-            help=width_help,
-        )
-
         dumping_group.add_argument(
             ConfigOptionsDump.argparse_option("compact"),
-            dest="inifile_compact",
+            dest="dump_compact",
             action="store_true",
             help=ConfigOptionsDump.get_property_doc("compact"),
         )
@@ -531,7 +469,9 @@ class CfgConvertApplication(BaseApplication):
         dumping_group.add_argument(
             ConfigOptionsDump.argparse_option("depth"),
             dest="dump_depth",
-            action="store_true",
+            type=int,
+            may_zero=False,
+            action=NonNegativeIntegerOptionAction,
             help=ConfigOptionsDump.get_property_doc("depth"),
         )
 
@@ -560,137 +500,87 @@ class CfgConvertApplication(BaseApplication):
         """Define commandline options for converting into YAML format."""
         yaml_group = self.arg_parser.add_argument_group(_("YAML output options"))
 
-        width_help = (
-            _("The maximum width of generated lines on YAML output.")
-            + " "
-            + self.width_help_epilog
-        )
-
         yaml_group.add_argument(
-            "--yaml-with",
-            metavar="INT",
-            dest="yaml_width",
-            type=int,
-            action=RangeOptionAction,
-            min_val=10,
-            max_val=4000,
-            help=width_help,
-        )
-
-        yaml_group.add_argument(
-            "--yaml-indent",
-            metavar="INT",
-            dest="yaml_indent",
-            type=int,
-            action=RangeOptionAction,
-            min_val=2,
-            max_val=9,
-            help=_("The indention of generated YAML output (Default: {}).").format(
-                self.yaml_indent
-            ),
-        )
-
-        yaml_group.add_argument(
-            "--yaml-canonical",
-            action="store_true",
+            ConfigOptionsYaml.argparse_option("canonical"),
             dest="yaml_canonical",
-            help=_("Include export tag type in YAML output."),
+            action="store_true",
+            help=ConfigOptionsYaml.get_property_doc("canonical"),
         )
 
         yaml_group.add_argument(
-            "--yaml-flow-style",
+            "--yaml-no-allow-unicode",
+            dest="yaml_no_allow_unicode",
+            action="store_true",
+            help=_("Unicode characters are not allowed in YAML output."),
+        )
+
+        yaml_group.add_argument(
+            ConfigOptionsYaml.argparse_option("flow_style"),
             action="store_true",
             dest="yaml_flow_style",
-            help=_("Print a collection as flow in YAML output."),
+            help=ConfigOptionsYaml.get_property_doc("flow_style"),
         )
 
-        style_list = format_list(self.yaml_avail_styles, do_repr=True, locale=DEFAULT_LOCALE)
         yaml_group.add_argument(
-            "--yaml-style",
+            ConfigOptionsYaml.argparse_option("style"),
             dest="yaml_style",
             nargs="?",
             metavar=_("STYLE"),
-            supported_styles=self.yaml_avail_styles,
+            supported_styles=ConfigOptionsYaml.avail_styles,
             action=YamlStyleOptionAction,
-            help=_("The style of the scalars in YAML output, may be be one of {}.").format(
-                style_list
-            ),
+            help=ConfigOptionsYaml.get_property_doc("style"),
         )
 
         yaml_group.add_argument(
             "--yaml-no-explicit-start",
-            action="store_true",
             dest="yaml_no_explicit_start",
+            action="store_true",
             help=_("Don't print an explicit start marker in YAML output."),
         )
 
         yaml_group.add_argument(
             "--yaml-explicit-end",
-            action="store_true",
             dest="yaml_explicit_end",
+            action="store_true",
             help=_("Print an explicit end marker in YAML output."),
         )
 
     # -------------------------------------------------------------------------
     def _init_json_args(self):
         """Define commandline options for converting into JSON format."""
-        if self.to_type and self.to_type != "json":
-            return
-
         json_group = self.arg_parser.add_argument_group(_("JSON output options"))
 
         json_group.add_argument(
-            "--json-ensure-ascii",
+            ConfigOptionsJson.argparse_option("ensure_ascii"),
             action="store_true",
             dest="json_ensure_ascii",
-            help=_(
-                "The {} output is guaranteed to have all incoming non-ASCII characters escaped."
-            ).format("JSON"),
+            help=ConfigOptionsJson.get_property_doc("ensure_ascii"),
         )
 
         json_group.add_argument(
-            "--json-indent",
-            metavar="INDENT",
-            dest="json_indent",
-            help=self.json_indent_help.format("JSON"),
-        )
-
-        json_group.add_argument(
-            "--json-sort-keys",
+            ConfigOptionsJson.argparse_option("sort_keys"),
             action="store_true",
             dest="json_sort_keys",
-            help=self.json_sort_help,
+            help=ConfigOptionsJson.get_property_doc("sort_keys"),
         )
 
     # -------------------------------------------------------------------------
     def _init_hjson_args(self):
         """Define commandline options for converting into HJSON format."""
-        if self.to_type and self.to_type != "hjson":
-            return
-
         hjson_group = self.arg_parser.add_argument_group(_("HJSON output options"))
 
         hjson_group.add_argument(
-            "--hjson-ensure-ascii",
+            ConfigOptionsHJson.argparse_option("ensure_ascii"),
             action="store_true",
             dest="hjson_ensure_ascii",
-            help=_(
-                "The {} output is guaranteed to have all incoming " "non-ASCII characters escaped."
-            ).format("HJSON"),
+            help=ConfigOptionsHJson.get_property_doc("ensure_ascii"),
         )
 
         hjson_group.add_argument(
-            "--hjson-indent",
-            metavar="INDENT",
-            dest="hjson_indent",
-            help=self.json_indent_help.format("HJSON"),
-        )
-
-        hjson_group.add_argument(
-            "--hjson-sort-keys",
+            ConfigOptionsHJson.argparse_option("sort_keys"),
             action="store_true",
             dest="hjson_sort_keys",
-            help=self.json_sort_help,
+            help=ConfigOptionsHJson.get_property_doc("sort_keys"),
         )
 
     # -------------------------------------------------------------------------
@@ -703,53 +593,192 @@ class CfgConvertApplication(BaseApplication):
         to_type = getattr(self.args, "to_type", None)
         if to_type:
             self.to_type = to_type
+        else:
+            self.to_type = "dump"
 
-        self.input_file = getattr(self.args, "input", None)
-        self.output = getattr(self.args, "output", None)
+        self.input_file = getattr(self.args, "input_file", "-")
+        self.output = getattr(self.args, "output_file", "-")
 
-        # val = getattr(self.args, "yaml_width", None)
-        # if val is not None:
-        #     self.yaml_width = val
+    # -------------------------------------------------------------------------
+    def eval_args_cfg_types(self):
+        """Evaluate all options for the particular configuration types from command line."""
+        if self.verbose > 1:
+            LOG.debug(
+                _("Evaluate all options for the particular configuration types from command line.")
+            )
 
-        # val = getattr(self.args, "yaml_indent", None)
-        # if val is not None:
-        #     self.yaml_indent = val
+        if "dump" in self.config_handler.supported_write_cfg_types:
+            self._eval_dump_args()
+        if "ini" in self.config_handler.supported_read_cfg_types:
+            self._eval_inifile_args()
+        if "yaml" in self.config_handler.supported_write_cfg_types:
+            self._eval_yaml_args()
+        if "json" in self.config_handler.supported_write_cfg_types:
+            self._eval_json_args()
+        if "hjson" in self.config_handler.supported_write_cfg_types:
+            self._eval_hjson_args()
+        if "toml" in self.config_handler.supported_write_cfg_types:
+            self._eval_toml_args()
 
-        # if getattr(self.args, "yaml_canonical", False):
-        #     self.yaml_canonical = True
+    # -------------------------------------------------------------------------
+    def _eval_dump_args(self):
+        """Evaluate options for dumping the output."""
+        if self.verbose > 2:
+            LOG.debug(_("Evaluate options for dumping the output."))
 
-        # if getattr(self.args, "yaml_flow_style", False):
-        #     self.yaml_default_flow_style = True
+        val = getattr(self.args, "width", None)
+        if val is not None:
+            self.config_handler.options_dump.width = val
 
-        # val = getattr(self.args, "yaml_style", None)
-        # if val is not None:
-        #     self.yaml_default_style = val
+        val = getattr(self.args, "indent", None)
+        if val is not None:
+            self.config_handler.options_dump.indent = val
 
-        # if getattr(self.args, "yaml_no_explicit_start", False):
-        #     self.yaml_explicit_start = False
+        val = getattr(self.args, "dump_compact", False)
+        if val:
+            self.config_handler.options_dump.compact = True
 
-        # if getattr(self.args, "yaml_explicit_end", False):
-        #     self.yaml_explicit_end = True
+        val = getattr(self.args, "dump_depth", None)
+        if val:
+            self.config_handler.options_dump.depth = val
 
-        # if getattr(self.args, "json_ensure_ascii", False):
-        #     self.json_ensure_ascii = True
+        if hasattr(self.args, "dump_sort_dicts"):
+            val = getattr(self.args, "dump_sort_dicts", True)
+            if not val:
+                self.config_handler.options_dump.sort_dicts = False
 
-        # val = getattr(self.args, "json_indent", None)
-        # if val is not None:
-        #     self.json_indent = val
+        if hasattr(self.args, "dump_underscore_numbers"):
+            val = getattr(self.args, "dump_underscore_numbers", False)
+            if val:
+                self.config_handler.options_dump.underscore_numbers = True
 
-        # if getattr(self.args, "json_sort_keys", False):
-        #     self.json_sort_keys = True
+        if self.verbose > 1:
+            LOG.debug(
+                _("Options for dumping the output:")
+                + "\n"
+                + pp(self.config_handler.options_dump.property_dict())
+            )
 
-        # if getattr(self.args, "hjson_ensure_ascii", False):
-        #     self.hjson_ensure_ascii = True
+    # -------------------------------------------------------------------------
+    def _eval_inifile_args(self):
+        """Evaluate options for reading inifiles."""
+        if self.verbose > 2:
+            LOG.debug(_("Evaluate options for reading inifiles."))
 
-        # val = getattr(self.args, "hjson_indent", None)
-        # if val is not None:
-        #     self.hjson_indent = val
+        if hasattr(self.args, "inifile_allow_no_value"):
+            val = self.args.inifile_allow_no_value
+            if val:
+                self.config_handler.options_inifile.allow_no_value = True
 
-        # if getattr(self.args, "hjson_sort_keys", False):
-        #     self.hjson_sort_keys = True
+        if hasattr(self.args, "inifile_comment_prefixes"):
+            val = self.argsinifile_comment_prefixes
+            if val:
+                self.config_handler.options_inifile.comment_prefixes = val
+
+        if hasattr(self.args, "inifile_delimiters"):
+            val = self.args.inifile_delimiters
+            if val:
+                self.config_handler.options_inifile.delimiters = val
+
+        if hasattr(self.args, "inifile_empty_lines_in_values"):
+            val = self.args.inifile_empty_lines_in_values
+            if not val:
+                self.config_handler.options_inifile.empty_lines_in_values = False
+
+        if hasattr(self.args, "inifile_extended_interpolation"):
+            val = self.args.inifile_extended_interpolation
+            if val:
+                self.config_handler.options_inifile.extended_interpolation = True
+
+        if hasattr(self.args, "inifile_inline_comment_prefixes"):
+            val = self.args.inifile_inline_comment_prefixes
+            if val:
+                self.config_handler.options_inifile.inline_comment_prefixes = val
+
+        if hasattr(self.args, "inifile_strict"):
+            val = self.args.inifile_strict
+            if val:
+                self.config_handler.options_inifile.strict = True
+
+        if self.verbose > 1:
+            LOG.debug(
+                _("Options for reading inifiles:")
+                + "\n"
+                + pp(self.config_handler.options_inifile.property_dict())
+            )
+
+    # -------------------------------------------------------------------------
+    def _eval_yaml_args(self):
+        """Evaluate options for generating YAML output."""
+        if self.verbose > 2:
+            LOG.debug(_("Evaluate options for generating YAML output."))
+
+        val = getattr(self.args, "width", None)
+        if val is not None:
+            self.config_handler.options_yaml.width = val
+
+        val = getattr(self.args, "indent", None)
+        if val is not None:
+            try:
+                self.config_handler.options_yaml.indent = val
+            except ValueError as e:
+                LOG.error(str(e))
+                self.exit(1)
+
+        if hasattr(self.args, "yaml_canonical"):
+            val = getattr(self.args, "yaml_canonical", False)
+            if val:
+                self.config_handler.options_yaml.canonical = True
+
+        if hasattr(self.args, "yaml_no_allow_unicode"):
+            val = getattr(self.args, "yaml_no_allow_unicode", False)
+            if val:
+                self.config_handler.options_yaml.allow_unicode = False
+
+        if hasattr(self.args, "yaml_flow_style"):
+            val = getattr(self.args, "yaml_flow_style", False)
+            if val:
+                self.config_handler.options_yaml.flow_style = True
+
+        if hasattr(self.args, "yaml_style"):
+            val = getattr(self.args, "yaml_style", None)
+            if val:
+                self.config_handler.options_yaml.style = val
+
+        if hasattr(self.args, "yaml_no_explicit_start"):
+            val = getattr(self.args, "yaml_no_explicit_start", False)
+            if val:
+                self.config_handler.options_yaml.explicit_start = False
+
+        if hasattr(self.args, "yaml_explicit_end"):
+            val = getattr(self.args, "yaml_explicit_end", False)
+            if val:
+                self.config_handler.options_yaml.explicit_end = True
+
+        if self.verbose > 1:
+            LOG.debug(
+                _("Options for generating YAML output:")
+                + "\n"
+                + pp(self.config_handler.options_yaml.property_dict())
+            )
+
+    # -------------------------------------------------------------------------
+    def _eval_json_args(self):
+        """Evaluate options for generating JSON output."""
+        if self.verbose > 2:
+            LOG.debug(_("Evaluate options for generating JSON output."))
+
+    # -------------------------------------------------------------------------
+    def _eval_hjson_args(self):
+        """Evaluate options for generating HJSON output."""
+        if self.verbose > 2:
+            LOG.debug(_("Evaluate options for generating HJSON output."))
+
+    # -------------------------------------------------------------------------
+    def _eval_toml_args(self):
+        """Evaluate options for generating Toml output."""
+        if self.verbose > 2:
+            LOG.debug(_("Evaluate options for generating Toml output."))
 
     # -------------------------------------------------------------------------
     def _run(self):
@@ -759,7 +788,7 @@ class CfgConvertApplication(BaseApplication):
 
         # try:
         #     self.load()
-        # except WrongCfgTypeError as e:
+        # except ConfigWrongTypeError as e:
         #     LOG.error(str(e))
         #     self.exit(5)
         #     return
@@ -797,7 +826,7 @@ class CfgConvertApplication(BaseApplication):
                 docs.append(doc)
         except Exception as e:
             if e.__class__.__name__ == "ParserError":
-                raise WrongCfgTypeError("YAML ParseError: " + str(e))
+                raise ConfigWrongTypeError("YAML ParseError: " + str(e))
             raise
         if not docs:
             self.cfg_content = None
@@ -816,7 +845,7 @@ class CfgConvertApplication(BaseApplication):
             doc = mod.loads(content)
         except Exception as e:
             if e.__class__.__name__ == "JSONDecodeError":
-                raise WrongCfgTypeError("JSONDecodeError: " + str(e))
+                raise ConfigWrongTypeError("JSONDecodeError: " + str(e))
             raise
 
         self.cfg_content = doc
@@ -831,7 +860,7 @@ class CfgConvertApplication(BaseApplication):
             doc = mod.loads(content)
         except Exception as e:
             if e.__class__.__name__ == "HjsonDecodeError":
-                raise WrongCfgTypeError("HjsonDecodeError: " + str(e))
+                raise ConfigWrongTypeError("HjsonDecodeError: " + str(e))
             raise
 
         self.cfg_content = doc

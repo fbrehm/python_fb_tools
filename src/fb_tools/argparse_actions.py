@@ -24,9 +24,11 @@ except ImportError:
 # Own modules
 
 from . import MAX_TIMEOUT
+from .errors import InputFileNotExistingError
+from .errors import InputFileNotReadableError
 from .xlate import XLATOR
 
-__version__ = "2.2.0"
+__version__ = "2.3.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -150,6 +152,43 @@ class OutputFileOptionAction(argparse.Action):
             return
         path = Path(filename)
         setattr(namespace, self.dest, path)
+
+
+# =============================================================================
+class NonNegativeIntegerOptionAction(argparse.Action):
+    """
+    It's an argparse action class to ensure a positive integer value.
+
+    It ensures, that the given value is an integer value, which ist greater or equal to 0.
+    """
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, may_zero=True, *args, **kwargs):
+        """Initialize the NonNegativeIntegerOptionAction object."""
+        self.may_zero = bool(may_zero)
+
+        super(NonNegativeIntegerOptionAction, self).__init__(
+            option_strings=option_strings, *args, **kwargs)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, value, option_string=None):
+        """Check the given value from command line for type and the valid range."""
+        try:
+            val = int(value)
+        except Exception as e:
+            msg = _('Got a {c} for converting {v!r} into an integer value: {e}').format(
+                c=e.__class__.__name__, v=value, e=e)
+            raise argparse.ArgumentError(self, msg)
+
+        if val < 0:
+            msg = _('The option must not be negative (given: {}).').format(value)
+            raise argparse.ArgumentError(self, msg)
+
+        if not self.may_zero and val == 0:
+            msg = _('The option must not be zero.')
+            raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, val)
 
 
 # =============================================================================

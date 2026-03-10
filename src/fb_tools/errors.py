@@ -14,7 +14,7 @@ import signal
 # Own modules
 from .xlate import XLATOR
 
-__version__ = "2.6.1"
+__version__ = "2.7.0"
 
 _ = XLATOR.gettext
 ngettext = XLATOR.ngettext
@@ -157,6 +157,38 @@ class FbAppError(FbHandlerError):
     """Generic exception class for all application classes."""
 
     pass
+
+
+# =============================================================================
+class InputFileError(FbAppError, OSError):
+    """Special exception class for the case of errors with the input file."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, err_no, strerror, filename):
+        """Initialise a InputFileError exception."""
+        super(InputFileError, self).__init__(err_no, strerror, str(filename))
+
+
+# =============================================================================
+class InputFileNotExistingError(InputFileError):
+    """Class for a exception in case an input file is not existing."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, filename):
+        """Initialise a InputFileNotExistingError exception."""
+        msg = _("The input file is not existing")
+        super(InputFileNotExistingError, self).__init__(errno.ENOENT, msg, filename)
+
+
+# =============================================================================
+class InputFileNotReadableError(InputFileError):
+    """Class for a exception in case an input file is not readable."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, filename):
+        """Initialise a InputFileNotReadableError exception."""
+        msg = _("The input file is not readable")
+        super(InputFileNotReadableError, self).__init__(errno.EACCES, msg, filename)
 
 
 # =============================================================================
