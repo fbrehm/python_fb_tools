@@ -41,7 +41,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.6.3"
+__version__ = "0.6.4"
 
 LOG = logging.getLogger(__name__)
 
@@ -395,9 +395,10 @@ class AnyConfigHandler(HandlingObject):
             try:
                 config = lmethod(self, content, raise_on_error=True, source=source)
             except ConfigWrongTypeError as e:
-                msg = _("Unable to parse '{f}' as {t}: {e}").format(
-                    f=self.colored(source, "cyan"), t=self.colored(config_type, "cyan"), e=e
-                )
+                if self.verbose > 1:
+                    msg = _("Unable to parse '{f}' as {t}: {e}").format(
+                        f=self.colored(source, "cyan"), t=self.colored(config_type, "cyan"), e=e
+                    )
                 LOG.debug(msg)
                 if i >= count_types:
                     msg = _("Could not detect file type by file content from '{}'.").format(
@@ -478,7 +479,7 @@ class AnyConfigHandler(HandlingObject):
         cfg = {}
         parser = module.ConfigParser(**kargs)
         try:
-            parser.read_string(content)
+            parser.read_string(content, source)
         except module.Error as e:
             msg = _("{what} on parsing: {e}").format(
                 what=self.colored(e.__class__.__name__, "red"), e=e
@@ -576,13 +577,6 @@ class AnyConfigHandler(HandlingObject):
         try:
             cfg = module.loads(content)
         except module.TOMLDecodeError as e:
-            # msg = _("{what} parse error in '{fn}', line {line}, column {col}: {msg}").format(
-            #     what=e.__class__.__name__,
-            #     fn=self.colored(e.doc, "red"),
-            #     line=e.lineno,
-            #     col=e.colno,
-            #     msg=e.msg,
-            # )
             msg = _("{what} parse error in '{fn}': {e}").format(
                 what=e.__class__.__name__,
                 fn=self.colored(source, "red"),
@@ -667,6 +661,8 @@ class AnyConfigHandler(HandlingObject):
         content = self.dump_config(
             self, config, config_type, raise_on_error=True, target=str(file_name)
         )
+
+        return (config_type, content)
 
     # -------------------------------------------------------------------------
     def dump_config(self, config, config_type, raise_on_error=None, target="-"):

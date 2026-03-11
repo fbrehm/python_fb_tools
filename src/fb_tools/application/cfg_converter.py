@@ -50,7 +50,7 @@ from ..xlate import format_list
 
 # from ..multi_config import BaseMultiConfig
 
-__version__ = "0.9.1"
+__version__ = "0.9.2"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -852,9 +852,12 @@ class CfgConvertApplication(BaseApplication):
         ret = 0
 
         try:
-            self.load()
+            (config_type, config) = self.load()
         except ConfigWrongTypeError as e:
-            LOG.error(str(e))
+            msg = _("Could not read or evaluate configuration file '{}':").format(
+                self.colored(str(self.input_file), "red"))
+            msg += " " + str(e)
+            LOG.error(msg)
             self.exit(5)
             return
 
@@ -865,7 +868,7 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def load(self):
         """Load config file."""
-        if self.verbose > 1: 
+        if self.verbose > 1:
             LOG.debug(_("Trying to read from '{}' ...").format(
                 self.colored(str(self.input_file), "cyan"))
             )
@@ -876,6 +879,8 @@ class CfgConvertApplication(BaseApplication):
                 infile=self.colored(str(self.input_file), "cyan"),
                 cfgtype=self.colored(config_type, "green"))
             )
+
+        return (config_type, config)
 
         # if self.input_file == "-":
         #     content = sys.stdin.read()
@@ -889,149 +894,149 @@ class CfgConvertApplication(BaseApplication):
         #     msg = _("Interpreted content of {!r}:").format(self.input_file)
         #     LOG.debug(msg + "\n" + pp(self.cfg_content))
 
-    # -------------------------------------------------------------------------
-    def load_yaml(self, content):
-        """Load config file in YAML format."""
-        LOG.debug(_("Loading content from {!r} format.").format("YAML"))
+    # # -------------------------------------------------------------------------
+    # def load_yaml(self, content):
+    #     """Load config file in YAML format."""
+    #     LOG.debug(_("Loading content from {!r} format.").format("YAML"))
 
-        mod = self.cfg_modules["yaml"]
+    #     mod = self.cfg_modules["yaml"]
 
-        docs = []
-        try:
-            for doc in mod.safe_load_all(content):
-                docs.append(doc)
-        except Exception as e:
-            if e.__class__.__name__ == "ParserError":
-                raise ConfigWrongTypeError("YAML ParseError: " + str(e))
-            raise
-        if not docs:
-            self.cfg_content = None
-            return
-        if len(docs) == 1:
-            self.cfg_content = docs[0]
-        self.cfg_content = docs
+    #     docs = []
+    #     try:
+    #         for doc in mod.safe_load_all(content):
+    #             docs.append(doc)
+    #     except Exception as e:
+    #         if e.__class__.__name__ == "ParserError":
+    #             raise ConfigWrongTypeError("YAML ParseError: " + str(e))
+    #         raise
+    #     if not docs:
+    #         self.cfg_content = None
+    #         return
+    #     if len(docs) == 1:
+    #         self.cfg_content = docs[0]
+    #     self.cfg_content = docs
 
-    # -------------------------------------------------------------------------
-    def load_json(self, content):
-        """Load config file in JSON format."""
-        LOG.debug(_("Loading content from {!r} format.").format("JSON"))
+    # # -------------------------------------------------------------------------
+    # def load_json(self, content):
+    #     """Load config file in JSON format."""
+    #     LOG.debug(_("Loading content from {!r} format.").format("JSON"))
 
-        mod = self.cfg_modules["json"]
-        try:
-            doc = mod.loads(content)
-        except Exception as e:
-            if e.__class__.__name__ == "JSONDecodeError":
-                raise ConfigWrongTypeError("JSONDecodeError: " + str(e))
-            raise
+    #     mod = self.cfg_modules["json"]
+    #     try:
+    #         doc = mod.loads(content)
+    #     except Exception as e:
+    #         if e.__class__.__name__ == "JSONDecodeError":
+    #             raise ConfigWrongTypeError("JSONDecodeError: " + str(e))
+    #         raise
 
-        self.cfg_content = doc
+    #     self.cfg_content = doc
 
-    # -------------------------------------------------------------------------
-    def load_hjson(self, content):
-        """Load config file in HJSON format."""
-        LOG.debug(_("Loading content from {!r} format.").format("HJSON"))
+    # # -------------------------------------------------------------------------
+    # def load_hjson(self, content):
+    #     """Load config file in HJSON format."""
+    #     LOG.debug(_("Loading content from {!r} format.").format("HJSON"))
 
-        mod = self.cfg_modules["hjson"]
-        try:
-            doc = mod.loads(content)
-        except Exception as e:
-            if e.__class__.__name__ == "HjsonDecodeError":
-                raise ConfigWrongTypeError("HjsonDecodeError: " + str(e))
-            raise
+    #     mod = self.cfg_modules["hjson"]
+    #     try:
+    #         doc = mod.loads(content)
+    #     except Exception as e:
+    #         if e.__class__.__name__ == "HjsonDecodeError":
+    #             raise ConfigWrongTypeError("HjsonDecodeError: " + str(e))
+    #         raise
 
-        self.cfg_content = doc
+    #     self.cfg_content = doc
 
-    # -------------------------------------------------------------------------
-    def save(self):
-        """Output of converted file in a file or to STDOUT."""
-        dmethod = getattr(self.__class__, self.dumper_methods[self.to_type])
-        content = dmethod(self)
+    # # -------------------------------------------------------------------------
+    # def save(self):
+    #     """Output of converted file in a file or to STDOUT."""
+    #     dmethod = getattr(self.__class__, self.dumper_methods[self.to_type])
+    #     content = dmethod(self)
 
-        if self.verbose > 2:
-            LOG.debug(_("Generated output:") + "\n" + content)
+    #     if self.verbose > 2:
+    #         LOG.debug(_("Generated output:") + "\n" + content)
 
-        if self.output == "-":
-            print(content)
-        else:
-            self.write_file(self.output, content)
+    #     if self.output == "-":
+    #         print(content)
+    #     else:
+    #         self.write_file(self.output, content)
 
-    # -------------------------------------------------------------------------
-    def dump_yaml(self):
-        """Return content of config file in YAML format."""
-        LOG.debug(_("Dumping content to {!r} format.").format("YAML"))
+    # # -------------------------------------------------------------------------
+    # def dump_yaml(self):
+    #     """Return content of config file in YAML format."""
+    #     LOG.debug(_("Dumping content to {!r} format.").format("YAML"))
 
-        mod = self.cfg_modules["yaml"]
-        content = mod.dump(
-            self.cfg_content,
-            width=self.yaml_width,
-            indent=self.yaml_indent,
-            canonical=self.yaml_canonical,
-            default_flow_style=self.yaml_default_flow_style,
-            default_style=self.yaml_default_style,
-            allow_unicode=self.yaml_allow_unicode,
-            line_break=self.yaml_line_break,
-            explicit_start=self.yaml_explicit_start,
-            explicit_end=self.yaml_explicit_end,
-        )
+    #     mod = self.cfg_modules["yaml"]
+    #     content = mod.dump(
+    #         self.cfg_content,
+    #         width=self.yaml_width,
+    #         indent=self.yaml_indent,
+    #         canonical=self.yaml_canonical,
+    #         default_flow_style=self.yaml_default_flow_style,
+    #         default_style=self.yaml_default_style,
+    #         allow_unicode=self.yaml_allow_unicode,
+    #         line_break=self.yaml_line_break,
+    #         explicit_start=self.yaml_explicit_start,
+    #         explicit_end=self.yaml_explicit_end,
+    #     )
 
-        return content
+    #     return content
 
-    # -------------------------------------------------------------------------
-    def dump_json(self):
-        """Return content of config file in JSON format."""
-        LOG.debug(_("Dumping content to {!r} format.").format("JSON"))
+    # # -------------------------------------------------------------------------
+    # def dump_json(self):
+    #     """Return content of config file in JSON format."""
+    #     LOG.debug(_("Dumping content to {!r} format.").format("JSON"))
 
-        mod = self.cfg_modules["json"]
-        item_separator = ", "
-        key_separator = ": "
-        ind = self.json_indent
+    #     mod = self.cfg_modules["json"]
+    #     item_separator = ", "
+    #     key_separator = ": "
+    #     ind = self.json_indent
 
-        if ind is None:
-            item_separator = ","
-            key_separator = ":"
-        else:
-            if ind == "":
-                item_separator = ","
-            else:
-                try:
-                    ind_int = int(self.json_indent)
-                    if ind_int <= 0:
-                        item_separator = ","
-                    ind = ind_int
-                except Exception:
-                    pass
+    #     if ind is None:
+    #         item_separator = ","
+    #         key_separator = ":"
+    #     else:
+    #         if ind == "":
+    #             item_separator = ","
+    #         else:
+    #             try:
+    #                 ind_int = int(self.json_indent)
+    #                 if ind_int <= 0:
+    #                     item_separator = ","
+    #                 ind = ind_int
+    #             except Exception:
+    #                 pass
 
-        content = mod.dumps(
-            self.cfg_content,
-            ensure_ascii=self.json_ensure_ascii,
-            indent=ind,
-            separators=(item_separator, key_separator),
-            sort_keys=self.json_sort_keys,
-        )
+    #     content = mod.dumps(
+    #         self.cfg_content,
+    #         ensure_ascii=self.json_ensure_ascii,
+    #         indent=ind,
+    #         separators=(item_separator, key_separator),
+    #         sort_keys=self.json_sort_keys,
+    #     )
 
-        return content
+    #     return content
 
-    # -------------------------------------------------------------------------
-    def dump_hjson(self):
-        """Return content of config file in HJSON format."""
-        LOG.debug(_("Dumping content to {!r} format.").format("HJSON"))
+    # # -------------------------------------------------------------------------
+    # def dump_hjson(self):
+    #     """Return content of config file in HJSON format."""
+    #     LOG.debug(_("Dumping content to {!r} format.").format("HJSON"))
 
-        mod = self.cfg_modules["hjson"]
-        ind = self.hjson_indent
-        try:
-            ind_int = int(ind)
-            ind = ind_int
-        except Exception:
-            pass
+    #     mod = self.cfg_modules["hjson"]
+    #     ind = self.hjson_indent
+    #     try:
+    #         ind_int = int(ind)
+    #         ind = ind_int
+    #     except Exception:
+    #         pass
 
-        content = mod.dumps(
-            self.cfg_content,
-            ensure_ascii=self.hjson_ensure_ascii,
-            indent=ind,
-            sort_keys=self.hjson_sort_keys,
-        )
+    #     content = mod.dumps(
+    #         self.cfg_content,
+    #         ensure_ascii=self.hjson_ensure_ascii,
+    #         indent=ind,
+    #         sort_keys=self.hjson_sort_keys,
+    #     )
 
-        return content
+    #     return content
 
 
 # =============================================================================

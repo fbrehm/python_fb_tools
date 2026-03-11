@@ -27,6 +27,9 @@ import sys
 from shlex import quote
 from subprocess import PIPE, Popen
 
+# from codecs import BOM_BE, BOM_LE, BOM_UTF32_BE, BOM_UTF32_LE, BOM_UTF8
+# from collections import OrderedDict
+
 try:
     import pathlib
 except ImportError:
@@ -66,7 +69,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = "2.4.6"
+__version__ = "2.4.7"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -958,6 +961,14 @@ class HandlingObject(FbBaseObject):
 
         if six.PY2 and not binary:
             content = content.decode(encoding, "replace")
+
+        # if not binary:
+        #     bofs = OrderedDict()
+        #     bofs['BOM_UTF32_BE'] = "\U0000feff"
+        #     bofs['BOM_UTF32_LE'] = "\Ufffe0000"
+        #     bofs['BOM_BE'] = "\ufeff"
+        #     bofs['BOM_LE'] = "\ufffe"
+        #     bofs['BOM_UTF8'] = "\xef\xbb\xbf"
 
         if not binary and content.startswith(u'\ufeff'):
             if self.verbose > 1:
