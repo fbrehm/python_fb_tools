@@ -24,7 +24,7 @@ from ..xlate import DEFAULT_LOCALE
 from ..xlate import XLATOR
 from ..xlate import format_list
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -120,7 +120,7 @@ class ConfigOptionsYaml(BaseConfigOptions):
 
     @flow_style.setter
     def flow_style(self, value):
-        self.flow_style = to_bool(value)
+        self._flow_style = to_bool(value)
 
     # -------------------------------------------------------------------------
     @property

@@ -41,7 +41,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.6.4"
+__version__ = "0.6.5"
 
 LOG = logging.getLogger(__name__)
 
@@ -659,8 +659,11 @@ class AnyConfigHandler(HandlingObject):
             raise ConfigWrongTypeError(msg)
 
         content = self.dump_config(
-            self, config, config_type, raise_on_error=True, target=str(file_name)
+            config, config_type, raise_on_error=True, target=str(file_name)
         )
+
+        if file_name is None or str(file_name) in ("", "-"):
+            print(content)
 
         return (config_type, content)
 
@@ -787,7 +790,7 @@ class AnyConfigHandler(HandlingObject):
         else:
             raise_on_error = bool(raise_on_error)
 
-        module_name = self.modules_write["hjson"]
+        module_name = self.modules_write["toml"]
         module = self.cfg_modules[module_name]
 
         kwargs = {
