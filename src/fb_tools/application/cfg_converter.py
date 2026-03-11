@@ -851,12 +851,12 @@ class CfgConvertApplication(BaseApplication):
         LOG.debug(_("Starting {a!r}, version {v!r} ...").format(a=self.appname, v=self.version))
         ret = 0
 
-        # try:
-        #     self.load()
-        # except ConfigWrongTypeError as e:
-        #     LOG.error(str(e))
-        #     self.exit(5)
-        #     return
+        try:
+            self.load()
+        except ConfigWrongTypeError as e:
+            LOG.error(str(e))
+            self.exit(5)
+            return
 
         # self.save()
 
@@ -865,18 +865,29 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def load(self):
         """Load config file."""
-        content = None
-        if self.input_file == "-":
-            content = sys.stdin.read()
-        else:
-            content = self.read_file(self.input_file)
+        if self.verbose > 1: 
+            LOG.debug(_("Trying to read from '{}' ...").format(
+                self.colored(str(self.input_file), "cyan"))
+            )
 
-        lmethod = getattr(self.__class__, self.loader_methods[self.from_type])
-        lmethod(self, content)
+        (config_type, config) = self.config_handler.load_file(self.input_file, self.from_type)
+        if config_type != self.from_type:
+            LOG.info(_("Detected config type of '{infile}': {cfgtype}").format(
+                infile=self.colored(str(self.input_file), "cyan"),
+                cfgtype=self.colored(config_type, "green"))
+            )
 
-        if self.verbose > 1:
-            msg = _("Interpreted content of {!r}:").format(self.input_file)
-            LOG.debug(msg + "\n" + pp(self.cfg_content))
+        # if self.input_file == "-":
+        #     content = sys.stdin.read()
+        # else:
+        #     content = self.read_file(self.input_file)
+
+        # lmethod = getattr(self.__class__, self.loader_methods[self.from_type])
+        # lmethod(self, content)
+
+        # if self.verbose > 1:
+        #     msg = _("Interpreted content of {!r}:").format(self.input_file)
+        #     LOG.debug(msg + "\n" + pp(self.cfg_content))
 
     # -------------------------------------------------------------------------
     def load_yaml(self, content):

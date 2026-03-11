@@ -472,13 +472,13 @@ class AnyConfigHandler(HandlingObject):
         if self.verbose > 2:
             LOG.debug(_("Arguments on initializing {}:").format("ConfigParser") + "\n" + pp(kargs))
 
-        if self.verbose > 2:
+        if self.verbose > 3:
             LOG.debug("Evaluating inifile content:\n" + content)
 
         cfg = {}
         parser = module.ConfigParser(**kargs)
         try:
-            parser.read_string(content, source)
+            parser.read_string(content)
         except module.Error as e:
             msg = _("{what} on parsing: {e}").format(
                 what=self.colored(e.__class__.__name__, "red"), e=e
@@ -576,12 +576,17 @@ class AnyConfigHandler(HandlingObject):
         try:
             cfg = module.loads(content)
         except module.TOMLDecodeError as e:
-            msg = _("{what} parse error in '{fn}', line {line}, column {col}: {msg}").format(
+            # msg = _("{what} parse error in '{fn}', line {line}, column {col}: {msg}").format(
+            #     what=e.__class__.__name__,
+            #     fn=self.colored(e.doc, "red"),
+            #     line=e.lineno,
+            #     col=e.colno,
+            #     msg=e.msg,
+            # )
+            msg = _("{what} parse error in '{fn}': {e}").format(
                 what=e.__class__.__name__,
-                fn=self.colored(e.doc, "red"),
-                line=e.lineno,
-                col=e.colno,
-                msg=e.msg,
+                fn=self.colored(source, "red"),
+                e=e
             )
             if raise_on_error:
                 raise ConfigWrongTypeError(msg)

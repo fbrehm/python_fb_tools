@@ -66,7 +66,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = "2.4.5"
+__version__ = "2.4.6"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -958,6 +958,11 @@ class HandlingObject(FbBaseObject):
 
         if six.PY2 and not binary:
             content = content.decode(encoding, "replace")
+
+        if not binary and content.startswith(u'\ufeff'):
+            if self.verbose > 1:
+                LOG.debug(_("Removing BOM from read file content ..."))
+            content = content.replace(u'\ufeff', '', 1)
 
         return content
 
