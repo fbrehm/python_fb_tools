@@ -920,7 +920,7 @@ class CfgConvertApplication(BaseApplication):
 # =============================================================================
 def main():
     """Entrypoint for config-convert."""
-    my_path = Path(__file__)
+    my_path = Path(sys.argv[0])
     appname = my_path.name
 
     locale.setlocale(locale.LC_ALL, "")

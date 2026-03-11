@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.9.4\n"
+"Project-Id-Version: fb_tools 2.9.5\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2026-02-23 14:25+0100\n"
-"PO-Revision-Date: 2026-02-23 14:25+0100\n"
+"POT-Creation-Date: 2026-03-11 15:22+0100\n"
+"PO-Revision-Date: 2026-03-11 15:40+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de\n"
 "Language-Team: de <frank@brehm-online.com>\n"
@@ -17,6 +17,188 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
+
+#: src/fb_tools/any_config.py:199 src/fb_tools/config.py:103 src/fb_tools/multi_config/__init__.py:219
+#, python-brace-format
+msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
+msgstr "Die Kodierung {v!r} muss ein {s!r}-Objekt sein, ist aber statt dessen ein {c!r}-Objekt."
+
+#: src/fb_tools/any_config.py:266 src/fb_tools/multi_config/read.py:105
+#, python-brace-format
+msgid ""
+"Character set detection by module {mod!r} for file {fn!r} should not be used, using character "
+"set {enc!r}."
+msgstr ""
+"Die Zeichesatzerkennung durch das Modul {mod!r} für die Datei {fn!r} soll nicht verwendet "
+"werden, verwende Zeichensatz {enc!r}."
+
+#: src/fb_tools/any_config.py:274 src/fb_tools/multi_config/read.py:113
+#, python-brace-format
+msgid "Trying to detect character set of file {fn!r} ..."
+msgstr "Versuche den Zeichensatz der Datei {fn!r} zu ermitteln …"
+
+#: src/fb_tools/any_config.py:286 src/fb_tools/multi_config/read.py:125
+#, python-brace-format, python-format
+msgid ""
+"The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, using character set "
+"{cs_def!r} instead of {cs_found!r}."
+msgstr ""
+"Die Zuverlässigkeit von {con:0.1f}% ist kleiner als das Limit von {lim:0.1f}%, verwende den "
+"Zeichensatz {cs_def!r} anstelle von {cs_found!r}."
+
+#: src/fb_tools/any_config.py:298 src/fb_tools/multi_config/read.py:137
+#, python-brace-format
+msgid "Got {what} on detecting cheracter set of {fn!r}: {e}"
+msgstr "Erhielt {what} bei der Zeichensatzerkennung von {fn!r}: {e}."
+
+#: src/fb_tools/any_config.py:305
+#, python-brace-format
+msgid "Found character set {cs} for file {fn} with a confidence of {con:0.1f}%."
+msgstr "Fand Zeichensatz {cs} für die Datei {fn} mit einer Zuverlässigkeit von {con:0.1f}%."
+
+#: src/fb_tools/any_config.py:340 src/fb_tools/cfg_app.py:242 src/fb_tools/pidfile.py:518
+#, python-brace-format
+msgid "Got a {c}: {e}."
+msgstr "Hab eine(e) {c} erhalten: {e}."
+
+#: src/fb_tools/any_config.py:344
+msgid "Read configuration:"
+msgstr "Gelesene Konfiguration:"
+
+#: src/fb_tools/any_config.py:356
+#, python-brace-format
+msgid "Detected configuration type {t} by file name {f}."
+msgstr "Festgestellter Konfigurationstyp {t} durch den Dateinamen {f}."
+
+#: src/fb_tools/any_config.py:364
+#, python-brace-format
+msgid "Detected configuration type {t} from file '{f}'."
+msgstr "Festgestellter Konfigurationstyp {t} für die Datei '{f}'."
+
+#: src/fb_tools/any_config.py:387 src/fb_tools/any_config.py:439
+#, python-brace-format
+msgid "Loader method {m} not defined in class {c}."
+msgstr "Die Lade-Methode {m} ist in der Klasse {c} nicht definiert."
+
+#: src/fb_tools/any_config.py:399
+#, python-brace-format
+msgid "Unable to parse '{f}' as {t}: {e}"
+msgstr "Kann '{f}' nicht als {t} parsen: {e}"
+
+#: src/fb_tools/any_config.py:404
+#, python-brace-format
+msgid "Could not detect file type by file content from '{}'."
+msgstr "Konnte den Dateityp nicht aus dem Inhalt der Datei '{}' ermitteln."
+
+#: src/fb_tools/any_config.py:414
+#, python-brace-format
+msgid "Loaded configuration of type {}:"
+msgstr "Geladene Konfiguration vom Typ {}:"
+
+#: src/fb_tools/any_config.py:432
+#, python-brace-format
+msgid "Invalid configuration type '{}' given on calling load_config()."
+msgstr "Ungültiger Konfigurationstyp '{}' beim Aufruf von load_config() übergeben.."
+
+#: src/fb_tools/any_config.py:449
+msgid "Loaded configuration:"
+msgstr "Geladene Konfiguration:"
+
+#: src/fb_tools/any_config.py:474 src/fb_tools/multi_config/read.py:239
+#, python-brace-format
+msgid "Arguments on initializing {}:"
+msgstr "Argumente zur Initialisierung von {}:"
+
+#: src/fb_tools/any_config.py:484
+#, python-brace-format
+msgid "{what} on parsing: {e}"
+msgstr "{what} beim Parsen : {e}."
+
+#: src/fb_tools/any_config.py:518 src/fb_tools/any_config.py:549
+#, python-brace-format
+msgid "{what} parse error in '{fn}', line {line}, column {col}: {msg}"
+msgstr "{what} Parse-Fehler in {fn}, Zeile {line}, Spalte {col}: {msg}"
+
+#: src/fb_tools/any_config.py:580
+#, python-brace-format
+msgid "{what} parse error in '{fn}': {e}"
+msgstr "{what} Parse-Fehler in {fn}: {e}"
+
+#: src/fb_tools/any_config.py:594
+#, python-brace-format
+msgid "Loading content from {!r} format."
+msgstr "Lade Inhalt aus {!r}-Format."
+
+#: src/fb_tools/any_config.py:609
+#, python-brace-format
+msgid "{what} in '{fn}': {msg}"
+msgstr "{what} in '{fn}': {msg}"
+
+#: src/fb_tools/any_config.py:646
+msgid "Cannot use STDOUT to dump the configuration, if no configuration type was given."
+msgstr "Kann STDOUT nicht zum Dumpen der Konfiguration verwenden, da kein Konfigurationstyp gegeben wurde."
+
+#: src/fb_tools/any_config.py:654 src/fb_tools/any_config.py:711
+#, python-brace-format
+msgid "Invalid configuration type {} for dumping given."
+msgstr "Ungültiger Konfigurationstyp {} zum Dumpen übergeben.."
+
+#: src/fb_tools/any_config.py:660
+#, python-brace-format
+msgid "writing {file_name} as {config_type} ..."
+msgstr "Schreibe {file_name} als {config_type} …"
+
+#: src/fb_tools/any_config.py:674
+#, python-brace-format
+msgid "File '{}' is already existing and will be overridden."
+msgstr "Die Datei '{}' existiert bereits und wird überschrieben."
+
+#: src/fb_tools/any_config.py:681
+#, python-brace-format
+msgid "File '{fo}' is already existing. Do you want to override it [{y}|{n}]"
+msgstr "Die Datei '{fo}' existiert bereits. Möchtest Du sie überschreiben [{y}|{n}]"
+
+#: src/fb_tools/any_config.py:685 src/fb_tools/handling_obj.py:434
+msgid "yes"
+msgstr "ja"
+
+#: src/fb_tools/any_config.py:686 src/fb_tools/app.py:739 src/fb_tools/handling_obj.py:1223
+msgid "No"
+msgstr "Nein"
+
+#: src/fb_tools/any_config.py:692
+#, python-brace-format
+msgid "File '{}' will not be overridden."
+msgstr "Die Datei '{}' wird nicht überschrieben."
+
+#: src/fb_tools/any_config.py:720
+#, python-brace-format
+msgid "Dumper method {m} not defined in class {c}."
+msgstr "Die Dumper-Methode {m} ist in der Klasse {c} nicht definiert."
+
+#: src/fb_tools/any_config.py:730
+msgid "Dumped configuration:"
+msgstr "Gedumpte Konfiguration:"
+
+#: src/fb_tools/any_config.py:874 src/fb_tools/any_config.py:886
+#, python-brace-format
+msgid "Trying to load module {} ..."
+msgstr "Versuche das Modul {} zu laden …"
+
+#: src/fb_tools/any_config.py:901
+#, python-brace-format
+msgid "Could not detect file type by a file name of type {}."
+msgstr "Konnte den Dateityp bei einem Dateiname vom Typ  {} nicht ermitteln."
+
+#: src/fb_tools/any_config.py:909
+#, python-brace-format
+msgid "Could not detect file type by file name '{}'."
+msgstr "Konnte den Dateityp nicht über den Dateinamen '{}' ermitteln."
+
+#: src/fb_tools/any_config.py:927
+#, python-brace-format
+msgid "Could not detect file type of file '{}'."
+msgstr " Konnte den Dateityp der Datei '{}' nicht ermitteln."
 
 #: src/fb_tools/app.py:99
 msgid "Forced execution - whatever it means."
@@ -45,193 +227,154 @@ msgstr "Unbekannte und nicht beschriebene Anwendung."
 msgid "Wrong exit_value {!r}, must be >= 0."
 msgstr "Falscher Wert für exit_value {!r}, muss größer als oder gleich Null sein."
 
-#: src/fb_tools/app.py:502
+#: src/fb_tools/app.py:505
 #, python-brace-format
 msgid "Trying to get {} via console ..."
 msgstr "Versuche {} über die Konsole zu bekommen …"
 
-#: src/fb_tools/app.py:518 src/fb_tools/application/show_spinner.py:239
+#: src/fb_tools/app.py:521 src/fb_tools/application/show_spinner.py:239
 #, python-brace-format
 msgid "Got a signal {}."
 msgstr "Erhielt ein Signal {}."
 
-#: src/fb_tools/app.py:521 src/fb_tools/application/show_spinner.py:242
+#: src/fb_tools/app.py:524 src/fb_tools/application/show_spinner.py:242
 #, python-brace-format
 msgid "Got a signal {n!r} ({s})."
 msgstr "Erhielt ein Signal {n!r} ({s})."
 
-#: src/fb_tools/app.py:532 src/fb_tools/application/show_spinner.py:255
+#: src/fb_tools/app.py:535 src/fb_tools/application/show_spinner.py:255
 #, python-brace-format
 msgid "Exit on signal {n!r} ({s})."
 msgstr "Beendigung auf Signal {n!r} ({s})."
 
-#: src/fb_tools/app.py:539 src/fb_tools/application/show_spinner.py:262
+#: src/fb_tools/app.py:542 src/fb_tools/application/show_spinner.py:262
 msgid "Tweaking signal handlers."
 msgstr "Schraube an den Signalhandlern."
 
-#: src/fb_tools/app.py:549 src/fb_tools/application/show_spinner.py:272
+#: src/fb_tools/app.py:552 src/fb_tools/application/show_spinner.py:272
 #, python-brace-format
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr "Setze Signalhandler für {n!r} ({s})."
 
-#: src/fb_tools/app.py:559
+#: src/fb_tools/app.py:562
 msgid "Enter "
 msgstr "Eingabe von "
 
-#: src/fb_tools/app.py:566
+#: src/fb_tools/app.py:569
 msgid "Repeat enter "
 msgstr "Wiederholen der Eingabe von "
 
-#: src/fb_tools/app.py:576
+#: src/fb_tools/app.py:579
 #, python-brace-format
 msgid "{n} and repeated {n} did not match."
 msgstr "{n} und das wiederholte {n} stimmen nicht überein."
 
-#: src/fb_tools/app.py:580 src/fb_tools/application/show_spinner.py:290
+#: src/fb_tools/app.py:583 src/fb_tools/application/show_spinner.py:290
 msgid "Restoring original signal handlers."
 msgstr "Stelle original Signalhandler wieder her."
 
-#: src/fb_tools/app.py:585
+#: src/fb_tools/app.py:588
 #, python-brace-format
 msgid "Got {n!r}: {s!r}"
 msgstr "Erhielt {n!r}: {s!r}"
 
-#: src/fb_tools/app.py:634
+#: src/fb_tools/app.py:637
 msgid "The application is not completely initialized."
 msgstr "Die Anwendung ist nicht vollständig initialisiert."
 
-#: src/fb_tools/app.py:645
+#: src/fb_tools/app.py:648
 #, python-brace-format
 msgid "Object {!r} seems not to be completely initialized."
 msgstr "Das {!r}-Objekt scheit noch nicht vollständig initialisiert zu sein."
 
-#: src/fb_tools/app.py:657
+#: src/fb_tools/app.py:660
 msgid "Ending."
 msgstr "Beenden."
 
-#: src/fb_tools/app.py:675
+#: src/fb_tools/app.py:678
 #, python-brace-format
 msgid "Executing {} ..."
 msgstr "Führe {} aus …"
 
-#: src/fb_tools/app.py:697
+#: src/fb_tools/app.py:700
 msgid "General options"
 msgstr "Allgemeine Optionen"
 
-#: src/fb_tools/app.py:705
+#: src/fb_tools/app.py:708
 msgid "Simulation mode, nothing is really done."
 msgstr "Simulations-Modus, es wird nichts wirklich verändert."
 
-#: src/fb_tools/app.py:725 src/fb_tools/app.py:735
+#: src/fb_tools/app.py:728 src/fb_tools/app.py:738
 #, python-brace-format
 msgid "Automatically answer '{}' for all questions."
 msgstr "Automatisch alle Fragen mit {} beantworten."
 
-#: src/fb_tools/app.py:726 src/fb_tools/handling_obj.py:1208
+#: src/fb_tools/app.py:729 src/fb_tools/handling_obj.py:1225
 msgid "Yes"
 msgstr "Ja"
 
-#: src/fb_tools/app.py:736 src/fb_tools/handling_obj.py:1206
-msgid "No"
-msgstr "Nein"
-
-#: src/fb_tools/app.py:743 src/fb_tools/application/show_spinner.py:147
+#: src/fb_tools/app.py:746 src/fb_tools/application/show_spinner.py:147
 #: src/fb_tools/ddns/__init__.py:232
 msgid "SECONDS"
 msgstr "SEKUNDEN"
 
-#: src/fb_tools/app.py:748
+#: src/fb_tools/app.py:751
 #, python-brace-format
 msgid "The timeout in seconds for console input. Default: {}"
 msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Konsolen-Eingaben Vorgabe: {}."
 
-#: src/fb_tools/app.py:761
+#: src/fb_tools/app.py:764
 msgid "Use colored output for messages."
 msgstr "Verwenden kolorierter Ausgabe für Mitteilungen."
 
-#: src/fb_tools/app.py:764
+#: src/fb_tools/app.py:767
 msgid "Increase the verbosity level"
 msgstr "Erhöhen des Ausführichkeits-Niveaus"
 
-#: src/fb_tools/app.py:779
+#: src/fb_tools/app.py:782
 msgid "Silent execution, only warnings and errors are emitted."
 msgstr "Stillschweigende Ausführung, nur Warnungen und Fehler werden ausgegeben."
 
-#: src/fb_tools/app.py:791
+#: src/fb_tools/app.py:794
 msgid "Show this help message and exit."
 msgstr "Zeigt diesen Hilfe-Bildschirm und beendet sich."
 
-#: src/fb_tools/app.py:797
+#: src/fb_tools/app.py:800
 msgid "Display brief usage message and exit."
 msgstr "Zeigt eine kurze Darstellug zur Verwendung und beendet sich."
 
-#: src/fb_tools/app.py:799
+#: src/fb_tools/app.py:802
 #, python-brace-format, python-format
 msgid "Version of %(prog)s: {}"
 msgstr "Version von %(prog)s: {}"
 
-#: src/fb_tools/app.py:805
+#: src/fb_tools/app.py:808
 msgid "Show program's version number and exit."
 msgstr "Stellt die Programm-Version dar und beendet sich."
 
-#: src/fb_tools/app.py:935
+#: src/fb_tools/app.py:938
 msgid "Starting in:"
 msgstr "Start in:"
 
-#: src/fb_tools/app.py:957
+#: src/fb_tools/app.py:960
 msgid "Aborted by user interrupt."
 msgstr "Abbruch durch Benutzer-Unterbrechung."
 
-#: src/fb_tools/application/cfg_converter.py:80
-msgid "The input file is not existing"
-msgstr "Die Eingabe-Datei existiert nicht"
-
-#: src/fb_tools/application/cfg_converter.py:91
-msgid "The input file is not readable"
-msgstr "Die Eingabe-Datei ist nicht lesbar"
-
-#: src/fb_tools/application/cfg_converter.py:110
+#: src/fb_tools/application/cfg_converter.py:83
 msgid "The configuration file type may not be None."
 msgstr "Der Typ der Konfigurationssdatei darf nicht None sein."
 
-#: src/fb_tools/application/cfg_converter.py:115
+#: src/fb_tools/application/cfg_converter.py:88
 #, python-brace-format
 msgid "The configuration file type must be one of {lst}, given {g!r}."
 msgstr "Der Typ der Konfigurationssdatei muss einer aus {lst} sein, gegeben wurde {g!r}."
 
-#: src/fb_tools/application/cfg_converter.py:187
-#, python-brace-format
-msgid "The value for {opt!r} may be at least {m}, {v} were given."
-msgstr "Der Wert für {opt!r} muss wenigstens {m} groß sein, {v} wurden gegeben."
-
-#: src/fb_tools/application/cfg_converter.py:193
-#, python-brace-format
-msgid "The value for {opt!r} may be at most {m}, {v} were given."
-msgstr "Der Wert für {opt!r} darf höchsten {m} groß sein, {v} wurden gegeben."
-
-#: src/fb_tools/application/cfg_converter.py:221
+#: src/fb_tools/application/cfg_converter.py:118
 #, python-brace-format
 msgid "The YAML style type must be one of {opt}, given {g!r}."
 msgstr "Der YAML-Stiltyp muss einer aus {opt} sein, {g!r} wurden gegeben."
 
-#: src/fb_tools/application/cfg_converter.py:255
-#, python-brace-format
-msgid ""
-"The indention of the {} output. If given an positive integer value, these number of spaces are "
-"indented. I given '0', a negative integer or an empty string (''), only newlines are inserted. "
-"If a non empty string is given, this will be used as indention to each level. If omitted, the "
-"most compact form without newlines will be generated."
-msgstr ""
-"Die Einrückung der {}-Ausgabe. Wenn es als pisitive Ganzzahl angegeben wird, dann wird diese "
-"Anzahl von Leerzeichen eingerückt. Wenn „0”, eine negative Zahl oder eine leere Zeichenkette "
-"(„”) angegeben wird, werden nur Zeilenumbrüche eingefügt. Wenn es wedggelassen wird, wird die "
-"kompakteste Form ohne Zeilenumbrüche generiert."
-
-#: src/fb_tools/application/cfg_converter.py:262
-msgid "Dictionaries will be outputted sorted by key."
-msgstr "Dictionaries werden nach ihren Schlüsseln sortiert ausgegeben."
-
-#: src/fb_tools/application/cfg_converter.py:293
+#: src/fb_tools/application/cfg_converter.py:144
 #, python-brace-format
 msgid ""
 "Converts the given configuration file from the given input format into the given output format "
@@ -240,171 +383,207 @@ msgstr ""
 "Konvertiert die übergebene Konfigurationsdatei vom gegebenen Eingabeformat in das übergebene "
 "Ausgabeformat und gibt sie auf {o} oder in die gegebene Ausgabedatei aus."
 
-#: src/fb_tools/application/cfg_converter.py:355
+#: src/fb_tools/application/cfg_converter.py:156
+msgid "Override an existing target config file without a question, if it is already existing."
+msgstr ""
+
+#: src/fb_tools/application/cfg_converter.py:193
 #, python-brace-format
 msgid "Invalid input configuration type {!r}"
 msgstr "Ungültiger Typ der Eingabedatei."
 
-#: src/fb_tools/application/cfg_converter.py:372
+#: src/fb_tools/application/cfg_converter.py:210
 #, python-brace-format
 msgid "Invalid target configuration type {!r}"
 msgstr "Ungültiger Typ der Ausgabedatei {!r}"
 
-#: src/fb_tools/application/cfg_converter.py:433
-#, python-brace-format
-msgid "The maximum width of generated YAML files must be at least {m} characters, {v!r} are given."
-msgstr ""
-"Die maximale Breite der generierten YAML-Datei muss wenigstens {m} Zeichen groß sein, {v!r} "
-"wurden übergeben."
-
-#: src/fb_tools/application/cfg_converter.py:439
-#, python-brace-format
-msgid "The maximum width of generated YAML files must be at most {m} characters, {v!r} are given."
-msgstr ""
-"Die maximale Breite der generierten YAML-Datei darf höchstens {m} Zeichen groß sein, {v!r} "
-"wurden übergeben."
-
-#: src/fb_tools/application/cfg_converter.py:456
-#, python-brace-format
-msgid "The indention of generated YAML files must be at least {m} characters, {v!r} are given."
-msgstr ""
-"Die Einrückung der generierten YAML-Datei muss wenigstens {m} Zeichen groß sein, {v!r} wurden "
-"übergeben."
-
-#: src/fb_tools/application/cfg_converter.py:462
-#, python-brace-format
-msgid "The indention of generated YAML files must be at most {m} characters, {v!r} are given."
-msgstr ""
-"Die Einrückung der generierten YAML-Datei darf höchstens {m} Zeichen groß sein, {v!r} wurden "
-"übergeben."
-
-#: src/fb_tools/application/cfg_converter.py:503
-#, python-brace-format
-msgid "The default style on ouput YAML must be one of {lst}, but {v!r} was given."
-msgstr "Der Vorgabe-Stil der YAML-Ausgabe muss einer aus {lst} sein, aber {v!r} wurden übergeben."
-
-#: src/fb_tools/application/cfg_converter.py:554
-#, python-brace-format
-msgid "The linebreak used in ouput YAML must be one of {lst}, but {v!r} was given."
-msgstr "Der Zeilenumbruch im Ausgabe-YAML muss einer aus {lst} sein, aber {v!r} wurden übergeben."
-
-#: src/fb_tools/application/cfg_converter.py:647 src/fb_tools/application/cfg_converter.py:653
-#, python-brace-format
-msgid "Loading module {!r} ..."
-msgstr "Lade Modul {!r} ..."
-
-#: src/fb_tools/application/cfg_converter.py:664 src/fb_tools/application/get_file_rm.py:268
-msgid "File options"
-msgstr "Dateioptionen"
-
-#: src/fb_tools/application/cfg_converter.py:673
-#, python-brace-format
-msgid "The filename of the input file. Use {i!r} to read from {f} (which is the default)."
-msgstr "Der Dateiname der Eingabedatei. Verwende {i!r}, um von {f} zu lesen (was die Vorgabe ist)."
-
-#: src/fb_tools/application/cfg_converter.py:685
-#, python-brace-format
-msgid "The filename of the output file. Use {i!r} to write to {f} (which is the default)."
-msgstr "Der Dateiname der Ausgabedatei. Verwende {i!r}, um auf {f} zu schreiben (was die Vorgabe ist)."
-
-#: src/fb_tools/application/cfg_converter.py:692
+#: src/fb_tools/application/cfg_converter.py:294
 msgid "Converting options"
 msgstr "Konvertierungsoptionen"
 
-#: src/fb_tools/application/cfg_converter.py:701 src/fb_tools/application/cfg_converter.py:715
+#: src/fb_tools/application/cfg_converter.py:305 src/fb_tools/application/cfg_converter.py:323
 msgid "CFG_TYPE"
 msgstr "KONFIG_TYP"
 
-#: src/fb_tools/application/cfg_converter.py:706
+#: src/fb_tools/application/cfg_converter.py:309
 #, python-brace-format
 msgid "The configuration type of the source, must be one of {}."
 msgstr "Der Konfigurationstyp der Eingabe, muss einer aus {} sein."
 
-#: src/fb_tools/application/cfg_converter.py:720
+#: src/fb_tools/application/cfg_converter.py:327
 #, python-brace-format
 msgid "The configuration type of the target, must be one of {}."
 msgstr "Der Konfigurationstyp der Ausgabe, muss einer aus {} sein."
 
-#: src/fb_tools/application/cfg_converter.py:735
+#: src/fb_tools/application/cfg_converter.py:333
+#, python-brace-format
+msgid ""
+"The maximum number of characters per line in the output. The default is the width of the current"
+" terminal. If this one cannot be evaluated, the default width is {}."
+msgstr ""
+"Die maximale Anzahl von Zeichen pro Zeile in der Ausgabe. Die Vorgabe ist die Breite des aktuellen Terminals. "
+"Wenn diese nicht festgestellt werden kan, dann beträgt die Vorgabe-Breite {} Zeichen."
+
+#: src/fb_tools/application/cfg_converter.py:349
+msgid ""
+"The amount of indentation added for each nesting level. The default depends of the output "
+"configuration type. For YAML output it is 2, JSON and HJSON it is None (compact output), and for"
+" Dump and Toml is is 4."
+msgstr ""
+"Die Anzahl der Einrückungen, die für jede verschachtelte Ebene hinzugefügt wird. "
+"Die Vorgabe hängt vom KKonfigurationstyp der Ausgabe ab. Für eine Ausgabe als YAML beträgt sie 2, "
+"für JSON und HJSON beträgt sie None (kompakte Ausgabe), und für Dump und Toml beträgt sie 4."
+
+#: src/fb_tools/application/cfg_converter.py:378
+msgid "INPUT_FILE"
+msgstr "EINGABE_DATEI"
+
+#: src/fb_tools/application/cfg_converter.py:383
+#, python-brace-format
+msgid "The filename of the input file. Use {i!r} to read from {f} (which is the default)."
+msgstr "Der Dateiname der Eingabedatei. Verwende {i!r}, um von {f} zu lesen (was die Vorgabe ist)."
+
+#: src/fb_tools/application/cfg_converter.py:390
+msgid "OUTPUT_FILE"
+msgstr "AUSGABE_DATEI"
+
+#: src/fb_tools/application/cfg_converter.py:395
+#, python-brace-format
+msgid "The filename of the output file. Use {i!r} to write to {f} (which is the default)."
+msgstr "Der Dateiname der Ausgabedatei. Verwende {i!r}, um auf {f} zu schreiben (was die Vorgabe ist)."
+
+#: src/fb_tools/application/cfg_converter.py:403
+msgid "Options for reading inifiles"
+msgstr "Optionen zum Lesen von Ini-Dateien."
+
+#: src/fb_tools/application/cfg_converter.py:417 src/fb_tools/application/cfg_converter.py:454
+msgid "PREFIXES"
+msgstr "PRÄFIXE"
+
+#: src/fb_tools/application/cfg_converter.py:427
+msgid "DELIMITERS"
+msgstr "TRENNZEICHEN"
+
+#: src/fb_tools/application/cfg_converter.py:436
+msgid "Don't allow multi-line values in inifiles."
+msgstr "Werte mit mehreren Zeilen in Ini-Dateien nicht erlauben. "
+
+#: src/fb_tools/application/cfg_converter.py:469
+msgid "Dump output options"
+msgstr "Dump-Ausgabeoptionen"
+
+#: src/fb_tools/application/cfg_converter.py:494
+msgid "Dictionaries will not be outputted sorted by key."
+msgstr "Dictionaries werden nicht nach ihren Schlüsseln sortiert ausgegeben."
+
+#: src/fb_tools/application/cfg_converter.py:510
 msgid "YAML output options"
 msgstr "YAML-Ausgabeoptionen"
 
-#: src/fb_tools/application/cfg_converter.py:745
-#, python-brace-format
-msgid "The maximum width of generated lines on YAML output (Default: {})."
-msgstr "Die Maximalbreite der Zeilen der generierten YAML-Ausgabe (Vorgabe: {})."
+#: src/fb_tools/application/cfg_converter.py:523
+msgid "Unicode characters are not allowed in YAML output."
+msgstr "Unicode-Zeichen sind in der YAML-Ausgabe nicht erlaubt."
 
-#: src/fb_tools/application/cfg_converter.py:758
-#, python-brace-format
-msgid "The indention of generated YAML output (Default: {})."
-msgstr "Die Einrückung der generierten YAML-Ausgabe (Vorgabe: {})."
-
-#: src/fb_tools/application/cfg_converter.py:767
-msgid "Include export tag type in YAML output."
-msgstr "Füge die Exporttyp-Markierungen in die YAML-Ausgabe ein."
-
-#: src/fb_tools/application/cfg_converter.py:774
-msgid "Print a collection as flow in YAML output."
-msgstr "Gebe eine Kollektion als Flußausgabe in der YAML-Ausgabe aus."
-
-#: src/fb_tools/application/cfg_converter.py:782
+#: src/fb_tools/application/cfg_converter.py:537
 msgid "STYLE"
 msgstr "STIL"
 
-#: src/fb_tools/application/cfg_converter.py:785
-#, python-brace-format
-msgid "The style of the scalars in YAML output, may be be one of {}."
-msgstr "Der Stil der Skalare in der YAML-Ausgabe, muss einer von {} sein."
-
-#: src/fb_tools/application/cfg_converter.py:794
+#: src/fb_tools/application/cfg_converter.py:547
 msgid "Don't print an explicit start marker in YAML output."
 msgstr "Keine explizite Starmarkiering in der YAML-Ausgabe ausgeben."
 
-#: src/fb_tools/application/cfg_converter.py:801
+#: src/fb_tools/application/cfg_converter.py:554
 msgid "Print an explicit end marker in YAML output."
 msgstr "Gebe eine explizite Ende-Markierung in der YAML-Ausgabe aus."
 
-#: src/fb_tools/application/cfg_converter.py:810
+#: src/fb_tools/application/cfg_converter.py:560
 msgid "JSON output options"
 msgstr "JSON-Ausgabeoptionen"
 
-#: src/fb_tools/application/cfg_converter.py:817 src/fb_tools/application/cfg_converter.py:848
-#, python-brace-format
-msgid "The {} output is guaranteed to have all incoming non-ASCII characters escaped."
-msgstr "In der {}-Ausgabe werden alle Nicht-ASCII-Zeichen garantiert escaped."
-
-#: src/fb_tools/application/cfg_converter.py:841
+#: src/fb_tools/application/cfg_converter.py:579
 msgid "HJSON output options"
 msgstr "HJSON-Ausgabeoptionen"
 
-#: src/fb_tools/application/cfg_converter.py:927 src/fb_tools/application/myip.py:145
+#: src/fb_tools/application/cfg_converter.py:612
+msgid "Evaluate all options for the particular configuration types from command line."
+msgstr "Ermittle alle Optionen der einzelnen Konfigurationstypen aus der Kommandozeile."
+
+#: src/fb_tools/application/cfg_converter.py:632
+msgid "Evaluate options for dumping the output."
+msgstr "Ermittle Optionen zum Dumpen der Ausgabe."
+
+#: src/fb_tools/application/cfg_converter.py:662
+msgid "Options for dumping the output:"
+msgstr "Optionen zum Dumpen der Ausgabe:"
+
+#: src/fb_tools/application/cfg_converter.py:671
+msgid "Evaluate options for reading inifiles."
+msgstr "Ermittle Optionen zum Lesen von Ini-Dateien."
+
+#: src/fb_tools/application/cfg_converter.py:710
+msgid "Options for reading inifiles:"
+msgstr "Optionen zum Lesen von Ini-Dateien:"
+
+#: src/fb_tools/application/cfg_converter.py:719
+#, python-brace-format
+msgid "Evaluate options for generating YAML output."
+msgstr "Ermittle Optionen zum Generieren von YAML-Ausgabe."
+
+#: src/fb_tools/application/cfg_converter.py:765
+msgid "Options for generating YAML output:"
+msgstr "Optionen zum Generieren von YAML-Ausgabe:"
+
+#: src/fb_tools/application/cfg_converter.py:774
+msgid "Evaluate options for generating JSON output."
+msgstr "Ermittle Optionen zum Generieren von JSON-Ausgabe."
+
+#: src/fb_tools/application/cfg_converter.py:796
+msgid "Options for generating JSON output:"
+msgstr "Optionen zum Generieren von JSON-Ausgabe:"
+
+#: src/fb_tools/application/cfg_converter.py:805
+msgid "Evaluate options for generating HJSON output."
+msgstr "Ermittle Optionen zum Generieren von HJSON-Ausgabe."
+
+#: src/fb_tools/application/cfg_converter.py:827
+msgid "Options for generating HJSON output:"
+msgstr "Optionen zum Generieren von HJSON-Ausgabe:"
+
+#: src/fb_tools/application/cfg_converter.py:836
+msgid "Evaluate options for generating Toml output."
+msgstr "Ermittle Optionen zum Generieren von TOML-Ausgabe."
+
+#: src/fb_tools/application/cfg_converter.py:848
+msgid "Options for generating TOML output:"
+msgstr "Optionen zum Generieren von TOML-Ausgabe."
+
+#: src/fb_tools/application/cfg_converter.py:856 src/fb_tools/application/myip.py:145
 #: src/fb_tools/application/update_ddns.py:490
 #, python-brace-format
 msgid "Starting {a!r}, version {v!r} ..."
 msgstr "Starte {a!r}, Version {v!r} …"
 
-#: src/fb_tools/application/cfg_converter.py:954
+#: src/fb_tools/application/cfg_converter.py:862
 #, python-brace-format
-msgid "Interpreted content of {!r}:"
-msgstr "Interpretierter Inhalt von {!r}:"
+msgid "Could not read or evaluate configuration file '{}':"
+msgstr "Konnte Konfigurationsdate '{}' oder auswerten:"
 
-#: src/fb_tools/application/cfg_converter.py:960 src/fb_tools/application/cfg_converter.py:982
-#: src/fb_tools/application/cfg_converter.py:997
+#: src/fb_tools/application/cfg_converter.py:879
 #, python-brace-format
-msgid "Loading content from {!r} format."
-msgstr "Lade Inhalt aus {!r}-Format."
+msgid "Trying to read from '{}' ..."
+msgstr "Versuche von '{}' zu lesen …"
 
-#: src/fb_tools/application/cfg_converter.py:1016
-msgid "Generated output:"
-msgstr "Generierte Ausgabe:"
-
-#: src/fb_tools/application/cfg_converter.py:1026 src/fb_tools/application/cfg_converter.py:1047
-#: src/fb_tools/application/cfg_converter.py:1082
+#: src/fb_tools/application/cfg_converter.py:887
 #, python-brace-format
-msgid "Dumping content to {!r} format."
-msgstr "Gebe Inhalt in {!r}-Format aus."
+msgid "Detected config type of '{infile}': {cfgtype}"
+msgstr "Ermittelter Konfigurationstyp von '{infile}': {cfgtype}"
 
-#: src/fb_tools/application/cfg_converter.py:1114 src/fb_tools/application/get_file_rm.py:727
+#: src/fb_tools/application/cfg_converter.py:908
+#, python-brace-format
+msgid "Guessed config type of {fo} is '{t}'."
+msgstr "Erratener Konfigurationstyp von {fo} ist '{t}'."
+
+#: src/fb_tools/application/cfg_converter.py:932 src/fb_tools/application/get_file_rm.py:727
 #: src/fb_tools/application/myip.py:177 src/fb_tools/application/show_spinner.py:326
 #: src/fb_tools/application/update_ddns.py:848
 #, python-brace-format
@@ -445,6 +624,10 @@ msgstr ""
 #, python-brace-format
 msgid "Wrong value {v!r} for {n}, must be >= {m}"
 msgstr "Ungültiger Wert {v!r} für {n}, muss größer als oder gleich {m} sein"
+
+#: src/fb_tools/application/get_file_rm.py:268
+msgid "File options"
+msgstr "Dateioptionen"
 
 #: src/fb_tools/application/get_file_rm.py:275
 msgid "File pattern to generate list of files to remove."
@@ -950,74 +1133,98 @@ msgstr "Aktualisierung aller Domänen mit den gefundenen externen Adressen …"
 msgid "Simulation mode, update of all domains will not be sended."
 msgstr "Simulationsmodus, die Aktualisierung aller Domänen wird nicht gesendet."
 
-#: src/fb_tools/argparse_actions.py:58
+#: src/fb_tools/argparse_actions.py:60
 #, python-brace-format
 msgid "Got a {c} for pattern {p!r}: {e}"
 msgstr "Habe ein(e) {c} zum Suchmuster {p!r} erhalten: {e}"
 
-#: src/fb_tools/argparse_actions.py:85
+#: src/fb_tools/argparse_actions.py:87
 #, python-brace-format
 msgid "The path {!r} must be an absolute path."
 msgstr "Der Pfad muss ein absoluter Pfad sein."
 
-#: src/fb_tools/argparse_actions.py:91
+#: src/fb_tools/argparse_actions.py:93
 #, python-brace-format
 msgid "The directory {!r} does not exists."
 msgstr "Das Verzeichnis {!r} existiert nicht."
 
-#: src/fb_tools/argparse_actions.py:95
+#: src/fb_tools/argparse_actions.py:97
 #, python-brace-format
 msgid "The given path {!r} exists, but is not a directory."
 msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
 
-#: src/fb_tools/argparse_actions.py:99
+#: src/fb_tools/argparse_actions.py:101
 #, python-brace-format
 msgid "The given directory {!r} is not readable."
 msgstr "Das angegebene Verzeichnis {!r} ist nicht lesbar."
 
-#: src/fb_tools/argparse_actions.py:103
+#: src/fb_tools/argparse_actions.py:105
 #, python-brace-format
 msgid "The given directory {!r} is not writeable."
 msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
 
-#: src/fb_tools/argparse_actions.py:130
+#: src/fb_tools/argparse_actions.py:180
+#, python-brace-format
+msgid "Got a {c} for converting {v!r} into an integer value: {e}"
+msgstr "Habe ein(e) {c} Konvertieren von {v!r}In einen Integerwert erhalten: {e}"
+
+#: src/fb_tools/argparse_actions.py:186
+#, python-brace-format
+msgid "The option must not be negative (given: {})."
+msgstr "Die Option darf nicht negative sein (gegeben: {})."
+
+#: src/fb_tools/argparse_actions.py:190
+msgid "The option must not be zero."
+msgstr "Ein Option darf nicht Null sein."
+
+#: src/fb_tools/argparse_actions.py:212
+#, python-brace-format
+msgid "The value for {opt!r} may be at least {m}, {v} were given."
+msgstr "Der Wert für {opt!r} muss wenigstens {m} groß sein, {v} wurde gegeben."
+
+#: src/fb_tools/argparse_actions.py:218
+#, python-brace-format
+msgid "The value for {opt!r} may be at most {m}, {v} were given."
+msgstr "Der Wert für {opt!r} darf höchsten {m} groß sein, {v} wurde gegeben."
+
+#: src/fb_tools/argparse_actions.py:247
 #, python-brace-format
 msgid "Directory {!r} does not exists."
 msgstr "Das Verzeichnis {!r} existiert nicht."
 
-#: src/fb_tools/argparse_actions.py:133
+#: src/fb_tools/argparse_actions.py:250
 #, python-brace-format
 msgid "Path {!r} exists, but is not a directory."
 msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
 
-#: src/fb_tools/application/get_file_rm.py:430 src/fb_tools/argparse_actions.py:139
-#: src/fb_tools/argparse_actions.py:173
+#: src/fb_tools/application/get_file_rm.py:430 src/fb_tools/argparse_actions.py:256
+#: src/fb_tools/argparse_actions.py:290
 #, python-brace-format
 msgid "File {!r} is not a regular file."
 msgstr "Die Datei {!r} ist keine reguläre Datei."
 
-#: src/fb_tools/argparse_actions.py:142
+#: src/fb_tools/argparse_actions.py:259
 #, python-brace-format
 msgid "File {!r} is not writeable."
 msgstr "Die Datei {!r} ist nicht schreibbar."
 
-#: src/fb_tools/argparse_actions.py:146
+#: src/fb_tools/argparse_actions.py:263
 #, python-brace-format
 msgid "Directory {!r} is not writeable."
 msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
 
-#: src/fb_tools/application/get_file_rm.py:421 src/fb_tools/argparse_actions.py:170
+#: src/fb_tools/application/get_file_rm.py:421 src/fb_tools/argparse_actions.py:287
 #: src/fb_tools/multi_config/files.py:218
 #, python-brace-format
 msgid "File {!r} does not exists."
 msgstr "Die Datei {!r} existiert nicht."
 
-#: src/fb_tools/argparse_actions.py:195 src/fb_tools/multi_config/__init__.py:581
+#: src/fb_tools/argparse_actions.py:312 src/fb_tools/multi_config/__init__.py:581
 #, python-brace-format
 msgid "A timeout must be greater than zero and less or equal to {}."
 msgstr "Ein Timeout muss größer als Null und kleiner oder gleich {} sein."
 
-#: src/fb_tools/argparse_actions.py:200
+#: src/fb_tools/argparse_actions.py:317
 #, python-brace-format
 msgid "Wrong timeout {!r}:"
 msgstr "Ungültiger Timeout {!r}:"
@@ -1031,7 +1238,6 @@ msgstr "Der Parameter {cls!r} muss eine von {clinfo!r} abgeleitete Klasse sein."
 msgid "Config options and options for logging"
 msgstr "Konfigurations- und Logging-Optionen"
 
-#: src/fb_tools/application/cfg_converter.py:669 src/fb_tools/application/cfg_converter.py:681
 #: src/fb_tools/application/get_file_rm.py:272 src/fb_tools/cfg_app.py:157 src/fb_tools/cfg_app.py:170
 msgid "FILE"
 msgstr "DATEI"
@@ -1044,7 +1250,8 @@ msgstr "Zusätzlich zu den Standard-Konfigurationsdateien zu benutzende Dateien.
 msgid "A logfile for storing all logging output."
 msgstr "Eine Logdatei, um alle Log-Ausgaben hineinzuschreiben."
 
-#: src/fb_tools/cfg_app.py:165
+#: src/fb_tools/application/cfg_converter.py:414 src/fb_tools/application/cfg_converter.py:424
+#: src/fb_tools/application/cfg_converter.py:451 src/fb_tools/cfg_app.py:165
 #, python-brace-format
 msgid "Default: {!r}."
 msgstr "Vorgabe: {!r}."
@@ -1056,11 +1263,6 @@ msgstr "Erhaltene Kommandozeilen-Argumente:"
 #: src/fb_tools/cfg_app.py:226
 msgid "Error on reading configuration:"
 msgstr "Fehler beim Lesen der Konfiguration:"
-
-#: src/fb_tools/cfg_app.py:242 src/fb_tools/pidfile.py:518
-#, python-brace-format
-msgid "Got a {c}: {e}."
-msgstr "Hab eine(e) {c} erhalten: {e}."
 
 #: src/fb_tools/cfg_app.py:267
 msgid "file is not writeable."
@@ -1074,6 +1276,212 @@ msgstr "kein Schreibzugriff auf das Verzeichnis."
 #, python-brace-format
 msgid "Start logging into file {!r} ..."
 msgstr "Beginne Logging in Datei {!r} …"
+
+#: src/fb_tools/cfg_options/__init__.py:55
+#, python-brace-format
+msgid "Unknown attribute {a!r} for class {c!r}."
+msgstr "Unbekanntes Attribut {a!r} für Klasse {c!r}."
+
+#: src/fb_tools/cfg_options/__init__.py:127 src/fb_tools/cfg_options/__init__.py:141
+#: src/fb_tools/cfg_options/__init__.py:161
+#, python-brace-format
+msgid "Wrong property {p!r} for class {c!r} given."
+msgstr "Falsche Eigenschaft {p!r} für Klasse {c!r} gegeben."
+
+#: src/fb_tools/cfg_options/dump.py:52
+msgid ""
+"If False, each item of a sequence will be formatted on a separate line, otherwise as many items "
+"as will fit within the width will be formatted on each output line."
+msgstr ""
+"Wenn „False“, wird jedes Element einer Sequenz auf einer separaten Line formatiert; andernfalls "
+"werden so viele Elemente, wie in die Breite passen, in jeder Ausgabezeile formatiert."
+
+#: src/fb_tools/cfg_options/dump.py:55
+msgid "The number of nesting levels which may be printed."
+msgstr "Die Anzahl der Verschachtelungsebenen, die ausgegeben werden können."
+
+#: src/fb_tools/cfg_options/dump.py:56
+msgid "The amount of indentation added for each nesting level."
+msgstr "Der für jede Verschachtelungsebene hinzugefügte Einrückungsbetrag."
+
+#: src/fb_tools/cfg_options/dump.py:57 src/fb_tools/cfg_options/hjson.py:49
+#: src/fb_tools/cfg_options/json.py:49
+msgid "Dictionaries will be outputted sorted by key."
+msgstr "Dictionaries werden nach ihren Schlüsseln sortiert ausgegeben."
+
+#: src/fb_tools/cfg_options/dump.py:59
+#, python-brace-format
+msgid "Integers will be formatted with the {!r} character for a thousands separator."
+msgstr "Integerwerte werden mit dem {!r}-Zeichen als Tausendertrennzeichen formatiert."
+
+#: src/fb_tools/cfg_options/dump.py:61
+msgid "The desired maximum number of characters per line in the output."
+msgstr "Die gewünschte Maximalzahl an Zeichen pro Zeile in der Ausgabe."
+
+#: src/fb_tools/cfg_options/dump.py:86
+#, python-brace-format
+msgid "The dump depth value must be a positive integer, {} was given."
+msgstr "Der Wert für die Dump-Tiefe muss ein positiver Integer-Wert sein, {} wurde gegeben."
+
+#: src/fb_tools/cfg_options/dump.py:104
+#, python-brace-format
+msgid "The indent value must be a non negative integer, {} was given."
+msgstr "Der Einrückungswert muss ein nicht-negativer Integerwert sein, {} wurde gegeben."
+
+#: src/fb_tools/cfg_options/dump.py:144
+#,  python-brace-format
+msgid "The value for the width must be an integer greater than {m}, {v} was given."
+msgstr "Der Wert für die Breite muss en Integerwert größer als {m} sein, {v} wurden gegeben."
+
+#: src/fb_tools/cfg_options/dump.py:149
+#, fuzzy, python-brace-format
+msgid "The value for the width must be an integer less than {m}, {v} was given."
+msgstr "Der Wert für {opt!r} muss wenigstens {m} groß sein, {v} wurden gegeben."
+
+#: src/fb_tools/cfg_options/hjson.py:40 src/fb_tools/cfg_options/json.py:40
+#, fuzzy, python-brace-format
+msgid "Ensure, the {} output is guaranteed to have all non-ASCII characters escaped."
+msgstr "In der {}-Ausgabe werden alle Nicht-ASCII-Zeichen garantiert escaped."
+
+#: src/fb_tools/cfg_options/hjson.py:43 src/fb_tools/cfg_options/json.py:43
+#, python-brace-format
+msgid ""
+"The indention of the {} output. If given an positive integer value, these number of spaces are "
+"indented. I given '0', a negative integer or an empty string (''), only newlines are inserted. "
+"If a non empty string is given, this will be used as indention to each level. If omitted, the "
+"most compact form without newlines will be generated."
+msgstr ""
+"Die Einrückung der {}-Ausgabe. Wenn es als pisitive Ganzzahl angegeben wird, dann wird diese "
+"Anzahl von Leerzeichen eingerückt. Wenn „0”, eine negative Zahl oder eine leere Zeichenkette "
+"(„”) angegeben wird, werden nur Zeilenumbrüche eingefügt. Wenn es wedggelassen wird, wird die "
+"kompakteste Form ohne Zeilenumbrüche generiert."
+
+#: src/fb_tools/cfg_options/inifile.py:45
+msgid "Allow keys without values in inifiles."
+msgstr ""
+
+#: src/fb_tools/cfg_options/inifile.py:46
+msgid "The prefixes for comment lines in inifiles."
+msgstr ""
+
+#: src/fb_tools/cfg_options/inifile.py:48
+msgid "The delimiters of inifiles for delimit keys from values within a section."
+msgstr ""
+
+#: src/fb_tools/cfg_options/inifile.py:50
+msgid "Allow multi-line values in inifiles."
+msgstr ""
+
+#: src/fb_tools/cfg_options/inifile.py:51
+msgid "Use ExtendedInterpolation for interpolation of inifiles."
+msgstr ""
+
+#: src/fb_tools/cfg_options/inifile.py:52
+msgid "The inline prefixes for comment lines in inifiles."
+msgstr ""
+
+#: src/fb_tools/cfg_options/inifile.py:54
+msgid "Perform strict parsing of inifiles without duplicated sections or options."
+msgstr ""
+
+#: src/fb_tools/cfg_options/inifile.py:86
+#, fuzzy, python-brace-format
+msgid "Cannot use {!r} as comment prefixes for inifiles."
+msgstr "Kann {!r} nicht als Kommentar-Präfix für ini-Dateien verwenden."
+
+#: src/fb_tools/cfg_options/inifile.py:108
+#, fuzzy, python-brace-format
+msgid "Cannot use {!r} as delimiters for inifiles."
+msgstr "Kann {!r} nicht als Trennzeichen für ini-Dateien verwenden."
+
+#: src/fb_tools/cfg_options/inifile.py:130
+#, fuzzy, python-brace-format
+msgid "Cannot use {!r} as inline comment prefixes for inifiles."
+msgstr "Kann {!r} nicht als Inline-Kommentar-Präfix für ini-Dateien verwenden."
+
+#: src/fb_tools/cfg_options/toml.py:36
+msgid "The indention toml output. It takes a non negative number."
+msgstr ""
+
+#: src/fb_tools/cfg_options/toml.py:52
+#, python-brace-format
+msgid "Toml indent takes a non negative number, {} was given."
+msgstr ""
+
+#: src/fb_tools/cfg_options/yaml.py:62
+msgid "Are Unicode characters allowed in YAML output."
+msgstr ""
+
+#: src/fb_tools/cfg_options/yaml.py:63
+msgid "Include export tag type in YAML output."
+msgstr "Füge die Exporttyp-Markierungen in die YAML-Ausgabe ein."
+
+#: src/fb_tools/cfg_options/yaml.py:64
+#, fuzzy
+msgid "Should be added an explicite end in YAML output."
+msgstr "Gebe eine explizite Ende-Markierung in der YAML-Ausgabe aus."
+
+#: src/fb_tools/cfg_options/yaml.py:65
+#, fuzzy
+msgid "Should be added an explicite start in YAML output."
+msgstr "Keine explizite Starmarkiering in der YAML-Ausgabe ausgeben."
+
+#: src/fb_tools/cfg_options/yaml.py:66
+msgid "Print a collection as flow in YAML output."
+msgstr "Gebe eine Kollektion als Flußausgabe in der YAML-Ausgabe aus."
+
+#: src/fb_tools/cfg_options/yaml.py:68
+#, fuzzy, python-brace-format
+msgid "The linebreak used to generate the YAML output, must be one of {}."
+msgstr "Der Zeilenumbruch im Ausgabe-YAML muss einer aus {lst} sein, aber {v!r} wurden übergeben."
+
+#: src/fb_tools/cfg_options/yaml.py:70
+#, python-brace-format
+msgid "The style of the scalars in YAML output, may be be one of {}."
+msgstr "Der Stil der Skalare in der YAML-Ausgabe, muss einer von {} sein."
+
+#: src/fb_tools/cfg_options/yaml.py:73
+#, fuzzy, python-brace-format
+msgid "The maximum width of generated lines on YAML output."
+msgstr "Die Maximalbreite der Zeilen der generierten YAML-Ausgabe (Vorgabe: {})."
+
+#: src/fb_tools/cfg_options/yaml.py:136
+#, python-brace-format
+msgid "The indention of generated YAML files must be at least {m} characters, {v!r} are given."
+msgstr ""
+"Die Einrückung der generierten YAML-Datei muss wenigstens {m} Zeichen groß sein, {v!r} wurden "
+"übergeben."
+
+#: src/fb_tools/cfg_options/yaml.py:142
+#, python-brace-format
+msgid "The indention of generated YAML files must be at most {m} characters, {v!r} are given."
+msgstr ""
+"Die Einrückung der generierten YAML-Datei darf höchstens {m} Zeichen groß sein, {v!r} wurden "
+"übergeben."
+
+#: src/fb_tools/cfg_options/yaml.py:162
+#, fuzzy, python-brace-format
+msgid "The line break used to generate ouput YAML must be one of {lst}, but {v!r} was given."
+msgstr "Der Zeilenumbruch im Ausgabe-YAML muss einer aus {lst} sein, aber {v!r} wurden übergeben."
+
+#: src/fb_tools/cfg_options/yaml.py:183
+#, python-brace-format
+msgid "The default style on ouput YAML must be one of {lst}, but {v!r} was given."
+msgstr "Der Vorgabe-Stil der YAML-Ausgabe muss einer aus {lst} sein, aber {v!r} wurden übergeben."
+
+#: src/fb_tools/cfg_options/yaml.py:203
+#, fuzzy, python-brace-format
+msgid "The maximum width of generated YAML output must be at least {m} characters, {v!r} are given."
+msgstr ""
+"Die maximale Breite der generierten YAML-Datei muss wenigstens {m} Zeichen groß sein, {v!r} "
+"wurden übergeben."
+
+#: src/fb_tools/cfg_options/yaml.py:209
+#, fuzzy, python-brace-format
+msgid "The maximum width of generated YAML output must be at most {m} characters, {v!r} are given."
+msgstr ""
+"Die maximale Breite der generierten YAML-Datei darf höchstens {m} Zeichen groß sein, {v!r} "
+"wurden übergeben."
 
 #: src/fb_tools/colcts.py:61 src/fb_tools/collections.py:61
 #, python-brace-format
@@ -1118,44 +1526,39 @@ msgstr "Der Parameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Ty
 msgid "The method {met}() expected at most {max} arguments, got {got}."
 msgstr "Die Methode {met}() erwartet höchstens {max} Argumente, hat aber {got} erhalten."
 
-#: src/fb_tools/common.py:173
+#: src/fb_tools/common.py:202
 #, python-brace-format
 msgid "{} is a tty."
 msgstr "{} ist ein tty."
 
-#: src/fb_tools/common.py:177
+#: src/fb_tools/common.py:206
 msgid "Platform is Windows and not ansi_term."
 msgstr "Die Plattform ist Windows und nicht ansi_term."
 
-#: src/fb_tools/common.py:181
+#: src/fb_tools/common.py:210
 #, python-brace-format
 msgid "{} is not a tty."
 msgstr "{} ist kein tty."
 
-#: src/fb_tools/common.py:573
+#: src/fb_tools/common.py:602
 #, python-brace-format
 msgid "Given value is {!r}."
 msgstr "Der übergebene Wert ist {!r}."
 
-#: src/fb_tools/common.py:612
+#: src/fb_tools/common.py:641
 #, python-brace-format
 msgid "Could not determine bytes in {!r}."
 msgstr "Konnte die Bytes nicht in {!r} ermitteln."
 
-#: src/fb_tools/common.py:698
+#: src/fb_tools/common.py:727
 #, python-brace-format
 msgid "Couldn't detect unit {!r}."
 msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
 
-#: src/fb_tools/common.py:803
+#: src/fb_tools/common.py:832
 #, python-brace-format
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
-
-#: src/fb_tools/config.py:103 src/fb_tools/multi_config/__init__.py:219
-#, python-brace-format
-msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
-msgstr "Die Kodierung {v!r} muss ein {s!r}-Objekt sein, ist aber statt dessen ein {c!r}-Objekt."
 
 #: src/fb_tools/config.py:119 src/fb_tools/multi_config/__init__.py:275
 msgid "A configuration directory may not be None."
@@ -1415,126 +1818,134 @@ msgstr "Das Arbeitsverzeichnis {!r} existiert nicht"
 msgid "Invalid permissions for working directory {!r}"
 msgstr "Ungenügende Rechte für das Arbeitsverzeichnis {!r}"
 
-#: src/fb_tools/errors.py:56
+#: src/fb_tools/errors.py:70
 #, python-brace-format
 msgid "Config loader method {!r} was not found."
 msgstr "Die Konfigurations-Lade-Methode {!r} wurde nicht gefunden."
 
-#: src/fb_tools/errors.py:92
+#: src/fb_tools/errors.py:106
 msgid "Empty mail address."
 msgstr "Leere Mailadresse."
 
-#: src/fb_tools/errors.py:108
+#: src/fb_tools/errors.py:122
 #, python-brace-format
 msgid "Wrong mail address {a!r} ({c})"
 msgstr "Ungültige Mailadresse {a!r} ({c})"
 
-#: src/fb_tools/errors.py:130
+#: src/fb_tools/errors.py:144
 #, python-brace-format
 msgid "Wrong time interval {!r}."
 msgstr "Ungültiges Zeitintervall"
 
-#: src/fb_tools/errors.py:212
+#: src/fb_tools/errors.py:179
+msgid "The input file is not existing"
+msgstr "Die Eingabe-Datei existiert nicht"
+
+#: src/fb_tools/errors.py:190
+msgid "The input file is not readable"
+msgstr "Die Eingabe-Datei ist nicht lesbar"
+
+#: src/fb_tools/errors.py:258
 #, python-brace-format
 msgid "Process with PID {pid} got signal {signal}."
 msgstr "Der Prozess mit der PID {pid} hat das Signal {signal} erhalten."
 
-#: src/fb_tools/errors.py:252
+#: src/fb_tools/errors.py:298
 #, python-brace-format
 msgid "The network {!r} is not existing."
 msgstr "Das Netzerk {!r} existiert nicht."
 
-#: src/fb_tools/errors.py:282
+#: src/fb_tools/errors.py:328
 #, python-brace-format
 msgid "Method {func}() has to be overridden in class {cls!r}."
 msgstr "Die Methode {func}() der Klasse {cls!r} muss überschrieben werden."
 
-#: src/fb_tools/errors.py:311
+#: src/fb_tools/errors.py:357
 #, python-brace-format
 msgid " (timeout after {:0.1f} secs)"
 msgstr " (Timeout nach {:0.1f} Sekunden)"
 
-#: src/fb_tools/errors.py:334
+#: src/fb_tools/errors.py:380
 msgid "Timeout error on reading"
 msgstr "Timeout-Fehler beim Lesen"
 
-#: src/fb_tools/errors.py:353
+#: src/fb_tools/errors.py:399
 msgid "Timeout error on writing"
 msgstr "Timeout-Fehler beim Schreiben"
 
-#: src/fb_tools/errors.py:364
+#: src/fb_tools/errors.py:410
 msgid "Timeout on answering on the console."
 msgstr "Zeitüberschreitung beim Antworten an der Konsole."
 
-#: src/fb_tools/errors.py:383
+#: src/fb_tools/errors.py:429
 msgid "Unknown OS command."
 msgstr "Unbekanntes Betriebssystem-Kommando."
 
-#: src/fb_tools/errors.py:390
+#: src/fb_tools/errors.py:436
 msgid "Empty command list given."
 msgstr "Leere Kommando-Liste übergeben."
 
-#: src/fb_tools/errors.py:398
+#: src/fb_tools/errors.py:444
 msgid "Could not found OS command:"
 msgid_plural "Could not found OS commands:"
 msgstr[0] "Konnte das Betriebssystem-Kommando nicht finden:"
 msgstr[1] "Konnte die Betriebssystem-Kommandos nicht finden:"
 
-#: src/fb_tools/errors.py:430
+#: src/fb_tools/errors.py:476
 #, python-brace-format
 msgid "Couldn't occupy lockfile {lf!r} in {d:0.1f} seconds with {tries} tries."
 msgstr "Konnte die Lock-Datei {lf!r} nicht in {d:0.1f} Sekunden mit {tries} Versuchen vereinnahmen."
 
-#: src/fb_tools/errors.py:460
+#: src/fb_tools/errors.py:506
 #, python-brace-format
 msgid "There is a problem with path {!r}"
 msgstr "Es gibt ein Problem mit dem Pfad {!r}"
 
-#: src/fb_tools/errors.py:475
+#: src/fb_tools/errors.py:521
 #, python-brace-format
 msgid "There is a problem with directory {!r}"
 msgstr "Es gibt ein Problem mit dem Verzeichnis {!r}"
 
-#: src/fb_tools/errors.py:490
+#: src/fb_tools/errors.py:536
 #, python-brace-format
 msgid "Directory {!r} does not exists"
 msgstr "Das Verzeichnis {!r} existiert nicht"
 
-#: src/fb_tools/ddns/errors.py:110 src/fb_tools/errors.py:505
+#: src/fb_tools/ddns/errors.py:110 src/fb_tools/errors.py:551
 #, python-brace-format
 msgid "Path {!r} is not a directory"
 msgstr "Der Pfad {!r} ist kein Verzeichnis."
 
-#: src/fb_tools/errors.py:520
+#: src/fb_tools/errors.py:566
 #, python-brace-format
 msgid "Invalid permissions for directory {!r}"
 msgstr "Ungültige Zugriffsrechte auf das Verzeichnis {!r}"
 
-#: src/fb_tools/errors.py:535
+#: src/fb_tools/errors.py:581
 #, python-brace-format
 msgid "There is a problem with file {!r}"
 msgstr "Es gibt ein Problem mit der Datei {!r}"
 
-#: src/fb_tools/errors.py:550
+#: src/fb_tools/errors.py:596
 #, python-brace-format
 msgid "File {!r} does not exists"
 msgstr "Die Datei {!r} existiert nicht"
 
-#: src/fb_tools/errors.py:565
+#: src/fb_tools/errors.py:611
 #, python-brace-format
 msgid "Path {!r} is not a regular file"
 msgstr "Der Pfad {!r} ist keine reguläre Datei"
 
-#: src/fb_tools/errors.py:580
+#: src/fb_tools/errors.py:626
 #, python-brace-format
 msgid "Invalid permissions for file {!r}"
 msgstr "Ungültige Zugriffsrechte auf die Datei {!r}"
 
-#: src/fb_tools/errors.py:609
+#: src/fb_tools/errors.py:655
 msgid "Timeout error on reading from socket"
 msgstr "Timeout-Fehler beim Lesen vom Sockel"
 
-#: src/fb_tools/errors.py:630
+#: src/fb_tools/errors.py:676
 msgid "Timeout error on writing to socket"
 msgstr "Timeout-Fehler beim Schreiben auf den Sockel"
 
@@ -1823,192 +2234,193 @@ msgstr "Konnte {cont!r} nicht als PID (in {file!r}) interpretieren: {err}"
 msgid "Invalid PID {pid} in {file!r} found."
 msgstr "Ungültige PID {pid} in Datei {file!r} gefunden."
 
-#: src/fb_tools/handling_obj.py:87
+#: src/fb_tools/handling_obj.py:90
 msgid "Timeout on communicating with process."
 msgstr "Zeitüberschreitung in der Kommunikation mit einem Prozess."
 
-#: src/fb_tools/handling_obj.py:113
+#: src/fb_tools/handling_obj.py:116
 #, python-brace-format
 msgid "Command {c!r} returned non-zero exit status {rc}."
 msgstr "Das Kommando {c!r} gab den Nicht-Null Wert {rc} zurück."
 
-#: src/fb_tools/handling_obj.py:153
+#: src/fb_tools/handling_obj.py:156
 #, python-brace-format
 msgid "Command {c!r} timed out after {s} second."
 msgid_plural "Command {c!r} timed out after {s} seconds."
 msgstr[0] "Das Kommando {c!r} timte nach einer Sekunde aus."
 msgstr[1] "Das Kommando {c!r} timte nach {s} Sekunden aus."
 
-#: src/fb_tools/handling_obj.py:388
+#: src/fb_tools/handling_obj.py:392
 #, python-brace-format
 msgid "Wrong prompt timeout {v!r}, must be greater or equal to Null and less or equal to {max}."
 msgstr ""
 "Falscher Eingabe-Timeout {v!r}, er muss größer oder gleich Null sowie kleiner oder gleich {max} "
 "sein."
 
-#: src/fb_tools/handling_obj.py:411 src/fb_tools/handling_obj.py:512
+#: src/fb_tools/handling_obj.py:415 src/fb_tools/handling_obj.py:516
 #, python-brace-format
 msgid "Wrong address family {!r} given. Valid values are:"
 msgstr "Ungültige Adressfamilie {!r} übergeben. Gültige Werte sind:"
 
-#: src/fb_tools/handling_obj.py:430
-msgid "yes"
-msgstr "ja"
-
-#: src/fb_tools/handling_obj.py:437
+#: src/fb_tools/handling_obj.py:441
 msgid "no"
 msgstr "nein"
 
-#: src/fb_tools/handling_obj.py:571
+#: src/fb_tools/handling_obj.py:575
 msgid "No hostname or IP address given on calling get_address()."
 msgstr "Kein Hostname oder IP-Adresse beim Aufruf von get_address() übergeben."
 
-#: src/fb_tools/handling_obj.py:639
+#: src/fb_tools/handling_obj.py:643
 #, python-brace-format
 msgid "Searching for command {!r} ..."
 msgstr "Suche nach Befehl {!r} …"
 
-#: src/fb_tools/handling_obj.py:644
+#: src/fb_tools/handling_obj.py:648
 #, python-brace-format
 msgid "Command {!r} doesn't exists."
 msgstr "Das Befehl {!r} existiert nicht."
 
-#: src/fb_tools/handling_obj.py:647 src/fb_tools/handling_obj.py:671
+#: src/fb_tools/handling_obj.py:651 src/fb_tools/handling_obj.py:675
 #, python-brace-format
 msgid "Command {!r} is not executable."
 msgstr "Das Befehl {!r} ist nicht ausführbar."
 
-#: src/fb_tools/handling_obj.py:661
+#: src/fb_tools/handling_obj.py:665
 #, python-brace-format
 msgid "Searching command in {!r} ..."
 msgstr "Suche Befehl in {!r} …"
 
-#: src/fb_tools/handling_obj.py:674
+#: src/fb_tools/handling_obj.py:678
 #, python-brace-format
 msgid "Command {!r} not found."
 msgstr "Das Kommando {!r} wurde nicht gefunden."
 
-#: src/fb_tools/handling_obj.py:746
+#: src/fb_tools/handling_obj.py:750
 msgid "STDIN and input arguments may not both be used."
 msgstr "STDIN und Eingabe-Argumente dürfen nicht zusammen verwendet werden."
 
-#: src/fb_tools/handling_obj.py:749
+#: src/fb_tools/handling_obj.py:753
 msgid "Executing command args:"
 msgstr "Auszuführende Befehlsargumente:"
 
-#: src/fb_tools/handling_obj.py:752
+#: src/fb_tools/handling_obj.py:756
 #, python-brace-format
 msgid "Performing argument {!r}."
 msgstr "Verarbeite Argument {!r}."
 
-#: src/fb_tools/handler/__init__.py:259 src/fb_tools/handling_obj.py:757
+#: src/fb_tools/handler/__init__.py:259 src/fb_tools/handling_obj.py:761
 #, python-brace-format
 msgid "Executing: {}"
 msgstr "Ausführung: {}"
 
-#: src/fb_tools/handling_obj.py:760
+#: src/fb_tools/handling_obj.py:764
 #, python-brace-format
 msgid "Simulation mode, not executing: {}"
 msgstr "Simulations-Modus, führe nicht aus: {}"
 
-#: src/fb_tools/handling_obj.py:768
+#: src/fb_tools/handling_obj.py:772
 #, python-brace-format
 msgid "PID of process: {}"
 msgstr "PID des Prozesses: {}"
 
-#: src/fb_tools/handling_obj.py:774
+#: src/fb_tools/handling_obj.py:778
 #, python-brace-format
 msgid "{c} happened, killing process: {e}"
 msgstr "{} aufgetreten, töte Prozess: {e}"
 
-#: src/fb_tools/handling_obj.py:878
+#: src/fb_tools/handling_obj.py:882
 msgid "Nothing to do on signal."
 msgstr "Aud das Signal gibt es nichts zu tun."
 
-#: src/fb_tools/handling_obj.py:930 src/fb_tools/handling_obj.py:1018
+#: src/fb_tools/handling_obj.py:934 src/fb_tools/handling_obj.py:1035
 msgid "File doesn't exists."
 msgstr "Die Datei existiert nicht."
 
-#: src/fb_tools/handling_obj.py:932
+#: src/fb_tools/handling_obj.py:936
 msgid "Read permission denied."
 msgstr "Lesezugriff verboten."
 
-#: src/fb_tools/handling_obj.py:935
+#: src/fb_tools/handling_obj.py:939
 #, python-brace-format
 msgid "Reading file content of {!r} ..."
 msgstr "Lese Inhalt der Datei {!r} …"
 
-#: src/fb_tools/handling_obj.py:1023 src/fb_tools/handling_obj.py:1030
+#: src/fb_tools/handling_obj.py:975
+#, fuzzy, python-brace-format
+msgid "Removing BOM from read file content ..."
+msgstr "Lösche Sockel-Datei {!r} …"
+
+#: src/fb_tools/handling_obj.py:1040 src/fb_tools/handling_obj.py:1047
 #, python-brace-format
 msgid "Write permission to {!r} denied."
 msgstr "Schreibzugriff auf {!r} verboten."
 
-#: src/fb_tools/handling_obj.py:1025 src/fb_tools/handling_obj.py:1032
+#: src/fb_tools/handling_obj.py:1042 src/fb_tools/handling_obj.py:1049
 msgid "Write permission denied."
 msgstr "Schreibzugriff verboten."
 
-#: src/fb_tools/handling_obj.py:1036
+#: src/fb_tools/handling_obj.py:1053
 #, python-brace-format
 msgid "Write {what!r} into {to!r}."
 msgstr "Schreibe {what!r} nach {to!r}."
 
-#: src/fb_tools/handling_obj.py:1038
+#: src/fb_tools/handling_obj.py:1055
 #, python-brace-format
 msgid "Writing {!r} ..."
 msgstr "Schreibe {!r} …"
 
-#: src/fb_tools/handling_obj.py:1050
+#: src/fb_tools/handling_obj.py:1067
 #, python-brace-format
 msgid "Simulating write into {!r}."
 msgstr "Simuliere das Schreiben nach {!r}."
 
-#: src/fb_tools/handling_obj.py:1058
+#: src/fb_tools/handling_obj.py:1075
 #, python-brace-format
 msgid "Opening {!r} for write unbuffered ..."
 msgstr "Öffne {!r} zum ungepufferten Schreiben …"
 
-#: src/fb_tools/handler/lock.py:964 src/fb_tools/handling_obj.py:1062
+#: src/fb_tools/handler/lock.py:964 src/fb_tools/handling_obj.py:1079
 #, python-brace-format
 msgid "Closing {!r} ..."
 msgstr "Schließe {!r} …"
 
-#: src/fb_tools/handling_obj.py:1103
+#: src/fb_tools/handling_obj.py:1120
 msgid "Password:"
 msgstr "Passwort:"
 
-#: src/fb_tools/handling_obj.py:1106
+#: src/fb_tools/handling_obj.py:1123
 msgid "Repeat password:"
 msgstr "Passwort Wiederholung:"
 
-#: src/fb_tools/handling_obj.py:1122
+#: src/fb_tools/handling_obj.py:1139
 msgid "The entered passwords does not match."
 msgstr "Die eingegebenen Passwörter stimmen nicht überein."
 
-#: src/fb_tools/handling_obj.py:1135 src/fb_tools/handling_obj.py:1216
+#: src/fb_tools/handling_obj.py:1152 src/fb_tools/handling_obj.py:1233
 msgid "Interrupted on demand."
 msgstr "Abbruch auf Verlangen."
 
-#: src/fb_tools/handling_obj.py:1160 src/fb_tools/handling_obj.py:1168
-#: src/fb_tools/handling_obj.py:1250 src/fb_tools/handling_obj.py:1255
+#: src/fb_tools/handling_obj.py:1177 src/fb_tools/handling_obj.py:1185
+#: src/fb_tools/handling_obj.py:1267 src/fb_tools/handling_obj.py:1272
 #, python-brace-format
 msgid "Got a {}:"
 msgstr "Habe ein {} erhalten:"
 
-#: src/fb_tools/handling_obj.py:1201
+#: src/fb_tools/handling_obj.py:1218
 msgid "Yes/No"
 msgstr "Ja/Nein"
 
-#: src/fb_tools/handling_obj.py:1209
+#: src/fb_tools/handling_obj.py:1226
 #, python-brace-format
 msgid "Automatic answer: '{}'."
 msgstr "Automatische Antwort: '{}'."
 
-#: src/fb_tools/handling_obj.py:1318 src/fb_tools/handling_obj.py:1325
+#: src/fb_tools/handling_obj.py:1335 src/fb_tools/handling_obj.py:1342
 #, python-brace-format
 msgid "Parameter {t!r} must be a {e}, {v!r} was given."
 msgstr "Der Parameter {t!r} muss ein {e} ein, statt dessen wurde {v!r} übergeben."
 
-#: src/fb_tools/handling_obj.py:1396
+#: src/fb_tools/handling_obj.py:1413
 msgid "Completed process"
 msgstr "Fertiggestellter Prozess"
 
@@ -2309,34 +2721,6 @@ msgstr "Von {fn!r} gelesene Konfiguration:"
 msgid "Read merged config:"
 msgstr "Gelesene und zusammengeführte Konfiguration:"
 
-#: src/fb_tools/multi_config/read.py:105
-#, python-brace-format
-msgid ""
-"Character set detection by module {mod!r} for file {fn!r} should not be used, using character "
-"set {enc!r}."
-msgstr ""
-"Die Zeichesatzerkennung durch das Modul {mod!r} für die Datei {fn!r} soll nicht verwendet "
-"werden, verwende Zeichensatz {enc!r}."
-
-#: src/fb_tools/multi_config/read.py:113
-#, python-brace-format
-msgid "Trying to detect character set of file {fn!r} ..."
-msgstr "Versuche den Zeichensatz der Datei {fn!r} zu ermitteln …"
-
-#: src/fb_tools/multi_config/read.py:125
-#, python-brace-format, python-format
-msgid ""
-"The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, using character set "
-"{cs_def!r} instead of {cs_found!r}."
-msgstr ""
-"Die Zuverlässigkeit von {con:0.1f}% ist kleiner als das Limit von {lim:0.1f}%, verwende den "
-"Zeichensatz {cs_def!r} anstelle von {cs_found!r}."
-
-#: src/fb_tools/multi_config/read.py:137
-#, python-brace-format
-msgid "Got {what} on detecting cheracter set of {fn!r}: {e}"
-msgstr "Erhielt {what} bei der Zeichensatzerkennung von {fn!r}: {e}."
-
 #: src/fb_tools/multi_config/read.py:144
 #, python-brace-format
 msgid "Found character set {cs!r} for file {fn!r} with a confidence of {con:0.1f}%."
@@ -2361,11 +2745,6 @@ msgstr "{what} Parse-Fehler in {fn!r}, Zeine {line}, Spalte {col}: {msg}"
 #, python-brace-format
 msgid "Got {what} on reading and parsing {fn!r}: {e}"
 msgstr "Habe {what} beim Lesen und Parsen von {fn!r} erhalten: {e}."
-
-#: src/fb_tools/multi_config/read.py:239
-#, python-brace-format
-msgid "Arguments on initializing {}:"
-msgstr "Argumente zur Initialisierung von {}:"
 
 #: src/fb_tools/obj.py:60
 #, python-brace-format
