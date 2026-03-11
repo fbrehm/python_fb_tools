@@ -69,7 +69,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = "2.4.7"
+__version__ = "2.4.8"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -970,10 +970,10 @@ class HandlingObject(FbBaseObject):
         #     bofs['BOM_LE'] = "\ufffe"
         #     bofs['BOM_UTF8'] = "\xef\xbb\xbf"
 
-        if not binary and content.startswith(u'\ufeff'):
+        if not binary and content.startswith("\ufeff"):
             if self.verbose > 1:
                 LOG.debug(_("Removing BOM from read file content ..."))
-            content = content.replace(u'\ufeff', '', 1)
+            content = content.replace("\ufeff", "", 1)
 
         return content
 
@@ -990,7 +990,7 @@ class HandlingObject(FbBaseObject):
         @raise WriteTimeoutError: on timeout writing into the file
 
         @param filename: name of the file to write
-        @type filename: str
+        @type filename: str or Path
         @param content: the content to write into the file
         @type content: str
         @param timeout: the amount in seconds when this method should timeout
@@ -1018,11 +1018,11 @@ class HandlingObject(FbBaseObject):
             raise WriteTimeoutError(timeout, filename)
 
         verb_level1 = 0
-        verb_level2 = 1
+        # verb_level2 = 1
         verb_level3 = 3
         if quiet:
             verb_level1 = 2
-            verb_level2 = 3
+            # verb_level2 = 3
             verb_level3 = 4
 
         if timeout is None:
@@ -1049,7 +1049,7 @@ class HandlingObject(FbBaseObject):
                     raise IOError(errno.EACCES, _("Write permission denied."), parent_dir)
 
         if self.verbose > verb_level1:
-            if self.verbose > verb_level2:
+            if self.verbose > verb_level3:
                 LOG.debug(_("Write {what!r} into {to!r}.").format(what=content, to=ofile))
             else:
                 LOG.debug(_("Writing {!r} ...").format(ofile))
@@ -1063,7 +1063,7 @@ class HandlingObject(FbBaseObject):
                 content_bin = encode_or_bust(str(content), encoding)
 
         if self.simulate:
-            if self.verbose > verb_level2:
+            if self.verbose > verb_level1:
                 LOG.debug(_("Simulating write into {!r}.").format(ofile))
             return
 

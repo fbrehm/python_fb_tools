@@ -41,7 +41,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.6.5"
+__version__ = "0.6.6"
 
 LOG = logging.getLogger(__name__)
 
@@ -578,9 +578,7 @@ class AnyConfigHandler(HandlingObject):
             cfg = module.loads(content)
         except module.TOMLDecodeError as e:
             msg = _("{what} parse error in '{fn}': {e}").format(
-                what=e.__class__.__name__,
-                fn=self.colored(source, "red"),
-                e=e
+                what=e.__class__.__name__, fn=self.colored(source, "red"), e=e
             )
             if raise_on_error:
                 raise ConfigWrongTypeError(msg)
@@ -658,12 +656,46 @@ class AnyConfigHandler(HandlingObject):
             )
             raise ConfigWrongTypeError(msg)
 
-        content = self.dump_config(
-            config, config_type, raise_on_error=True, target=str(file_name)
+        LOG.debug(
+            _("writing {file_name} as {config_type} ...").format(
+                file_name=self.colored(str(file_name), "cyan"),
+                config_type=self.colored(config_type, "green"),
+            )
         )
+
+        content = self.dump_config(config, config_type, raise_on_error=True, target=str(file_name))
 
         if file_name is None or str(file_name) in ("", "-"):
             print(content)
+        else:
+            fo = Path(file_name)
+            if fo.exists():
+                if self.force:
+                    msg = _("File '{}' is already existing and will be overridden.").format(
+                        self.colored(str(fo), "yellow")
+                    )
+                    LOG.warn(msg)
+                else:
+                    prompt = (
+                        _(
+                            "File '{fo}' is already existing. Do you want to override it "
+                            "[{y}|{n}]"
+                        ).format(
+                            fo=self.colored(str(fo), "cyan"),
+                            y=self.colored(_("yes"), "red"),
+                            n=self.colored(_("No"), "green"),
+                        )
+                        + " "
+                    )
+                    answer = self.ask_for_yes_or_no(prompt, False)
+                    if not answer:
+                        msg = _("File '{}' will not be overridden.").format(
+                            self.colored(str(fo), "cyan")
+                        )
+                        LOG.info(msg)
+                        return (config_type, content)
+
+            self.write_file(fo, content, must_exists=False)
 
         return (config_type, content)
 

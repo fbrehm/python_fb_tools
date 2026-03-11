@@ -127,7 +127,6 @@ def pp(
     @return: pretty print string
     @rtype: str
     """
-
     if width is None:
         term_size = shutil.get_terminal_size((DEFAULT_TERMINAL_WIDTH, DEFAULT_TERMINAL_HEIGHT))
         width = term_size.columns

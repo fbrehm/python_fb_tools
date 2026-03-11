@@ -16,8 +16,8 @@ import logging
 # Own modules
 from . import BaseConfigOptions
 from .. import MAX_INDENT
-from .. import MIN_INDENT
 from .. import MAX_TERM_WIDTH
+from .. import MIN_INDENT
 from .. import MIN_TERM_WIDTH
 from ..common import to_bool
 from ..xlate import DEFAULT_LOCALE
@@ -160,7 +160,8 @@ class ConfigOptionsYaml(BaseConfigOptions):
         if v not in self.avail_linebreaks:
             msg = _(
                 "The line break used to generate ouput YAML must be one of {lst}, "
-                "but {v!r} was given.").format(lst=self.linebreak_list_xlated, v=value)
+                "but {v!r} was given."
+            ).format(lst=self.linebreak_list_xlated, v=value)
             raise ValueError(msg)
 
         self._style = v

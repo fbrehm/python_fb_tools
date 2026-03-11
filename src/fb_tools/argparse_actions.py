@@ -168,7 +168,8 @@ class NonNegativeIntegerOptionAction(argparse.Action):
         self.may_zero = bool(may_zero)
 
         super(NonNegativeIntegerOptionAction, self).__init__(
-            option_strings=option_strings, *args, **kwargs)
+            *args, **kwargs, option_strings=option_strings
+        )
 
     # -------------------------------------------------------------------------
     def __call__(self, parser, namespace, value, option_string=None):
@@ -176,16 +177,17 @@ class NonNegativeIntegerOptionAction(argparse.Action):
         try:
             val = int(value)
         except Exception as e:
-            msg = _('Got a {c} for converting {v!r} into an integer value: {e}').format(
-                c=e.__class__.__name__, v=value, e=e)
+            msg = _("Got a {c} for converting {v!r} into an integer value: {e}").format(
+                c=e.__class__.__name__, v=value, e=e
+            )
             raise argparse.ArgumentError(self, msg)
 
         if val < 0:
-            msg = _('The option must not be negative (given: {}).').format(value)
+            msg = _("The option must not be negative (given: {}).").format(value)
             raise argparse.ArgumentError(self, msg)
 
         if not self.may_zero and val == 0:
-            msg = _('The option must not be zero.')
+            msg = _("The option must not be zero.")
             raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, val)

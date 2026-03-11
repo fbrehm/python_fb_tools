@@ -51,7 +51,7 @@ from ..xlate import format_list
 
 # from ..multi_config import BaseMultiConfig
 
-__version__ = "0.10.0"
+__version__ = "0.10.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -135,6 +135,7 @@ class CfgConvertApplication(BaseApplication):
     max_indent = MAX_INDENT
 
     show_quiet_option = False
+    show_force_option = True
 
     # -------------------------------------------------------------------------
     def __init__(self, version=GLOBAL_VERSION, *args, **kwargs):
@@ -151,6 +152,11 @@ class CfgConvertApplication(BaseApplication):
         self._output_file = "-"
         self.cfg_content = None
 
+        self._force_desc_msg = _(
+            "Override an existing target config file without a question, "
+            "if it is already existing."
+        )
+
         self.config_handler = None
 
         super(CfgConvertApplication, self).__init__(
@@ -163,6 +169,7 @@ class CfgConvertApplication(BaseApplication):
             terminal_has_colors=self.terminal_has_colors,
             verbose=self.verbose,
             simulate=self.simulate,
+            force=self.force,
         )
         self.eval_args_cfg_types()
 
@@ -592,14 +599,10 @@ class CfgConvertApplication(BaseApplication):
         if from_type:
             self.from_type = from_type
 
-        to_type = getattr(self.args, "to_type", None)
-        if to_type:
-            self.to_type = to_type
-        else:
-            self.to_type = "dump"
+        self.to_type = getattr(self.args, "to_type", None)
 
         self.input_file = getattr(self.args, "input_file", "-")
-        self.output = getattr(self.args, "output_file", "-")
+        self.output_file = getattr(self.args, "output_file", "-")
 
     # -------------------------------------------------------------------------
     def eval_args_cfg_types(self):
@@ -854,10 +857,11 @@ class CfgConvertApplication(BaseApplication):
         ret = 0
 
         try:
-            (config_type, config) = self.load()
+            config_type, config = self.load()
         except ConfigWrongTypeError as e:
             msg = _("Could not read or evaluate configuration file '{}':").format(
-                self.colored(str(self.input_file), "red"))
+                self.colored(str(self.input_file), "red")
+            )
             msg += " " + str(e)
             LOG.error(msg)
             self.exit(5)
@@ -871,15 +875,19 @@ class CfgConvertApplication(BaseApplication):
     def load(self):
         """Load config file."""
         if self.verbose > 1:
-            LOG.debug(_("Trying to read from '{}' ...").format(
-                self.colored(str(self.input_file), "cyan"))
+            LOG.debug(
+                _("Trying to read from '{}' ...").format(
+                    self.colored(str(self.input_file), "cyan")
+                )
             )
 
-        (config_type, config) = self.config_handler.load_file(self.input_file, self.from_type)
+        config_type, config = self.config_handler.load_file(self.input_file, self.from_type)
         if config_type != self.from_type:
-            LOG.debug(_("Detected config type of '{infile}': {cfgtype}").format(
-                infile=self.colored(str(self.input_file), "cyan"),
-                cfgtype=self.colored(config_type, "green"))
+            LOG.debug(
+                _("Detected config type of '{infile}': {cfgtype}").format(
+                    infile=self.colored(str(self.input_file), "cyan"),
+                    cfgtype=self.colored(config_type, "green"),
+                )
             )
 
         return (config_type, config)
@@ -895,6 +903,12 @@ class CfgConvertApplication(BaseApplication):
                 try:
                     config_type = self.config_handler.guess_config_type_by_name(
                         self.output_file, raise_on_error=True
+                    )
+                    LOG.debug(
+                        _("Guessed config type of {fo} is '{t}'.").format(
+                            fo=self.colored(str(self.output_file), "cyan"),
+                            t=self.colored(config_type, "green"),
+                        )
                     )
                 except ConfigDetectionError as e:
                     LOG.error(str(e))
