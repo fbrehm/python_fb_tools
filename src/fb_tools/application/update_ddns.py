@@ -46,7 +46,7 @@ from ..errors import FileNotRegularFileError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR, format_list
 
-__version__ = "2.5.0"
+__version__ = "2.5.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -836,7 +836,7 @@ class UpdateDdnsApplication(BaseDdnsApplication):
 # =============================================================================
 def main():
     """Entrypoint for myip."""
-    my_path = Path(__file__)
+    my_path = Path(sys.argv[0])
     appname = my_path.name
 
     locale.setlocale(locale.LC_ALL, "")
