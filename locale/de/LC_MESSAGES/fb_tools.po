@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: fb_tools 2.9.5\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
 "POT-Creation-Date: 2026-03-11 15:22+0100\n"
-"PO-Revision-Date: 2026-03-11 15:40+0100\n"
+"PO-Revision-Date: 2026-03-12 07:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de\n"
 "Language-Team: de <frank@brehm-online.com>\n"
@@ -606,8 +606,8 @@ msgstr "Das übergebene Muster {!r} is kein gültiges Datums-Muster"
 
 #: src/fb_tools/application/get_file_rm.py:110
 #, python-format
-msgid ". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
-msgstr ". Es muss exakt einmal '%Y', einmal '%m' und einmal '%d' angegeben werden."
+msgid ". There must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
+msgstr ". Es muss exakt einmal „%Y”, einmal „%m” und einmal „%d” angegeben werden."
 
 #: src/fb_tools/application/get_file_rm.py:142
 msgid ""
