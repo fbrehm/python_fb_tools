@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 2.9.5\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2026-03-12 08:39+0100\n"
+"POT-Creation-Date: 2026-03-12 11:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank@brehm-online.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -542,33 +542,32 @@ msgstr ""
 msgid "Options for generating TOML output:"
 msgstr ""
 
-#: src/fb_tools/application/cfg_converter.py:856 src/fb_tools/application/myip.py:145
-#: src/fb_tools/application/update_ddns.py:490
+#: src/fb_tools/application/cfg_converter.py:856
 #, python-brace-format
-msgid "Starting {a!r}, version {v!r} ..."
+msgid "Starting {a}, version '{v}' ..."
 msgstr ""
 
-#: src/fb_tools/application/cfg_converter.py:862
+#: src/fb_tools/application/cfg_converter.py:865
 #, python-brace-format
 msgid "Could not read or evaluate configuration file '{}':"
 msgstr ""
 
-#: src/fb_tools/application/cfg_converter.py:879
+#: src/fb_tools/application/cfg_converter.py:882
 #, python-brace-format
 msgid "Trying to read from '{}' ..."
 msgstr ""
 
-#: src/fb_tools/application/cfg_converter.py:887
+#: src/fb_tools/application/cfg_converter.py:890
 #, python-brace-format
 msgid "Detected config type of '{infile}': {cfgtype}"
 msgstr ""
 
-#: src/fb_tools/application/cfg_converter.py:908
+#: src/fb_tools/application/cfg_converter.py:911
 #, python-brace-format
 msgid "Guessed config type of {fo} is '{t}'."
 msgstr ""
 
-#: src/fb_tools/application/cfg_converter.py:932 src/fb_tools/application/get_file_rm.py:723
+#: src/fb_tools/application/cfg_converter.py:935 src/fb_tools/application/get_file_rm.py:723
 #: src/fb_tools/application/myip.py:177 src/fb_tools/application/show_spinner.py:322
 #: src/fb_tools/application/update_ddns.py:848
 #, python-brace-format
@@ -796,6 +795,11 @@ msgstr ""
 
 #: src/fb_tools/application/myip.py:112
 msgid "Write found public IPs into a cache file in working directory."
+msgstr ""
+
+#: src/fb_tools/application/myip.py:145 src/fb_tools/application/update_ddns.py:490
+#, python-brace-format
+msgid "Starting {a!r}, version {v!r} ..."
 msgstr ""
 
 #: src/fb_tools/application/show_spinner.py:46

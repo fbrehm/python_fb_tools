@@ -51,7 +51,7 @@ from ..xlate import format_list
 
 # from ..multi_config import BaseMultiConfig
 
-__version__ = "0.10.1"
+__version__ = "0.10.2"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -853,7 +853,10 @@ class CfgConvertApplication(BaseApplication):
     # -------------------------------------------------------------------------
     def _run(self):
 
-        LOG.debug(_("Starting {a!r}, version {v!r} ...").format(a=self.appname, v=self.version))
+        LOG.debug(_("Starting {a}, version '{v}' ...").format(
+            a=self.colored(self.appname, "green"),
+            v=self.colored(self.version, "cyan"))
+        )
         ret = 0
 
         try:

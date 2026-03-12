@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 2.9.5\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2026-03-12 08:39+0100\n"
-"PO-Revision-Date: 2026-03-12 07:30+0100\n"
+"POT-Creation-Date: 2026-03-12 11:54+0100\n"
+"PO-Revision-Date: 2026-03-12 11:55+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de\n"
 "Language-Team: de <frank@brehm-online.com>\n"
@@ -73,7 +73,7 @@ msgstr "Festgestellter Konfigurationstyp {t} durch den Dateinamen {f}."
 #: src/fb_tools/any_config.py:364
 #, python-brace-format
 msgid "Detected configuration type {t} from file '{f}'."
-msgstr "Festgestellter Konfigurationstyp {t} für die Datei '{f}'."
+msgstr "Festgestellter Konfigurationstyp {t} für die Datei »{f}«."
 
 #: src/fb_tools/any_config.py:387 src/fb_tools/any_config.py:439
 #, python-brace-format
@@ -83,12 +83,12 @@ msgstr "Die Lade-Methode {m} ist in der Klasse {c} nicht definiert."
 #: src/fb_tools/any_config.py:399
 #, python-brace-format
 msgid "Unable to parse '{f}' as {t}: {e}"
-msgstr "Kann '{f}' nicht als {t} parsen: {e}"
+msgstr "Kann »{f}« nicht als {t} parsen: {e}"
 
 #: src/fb_tools/any_config.py:404
 #, python-brace-format
 msgid "Could not detect file type by file content from '{}'."
-msgstr "Konnte den Dateityp nicht aus dem Inhalt der Datei '{}' ermitteln."
+msgstr "Konnte den Dateityp nicht aus dem Inhalt der Datei »{}« ermitteln."
 
 #: src/fb_tools/any_config.py:414
 #, python-brace-format
@@ -98,7 +98,7 @@ msgstr "Geladene Konfiguration vom Typ {}:"
 #: src/fb_tools/any_config.py:432
 #, python-brace-format
 msgid "Invalid configuration type '{}' given on calling load_config()."
-msgstr "Ungültiger Konfigurationstyp '{}' beim Aufruf von load_config() übergeben.."
+msgstr "Ungültiger Konfigurationstyp »{}« beim Aufruf von load_config() übergeben.."
 
 #: src/fb_tools/any_config.py:449
 msgid "Loaded configuration:"
@@ -117,12 +117,12 @@ msgstr "{what} beim Parsen : {e}."
 #: src/fb_tools/any_config.py:518 src/fb_tools/any_config.py:549
 #, python-brace-format
 msgid "{what} parse error in '{fn}', line {line}, column {col}: {msg}"
-msgstr "{what} Parse-Fehler in {fn}, Zeile {line}, Spalte {col}: {msg}"
+msgstr "{what} Parse-Fehler in »{fn}«, Zeile {line}, Spalte {col}: {msg}"
 
 #: src/fb_tools/any_config.py:580
 #, python-brace-format
 msgid "{what} parse error in '{fn}': {e}"
-msgstr "{what} Parse-Fehler in {fn}: {e}"
+msgstr "{what} Parse-Fehler in »{fn}«: {e}"
 
 #: src/fb_tools/any_config.py:594
 #, python-brace-format
@@ -132,7 +132,7 @@ msgstr "Lade Inhalt aus {!r}-Format."
 #: src/fb_tools/any_config.py:609
 #, python-brace-format
 msgid "{what} in '{fn}': {msg}"
-msgstr "{what} in '{fn}': {msg}"
+msgstr "{what} in »{fn}«: {msg}"
 
 #: src/fb_tools/any_config.py:646
 msgid "Cannot use STDOUT to dump the configuration, if no configuration type was given."
@@ -153,12 +153,12 @@ msgstr "Schreibe {file_name} als {config_type} …"
 #: src/fb_tools/any_config.py:674
 #, python-brace-format
 msgid "File '{}' is already existing and will be overridden."
-msgstr "Die Datei '{}' existiert bereits und wird überschrieben."
+msgstr "Die Datei »{}« existiert bereits und wird überschrieben."
 
 #: src/fb_tools/any_config.py:681
 #, python-brace-format
 msgid "File '{fo}' is already existing. Do you want to override it [{y}|{n}]"
-msgstr "Die Datei '{fo}' existiert bereits. Möchtest Du sie überschreiben [{y}|{n}]"
+msgstr "Die Datei »{fo}« existiert bereits. Möchtest Du sie überschreiben [{y}|{n}]"
 
 #: src/fb_tools/any_config.py:685 src/fb_tools/handling_obj.py:434
 msgid "yes"
@@ -171,7 +171,7 @@ msgstr "Nein"
 #: src/fb_tools/any_config.py:692
 #, python-brace-format
 msgid "File '{}' will not be overridden."
-msgstr "Die Datei '{}' wird nicht überschrieben."
+msgstr "Die Datei »{}« wird nicht überschrieben."
 
 #: src/fb_tools/any_config.py:720
 #, python-brace-format
@@ -195,12 +195,12 @@ msgstr "Konnte den Dateityp bei einem Dateiname vom Typ  {} nicht ermitteln."
 #: src/fb_tools/any_config.py:909
 #, python-brace-format
 msgid "Could not detect file type by file name '{}'."
-msgstr "Konnte den Dateityp nicht über den Dateinamen '{}' ermitteln."
+msgstr "Konnte den Dateityp nicht über den Dateinamen »{}« ermitteln."
 
 #: src/fb_tools/any_config.py:927
 #, python-brace-format
 msgid "Could not detect file type of file '{}'."
-msgstr " Konnte den Dateityp der Datei '{}' nicht ermitteln."
+msgstr " Konnte den Dateityp der Datei »{}« nicht ermitteln."
 
 #: src/fb_tools/app.py:99
 msgid "Forced execution - whatever it means."
@@ -309,7 +309,7 @@ msgstr "Simulations-Modus, es wird nichts wirklich verändert."
 #: src/fb_tools/app.py:728 src/fb_tools/app.py:738
 #, python-brace-format
 msgid "Automatically answer '{}' for all questions."
-msgstr "Automatisch alle Fragen mit {} beantworten."
+msgstr "Automatisch alle Fragen mit »{}« beantworten."
 
 #: src/fb_tools/app.py:729 src/fb_tools/handling_obj.py:1225
 msgid "Yes"
@@ -559,33 +559,32 @@ msgstr "Ermittle Optionen zum Generieren von TOML-Ausgabe."
 msgid "Options for generating TOML output:"
 msgstr "Optionen zum Generieren von TOML-Ausgabe."
 
-#: src/fb_tools/application/cfg_converter.py:856 src/fb_tools/application/myip.py:145
-#: src/fb_tools/application/update_ddns.py:490
+#: src/fb_tools/application/cfg_converter.py:856
 #, python-brace-format
-msgid "Starting {a!r}, version {v!r} ..."
-msgstr "Starte {a!r}, Version {v!r} …"
+msgid "Starting {a}, version '{v}' ..."
+msgstr "Starte {a}, Version »{v}« …"
 
-#: src/fb_tools/application/cfg_converter.py:862
+#: src/fb_tools/application/cfg_converter.py:865
 #, python-brace-format
 msgid "Could not read or evaluate configuration file '{}':"
-msgstr "Konnte Konfigurationsdate '{}' oder auswerten:"
+msgstr "Konnte Konfigurationsdate »{}« oder auswerten:"
 
-#: src/fb_tools/application/cfg_converter.py:879
+#: src/fb_tools/application/cfg_converter.py:882
 #, python-brace-format
 msgid "Trying to read from '{}' ..."
-msgstr "Versuche von '{}' zu lesen …"
+msgstr "Versuche von »{}« zu lesen …"
 
-#: src/fb_tools/application/cfg_converter.py:887
+#: src/fb_tools/application/cfg_converter.py:890
 #, python-brace-format
 msgid "Detected config type of '{infile}': {cfgtype}"
-msgstr "Ermittelter Konfigurationstyp von '{infile}': {cfgtype}"
+msgstr "Ermittelter Konfigurationstyp von »{infile}«: {cfgtype}"
 
-#: src/fb_tools/application/cfg_converter.py:908
+#: src/fb_tools/application/cfg_converter.py:911
 #, python-brace-format
 msgid "Guessed config type of {fo} is '{t}'."
-msgstr "Erratener Konfigurationstyp von {fo} ist '{t}'."
+msgstr "Erratener Konfigurationstyp von {fo} ist »{t}«."
 
-#: src/fb_tools/application/cfg_converter.py:932 src/fb_tools/application/get_file_rm.py:723
+#: src/fb_tools/application/cfg_converter.py:935 src/fb_tools/application/get_file_rm.py:723
 #: src/fb_tools/application/myip.py:177 src/fb_tools/application/show_spinner.py:322
 #: src/fb_tools/application/update_ddns.py:848
 #, python-brace-format
@@ -609,7 +608,7 @@ msgstr "Das übergebene Muster {!r} is kein gültiges Datums-Muster"
 #: src/fb_tools/application/get_file_rm.py:106
 #, python-format
 msgid ". There must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
-msgstr ". Es muss exakt einmal „%Y”, einmal „%m” und einmal „%d” angegeben werden."
+msgstr ". Es muss exakt einmal »%Y«, einmal »%m« und einmal »%d« angegeben werden."
 
 #: src/fb_tools/application/get_file_rm.py:138
 msgid ""
@@ -832,6 +831,11 @@ msgstr "Optionen für myip"
 msgid "Write found public IPs into a cache file in working directory."
 msgstr "Schreibe die gefundenen öffentliche IP-Adressen in eine Cache-Datei im Arbeitsverzeichnis zurück."
 
+#: src/fb_tools/application/myip.py:145 src/fb_tools/application/update_ddns.py:490
+#, python-brace-format
+msgid "Starting {a!r}, version {v!r} ..."
+msgstr "Starte {a!r}, Version {v!r} …"
+
 #: src/fb_tools/application/show_spinner.py:46
 msgid "Waiting ... "
 msgstr "Warten … "
@@ -1045,7 +1049,7 @@ msgstr "Aktionen vor Beginn."
 
 #: src/fb_tools/application/update_ddns.py:511
 msgid "No domains to update given, but the option all domains is deactivated."
-msgstr "Keine Domänen zur Aktualisierungg angegeben, aber die Option 'für alle Domänen' ist deaktiviert."
+msgstr "Keine Domänen zur Aktualisierungg angegeben, aber die Option »für alle Domänen« ist deaktiviert."
 
 #: src/fb_tools/application/update_ddns.py:531 src/fb_tools/application/update_ddns.py:548
 #, python-brace-format
@@ -1356,8 +1360,8 @@ msgid ""
 "most compact form without newlines will be generated."
 msgstr ""
 "Die Einrückung der {}-Ausgabe. Wenn es als pisitive Ganzzahl angegeben wird, dann wird diese "
-"Anzahl von Leerzeichen eingerückt. Wenn „0”, eine negative Zahl oder eine leere Zeichenkette "
-"(„”) angegeben wird, werden nur Zeilenumbrüche eingefügt. Wenn es wedggelassen wird, wird die "
+"Anzahl von Leerzeichen eingerückt. Wenn »0«, eine negative Zahl oder eine leere Zeichenkette "
+"(»«) angegeben wird, werden nur Zeilenumbrüche eingefügt. Wenn es wedggelassen wird, wird die "
 "kompakteste Form ohne Zeilenumbrüche generiert."
 
 #: src/fb_tools/cfg_options/inifile.py:45
@@ -1986,12 +1990,12 @@ msgstr "Stillschweigende Ausführung."
 #: src/fb_tools/handler/__init__.py:320
 #, python-brace-format
 msgid "Starting synchronous communication with '{}'."
-msgstr "Starte synchrone Kommunikation mit '{}'."
+msgstr "Starte synchrone Kommunikation mit »{}«."
 
 #: src/fb_tools/handler/__init__.py:324
 #, python-brace-format
 msgid "Finished communication with '{}'."
-msgstr "Kommunikation mit '{}' beendet."
+msgstr "Kommunikation mit »{}« beendet."
 
 #: src/fb_tools/handler/__init__.py:344
 #, python-brace-format
@@ -2010,7 +2014,7 @@ msgstr "Ausgabe an {}:"
 #: src/fb_tools/handler/__init__.py:394
 #, python-brace-format
 msgid "Starting asynchronous communication with '{cmd}', heartbeat interval is {interval:0.1f} seconds."
-msgstr "Starte asynchrone Kommunikation mit '{cmd}', Herzschlag-Intervall ist {interval:0.1f} Sekunden."
+msgstr "Starte asynchrone Kommunikation mit »{cmd}«, Herzschlag-Intervall ist {interval:0.1f} Sekunden."
 
 #: src/fb_tools/handler/__init__.py:409
 msgid "Checking for the end of the communication ..."
@@ -2417,7 +2421,7 @@ msgstr "Ja/Nein"
 #: src/fb_tools/handling_obj.py:1226
 #, python-brace-format
 msgid "Automatic answer: '{}'."
-msgstr "Automatische Antwort: '{}'."
+msgstr "Automatische Antwort: »{}«."
 
 #: src/fb_tools/handling_obj.py:1335 src/fb_tools/handling_obj.py:1342
 #, python-brace-format
