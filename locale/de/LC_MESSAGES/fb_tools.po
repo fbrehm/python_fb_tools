@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 2.9.5\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2026-03-11 15:22+0100\n"
+"POT-Creation-Date: 2026-03-12 08:39+0100\n"
 "PO-Revision-Date: 2026-03-12 07:30+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de\n"
@@ -136,7 +136,9 @@ msgstr "{what} in '{fn}': {msg}"
 
 #: src/fb_tools/any_config.py:646
 msgid "Cannot use STDOUT to dump the configuration, if no configuration type was given."
-msgstr "Kann STDOUT nicht zum Dumpen der Konfiguration verwenden, da kein Konfigurationstyp gegeben wurde."
+msgstr ""
+"Kann STDOUT nicht zum Dumpen der Konfiguration verwenden, da kein Konfigurationstyp gegeben "
+"wurde."
 
 #: src/fb_tools/any_config.py:654 src/fb_tools/any_config.py:711
 #, python-brace-format
@@ -232,26 +234,26 @@ msgstr "Falscher Wert für exit_value {!r}, muss größer als oder gleich Null s
 msgid "Trying to get {} via console ..."
 msgstr "Versuche {} über die Konsole zu bekommen …"
 
-#: src/fb_tools/app.py:521 src/fb_tools/application/show_spinner.py:239
+#: src/fb_tools/app.py:521 src/fb_tools/application/show_spinner.py:235
 #, python-brace-format
 msgid "Got a signal {}."
 msgstr "Erhielt ein Signal {}."
 
-#: src/fb_tools/app.py:524 src/fb_tools/application/show_spinner.py:242
+#: src/fb_tools/app.py:524 src/fb_tools/application/show_spinner.py:238
 #, python-brace-format
 msgid "Got a signal {n!r} ({s})."
 msgstr "Erhielt ein Signal {n!r} ({s})."
 
-#: src/fb_tools/app.py:535 src/fb_tools/application/show_spinner.py:255
+#: src/fb_tools/app.py:535 src/fb_tools/application/show_spinner.py:251
 #, python-brace-format
 msgid "Exit on signal {n!r} ({s})."
 msgstr "Beendigung auf Signal {n!r} ({s})."
 
-#: src/fb_tools/app.py:542 src/fb_tools/application/show_spinner.py:262
+#: src/fb_tools/app.py:542 src/fb_tools/application/show_spinner.py:258
 msgid "Tweaking signal handlers."
 msgstr "Schraube an den Signalhandlern."
 
-#: src/fb_tools/app.py:552 src/fb_tools/application/show_spinner.py:272
+#: src/fb_tools/app.py:552 src/fb_tools/application/show_spinner.py:268
 #, python-brace-format
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr "Setze Signalhandler für {n!r} ({s})."
@@ -269,7 +271,7 @@ msgstr "Wiederholen der Eingabe von "
 msgid "{n} and repeated {n} did not match."
 msgstr "{n} und das wiederholte {n} stimmen nicht überein."
 
-#: src/fb_tools/app.py:583 src/fb_tools/application/show_spinner.py:290
+#: src/fb_tools/app.py:583 src/fb_tools/application/show_spinner.py:286
 msgid "Restoring original signal handlers."
 msgstr "Stelle original Signalhandler wieder her."
 
@@ -313,7 +315,7 @@ msgstr "Automatisch alle Fragen mit {} beantworten."
 msgid "Yes"
 msgstr "Ja"
 
-#: src/fb_tools/app.py:746 src/fb_tools/application/show_spinner.py:147
+#: src/fb_tools/app.py:746 src/fb_tools/application/show_spinner.py:143
 #: src/fb_tools/ddns/__init__.py:232
 msgid "SECONDS"
 msgstr "SEKUNDEN"
@@ -421,8 +423,9 @@ msgid ""
 "The maximum number of characters per line in the output. The default is the width of the current"
 " terminal. If this one cannot be evaluated, the default width is {}."
 msgstr ""
-"Die maximale Anzahl von Zeichen pro Zeile in der Ausgabe. Die Vorgabe ist die Breite des aktuellen Terminals. "
-"Wenn diese nicht festgestellt werden kan, dann beträgt die Vorgabe-Breite {} Zeichen."
+"Die maximale Anzahl von Zeichen pro Zeile in der Ausgabe. Die Vorgabe ist die Breite des "
+"aktuellen Terminals. Wenn diese nicht festgestellt werden kan, dann beträgt die Vorgabe-Breite "
+"{} Zeichen."
 
 #: src/fb_tools/application/cfg_converter.py:349
 msgid ""
@@ -430,9 +433,9 @@ msgid ""
 "configuration type. For YAML output it is 2, JSON and HJSON it is None (compact output), and for"
 " Dump and Toml is is 4."
 msgstr ""
-"Die Anzahl der Einrückungen, die für jede verschachtelte Ebene hinzugefügt wird. "
-"Die Vorgabe hängt vom KKonfigurationstyp der Ausgabe ab. Für eine Ausgabe als YAML beträgt sie 2, "
-"für JSON und HJSON beträgt sie None (kompakte Ausgabe), und für Dump und Toml beträgt sie 4."
+"Die Anzahl der Einrückungen, die für jede verschachtelte Ebene hinzugefügt wird. Die Vorgabe "
+"hängt vom KKonfigurationstyp der Ausgabe ab. Für eine Ausgabe als YAML beträgt sie 2, für JSON "
+"und HJSON beträgt sie None (kompakte Ausgabe), und für Dump und Toml beträgt sie 4."
 
 #: src/fb_tools/application/cfg_converter.py:378
 msgid "INPUT_FILE"
@@ -525,7 +528,6 @@ msgid "Options for reading inifiles:"
 msgstr "Optionen zum Lesen von Ini-Dateien:"
 
 #: src/fb_tools/application/cfg_converter.py:719
-#, python-brace-format
 msgid "Evaluate options for generating YAML output."
 msgstr "Ermittle Optionen zum Generieren von YAML-Ausgabe."
 
@@ -583,8 +585,8 @@ msgstr "Ermittelter Konfigurationstyp von '{infile}': {cfgtype}"
 msgid "Guessed config type of {fo} is '{t}'."
 msgstr "Erratener Konfigurationstyp von {fo} ist '{t}'."
 
-#: src/fb_tools/application/cfg_converter.py:932 src/fb_tools/application/get_file_rm.py:727
-#: src/fb_tools/application/myip.py:177 src/fb_tools/application/show_spinner.py:326
+#: src/fb_tools/application/cfg_converter.py:932 src/fb_tools/application/get_file_rm.py:723
+#: src/fb_tools/application/myip.py:177 src/fb_tools/application/show_spinner.py:322
 #: src/fb_tools/application/update_ddns.py:848
 #, python-brace-format
 msgid ""
@@ -594,22 +596,22 @@ msgstr ""
 "{c}-Objekt:\n"
 "{a}"
 
-#: src/fb_tools/application/get_file_rm.py:65
+#: src/fb_tools/application/get_file_rm.py:61
 #, python-brace-format
 msgid "Value must be at least {m} - {v} was given."
 msgstr "Der Wert muss mindestens {m} sein - {v} wurde gegeben."
 
-#: src/fb_tools/application/get_file_rm.py:106
+#: src/fb_tools/application/get_file_rm.py:102
 #, python-brace-format
 msgid "The given pattern {!r} is not a valid date pattern"
 msgstr "Das übergebene Muster {!r} is kein gültiges Datums-Muster"
 
-#: src/fb_tools/application/get_file_rm.py:110
+#: src/fb_tools/application/get_file_rm.py:106
 #, python-format
 msgid ". There must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
 msgstr ". Es muss exakt einmal „%Y”, einmal „%m” und einmal „%d” angegeben werden."
 
-#: src/fb_tools/application/get_file_rm.py:142
+#: src/fb_tools/application/get_file_rm.py:138
 msgid ""
 "Returns a newline separated list of files generated from file globbing patterns given as "
 "arguments to this application, where all files are omitted, which should not be removed."
@@ -618,187 +620,187 @@ msgstr ""
 "welches als Kommando-Zeilen-Argument dieser Anwendung übergeben wurde, generiert wurde, wobei "
 "alle Datein fehlen, welche nicht gelöscht werden sollen."
 
-#: src/fb_tools/application/get_file_rm.py:178 src/fb_tools/application/get_file_rm.py:195
-#: src/fb_tools/application/get_file_rm.py:212 src/fb_tools/application/get_file_rm.py:229
-#: src/fb_tools/application/get_file_rm.py:246
+#: src/fb_tools/application/get_file_rm.py:174 src/fb_tools/application/get_file_rm.py:191
+#: src/fb_tools/application/get_file_rm.py:208 src/fb_tools/application/get_file_rm.py:225
+#: src/fb_tools/application/get_file_rm.py:242
 #, python-brace-format
 msgid "Wrong value {v!r} for {n}, must be >= {m}"
 msgstr "Ungültiger Wert {v!r} für {n}, muss größer als oder gleich {m} sein"
 
-#: src/fb_tools/application/get_file_rm.py:268
+#: src/fb_tools/application/get_file_rm.py:264
 msgid "File options"
 msgstr "Dateioptionen"
 
-#: src/fb_tools/application/get_file_rm.py:275
+#: src/fb_tools/application/get_file_rm.py:271
 msgid "File pattern to generate list of files to remove."
 msgstr "Dateimuster, um die Liste der zu löschenden Dateien zu generieren."
 
-#: src/fb_tools/application/get_file_rm.py:278
+#: src/fb_tools/application/get_file_rm.py:274
 msgid "Keep options"
 msgstr "Optionen zum Aufbewahren"
 
-#: src/fb_tools/application/get_file_rm.py:283
+#: src/fb_tools/application/get_file_rm.py:279
 msgid "NR_FILES"
 msgstr "ANZAHL_DATEIEN"
 
-#: src/fb_tools/application/get_file_rm.py:289
+#: src/fb_tools/application/get_file_rm.py:285
 #, python-brace-format
 msgid "How many of the last files should be kept (default: {default}, minimum: {min})?"
 msgstr "Wieviele der letzten Dateien sollen aufbewahrt werden (Vorgabe: {default}, Minimum {min})?"
 
-#: src/fb_tools/application/get_file_rm.py:297
+#: src/fb_tools/application/get_file_rm.py:293
 msgid "DAYS"
 msgstr "TAGE"
 
-#: src/fb_tools/application/get_file_rm.py:303
+#: src/fb_tools/application/get_file_rm.py:299
 #, python-brace-format
 msgid "How many files one per day from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 "Wieviele Dateien (eine pro Tag) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
 "{default}, Minimum {min})?"
 
-#: src/fb_tools/application/get_file_rm.py:311
+#: src/fb_tools/application/get_file_rm.py:307
 msgid "WEEKS"
 msgstr "WOCHEN"
 
-#: src/fb_tools/application/get_file_rm.py:317
+#: src/fb_tools/application/get_file_rm.py:313
 #, python-brace-format
 msgid "How many files one per week from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 "Wieviele Dateien (eine pro Woche) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
 "{default}, Minimum {min})?"
 
-#: src/fb_tools/application/get_file_rm.py:325
+#: src/fb_tools/application/get_file_rm.py:321
 msgid "MONTHS"
 msgstr "MONATE"
 
-#: src/fb_tools/application/get_file_rm.py:331
+#: src/fb_tools/application/get_file_rm.py:327
 #, python-brace-format
 msgid "How many files one per month from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 "Wieviele Dateien (eine pro Monat) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
 "{default}, Minimum {min})?"
 
-#: src/fb_tools/application/get_file_rm.py:339
+#: src/fb_tools/application/get_file_rm.py:335
 msgid "YEARS"
 msgstr "JAHRE"
 
-#: src/fb_tools/application/get_file_rm.py:345
+#: src/fb_tools/application/get_file_rm.py:341
 #, python-brace-format
 msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 "Wieviele Dateien (eine pro Jahr) sollen von heute an rückwärts aufbewahrt werden (Vorgabe:  "
 "{default}, Minimum {min})?"
 
-#: src/fb_tools/application/get_file_rm.py:375
+#: src/fb_tools/application/get_file_rm.py:371
 #, python-brace-format
 msgid "Resolving date pattern {!r}."
 msgstr "Löse Datumsmuster {!r} auf."
 
-#: src/fb_tools/application/get_file_rm.py:397
+#: src/fb_tools/application/get_file_rm.py:393
 msgid "Checking given files..."
 msgstr "Überprüfe übergebene Dateien …"
 
-#: src/fb_tools/application/get_file_rm.py:402
+#: src/fb_tools/application/get_file_rm.py:398
 #, python-brace-format
 msgid "Checking given file {!r} ..."
 msgstr "Überprüfe übergebene Datei {!r} …"
 
-#: src/fb_tools/application/get_file_rm.py:411
+#: src/fb_tools/application/get_file_rm.py:407
 msgid "Resolved paths:"
 msgstr "Aufgelöste Pfade:"
 
-#: src/fb_tools/application/get_file_rm.py:414
+#: src/fb_tools/application/get_file_rm.py:410
 #, python-brace-format
 msgid "File pattern {!r} does not match any files."
 msgstr "Das Dateimuster {!r} passt auf keine Dateien."
 
-#: src/fb_tools/application/get_file_rm.py:419
+#: src/fb_tools/application/get_file_rm.py:415
 #, python-brace-format
 msgid "Checking {!r} ..."
 msgstr "Überprüfe {!r} …"
 
-#: src/fb_tools/application/get_file_rm.py:425
+#: src/fb_tools/application/get_file_rm.py:421
 #, python-brace-format
 msgid "File {!r} is a regular file."
 msgstr "Die Datei {!r} ist eine reguläre Datei."
 
-#: src/fb_tools/application/get_file_rm.py:428
+#: src/fb_tools/application/get_file_rm.py:424
 #, python-brace-format
 msgid "Path {!r} is a directory."
 msgstr "Der Pfad {!r} ist ein Verzeichnis."
 
-#: src/fb_tools/application/get_file_rm.py:436
+#: src/fb_tools/application/get_file_rm.py:432
 #, python-brace-format
 msgid "File {fi!r} does not match pattern {pa!r}."
 msgstr "Die Datei {fi!r} passt nicht in das Dateimuster {pa!r}."
 
-#: src/fb_tools/application/get_file_rm.py:448
+#: src/fb_tools/application/get_file_rm.py:444
 #, python-brace-format
 msgid "Date in file {fi!r} is not a valid date: {e}."
 msgstr "Das Datum in der Datei {fi!r} ist kein gültiges Datum: {e}."
 
-#: src/fb_tools/application/get_file_rm.py:500
+#: src/fb_tools/application/get_file_rm.py:496
 msgid "Did not found any files to evaluate."
 msgstr "Fand keine Dateien zur Auswertung"
 
-#: src/fb_tools/application/get_file_rm.py:532
+#: src/fb_tools/application/get_file_rm.py:528
 #, python-brace-format
 msgid "Keeping last file ..."
 msgid_plural "Keeping last {} files ..."
 msgstr[0] "Behalte die letzte Datei …"
 msgstr[1] "Behalte die letzten {} Dateien …"
 
-#: src/fb_tools/application/get_file_rm.py:538
+#: src/fb_tools/application/get_file_rm.py:534
 #, python-brace-format
 msgid "Keep last file {!r}."
 msgstr "Behalte die letzte Datei {!r}."
 
-#: src/fb_tools/application/get_file_rm.py:543
+#: src/fb_tools/application/get_file_rm.py:539
 msgid "Files to keep:"
 msgstr "Zu behaltende Dateien:"
 
-#: src/fb_tools/application/get_file_rm.py:564
+#: src/fb_tools/application/get_file_rm.py:560
 msgid "Files to keep for year:"
 msgstr "Dateien, die für Jahr zu behalten sind:"
 
-#: src/fb_tools/application/get_file_rm.py:586
+#: src/fb_tools/application/get_file_rm.py:582
 #, python-brace-format
 msgid "Got last month: {!r}"
 msgstr "Ermittelter letzter Monat: {!r}"
 
-#: src/fb_tools/application/get_file_rm.py:599
+#: src/fb_tools/application/get_file_rm.py:595
 msgid "Files to keep for month:"
 msgstr "Dateien, die für Monat zu behalten sind:"
 
-#: src/fb_tools/application/get_file_rm.py:613
+#: src/fb_tools/application/get_file_rm.py:609
 #, python-brace-format
 msgid "Got last Monday: {!r}"
 msgstr "Ermittelter letzter Montag: {!r}"
 
-#: src/fb_tools/application/get_file_rm.py:625
+#: src/fb_tools/application/get_file_rm.py:621
 msgid "Files to keep for week:"
 msgstr "Dateien, die für Woche zu behalten sind:"
 
-#: src/fb_tools/application/get_file_rm.py:638
+#: src/fb_tools/application/get_file_rm.py:634
 #, python-brace-format
 msgid "Got last day: {!r}"
 msgstr "Ermittelter letzter Tag: {!r}"
 
-#: src/fb_tools/application/get_file_rm.py:648
+#: src/fb_tools/application/get_file_rm.py:644
 msgid "Keeping all files from today."
 msgstr "Aufheben aller Dateien von heute."
 
-#: src/fb_tools/application/get_file_rm.py:655
+#: src/fb_tools/application/get_file_rm.py:651
 msgid "Files to keep for day:"
 msgstr "Dateien, die für Tag zu behalten sind:"
 
-#: src/fb_tools/application/get_file_rm.py:672
+#: src/fb_tools/application/get_file_rm.py:668
 #, python-brace-format
 msgid "Trying to get date of file {!r}."
 msgstr "Versuche das Datum aus der Datei {!r} zu entnehmen."
 
-#: src/fb_tools/application/get_file_rm.py:711
+#: src/fb_tools/application/get_file_rm.py:707
 msgid "Explored and assigned files:"
 msgstr "Ermittelte und zugewiesene Dateien:"
 
@@ -830,11 +832,11 @@ msgstr "Optionen für myip"
 msgid "Write found public IPs into a cache file in working directory."
 msgstr "Schreibe die gefundenen öffentliche IP-Adressen in eine Cache-Datei im Arbeitsverzeichnis zurück."
 
-#: src/fb_tools/application/show_spinner.py:50
+#: src/fb_tools/application/show_spinner.py:46
 msgid "Waiting ... "
 msgstr "Warten … "
 
-#: src/fb_tools/application/show_spinner.py:56
+#: src/fb_tools/application/show_spinner.py:52
 msgid ""
 "Shows one or more spinners, and their names, if multiple spinners should be shown. If no spinner"
 " is given, a random spinner will be displayed."
@@ -842,32 +844,32 @@ msgstr ""
 "Zeigt einen oder mehrere Spinner, sowie deren Namen, wenn mehrere Spinner dargestellt werden "
 "sollen. Wenn kein Spinner angegeben wird, wird ein zufällig ausgewählter anhgezeigt."
 
-#: src/fb_tools/application/show_spinner.py:86
+#: src/fb_tools/application/show_spinner.py:82
 #, python-brace-format
 msgid "A negative time for showing the spinner {v!r} is not allowed."
 msgstr "Eine negative Zeitangabe zum Zeigen der Spinne {v!r} ist nicht gestattet."
 
-#: src/fb_tools/application/show_spinner.py:131
+#: src/fb_tools/application/show_spinner.py:127
 #, python-brace-format
 msgid "Options for {}"
 msgstr "Optionen für {}"
 
-#: src/fb_tools/application/show_spinner.py:138
+#: src/fb_tools/application/show_spinner.py:134
 #, python-brace-format
 msgid "The prompt displayed before the spinner, if only one spinner should be shown. Default: {!r}."
 msgstr ""
 "Der Prompt, der vor dem Spinner angezeigt werden soll, wenn nur ein Spinner gezeigt werden soll."
 " Vorgabe: {!r}."
 
-#: src/fb_tools/application/show_spinner.py:149
+#: src/fb_tools/application/show_spinner.py:145
 msgid "The time in seconds for displaying each spinner."
 msgstr "Die Zeit in Sekunden, die ein Spinner gezeigt werden soll."
 
-#: src/fb_tools/application/show_spinner.py:156
+#: src/fb_tools/application/show_spinner.py:152
 msgid "SPINNER"
 msgstr "SPINNER"
 
-#: src/fb_tools/application/show_spinner.py:160
+#: src/fb_tools/application/show_spinner.py:156
 #, python-brace-format
 msgid ""
 "The spinners, which should be displayed. If not given, a random spinner will be displayed, which"
@@ -881,22 +883,22 @@ msgstr ""
 "ausgegeben, ohne die Spinner selbst anzuzeigen. Wird {all!r} angegeben, werden alle verfügbaren "
 "Spinner dargestellt."
 
-#: src/fb_tools/application/show_spinner.py:188 src/fb_tools/application/show_spinner.py:199
+#: src/fb_tools/application/show_spinner.py:184 src/fb_tools/application/show_spinner.py:195
 #, python-brace-format
 msgid "You may give {!r} only as the only spinner."
 msgstr "Man darf {!r} nur als einzigen Spinner angeben."
 
-#: src/fb_tools/application/show_spinner.py:207
+#: src/fb_tools/application/show_spinner.py:203
 #, python-brace-format
 msgid "Invalid spinner {!r} given."
 msgstr "Ungültiger Spinner {!r} übergeben."
 
-#: src/fb_tools/application/show_spinner.py:233
+#: src/fb_tools/application/show_spinner.py:229
 #, python-brace-format
 msgid "Spinner {!r}: "
 msgstr "Spinner {!r}: "
 
-#: src/fb_tools/application/show_spinner.py:306
+#: src/fb_tools/application/show_spinner.py:302
 msgid "All available spinners:"
 msgstr "Alle verfügbaren Spinner:"
 
@@ -1197,7 +1199,7 @@ msgstr "Das Verzeichnis {!r} existiert nicht."
 msgid "Path {!r} exists, but is not a directory."
 msgstr "Der angegebene Pfad {!r} existiert, ist aber kein Verzeichnis."
 
-#: src/fb_tools/application/get_file_rm.py:430 src/fb_tools/argparse_actions.py:256
+#: src/fb_tools/application/get_file_rm.py:426 src/fb_tools/argparse_actions.py:256
 #: src/fb_tools/argparse_actions.py:290
 #, python-brace-format
 msgid "File {!r} is not a regular file."
@@ -1213,7 +1215,7 @@ msgstr "Die Datei {!r} ist nicht schreibbar."
 msgid "Directory {!r} is not writeable."
 msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
 
-#: src/fb_tools/application/get_file_rm.py:421 src/fb_tools/argparse_actions.py:287
+#: src/fb_tools/application/get_file_rm.py:417 src/fb_tools/argparse_actions.py:287
 #: src/fb_tools/multi_config/files.py:218
 #, python-brace-format
 msgid "File {!r} does not exists."
@@ -1238,7 +1240,7 @@ msgstr "Der Parameter {cls!r} muss eine von {clinfo!r} abgeleitete Klasse sein."
 msgid "Config options and options for logging"
 msgstr "Konfigurations- und Logging-Optionen"
 
-#: src/fb_tools/application/get_file_rm.py:272 src/fb_tools/cfg_app.py:157 src/fb_tools/cfg_app.py:170
+#: src/fb_tools/application/get_file_rm.py:268 src/fb_tools/cfg_app.py:157 src/fb_tools/cfg_app.py:170
 msgid "FILE"
 msgstr "DATEI"
 
@@ -1329,14 +1331,16 @@ msgid "The indent value must be a non negative integer, {} was given."
 msgstr "Der Einrückungswert muss ein nicht-negativer Integerwert sein, {} wurde gegeben."
 
 #: src/fb_tools/cfg_options/dump.py:144
-#,  python-brace-format
+#, python-brace-format
 msgid "The value for the width must be an integer greater than {m}, {v} was given."
 msgstr "Der Wert für die Breite muss en Integerwert größer als {m} sein, {v} wurden gegeben."
 
 #: src/fb_tools/cfg_options/dump.py:149
 #, python-brace-format
 msgid "The value for the width must be an integer less than {m}, {v} was given."
-msgstr "Der Wert für {opt!r} für die Breite muss ein Integerwert kleiner als {m} sein, {v} wurden gegeben."
+msgstr ""
+"Der Wert für {opt!r} für die Breite muss ein Integerwert kleiner als {m} sein, {v} wurden "
+"gegeben."
 
 #: src/fb_tools/cfg_options/hjson.py:40 src/fb_tools/cfg_options/json.py:40
 #, python-brace-format
@@ -1439,7 +1443,6 @@ msgid "The style of the scalars in YAML output, may be be one of {}."
 msgstr "Der Stil der Skalare in der YAML-Ausgabe, muss einer von {} sein."
 
 #: src/fb_tools/cfg_options/yaml.py:73
-#, python-brace-format
 msgid "The maximum width of generated lines on YAML output."
 msgstr "Die Maximalbreite der Zeilen der generierten YAML-Ausgabe."
 
@@ -1460,7 +1463,9 @@ msgstr ""
 #: src/fb_tools/cfg_options/yaml.py:162
 #, python-brace-format
 msgid "The line break used to generate ouput YAML must be one of {lst}, but {v!r} was given."
-msgstr "Der Zeilenumbruch der generierten Ausgabe-YAML muss einer aus {lst} sein, aber {v!r} wurden übergeben."
+msgstr ""
+"Der Zeilenumbruch der generierten Ausgabe-YAML muss einer aus {lst} sein, aber {v!r} wurden "
+"übergeben."
 
 #: src/fb_tools/cfg_options/yaml.py:183
 #, python-brace-format
@@ -1658,7 +1663,7 @@ msgstr ""
 "Normalerweise wird von {app} jede sichere Verbindung vor der Abfrage überprüft, ob sie wirklich "
 "sicher ist. Diese Option veranlaßt {app}, diese Überprüfung zu überspringen und weiterzufahren."
 
-#: src/fb_tools/ddns/__init__.py:282 src/fb_tools/ddns/config.py:266
+#: src/fb_tools/ddns/__init__.py:282 src/fb_tools/ddns/config.py:272
 #, python-brace-format
 msgid "Invalid value {!r} as timeout:"
 msgstr "Ungültiger Wert {!r} für die Zeit der Zeitüberschreitung:"
@@ -1757,36 +1762,38 @@ msgstr "Kann Methode {method]() nicht ausführen - das Modul {mod!r} konnte nich
 msgid "Did not found a {t} entry for zone {z}:"
 msgstr "Fand keinen {t}-Eintrag für Zone {z}:"
 
-#: src/fb_tools/ddns/config.py:154
+#: src/fb_tools/ddns/config.py:158
 #, python-brace-format
-msgid "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600."
+msgid ""
+"Invalid timeout {to!r} for Web requests, it must be greater than {min} and less than {max} "
+"seconds."
 msgstr ""
-"Ungültige Zeit {!r} für eine Zeitüberschreitung für aine Webabfrage, sie muss zwischen 0 und "
-"3600 Sekunden liegen."
+"Ungültige Zeit {to!r} für eine Zeitüberschreitung für aine Webabfrage, sie muss zwischen {min} "
+"und {max} Sekunden liegen."
 
-#: src/fb_tools/ddns/config.py:290
+#: src/fb_tools/ddns/config.py:296
 #, python-brace-format
 msgid "Invalid value {u!r} for protocols to update in section {s!r}, valid protocols are: "
 msgstr ""
 "Ungültiger Wert {u!r} für Protokolle zum Update in Abschnitt {s!r} angegeben, gültige Protokolle"
 " sind:"
 
-#: src/fb_tools/ddns/config.py:308
+#: src/fb_tools/ddns/config.py:314
 #, python-brace-format
 msgid "Invalid forced update interval in section {!r}:"
 msgstr "Ungültiges Intervall für forcierte Updates in Abschnitt {s!r} angegeben:"
 
-#: src/fb_tools/ddns/config.py:315 src/fb_tools/ddns/config.py:359
+#: src/fb_tools/ddns/config.py:321 src/fb_tools/ddns/config.py:365
 #, python-brace-format
 msgid "Unknown configuration option {o!r} with value {v!r} in section {s!r}."
 msgstr "Unbekannte Konfigurationsoption {o!r} mit dem Wert {v!r} in Abschnitt {s!r}."
 
-#: src/fb_tools/ddns/config.py:339
+#: src/fb_tools/ddns/config.py:345
 #, python-brace-format
 msgid "The path to the working directory must be an absolute path (given: {!r})."
 msgstr "Der Pfad zum Arbeitsverzeichnis muss ein absoluter Pfad sein (gegeben: {!r})."
 
-#: src/fb_tools/ddns/config.py:352
+#: src/fb_tools/ddns/config.py:358
 #, python-brace-format
 msgid "The path to the logfile must be an absolute path (given: {!r})."
 msgstr "Der Pfad zur Logdatei muss absolut sein (gegeben: {!r})."
@@ -2344,7 +2351,6 @@ msgid "Reading file content of {!r} ..."
 msgstr "Lese Inhalt der Datei {!r} …"
 
 #: src/fb_tools/handling_obj.py:975
-#, python-brace-format
 msgid "Removing BOM from read file content ..."
 msgstr "Lösche BOM (Byte Order Mark) vom gelesenen Dateiinhalt …"
 

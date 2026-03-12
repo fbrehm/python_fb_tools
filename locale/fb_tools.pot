@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 2.9.5\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2026-03-11 15:22+0100\n"
+"POT-Creation-Date: 2026-03-12 08:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank@brehm-online.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -225,26 +225,26 @@ msgstr ""
 msgid "Trying to get {} via console ..."
 msgstr ""
 
-#: src/fb_tools/app.py:521 src/fb_tools/application/show_spinner.py:239
+#: src/fb_tools/app.py:521 src/fb_tools/application/show_spinner.py:235
 #, python-brace-format
 msgid "Got a signal {}."
 msgstr ""
 
-#: src/fb_tools/app.py:524 src/fb_tools/application/show_spinner.py:242
+#: src/fb_tools/app.py:524 src/fb_tools/application/show_spinner.py:238
 #, python-brace-format
 msgid "Got a signal {n!r} ({s})."
 msgstr ""
 
-#: src/fb_tools/app.py:535 src/fb_tools/application/show_spinner.py:255
+#: src/fb_tools/app.py:535 src/fb_tools/application/show_spinner.py:251
 #, python-brace-format
 msgid "Exit on signal {n!r} ({s})."
 msgstr ""
 
-#: src/fb_tools/app.py:542 src/fb_tools/application/show_spinner.py:262
+#: src/fb_tools/app.py:542 src/fb_tools/application/show_spinner.py:258
 msgid "Tweaking signal handlers."
 msgstr ""
 
-#: src/fb_tools/app.py:552 src/fb_tools/application/show_spinner.py:272
+#: src/fb_tools/app.py:552 src/fb_tools/application/show_spinner.py:268
 #, python-brace-format
 msgid "Setting signal handler for {n!r} ({s})."
 msgstr ""
@@ -262,7 +262,7 @@ msgstr ""
 msgid "{n} and repeated {n} did not match."
 msgstr ""
 
-#: src/fb_tools/app.py:583 src/fb_tools/application/show_spinner.py:290
+#: src/fb_tools/app.py:583 src/fb_tools/application/show_spinner.py:286
 msgid "Restoring original signal handlers."
 msgstr ""
 
@@ -306,7 +306,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: src/fb_tools/app.py:746 src/fb_tools/application/show_spinner.py:147
+#: src/fb_tools/app.py:746 src/fb_tools/application/show_spinner.py:143
 #: src/fb_tools/ddns/__init__.py:232
 msgid "SECONDS"
 msgstr ""
@@ -568,8 +568,8 @@ msgstr ""
 msgid "Guessed config type of {fo} is '{t}'."
 msgstr ""
 
-#: src/fb_tools/application/cfg_converter.py:932 src/fb_tools/application/get_file_rm.py:727
-#: src/fb_tools/application/myip.py:177 src/fb_tools/application/show_spinner.py:326
+#: src/fb_tools/application/cfg_converter.py:932 src/fb_tools/application/get_file_rm.py:723
+#: src/fb_tools/application/myip.py:177 src/fb_tools/application/show_spinner.py:322
 #: src/fb_tools/application/update_ddns.py:848
 #, python-brace-format
 msgid ""
@@ -577,200 +577,200 @@ msgid ""
 "{a}"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:65
+#: src/fb_tools/application/get_file_rm.py:61
 #, python-brace-format
 msgid "Value must be at least {m} - {v} was given."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:106
+#: src/fb_tools/application/get_file_rm.py:102
 #, python-brace-format
 msgid "The given pattern {!r} is not a valid date pattern"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:110
+#: src/fb_tools/application/get_file_rm.py:106
 #, python-format
-msgid ". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
+msgid ". There must be exactly one occurence of '%Y', one of '%m' and one of '%d'."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:142
+#: src/fb_tools/application/get_file_rm.py:138
 msgid ""
 "Returns a newline separated list of files generated from file globbing patterns given as "
 "arguments to this application, where all files are omitted, which should not be removed."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:178 src/fb_tools/application/get_file_rm.py:195
-#: src/fb_tools/application/get_file_rm.py:212 src/fb_tools/application/get_file_rm.py:229
-#: src/fb_tools/application/get_file_rm.py:246
+#: src/fb_tools/application/get_file_rm.py:174 src/fb_tools/application/get_file_rm.py:191
+#: src/fb_tools/application/get_file_rm.py:208 src/fb_tools/application/get_file_rm.py:225
+#: src/fb_tools/application/get_file_rm.py:242
 #, python-brace-format
 msgid "Wrong value {v!r} for {n}, must be >= {m}"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:268
+#: src/fb_tools/application/get_file_rm.py:264
 msgid "File options"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:275
+#: src/fb_tools/application/get_file_rm.py:271
 msgid "File pattern to generate list of files to remove."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:278
+#: src/fb_tools/application/get_file_rm.py:274
 msgid "Keep options"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:283
+#: src/fb_tools/application/get_file_rm.py:279
 msgid "NR_FILES"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:289
+#: src/fb_tools/application/get_file_rm.py:285
 #, python-brace-format
 msgid "How many of the last files should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:297
+#: src/fb_tools/application/get_file_rm.py:293
 msgid "DAYS"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:303
+#: src/fb_tools/application/get_file_rm.py:299
 #, python-brace-format
 msgid "How many files one per day from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:311
+#: src/fb_tools/application/get_file_rm.py:307
 msgid "WEEKS"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:317
+#: src/fb_tools/application/get_file_rm.py:313
 #, python-brace-format
 msgid "How many files one per week from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:325
+#: src/fb_tools/application/get_file_rm.py:321
 msgid "MONTHS"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:331
+#: src/fb_tools/application/get_file_rm.py:327
 #, python-brace-format
 msgid "How many files one per month from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:339
+#: src/fb_tools/application/get_file_rm.py:335
 msgid "YEARS"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:345
+#: src/fb_tools/application/get_file_rm.py:341
 #, python-brace-format
 msgid "How many files one per year from today on should be kept (default: {default}, minimum: {min})?"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:375
+#: src/fb_tools/application/get_file_rm.py:371
 #, python-brace-format
 msgid "Resolving date pattern {!r}."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:397
+#: src/fb_tools/application/get_file_rm.py:393
 msgid "Checking given files..."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:402
+#: src/fb_tools/application/get_file_rm.py:398
 #, python-brace-format
 msgid "Checking given file {!r} ..."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:411
+#: src/fb_tools/application/get_file_rm.py:407
 msgid "Resolved paths:"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:414
+#: src/fb_tools/application/get_file_rm.py:410
 #, python-brace-format
 msgid "File pattern {!r} does not match any files."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:419
+#: src/fb_tools/application/get_file_rm.py:415
 #, python-brace-format
 msgid "Checking {!r} ..."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:425
+#: src/fb_tools/application/get_file_rm.py:421
 #, python-brace-format
 msgid "File {!r} is a regular file."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:428
+#: src/fb_tools/application/get_file_rm.py:424
 #, python-brace-format
 msgid "Path {!r} is a directory."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:436
+#: src/fb_tools/application/get_file_rm.py:432
 #, python-brace-format
 msgid "File {fi!r} does not match pattern {pa!r}."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:448
+#: src/fb_tools/application/get_file_rm.py:444
 #, python-brace-format
 msgid "Date in file {fi!r} is not a valid date: {e}."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:500
+#: src/fb_tools/application/get_file_rm.py:496
 msgid "Did not found any files to evaluate."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:532
+#: src/fb_tools/application/get_file_rm.py:528
 #, python-brace-format
 msgid "Keeping last file ..."
 msgid_plural "Keeping last {} files ..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/fb_tools/application/get_file_rm.py:538
+#: src/fb_tools/application/get_file_rm.py:534
 #, python-brace-format
 msgid "Keep last file {!r}."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:543
+#: src/fb_tools/application/get_file_rm.py:539
 msgid "Files to keep:"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:564
+#: src/fb_tools/application/get_file_rm.py:560
 msgid "Files to keep for year:"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:586
+#: src/fb_tools/application/get_file_rm.py:582
 #, python-brace-format
 msgid "Got last month: {!r}"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:599
+#: src/fb_tools/application/get_file_rm.py:595
 msgid "Files to keep for month:"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:613
+#: src/fb_tools/application/get_file_rm.py:609
 #, python-brace-format
 msgid "Got last Monday: {!r}"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:625
+#: src/fb_tools/application/get_file_rm.py:621
 msgid "Files to keep for week:"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:638
+#: src/fb_tools/application/get_file_rm.py:634
 #, python-brace-format
 msgid "Got last day: {!r}"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:648
+#: src/fb_tools/application/get_file_rm.py:644
 msgid "Keeping all files from today."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:655
+#: src/fb_tools/application/get_file_rm.py:651
 msgid "Files to keep for day:"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:672
+#: src/fb_tools/application/get_file_rm.py:668
 #, python-brace-format
 msgid "Trying to get date of file {!r}."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:711
+#: src/fb_tools/application/get_file_rm.py:707
 msgid "Explored and assigned files:"
 msgstr ""
 
@@ -798,40 +798,40 @@ msgstr ""
 msgid "Write found public IPs into a cache file in working directory."
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:50
+#: src/fb_tools/application/show_spinner.py:46
 msgid "Waiting ... "
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:56
+#: src/fb_tools/application/show_spinner.py:52
 msgid ""
 "Shows one or more spinners, and their names, if multiple spinners should be shown. If no spinner"
 " is given, a random spinner will be displayed."
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:86
+#: src/fb_tools/application/show_spinner.py:82
 #, python-brace-format
 msgid "A negative time for showing the spinner {v!r} is not allowed."
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:131
+#: src/fb_tools/application/show_spinner.py:127
 #, python-brace-format
 msgid "Options for {}"
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:138
+#: src/fb_tools/application/show_spinner.py:134
 #, python-brace-format
 msgid "The prompt displayed before the spinner, if only one spinner should be shown. Default: {!r}."
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:149
+#: src/fb_tools/application/show_spinner.py:145
 msgid "The time in seconds for displaying each spinner."
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:156
+#: src/fb_tools/application/show_spinner.py:152
 msgid "SPINNER"
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:160
+#: src/fb_tools/application/show_spinner.py:156
 #, python-brace-format
 msgid ""
 "The spinners, which should be displayed. If not given, a random spinner will be displayed, which"
@@ -840,22 +840,22 @@ msgid ""
 " spinners will be shown."
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:188 src/fb_tools/application/show_spinner.py:199
+#: src/fb_tools/application/show_spinner.py:184 src/fb_tools/application/show_spinner.py:195
 #, python-brace-format
 msgid "You may give {!r} only as the only spinner."
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:207
+#: src/fb_tools/application/show_spinner.py:203
 #, python-brace-format
 msgid "Invalid spinner {!r} given."
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:233
+#: src/fb_tools/application/show_spinner.py:229
 #, python-brace-format
 msgid "Spinner {!r}: "
 msgstr ""
 
-#: src/fb_tools/application/show_spinner.py:306
+#: src/fb_tools/application/show_spinner.py:302
 msgid "All available spinners:"
 msgstr ""
 
@@ -1152,7 +1152,7 @@ msgstr ""
 msgid "Path {!r} exists, but is not a directory."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:430 src/fb_tools/argparse_actions.py:256
+#: src/fb_tools/application/get_file_rm.py:426 src/fb_tools/argparse_actions.py:256
 #: src/fb_tools/argparse_actions.py:290
 #, python-brace-format
 msgid "File {!r} is not a regular file."
@@ -1168,7 +1168,7 @@ msgstr ""
 msgid "Directory {!r} is not writeable."
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:421 src/fb_tools/argparse_actions.py:287
+#: src/fb_tools/application/get_file_rm.py:417 src/fb_tools/argparse_actions.py:287
 #: src/fb_tools/multi_config/files.py:218
 #, python-brace-format
 msgid "File {!r} does not exists."
@@ -1193,7 +1193,7 @@ msgstr ""
 msgid "Config options and options for logging"
 msgstr ""
 
-#: src/fb_tools/application/get_file_rm.py:272 src/fb_tools/cfg_app.py:157 src/fb_tools/cfg_app.py:170
+#: src/fb_tools/application/get_file_rm.py:268 src/fb_tools/cfg_app.py:157 src/fb_tools/cfg_app.py:170
 msgid "FILE"
 msgstr ""
 
@@ -1349,7 +1349,7 @@ msgid "Cannot use {!r} as inline comment prefixes for inifiles."
 msgstr ""
 
 #: src/fb_tools/cfg_options/toml.py:36
-msgid "The indention toml output. It takes a non negative number."
+msgid "The indention of toml output. It takes a non negative number."
 msgstr ""
 
 #: src/fb_tools/cfg_options/toml.py:52
@@ -1592,7 +1592,7 @@ msgid ""
 "takes place. This option makes {app} skip the verification step and proceed without checking."
 msgstr ""
 
-#: src/fb_tools/ddns/__init__.py:282 src/fb_tools/ddns/config.py:266
+#: src/fb_tools/ddns/__init__.py:282 src/fb_tools/ddns/config.py:272
 #, python-brace-format
 msgid "Invalid value {!r} as timeout:"
 msgstr ""
@@ -1691,32 +1691,34 @@ msgstr ""
 msgid "Did not found a {t} entry for zone {z}:"
 msgstr ""
 
-#: src/fb_tools/ddns/config.py:154
+#: src/fb_tools/ddns/config.py:158
 #, python-brace-format
-msgid "Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600."
+msgid ""
+"Invalid timeout {to!r} for Web requests, it must be greater than {min} and less than {max} "
+"seconds."
 msgstr ""
 
-#: src/fb_tools/ddns/config.py:290
+#: src/fb_tools/ddns/config.py:296
 #, python-brace-format
 msgid "Invalid value {u!r} for protocols to update in section {s!r}, valid protocols are: "
 msgstr ""
 
-#: src/fb_tools/ddns/config.py:308
+#: src/fb_tools/ddns/config.py:314
 #, python-brace-format
 msgid "Invalid forced update interval in section {!r}:"
 msgstr ""
 
-#: src/fb_tools/ddns/config.py:315 src/fb_tools/ddns/config.py:359
+#: src/fb_tools/ddns/config.py:321 src/fb_tools/ddns/config.py:365
 #, python-brace-format
 msgid "Unknown configuration option {o!r} with value {v!r} in section {s!r}."
 msgstr ""
 
-#: src/fb_tools/ddns/config.py:339
+#: src/fb_tools/ddns/config.py:345
 #, python-brace-format
 msgid "The path to the working directory must be an absolute path (given: {!r})."
 msgstr ""
 
-#: src/fb_tools/ddns/config.py:352
+#: src/fb_tools/ddns/config.py:358
 #, python-brace-format
 msgid "The path to the logfile must be an absolute path (given: {!r})."
 msgstr ""
