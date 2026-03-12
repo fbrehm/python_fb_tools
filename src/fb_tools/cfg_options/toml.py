@@ -33,7 +33,7 @@ class ConfigOptionsToml(BaseConfigOptions):
     _defaults["indent"] = 4
 
     _doc = {}
-    _doc["indent"] = _("The indention toml output. It takes a non negative number.")
+    _doc["indent"] = _("The indention of toml output. It takes a non negative number.")
 
     # -------------------------------------------------------------------------
     @property

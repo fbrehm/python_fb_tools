@@ -385,7 +385,7 @@ msgstr ""
 
 #: src/fb_tools/application/cfg_converter.py:156
 msgid "Override an existing target config file without a question, if it is already existing."
-msgstr ""
+msgstr "Eine existierende Ziel-Konfigurationsdatei ohne zu fragen überschreiben."
 
 #: src/fb_tools/application/cfg_converter.py:193
 #, python-brace-format
@@ -1334,14 +1334,14 @@ msgid "The value for the width must be an integer greater than {m}, {v} was give
 msgstr "Der Wert für die Breite muss en Integerwert größer als {m} sein, {v} wurden gegeben."
 
 #: src/fb_tools/cfg_options/dump.py:149
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The value for the width must be an integer less than {m}, {v} was given."
-msgstr "Der Wert für {opt!r} muss wenigstens {m} groß sein, {v} wurden gegeben."
+msgstr "Der Wert für {opt!r} für die Breite muss ein Integerwert kleiner als {m} sein, {v} wurden gegeben."
 
 #: src/fb_tools/cfg_options/hjson.py:40 src/fb_tools/cfg_options/json.py:40
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Ensure, the {} output is guaranteed to have all non-ASCII characters escaped."
-msgstr "In der {}-Ausgabe werden alle Nicht-ASCII-Zeichen garantiert escaped."
+msgstr "Sicherstellen, dass in der {}-Ausgabe alle Nicht-ASCII-Zeichen imaskiert werden."
 
 #: src/fb_tools/cfg_options/hjson.py:43 src/fb_tools/cfg_options/json.py:43
 #, python-brace-format
@@ -1358,82 +1358,80 @@ msgstr ""
 
 #: src/fb_tools/cfg_options/inifile.py:45
 msgid "Allow keys without values in inifiles."
-msgstr ""
+msgstr "Schlüssel ohne Wert in Ini-Dateien erlauben."
 
 #: src/fb_tools/cfg_options/inifile.py:46
 msgid "The prefixes for comment lines in inifiles."
-msgstr ""
+msgstr "Die Präfixe für Kommentarzeilen in Ini-Dateien."
 
 #: src/fb_tools/cfg_options/inifile.py:48
 msgid "The delimiters of inifiles for delimit keys from values within a section."
-msgstr ""
+msgstr "Die Trennzeichen in Ini-Dateien um die Schlüssel von den Werten in einem Abschnitt zu trennen."
 
 #: src/fb_tools/cfg_options/inifile.py:50
 msgid "Allow multi-line values in inifiles."
-msgstr ""
+msgstr "Mehrzeilige Werte in Ini-Dateien erlauben."
 
 #: src/fb_tools/cfg_options/inifile.py:51
 msgid "Use ExtendedInterpolation for interpolation of inifiles."
-msgstr ""
+msgstr "ExtendedInterpolation zur Interpolation von Ini-Dateien verwenden."
 
 #: src/fb_tools/cfg_options/inifile.py:52
 msgid "The inline prefixes for comment lines in inifiles."
-msgstr ""
+msgstr "Die Inline-Präfixe für Kommentarzeilen in Ini-Dateien."
 
 #: src/fb_tools/cfg_options/inifile.py:54
 msgid "Perform strict parsing of inifiles without duplicated sections or options."
-msgstr ""
+msgstr "Striktes Parsen von Ini-Dateien ohne duplizierte Abschnitte oder Optionen verwenden."
 
 #: src/fb_tools/cfg_options/inifile.py:86
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Cannot use {!r} as comment prefixes for inifiles."
-msgstr "Kann {!r} nicht als Kommentar-Präfix für ini-Dateien verwenden."
+msgstr "Kann {!r} nicht als Kommentar-Präfix für Ini-Dateien verwenden."
 
 #: src/fb_tools/cfg_options/inifile.py:108
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Cannot use {!r} as delimiters for inifiles."
-msgstr "Kann {!r} nicht als Trennzeichen für ini-Dateien verwenden."
+msgstr "Kann {!r} nicht als Trennzeichen für Ini-Dateien verwenden."
 
 #: src/fb_tools/cfg_options/inifile.py:130
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Cannot use {!r} as inline comment prefixes for inifiles."
-msgstr "Kann {!r} nicht als Inline-Kommentar-Präfix für ini-Dateien verwenden."
+msgstr "Kann {!r} nicht als Inline-Kommentar-Präfix für Ini-Dateien verwenden."
 
 #: src/fb_tools/cfg_options/toml.py:36
-msgid "The indention toml output. It takes a non negative number."
-msgstr ""
+msgid "The indention of toml output. It takes a non negative number."
+msgstr "Die Einrückung der Toml-Ausgabe. Es verwendet nicht-negative Zahlen."
 
 #: src/fb_tools/cfg_options/toml.py:52
 #, python-brace-format
 msgid "Toml indent takes a non negative number, {} was given."
-msgstr ""
+msgstr "Toml-Einrückung verwendet eine nicht-negative Zahl, {} wurde gegeben."
 
 #: src/fb_tools/cfg_options/yaml.py:62
 msgid "Are Unicode characters allowed in YAML output."
-msgstr ""
+msgstr "Sind Unicode-Zeichen in der YAML-Ausgabe erlaubt."
 
 #: src/fb_tools/cfg_options/yaml.py:63
 msgid "Include export tag type in YAML output."
 msgstr "Füge die Exporttyp-Markierungen in die YAML-Ausgabe ein."
 
 #: src/fb_tools/cfg_options/yaml.py:64
-#, fuzzy
 msgid "Should be added an explicite end in YAML output."
-msgstr "Gebe eine explizite Ende-Markierung in der YAML-Ausgabe aus."
+msgstr "Soll eine explizite Ende-Markierung in der YAML-Ausgabe ausgegeben werden."
 
 #: src/fb_tools/cfg_options/yaml.py:65
-#, fuzzy
 msgid "Should be added an explicite start in YAML output."
-msgstr "Keine explizite Starmarkiering in der YAML-Ausgabe ausgeben."
+msgstr "Soll keine explizite Startmarkiering in der YAML-Ausgabe ausgeben werden."
 
 #: src/fb_tools/cfg_options/yaml.py:66
 msgid "Print a collection as flow in YAML output."
 msgstr "Gebe eine Kollektion als Flußausgabe in der YAML-Ausgabe aus."
 
 #: src/fb_tools/cfg_options/yaml.py:68
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The linebreak used to generate the YAML output, must be one of {}."
-msgstr "Der Zeilenumbruch im Ausgabe-YAML muss einer aus {lst} sein, aber {v!r} wurden übergeben."
+msgstr "Der Zeilenumbruch, der in der Ausgabe-YAML iverwendet wird, muss einer aus {} sein."
 
 #: src/fb_tools/cfg_options/yaml.py:70
 #, python-brace-format
@@ -1441,9 +1439,9 @@ msgid "The style of the scalars in YAML output, may be be one of {}."
 msgstr "Der Stil der Skalare in der YAML-Ausgabe, muss einer von {} sein."
 
 #: src/fb_tools/cfg_options/yaml.py:73
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The maximum width of generated lines on YAML output."
-msgstr "Die Maximalbreite der Zeilen der generierten YAML-Ausgabe (Vorgabe: {})."
+msgstr "Die Maximalbreite der Zeilen der generierten YAML-Ausgabe."
 
 #: src/fb_tools/cfg_options/yaml.py:136
 #, python-brace-format
@@ -1460,9 +1458,9 @@ msgstr ""
 "übergeben."
 
 #: src/fb_tools/cfg_options/yaml.py:162
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The line break used to generate ouput YAML must be one of {lst}, but {v!r} was given."
-msgstr "Der Zeilenumbruch im Ausgabe-YAML muss einer aus {lst} sein, aber {v!r} wurden übergeben."
+msgstr "Der Zeilenumbruch der generierten Ausgabe-YAML muss einer aus {lst} sein, aber {v!r} wurden übergeben."
 
 #: src/fb_tools/cfg_options/yaml.py:183
 #, python-brace-format
@@ -1470,14 +1468,14 @@ msgid "The default style on ouput YAML must be one of {lst}, but {v!r} was given
 msgstr "Der Vorgabe-Stil der YAML-Ausgabe muss einer aus {lst} sein, aber {v!r} wurden übergeben."
 
 #: src/fb_tools/cfg_options/yaml.py:203
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The maximum width of generated YAML output must be at least {m} characters, {v!r} are given."
 msgstr ""
 "Die maximale Breite der generierten YAML-Datei muss wenigstens {m} Zeichen groß sein, {v!r} "
 "wurden übergeben."
 
 #: src/fb_tools/cfg_options/yaml.py:209
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The maximum width of generated YAML output must be at most {m} characters, {v!r} are given."
 msgstr ""
 "Die maximale Breite der generierten YAML-Datei darf höchstens {m} Zeichen groß sein, {v!r} "
@@ -2346,9 +2344,9 @@ msgid "Reading file content of {!r} ..."
 msgstr "Lese Inhalt der Datei {!r} …"
 
 #: src/fb_tools/handling_obj.py:975
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Removing BOM from read file content ..."
-msgstr "Lösche Sockel-Datei {!r} …"
+msgstr "Lösche BOM (Byte Order Mark) vom gelesenen Dateiinhalt …"
 
 #: src/fb_tools/handling_obj.py:1040 src/fb_tools/handling_obj.py:1047
 #, python-brace-format
