@@ -7,6 +7,7 @@
 @contact: frank.brehm@profitbricks.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 # Standard modules

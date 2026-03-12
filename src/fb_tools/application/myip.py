@@ -7,14 +7,15 @@
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import, print_function
 
 # Standard modules
 import copy
 import locale
 import logging
-import pathlib
 import sys
+from pathlib import Path
 
 # Own modules
 from .. import __version__ as GLOBAL_VERSION
@@ -24,7 +25,7 @@ from ..ddns.config import DdnsConfiguration
 from ..ddns.errors import WorkDirError
 from ..xlate import XLATOR, format_list
 
-__version__ = "2.1.1"
+__version__ = "2.1.2"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -164,7 +165,7 @@ class MyIpApplication(BaseDdnsApplication):
 # =============================================================================
 def main():
     """Entrypoint for myip."""
-    my_path = pathlib.Path(__file__)
+    my_path = Path(sys.argv[0])
     appname = my_path.name
 
     locale.setlocale(locale.LC_ALL, "")

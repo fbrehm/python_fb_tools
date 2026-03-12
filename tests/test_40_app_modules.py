@@ -277,6 +277,47 @@ class TestAppModules(FbToolsTestcase):
 
         del app
 
+    # -------------------------------------------------------------------------
+    def test_import_cfg_converter(self):
+        """Test importing module fb_tools.application.cfg_converter."""
+        LOG.info("Testing import of fb_tools.application.cfg_converter ...")
+        import fb_tools.application.cfg_converter
+
+        LOG.info(
+            "Module version of fb_tools.application.cfg_converter is {!r}.".format(
+                fb_tools.application.cfg_converter.__version__
+            )
+        )
+
+    # -------------------------------------------------------------------------
+    def test_instance_cfg_converter(self):
+        """Test create an instance of a CfgConvertApplication object."""
+        LOG.info("Test creating an instance of a CfgConvertApplication object.")
+
+        from fb_tools.application.cfg_converter import CfgConvertApplication
+
+        CfgConvertApplication.do_init_logging = False
+
+        app = CfgConvertApplication(
+            appname=self.appname,
+            testing_args=[
+                "--input",
+                str(self.test_dir / "config.yml"),
+                "--from-type",
+                "yaml",
+                "--to-type",
+                "json",
+                "--output",
+                str(self.test_dir / "config.js"),
+            ],
+            verbose=self.verbose,
+        )
+        LOG.debug("CfgConvertApplication %%r: {!r}".format(app))
+        if self.verbose > 1:
+            LOG.debug("CfgConvertApplication %%s: {}".format(app))
+
+        del app
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -304,6 +345,8 @@ if __name__ == "__main__":
     suite.addTest(TestAppModules("test_instance_get_file_rm_app", verbose))
     suite.addTest(TestAppModules("test_import_show_spinner", verbose))
     suite.addTest(TestAppModules("test_instance_show_spinner", verbose))
+    suite.addTest(TestAppModules("test_import_cfg_converter", verbose))
+    suite.addTest(TestAppModules("test_instance_cfg_converter", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

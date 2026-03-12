@@ -10,4 +10,6 @@ PyYAML
 toml
 hjson
 chardet
+apacheconfig
+iscpy
 requests_mock

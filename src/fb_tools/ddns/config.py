@@ -7,6 +7,7 @@
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 # Standard module
@@ -30,7 +31,7 @@ from ..errors import InvalidTimeIntervalError
 from ..multi_config import BaseMultiConfig
 from ..xlate import XLATOR, format_list
 
-__version__ = "3.1.3"
+__version__ = "3.2.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -69,6 +70,9 @@ class DdnsConfiguration(BaseMultiConfig):
     re_forced_update_interval = re.compile(
         r"^^\s*forced[_-]?update[_-]?intervall?\s*$", re.IGNORECASE
     )
+
+    min_timeout = 0
+    max_timeout = 3600
 
     # -------------------------------------------------------------------------
     def __init__(
@@ -150,9 +154,12 @@ class DdnsConfiguration(BaseMultiConfig):
             self._timeout = self.default_timeout
             return
         val = int(value)
-        err_msg = _("Invalid timeout {!r} for Web requests, must be 0 < SECONDS < 3600.")
-        if val <= 0 or val > 3600:
-            msg = err_msg.format(value)
+        err_msg = _(
+            "Invalid timeout {to!r} for Web requests, it must be greater than {min} and less "
+            "than {max} seconds."
+        )
+        if val <= self.min_timeout or val > self.max_timeout:
+            msg = err_msg.format(to=val, min=self.min_timeout, max=self.max_timeout)
             raise ValueError(msg)
         self._timeout = val
 

@@ -7,6 +7,7 @@
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 # Standard modules
@@ -23,9 +24,11 @@ except ImportError:
 # Own modules
 
 from . import MAX_TIMEOUT
+from .errors import InputFileNotExistingError
+from .errors import InputFileNotReadableError
 from .xlate import XLATOR
 
-__version__ = "2.1.5"
+__version__ = "2.3.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -103,6 +106,121 @@ class DirectoryOptionAction(argparse.Action):
                 raise argparse.ArgumentError(self, msg)
 
         setattr(namespace, self.dest, path)
+
+
+# =============================================================================
+class InputFileOptionAction(argparse.Action):
+    """An argparse action for a input file option."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, *args, **kwargs):
+        """Initialise a InputFileOptionAction object."""
+        super(InputFileOptionAction, self).__init__(*args, **kwargs, option_strings=option_strings)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, filename, option_string=None):
+        """Parse the input file option."""
+        if filename is None or filename == "-" or filename == "":
+            setattr(namespace, self.dest, "-")
+            return
+        path = Path(filename)
+        if not path.exists():
+            err = InputFileNotExistingError(path)
+            raise argparse.ArgumentError(self, str(err))
+        if not os.access(str(path), os.R_OK):
+            err = InputFileNotReadableError(path)
+            raise argparse.ArgumentError(self, str(err))
+        setattr(namespace, self.dest, path)
+
+
+# =============================================================================
+class OutputFileOptionAction(argparse.Action):
+    """An argparse action for a output file option."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, *args, **kwargs):
+        """Initialise a OutputFileOptionAction object."""
+        super(OutputFileOptionAction, self).__init__(
+            *args, **kwargs, option_strings=option_strings
+        )
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, filename, option_string=None):
+        """Parse the output file option."""
+        if filename is None or filename == "-" or filename == "":
+            setattr(namespace, self.dest, "-")
+            return
+        path = Path(filename)
+        setattr(namespace, self.dest, path)
+
+
+# =============================================================================
+class NonNegativeIntegerOptionAction(argparse.Action):
+    """
+    It's an argparse action class to ensure a positive integer value.
+
+    It ensures, that the given value is an integer value, which ist greater or equal to 0.
+    """
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, may_zero=True, *args, **kwargs):
+        """Initialize the NonNegativeIntegerOptionAction object."""
+        self.may_zero = bool(may_zero)
+
+        super(NonNegativeIntegerOptionAction, self).__init__(
+            *args, **kwargs, option_strings=option_strings
+        )
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, value, option_string=None):
+        """Check the given value from command line for type and the valid range."""
+        try:
+            val = int(value)
+        except Exception as e:
+            msg = _("Got a {c} for converting {v!r} into an integer value: {e}").format(
+                c=e.__class__.__name__, v=value, e=e
+            )
+            raise argparse.ArgumentError(self, msg)
+
+        if val < 0:
+            msg = _("The option must not be negative (given: {}).").format(value)
+            raise argparse.ArgumentError(self, msg)
+
+        if not self.may_zero and val == 0:
+            msg = _("The option must not be zero.")
+            raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, val)
+
+
+# =============================================================================
+class RangeOptionAction(argparse.Action):
+    """An argparse action for a option in a numeric range."""
+
+    # -------------------------------------------------------------------------
+    def __init__(self, option_strings, min_val, max_val, *args, **kwargs):
+        """Initialise a RangeOptionAction object."""
+        self._min_val = min_val
+        self._max_val = max_val
+
+        super(RangeOptionAction, self).__init__(*args, **kwargs, option_strings=option_strings)
+
+    # -------------------------------------------------------------------------
+    def __call__(self, parser, namespace, value, option_string=None):
+        """Parse the range option."""
+        if value < self._min_val:
+            msg = _("The value for {opt!r} may be at least {m}, {v} were given.").format(
+                opt=option_string, m=self._min_val, v=value
+            )
+            raise argparse.ArgumentError(self, msg)
+
+        if value > self._max_val:
+            msg = _("The value for {opt!r} may be at most {m}, {v} were given.").format(
+                opt=option_string, m=self._max_val, v=value
+            )
+            raise argparse.ArgumentError(self, msg)
+
+        setattr(namespace, self.dest, value)
 
 
 # =============================================================================

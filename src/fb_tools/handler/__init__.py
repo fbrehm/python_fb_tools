@@ -8,6 +8,7 @@
 @copyright: © 2025 by Frank Brehm, Berlin
 
 """
+
 from __future__ import absolute_import, print_function
 
 # Standard module
@@ -20,11 +21,12 @@ import stat
 import subprocess
 import time
 from fcntl import F_GETFL, F_SETFL, fcntl
+from shlex import quote
+
 try:
     import pathlib
 except ImportError:
     import pathlib2 as pathlib
-from shlex import quote
 
 # Third party modules
 import babel
@@ -301,7 +303,7 @@ class BaseHandler(HandlingObject):
         # Display Output of executable
         if hb_handler is not None:
 
-            (stdoutdata, stderrdata) = self._wait_for_proc_with_heartbeat(
+            stdoutdata, stderrdata = self._wait_for_proc_with_heartbeat(
                 cmd_obj=cmd_obj,
                 cmd_str=cmd_str,
                 hb_handler=hb_handler,
@@ -316,7 +318,7 @@ class BaseHandler(HandlingObject):
 
             if not quiet or self.verbose > 1:
                 LOG.debug(_("Starting synchronous communication with '{}'.").format(cmd_str))
-            (stdoutdata, stderrdata) = cmd_obj.communicate()
+            stdoutdata, stderrdata = cmd_obj.communicate()
 
         if not quiet or self.verbose > 1:
             LOG.debug(_("Finished communication with '{}'.").format(cmd_str))
