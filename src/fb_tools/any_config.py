@@ -41,7 +41,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.6.6"
+__version__ = "0.6.7"
 
 LOG = logging.getLogger(__name__)
 
@@ -399,7 +399,7 @@ class AnyConfigHandler(HandlingObject):
                     msg = _("Unable to parse '{f}' as {t}: {e}").format(
                         f=self.colored(source, "cyan"), t=self.colored(config_type, "cyan"), e=e
                     )
-                LOG.debug(msg)
+                    LOG.debug(msg)
                 if i >= count_types:
                     msg = _("Could not detect file type by file content from '{}'.").format(
                         self.colored(source, "red")
