@@ -33,6 +33,6 @@ MAX_INDENT = 12
 from .mailaddress import MailAddress, MailAddressList, QualifiedMailAddress  # noqa: F401
 from .multi_config import BaseMultiConfig  # noqa: F401
 
-__version__ = "2.9.5"
+__version__ = "3.0.0"
 
 # vim: ts=4 et list

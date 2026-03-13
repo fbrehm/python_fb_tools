@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-03-13
+
+### Added
+
+* Adding `src/fb_tools/cfg_options/*py` modules for encapsulation options of
+  the different config parsers and generators.
+* Adding exception classes `ConfigDetectionError`, `ConfigWrongTypeError`,
+  `InputFileError`, `InputFileNotExistingError` and `InputFileNotReadableError`
+  to module `src/fb_tools/errors.py`.
+* Adding classes `InputFileOptionAction`, `OutputFileOptionAction`, `NonNegativeIntegerOptionAction`
+  and `RangeOptionAction` to `src/fb_tools/argparse_actions.py`.
+* Adding `src/fb_tools/any_config.py` for class `AnyConfigHandler` for reading and writing
+  arbitrary configuration files.
+* Adding module `src/fb_tools/application/cfg_converter.py` for class `CfgConvertApplication`
+  for providing the script config-convert.
+* Adding tests fo AnyConfigHandler and CfgConvertApplication.
+
+### Changed
+
+* Using `AnyConfigHandler` in class `BaseMultiConfig` to read configuration files.
+* Extending function `pp` in module `src/fb_tools/common.py` for using terminal width.
+* Removing BOM on reading text files in class `HandlingObject`.
+
+### Removed
+
+* Removing module `src/fb_tools/multi_config/read.py`, because it was substituted
+  by class `AnyConfigHandler`.
+
 ## [2.9.5] - 2026-02-24
 
 ### Changed
