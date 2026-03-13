@@ -41,9 +41,9 @@ Python modules for common used objects, error classes and functions.
 This is the Python@@@py_version_nodot@@@ version.
 
 In this package are contained the following scripts:
+ * config-convert
  * get-file-to-remove
- * myip
- * update-ddns
+ * show-spinner
 
 %prep
 echo "Preparing '${builddir}-' ..."

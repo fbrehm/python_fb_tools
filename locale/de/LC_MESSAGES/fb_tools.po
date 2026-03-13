@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 2.9.5\n"
+"Project-Id-Version: fb_tools 3.0.0\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2026-03-12 11:54+0100\n"
+"POT-Creation-Date: 2026-03-13 13:40+0100\n"
 "PO-Revision-Date: 2026-03-12 11:55+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de\n"
@@ -18,12 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: src/fb_tools/any_config.py:199 src/fb_tools/config.py:103 src/fb_tools/multi_config/__init__.py:219
+#: src/fb_tools/any_config.py:199 src/fb_tools/config.py:103 src/fb_tools/multi_config/__init__.py:220
 #, python-brace-format
 msgid "Encoding {v!r} must be a {s!r} object, but is a {c!r} object instead."
 msgstr "Die Kodierung {v!r} muss ein {s!r}-Objekt sein, ist aber statt dessen ein {c!r}-Objekt."
 
-#: src/fb_tools/any_config.py:266 src/fb_tools/multi_config/read.py:105
+#: src/fb_tools/any_config.py:266
 #, python-brace-format
 msgid ""
 "Character set detection by module {mod!r} for file {fn!r} should not be used, using character "
@@ -32,12 +32,12 @@ msgstr ""
 "Die Zeichesatzerkennung durch das Modul {mod!r} für die Datei {fn!r} soll nicht verwendet "
 "werden, verwende Zeichensatz {enc!r}."
 
-#: src/fb_tools/any_config.py:274 src/fb_tools/multi_config/read.py:113
+#: src/fb_tools/any_config.py:274
 #, python-brace-format
 msgid "Trying to detect character set of file {fn!r} ..."
 msgstr "Versuche den Zeichensatz der Datei {fn!r} zu ermitteln …"
 
-#: src/fb_tools/any_config.py:286 src/fb_tools/multi_config/read.py:125
+#: src/fb_tools/any_config.py:286
 #, python-brace-format, python-format
 msgid ""
 "The confidence of {con:0.1f}% is lower than the limit of {lim:0.1f}%, using character set "
@@ -46,7 +46,7 @@ msgstr ""
 "Die Zuverlässigkeit von {con:0.1f}% ist kleiner als das Limit von {lim:0.1f}%, verwende den "
 "Zeichensatz {cs_def!r} anstelle von {cs_found!r}."
 
-#: src/fb_tools/any_config.py:298 src/fb_tools/multi_config/read.py:137
+#: src/fb_tools/any_config.py:298
 #, python-brace-format
 msgid "Got {what} on detecting cheracter set of {fn!r}: {e}"
 msgstr "Erhielt {what} bei der Zeichensatzerkennung von {fn!r}: {e}."
@@ -104,7 +104,7 @@ msgstr "Ungültiger Konfigurationstyp »{}« beim Aufruf von load_config() über
 msgid "Loaded configuration:"
 msgstr "Geladene Konfiguration:"
 
-#: src/fb_tools/any_config.py:474 src/fb_tools/multi_config/read.py:239
+#: src/fb_tools/any_config.py:474
 #, python-brace-format
 msgid "Arguments on initializing {}:"
 msgstr "Argumente zur Initialisierung von {}:"
@@ -316,7 +316,6 @@ msgid "Yes"
 msgstr "Ja"
 
 #: src/fb_tools/app.py:746 src/fb_tools/application/show_spinner.py:143
-#: src/fb_tools/ddns/__init__.py:232
 msgid "SECONDS"
 msgstr "SEKUNDEN"
 
@@ -585,8 +584,7 @@ msgid "Guessed config type of {fo} is '{t}'."
 msgstr "Erratener Konfigurationstyp von {fo} ist »{t}«."
 
 #: src/fb_tools/application/cfg_converter.py:935 src/fb_tools/application/get_file_rm.py:723
-#: src/fb_tools/application/myip.py:177 src/fb_tools/application/show_spinner.py:322
-#: src/fb_tools/application/update_ddns.py:848
+#: src/fb_tools/application/show_spinner.py:322
 #, python-brace-format
 msgid ""
 "{c}-Object:\n"
@@ -803,39 +801,6 @@ msgstr "Versuche das Datum aus der Datei {!r} zu entnehmen."
 msgid "Explored and assigned files:"
 msgstr "Ermittelte und zugewiesene Dateien:"
 
-#: src/fb_tools/application/myip.py:53
-msgid ""
-"Tries to detect the public NAT IPv4 address and/or the automatic assigned IPv6 address in a "
-"local network and print it out."
-msgstr ""
-"Versucht die öffentliche NAT-IPv4-Adresse bzw. die automatisch zugewiesene IPv6-Adresse in einem"
-" lokalem Netzwerk zu ermitten und zu zeigen."
-
-#: src/fb_tools/application/myip.py:58 src/fb_tools/application/myip.py:59
-#, python-brace-format
-msgid "Use only {} to retreive the public IP address."
-msgstr "Verwende nur {}, um die öffentliche IP-Adresse zu ermiteln."
-
-#: src/fb_tools/application/myip.py:61
-#, python-brace-format
-msgid "The IP protocol, for which the public IP should be retrieved (one of {c}, default {d!r})."
-msgstr ""
-"Das IP-Protokoll, für welches die öffentliche IP-Adresse ermittelt werden soll (eins aus {c}, "
-"Vorgabe: {d!r})."
-
-#: src/fb_tools/application/myip.py:104
-msgid "myip options"
-msgstr "Optionen für myip"
-
-#: src/fb_tools/application/myip.py:112
-msgid "Write found public IPs into a cache file in working directory."
-msgstr "Schreibe die gefundenen öffentliche IP-Adressen in eine Cache-Datei im Arbeitsverzeichnis zurück."
-
-#: src/fb_tools/application/myip.py:145 src/fb_tools/application/update_ddns.py:490
-#, python-brace-format
-msgid "Starting {a!r}, version {v!r} ..."
-msgstr "Starte {a!r}, Version {v!r} …"
-
 #: src/fb_tools/application/show_spinner.py:46
 msgid "Waiting ... "
 msgstr "Warten … "
@@ -905,239 +870,6 @@ msgstr "Spinner {!r}: "
 #: src/fb_tools/application/show_spinner.py:302
 msgid "All available spinners:"
 msgstr "Alle verfügbaren Spinner:"
-
-#: src/fb_tools/application/update_ddns.py:96
-#, python-brace-format
-msgid "No valid domain given on initialization of a {} object."
-msgstr "Keine gültige Domäne bei der Initialisierung eines {}-Objektes angegeben."
-
-#: src/fb_tools/application/update_ddns.py:127
-#, python-brace-format
-msgid "Invalid domain {!r} given, whitespaces are not allowed."
-msgstr "Ungültige Domäne angegeben, Leerzeichen sind nicht erlaubt."
-
-#: src/fb_tools/application/update_ddns.py:177
-msgid "A timestamp must not be None."
-msgstr "Ein Timeout darf nicht None sein."
-
-#: src/fb_tools/application/update_ddns.py:250
-#, python-brace-format
-msgid "Checking working directory {d!r} for updating {what} ..."
-msgstr "Überprüfe Arbeitsverzeichnis {d!r} zur Aktualisierung von {what} …"
-
-#: src/fb_tools/application/update_ddns.py:256
-msgid "working directory is not a path object."
-msgstr "Das Arbeitsverzeichnis ist kein Path-Objekt."
-
-#: src/fb_tools/application/update_ddns.py:265
-msgid "working directory is not readable."
-msgstr "Das Arbeitsverzeichnis ist nicht lesbar."
-
-#: src/fb_tools/application/update_ddns.py:269
-msgid "working directory is not writeable."
-msgstr "Das Arbeitsverzeichnis ist nicht beschreibbar."
-
-#: src/fb_tools/application/update_ddns.py:275
-#, python-brace-format
-msgid "Checking update status file {!r} ..."
-msgstr "Überprüfe Aktualisierungs-Statusdatei {!r} …"
-
-#: src/fb_tools/application/update_ddns.py:280
-#, python-brace-format
-msgid "Update status file {!r} does not exists."
-msgstr "Die Aktualisierungs-Statusdatei {!r} existiert nicht."
-
-#: src/fb_tools/application/update_ddns.py:287
-msgid "update status file is not readable."
-msgstr "die Aktualisierungs-Statusdatei ist nicht lesbar."
-
-#: src/fb_tools/application/update_ddns.py:291
-msgid "update status file is not writeable."
-msgstr "die Aktualisierungs-Statusdatei ist nicht beschreibbar."
-
-#: src/fb_tools/application/update_ddns.py:296
-#, python-brace-format
-msgid "Write status into {!r} ..."
-msgstr "Schreibe Status in {!r} …"
-
-#: src/fb_tools/application/update_ddns.py:312
-msgid "Data to write in status file:"
-msgstr "Daten, die in die Statusdatei geschrieben werden:"
-
-#: src/fb_tools/application/update_ddns.py:315
-#, python-brace-format
-msgid "Simulation mode, file {!r} will not be written."
-msgstr "Simulationsmodus, die Datei {!r} wird nicht geschrieben."
-
-#: src/fb_tools/application/update_ddns.py:334
-#, python-brace-format
-msgid "Read status from {!r} ..."
-msgstr "Lese Status aus {!r} …"
-
-#: src/fb_tools/application/update_ddns.py:342
-msgid "Read data from YAML:"
-msgstr "Gelesene Daten aus YAML:"
-
-#: src/fb_tools/application/update_ddns.py:354
-msgid "no timestamp of last update found."
-msgstr "kein Zeitstempel der letzten Aktualisierung gefunden."
-
-#: src/fb_tools/application/update_ddns.py:383
-msgid "Updating the DDNS records, even if seems not to be changed."
-msgstr "Aktualisieren der DDNS-Einträge, auch wenn sie nicht verändert zu sein scheinen."
-
-#: src/fb_tools/application/update_ddns.py:387
-msgid "Tries to update the A and/or AAAA record at ddns.de with the current IP address."
-msgstr "Versucht den A- bzw. AAAA-Eintrag bei ddns.de mit der aktuellen IP-Adresse zu aktualisieren."
-
-#: src/fb_tools/application/update_ddns.py:392 src/fb_tools/application/update_ddns.py:393
-#, python-brace-format
-msgid "Update only the {} record with the public IP address."
-msgstr "Aktualisiere nur den {}-Eintrag mit der aktuellen IP-Adresse."
-
-#: src/fb_tools/application/update_ddns.py:395
-#, python-brace-format
-msgid ""
-"The IP protocol, for which the appropriate DNS record should be updated with the public IP (one "
-"of {c}, default {d!r})."
-msgstr ""
-"Das IP-Protokoll, für welches der entsprechende DNS-Eintrag der üffentlichen IP aktualisiert "
-"werden soll (eins aus {c}, Vorgabe {d!r})."
-
-#: src/fb_tools/application/update_ddns.py:412
-msgid "Update DDNS options"
-msgstr "DDNS-Aktualisierungsoptionen"
-
-#: src/fb_tools/application/update_ddns.py:417
-msgid "USER"
-msgstr "BENUTZER"
-
-#: src/fb_tools/application/update_ddns.py:419
-msgid "The username to login at ddns.de."
-msgstr "Der Nutzername, um sich bei ddns.de eizuloggen."
-
-#: src/fb_tools/application/update_ddns.py:425
-msgid "PASSWORD"
-msgstr "PASSWORT"
-
-#: src/fb_tools/application/update_ddns.py:427
-msgid "The password of the user to login at ddns.de."
-msgstr "Das Login-Passwort des Nutzers bei ddns.de."
-
-#: src/fb_tools/application/update_ddns.py:438
-msgid "Update all domains, which are connected whith the given ddns account."
-msgstr "Aktualisirung alle Domänen, die mit dem gegebenen DDNS-Konto verbunden sind."
-
-#: src/fb_tools/application/update_ddns.py:445
-msgid "DOMAIN"
-msgstr "DOMÄNE"
-
-#: src/fb_tools/application/update_ddns.py:447
-msgid "The particular domain(s), which should be updated (if not all)."
-msgstr ""
-"Die einzelnen Domäne(n), die aktualisiert werden sollen (wenn nicht alle aktualisiert werden "
-"sollen)."
-
-#: src/fb_tools/application/update_ddns.py:502
-#, python-brace-format
-msgid "Ending {a!r}."
-msgstr "Beende {a!r}."
-
-#: src/fb_tools/application/update_ddns.py:508
-msgid "Actions before running."
-msgstr "Aktionen vor Beginn."
-
-#: src/fb_tools/application/update_ddns.py:511
-msgid "No domains to update given, but the option all domains is deactivated."
-msgstr "Keine Domänen zur Aktualisierungg angegeben, aber die Option »für alle Domänen« ist deaktiviert."
-
-#: src/fb_tools/application/update_ddns.py:531 src/fb_tools/application/update_ddns.py:548
-#, python-brace-format
-msgid "Found current {t} address {a}."
-msgstr "Fand aktuell {t}-Adresse {a}."
-
-#: src/fb_tools/application/update_ddns.py:533 src/fb_tools/application/update_ddns.py:550
-#, python-brace-format
-msgid "Address {a!r} seems not to be a valid {w} address: {e}"
-msgstr "Die Adresse {a!r} scheint keine gültige {w}-Adresse zu sein: {e}"
-
-#: src/fb_tools/application/update_ddns.py:538 src/fb_tools/application/update_ddns.py:555
-#, python-brace-format
-msgid "Got no public {} address."
-msgstr "Keine öffentliche {}-Adresse gefunden."
-
-#: src/fb_tools/application/update_ddns.py:564
-msgid "Currently configured dynamic addresses:"
-msgstr "Aktuell konfigurierte dynamische Adressen:"
-
-#: src/fb_tools/application/update_ddns.py:580
-#, python-brace-format
-msgid "Did not found update status file {!r}."
-msgstr "Aktualisierungs-Statusdatei {!r} nicht gefunden."
-
-#: src/fb_tools/application/update_ddns.py:587
-#, python-brace-format
-msgid "{c} - could not evaluate update status file {f!r}: {e}"
-msgstr "{c} - konnte Aktualisierungs-Statusdatei {f!r} nicht auswerten: {e}"
-
-#: src/fb_tools/application/update_ddns.py:594
-#, python-brace-format
-msgid "Last update was at {dt} with status {st!r}."
-msgstr "Die letzte Aktualisierung war {dt}  mit dem Status {st!r}."
-
-#: src/fb_tools/application/update_ddns.py:630
-#, python-brace-format
-msgid "Last update of domain {dom!r} is {delta} ago."
-msgstr "Die letzte Aktualisierung der Domäne {dom!r} war vor {delta}."
-
-#: src/fb_tools/application/update_ddns.py:643
-#, python-brace-format
-msgid "Checking the need for updating the given domain {!r}."
-msgstr "Überprüfe Notwendigkeit zum Aktualisieren der angegebenen Domäne {!r}."
-
-#: src/fb_tools/application/update_ddns.py:651
-#, python-brace-format
-msgid "Updating the DDNS records of domain {!r}, although if they seems not to be changed."
-msgstr "Aktualisieren der DDNS-Einträge der Domäne {!r}, auch wenn sie nicht verändert zu sein scheinen."
-
-#: src/fb_tools/application/update_ddns.py:656
-#, python-brace-format
-msgid "Update of domain {!r} is not necessary."
-msgstr "Die Aktualisierung der Domäne {!r} ist nicht notwendig."
-
-#: src/fb_tools/application/update_ddns.py:659
-#, python-brace-format
-msgid "Updating the DDNS records of domain {!r}."
-msgstr "Aktualisiere DDNS-Einträge der Domäne {!r}."
-
-#: src/fb_tools/application/update_ddns.py:701
-#, python-brace-format
-msgid "Simulation mode, update of domain {!r} will not be sended."
-msgstr "Simulationsmodus, die Aktualisierung der Domäne {!r} wird nicht gesendet."
-
-#: src/fb_tools/application/update_ddns.py:717 src/fb_tools/application/update_ddns.py:814
-#, python-brace-format
-msgid "No response from {}."
-msgstr "Keine Antwort von {}."
-
-#: src/fb_tools/application/update_ddns.py:719 src/fb_tools/application/update_ddns.py:816
-#, python-brace-format
-msgid "Response from {}:"
-msgstr "Antwort von {}:"
-
-#: src/fb_tools/application/update_ddns.py:721 src/fb_tools/application/update_ddns.py:818
-#, python-brace-format
-msgid "Status code: {c}, status text: {r!r}."
-msgstr "Statuscode: {c}, Statustext: {r!r}."
-
-#: src/fb_tools/application/update_ddns.py:757
-#, python-brace-format
-msgid "Update all domains at {} with found dynamic external addresses ..."
-msgstr "Aktualisierung aller Domänen mit den gefundenen externen Adressen …"
-
-#: src/fb_tools/application/update_ddns.py:799
-msgid "Simulation mode, update of all domains will not be sended."
-msgstr "Simulationsmodus, die Aktualisierung aller Domänen wird nicht gesendet."
 
 #: src/fb_tools/argparse_actions.py:60
 #, python-brace-format
@@ -1225,7 +957,7 @@ msgstr "In das angegebene Verzeichnis {!r} kann nicht geschrieben werden."
 msgid "File {!r} does not exists."
 msgstr "Die Datei {!r} existiert nicht."
 
-#: src/fb_tools/argparse_actions.py:312 src/fb_tools/multi_config/__init__.py:581
+#: src/fb_tools/argparse_actions.py:312 src/fb_tools/multi_config/__init__.py:619
 #, python-brace-format
 msgid "A timeout must be greater than zero and less or equal to {}."
 msgstr "Ein Timeout muss größer als Null und kleiner oder gleich {} sein."
@@ -1567,7 +1299,7 @@ msgstr "Konnte die Maßeinheit in {!r} nicht ermitteln."
 msgid "Argument {a!r} must be of type {t1!r} or {t2!r}."
 msgstr "Das Argument {a!r} muss vom Typ {t1!r} oder {t2!r} sein."
 
-#: src/fb_tools/config.py:119 src/fb_tools/multi_config/__init__.py:275
+#: src/fb_tools/config.py:119 src/fb_tools/multi_config/__init__.py:276
 msgid "A configuration directory may not be None."
 msgstr "Ein Konfigurations-Verzeichnis darf nicht None sein."
 
@@ -1575,7 +1307,7 @@ msgstr "Ein Konfigurations-Verzeichnis darf nicht None sein."
 msgid "A configuration file may not be None."
 msgstr "Eine Konfigurations-Datei darf nicht None sein."
 
-#: src/fb_tools/config.py:140 src/fb_tools/config.py:149 src/fb_tools/multi_config/__init__.py:247
+#: src/fb_tools/config.py:140 src/fb_tools/config.py:149 src/fb_tools/multi_config/__init__.py:248
 #, python-brace-format
 msgid "Configuration file {!r} exists, but is not a regular file."
 msgstr "Die Konfigurations-Datei {!r} existiert, ist aber keine reguläre Datei."
@@ -1608,224 +1340,10 @@ msgstr "Falsche Konfiguration in {!r} gefunden"
 msgid "Configuration parse error"
 msgstr "Fehler beim Parsen der Konfiguration"
 
-#: src/fb_tools/config.py:231 src/fb_tools/multi_config/__init__.py:549
+#: src/fb_tools/config.py:231 src/fb_tools/multi_config/__init__.py:587
 #, python-brace-format
 msgid "Checking config section {!r} ..."
 msgstr "Überprüfe Konfigurationsabschnitt {!r} …"
-
-#: src/fb_tools/ddns/__init__.py:91
-msgid "This is a base DDNS related application."
-msgstr "Das ist eine DDNS-bezogene Basisanwendung."
-
-#: src/fb_tools/ddns/__init__.py:122
-#, python-brace-format
-msgid "Invalid user agent {!r} given."
-msgstr "Ungültiger User-Agent {!r} übergeben."
-
-#: src/fb_tools/ddns/__init__.py:165
-msgid "DDNS options"
-msgstr "DDNS-Optionen"
-
-#: src/fb_tools/ddns/__init__.py:176 src/fb_tools/ddns/__init__.py:179
-#, python-brace-format
-msgid "Perform action only for {}."
-msgstr "Führe die Aktion nur für {} aus."
-
-#: src/fb_tools/ddns/__init__.py:183
-#, python-brace-format
-msgid "The IP protocol, for which the action should be performed (one of {c}, default {d!r})."
-msgstr "Das IP-Protokoll, für das die Aktion ausgeführt werden soll (eins ais {c}, Vorgabe {d!r})."
-
-#: src/fb_tools/ddns/__init__.py:207
-msgid "PROTOCOL"
-msgstr "PROTOKOLL"
-
-#: src/fb_tools/ddns/__init__.py:217
-msgid "DIRECTORY"
-msgstr "VERZEICHNIS"
-
-#: src/fb_tools/ddns/__init__.py:222
-#, python-brace-format
-msgid ""
-"The directory, where to read and write the cache files of the evaluated IP addresses (default: "
-"{!r})."
-msgstr ""
-"Das Verzeichnis, von wo Cache-Dateien mit den ermittelten IP-Adresses und wohin sie auch "
-"geschrieben werden (Vorgabe: {!r})."
-
-#: src/fb_tools/ddns/__init__.py:233
-#, python-brace-format
-msgid "The timeout in seconds for Web requests (default: {})."
-msgstr "Die Zeit für die Zeitüberschreitung in Sekunden für Web-Abfragen (Vorgabe: {})."
-
-#: src/fb_tools/ddns/__init__.py:244
-#, python-brace-format
-msgid ""
-"By default, every secure connection {app} makes is verified to be secure before the request "
-"takes place. This option makes {app} skip the verification step and proceed without checking."
-msgstr ""
-"Normalerweise wird von {app} jede sichere Verbindung vor der Abfrage überprüft, ob sie wirklich "
-"sicher ist. Diese Option veranlaßt {app}, diese Überprüfung zu überspringen und weiterzufahren."
-
-#: src/fb_tools/ddns/__init__.py:282 src/fb_tools/ddns/config.py:272
-#, python-brace-format
-msgid "Invalid value {!r} as timeout:"
-msgstr "Ungültiger Wert {!r} für die Zeit der Zeitüberschreitung:"
-
-#: src/fb_tools/ddns/__init__.py:293
-#, python-brace-format
-msgid "Setting Loglevel of the {m} module to {ll}."
-msgstr "Setze Loglevel des {m}-Moduls auf {ll}."
-
-#: src/fb_tools/ddns/__init__.py:308
-#, python-brace-format
-msgid "Trying to get my public IPv{} address."
-msgstr "Versuche meine öffentliche IPv{}-Adresse zu ermitteln."
-
-#: src/fb_tools/ddns/__init__.py:320
-msgid "Got a response:"
-msgstr "Erhaltene Antwort:"
-
-#: src/fb_tools/ddns/__init__.py:342
-#, python-brace-format
-msgid "Request method: {!r}"
-msgstr "Request-Methode: {!r}"
-
-#: src/fb_tools/ddns/__init__.py:362
-msgid "Simulation mode, Request will not be sent."
-msgstr "Simulationsmodus, der Request wird nicht gesendet."
-
-#: src/fb_tools/ddns/__init__.py:379
-#, python-brace-format
-msgid "Got a {c} on requesting {u!r}: {e}."
-msgstr "Habe ein {c} bei der Abfrage von {u!r} erhalten: {e}."
-
-#: src/fb_tools/ddns/__init__.py:387
-msgid "Failed to parse the response"
-msgstr "Konnte Rückgabe nicht auswerten"
-
-#: src/fb_tools/ddns/__init__.py:405
-msgid "Text response:"
-msgstr "Erhaltene textuelle Antwort:"
-
-#: src/fb_tools/ddns/__init__.py:415
-#, python-brace-format
-msgid "Setting encoding of response to {!r}."
-msgstr "Setze Codierung der Antwort auf {!r}."
-
-#: src/fb_tools/ddns/__init__.py:441
-#, python-brace-format
-msgid "Checking existence and accessibility of working directory {!r} ..."
-msgstr "Überprüfe Existenz und Verfügbarkeit des Arbeitverzeichnisses {!r} …"
-
-#: src/fb_tools/ddns/__init__.py:453
-msgid "No read access"
-msgstr "Kein Lesezugriff"
-
-#: src/fb_tools/ddns/__init__.py:456
-msgid "No write access"
-msgstr "Kein Schreinzugriff"
-
-#: src/fb_tools/ddns/__init__.py:472
-#, python-brace-format
-msgid "Writing IP address {a!r} into {f!r} ..."
-msgstr "Schreibe IP-Adresse {a!r} nach {f!r} …"
-
-#: src/fb_tools/ddns/__init__.py:499
-#, python-brace-format
-msgid "File {!r} not found."
-msgstr "Datei {!r} nicht gefunden."
-
-#: src/fb_tools/ddns/__init__.py:502
-#, python-brace-format
-msgid "Reading IP address from {!r}..."
-msgstr "Lese IP-Adresse aus {!r} …"
-
-#: src/fb_tools/ddns/__init__.py:523
-#, python-brace-format
-msgid "Line {li!r} in {f!r} is not a valid IP address:"
-msgstr "Zeile {li!r} in {f!r} ist keine gültige IP-Adresse:"
-
-#: src/fb_tools/ddns/__init__.py:553 src/fb_tools/ddns/__init__.py:595
-#: src/fb_tools/ddns/__init__.py:629
-msgid "Using resolver:"
-msgstr "Verwende Resolver:"
-
-#: src/fb_tools/ddns/__init__.py:564 src/fb_tools/ddns/__init__.py:576
-#, python-brace-format
-msgid "Did not found a {t} address for {n}:"
-msgstr "Fand keine {t}-Adresse für {n}:"
-
-#: src/fb_tools/ddns/__init__.py:585 src/fb_tools/ddns/__init__.py:619
-#, python-brace-format
-msgid "Cannot execute {method}() - module {mod!r} could not imported."
-msgstr "Kann Methode {method]() nicht ausführen - das Modul {mod!r} konnte nicht importiert werden."
-
-#: src/fb_tools/ddns/__init__.py:610 src/fb_tools/ddns/__init__.py:641
-#, python-brace-format
-msgid "Did not found a {t} entry for zone {z}:"
-msgstr "Fand keinen {t}-Eintrag für Zone {z}:"
-
-#: src/fb_tools/ddns/config.py:158
-#, python-brace-format
-msgid ""
-"Invalid timeout {to!r} for Web requests, it must be greater than {min} and less than {max} "
-"seconds."
-msgstr ""
-"Ungültige Zeit {to!r} für eine Zeitüberschreitung für aine Webabfrage, sie muss zwischen {min} "
-"und {max} Sekunden liegen."
-
-#: src/fb_tools/ddns/config.py:296
-#, python-brace-format
-msgid "Invalid value {u!r} for protocols to update in section {s!r}, valid protocols are: "
-msgstr ""
-"Ungültiger Wert {u!r} für Protokolle zum Update in Abschnitt {s!r} angegeben, gültige Protokolle"
-" sind:"
-
-#: src/fb_tools/ddns/config.py:314
-#, python-brace-format
-msgid "Invalid forced update interval in section {!r}:"
-msgstr "Ungültiges Intervall für forcierte Updates in Abschnitt {s!r} angegeben:"
-
-#: src/fb_tools/ddns/config.py:321 src/fb_tools/ddns/config.py:365
-#, python-brace-format
-msgid "Unknown configuration option {o!r} with value {v!r} in section {s!r}."
-msgstr "Unbekannte Konfigurationsoption {o!r} mit dem Wert {v!r} in Abschnitt {s!r}."
-
-#: src/fb_tools/ddns/config.py:345
-#, python-brace-format
-msgid "The path to the working directory must be an absolute path (given: {!r})."
-msgstr "Der Pfad zum Arbeitsverzeichnis muss ein absoluter Pfad sein (gegeben: {!r})."
-
-#: src/fb_tools/ddns/config.py:358
-#, python-brace-format
-msgid "The path to the logfile must be an absolute path (given: {!r})."
-msgstr "Der Pfad zur Logdatei muss absolut sein (gegeben: {!r})."
-
-#: src/fb_tools/ddns/errors.py:52
-#, python-brace-format
-msgid "Got an error {c} on requesting {u!r}: {m}"
-msgstr "Habe einen Fehler {c} beim Abfrage der URL {u!r} erhalten: {m}"
-
-#: src/fb_tools/ddns/errors.py:65
-#, python-brace-format
-msgid "There is a problem with the update status file {!r}"
-msgstr "Es gibt ein Problem mit der Update-Statusdatei {!r}"
-
-#: src/fb_tools/ddns/errors.py:80
-#, python-brace-format
-msgid "There is a problem with the working directory {!r}"
-msgstr "Es gibt ein Problem mit dem Arbeitsverzeichnis {!r}"
-
-#: src/fb_tools/ddns/errors.py:95
-#, python-brace-format
-msgid "Working directory {!r} does not exists"
-msgstr "Das Arbeitsverzeichnis {!r} existiert nicht"
-
-#: src/fb_tools/ddns/errors.py:125
-#, python-brace-format
-msgid "Invalid permissions for working directory {!r}"
-msgstr "Ungenügende Rechte für das Arbeitsverzeichnis {!r}"
 
 #: src/fb_tools/errors.py:70
 #, python-brace-format
@@ -1920,7 +1438,7 @@ msgstr "Es gibt ein Problem mit dem Verzeichnis {!r}"
 msgid "Directory {!r} does not exists"
 msgstr "Das Verzeichnis {!r} existiert nicht"
 
-#: src/fb_tools/ddns/errors.py:110 src/fb_tools/errors.py:551
+#: src/fb_tools/errors.py:551
 #, python-brace-format
 msgid "Path {!r} is not a directory"
 msgstr "Der Pfad {!r} ist kein Verzeichnis."
@@ -2521,47 +2039,61 @@ msgstr "{m} akzeptiert höchstens {max} Argumente ({n} wurden gegeben)."
 msgid "Mail address {} is not in address list."
 msgstr "Die Mailadresse {} ist nicht in der Adressliste."
 
-#: src/fb_tools/multi_config/__init__.py:184 src/fb_tools/multi_config/__init__.py:186
-#: src/fb_tools/multi_config/__init__.py:188
+#: src/fb_tools/multi_config/__init__.py:185 src/fb_tools/multi_config/__init__.py:187
+#: src/fb_tools/multi_config/__init__.py:189
 #, python-brace-format
 msgid "{} configuration is not supported."
 msgstr "{}-Konfiguration wird nicht unterstützt."
 
-#: src/fb_tools/multi_config/__init__.py:240
+#: src/fb_tools/multi_config/__init__.py:241
 #, python-brace-format
 msgid "Additional config file {!r} does not exists."
 msgstr "Die zusätzliche Konfigurationsdatei {!r} existiert nicht."
 
-#: src/fb_tools/multi_config/__init__.py:254
+#: src/fb_tools/multi_config/__init__.py:255
 #, python-brace-format
 msgid "Configuration file {!r} is not readable."
 msgstr "Die Konfigurations-Datei {!r} ist nicht lesbar."
 
-#: src/fb_tools/multi_config/__init__.py:278
+#: src/fb_tools/multi_config/__init__.py:279
 #, python-brace-format
 msgid "Configuration directory {!r} may not be absolute."
 msgstr "Das Konfigurations-Verzeichnis {!r} darf nicht absolut sein."
 
-#: src/fb_tools/multi_config/__init__.py:358
+#: src/fb_tools/multi_config/__init__.py:359
 #, python-brace-format
 msgid "Cannot use {!r} as delimiters for ini-files."
 msgstr "Kann {!r} nicht als Trennzeichen für ini-Dateien verwenden."
 
-#: src/fb_tools/multi_config/__init__.py:380
+#: src/fb_tools/multi_config/__init__.py:381
 #, python-brace-format
 msgid "Cannot use {!r} as comment prefixes for ini-files."
 msgstr "Kann {!r} nicht als Kommentar-Präfix für ini-Dateien verwenden."
 
-#: src/fb_tools/multi_config/__init__.py:402
+#: src/fb_tools/multi_config/__init__.py:403
 #, python-brace-format
 msgid "Cannot use {!r} as inline comment prefixes for ini-files."
 msgstr "Kann {!r} nicht als Inline-Kommentar-Präfix für ini-Dateien verwenden."
 
-#: src/fb_tools/multi_config/__init__.py:532
+#: src/fb_tools/multi_config/__init__.py:548
+#, python-brace-format
+msgid "Reading configuration file {!r} ..."
+msgstr "Lese Konfigurationsdatei {!r} …"
+
+#: src/fb_tools/multi_config/__init__.py:553
+#, python-brace-format
+msgid "Read config from {fn!r}:"
+msgstr "Von {fn!r} gelesene Konfiguration:"
+
+#: src/fb_tools/multi_config/__init__.py:564
+msgid "Read merged config:"
+msgstr "Gelesene und zusammengeführte Konfiguration:"
+
+#: src/fb_tools/multi_config/__init__.py:570
 msgid "Evaluation of configuration could only be happen after reading it."
 msgstr "Die Evaluierung der Konfiguration kann erst erfolgen, nachdem die gelesen wurde."
 
-#: src/fb_tools/multi_config/__init__.py:552
+#: src/fb_tools/multi_config/__init__.py:590
 #, python-brace-format
 msgid "Invalid value {val!r} in section {sec!r} for console timeout."
 msgstr "Ungültiger Wert {val!r} für Konsolen-Timeout in Abschnitt {sec!r}."
@@ -2709,50 +2241,6 @@ msgstr "der Konfigurations-Namens-Stamm {!r} ist ungültig."
 #, python-brace-format
 msgid "Invalid configuration type {t!r} - not found in {w!r}."
 msgstr "Ungültiger Konfigurationstyp {t!r} - wurde nicht in {w!r} gefunden."
-
-#: src/fb_tools/multi_config/read.py:73
-#, python-brace-format
-msgid "Reading configuration file {!r} ..."
-msgstr "Lese Konfigurationsdatei {!r} …"
-
-#: src/fb_tools/multi_config/read.py:77
-#, python-brace-format
-msgid "Using loading method {!r}."
-msgstr "Verwende Lade-Methode {!r}."
-
-#: src/fb_tools/multi_config/read.py:85
-#, python-brace-format
-msgid "Read config from {fn!r}:"
-msgstr "Von {fn!r} gelesene Konfiguration:"
-
-#: src/fb_tools/multi_config/read.py:96
-msgid "Read merged config:"
-msgstr "Gelesene und zusammengeführte Konfiguration:"
-
-#: src/fb_tools/multi_config/read.py:144
-#, python-brace-format
-msgid "Found character set {cs!r} for file {fn!r} with a confidence of {con:0.1f}%."
-msgstr "Fand Zeichensatz {cs!r} für die Datei {fn!r} mit einer Zuverlässigkeit von {con:0.1f}%."
-
-#: src/fb_tools/multi_config/read.py:153 src/fb_tools/multi_config/read.py:186
-#: src/fb_tools/multi_config/read.py:222 src/fb_tools/multi_config/read.py:280
-#: src/fb_tools/multi_config/read.py:308
-#, python-brace-format
-msgid "Reading {tp} file {fn!r} ..."
-msgstr "Lese {tp}-Datei {fn!r} …"
-
-#: src/fb_tools/multi_config/read.py:164 src/fb_tools/multi_config/read.py:201
-#: src/fb_tools/multi_config/read.py:287 src/fb_tools/multi_config/read.py:322
-#, python-brace-format
-msgid "{what} parse error in {fn!r}, line {line}, column {col}: {msg}"
-msgstr "{what} Parse-Fehler in {fn!r}, Zeine {line}, Spalte {col}: {msg}"
-
-#: src/fb_tools/multi_config/read.py:172 src/fb_tools/multi_config/read.py:209
-#: src/fb_tools/multi_config/read.py:257 src/fb_tools/multi_config/read.py:295
-#: src/fb_tools/multi_config/read.py:330 src/fb_tools/multi_config/read.py:338
-#, python-brace-format
-msgid "Got {what} on reading and parsing {fn!r}: {e}"
-msgstr "Habe {what} beim Lesen und Parsen von {fn!r} erhalten: {e}."
 
 #: src/fb_tools/obj.py:60
 #, python-brace-format

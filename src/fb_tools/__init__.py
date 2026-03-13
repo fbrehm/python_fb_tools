@@ -12,7 +12,6 @@ from __future__ import absolute_import
 
 UTF8_ENCODING = "utf-8"
 
-DDNS_CFG_BASENAME = "ddns.ini"
 MAX_TIMEOUT = 3600
 MAX_PORT_NUMBER = (2**16) - 1
 DEFAULT_ENCODING = UTF8_ENCODING

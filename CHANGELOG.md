@@ -27,11 +27,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Using `AnyConfigHandler` in class `BaseMultiConfig` to read configuration files.
 * Extending function `pp` in module `src/fb_tools/common.py` for using terminal width.
 * Removing BOM on reading text files in class `HandlingObject`.
+* Fixed property appname in all application classes.
 
 ### Removed
 
 * Removing module `src/fb_tools/multi_config/read.py`, because it was substituted
   by class `AnyConfigHandler`.
+* Removing all classes, tests and helper files related to DDNS.
 
 ## [2.9.5] - 2026-02-24
 
