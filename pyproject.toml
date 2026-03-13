@@ -54,7 +54,9 @@ update-ddns = "fb_tools.application.update_ddns:main"
 
 [project.optional-dependencies]
 development = [
+    "apacheconfig",
     "black",
+    "iscpy",
     "isort",
     "hjson",
     "tomli",
