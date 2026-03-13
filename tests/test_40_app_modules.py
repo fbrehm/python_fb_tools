@@ -300,16 +300,6 @@ class TestAppModules(FbToolsTestcase):
 
         app = CfgConvertApplication(
             appname=self.appname,
-            testing_args=[
-                "--input",
-                str(self.test_dir / "config.yml"),
-                "--from-type",
-                "yaml",
-                "--to-type",
-                "json",
-                "--output",
-                str(self.test_dir / "config.js"),
-            ],
             verbose=self.verbose,
         )
         LOG.debug("CfgConvertApplication %%r: {!r}".format(app))
