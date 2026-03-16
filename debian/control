@@ -33,7 +33,7 @@ Depends: python3-six,
          python3-tz,
          ${misc:Depends},
          ${python3:Depends}
-Recommends: python3-toml
+Recommends: python3-tomli-w
 Provides: fb-tools
 Conflicts: fb-tools
 Replaces: fb-tools
