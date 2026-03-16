@@ -1,4 +1,4 @@
-fb-tools (3.0.0) UNRELEASED; urgency=medium
+fb-tools (3.0.0) all; urgency=medium
 
   * Adding class AnyConfigHandler and script `config-convert` - see
     CHANGELOG.md.
