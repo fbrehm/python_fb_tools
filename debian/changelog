@@ -1,3 +1,10 @@
+fb-tools (3.0.0) all; urgency=medium
+
+  * Adding class AnyConfigHandler and script `config-convert` - see
+    CHANGELOG.md.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 13 Mar 2026 13:28:03 +0100
+
 fb-tools (2.9.5) all; urgency=medium
 
   * Renaming directory test => tests.

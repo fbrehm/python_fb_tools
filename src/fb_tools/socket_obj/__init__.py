@@ -8,6 +8,7 @@
 @copyright: © 2025 by Frank Brehm, Berlin
 @summary: modules for socket object classes
 """
+
 from __future__ import absolute_import
 
 # Standard modules

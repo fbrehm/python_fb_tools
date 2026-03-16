@@ -7,6 +7,7 @@
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 # Standard modules
@@ -23,12 +24,16 @@ import shutil
 import signal
 import socket
 import sys
+from shlex import quote
+from subprocess import PIPE, Popen
+
+# from codecs import BOM_BE, BOM_LE, BOM_UTF32_BE, BOM_UTF32_LE, BOM_UTF8
+# from collections import OrderedDict
+
 try:
     import pathlib
 except ImportError:
     import pathlib2 as pathlib
-from shlex import quote
-from subprocess import PIPE, Popen
 
 if sys.version_info[0] >= 3:
     from subprocess import SubprocessError, TimeoutExpired
@@ -64,7 +69,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = "2.4.5"
+__version__ = "2.4.8"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -173,19 +178,20 @@ class HandlingObject(FbBaseObject):
     Base class for an object with extend handling possibilities.
 
     Properties:
-    * address_family (str or int   - rw)
-    * appname        (str          - rw) (inherited from FbBaseObject)
-    * assumed_answer (None or bool - rw)
-    * base_dir       (pathlib.Path - rw) (inherited from FbBaseObject)
-    * force          (bool         - rw)
-    * initialized    (bool         - rw) (inherited from FbBaseObject)
-    * interrupted    (bool         - rw)
-    * is_venv        (bool         - ro)
-    * prompt_timeout (int          - rw)
-    * quiet          (bool         - rw)
-    * simulate       (bool         - rw)
-    * verbose        (int          - rw) (inherited from FbBaseObject)
-    * version        (str          - ro) (inherited from FbBaseObject)
+    * address_family      (str or int   - rw)
+    * appname             (str          - rw) (inherited from FbBaseObject)
+    * assumed_answer      (None or bool - rw)
+    * base_dir            (pathlib.Path - rw) (inherited from FbBaseObject)
+    * force               (bool         - rw)
+    * initialized         (bool         - rw) (inherited from FbBaseObject)
+    * interrupted         (bool         - rw)
+    * is_venv             (bool         - ro)
+    * prompt_timeout      (int          - rw)
+    * quiet               (bool         - rw)
+    * simulate            (bool         - rw)
+    * terminal_has_colors (bool         - rw)
+    * verbose             (int          - rw) (inherited from FbBaseObject)
+    * version             (str          - ro) (inherited from FbBaseObject)
 
     Public attributes:
     * add_search_paths       Array of pathlib.Path
@@ -956,6 +962,19 @@ class HandlingObject(FbBaseObject):
         if six.PY2 and not binary:
             content = content.decode(encoding, "replace")
 
+        # if not binary:
+        #     bofs = OrderedDict()
+        #     bofs['BOM_UTF32_BE'] = "\U0000feff"
+        #     bofs['BOM_UTF32_LE'] = "\Ufffe0000"
+        #     bofs['BOM_BE'] = "\ufeff"
+        #     bofs['BOM_LE'] = "\ufffe"
+        #     bofs['BOM_UTF8'] = "\xef\xbb\xbf"
+
+        if not binary and content.startswith("\ufeff"):
+            if self.verbose > 1:
+                LOG.debug(_("Removing BOM from read file content ..."))
+            content = content.replace("\ufeff", "", 1)
+
         return content
 
     # -------------------------------------------------------------------------
@@ -971,7 +990,7 @@ class HandlingObject(FbBaseObject):
         @raise WriteTimeoutError: on timeout writing into the file
 
         @param filename: name of the file to write
-        @type filename: str
+        @type filename: str or Path
         @param content: the content to write into the file
         @type content: str
         @param timeout: the amount in seconds when this method should timeout
@@ -999,11 +1018,11 @@ class HandlingObject(FbBaseObject):
             raise WriteTimeoutError(timeout, filename)
 
         verb_level1 = 0
-        verb_level2 = 1
+        # verb_level2 = 1
         verb_level3 = 3
         if quiet:
             verb_level1 = 2
-            verb_level2 = 3
+            # verb_level2 = 3
             verb_level3 = 4
 
         if timeout is None:
@@ -1030,7 +1049,7 @@ class HandlingObject(FbBaseObject):
                     raise IOError(errno.EACCES, _("Write permission denied."), parent_dir)
 
         if self.verbose > verb_level1:
-            if self.verbose > verb_level2:
+            if self.verbose > verb_level3:
                 LOG.debug(_("Write {what!r} into {to!r}.").format(what=content, to=ofile))
             else:
                 LOG.debug(_("Writing {!r} ...").format(ofile))
@@ -1044,7 +1063,7 @@ class HandlingObject(FbBaseObject):
                 content_bin = encode_or_bust(str(content), encoding)
 
         if self.simulate:
-            if self.verbose > verb_level2:
+            if self.verbose > verb_level1:
                 LOG.debug(_("Simulating write into {!r}.").format(ofile))
             return
 

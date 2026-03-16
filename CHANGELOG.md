@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-03-13
+
+### Added
+
+* Adding `src/fb_tools/cfg_options/*py` modules for encapsulation options of
+  the different config parsers and generators.
+* Adding exception classes `ConfigDetectionError`, `ConfigWrongTypeError`,
+  `InputFileError`, `InputFileNotExistingError` and `InputFileNotReadableError`
+  to module `src/fb_tools/errors.py`.
+* Adding classes `InputFileOptionAction`, `OutputFileOptionAction`, `NonNegativeIntegerOptionAction`
+  and `RangeOptionAction` to `src/fb_tools/argparse_actions.py`.
+* Adding `src/fb_tools/any_config.py` for class `AnyConfigHandler` for reading and writing
+  arbitrary configuration files.
+* Adding module `src/fb_tools/application/cfg_converter.py` for class `CfgConvertApplication`
+  for providing the script config-convert.
+* Adding tests fo AnyConfigHandler and CfgConvertApplication.
+
+### Changed
+
+* Using `AnyConfigHandler` in class `BaseMultiConfig` to read configuration files.
+* Extending function `pp` in module `src/fb_tools/common.py` for using terminal width.
+* Removing BOM on reading text files in class `HandlingObject`.
+* Fixed property appname in all application classes.
+
+### Removed
+
+* Removing module `src/fb_tools/multi_config/read.py`, because it was substituted
+  by class `AnyConfigHandler`.
+* Removing all classes, tests and helper files related to DDNS.
+
 ## [2.9.5] - 2026-02-24
 
 ### Changed
@@ -410,5 +440,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Removing all VSpere modules and applications in favor of the
   separate Python package `fb_vmware`.
 
+## [1.9.6] - 2022-07-11
 
+### Fixed
+
+* Fixing typo in `locale/de_DE/LC_MESSAGES/fb_tools.po`.
+
+### Removed
+
+* Removing dependency to Python module packaging on EL.
+
+## {1.9.5] - 2022-05-16
+
+### Added
+
+* Adding Python module 'packaging' as a dependency.
+
+### Changed
+
+* Substituting distutils.version.LooseVersion by packaging.version.Version.
+
+## [1.9.4] - 2022-04-23
+
+### Added
+
+* Supporting Ubuntu 22.04 Jammy Jellyfish
+
+## [1.9.3] - 2022-04-20
+
+### Added
+
+* Adding exception classes BaseMailAddressError, GeneralMailAddressError and
+  EmptyMailAddressError to module `fb_tools.errors`.
+* Adding module `fb_tools.mailaddress` for classes MailAddress, QualifiedMailAddress
+  and MailAddressList.
+* Adding script `test/test_15_mailaddress.py` for testing all classes in module `fb_tools.mailaddress`.
+
+
+### Changed
+
+* Changing .github/workflows/packages.yaml for ignoring feature* branches and
+  fixing job `deploy_to_pypi`.
+* Renaming test scripts for ensuring correct order of executing test scripts.
+
+## [1.9.2] - 2022-04-01
+
+### Added
+
+* Adding `lib/fb_tools/pidfile.py` for class PidFile.
+* Adding `test/test_pidfile.py` for testing class PidFile.
+
+### Changed
+
+* Updating update-env.sh.
+
+### Fixed
+
+* Fixing translation files.
+
+## [1.9.1] - 2022-03-24
+
+### Added
+
+* Adding evaluation of configuration in BaseMultiConfig.
+* Performing additional config file in BaseMultiConfig.
+* Adding class FbConfigApplication as a base class for configured applications.
+* Adding option for demanding protected coonfig files.
+* Adding `lib/fb_tools/argparse_actions.py` containg all argparse action classes.
+* Adding class BaseVmwareApplication as a base class for all VMware applications.
+
+### Changed
+
+* Changing class VmwareConfiguration to use BaseMultiConfig as parent.
+* Changing all VMWare applications to use BaseVmwareApplication as parent.
+
+## [1.9.0] - 2022-03-21
+
+### Added
+
+* Adding script `bin/get-vmware-hosts`.
+* Adding `lib/fb_tools/merge.py`.
+* Adding `lib/fb_tools/multi_config.py` with appropriate tests.
 

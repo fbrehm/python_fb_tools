@@ -30,7 +30,6 @@ dependencies = [
     "click",
     "pytz",
     "PyYAML",
-    "requests",
     "semver",
     "six",
     "fb_logging",
@@ -46,16 +45,19 @@ name = "fb_tools"
 directory = "data"
 
 [project.scripts]
+config-convert = "fb_tools.application.cfg_converter:main"
 get-file-to-remove = "fb_tools.application.get_file_rm:main"
-myip = "fb_tools.application.myip:main"
 show-spinner = "fb_tools.application.show_spinner:main"
-update-ddns = "fb_tools.application.update_ddns:main"
 
 [project.optional-dependencies]
 development = [
+    "apacheconfig",
     "black",
+    "iscpy",
     "isort",
     "hjson",
+    "tomli",
+    "tomli-w",
 ]
 
 lint = [
@@ -72,8 +74,10 @@ lint = [
 ]
 
 testing = [
+    "hjson",
     "pytest >= 7.0.0, < 9.0.0",
-    "requests_mock",
+    "tomli",
+    "tomli-w",
 ]
 
 [tool.black]
