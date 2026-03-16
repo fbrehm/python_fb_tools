@@ -27,12 +27,13 @@ Requires:       python%{python3_pkgversion}
 Requires:       python%{python3_pkgversion}-libs
 Requires:       python%{python3_pkgversion}-babel
 Requires:       python%{python3_pkgversion}-pytz
-Requires:       python%{python3_pkgversion}-requests
 Requires:       python%{python3_pkgversion}-six
 Requires:       python%{python3_pkgversion}-fb-logging >= 1.0.0
 Requires:       python%{python3_pkgversion}-chardet
 Requires:       python%{python3_pkgversion}-pyyaml
 Requires:       python%{python3_pkgversion}-semver
+Recommends:	python%{python3_pkgversion}-tomli
+Recommends:	python%{python3_pkgversion}-tomli-w
 BuildArch:      noarch
 
 %description
@@ -41,9 +42,9 @@ Python modules for common used objects, error classes and functions.
 This is the Python@@@py_version_nodot@@@ version.
 
 In this package are contained the following scripts:
+ * config-convert
  * get-file-to-remove
- * myip
- * update-ddns
+ * show-spinner
 
 %prep
 echo "Preparing '${builddir}-' ..."

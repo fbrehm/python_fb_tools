@@ -1,0 +1,12 @@
+---
+
+uhu: banane
+hallo: |
+  Welt da draußen.
+  Wo auch immer.
+foo: >
+  Bar
+  Baz
+zeile: 'Mit mehreren Zeilen.
+  Sehr vielen!'
+

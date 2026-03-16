@@ -9,6 +9,7 @@ They are providing alternatives to Python's general purpose built-in frozen_set,
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 # Standard modules

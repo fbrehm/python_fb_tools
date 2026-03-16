@@ -7,6 +7,7 @@
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 # Standard module
@@ -50,15 +51,16 @@ except ImportError:
 # Own modules
 from .files import MultiCfgFilesMixin
 from .inits import MultiCfgInitMixin
-from .read import MultiCfgReadMixin
 from .. import DEFAULT_ENCODING
-from ..common import is_sequence, to_bool
+from ..any_config import AnyConfigHandler
+from ..common import is_sequence, pp, to_bool
 from ..errors import MultiConfigError
 from ..handling_obj import HandlingObject
+from ..merge import merge_structure
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
 
-__version__ = "2.2.2"
+__version__ = "2.3.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -66,7 +68,7 @@ _ = XLATOR.gettext
 
 
 # =============================================================================
-class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, MultiCfgReadMixin):
+class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin):
     """
     A base class for providing a configuration based in different config files.
 
@@ -523,6 +525,43 @@ class BaseMultiConfig(FbBaseObject, MultiCfgInitMixin, MultiCfgFilesMixin, Multi
         if cls.re_invalid_stem.search(stem):
             return False
         return True
+
+    # -------------------------------------------------------------------------
+    def read(self):
+        """Read all collected config files and save their configuration."""
+        if not self.cfgfiles_collected:
+            self.collect_config_files()
+
+        cfg_handler = AnyConfigHandler(
+            appname=self.appname,
+            base_dir=self.base_dir,
+            encoding=self.encoding,
+            raise_on_error=True,
+            use_chardet=True,
+            verbose=self.verbose,
+        )
+
+        self.cfg = {}
+        for cfg_file in self.config_files:
+
+            if self.verbose:
+                LOG.info(_("Reading configuration file {!r} ...").format(str(cfg_file)))
+
+            (cfg_type, config) = cfg_handler.load_file(cfg_file)
+
+            if self.verbose > 3:
+                msg = _("Read config from {fn!r}:").format(fn=str(cfg_file))
+                msg += "\n" + pp(config)
+                LOG.debug(msg)
+            if config and config.keys():
+                self.configs_raw[str(cfg_file)] = config
+                self.cfg = merge_structure(self.cfg, config)
+            else:
+                self.configs_raw[str(cfg_file)] = None
+
+        self._was_read = True
+        if self.verbose > 2:
+            LOG.debug(_("Read merged config:") + "\n" + pp(self.cfg))
 
     # -------------------------------------------------------------------------
     def eval(self):  # noqa: A003

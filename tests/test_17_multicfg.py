@@ -358,6 +358,7 @@ class TestFbMultiConfig(FbToolsTestcase):
         LOG.info("Testing reading of broken configuration files.")
 
         import fb_tools.multi_config
+        from fb_tools.errors import ConfigWrongTypeError
         from fb_tools.errors import MultiCfgParseError
         from fb_tools.multi_config import BaseMultiConfig
 
@@ -385,7 +386,7 @@ class TestFbMultiConfig(FbToolsTestcase):
                 continue
             LOG.info("Testing for file stem {!r} ...".format(stem))
 
-            with self.assertRaises(MultiCfgParseError) as cm:
+            with self.assertRaises((MultiCfgParseError, ConfigWrongTypeError)) as cm:
                 cfg = BaseMultiConfig(
                     appname=self.appname,
                     config_dir=self.test_cfg_dir.name,

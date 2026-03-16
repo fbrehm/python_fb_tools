@@ -27,13 +27,12 @@ Depends: python3-six,
          python3-babel,
          python3-chardet,
          python3-fb-logging (>=0.5.0),
-         python3-requests,
          python3-semver,
          python3-yaml,
          python3-tz,
          ${misc:Depends},
          ${python3:Depends}
-Recommends: python3-toml
+Recommends: python3-tomli-w
 Provides: fb-tools
 Conflicts: fb-tools
 Replaces: fb-tools

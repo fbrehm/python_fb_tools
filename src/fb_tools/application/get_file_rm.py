@@ -7,6 +7,7 @@
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 # Standard modules
@@ -17,11 +18,7 @@ import locale
 import logging
 import re
 import sys
-
-try:
-    import pathlib
-except ImportError:
-    import pathlib2 as pathlib
+from pathlib import Path
 
 # Third party modules
 
@@ -32,7 +29,7 @@ from ..common import get_monday, pp
 from ..errors import FbAppError
 from ..xlate import XLATOR
 
-__version__ = "2.2.0"
+__version__ = "2.2.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -106,7 +103,7 @@ class WrongDatePattern(GetFileRmError):
         if self.add_info:
             msg += ": " + self.add_info
         else:
-            msg += _(". The must be exactly one occurence of '%Y', one of '%m' and one of '%d'.")
+            msg += _(". There must be exactly one occurence of '%Y', one of '%m' and one of '%d'.")
         return msg
 
 
@@ -401,7 +398,7 @@ class GetFileRmApplication(BaseApplication):
                 LOG.debug(_("Checking given file {!r} ...").format(fname))
 
             given_paths = []
-            single_fpath = pathlib.Path(fname)
+            single_fpath = Path(fname)
             if single_fpath.exists():
                 given_paths = [single_fpath]
             else:
@@ -413,7 +410,7 @@ class GetFileRmApplication(BaseApplication):
                         LOG.info(_("File pattern {!r} does not match any files.").format(fname))
                     continue
             for f_name in given_paths:
-                fpath = pathlib.Path(f_name)
+                fpath = Path(f_name)
                 if self.verbose > 2:
                     LOG.debug(_("Checking {!r} ...").format(fpath))
                 if not fpath.exists():
@@ -714,7 +711,7 @@ class GetFileRmApplication(BaseApplication):
 # =============================================================================
 def main():
     """Entrypoint for get-file-to-remove."""
-    my_path = pathlib.Path(__file__)
+    my_path = Path(sys.argv[0])
     appname = my_path.name
 
     locale.setlocale(locale.LC_ALL, "")

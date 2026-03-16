@@ -7,6 +7,7 @@
 @contact: frank@brehm-online.com
 @copyright: © 2025 by Frank Brehm, Berlin
 """
+
 from __future__ import absolute_import
 
 # Standard modules
@@ -17,11 +18,7 @@ import random
 import signal
 import sys
 import time
-
-try:
-    import pathlib
-except ImportError:
-    import pathlib2 as pathlib
+from pathlib import Path
 
 # Third party modules
 
@@ -33,7 +30,7 @@ from ..spinner import CycleList
 from ..spinner import Spinner
 from ..xlate import XLATOR
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -313,7 +310,7 @@ class ShowSpinnerApplication(BaseApplication):
 # =============================================================================
 def main():
     """Entrypoint for show-spinner."""
-    my_path = pathlib.Path(__file__)
+    my_path = Path(sys.argv[0])
     appname = my_path.name
 
     locale.setlocale(locale.LC_ALL, "")
