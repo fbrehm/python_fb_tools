@@ -1,3 +1,9 @@
+fb-tools (3.0.1) all; urgency=medium
+
+  * Fixing wrong input in src/fb_tools/any_config.py.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 20 Mar 2026 10:03:52 +0100
+
 fb-tools (3.0.0) all; urgency=medium
 
   * Adding class AnyConfigHandler and script `config-convert` - see
