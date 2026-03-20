@@ -13,7 +13,7 @@ from __future__ import absolute_import
 # Standard module
 import codecs
 import copy
-import importlib
+import importlib.util
 import logging
 import re
 import shutil
@@ -41,7 +41,7 @@ from .errors import ReadTimeoutError
 from .handling_obj import HandlingObject
 from .xlate import XLATOR
 
-__version__ = "0.6.7"
+__version__ = "0.6.8"
 
 LOG = logging.getLogger(__name__)
 
