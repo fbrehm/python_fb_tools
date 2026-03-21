@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-03-21
+
+### Changed
+
+* Updating CHANGELOG.md.
+* Setting copyright year to 2026.
+
 ## [3.0.1] - 2026-03-20
 
 ### Fixed
@@ -175,7 +182,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Fixing `lib/fb_tools/handling_obj.py`.
 
-## [2.5.2} - 2024-05-15
+## [2.5.2] - 2024-05-15
 
 ### Changed
 
@@ -229,7 +236,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Fixing tests for class HandlingObject.
 
-## [2.4.0} - 2024-02-06
+## [2.4.0] - 2024-02-06
 
 ### Added
 
@@ -249,7 +256,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Fixing Github workflow.
 
-## [2.3.4} - 2024-02-04
+## [2.3.4] - 2024-02-04
 
 ### Added
 
@@ -456,7 +463,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Removing dependency to Python module packaging on EL.
 
-## {1.9.5] - 2022-05-16
+## [1.9.5] - 2022-05-16
 
 ### Added
 
@@ -528,3 +535,734 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Adding `lib/fb_tools/merge.py`.
 * Adding `lib/fb_tools/multi_config.py` with appropriate tests.
 
+## [1.8.6] - 2022-02-01
+
+### Changed
+
+* Tweaking dependencies in .github/workflows/packages.yaml and specs/fb-tools.spec.template.
+
+### Fixed
+
+* Fixing creation of RPMs in Github workflow.
+
+## [1.8.5] - 2022-02-01
+
+### Added
+
+* Adding support creating RPMs for CentOS Stream 9.
+
+### Changed
+
+* Changing Distro for building EL-8 packages to CentOS Stream 8.
+
+## [1.8.4] - 2021-11-17
+
+### Changed
+
+* Updating translations because of removed modules.
+
+### Removed
+
+* Removing all pdns modules and bin/pdns-bulk-remove, because it's now
+  located in Github repo `fbrehm/fb-pdnstools.git`.
+
+## [1.8.3] - 2021-11-16
+
+### Fixed
+
+* Fixing `.github/workflows/packages.yaml`.
+
+## [1.8.2] - 2021-11-16
+
+### Added
+
+* Adding Github action `add-fb-yum-repo`.
+* Adding file `LICENSE`.
+* Adding job `build_rpm` to Github workflow.
+
+### Changed
+
+* Updating setup.cfg for building Python packages.
+
+### Fixed
+
+* Fixing packages in Github action `debian-install-buildenv`.
+
+## [1.8.1] - 2021-10-25
+
+### Added
+
+* Adding dependencies to fb-logging and removing all appropriate modules and test scripts,
+  which are substituted by this package.
+* Adding Debian Repository definition of Franks Repo on building Debian packages in .gitlab-ci.yml.
+
+### Changed
+
+* Modifying Github action and workflow to reflect this.
+* Completing tests and build process in .gitlab-ci.yml.
+
+## [1.8.0] - 2021-08-30
+
+### Added
+
+* Adding bin-build/changelog-deb2rpm.py for converting Debian changelog to spec format.
+* Adding Github workflow and Github actions for building packages.
+
+### Changed
+
+* Moving some build functionality from .gitlab-ci.yml into separate scripts.
+* Setting debian/compat to 12.
+
+### Removed
+
+* Removing Python 2 support.
+* Removing support for Debian 9 and for Ubuntu 16.04.
+
+## [1.7.6] - 2021-08-24
+
+### Added
+
+* Adding Build for Debian 11 bullseye.
+
+## [1.7.5] - 2021-04-03
+
+### Changed
+
+* Decreasing minimal values of files to keep.
+
+## [1.7.4] - 2021-01-04
+
+### Changed
+
+* Satisfying linter in `lib/fb_tools/collections.py`.
+
+## [1.7.3] - 2021-01-04
+
+### Added
+
+* New module `lib/fb_tools/collections.py` with new classes FrozenCIStringSet, CIStringSet,
+  FrozenCIDict and CIDict, and some additional Exception classes.
+* Adding test script `test/test_collections.py` for testing `lib/fb_tools/collections.py`.
+
+### Changed
+
+* Modifying `.github/workflows/superlinter.yml` to execute only in branch master.
+
+## [1.7.2] - 2020-12-14
+
+### Added
+
+* Adding functions `is_general_string()` and `compare_ldap_values()` to `lib/fb_tools/common.py`.
+
+## [1.7.0] - 2020-08-04
+
+### Added
+
+* Adding many jobs in .gitlab-ci.yml for creating RPM- and Debian packages.
+
+## [1.6.5] - 2020-11-03
+
+### Changed
+
+* Allowing directories in get-file-to-remove.
+
+## [1.6.4] - 2020-03-30
+
+### Fixed
+
+* Bugfixing PDNS classes.
+
+## [1.6.3] - 2019-10-16
+
+## Added
+
+* New class RegexOptionAction.
+* Adding property `is_venv` to class HandlingObject.
+
+### Changed
+
+* Refactoring VSPhere classes.
+* Refactoring update-env.sh.
+* Reformatting output of get-vmware-vm-info and get-vmware-vm-list.
+
+## [1.6.2] - 2ß19-10-07
+
+### Fixed
+
+* Fixing .gitlab-ci.yml.
+
+## [1.6.1] - 2ß19-10-07
+
+### Added
+
+* Adding function `format_list()` to `lib/fb_tools/xlate.py`.
+* Adding yamllint.yaml.
+
+### Changed
+
+* Improve .gitlab-ci.yml for building RPM packages.
+* Bigger improvements and completions on VSphere classes.
+* Improving Shell scripts.
+
+## [1.5.5] - 2019-08-29
+
+### Changed
+
+* Rewrite .gitlab-ci.yml to build Enterprise Linux RPM packages.
+* Applying flake8 rules.
+
+## [1.5.3] - 2019-07-25
+
+### Changed
+
+* Bugfixing in PowerDNS-API modules.
+* Changing debug output in PowerDNS-API modules.
+
+## [1.5.2] - 2019-07-25
+
+### Fixed
+
+* Fixing and updating `specs/fb_tools.spec.template`.
+
+## [1.5.1] - 2019-07-25
+
+### Added
+
+* Adding script bin/get-vmware-vm-list and its module `lib/fb_tools/get_vm_list_app.py`.
+* Adding test script `test/test_pdns.py` for PowerDNS-API modules.
+
+### Changed
+
+* Improving all PowerDNS-API objects.
+* Updating translations.
+* Updating `specs/fb_tools.spec.template` for generating RPM packages.
+* Changing import behaviour of collections to use collections.abc in Python3.
+
+## [1.4.5] - 2019-05-29
+
+### Fixed
+
+*  Bugfixing `lib/fb_tools/handler/lock.py` because of simulation mode.
+
+## [1.4.4] - 2019-04-30
+
+### Fixed
+
+* `Bugfixing in lib/fb_tools/handler/__init__.py`.
+
+## [1.4.3] - 2019-02-11
+
+### Changed
+
+* Completion of translating (i18n) of many modules.
+
+## [1.4.2] - 2019-02-06
+
+### Added
+
+* Adding .gitlab-ci.yml for Continous Integration via Gitlab.
+* Adding some more translations into German.
+
+## [1.4.1] - 2019-01-09
+
+### Added
+
+* Adding module `lib/fb_tools/handler/lock.py` for classes LockObject and
+  LockHandler and some appropiate exception classes.
+* Adding test script `test/test_lock.py` to test all classes in `lib/fb_tools/handler/lock.py`.
+
+### Changed
+
+* Translating `lib/fb_tools/handler/lock.py`.
+* Changing classes LockObject and LockHandler to use pathlib.Path
+  instead of str objects for paths.
+
+### Fixed
+
+* Bugfixing other modules, applying flake8 rules, updating i18n files.
+
+## [1.3.9] - 2019-01-03
+
+### Added
+
+* Adding test method `test_get_command()` to `test/test_handling_object.py`.
+
+### Fixed
+
+* Fixing method `HandlingObject.get_command()`, adding property `add_search_paths`
+  to class HandlingObject.
+
+## [1.3.8] - 2019-01-03
+
+### Changed
+
+* Minor changes of function `caller_search_path()` in `lib/fb_tools/common.py`.
+* Extending method `HandlingObject.get_command()` by parameter `resolve`.
+
+## [1.3.7] - 2019-01-02
+
+### Fixed
+
+* Fixing setup.py.
+
+## [1.3.6] - 2019-01-01
+
+### Added
+
+* Adding function indent() to `lib/fb_tools/common.py`.
+
+### Changed
+
+* Making module compatible to Python2.
+* Updating dependencies in debian/control.
+* Extending tests for `test/test_handling_object.py`.
+* Updating localisation.
+* Moving property quiet from class BaseApplication to class HandlingObject.
+* Changing `BaseHandler.call()` and `BaseHandler._eval_call_results`
+  to return a CompletedProcess object.
+* Using localized version of timezone in BaseHandler.
+* Including start and end timestamps in class CompletedProcess.
+
+### Fixed
+
+* Fixing `test/test_handling_object.py`.
+* Bugfixing for encoding in methods HandlingObject.run() an BaseHandler.call().
+
+## [1.3.2] - 2018-12-19
+
+### Added
+
+* Adding test scripts.
+
+### Fixed
+
+* Fixing arguments of method run() of class HandlingObject in `lib/fb_tools/handling_obj.py`.
+
+## [1.3.1] - 2018-12-18
+
+### Changed
+
+* Changing setup.py because a more stable generation of .mo-files for i18n.
+* Applying flake8 rules to all Python modules.
+* Cleaning up setup.py and minor changes because of character encoding.
+
+### Removed
+
+* Removing Debian package python-fb-tools-nls from debian/control and debian/rules.
+
+## [1.3.0] - 2018-12-12
+
+### Added
+
+* Adding module `lib/fb_tools/xlate.py` for providing a translator object dedicated for this package.
+* Adding script `./xtract-xlate-msgs.sh` for generating and updating localization files.
+* Adding script `./compile-xlate-msgs.sh` for compiling `*.po` files into `*.mo` files.
+
+### Changed
+
+* Preparing for internationalization.
+* Modifying setup.py and setup.cfg for for automatic compiling `*.po` files on calling setup.py.
+* Marking all translatable strings in Python modules and scripts.
+* Translating all messages into localea` de_Da`E.
+* Some modifications and bugfixes for creating Debian packages.
+
+### Fixed
+
+* Bugfixing because of Punycode.
+
+## [1.2.6] - 2018-12-07
+
+### Added
+
+* Adding methods `get_cmd()` and `write_file()` to class HandlingObject.
+* Adding property `sudo` and method call() to class BaseHandler.
+
+## [1.2.5] - 2018-12-06
+
+### Added
+
+* Adding new exception classes InvalidMailAddressError and CouldntOccupyLockfileError.
+
+## [1.2.4] - 2018-12-06
+
+### Added
+
+* Adding function `is_sequence()` to `lib/fb_tools/common.py`.
+
+### Changed
+
+* Extending search path in `lib/fb_tools/common.py`.
+
+## [1.2.3] - 2018-12-05
+
+### Changed
+
+* Substituting property `reverse_pointer` of ipaddress objects by a function in `lib/fb_tools/common.py`,
+  because it is not available with Python3.4.
+
+## [1.2.2] - 2018-12-04
+
+### Changed
+
+* Ignoring found PTR records, if they are not pointing to their original address.
+
+## [1.2.1] - 2018-12-04
+
+### Changed
+
+* Applying flake8 rules to all Python modules and scripts.
+
+## [1.2.0] - 2018-11-30
+
+### Added
+
+* Adding script `bin/pdns-bulk-remove` and all necessary modules for.
+
+## [1.0.3] - 2018-11-23
+
+### Changed
+
+* Detecting, whether a VSphere datastore is intended for Kubernetes or not.
+
+## [1.0.2] - 2018-11-23
+
+### Fixed
+
+* Bugfixing in `lib/fb_tools/pdns/server.py`.
+
+## [1.0.1] - 2018-11-07
+
+### Added
+
+* Adding first Debian setup files.
+* Adding debian/source/format.
+* Adding debian/rules.
+* Adding first tests.
+* Adding tests to `test/test_common.py`.
+* Adding functions bytes2human() and improving function human2mbytes()
+  in `lib/fb_tools/common.py`.
+* Adding dark mode of colored logging formatter.
+* Adding `test/test_colored.py`.
+* Adding `lib/fb_tools/syslog_handler.py`, `lib/fb_tools/unix_handler.py`
+  and `test/test_syslog.py`.
+* Adding `test/test_base_object.py`.
+
+### Changed
+
+* Setting permissions to debian/rules.
+* Completing tests in `test/test_common.py`.
+* Applying flake8 rules.
+* Apply some cosmetic changes.
+* Minor change to `lib/fb_tools/unix_handler.py`.
+
+## [0.4.0] - 2018-11-07
+
+### Added
+
+* Initial release.
+
+## [0.1.1] - 2018-10-09
+
+### Added
+
+* Initial commit.
+
+
+[Unreleased]: https://github.com/fbrehm/python_fb_tools/compare/3.0.1...develop
+[3.0.1]: https://github.com/fbrehm/python_fb_tools/compare/3.0.0...3.0.1
+[3.0.0]: https://github.com/fbrehm/python_fb_tools/compare/2.9.5...3.0.0
+[2.9.5]: https://github.com/fbrehm/python_fb_tools/compare/2.9.4...2.9.5
+[2.9.4]: https://github.com/fbrehm/python_fb_tools/compare/2.9.3...2.9.4
+[2.9.3]: https://github.com/fbrehm/python_fb_tools/compare/2.9.2...2.9.3
+[2.9.2]: https://github.com/fbrehm/python_fb_tools/compare/2.9.1...2.9.2
+[2.9.1]: https://github.com/fbrehm/python_fb_tools/compare/2.9.0...2.9.1
+[2.9.0]: https://github.com/fbrehm/python_fb_tools/compare/2.8.1...2.9.0
+[2.8.1]: https://github.com/fbrehm/python_fb_tools/compare/2.8.0...2.8.1
+[2.8.0]: https://github.com/fbrehm/python_fb_tools/compare/2.7.0...2.8.0
+[2.7.0]: https://github.com/fbrehm/python_fb_tools/compare/2.6.3...2.7.0
+[2.6.3]: https://github.com/fbrehm/python_fb_tools/compare/2.6.2...2.6.3
+[2.6.2]: https://github.com/fbrehm/python_fb_tools/compare/2.6.1...2.6.2
+[2.6.1]: https://github.com/fbrehm/python_fb_tools/compare/2.6.0...2.6.1
+[2.6.0]: https://github.com/fbrehm/python_fb_tools/compare/2.5.3...2.6.0
+[2.5.3]: https://github.com/fbrehm/python_fb_tools/compare/2.5.2...2.5.3
+[2.5.2]: https://github.com/fbrehm/python_fb_tools/compare/2.5.1...2.5.2
+[2.5.1]: https://github.com/fbrehm/python_fb_tools/compare/2.5.0...2.5.1
+[2.5.0]: https://github.com/fbrehm/python_fb_tools/compare/2.4.2...2.5.0
+[2.4.2]: https://github.com/fbrehm/python_fb_tools/compare/2.4.1...2.4.2
+[2.4.1]: https://github.com/fbrehm/python_fb_tools/compare/2.4.0...2.4.1
+[2.4.0]: https://github.com/fbrehm/python_fb_tools/compare/2.3.5...2.4.0
+[2.3.5]: https://github.com/fbrehm/python_fb_tools/compare/2.3.4...2.3.5
+[2.3.4]: https://github.com/fbrehm/python_fb_tools/compare/2.3.3...2.3.4
+[2.3.3]: https://github.com/fbrehm/python_fb_tools/compare/2.3.2...2.3.3
+[2.3.2]: https://github.com/fbrehm/python_fb_tools/compare/2.3.1...2.3.2
+[2.3.1]: https://github.com/fbrehm/python_fb_tools/compare/2.3.0...2.3.1
+[2.3.0]: https://github.com/fbrehm/python_fb_tools/compare/2.2.5...2.3.0
+[2.2.5]: https://github.com/fbrehm/python_fb_tools/compare/2.2.4...2.2.5
+[2.2.4]: https://github.com/fbrehm/python_fb_tools/compare/2.2.3...2.2.4
+[2.2.3]: https://github.com/fbrehm/python_fb_tools/compare/2.2.2...2.2.3
+[2.2.2]: https://github.com/fbrehm/python_fb_tools/compare/2.2.1...2.2.2
+[2.2.1]: https://github.com/fbrehm/python_fb_tools/compare/2.2.0...2.2.1
+[2.2.0]: https://github.com/fbrehm/python_fb_tools/compare/2.1.2...2.2.0
+[2.1.2]: https://github.com/fbrehm/python_fb_tools/compare/2.1.1...2.1.2
+[2.1.1]: https://github.com/fbrehm/python_fb_tools/compare/2.1.0...2.1.1
+[2.1.0]: https://github.com/fbrehm/python_fb_tools/compare/2.0.3...2.1.0
+[2.0.3]: https://github.com/fbrehm/python_fb_tools/compare/2.0.2...2.0.3
+[2.0.2]: https://github.com/fbrehm/python_fb_tools/compare/2.0.1...2.0.2
+[2.0.1]: https://github.com/fbrehm/python_fb_tools/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/fbrehm/python_fb_tools/compare/1.9.6...2.0.0
+[1.9.6]: https://github.com/fbrehm/python_fb_tools/compare/1.9.5...1.9.6
+[1.9.5]: https://github.com/fbrehm/python_fb_tools/compare/1.9.4...1.9.5
+[1.9.4]: https://github.com/fbrehm/python_fb_tools/compare/1.9.3...1.9.4
+[1.9.3]: https://github.com/fbrehm/python_fb_tools/compare/1.9.2...1.9.3
+[1.9.2]: https://github.com/fbrehm/python_fb_tools/compare/1.9.1...1.9.2
+[1.9.1]: https://github.com/fbrehm/python_fb_tools/compare/1.9.0...1.9.1
+[1.9.0]: https://github.com/fbrehm/python_fb_tools/compare/1.8.6...1.9.0
+[1.8.6]: https://github.com/fbrehm/python_fb_tools/compare/1.8.5...1.8.6
+[1.8.5]: https://github.com/fbrehm/python_fb_tools/compare/1.8.4...1.8.5
+[1.8.4]: https://github.com/fbrehm/python_fb_tools/compare/1.8.3...1.8.4
+[1.8.3]: https://github.com/fbrehm/python_fb_tools/compare/1.8.2...1.8.3
+[1.8.2]: https://github.com/fbrehm/python_fb_tools/compare/1.8.1...1.8.2
+[1.8.1]: https://github.com/fbrehm/python_fb_tools/compare/1.8.0...1.8.1
+[1.8.0]: https://github.com/fbrehm/python_fb_tools/compare/1.7.6...1.8.0
+[1.7.6]: https://github.com/fbrehm/python_fb_tools/compare/1.7.5...1.7.6
+[1.7.5]: https://github.com/fbrehm/python_fb_tools/compare/1.7.4...1.7.5
+[1.7.4]: https://github.com/fbrehm/python_fb_tools/compare/1.7.3...1.7.4
+[1.7.3]: https://github.com/fbrehm/python_fb_tools/compare/1.7.2...1.7.3
+[1.7.2]: https://github.com/fbrehm/python_fb_tools/compare/1.7.0...1.7.2
+[1.7.0]: https://github.com/fbrehm/python_fb_tools/compare/1.6.5...1.7.0
+[1.6.5]: https://github.com/fbrehm/python_fb_tools/compare/1.6.4...1.6.5
+[1.6.4]: https://github.com/fbrehm/python_fb_tools/compare/1.6.3...1.6.4
+[1.6.3]: https://github.com/fbrehm/python_fb_tools/compare/1.6.2...1.6.3
+[1.6.2]: https://github.com/fbrehm/python_fb_tools/compare/1.6.1...1.6.2
+[1.6.1]: https://github.com/fbrehm/python_fb_tools/compare/1.5.5...1.6.1
+[1.5.5]: https://github.com/fbrehm/python_fb_tools/compare/1.5.3...1.5.5
+[1.5.3]: https://github.com/fbrehm/python_fb_tools/compare/1.5.2...1.5.3
+[1.5.2]: https://github.com/fbrehm/python_fb_tools/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/fbrehm/python_fb_tools/compare/1.4.5...1.5.1
+[1.4.5]: https://github.com/fbrehm/python_fb_tools/compare/1.4.4...1.4.5
+[1.4.4]: https://github.com/fbrehm/python_fb_tools/compare/1.4.3...1.4.4
+[1.4.3]: https://github.com/fbrehm/python_fb_tools/compare/1.4.2...1.4.3
+[1.4.2]: https://github.com/fbrehm/python_fb_tools/compare/1.4.1...1.4.2
+[1.4.1]: https://github.com/fbrehm/python_fb_tools/compare/1.3.9...1.4.1
+[1.3.9]: https://github.com/fbrehm/python_fb_tools/compare/1.3.8...1.3.9
+[1.3.8]: https://github.com/fbrehm/python_fb_tools/compare/1.3.7...1.3.8
+[1.3.7]: https://github.com/fbrehm/python_fb_tools/compare/1.3.6...1.3.7
+[1.3.6]: https://github.com/fbrehm/python_fb_tools/compare/1.3.2...1.3.6
+[1.3.2]: https://github.com/fbrehm/python_fb_tools/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/fbrehm/python_fb_tools/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/fbrehm/python_fb_tools/compare/1.2.6...1.3.0
+[1.2.6]: https://github.com/fbrehm/python_fb_tools/compare/1.2.5...1.2.6
+[1.2.5]: https://github.com/fbrehm/python_fb_tools/compare/1.2.4...1.2.5
+[1.2.4]: https://github.com/fbrehm/python_fb_tools/compare/1.2.3...1.2.4
+[1.2.3]: https://github.com/fbrehm/python_fb_tools/compare/1.2.2...1.2.3
+[1.2.2]: https://github.com/fbrehm/python_fb_tools/compare/1.2.1...1.2.2
+[1.2.1]: https://github.com/fbrehm/python_fb_tools/compare/1.2.0...1.2.1
+[1.2.0]: https://github.com/fbrehm/python_fb_tools/compare/1.0.3...1.2.0
+[1.0.3]: https://github.com/fbrehm/python_fb_tools/compare/1.0.2...1.0.3
+[1.0.2]: https://github.com/fbrehm/python_fb_tools/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/fbrehm/python_fb_tools/compare/0.4.0...1.0.1
+[0.4.0]: https://github.com/fbrehm/python_fb_tools/compare/0.1.1...0.4.0
+[0.1.1]: https://github.com/fbrehm/python_fb_tools/tree/0.1.1
+[2.2.0]: https://github.com/fbrehm/python_fb_tools/compare/2.1.2...2.2.0
+[2.1.2]: https://github.com/fbrehm/python_fb_tools/compare/2.1.1...2.1.2
+[2.1.1]: https://github.com/fbrehm/python_fb_tools/compare/2.1.0...2.1.1
+[2.1.0]: https://github.com/fbrehm/python_fb_tools/compare/2.0.3...2.1.0
+[2.0.3]: https://github.com/fbrehm/python_fb_tools/compare/2.0.2...2.0.3
+[2.0.2]: https://github.com/fbrehm/python_fb_tools/compare/2.0.1...2.0.2
+[2.0.1]: https://github.com/fbrehm/python_fb_tools/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/fbrehm/python_fb_tools/compare/1.9.6...2.0.0
+[1.9.6]: https://github.com/fbrehm/python_fb_tools/compare/1.9.5...1.9.6
+[1.9.5]: https://github.com/fbrehm/python_fb_tools/compare/1.9.4...1.9.5
+[1.9.4]: https://github.com/fbrehm/python_fb_tools/compare/1.9.3...1.9.4
+[1.9.3]: https://github.com/fbrehm/python_fb_tools/compare/1.9.2...1.9.3
+[1.9.2]: https://github.com/fbrehm/python_fb_tools/compare/1.9.1...1.9.2
+[1.9.1]: https://github.com/fbrehm/python_fb_tools/compare/1.9.0...1.9.1
+[1.9.0]: https://github.com/fbrehm/python_fb_tools/compare/1.8.6...1.9.0
+[1.8.6]: https://github.com/fbrehm/python_fb_tools/compare/1.8.5...1.8.6
+[1.8.5]: https://github.com/fbrehm/python_fb_tools/compare/1.8.4...1.8.5
+[1.8.4]: https://github.com/fbrehm/python_fb_tools/compare/1.8.3...1.8.4
+[1.8.3]: https://github.com/fbrehm/python_fb_tools/compare/1.8.2...1.8.3
+[1.8.2]: https://github.com/fbrehm/python_fb_tools/compare/1.8.1...1.8.2
+[1.8.1]: https://github.com/fbrehm/python_fb_tools/compare/1.8.0...1.8.1
+[1.8.0]: https://github.com/fbrehm/python_fb_tools/compare/1.7.6...1.8.0
+[1.7.6]: https://github.com/fbrehm/python_fb_tools/compare/1.7.5...1.7.6
+[1.7.5]: https://github.com/fbrehm/python_fb_tools/compare/1.7.4...1.7.5
+[1.7.4]: https://github.com/fbrehm/python_fb_tools/compare/1.7.3...1.7.4
+[1.7.3]: https://github.com/fbrehm/python_fb_tools/compare/1.7.2...1.7.3
+[1.7.2]: https://github.com/fbrehm/python_fb_tools/compare/1.7.0...1.7.2
+[1.7.0]: https://github.com/fbrehm/python_fb_tools/compare/1.6.5...1.7.0
+[1.6.5]: https://github.com/fbrehm/python_fb_tools/compare/1.6.4...1.6.5
+[1.6.4]: https://github.com/fbrehm/python_fb_tools/compare/1.6.3...1.6.4
+[1.6.3]: https://github.com/fbrehm/python_fb_tools/compare/1.6.2...1.6.3
+[1.6.2]: https://github.com/fbrehm/python_fb_tools/compare/1.6.1...1.6.2
+[1.6.1]: https://github.com/fbrehm/python_fb_tools/compare/1.5.5...1.6.1
+[1.5.5]: https://github.com/fbrehm/python_fb_tools/compare/1.5.3...1.5.5
+[1.5.3]: https://github.com/fbrehm/python_fb_tools/compare/1.5.2...1.5.3
+[1.5.2]: https://github.com/fbrehm/python_fb_tools/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/fbrehm/python_fb_tools/compare/1.4.5...1.5.1
+[1.4.5]: https://github.com/fbrehm/python_fb_tools/compare/1.4.4...1.4.5
+[1.4.4]: https://github.com/fbrehm/python_fb_tools/compare/1.4.3...1.4.4
+[1.4.3]: https://github.com/fbrehm/python_fb_tools/compare/1.4.2...1.4.3
+[1.4.2]: https://github.com/fbrehm/python_fb_tools/compare/1.4.1...1.4.2
+[1.4.1]: https://github.com/fbrehm/python_fb_tools/compare/1.3.9...1.4.1
+[1.3.9]: https://github.com/fbrehm/python_fb_tools/compare/1.3.8...1.3.9
+[1.3.8]: https://github.com/fbrehm/python_fb_tools/compare/1.3.7...1.3.8
+[1.3.7]: https://github.com/fbrehm/python_fb_tools/compare/1.3.6...1.3.7
+[1.3.6]: https://github.com/fbrehm/python_fb_tools/compare/1.3.2...1.3.6
+[1.3.2]: https://github.com/fbrehm/python_fb_tools/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/fbrehm/python_fb_tools/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/fbrehm/python_fb_tools/compare/1.2.6...1.3.0
+[1.2.6]: https://github.com/fbrehm/python_fb_tools/compare/1.2.5...1.2.6
+[1.2.5]: https://github.com/fbrehm/python_fb_tools/compare/1.2.4...1.2.5
+[1.2.4]: https://github.com/fbrehm/python_fb_tools/compare/1.2.3...1.2.4
+[1.2.3]: https://github.com/fbrehm/python_fb_tools/compare/1.2.2...1.2.3
+[1.2.2]: https://github.com/fbrehm/python_fb_tools/compare/1.2.1...1.2.2
+[1.2.1]: https://github.com/fbrehm/python_fb_tools/compare/1.2.0...1.2.1
+[1.2.0]: https://github.com/fbrehm/python_fb_tools/compare/1.0.3...1.2.0
+[1.0.3]: https://github.com/fbrehm/python_fb_tools/compare/1.0.2...1.0.3
+[1.0.2]: https://github.com/fbrehm/python_fb_tools/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/fbrehm/python_fb_tools/compare/0.4.0...1.0.1
+[0.4.0]: https://github.com/fbrehm/python_fb_tools/compare/0.1.1...0.4.0
+[0.1.1]: https://github.com/fbrehm/python_fb_tools/tree/0.1.1
+[2.6.1]: https://github.com/fbrehm/python_fb_tools/compare/2.6.0...2.6.1
+[2.6.0]: https://github.com/fbrehm/python_fb_tools/compare/2.5.3...2.6.0
+[2.5.3]: https://github.com/fbrehm/python_fb_tools/compare/2.5.2...2.5.3
+[2.5.2]: https://github.com/fbrehm/python_fb_tools/compare/2.5.1...2.5.2
+[2.5.1]: https://github.com/fbrehm/python_fb_tools/compare/2.5.0...2.5.1
+[2.5.0]: https://github.com/fbrehm/python_fb_tools/compare/2.4.2...2.5.0
+[2.4.2]: https://github.com/fbrehm/python_fb_tools/compare/2.4.1...2.4.2
+[2.4.1]: https://github.com/fbrehm/python_fb_tools/compare/2.4.0...2.4.1
+[2.4.0]: https://github.com/fbrehm/python_fb_tools/compare/2.3.5...2.4.0
+[2.3.5]: https://github.com/fbrehm/python_fb_tools/compare/2.3.4...2.3.5
+[2.3.4]: https://github.com/fbrehm/python_fb_tools/compare/2.3.3...2.3.4
+[2.3.3]: https://github.com/fbrehm/python_fb_tools/compare/2.3.2...2.3.3
+[2.3.2]: https://github.com/fbrehm/python_fb_tools/compare/2.3.1...2.3.2
+[2.3.1]: https://github.com/fbrehm/python_fb_tools/compare/2.3.0...2.3.1
+[2.3.0]: https://github.com/fbrehm/python_fb_tools/compare/2.2.5...2.3.0
+[2.2.5]: https://github.com/fbrehm/python_fb_tools/compare/2.2.4...2.2.5
+[2.2.4]: https://github.com/fbrehm/python_fb_tools/compare/2.2.3...2.2.4
+[2.2.3]: https://github.com/fbrehm/python_fb_tools/compare/2.2.2...2.2.3
+[2.2.2]: https://github.com/fbrehm/python_fb_tools/compare/2.2.1...2.2.2
+[2.2.1]: https://github.com/fbrehm/python_fb_tools/compare/2.2.0...2.2.1
+[2.2.0]: https://github.com/fbrehm/python_fb_tools/compare/2.1.2...2.2.0
+[2.1.2]: https://github.com/fbrehm/python_fb_tools/compare/2.1.1...2.1.2
+[2.1.1]: https://github.com/fbrehm/python_fb_tools/compare/2.1.0...2.1.1
+[2.1.0]: https://github.com/fbrehm/python_fb_tools/compare/2.0.3...2.1.0
+[2.0.3]: https://github.com/fbrehm/python_fb_tools/compare/2.0.2...2.0.3
+[2.0.2]: https://github.com/fbrehm/python_fb_tools/compare/2.0.1...2.0.2
+[2.0.1]: https://github.com/fbrehm/python_fb_tools/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/fbrehm/python_fb_tools/compare/1.9.6...2.0.0
+[1.9.6]: https://github.com/fbrehm/python_fb_tools/compare/1.9.5...1.9.6
+[1.9.5]: https://github.com/fbrehm/python_fb_tools/compare/1.9.4...1.9.5
+[1.9.4]: https://github.com/fbrehm/python_fb_tools/compare/1.9.3...1.9.4
+[1.9.3]: https://github.com/fbrehm/python_fb_tools/compare/1.9.2...1.9.3
+[1.9.2]: https://github.com/fbrehm/python_fb_tools/compare/1.9.1...1.9.2
+[1.9.1]: https://github.com/fbrehm/python_fb_tools/compare/1.9.0...1.9.1
+[1.9.0]: https://github.com/fbrehm/python_fb_tools/compare/1.8.6...1.9.0
+[1.8.6]: https://github.com/fbrehm/python_fb_tools/compare/1.8.5...1.8.6
+[1.8.5]: https://github.com/fbrehm/python_fb_tools/compare/1.8.4...1.8.5
+[1.8.4]: https://github.com/fbrehm/python_fb_tools/compare/1.8.3...1.8.4
+[1.8.3]: https://github.com/fbrehm/python_fb_tools/compare/1.8.2...1.8.3
+[1.8.2]: https://github.com/fbrehm/python_fb_tools/compare/1.8.1...1.8.2
+[1.8.1]: https://github.com/fbrehm/python_fb_tools/compare/1.8.0...1.8.1
+[1.8.0]: https://github.com/fbrehm/python_fb_tools/compare/1.7.6...1.8.0
+[1.7.6]: https://github.com/fbrehm/python_fb_tools/compare/1.7.5...1.7.6
+[1.7.5]: https://github.com/fbrehm/python_fb_tools/compare/1.7.4...1.7.5
+[1.7.4]: https://github.com/fbrehm/python_fb_tools/compare/1.7.3...1.7.4
+[1.7.3]: https://github.com/fbrehm/python_fb_tools/compare/1.7.2...1.7.3
+[1.7.2]: https://github.com/fbrehm/python_fb_tools/compare/1.7.0...1.7.2
+[1.7.0]: https://github.com/fbrehm/python_fb_tools/compare/1.6.5...1.7.0
+[1.6.5]: https://github.com/fbrehm/python_fb_tools/compare/1.6.4...1.6.5
+[1.6.4]: https://github.com/fbrehm/python_fb_tools/compare/1.6.3...1.6.4
+[1.6.3]: https://github.com/fbrehm/python_fb_tools/compare/1.6.2...1.6.3
+[1.6.2]: https://github.com/fbrehm/python_fb_tools/compare/1.6.1...1.6.2
+[1.6.1]: https://github.com/fbrehm/python_fb_tools/compare/1.5.5...1.6.1
+[1.5.5]: https://github.com/fbrehm/python_fb_tools/compare/1.5.3...1.5.5
+[1.5.3]: https://github.com/fbrehm/python_fb_tools/compare/1.5.2...1.5.3
+[1.5.2]: https://github.com/fbrehm/python_fb_tools/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/fbrehm/python_fb_tools/compare/1.4.5...1.5.1
+[1.4.5]: https://github.com/fbrehm/python_fb_tools/compare/1.4.4...1.4.5
+[1.4.4]: https://github.com/fbrehm/python_fb_tools/compare/1.4.3...1.4.4
+[1.4.3]: https://github.com/fbrehm/python_fb_tools/compare/1.4.2...1.4.3
+[1.4.2]: https://github.com/fbrehm/python_fb_tools/compare/1.4.1...1.4.2
+[1.4.1]: https://github.com/fbrehm/python_fb_tools/compare/1.3.9...1.4.1
+[1.3.9]: https://github.com/fbrehm/python_fb_tools/compare/1.3.8...1.3.9
+[1.3.8]: https://github.com/fbrehm/python_fb_tools/compare/1.3.7...1.3.8
+[1.3.7]: https://github.com/fbrehm/python_fb_tools/compare/1.3.6...1.3.7
+[1.3.6]: https://github.com/fbrehm/python_fb_tools/compare/1.3.2...1.3.6
+[1.3.2]: https://github.com/fbrehm/python_fb_tools/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/fbrehm/python_fb_tools/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/fbrehm/python_fb_tools/compare/1.2.6...1.3.0
+[1.2.6]: https://github.com/fbrehm/python_fb_tools/compare/1.2.5...1.2.6
+[1.2.5]: https://github.com/fbrehm/python_fb_tools/compare/1.2.4...1.2.5
+[1.2.4]: https://github.com/fbrehm/python_fb_tools/compare/1.2.3...1.2.4
+[1.2.3]: https://github.com/fbrehm/python_fb_tools/compare/1.2.2...1.2.3
+[1.2.2]: https://github.com/fbrehm/python_fb_tools/compare/1.2.1...1.2.2
+[1.2.1]: https://github.com/fbrehm/python_fb_tools/compare/1.2.0...1.2.1
+[1.2.0]: https://github.com/fbrehm/python_fb_tools/compare/1.0.3...1.2.0
+[1.0.3]: https://github.com/fbrehm/python_fb_tools/compare/1.0.2...1.0.3
+[1.0.2]: https://github.com/fbrehm/python_fb_tools/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/fbrehm/python_fb_tools/compare/0.4.0...1.0.1
+[0.4.0]: https://github.com/fbrehm/python_fb_tools/compare/0.1.1...0.4.0
+[0.1.1]: https://github.com/fbrehm/python_fb_tools/tree/0.1.1
+[2.2.0]: https://github.com/fbrehm/python_fb_tools/compare/2.1.2...2.2.0
+[2.1.2]: https://github.com/fbrehm/python_fb_tools/compare/2.1.1...2.1.2
+[2.1.1]: https://github.com/fbrehm/python_fb_tools/compare/2.1.0...2.1.1
+[2.1.0]: https://github.com/fbrehm/python_fb_tools/compare/2.0.3...2.1.0
+[2.0.3]: https://github.com/fbrehm/python_fb_tools/compare/2.0.2...2.0.3
+[2.0.2]: https://github.com/fbrehm/python_fb_tools/compare/2.0.1...2.0.2
+[2.0.1]: https://github.com/fbrehm/python_fb_tools/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/fbrehm/python_fb_tools/compare/1.9.6...2.0.0
+[1.9.6]: https://github.com/fbrehm/python_fb_tools/compare/1.9.5...1.9.6
+[1.9.5]: https://github.com/fbrehm/python_fb_tools/compare/1.9.4...1.9.5
+[1.9.4]: https://github.com/fbrehm/python_fb_tools/compare/1.9.3...1.9.4
+[1.9.3]: https://github.com/fbrehm/python_fb_tools/compare/1.9.2...1.9.3
+[1.9.2]: https://github.com/fbrehm/python_fb_tools/compare/1.9.1...1.9.2
+[1.9.1]: https://github.com/fbrehm/python_fb_tools/compare/1.9.0...1.9.1
+[1.9.0]: https://github.com/fbrehm/python_fb_tools/compare/1.8.6...1.9.0
+[1.8.6]: https://github.com/fbrehm/python_fb_tools/compare/1.8.5...1.8.6
+[1.8.5]: https://github.com/fbrehm/python_fb_tools/compare/1.8.4...1.8.5
+[1.8.4]: https://github.com/fbrehm/python_fb_tools/compare/1.8.3...1.8.4
+[1.8.3]: https://github.com/fbrehm/python_fb_tools/compare/1.8.2...1.8.3
+[1.8.2]: https://github.com/fbrehm/python_fb_tools/compare/1.8.1...1.8.2
+[1.8.1]: https://github.com/fbrehm/python_fb_tools/compare/1.8.0...1.8.1
+[1.8.0]: https://github.com/fbrehm/python_fb_tools/compare/1.7.6...1.8.0
+[1.7.6]: https://github.com/fbrehm/python_fb_tools/compare/1.7.5...1.7.6
+[1.7.5]: https://github.com/fbrehm/python_fb_tools/compare/1.7.4...1.7.5
+[1.7.4]: https://github.com/fbrehm/python_fb_tools/compare/1.7.3...1.7.4
+[1.7.3]: https://github.com/fbrehm/python_fb_tools/compare/1.7.2...1.7.3
+[1.7.2]: https://github.com/fbrehm/python_fb_tools/compare/1.7.0...1.7.2
+[1.7.0]: https://github.com/fbrehm/python_fb_tools/compare/1.6.5...1.7.0
+[1.6.5]: https://github.com/fbrehm/python_fb_tools/compare/1.6.4...1.6.5
+[1.6.4]: https://github.com/fbrehm/python_fb_tools/compare/1.6.3...1.6.4
+[1.6.3]: https://github.com/fbrehm/python_fb_tools/compare/1.6.2...1.6.3
+[1.6.2]: https://github.com/fbrehm/python_fb_tools/compare/1.6.1...1.6.2
+[1.6.1]: https://github.com/fbrehm/python_fb_tools/compare/1.5.5...1.6.1
+[1.5.5]: https://github.com/fbrehm/python_fb_tools/compare/1.5.3...1.5.5
+[1.5.3]: https://github.com/fbrehm/python_fb_tools/compare/1.5.2...1.5.3
+[1.5.2]: https://github.com/fbrehm/python_fb_tools/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/fbrehm/python_fb_tools/compare/1.4.5...1.5.1
+[1.4.5]: https://github.com/fbrehm/python_fb_tools/compare/1.4.4...1.4.5
+[1.4.4]: https://github.com/fbrehm/python_fb_tools/compare/1.4.3...1.4.4
+[1.4.3]: https://github.com/fbrehm/python_fb_tools/compare/1.4.2...1.4.3
+[1.4.2]: https://github.com/fbrehm/python_fb_tools/compare/1.4.1...1.4.2
+[1.4.1]: https://github.com/fbrehm/python_fb_tools/compare/1.3.9...1.4.1
+[1.3.9]: https://github.com/fbrehm/python_fb_tools/compare/1.3.8...1.3.9
+[1.3.8]: https://github.com/fbrehm/python_fb_tools/compare/1.3.7...1.3.8
+[1.3.7]: https://github.com/fbrehm/python_fb_tools/compare/1.3.6...1.3.7
+[1.3.6]: https://github.com/fbrehm/python_fb_tools/compare/1.3.2...1.3.6
+[1.3.2]: https://github.com/fbrehm/python_fb_tools/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/fbrehm/python_fb_tools/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/fbrehm/python_fb_tools/compare/1.2.6...1.3.0
+[1.2.6]: https://github.com/fbrehm/python_fb_tools/compare/1.2.5...1.2.6
+[1.2.5]: https://github.com/fbrehm/python_fb_tools/compare/1.2.4...1.2.5
+[1.2.4]: https://github.com/fbrehm/python_fb_tools/compare/1.2.3...1.2.4
+[1.2.3]: https://github.com/fbrehm/python_fb_tools/compare/1.2.2...1.2.3
+[1.2.2]: https://github.com/fbrehm/python_fb_tools/compare/1.2.1...1.2.2
+[1.2.1]: https://github.com/fbrehm/python_fb_tools/compare/1.2.0...1.2.1
+[1.2.0]: https://github.com/fbrehm/python_fb_tools/compare/1.0.3...1.2.0
+[1.0.3]: https://github.com/fbrehm/python_fb_tools/compare/1.0.2...1.0.3
+[1.0.2]: https://github.com/fbrehm/python_fb_tools/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/fbrehm/python_fb_tools/compare/0.4.0...1.0.1
+[0.4.0]: https://github.com/fbrehm/python_fb_tools/compare/0.1.1...0.4.0
+[0.1.1]: https://github.com/fbrehm/python_fb_tools/tree/0.1.1
