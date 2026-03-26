@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2025 by Frank Brehm, Berlin
+@copyright: © 2018 - 2026 by Frank Brehm, Berlin
 """
 
 from __future__ import absolute_import
@@ -32,6 +32,6 @@ MAX_INDENT = 12
 from .mailaddress import MailAddress, MailAddressList, QualifiedMailAddress  # noqa: F401
 from .multi_config import BaseMultiConfig  # noqa: F401
 
-__version__ = "3.0.1"
+__version__ = "3.1.0"
 
 # vim: ts=4 et list

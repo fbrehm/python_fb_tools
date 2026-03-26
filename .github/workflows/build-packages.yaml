@@ -63,13 +63,16 @@ jobs:
       libdir: src/fb_tools
       # debian_versions: 'Debian-Bookworm Debian-Trixie Ubuntu-Focal Ubuntu-Jammy'
       el_versions: 'el-9 el-10'
-      additional_debian_build_packages: >
+      additional_debian_build_packages: >-
         flit
         pybuild-plugin-pyproject
         python3-fb-logging
         python3-semver
         python3-yaml
-      additional_rpm_build_packages: 'python3-fb-logging python3-pyyaml'
+      additional_rpm_build_packages: >-
+        python3-fb-logging
+        python3-pyyaml
+        python3-semver
       password_file: ${{ needs.prepare-image.outputs.password_file }}
       key_id: ${{ needs.prepare-image.outputs.key_id }}
       # do_help2man: true

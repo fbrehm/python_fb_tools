@@ -2,14 +2,14 @@ Source: fb-tools
 Section: python
 Priority: extra
 Maintainer: Frank Brehm <frank@brehm-online.com>
-Build-Depends: debhelper (>= 9),
+Build-Depends: debhelper (>= 13),
                gettext,
                dh-python,
                help2man,
                python3-all,
                python3-babel,
                python3-chardet,
-               python3-fb-logging (>=0.5.0),
+               python3-fb-logging (>=1.4.0),
                python3-pip,
                python3-semver,
                python3-six,
@@ -19,23 +19,36 @@ Standards-Version: 3.9.6
 Homepage: https://github.com/fbrehm/python_fb_tools
 Vcs-Browser: https://github.com/fbrehm/python_fb_tools
 Vcs-Git: https://github.com/fbrehm/python_fb_tools.git
-X-Python3-Version: >= 3.5
+X-Python3-Version: >= 3.8
+
+Package: fb-tools
+Architecture: all
+Pre-Depends: ${misc:Pre-Depends}
+Depends: python3-fb-tools (= ${binary:Version}),
+         ${misc:Depends},
+         ${python3:Depends}
+Description: Python modules for common used objects, error classes and functions
+ .
+ This package includes the following executable binaries:
+ - config-convert - Converts a configuration file into another configuration format
+ - get-file-to-remove - Prints a list of rotated logfiles, which can be removeed,
+   based on the timestamp inside their filenames.
+ - show-spinner - Shows one or more available spinners and their names.
 
 Package: python3-fb-tools
 Architecture: all
-Depends: python3-six,
-         python3-babel,
+Depends: python3-babel,
          python3-chardet,
-         python3-fb-logging (>=0.5.0),
+         python3-fb-logging (>=1.4.0),
+         python3-pytz,
          python3-semver,
+         python3-six,
          python3-yaml,
          python3-tz,
          ${misc:Depends},
          ${python3:Depends}
-Recommends: python3-tomli-w
-Provides: fb-tools
-Conflicts: fb-tools
-Replaces: fb-tools
+Recommends: python3-hjson,
+            python3-tomli-w
 Description: Python modules for common used objects, error classes and functions
  .
  This package includes the Python3 modules for this package.

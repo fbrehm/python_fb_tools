@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2026 Frank Brehm, Berlin
+@copyright: © 2018 - 2026 Frank Brehm, Berlin
 @license: GPL3
 """
 
@@ -200,7 +200,7 @@ class TestFbAnyConfig(FbToolsTestcase):
             "yaml",
         ]
 
-        config = { "General": {"testing_types": testing_types } }
+        config = {"General": {"testing_types": testing_types}}
 
         for testing_type in testing_types:
             if self.verbose >= 1:
@@ -212,6 +212,7 @@ class TestFbAnyConfig(FbToolsTestcase):
 
             content = cfg_handler.dump_config(config, testing_type)
             LOG.debug("Generated output:\n" + content)
+
 
 # =============================================================================
 if __name__ == "__main__":

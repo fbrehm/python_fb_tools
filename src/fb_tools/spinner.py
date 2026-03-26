@@ -17,7 +17,7 @@
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2025 by Frank Brehm, Berlin
+@copyright: © 2018 - 2026 by Frank Brehm, Berlin
 """
 
 import itertools

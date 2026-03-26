@@ -5,7 +5,7 @@
 
 @author: Frank Brehm
 @contact: frank.brehm@pixelpark.com
-@copyright: © 2026 by Frank Brehm, Berlin
+@copyright: © 2018 - 2026 by Frank Brehm, Berlin
 """
 
 from __future__ import absolute_import, print_function

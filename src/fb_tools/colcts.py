@@ -7,7 +7,7 @@ They are providing alternatives to Python's general purpose built-in frozen_set,
 
 @author: Frank Brehm
 @contact: frank@brehm-online.com
-@copyright: © 2025 by Frank Brehm, Berlin
+@copyright: © 2018 - 2026 by Frank Brehm, Berlin
 """
 
 from __future__ import absolute_import
