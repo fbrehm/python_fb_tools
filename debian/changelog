@@ -1,3 +1,10 @@
+fb-tools (3.1.0) all; urgency=medium
+
+  * Changing build environment to create two Debian packages.
+  * Updated dependencies in package build environments.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 26 Mar 2026 17:20:59 +0100
+
 fb-tools (3.0.1) all; urgency=medium
 
   * Fixing wrong input in src/fb_tools/any_config.py.

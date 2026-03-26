@@ -5,12 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2026-03-21
+## [3.1.0] - 2026-03-26
 
 ### Changed
 
 * Updating CHANGELOG.md.
 * Setting copyright year to 2026.
+* Moving installation of script manpages into Debian package fb-tools
+* Updated dependencies in package build environments.
+* Changing Debian build environments to create two binary packages -
+  `fb-tools` and `python3-fb-tools`.
 
 ## [3.0.1] - 2026-03-20
 
@@ -968,7 +972,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Initial commit.
 
 
-[Unreleased]: https://github.com/fbrehm/python_fb_tools/compare/3.0.1...develop
+[3.1.0]: https://github.com/fbrehm/python_fb_tools/compare/3.0.1...3.1.0
 [3.0.1]: https://github.com/fbrehm/python_fb_tools/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/fbrehm/python_fb_tools/compare/2.9.5...3.0.0
 [2.9.5]: https://github.com/fbrehm/python_fb_tools/compare/2.9.4...2.9.5
