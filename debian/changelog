@@ -1,3 +1,9 @@
+fb-tools (3.1.1) all; urgency=medium
+
+  * Fixing dependencies of generated Debian packages.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Fri, 27 Mar 2026 09:34:46 +0100
+
 fb-tools (3.1.0) all; urgency=medium
 
   * Changing build environment to create two Debian packages.
