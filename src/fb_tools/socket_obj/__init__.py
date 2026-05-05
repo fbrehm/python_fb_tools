@@ -34,7 +34,7 @@ from ..errors import GenericSocketError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR
 
-__version__ = "0.7.2"
+__version__ = "0.8.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -71,6 +71,7 @@ class GenericSocket(HandlingObject):
     * initialized        (bool         - rw) (inherited from FbBaseObject)
     * interrupted        (bool         - rw) (inherited from HandlingObject)
     * is_venv            (bool         - ro) (inherited from HandlingObject)
+    * name               (str          - ro)
     * polling_interval   (float        - rw)
     * prompt_timeout     (int          - rw) (inherited from HandlingObject)
     * quiet              (bool         - rw) (inherited from HandlingObject)
@@ -365,6 +366,12 @@ class GenericSocket(HandlingObject):
 
         self._polling_interval = v
 
+    # -----------------------------------------------------------
+    @property
+    def name(self):
+        """Return a descriptive name of this socket."""
+        return self._name()
+
     # -------------------------------------------------------------------------
     @abstractmethod
     def connect(self):
@@ -376,6 +383,17 @@ class GenericSocket(HandlingObject):
     def bind(self):
         """Create the socket and listen on it."""
         raise FunctionNotImplementedError("bind", self.__class__.__name__)
+
+    # -------------------------------------------------------------------------
+    @abstractmethod
+    def _name(self):
+        """
+        Return a descriptive name of this socket.
+
+        It might be unique on the system as possible.
+        This methos ha to be overridden in descendent classes.
+        """
+        raise FunctionNotImplementedError("_name", self.__class__.__name__)
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=False):
@@ -395,6 +413,7 @@ class GenericSocket(HandlingObject):
         res["connected"] = self.connected
         res["encoding"] = self.encoding
         res["fileno"] = self.fileno
+        res["name"] = self.name
         res["polling_interval"] = self.polling_interval
         res["request_queue_size"] = self.request_queue_size
         res["timeout"] = self.timeout
@@ -665,6 +684,22 @@ class GenericSocket(HandlingObject):
                 pass
 
         return result
+
+    # -------------------------------------------------------------------------
+    def __enter__(self):
+        """Execute this action, when this socket will be opened by the with-block."""
+        LOG.debug(
+            _("Opened the {cls} {name!r} ...").format(cls=self.__class__.__name__, name=self.name)
+        )
+
+    # -------------------------------------------------------------------------
+    def __exit__(self, exc_type, exc_val, exc_traceback):
+        """Exit action at the end of the with-block - closing socket."""
+        LOG.debug(
+            _("Closing the {cls} {name!r} ...").format(cls=self.__class__.__name__, name=self.name)
+        )
+
+        self.close()
 
 
 # =============================================================================

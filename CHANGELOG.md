@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-05-05
+
+### Added
+
+* Adding property `name` to `GenericSocket` in module `fb_tools.socket_obj`.
+* Adding magic context methods `__enter__` and `__exit__` to `GenericSocket`
+  in module `fb_tools.socket_obj`.
+* Adding tests for property `name` and centextual handling of socket objects.
+
+### Fixed
+
+* Fixing typos in CHANGELOG.md
+
 ## [3.1.1] - 2026-03-27
 
 ### Fixed
@@ -312,7 +325,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Adding possibility to assining testing command line arguments to
   BaseApplication.
 
-### Fixwd
+### Fixed
 
 * Fixing internal imports.
 * Fixing deprecated imports.
@@ -332,7 +345,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Expanding tests for class `BaseMultiConfig`.
 * Updating translations.
 
-### Fixwd
+### Fixed
 
 * Fixing Github workflow for linting.
 
@@ -684,7 +697,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.3] - 2019-10-16
 
-## Added
+### Added
 
 * New class RegexOptionAction.
 * Adding property `is_venv` to class HandlingObject.
@@ -695,13 +708,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Refactoring update-env.sh.
 * Reformatting output of get-vmware-vm-info and get-vmware-vm-list.
 
-## [1.6.2] - 2ß19-10-07
+## [1.6.2] - 2019-10-07
 
 ### Fixed
 
 * Fixing .gitlab-ci.yml.
 
-## [1.6.1] - 2ß19-10-07
+## [1.6.1] - 2019-10-07
 
 ### Added
 
@@ -978,6 +991,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Initial commit.
 
 
+[3.2.0]: https://github.com/fbrehm/python_fb_tools/compare/3.1.1...3.2.0
+[3.1.1]: https://github.com/fbrehm/python_fb_tools/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/fbrehm/python_fb_tools/compare/3.0.1...3.1.0
 [3.0.1]: https://github.com/fbrehm/python_fb_tools/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/fbrehm/python_fb_tools/compare/2.9.5...3.0.0
