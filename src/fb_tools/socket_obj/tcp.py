@@ -523,6 +523,7 @@ class TcpSocket(GenericSocket):
 
         return f"[{ip_addr}]:{self.port}"
 
+
 # =============================================================================
 
 if __name__ == "__main__":

@@ -549,6 +549,7 @@ class UnixSocket(GenericSocket):
         """Return a descriptive name of this socket."""
         return str(self.filename)
 
+
 # =============================================================================
 
 if __name__ == "__main__":

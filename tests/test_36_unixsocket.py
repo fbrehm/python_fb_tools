@@ -104,6 +104,8 @@ class TestUnixSocketHandler(FbToolsTestcase):
         LOG.debug("Used socket file mode: {m} == 0o{oct}.".format(m=sock.mode, oct=sock.mode_oct))
         self.assertEqual(sock.mode, default_mode)
         self.assertEqual(DEFAULT_SOCKET_MODE, default_mode)
+        LOG.debug(f"Name of the socket: {sock.name!r}")
+        self.assertEqual(str(self.socketfile), sock.name)
 
         del sock
 
@@ -156,6 +158,40 @@ class TestUnixSocketHandler(FbToolsTestcase):
 
         listener_thread.join_with_exception()
 
+    # -------------------------------------------------------------------------
+    def test_rw_context(self):
+        """
+        Test reading from and writing to a UNIX socket file with a UnixSocket object.
+
+        Using context (with-blocks) for those operations.
+        """
+        LOG.info(self.get_method_doc())
+
+        self.socketfile.unlink()
+
+        from fb_tools.socket_obj.unix import UnixSocket
+        from listener_thread import ListenerThread
+
+        msg2send = "Hallo Ballo!\n"
+
+        listener_socket = UnixSocket(self.socketfile, appname=APPNAME, verbose=self.verbose)
+        listener_thread = ListenerThread(listener_socket, msg2send)
+
+        write_sock = UnixSocket(self.socketfile, appname=APPNAME, verbose=self.verbose)
+        with write_sock.connect():
+            self.assertEqual(write_sock.connected, True)
+            listener_thread.start()
+
+            time.sleep(0.5)
+            LOG.debug("Sending to socket: {!r}".format(msg2send))
+
+            write_sock.send(msg2send)
+
+        LOG.debug("With-block finished.")
+        self.assertEqual(write_sock.connected, False)
+
+        listener_thread.join_with_exception()
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -172,6 +208,7 @@ if __name__ == "__main__":
     suite.addTest(TestUnixSocketHandler("test_import", verbose))
     suite.addTest(TestUnixSocketHandler("test_object", verbose))
     suite.addTest(TestUnixSocketHandler("test_readwrite", verbose))
+    suite.addTest(TestUnixSocketHandler("test_rw_context", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
