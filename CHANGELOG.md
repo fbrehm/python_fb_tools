@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in module `fb_tools.socket_obj`.
 * Adding tests for property `name` and centextual handling of socket objects.
 
+### Fixed
+
+* Fixing typos in CHANGELOG.md
+
 ## [3.1.1] - 2026-03-27
 
 ### Fixed
@@ -321,7 +325,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Adding possibility to assining testing command line arguments to
   BaseApplication.
 
-### Fixwd
+### Fixed
 
 * Fixing internal imports.
 * Fixing deprecated imports.
@@ -341,7 +345,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Expanding tests for class `BaseMultiConfig`.
 * Updating translations.
 
-### Fixwd
+### Fixed
 
 * Fixing Github workflow for linting.
 
@@ -693,7 +697,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.3] - 2019-10-16
 
-## Added
+### Added
 
 * New class RegexOptionAction.
 * Adding property `is_venv` to class HandlingObject.
@@ -704,13 +708,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Refactoring update-env.sh.
 * Reformatting output of get-vmware-vm-info and get-vmware-vm-list.
 
-## [1.6.2] - 2ß19-10-07
+## [1.6.2] - 2019-10-07
 
 ### Fixed
 
 * Fixing .gitlab-ci.yml.
 
-## [1.6.1] - 2ß19-10-07
+## [1.6.1] - 2019-10-07
 
 ### Added
 
