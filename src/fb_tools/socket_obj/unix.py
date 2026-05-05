@@ -29,7 +29,7 @@ from . import GenericSocket
 from ..errors import GenericSocketError
 from ..xlate import XLATOR
 
-__version__ = "0.5.2"
+__version__ = "0.6.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -468,6 +468,8 @@ class UnixSocket(GenericSocket):
         self._connected = True
         self.fileno = self.sock.fileno()
 
+        return self
+
     # -------------------------------------------------------------------------
     def _set_socket_permissions(self):
         """Set file mode, owner and group to the socket file."""
@@ -540,6 +542,12 @@ class UnixSocket(GenericSocket):
             )
         self.sock.listen(self.request_queue_size)
 
+        return self
+
+    # -------------------------------------------------------------------------
+    def _name(self):
+        """Return a descriptive name of this socket."""
+        return str(self.filename)
 
 # =============================================================================
 
