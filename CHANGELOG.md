@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-05-05
+
+### Added
+
+* Adding property `name` to `GenericSocket` in module `fb_tools.socket_obj`.
+* Adding magic context methods `__enter__` and `__exit__` to `GenericSocket`
+  in module `fb_tools.socket_obj`.
+* Adding tests for property `name` and centextual handling of socket objects.
+
 ## [3.1.1] - 2026-03-27
 
 ### Fixed
@@ -978,6 +987,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Initial commit.
 
 
+[3.2.0]: https://github.com/fbrehm/python_fb_tools/compare/3.1.1...3.2.0
+[3.1.1]: https://github.com/fbrehm/python_fb_tools/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/fbrehm/python_fb_tools/compare/3.0.1...3.1.0
 [3.0.1]: https://github.com/fbrehm/python_fb_tools/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/fbrehm/python_fb_tools/compare/2.9.5...3.0.0

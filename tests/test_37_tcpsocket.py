@@ -102,6 +102,9 @@ class TestTcpSocketHandler(FbToolsTestcase):
         self.assertEqual(sock.port, TEST_PORT)
         LOG.debug("Used address family: {!r}".format(sock.address_family))
         self.assertEqual(sock.address_family, HandlingObject.default_address_family)
+        LOG.debug(f"Name of the socket: {sock.name!r}")
+        expected_sockname = "*:{}".format(TEST_PORT)
+        self.assertEqual(expected_sockname, sock.name)
 
         del sock
 
@@ -129,6 +132,38 @@ class TestTcpSocketHandler(FbToolsTestcase):
 
         listener_thread.join_with_exception()
 
+    # -------------------------------------------------------------------------
+    def test_rw_context(self):
+        """
+        Test reading from and writing to a network socket file with a TcpSocket object.
+
+        Using context (with-blocks) for those operations.
+        """
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.socket_obj.tcp import TcpSocket
+        from listener_thread import ListenerThread
+
+        msg2send = "Hallo Ballo!\n"
+
+        listener_socket = TcpSocket("localhost", TEST_PORT, appname=APPNAME, verbose=self.verbose)
+        listener_thread = ListenerThread(listener_socket, msg2send)
+
+        write_sock = TcpSocket("localhost", TEST_PORT, appname=APPNAME, verbose=self.verbose)
+        with write_sock.connect():
+            self.assertEqual(write_sock.connected, True)
+            listener_thread.start()
+
+            time.sleep(0.5)
+            LOG.debug("Sending to socket: {!r}".format(msg2send))
+
+            write_sock.send(msg2send)
+
+        LOG.debug("With-block finished.")
+        self.assertEqual(write_sock.connected, False)
+
+        listener_thread.join_with_exception()
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -145,6 +180,7 @@ if __name__ == "__main__":
     suite.addTest(TestTcpSocketHandler("test_import", verbose))
     suite.addTest(TestTcpSocketHandler("test_object", verbose))
     suite.addTest(TestTcpSocketHandler("test_readwrite", verbose))
+    suite.addTest(TestTcpSocketHandler("test_rw_context", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

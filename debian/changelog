@@ -1,3 +1,13 @@
+fb-tools (3.2.0) all; urgency=medium
+
+  * Adding property name to GenericSocket in module fb_tools.socket_obj.
+  * Adding magic context methods __enter__ and __exit__ to GenericSocket
+    in module fb_tools.socket_obj.
+  * Adding tests for property name and centextual handling of socket
+    objects.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 05 May 2026 09:06:41 +0200
+
 fb-tools (3.1.1) all; urgency=medium
 
   * Fixing dependencies of generated Debian packages.

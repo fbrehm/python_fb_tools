@@ -24,7 +24,7 @@ from ..common import pp
 from ..errors import GenericSocketError
 from ..xlate import XLATOR
 
-__version__ = "0.4.2"
+__version__ = "0.5.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -67,6 +67,7 @@ class TcpSocket(GenericSocket):
     * initialized        (bool              - rw) (inherited from FbBaseObject)
     * interrupted        (bool              - rw) (inherited from HandlingObject)
     * is_venv            (bool              - ro) (inherited from HandlingObject)
+    * name               (str               - ro) (inherited from GenericSocket)
     * own_address        (ipaddress         - ro)
     * polling_interval   (float             - rw) (inherited from GenericSocket)
     * port               (int               - rw)
@@ -111,10 +112,11 @@ class TcpSocket(GenericSocket):
         @raise TcpSocketError: on a uncoverable error.
 
         @param address: the hostname or IP address, where to connect to or on which listening to.
-                        If it can be converted to a IPy.IP object, an IP address is assumed.
+                        If it can be converted to a ipaddress._BaseAddress object,
+                        an IP address is assumed.
                         If None is given, then the socket will listen on all local IP addresses -
                         not usable for client sockets.  Else a hostname is assumed.
-        @type address: str or IPy.IP or None
+        @type address: str or ipaddress.IPv4Address or ipaddress.IPv6Address or None
         @param port: the TCP port number, where to connect to or on which should be listened.
         @type port: int
         @param address_family: the IP address family, may be socket.AF_INET or socket.AF_INET6 or
@@ -177,7 +179,7 @@ class TcpSocket(GenericSocket):
         """
         @ivar: The resolved IP address, where to connect to or on which listening to.
                If self.address is '*', the self.resolved_address stays to None.
-        @type: IPy.IP or None
+        @type: ipaddress.IPv4Address or ipaddress.IPv6Address or None
         """
 
         self.port = port
@@ -401,6 +403,8 @@ class TcpSocket(GenericSocket):
         self._resolved_address = ip_addr
         self._own_address = self.sock.getsockname()
 
+        return self
+
     # -------------------------------------------------------------------------
     def bind(self):
         """Create a TCP socket and listen on it."""
@@ -499,6 +503,25 @@ class TcpSocket(GenericSocket):
         self._used_socket_addr = socketaddr
         self._resolved_address = socketaddr[0]
         self._own_address = self.sock.getsockname()
+
+        return self
+
+    # -------------------------------------------------------------------------
+    def _name(self):
+        """Return a descriptive name of this socket."""
+        if self.address is None:
+            return f"*:{self.port}"
+
+        addr = str(self.address)
+        try:
+            ip_addr = ipaddress.ip_address(self.address)
+        except ValueError:
+            return f"{addr}:{self.port}"
+
+        if ip_addr.version == 4:
+            return f"{ip_addr}:{self.port}"
+
+        return f"[{ip_addr}]:{self.port}"
 
 
 # =============================================================================

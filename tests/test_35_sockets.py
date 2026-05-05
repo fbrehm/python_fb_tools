@@ -85,6 +85,8 @@ class TestSocketHandler(FbToolsTestcase):
         from fb_tools.socket_obj import GenericSocket
         from fb_tools.socket_obj import MIN_BUFFER_SIZE, MAX_BUFFER_SIZE, MAX_REQUEST_QUEUE_SIZE
 
+        socket_name = "abstract-socket"
+
         class TestSocket(GenericSocket):
             """Test Socket class."""
 
@@ -100,6 +102,9 @@ class TestSocketHandler(FbToolsTestcase):
 
             def bind(self):
                 pass
+
+            def _name(self):
+                return socket_name
 
         min_socket = TestSocket(appname=APPNAME, verbose=self.verbose)
         LOG.debug("TestSocket %%r: {!r}".format(min_socket))
@@ -170,6 +175,11 @@ class TestSocketHandler(FbToolsTestcase):
                     cls=e.__class__.__name__, enc=enc, err=e
                 )
             )
+
+        if self.verbose >= 1:
+            print()
+        LOG.debug(f"Testing name {socket_name!r} of the minimal test socket.")
+        self.assertEqual(min_socket.name, socket_name)
 
 
 # =============================================================================
