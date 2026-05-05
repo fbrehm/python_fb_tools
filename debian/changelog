@@ -1,4 +1,4 @@
-fb-tools (3.2.0) UNRELEASED; urgency=medium
+fb-tools (3.2.0) all; urgency=medium
 
   * Adding property name to GenericSocket in module fb_tools.socket_obj.
   * Adding magic context methods __enter__ and __exit__ to GenericSocket
