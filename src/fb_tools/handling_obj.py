@@ -69,7 +69,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = "2.4.8"
+__version__ = "2.4.9"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -750,12 +750,8 @@ class HandlingObject(FbBaseObject):
                 raise ValueError(_("STDIN and input arguments may not both be used."))
             kwargs["stdin"] = PIPE
 
-        LOG.debug(_("Executing command args:") + "\n" + pp(popenargs))
-        cmd_args = []
-        for arg in popenargs[0]:
-            LOG.debug(_("Performing argument {!r}.").format(arg))
-            cmd_args.append(quote(arg))
-        cmd_str = " ".join(cmd_args)
+        if self.verbose > 2:
+            LOG.debug(_("Executing command args:") + "\n" + pp(popenargs))
 
         cmd_str = " ".join((quote(x) for x in popenargs[0]))
         LOG.debug(_("Executing: {}").format(cmd_str))
