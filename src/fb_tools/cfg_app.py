@@ -37,7 +37,7 @@ from .errors import MultiConfigError
 from .multi_config import BaseMultiConfig
 from .xlate import XLATOR
 
-__version__ = "2.3.3"
+__version__ = "2.3.4"
 LOG = logging.getLogger(__name__)
 
 
@@ -46,7 +46,44 @@ _ = XLATOR.gettext
 
 # =============================================================================
 class FbConfigApplication(BaseApplication):
-    """Class for configured application objects."""
+    """
+    Class for configured application objects.
+
+    Properties:
+    * additional_cfg_file   (pathlib.Path or None) - ro)
+    * address_family        (str or int            - rw) (inherited from HandlingObject)
+    * appname               (str                   - rw) (inherited from FbBaseObject)
+    * argparse_epilog       (None or str           - ro) (inherited from BaseApplication)
+    * argparse_prefix_chars (str                   - ro) (inherited from BaseApplication)
+    * assumed_answer        (None or bool          - rw) (inherited from HandlingObject)
+    * base_dir              (pathlib.Path          - rw) (inherited from FbBaseObject)
+    * description           (str                   - ro) (inherited from BaseApplication)
+    * exit_value            (int                   - rw) (inherited from BaseApplication)
+    * exitvalue             (int                   - rw) (inherited from BaseApplication)
+    * force                 (bool                  - rw) (inherited from HandlingObject)
+    * force_desc_msg        (None or str           - ro) (inherited from BaseApplication)
+    * initialized           (bool                  - rw) (inherited from FbBaseObject)
+    * interrupted           (bool                  - rw) (inherited from HandlingObject)
+    * is_venv               (bool                  - ro) (inherited from HandlingObject)
+    * logfile               (pathlib.Path or None) - ro)
+    * prompt_timeout        (int                   - rw) (inherited from HandlingObject)
+    * quiet                 (bool                  - rw) (inherited from HandlingObject)
+    * simulate              (bool                  - rw) (inherited from HandlingObject)
+    * testing_args          (array od str          - ro) (inherited from BaseApplication)
+    * usage                 (str                   - ro) (inherited from BaseApplication)
+    * usage_term            None or int            - ro) (inherited from BaseApplication)
+    * use_chardet           (bool                  - rw)
+    * verbose               (int                   - rw) (inherited from FbBaseObject)
+    * version               (str                   - ro) (inherited from FbBaseObject)
+
+    Public attributes:
+    * add_search_paths       Array of pathlib.Path   (inherited from HandlingObject)
+    * arg_parser             argparse.ArgumentParser (inherited from BaseApplication)
+    * args                   Namespace               (inherited from BaseApplication)
+    * cfg                    BaseMultiConfig
+    * env                    Dict                    (inherited from BaseApplication)
+    * signals_dont_interrupt Array of int            (inherited from HandlingObject)
+    """
 
     default_logfile = None
 
@@ -65,7 +102,59 @@ class FbConfigApplication(BaseApplication):
         *args,
         **kwargs,
     ):
-        """Initialise a FbConfigApplication object."""
+        """
+        Initialise a FbConfigApplication object.
+
+        @param cfg_class: The class of the configuration
+        @type: class
+        @param append_appname_to_stems: Append the application name to the list of file stems
+                                        of possible configuration files
+        @type: bool
+        @param config_dir: The base name of the configuration directory below /etc and ~/.config
+        @type: str
+        @param additional_stems: Additional stems of possible configuration files.
+        @type: list of str
+        @param additional_cfgdirs: additional directories to search for configuration files.
+        @type: list of pathlib.Path or str
+        @param cfg_encoding:  the encoding of configuration files.
+        @type: str
+        @param use_chardet: Use character detection to detect the character encoding of
+                            configuration files.
+        @type: bool
+
+        @param appname: name of the current running application
+        @type: str
+        @param argparse_epilog: an epilog displayed at the end of the argparse help screen
+        @type: str
+        @param argparse_prefix_chars: The set of characters that prefix optional arguments.
+        @type: str
+        @param assumed_answer: The assumed answer to all yes/no questions
+        @type: bool or None
+        @param base_dir: base directory used for different purposes
+        @type: str or pathlib.Path
+        @param description: a short text describing the application
+        @type: str
+        @param env_prefix: a prefix for environment variables to detect them and to assign
+        @type: None or str
+        @param force: Forced execution of something
+        @type: bool
+        @param initialized: initialisation of this object is complete after init
+        @type: bool
+        @param quiet: Quiet execution
+        @type: bool
+        @param simulate: actions with changing a state are not executed
+        @type: bool
+        @param terminal_has_colors: has the current terminal colored output
+        @type: bool
+        @param testing_args: Command line arguments to use for testing purposes.
+        @type: None or list of strings
+        @param verbose: verbosity level (0 - 9)
+        @type: int
+        @type: usage: usage text used on argparse
+        @type: str
+        @param version: version string of the current object or application
+        @type: str
+        """
         if not issubclass(cfg_class, BaseMultiConfig):
             msg = _("Parameter {cls!r} must be a subclass of {clinfo!r}.").format(
                 cls="cfg_class", clinfo="BaseMultiConfig"
