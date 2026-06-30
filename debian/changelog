@@ -1,3 +1,9 @@
+fb-tools (3.2.1) all; urgency=medium
+
+  * Fixing debug output in src/fb_tools/handling_obj.py.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Tue, 30 Jun 2026 17:53:45 +0200
+
 fb-tools (3.2.0) all; urgency=medium
 
   * Adding property name to GenericSocket in module fb_tools.socket_obj.
