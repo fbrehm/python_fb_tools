@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Fixing debug output in `src/fb_tools/handling_obj.py`.
 
+### Removed
+
+* Removing obsolete `debian/compat`.
+
 ## [3.2.0] - 2026-05-05
 
 ### Added
