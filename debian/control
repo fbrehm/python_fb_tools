@@ -5,6 +5,7 @@ Maintainer: Frank Brehm <frank@brehm-online.com>
 Build-Depends: debhelper (>= 13),
                gettext,
                dh-python,
+               debhelper-compat (= 12),
                help2man,
                python3-all,
                python3-babel,
