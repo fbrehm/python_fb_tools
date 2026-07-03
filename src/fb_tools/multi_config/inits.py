@@ -25,7 +25,7 @@ import six
 from ..common import is_sequence, to_str
 from ..xlate import XLATOR
 
-__version__ = "0.2.1"
+__version__ = "0.3.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -48,11 +48,25 @@ class MultiCfgInitMixin:
 
         self.config_dirs.append(Path("/etc") / self.config_dir)
 
-        path = Path(os.path.expanduser("~")) / ".config" / self.config_dir
+        xdg_dirs = os.environ.get("XDG_CONFIG_DIRS", None)
+        if xdg_dirs:
+            xdg_dirs = [Path(x) for x in xdg_dirs.split(os.pathsep)]
+            xdg_dirs.reverse()
+            for path in xdg_dirs:
+                cfg_path = path / self.config_dir
+                if cfg_path in self.config_dirs:
+                    self.config_dirs.remove(cfg_path)
+                self.config_dirs.append(cfg_path)
+
+        xdg_dir = os.environ.get("XDG_CONFIG_HOME", None)
+        if xdg_dir:
+            path = Path(xdg_dir) / self.config_dir
+        else:
+            path = Path("~/.config").expanduser() / self.config_dir
         if path in self.config_dirs:
             self.config_dirs.remove(path)
-
         self.config_dirs.append(path)
+
         if self.is_venv():
             path = Path(sys.prefix) / "etc"
             if path in self.config_dirs:
