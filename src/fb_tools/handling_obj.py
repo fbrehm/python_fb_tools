@@ -66,7 +66,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = "2.5.0"
+__version__ = "2.6.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -179,6 +179,7 @@ class HandlingObject(FbBaseObject):
     * appname             (str          - rw) (inherited from FbBaseObject)
     * assumed_answer      (None or bool - rw)
     * base_dir            (pathlib.Path - rw) (inherited from FbBaseObject)
+    * cache_dir           (pathlib.Path - rw)
     * data_dir            (pathlib.Path - rw)
     * force               (bool         - rw)
     * initialized         (bool         - rw) (inherited from FbBaseObject)
@@ -188,6 +189,7 @@ class HandlingObject(FbBaseObject):
     * prompt_timeout      (int          - rw)
     * quiet               (bool         - rw)
     * simulate            (bool         - rw)
+    * state_dir           (pathlib.Path - rw)
     * terminal_has_colors (bool         - rw)
     * verbose             (int          - rw) (inherited from FbBaseObject)
     * version             (str          - ro) (inherited from FbBaseObject)
@@ -236,6 +238,10 @@ class HandlingObject(FbBaseObject):
         force=None,
         assumed_answer=None,
         project_name=None,
+        data_dir=None,
+        cache_dir=None,
+        state_dir=None,
+        runtime_dir=None,
         *args,
         **kwargs,
     ):
@@ -256,6 +262,15 @@ class HandlingObject(FbBaseObject):
         @type: bool or None
         @param project_name: Project name used for subdirectories in default directories
         @type: str
+        @param data_dir: directory to which user-specific data files should be stored.
+        @type: Path or None
+        @param cache_dir: directory to which user-specific non-essential data files
+                          should be stored.
+        @type: Path or None
+        @param state_dir: directory to which user-specific state files should be stored.
+        @type: Path or None
+        @param runtime_dir: directory to which non-essential runtime files should be stored.
+        @type: Path or None
 
         @param appname: name of the current running application
         @type: str
@@ -273,8 +288,15 @@ class HandlingObject(FbBaseObject):
         self._quiet = quiet
         self._assumed_answer = None
         self._address_family = self.default_address_family
+
         self._project_name = self.default_project_name
+        if project_name:
+            self.project_name = project_name
+
         self._data_dir = self.get_default_data_dir() / self.project_name
+        self._cache_dir = self.get_default_cache_dir() / self.project_name
+        self._state_dir = self.get_default_state_dir() / self.project_name
+        self._runtime_dir = self.get_default_runtime_dir() / self.project_name
 
         self.add_search_paths = []
         """
@@ -302,6 +324,14 @@ class HandlingObject(FbBaseObject):
             version=version,
             **kwargs,
         )
+        if data_dir:
+            self._data_dir = data_dir
+        if cache_dir:
+            self.cache_dir = cache_dir
+        if state_dir:
+            self.state_dir = state_dir
+        if runtime_dir:
+            self.runtime_dir = runtime_dir
 
         if simulate is not None:
             self.simulate = simulate
@@ -451,7 +481,7 @@ class HandlingObject(FbBaseObject):
 
         val = str(value)
         if val == "":
-            raise ValueError(_("A project name may not be empty."))
+            raise ValueError(_("A project name must not be empty."))
 
         if not self.re_project_name.match(val):
             msg = _("Invalid project name {} given.").format(self.colored(val, "red"))
@@ -460,7 +490,7 @@ class HandlingObject(FbBaseObject):
     # -----------------------------------------------------------
     @property
     def data_dir(self):
-        """Retun the directory to which user-specific data files should be stored."""
+        """Return the directory to which user-specific data files should be stored."""
         return self._data_dir
 
     @data_dir.setter
@@ -475,6 +505,63 @@ class HandlingObject(FbBaseObject):
             return
 
         self._data_dir = path.resolve()
+
+    # -----------------------------------------------------------
+    @property
+    def cache_dir(self):
+        """Return the dir to which user-specific non-essential data files should be stored."""
+        return self._cache_dir
+
+    @cache_dir.setter
+    def cache_dir(self, value):
+        if value is None:
+            self._cache_dir = self.get_default_cache_dir() / self.project_name
+            return
+
+        path = Path(value)
+        if path.is_absolute():
+            self._cache_dir = path
+            return
+
+        self._cache_dir = path.resolve()
+
+    # -----------------------------------------------------------
+    @property
+    def state_dir(self):
+        """Return the directory to which user-specific state files should be stored."""
+        return self._state_dir
+
+    @state_dir.setter
+    def state_dir(self, value):
+        if value is None:
+            self._state_dir = self.get_default_state_dir() / self.project_name
+            return
+
+        path = Path(value)
+        if path.is_absolute():
+            self._state_dir = path
+            return
+
+        self._state_dir = path.resolve()
+
+    # -----------------------------------------------------------
+    @property
+    def runtime_dir(self):
+        """Return the directory to which user-specific runtime files should be stored."""
+        return self._runtime_dir
+
+    @runtime_dir.setter
+    def runtime_dir(self, value):
+        if value is None:
+            self._runtime_dir = self.get_default_runtime_dir() / self.project_name
+            return
+
+        path = Path(value)
+        if path.is_absolute():
+            self._runtime_dir = path
+            return
+
+        self._runtime_dir = path.resolve()
 
     # -------------------------------------------------------------------------
     @classmethod
@@ -502,7 +589,7 @@ class HandlingObject(FbBaseObject):
     # -------------------------------------------------------------------------
     @classmethod
     def get_default_data_dir(cls):
-        """Return the default path to the data directory."""
+        """Return the default base path to the data directory."""
         xdg_dir = os.environ.get("XDG_DATA_HOME", None)
         xdg_dirs = os.environ.get("XDG_DATA_DIRS", None)
 
@@ -513,16 +600,16 @@ class HandlingObject(FbBaseObject):
 
         # If $XDG_DATA_HOME was given, then use it, no matter whether it exists
         if xdg_dir:
-            LOG.debug(f"Using data_dir {xdg_dir!r}.")
+            # LOG.debug(f"Using data_dir {xdg_dir!r}.")
             return Path(xdg_dir)
 
         # Search for the first existing dir in XDG_DATA_DIRS. If not existing,
         # use the first one, no matter whether it exists
         if xdg_dirs:
             for ddir in xdg_dirs:
-                LOG.debug(f"Checking data_dir {str(ddir)!r}.")
+                # LOG.debug(f"Checking data_dir {str(ddir)!r}.")
                 if ddir.exists and ddir.is_dir() and os.access(str(ddir), os.W_OK):
-                    LOG.debug(f"Using data_dir {str(ddir)!r}.")
+                    # LOG.debug(f"Using data_dir {str(ddir)!r}.")
                     return ddir
             if not os.geteuid():
                 return xdg_dirs[0]
@@ -532,7 +619,46 @@ class HandlingObject(FbBaseObject):
             return Path("/var/lib")
 
         # Init as non root user
-        return Path('~/.local/share').expanduser()
+        return Path("~/.local/share").expanduser()
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def get_default_cache_dir(cls):
+        """Get the default base path to the cache directory."""
+        xdg_dir = os.environ.get("XDG_CACHE_HOME", None)
+
+        if xdg_dir:
+            return Path(xdg_dir)
+
+        if not os.geteuid():
+            return Path("/var/cache")
+
+        return Path("~/.cache").expanduser()
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def get_default_state_dir(cls):
+        """Get the default base path to the state directory."""
+        xdg_dir = os.environ.get("XDG_STATE_HOME", None)
+
+        if xdg_dir:
+            return Path(xdg_dir)
+
+        if not os.geteuid():
+            return Path("/var/lib")
+
+        return Path("~/.local/state").expanduser()
+
+    # -------------------------------------------------------------------------
+    @classmethod
+    def get_default_runtime_dir(cls):
+        """Get the default base path to the runtime directory."""
+        xdg_dir = os.environ.get("XDG_RUNTIME_DIR", None)
+
+        if xdg_dir:
+            return Path(xdg_dir)
+
+        return Path("/run")
 
     # -------------------------------------------------------------------------
     def as_dict(self, short=True):
@@ -548,6 +674,7 @@ class HandlingObject(FbBaseObject):
         res = super(HandlingObject, self).as_dict(short=short)
         res["address_family"] = self.address_family
         res["assumed_answer"] = self.assumed_answer
+        res["cache_dir"] = self.cache_dir
         res["data_dir"] = self.data_dir
         res["fileio_timeout"] = self.fileio_timeout
         res["force"] = self.force
@@ -558,7 +685,9 @@ class HandlingObject(FbBaseObject):
         res["project_name"] = self.project_name
         res["prompt_timeout"] = self.prompt_timeout
         res["quiet"] = self.quiet
+        res["runtime_dir"] = self.runtime_dir
         res["simulate"] = self.simulate
+        res["state_dir"] = self.state_dir
         res["terminal_has_colors"] = self.terminal_has_colors
         res["yes_list"] = self.yes_list
 

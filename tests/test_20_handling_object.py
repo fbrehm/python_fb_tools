@@ -16,6 +16,7 @@ import sys
 import tempfile
 import textwrap
 from pathlib import Path
+from shutil import rmtree
 
 try:
     import unittest2 as unittest
@@ -58,6 +59,8 @@ class TestFbHandlingObject(FbToolsTestcase):
 
         self.test_file = None
 
+        self.local_dir = Path(__file__).parent / ".local"
+
     # -------------------------------------------------------------------------
     def tearDown(self):
         """Tear down routine for calling each particular test method."""
@@ -65,6 +68,10 @@ class TestFbHandlingObject(FbToolsTestcase):
             if os.path.exists(self.test_file):
                 LOG.debug("Removing {!r} ...".format(self.test_file))
                 os.remove(self.test_file)
+
+        if self.local_dir.exists():
+            LOG.debug(f"Removing recursive {str(self.local_dir)!r} ...")
+            rmtree(str(self.local_dir))
 
     # -------------------------------------------------------------------------
     def create_test_file(self):
@@ -230,6 +237,50 @@ class TestFbHandlingObject(FbToolsTestcase):
 
         hdlr.quiet = True
         self.assertTrue(hdlr.quiet)
+
+    # -------------------------------------------------------------------------
+    def test_standard_directories(self):
+        """Test for initiated standard directories."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.handling_obj import HandlingObject
+
+        hdlr = HandlingObject(
+            appname=self.appname,
+            verbose=self.verbose,
+        )
+
+        LOG.debug(f"Project name:      {hdlr.project_name!r}.")
+        LOG.debug(f"Cache directory:   {hdlr.cache_dir!r}.")
+        LOG.debug(f"Data directory:    {hdlr.data_dir!r}.")
+        LOG.debug(f"Runtime directory: {hdlr.runtime_dir!r}.")
+        LOG.debug(f"State directory:   {hdlr.state_dir!r}.")
+
+        dirs = {
+            "cache_dir": self.local_dir / "cache",
+            "data_dir": self.local_dir / "data",
+            "runtime_dir": self.local_dir / "run",
+            "state_dir": self.local_dir / "state",
+        }
+
+        description = {
+            "cache_dir": "Cache directory",
+            "data_dir": "Data directory",
+            "runtime_dir": "Runtime directory",
+            "state_dir": "State directory",
+        }
+
+        for key in dirs.keys():
+            path = dirs[key]
+            desc = description[key]
+            if not path.exists():
+                if self.verbose > 2:
+                    LOG.debug(f"Creating {desc} {str(path)!r} ...")
+                path.mkdir(mode=0o755, parents=True)
+
+            LOG.debug(f"Setting {desc} to {str(path)!r} ...")
+            setattr(hdlr, key, path)
+            self.assertEqual(getattr(hdlr, key), path)
 
     # -------------------------------------------------------------------------
     def test_completed_process(self):
@@ -708,6 +759,7 @@ if __name__ == "__main__":
     suite.addTest(TestFbHandlingObject("test_called_process_error", verbose))
     suite.addTest(TestFbHandlingObject("test_timeout_expired_error", verbose))
     suite.addTest(TestFbHandlingObject("test_generic_handling_object", verbose))
+    suite.addTest(TestFbHandlingObject("test_standard_directories", verbose))
     suite.addTest(TestFbHandlingObject("test_completed_process", verbose))
     suite.addTest(TestFbHandlingObject("test_run_simple", verbose))
     suite.addTest(TestFbHandlingObject("test_run_timeout", verbose))
