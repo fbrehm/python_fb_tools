@@ -27,6 +27,8 @@ MIN_INDENT = 2
 # Maximal indention of configuration files
 MAX_INDENT = 12
 
+PROJECT_NAME = "fb-tools"
+
 # Own modules
 
 from .mailaddress import MailAddress, MailAddressList, QualifiedMailAddress  # noqa: F401

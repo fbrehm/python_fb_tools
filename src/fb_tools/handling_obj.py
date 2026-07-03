@@ -24,16 +24,12 @@ import shutil
 import signal
 import socket
 import sys
+from pathlib import Path
 from shlex import quote
 from subprocess import PIPE, Popen
 
 # from codecs import BOM_BE, BOM_LE, BOM_UTF32_BE, BOM_UTF32_LE, BOM_UTF8
 # from collections import OrderedDict
-
-try:
-    import pathlib
-except ImportError:
-    import pathlib2 as pathlib
 
 if sys.version_info[0] >= 3:
     from subprocess import SubprocessError, TimeoutExpired
@@ -57,6 +53,7 @@ import six
 
 # Own modules
 from . import DEFAULT_TERMINAL_HEIGHT, DEFAULT_TERMINAL_WIDTH
+from . import PROJECT_NAME
 from .common import caller_search_path, encode_or_bust, pp, to_bool, to_str
 from .common import indent, is_sequence
 from .errors import AbortAppError
@@ -69,7 +66,7 @@ from .errors import WriteTimeoutError
 from .obj import FbBaseObject
 from .xlate import XLATOR, format_list
 
-__version__ = "2.4.9"
+__version__ = "2.5.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -182,10 +179,12 @@ class HandlingObject(FbBaseObject):
     * appname             (str          - rw) (inherited from FbBaseObject)
     * assumed_answer      (None or bool - rw)
     * base_dir            (pathlib.Path - rw) (inherited from FbBaseObject)
+    * data_dir            (pathlib.Path - rw)
     * force               (bool         - rw)
     * initialized         (bool         - rw) (inherited from FbBaseObject)
     * interrupted         (bool         - rw)
     * is_venv             (bool         - ro)
+    * project_name        (str)         - rw)
     * prompt_timeout      (int          - rw)
     * quiet               (bool         - rw)
     * simulate            (bool         - rw)
@@ -194,7 +193,7 @@ class HandlingObject(FbBaseObject):
     * version             (str          - ro) (inherited from FbBaseObject)
 
     Public attributes:
-    * add_search_paths       Array of pathlib.Path
+    * add_search_paths       Array of Path
     * signals_dont_interrupt Array of int
     """
 
@@ -221,6 +220,12 @@ class HandlingObject(FbBaseObject):
         "6",
     )
 
+    # Project name, used for the subdirectory name of different default directories
+    # e.g. log directory, data directory, cache dir, runtime dir a.s.o.
+    default_project_name = PROJECT_NAME
+
+    re_project_name = re.compile(r"^[a-z0-9]([a-z0-9+\-_\.]*[a-z0-9])?$", re.IGNORECASE)
+
     # -------------------------------------------------------------------------
     def __init__(
         self,
@@ -230,6 +235,7 @@ class HandlingObject(FbBaseObject):
         simulate=None,
         force=None,
         assumed_answer=None,
+        project_name=None,
         *args,
         **kwargs,
     ):
@@ -248,11 +254,13 @@ class HandlingObject(FbBaseObject):
         @type: bool
         @param assumed_answer: The assumed answer to all yes/no questions.
         @type: bool or None
+        @param project_name: Project name used for subdirectories in default directories
+        @type: str
 
         @param appname: name of the current running application
         @type: str
         @param base_dir: base directory used for different purposes
-        @type: str or pathlib.Path
+        @type: str or Path
         @param initialized: initialisation of this object is complete after init
         @type: bool
         @param verbose: verbosity level (0 - 9)
@@ -265,11 +273,13 @@ class HandlingObject(FbBaseObject):
         self._quiet = quiet
         self._assumed_answer = None
         self._address_family = self.default_address_family
+        self._project_name = self.default_project_name
+        self._data_dir = self.get_default_data_dir() / self.project_name
 
         self.add_search_paths = []
         """
         @ivar: Additional search paths of executing external commands
-        @type: Array of pathlib.Path
+        @type: Array of Path
         """
 
         self._prompt_timeout = self.default_prompt_timeout
@@ -427,6 +437,45 @@ class HandlingObject(FbBaseObject):
             family = socket.AF_INET6
         self._address_family = family
 
+    # -----------------------------------------------------------
+    @property
+    def project_name(self):
+        """Return the project name used for subdirectories in default directories."""
+        return self._project_name
+
+    @project_name.setter
+    def project_name(self, value):
+        if value is None:
+            self._project_name = self.default_project_name
+            return
+
+        val = str(value)
+        if val == "":
+            raise ValueError(_("A project name may not be empty."))
+
+        if not self.re_project_name.match(val):
+            msg = _("Invalid project name {} given.").format(self.colored(val, "red"))
+            raise ValueError(msg)
+
+    # -----------------------------------------------------------
+    @property
+    def data_dir(self):
+        """Retun the directory to which user-specific data files should be stored."""
+        return self._data_dir
+
+    @data_dir.setter
+    def data_dir(self, value):
+        if value is None:
+            self._data_dir = self.get_default_data_dir() / self.project_name
+            return
+
+        path = Path(value)
+        if path.is_absolute():
+            self._data_dir = path
+            return
+
+        self._data_dir = path.resolve()
+
     # -------------------------------------------------------------------------
     @classmethod
     def init_yes_no_lists(cls):
@@ -451,6 +500,41 @@ class HandlingObject(FbBaseObject):
         cls.re_yes_no = re.compile(cls.pattern_yes_no, re.IGNORECASE)
 
     # -------------------------------------------------------------------------
+    @classmethod
+    def get_default_data_dir(cls):
+        """Return the default path to the data directory."""
+        xdg_dir = os.environ.get("XDG_DATA_HOME", None)
+        xdg_dirs = os.environ.get("XDG_DATA_DIRS", None)
+
+        if xdg_dirs:
+            xdg_dirs = [Path(x) for x in xdg_dirs.split(os.pathsep)]
+        else:
+            xdg_dirs = []
+
+        # If $XDG_DATA_HOME was given, then use it, no matter whether it exists
+        if xdg_dir:
+            LOG.debug(f"Using data_dir {xdg_dir!r}.")
+            return Path(xdg_dir)
+
+        # Search for the first existing dir in XDG_DATA_DIRS. If not existing,
+        # use the first one, no matter whether it exists
+        if xdg_dirs:
+            for ddir in xdg_dirs:
+                LOG.debug(f"Checking data_dir {str(ddir)!r}.")
+                if ddir.exists and ddir.is_dir() and os.access(str(ddir), os.W_OK):
+                    LOG.debug(f"Using data_dir {str(ddir)!r}.")
+                    return ddir
+            if not os.geteuid():
+                return xdg_dirs[0]
+
+        # Init as root user
+        if not os.geteuid():
+            return Path("/var/lib")
+
+        # Init as non root user
+        return Path('~/.local/share').expanduser()
+
+    # -------------------------------------------------------------------------
     def as_dict(self, short=True):
         """
         Transform the elements of the object into a dict.
@@ -464,12 +548,14 @@ class HandlingObject(FbBaseObject):
         res = super(HandlingObject, self).as_dict(short=short)
         res["address_family"] = self.address_family
         res["assumed_answer"] = self.assumed_answer
+        res["data_dir"] = self.data_dir
         res["fileio_timeout"] = self.fileio_timeout
         res["force"] = self.force
         res["interrupted"] = self.interrupted
         res["is_venv"] = self.is_venv
         res["no_list"] = self.no_list
         res["pattern_yes_no"] = self.pattern_yes_no
+        res["project_name"] = self.project_name
         res["prompt_timeout"] = self.prompt_timeout
         res["quiet"] = self.quiet
         res["simulate"] = self.simulate
@@ -637,7 +723,7 @@ class HandlingObject(FbBaseObject):
         @rtype: str or None
 
         """
-        cmd = pathlib.Path(cmd)
+        cmd = Path(cmd)
 
         if self.verbose > 2:
             LOG.debug(_("Searching for command {!r} ...").format(str(cmd)))
