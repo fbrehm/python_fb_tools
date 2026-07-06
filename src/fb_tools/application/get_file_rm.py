@@ -29,7 +29,7 @@ from ..common import get_monday, pp
 from ..errors import FbAppError
 from ..xlate import XLATOR
 
-__version__ = "2.2.1"
+__version__ = "2.2.2"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -171,8 +171,10 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_days:
             self._keep_days = v
         else:
-            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
-                v=value, n="keep_days", m=self.min_keep_days
+            msg = _("Wrong value {v} for {n}, must be >= {m}").format(
+                v=self.colored(repr(value), "red"),
+                n="keep_days",
+                m=self.colored(str(self.min_keep_days), "yellow"),
             )
             raise ValueError(msg)
 
@@ -188,8 +190,10 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_weeks:
             self._keep_weeks = v
         else:
-            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
-                v=value, n="keep_weeks", m=self.min_keep_weeks
+            msg = _("Wrong value {v} for {n}, must be >= {m}").format(
+                v=self.colored(repr(value), "red"),
+                n="keep_weeks",
+                m=self.colored(str(self.min_keep_weeks), "yellow"),
             )
             raise ValueError(msg)
 
@@ -205,8 +209,10 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_months:
             self._keep_months = v
         else:
-            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
-                v=value, n="keep_months", m=self.min_keep_months
+            msg = _("Wrong value {v} for {n}, must be >= {m}").format(
+                v=self.colored(repr(value), "red"),
+                n="keep_months",
+                m=self.colored(str(self.min_keep_months), "yellow"),
             )
             raise ValueError(msg)
 
@@ -222,8 +228,10 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_years:
             self._keep_years = v
         else:
-            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
-                v=value, n="keep_years", m=self.min_keep_years
+            msg = _("Wrong value {v} for {n}, must be >= {m}").format(
+                v=self.colored(repr(value), "red"),
+                n="keep_years",
+                m=self.colored(str(self.min_keep_years), "yellow"),
             )
             raise ValueError(msg)
 
@@ -239,8 +247,10 @@ class GetFileRmApplication(BaseApplication):
         if v >= self.min_keep_last:
             self._keep_last = v
         else:
-            msg = _("Wrong value {v!r} for {n}, must be >= {m}").format(
-                v=value, n="keep_last", m=self.min_keep_last
+            msg = _("Wrong value {v} for {n}, must be >= {m}").format(
+                v=self.colored(repr(value), "red"),
+                n="keep_last",
+                m=self.colored(str(self.min_keep_last), "yellow"),
             )
             raise ValueError(msg)
 
@@ -368,7 +378,7 @@ class GetFileRmApplication(BaseApplication):
         if not check_date_pattern(pat):
             raise WrongDatePattern(self.date_pattern)
         if self.verbose > 1:
-            LOG.debug(_("Resolving date pattern {!r}.").format(pat))
+            LOG.debug(_("Resolving date pattern {}.").format(self.colored(pat, "cyan")))
 
         self._pattern = (
             pat.replace("%Y", r"(?P<year>\d{4})")
@@ -395,7 +405,7 @@ class GetFileRmApplication(BaseApplication):
         for fname in self.args.files:
 
             if self.verbose > 2:
-                LOG.debug(_("Checking given file {!r} ...").format(fname))
+                LOG.debug(_("Checking given file {} ...").format(self.colored(fname, "cyan")))
 
             given_paths = []
             single_fpath = Path(fname)
@@ -429,8 +439,9 @@ class GetFileRmApplication(BaseApplication):
                 match = self.re_date.search(str(fpath))
                 if not match:
                     LOG.warning(
-                        _("File {fi!r} does not match pattern {pa!r}.").format(
-                            fi=str(fpath), pa=self.date_pattern
+                        _("File {fi} does not match pattern {pa}.").format(
+                            fi=self.colored(str(fpath), "yellow"),
+                            pa=self.colord(repr(self.date_pattern), "yellow"),
                         )
                     )
                     continue
