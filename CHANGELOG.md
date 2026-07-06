@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-07-06
+
+### Added
+
+* Definiton of `project_name` and `data_dir` in `src/fb_tools/handling_obj.py`.
+
+### Changed
+
+* Defining and testing properties `cache_dir`, `runtime_dir`, `data_dir` and `state_dir`
+  for class HandlingObject.
+* Applying XDG standard for `fb_tools/multi_config` - refactoring method
+  `_init_config_dirs()` in `src/fb_tools/multi_config/inits.py`.
+* Changing log output.
+
 ## [3.2.1] - 2026-06-30
 
 ### Added
@@ -1005,6 +1019,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Initial commit.
 
 
+[Unreleased]: https://github.com/fbrehm/python_fb_tools/compare/3.2.1...develop
 [3.2.1]: https://github.com/fbrehm/python_fb_tools/compare/3.2.0...3.2.1
 [3.2.0]: https://github.com/fbrehm/python_fb_tools/compare/3.1.1...3.2.0
 [3.1.1]: https://github.com/fbrehm/python_fb_tools/compare/3.1.0...3.1.1
