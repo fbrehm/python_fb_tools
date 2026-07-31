@@ -1118,4 +1118,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.0.1]: https://github.com/fbrehm/python_fb_tools/compare/0.4.0...1.0.1
 [0.4.0]: https://github.com/fbrehm/python_fb_tools/compare/0.1.1...0.4.0
 [0.1.1]: https://github.com/fbrehm/python_fb_tools/tree/0.1.1
-

@@ -2693,4 +2693,3 @@ msgstr "Locale domain:"
 #: src/fb_tools/xlate.py:125
 msgid "Found .mo-file:"
 msgstr "Found .mo-file:"
-
