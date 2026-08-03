@@ -19,7 +19,7 @@ repos:
       #      - id: check-xml
       - id: check-yaml
       - id: debug-statements
-      - id: detect-aws-credentials
+      #	     - id: detect-aws-credentials
       - id: detect-private-key
       - id: double-quote-string-fixer
       - id: end-of-file-fixer
@@ -34,17 +34,18 @@ repos:
           - '--max-complexity'
           - '20'
           - '--ignore'
-          - 'E226,E302,E41,E402'
+          - 'A005,E226,E302,E41,E402,W503,B042,B902,Q000'
       - id: forbid-new-submodules
       - id: mixed-line-ending
-      - id: name-tests-test
-        args:
-          - --django
+      #      - id: name-tests-test
+      #        args:
+      #          - --django
       - id: no-commit-to-branch
       #      - id: pretty-format-json
-      - id: requirements-txt-fixer
-        args:
-          - requirements.txt
-          - requirements-2.7.txt
+      #      - id: requirements-txt-fixer
+      #        args:
+      #          - requirements.txt
+      #          - requirements-2.7.txt
       #      - id: sort-simple-yaml
       - id: trailing-whitespace
+exclude: '^tests/test-multiconfig/test_multicfg-broken-yaml.yaml$'

@@ -34,7 +34,7 @@ from ..errors import GenericSocketError
 from ..handling_obj import HandlingObject
 from ..xlate import XLATOR
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"
 
 LOG = logging.getLogger(__name__)
 
@@ -689,14 +689,18 @@ class GenericSocket(HandlingObject):
     def __enter__(self):
         """Execute this action, when this socket will be opened by the with-block."""
         LOG.debug(
-            _("Opened the {cls} {name!r} ...").format(cls=self.__class__.__name__, name=self.name)
+            _("Opened the {cls} {name} ...").format(
+                cls=self.__class__.__name__, name=self.colored(self.name, "cyan")
+            )
         )
 
     # -------------------------------------------------------------------------
     def __exit__(self, exc_type, exc_val, exc_traceback):
         """Exit action at the end of the with-block - closing socket."""
         LOG.debug(
-            _("Closing the {cls} {name!r} ...").format(cls=self.__class__.__name__, name=self.name)
+            _("Closing the {cls} {name} ...").format(
+                cls=self.__class__.__name__, name=self.colored(self.name, "cyan")
+            )
         )
 
         self.close()

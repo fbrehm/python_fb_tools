@@ -25,7 +25,7 @@ import six
 from ..common import is_sequence, to_str
 from ..xlate import XLATOR
 
-__version__ = "0.2.1"
+__version__ = "0.4.0"
 
 LOG = logging.getLogger(__name__)
 
@@ -43,54 +43,74 @@ class MultiCfgInitMixin:
 
     # -------------------------------------------------------------------------
     def _init_config_dirs(self, additional_cfgdirs=None):
-
+        """Create the list of possible configuration directories."""
         self.config_dirs = []
 
-        self.config_dirs.append(Path("/etc") / self.config_dir)
+        # Insert in this list possible paths in decreasing priority
 
-        path = Path(os.path.expanduser("~")) / ".config" / self.config_dir
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-
-        self.config_dirs.append(path)
-        if self.is_venv():
-            path = Path(sys.prefix) / "etc"
-            if path in self.config_dirs:
-                self.config_dirs.remove(path)
-            self.config_dirs.append(path)
-
-        path = Path.cwd() / "etc"
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-        self.config_dirs.append(path)
-
-        path = self.base_dir / "etc"
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-        self.config_dirs.append(path)
-
-        path = self.base_dir
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-        self.config_dirs.append(path)
-
-        path = Path.cwd()
-        if path in self.config_dirs:
-            self.config_dirs.remove(path)
-        self.config_dirs.append(path)
-
+        # Exceptionally given additional config directory or directories
         if additional_cfgdirs:
             if is_sequence(additional_cfgdirs):
                 for item in additional_cfgdirs:
                     path = Path(item)
-                    if path in self.config_dirs:
-                        self.config_dirs.remove(path)
-                    self.config_dirs.append(path)
+                    if path not in self.config_dirs:
+                        self.config_dirs.append(path)
             else:
                 path = Path(additional_cfgdirs)
-                if path in self.config_dirs:
-                    self.config_dirs.remove(path)
+                self.config_dirs.append(Path(additional_cfgdirs))
+
+        # Current working directory
+        path = Path.cwd()
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
+
+        # The base directory itselv (whatever it is)
+        path = self.base_dir
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
+
+        # ${base_dir}/etc
+        path = self.base_dir / "etc"
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
+
+        # ${current_working_directory}/etc
+        path = Path.cwd() / "etc"
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
+
+        # ${virtual_env_directory}/etc
+        if self.is_venv():
+            path = Path(sys.prefix) / "etc"
+            if path not in self.config_dirs:
                 self.config_dirs.append(path)
+
+        # ${XDG_CONFIG_HOME}/${config_dir}
+        xdg_dir = os.environ.get("XDG_CONFIG_HOME", None)
+        if xdg_dir:
+            path = Path(xdg_dir) / self.config_dir
+        else:
+            path = Path("~/.config").expanduser() / self.config_dir
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
+
+        # All directories in $XDG_CONFIG_DIRS, appended by ${config_dir}
+        xdg_dirs = os.environ.get("XDG_CONFIG_DIRS", None)
+        if xdg_dirs:
+            xdg_dirs = [Path(x) for x in xdg_dirs.split(os.pathsep)]
+            for path in xdg_dirs:
+                path = path / self.config_dir
+                if path not in self.config_dirs:
+                    self.config_dirs.append(path)
+
+        # last, but not least /etc/${config_dir}
+        path = Path("/etc") / self.config_dir
+        if path not in self.config_dirs:
+            self.config_dirs.append(path)
+
+        # And now revert the list, so the lowest prioritized dirs come first,
+        # and the highest prioritized dir comes at last
+        self.config_dirs.reverse()
 
     # -------------------------------------------------------------------------
     def _init_stems(self, append_appname_to_stems, additional_stems=None):
