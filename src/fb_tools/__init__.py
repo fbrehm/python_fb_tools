@@ -34,6 +34,6 @@ PROJECT_NAME = "fb-tools"
 from .mailaddress import MailAddress, MailAddressList, QualifiedMailAddress  # noqa: F401
 from .multi_config import BaseMultiConfig  # noqa: F401
 
-__version__ = "3.2.1"
+__version__ = "3.3.0"
 
 # vim: ts=4 et list

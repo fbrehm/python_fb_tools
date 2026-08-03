@@ -1,3 +1,14 @@
+fb-tools (3.3.0) all; urgency=medium
+
+  * Definiton of project_name and data_dir in src/fb_tools/handling_obj.py.
+  * Defining and testing properties cache_dir, runtime_dir, data_dir and
+    state_dir for class HandlingObject.
+  * Applying XDG standard for fb_tools/multi_config - refactoring method
+    _init_config_dirs() in src/fb_tools/multi_config/inits.py.
+  * Changing log output.
+
+ -- Frank Brehm <frank@brehm-online.com>  Mon, 03 Aug 2026 10:54:31 +0200
+
 fb-tools (3.2.1) all; urgency=medium
 
   * Fixing debug output in src/fb_tools/handling_obj.py.
