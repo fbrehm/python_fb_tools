@@ -25,7 +25,6 @@ from pathlib import Path
 HAS_YAML = False
 try:
     import yaml  # noqa:F401
-
     HAS_YAML = True
 except ImportError:
     pass
@@ -33,19 +32,20 @@ except ImportError:
 HAS_HJSON = False
 try:
     import hjson  # noqa:F401
-
     HAS_HJSON = True
 except ImportError:
     pass
 
 HAS_TOML = False
 try:
-    import toml  # noqa:F401
-    from toml import TomlDecodeError  # noqa:F401
-
+    import tomllib as toml  # noqa:F401
     HAS_TOML = True
 except ImportError:
-    pass
+    try:
+        import tomli as toml  # noqa:F401
+        HAS_TOML = True
+    except ImportError:
+        pass
 
 
 # Own modules
@@ -60,7 +60,7 @@ from ..merge import merge_structure
 from ..obj import FbBaseObject
 from ..xlate import XLATOR
 
-__version__ = "2.3.0"
+__version__ = "2.4.0"
 
 LOG = logging.getLogger(__name__)
 
