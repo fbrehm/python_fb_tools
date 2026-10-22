@@ -1,4 +1,4 @@
-fb-tools (3.3.1) UNRELEASED; urgency=medium
+fb-tools (3.3.1) all; urgency=medium
 
   * Fixing TOML support in src/fb_tools/multi_config/__init__.py.
 
