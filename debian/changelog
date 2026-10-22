@@ -1,3 +1,9 @@
+fb-tools (3.3.1) UNRELEASED; urgency=medium
+
+  * Fixing TOML support in src/fb_tools/multi_config/__init__.py.
+
+ -- Frank Brehm <frank.brehm@pixelpark.com>  Thu, 22 Oct 2026 16:31:54 +0200
+
 fb-tools (3.3.0) all; urgency=medium
 
   * Definiton of project_name and data_dir in src/fb_tools/handling_obj.py.
