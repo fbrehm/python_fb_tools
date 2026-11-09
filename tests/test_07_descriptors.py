@@ -137,12 +137,12 @@ class TestDescriptors(FbToolsTestcase):
 
         test_obj = TestClass()
 
-        LOG.debug(f"test_obj.test_int: {test_obj.test_int}")
+        LOG.debug(f"test_obj.test_int: {test_obj.test_int!r}")
         self.assertEqual(test_obj.test_int, 1)
 
         LOG.debug("Test setting test_obj.test_int ...")
         test_obj.test_int = 2
-        LOG.debug(f"test_obj.test_int: {test_obj.test_int}")
+        LOG.debug(f"test_obj.test_int: {test_obj.test_int!r}")
         self.assertEqual(test_obj.test_int, 2)
 
         if self.verbose > 1:
@@ -249,6 +249,166 @@ class TestDescriptors(FbToolsTestcase):
             e = cm.exception
             LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
 
+    # -------------------------------------------------------------------------
+    def test_float_descriptor(self):
+        """Test object with a FloatDescriptor."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.descriptors import FloatDescriptor
+
+        LOG.debug("Testing an FloatDescriptor.")
+
+        class TestClass:
+
+            test_float = FloatDescriptor(name="test_float")
+
+            def __init__(myself):
+                """Init TestClass."""
+                myself.test_float = 1
+
+        test_obj = TestClass()
+
+        LOG.debug(f"test_obj.test_float: {test_obj.test_float!r}")
+        self.assertEqual(test_obj.test_float, 1.0)
+        self.assertIsInstance(test_obj.test_float, float)
+
+        LOG.debug("Test setting test_obj.test_float ...")
+        test_obj.test_float = 1.5
+        LOG.debug(f"test_obj.test_float: {test_obj.test_float!r}")
+        self.assertEqual(test_obj.test_float, 1.5)
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Test wrong values for FloatDescriptor ...")
+        wrong_values = (None, 'blub', print, [], {"Uhu": "Banane"})
+        for wrong_value in wrong_values:
+            LOG.debug(f"Testing wrong value {wrong_value!r} ...")
+            with self.assertRaises((TypeError, ValueError)) as cm:
+                test_obj.test_float = wrong_value
+            e = cm.exception
+            LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Testing an FloatDescriptor, which may be set to None.")
+
+        class TestClass1:
+
+            test_float = FloatDescriptor(name="test_float", maybe_none=True)
+
+            def __init__(myself):
+                """Init TestClass1."""
+                myself.test_float = None
+
+        test_obj1 = TestClass1()
+
+        LOG.debug(f"test_obj1.test_float: {test_obj1.test_float!r}")
+        self.assertIsNone(test_obj1.test_float)
+
+        test_obj1.test_float = 1
+        LOG.debug(f"test_obj1.test_float: {test_obj1.test_float!r}")
+        self.assertEqual(test_obj1.test_float, 1)
+
+        test_obj1.test_float = None
+        LOG.debug(f"test_obj1.test_float: {test_obj1.test_float!r}")
+        self.assertIsNone(test_obj1.test_float)
+
+        if self.verbose > 1:
+            print()
+
+        LOG.debug("Testing an FloatDescriptor with wrong set limits.")
+        with self.assertRaises((TypeError, ValueError)) as cm:
+            class TestClass2:
+
+                test_float = FloatDescriptor(name="test_float", lower_limit="bla")
+
+                def __init__(myself):
+                    """Init TestClass2."""
+                    myself.test_int = 1
+
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Testing an FloatDescriptor with included limits for its value.")
+
+        lower_limit = 1.0
+        upper_limit = 9.0
+
+        values = (
+            {"val": -5000, "incl": False, "excl": False},
+            {"val": 0, "incl": False, "excl": False},
+            {"val": 0.999, "incl": False, "excl": False},
+            {"val": 1, "incl": True, "excl": False},
+            {"val": 1.001, "incl": True, "excl": True},
+            {"val": 4.995, "incl": True, "excl": True},
+            {"val": 8.999, "incl": True, "excl": True},
+            {"val": 9, "incl": True, "excl": False},
+            {"val": 9.00001, "incl": False, "excl": False},
+            {"val": 999, "incl": False, "excl": False},
+        )
+
+        class TestClassIncl:
+
+            test_float = FloatDescriptor(
+                name="test_float",
+                lower_limit=lower_limit,
+                include_lower_limit=True,
+                upper_limit=upper_limit,
+                include_upper_limit=True,
+            )
+
+            def __init__(myself):
+                """Init TestClassIncl."""
+                myself.test_float = 5
+
+        class TestClassExcl:
+
+            test_float = FloatDescriptor(
+                name="test_float",
+                lower_limit=lower_limit,
+                include_lower_limit=False,
+                upper_limit=upper_limit,
+                include_upper_limit=False,
+            )
+
+            def __init__(myself):
+                """Init TestClassExcl."""
+                myself.test_float = 5
+
+        test_obj_incl = TestClassIncl()
+        test_obj_excl = TestClassExcl()
+
+        for test_data in values:
+            value = test_data["val"]
+
+            if test_data["incl"]:
+                LOG.debug(f"Testing (included_limits) good value {value!r}.")
+                test_obj_incl.test_float = value
+                LOG.debug(f"test_obj_incl.test_float: {test_obj_incl.test_float!r}")
+                self.assertEqual(test_obj_incl.test_float, float(value))
+                self.assertIsInstance(test_obj_incl.test_float, float)
+            else:
+                LOG.debug(f"Testing (included_limits) bad value {value!r}.")
+                with self.assertRaises((TypeError, ValueError)) as cm:
+                    test_obj_incl.test_float = value
+                e = cm.exception
+                LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+            if test_data["excl"]:
+                LOG.debug(f"Testing (excluded_limits) good value {value!r}.")
+                test_obj_excl.test_float = value
+                LOG.debug(f"test_obj_excl.test_float: {test_obj_excl.test_float!r}")
+                self.assertEqual(test_obj_excl.test_float, float(value))
+                self.assertIsInstance(test_obj_excl.test_float, float)
+            else:
+                LOG.debug(f"Testing (excluded_limits) bad value {value!r}.")
+                with self.assertRaises((TypeError, ValueError)) as cm:
+                    test_obj_excl.test_float = value
+                e = cm.exception
+                LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -265,6 +425,7 @@ if __name__ == "__main__":
     suite.addTest(TestDescriptors("test_import", verbose))
     suite.addTest(TestDescriptors("test_boolean_descriptor", verbose))
     suite.addTest(TestDescriptors("test_integer_descriptor", verbose))
+    suite.addTest(TestDescriptors("test_float_descriptor", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
