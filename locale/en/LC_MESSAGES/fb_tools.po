@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 3.2.1\n"
+"Project-Id-Version: fb_tools 3.3.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2026-07-06 12:10+0200\n"
-"PO-Revision-Date: 2026-07-06 12:15+0200\n"
+"POT-Creation-Date: 2026-11-09 13:39+0100\n"
+"PO-Revision-Date: 2026-11-09 14:00+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: en\n"
 "Language-Team: en <frank@brehm-online.com>\n"
@@ -1315,6 +1315,63 @@ msgstr "Configuration parse error"
 #, python-brace-format
 msgid "Checking config section {!r} ..."
 msgstr "Checking config section {!r} …"
+
+#: src/fb_tools/descriptors.py:67 src/fb_tools/descriptors.py:152
+#, python-brace-format
+msgid "The upper limit of an {} must be greater or equal to its lower_limit."
+msgstr "The upper limit of an {} must be greater or equal to its lower_limit."
+
+#: src/fb_tools/descriptors.py:72 src/fb_tools/descriptors.py:158
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be greater or equal to {m}."
+msgstr "Invalid value {{v}} of attribute {a}, must be greater or equal to {m}."
+
+#: src/fb_tools/descriptors.py:75 src/fb_tools/descriptors.py:169
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be less or equal to {m}."
+msgstr "Invalid value {{v}} of attribute {a}, must be less or equal to {m}."
+
+#: src/fb_tools/descriptors.py:96 src/fb_tools/descriptors.py:196 src/fb_tools/descriptors.py:250
+#: src/fb_tools/descriptors.py:287 src/fb_tools/descriptors.py:333 src/fb_tools/descriptors.py:397
+#: src/fb_tools/descriptors.py:462 src/fb_tools/descriptors.py:526
+#, python-brace-format
+msgid "The attribute {a!r} must not be None."
+msgstr "The attribute {a!r} must not be None."
+
+#: src/fb_tools/descriptors.py:162
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be greater to {m}."
+msgstr "Invalid value {{v}} of attribute {a}, must be greater to {m}."
+
+#: src/fb_tools/descriptors.py:173
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be less to {m}."
+msgstr "Invalid value {{v}} of attribute {a}, must be less to {m}."
+
+#: src/fb_tools/descriptors.py:294
+#, python-brace-format
+msgid "The attribute {a!r} must be an absolute Posix path, given {p!r}."
+msgstr "The attribute {a!r} must be an absolute Posix path, given {p!r}."
+
+#: src/fb_tools/descriptors.py:340
+#, python-brace-format
+msgid "The attribute {a!r} must be an absolute path, given {p!r}."
+msgstr "The attribute {a!r} must be an absolute path, given {p!r}."
+
+#: src/fb_tools/descriptors.py:374 src/fb_tools/descriptors.py:439
+#, python-brace-format
+msgid "The properties {lc!r} and {uc!r} of attribute {a!r} must not be set to {w} at the same time."
+msgstr "The properties {lc!r} and {uc!r} of attribute {a!r} must not be set to {w} at the same time."
+
+#: src/fb_tools/descriptors.py:408
+#, python-brace-format
+msgid "The attribute {a!r} must not be empty."
+msgstr "The attribute {a!r} must not be empty."
+
+#: src/fb_tools/descriptors.py:475 src/fb_tools/descriptors.py:488
+#, python-brace-format
+msgid "The attribute {a!r} must not contain empty strings."
+msgstr "The attribute {a!r} must not contain empty strings."
 
 #: src/fb_tools/errors.py:70
 #, python-brace-format
@@ -2693,3 +2750,4 @@ msgstr "Locale domain:"
 #: src/fb_tools/xlate.py:125
 msgid "Found .mo-file:"
 msgstr "Found .mo-file:"
+

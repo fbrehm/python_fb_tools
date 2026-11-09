@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fb_tools 3.2.1\n"
+"Project-Id-Version: fb_tools 3.3.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2026-07-06 12:10+0200\n"
+"POT-Creation-Date: 2026-11-09 13:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <frank@brehm-online.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1284,6 +1284,63 @@ msgstr ""
 #: src/fb_tools/config.py:231 src/fb_tools/multi_config/__init__.py:587
 #, python-brace-format
 msgid "Checking config section {!r} ..."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:67 src/fb_tools/descriptors.py:152
+#, python-brace-format
+msgid "The upper limit of an {} must be greater or equal to its lower_limit."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:72 src/fb_tools/descriptors.py:158
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be greater or equal to {m}."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:75 src/fb_tools/descriptors.py:169
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be less or equal to {m}."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:96 src/fb_tools/descriptors.py:196 src/fb_tools/descriptors.py:250
+#: src/fb_tools/descriptors.py:287 src/fb_tools/descriptors.py:333 src/fb_tools/descriptors.py:397
+#: src/fb_tools/descriptors.py:462 src/fb_tools/descriptors.py:526
+#, python-brace-format
+msgid "The attribute {a!r} must not be None."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:162
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be greater to {m}."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:173
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be less to {m}."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:294
+#, python-brace-format
+msgid "The attribute {a!r} must be an absolute Posix path, given {p!r}."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:340
+#, python-brace-format
+msgid "The attribute {a!r} must be an absolute path, given {p!r}."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:374 src/fb_tools/descriptors.py:439
+#, python-brace-format
+msgid "The properties {lc!r} and {uc!r} of attribute {a!r} must not be set to {w} at the same time."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:408
+#, python-brace-format
+msgid "The attribute {a!r} must not be empty."
+msgstr ""
+
+#: src/fb_tools/descriptors.py:475 src/fb_tools/descriptors.py:488
+#, python-brace-format
+msgid "The attribute {a!r} must not contain empty strings."
 msgstr ""
 
 #: src/fb_tools/errors.py:70
@@ -2663,3 +2720,4 @@ msgstr ""
 #: src/fb_tools/xlate.py:125
 msgid "Found .mo-file:"
 msgstr ""
+
