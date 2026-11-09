@@ -52,8 +52,8 @@ class TestDescriptors(FbToolsTestcase):
         LOG.debug("Version of fb_tools.descriptors: {!r}".format(fb_tools.descriptors.__version__))
 
     # -------------------------------------------------------------------------
-    def test_integer_descriptor_simple(self):
-        """Test init of a test object with a simple IntegerDescriptor."""
+    def test_integer_descriptor(self):
+        """Test object with a IntegerDescriptor."""
         LOG.info(self.get_method_doc())
 
         from fb_tools.descriptors import IntegerDescriptor
@@ -114,6 +114,74 @@ class TestDescriptors(FbToolsTestcase):
         LOG.debug(f"test_obj1.test_int: {test_obj1.test_int!r}")
         self.assertIsNone(test_obj1.test_int)
 
+        if self.verbose >= 1:
+            print()
+        LOG.debug("Testing an IntegerDescriptor with limits for its value.")
+
+        LOG.debug("Testing an IntegerDescriptor with wrong set limits.")
+        with self.assertRaises((TypeError, ValueError)) as cm:
+            class TestClass2:
+
+                test_int = IntegerDescriptor(name="test_int", lower_limit="bla")
+
+                def __init__(myself):
+                    """Init TestClass2."""
+                    myself.test_int = 1
+
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        with self.assertRaises((TypeError, ValueError)) as cm:
+            class TestClass3:
+
+                test_int = IntegerDescriptor(name="test_int", upper_limit={})
+
+                def __init__(myself):
+                    """Init TestClass3."""
+                    myself.test_int = 1
+
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        with self.assertRaises((TypeError, ValueError)) as cm:
+            class TestClass4:
+
+                test_int = IntegerDescriptor(name="test_int", lower_limit=10, upper_limit=5)
+
+                def __init__(myself):
+                    """Init TestClass4."""
+                    myself.test_int = 1
+
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        class TestClass5:
+
+            test_int = IntegerDescriptor(name="test_int", lower_limit=1, upper_limit=5)
+
+            def __init__(myself):
+                """Init TestClass2."""
+                myself.test_int = 3
+
+        test_obj5 = TestClass5()
+        LOG.debug(f"test_obj5.test_int: {test_obj5.test_int}")
+        self.assertEqual(test_obj5.test_int, 3)
+
+        test_obj5.test_int = 1
+        LOG.debug(f"test_obj5.test_int: {test_obj5.test_int}")
+        self.assertEqual(test_obj5.test_int, 1)
+        test_obj5.test_int = 5
+        LOG.debug(f"test_obj5.test_int: {test_obj5.test_int}")
+        self.assertEqual(test_obj5.test_int, 5)
+
+        wrong_values = (0, 6)
+        for wrong_value in wrong_values:
+            LOG.debug(f"Testing wrong value {wrong_value!r} ...")
+            with self.assertRaises((TypeError, ValueError)) as cm:
+                test_obj5.test_int = wrong_value
+            e = cm.exception
+            LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -128,7 +196,7 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     suite.addTest(TestDescriptors("test_import", verbose))
-    suite.addTest(TestDescriptors("test_integer_descriptor_simple", verbose))
+    suite.addTest(TestDescriptors("test_integer_descriptor", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
