@@ -12,6 +12,8 @@
 import logging
 import os
 import sys
+from pathlib import PurePath
+from pathlib import PureWindowsPath
 
 try:
     import unittest2 as unittest
@@ -148,7 +150,7 @@ class TestDescriptors(FbToolsTestcase):
         if self.verbose > 1:
             print()
         LOG.debug("Test wrong values for IntegerDescriptor ...")
-        wrong_values = (None, 'bla', print, [])
+        wrong_values = (None, "bla", print, [])
         for wrong_value in wrong_values:
             LOG.debug(f"Testing wrong value {wrong_value!r} ...")
             with self.assertRaises((TypeError, ValueError)) as cm:
@@ -187,6 +189,7 @@ class TestDescriptors(FbToolsTestcase):
 
         LOG.debug("Testing an IntegerDescriptor with wrong set limits.")
         with self.assertRaises((TypeError, ValueError)) as cm:
+
             class TestClass2:
 
                 test_int = IntegerDescriptor(name="test_int", lower_limit="bla")
@@ -199,6 +202,7 @@ class TestDescriptors(FbToolsTestcase):
         LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
 
         with self.assertRaises((TypeError, ValueError)) as cm:
+
             class TestClass3:
 
                 test_int = IntegerDescriptor(name="test_int", upper_limit={})
@@ -211,6 +215,7 @@ class TestDescriptors(FbToolsTestcase):
         LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
 
         with self.assertRaises((TypeError, ValueError)) as cm:
+
             class TestClass4:
 
                 test_int = IntegerDescriptor(name="test_int", lower_limit=10, upper_limit=5)
@@ -280,7 +285,7 @@ class TestDescriptors(FbToolsTestcase):
         if self.verbose > 1:
             print()
         LOG.debug("Test wrong values for FloatDescriptor ...")
-        wrong_values = (None, 'blub', print, [], {"Uhu": "Banane"})
+        wrong_values = (None, "blub", print, [], {"Uhu": "Banane"})
         for wrong_value in wrong_values:
             LOG.debug(f"Testing wrong value {wrong_value!r} ...")
             with self.assertRaises((TypeError, ValueError)) as cm:
@@ -318,6 +323,7 @@ class TestDescriptors(FbToolsTestcase):
 
         LOG.debug("Testing an FloatDescriptor with wrong set limits.")
         with self.assertRaises((TypeError, ValueError)) as cm:
+
             class TestClass2:
 
                 test_float = FloatDescriptor(name="test_float", lower_limit="bla")
@@ -409,6 +415,132 @@ class TestDescriptors(FbToolsTestcase):
                 e = cm.exception
                 LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
 
+    # -------------------------------------------------------------------------
+    def test_path_descriptor(self):
+        """Test object with a PathDescriptor."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.descriptors import PathDescriptor
+
+        windows_path = PureWindowsPath("C:\\Windows")
+
+        LOG.debug("Testing a PathDescriptor.")
+
+        class TestClass:
+
+            test_path = PathDescriptor(name="test_path")
+
+            def __init__(myself):
+                """Init TestClass."""
+                myself.test_path = str(self.testsdir_rel)
+
+        test_obj = TestClass()
+
+        test_data = (
+            self.testsdir_rel,
+            self.testsdir_abs,
+            str(self.testsdir_rel),
+            PurePath(str(__file__)),
+        )
+
+        for path in test_data:
+            LOG.debug(f"Testing {path!r} ...")
+            test_obj.test_path = path
+
+            LOG.debug(f"test_obj.test_path: {test_obj.test_path!r}")
+            self.assertEqual(str(test_obj.test_path), str(path))
+            self.assertIsInstance(test_obj.test_path, PurePath)
+
+        LOG.debug(f"Test assign a Windows path {windows_path!r} ...")
+        test_obj.test_path = windows_path
+        LOG.debug(f"test_obj.test_path: {test_obj.test_path!r}")
+        self.assertEqual(str(test_obj.test_path), str(windows_path))
+        self.assertIsInstance(test_obj.test_path, PurePath)
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Test wrong values for PathDescriptor ...")
+        wrong_values = (None, print, ["blub"], {"Uhu": "Banane"})
+        for wrong_value in wrong_values:
+            LOG.debug(f"Testing wrong value {wrong_value!r} ...")
+            with self.assertRaises((TypeError, ValueError)) as cm:
+                test_obj.test_path = wrong_value
+            e = cm.exception
+            LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        if self.verbose > 1:
+            print()
+        LOG.debug(f"Test relative path {self.testsdir_rel}, if a absolute one is demanded ...")
+
+        class TestClass1:
+
+            test_path = PathDescriptor(name="test_path", must_absolute=True)
+
+            def __init__(myself):
+                """Init TestClass."""
+                myself.test_path = __file__
+
+        test_obj1 = TestClass1()
+
+        with self.assertRaises((TypeError, ValueError)) as cm:
+            test_obj1.test_path = self.testsdir_rel
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        if self.verbose > 1:
+            print()
+        LOG.debug(f"Test relative path {self.testsdir_rel}, if a absolute one is demanded ...")
+
+        class TestClass1:
+
+            test_path = PathDescriptor(name="test_path", must_absolute=True)
+
+            def __init__(myself):
+                """Init TestClass1."""
+                myself.test_path = __file__
+
+        test_obj1 = TestClass1()
+
+        with self.assertRaises((TypeError, ValueError)) as cm:
+            test_obj1.test_path = self.testsdir_rel
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Test PathDescriptor, which may be set to None ...")
+
+        class TestClass2:
+
+            test_path = PathDescriptor(name="test_path", maybe_none=True)
+
+            def __init__(myself):
+                """Init TestClass2."""
+                myself.test_path = None
+
+        test_obj2 = TestClass2()
+        LOG.debug(f"test_obj2.test_path: {test_obj2.test_path!r}")
+        self.assertIsNone(test_obj2.test_path)
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Testing a PathDescriptor for only PosixPaths ...")
+
+        class TestClass3:
+
+            test_path = PathDescriptor(name="test_path", maybe_none=True, posix=True)
+
+            def __init__(myself):
+                """Init TestClass2."""
+                myself.test_path = None
+
+        test_obj3 = TestClass3()
+        LOG.debug(f"Test assign a Windows path {windows_path!r} ...")
+        with self.assertRaises((TypeError, ValueError)) as cm:
+            test_obj3.test_path = windows_path
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -426,6 +558,7 @@ if __name__ == "__main__":
     suite.addTest(TestDescriptors("test_boolean_descriptor", verbose))
     suite.addTest(TestDescriptors("test_integer_descriptor", verbose))
     suite.addTest(TestDescriptors("test_float_descriptor", verbose))
+    suite.addTest(TestDescriptors("test_path_descriptor", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

@@ -15,7 +15,8 @@ from __future__ import absolute_import
 # Standard modules
 import logging
 from pathlib import Path
-from pathlib import PosixPath
+from pathlib import PurePath
+from pathlib import PurePosixPath
 
 # Third party modules
 
@@ -30,7 +31,7 @@ from .common import is_sequence
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -169,9 +170,7 @@ class FloatDescriptor:
                 "Invalid value {{v}} of attribute {a}, must be less or equal to {m}."
             )
         else:
-            self.upper_limit_msg = _(
-                "Invalid value {{v}} of attribute {a}, must be less to {m}."
-            )
+            self.upper_limit_msg = _("Invalid value {{v}} of attribute {a}, must be less to {m}.")
 
         self.upper_limit_msg = self.upper_limit_msg.format(a=self.public_name, m=self.upper_limit)
 
@@ -254,63 +253,19 @@ class BooleanDescriptor:
 
 
 # =============================================================================
-class PosixPathDescriptor:
-    """Descriptor for a field containing a Posix file path."""
-
-    # -------------------------------------------------------------------------
-    def __init__(self, name, must_absolute=False, maybe_none=False):
-        """Initialize the PosixPathDescriptor descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
-
-        self.must_absolute = to_bool(must_absolute)
-        self.maybe_none = to_bool(maybe_none)
-
-    # -------------------------------------------------------------------------
-    def __set_name__(self, owner, name):
-        """Keep the name of teh descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
-
-    # -------------------------------------------------------------------------
-    def __get__(self, instance, owner):
-        """Get the data from instance object by the private name."""
-        return getattr(instance, self.private_name, "")
-
-    # -------------------------------------------------------------------------
-    def __set__(self, instance, value):
-        """Set the data in the instance object by the private name as a string value."""
-        if value is None:
-            if self.maybe_none:
-                setattr(instance, self.private_name, None)
-                return
-            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
-            raise TypeError(msg)
-
-        path = PosixPath(value)
-
-        if self.must_absolute:
-            if not path.is_absolute():
-                mdg = _("The attribute {a!r} must be an absolute Posix path, given {p!r}.").format(
-                    a=self.public_name, p=str(path)
-                )
-                raise ValueError(mdg)
-
-        setattr(instance, self.private_name, path)
-
-
-# =============================================================================
 class PathDescriptor:
     """Descriptor for a field containing a common file path."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, name, must_absolute=False, maybe_none=False):
+    def __init__(self, name, must_absolute=False, maybe_none=False, posix=False, pure_path=False):
         """Initialize the PathDescriptor descriptor."""
         self.public_name = name
         self.private_name = "_" + name
 
         self.must_absolute = to_bool(must_absolute)
         self.maybe_none = to_bool(maybe_none)
+        self.posix = to_bool(posix)
+        self.pure_path = to_bool(pure_path)
 
     # -------------------------------------------------------------------------
     def __set_name__(self, owner, name):
@@ -333,7 +288,18 @@ class PathDescriptor:
             msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
             raise TypeError(msg)
 
-        path = Path(value)
+        if isinstance(value, PurePath):
+            if self.posix and not isinstance(value, PurePosixPath):
+                msg = _(
+                    "The given path {!r} is a WindowsPath, but a PosixPath is required."
+                ).format(str(value))
+                raise ValueError(msg)
+            path = value
+        else:
+            if self.pure_path:
+                path = PurePath(value)
+            else:
+                path = Path(value)
 
         if self.must_absolute:
             if not path.is_absolute():
@@ -492,6 +458,7 @@ class StringArrayDescriptor:
             array.append(str(value))
 
         setattr(instance, self.private_name, array)
+
 
 # =============================================================================
 class VersionDescriptor:

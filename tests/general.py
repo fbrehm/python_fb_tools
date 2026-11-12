@@ -14,6 +14,7 @@ import logging
 import os
 import sys
 import textwrap
+from pathlib import Path
 
 try:
     import unittest2 as unittest
@@ -103,6 +104,11 @@ class FbToolsTestcase(unittest.TestCase):
 
         appname = os.path.basename(sys.argv[0]).replace(".py", "")
         self._appname = appname
+
+        testsdir = os.path.dirname(os.path.abspath(__file__))
+
+        self.testsdir_abs = Path(testsdir)
+        self.testsdir_rel = Path(os.path.relpath(testsdir))
 
         super(FbToolsTestcase, self).__init__(methodName)
 
