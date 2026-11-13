@@ -23,6 +23,8 @@ except ImportError:
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, libdir)
 
+# from fb_tools.common import pp
+
 from general import FbToolsTestcase, get_arg_verbose, init_root_logger
 
 LOG = logging.getLogger("test_descriptors")
@@ -541,6 +543,92 @@ class TestDescriptors(FbToolsTestcase):
         e = cm.exception
         LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
 
+    # -------------------------------------------------------------------------
+    def test_string_descriptor(self):
+        """Test object with a StringDescriptor."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.descriptors import StringDescriptor
+
+        used_encoding = "windows-1252"
+        test_str_00 = "Uhu Banane"
+        test_str_01 = "Bla blub"
+        test_str_03 = "Schöner scheißen!"
+        test_bytes_03 = test_str_03.encode(encoding=used_encoding)
+
+        class TestClass:
+
+            test_string = StringDescriptor(name="test_string", encoding=used_encoding)
+
+            def __init__(myself):
+                """Init StringDescriptor."""
+                myself.test_string = test_str_00
+
+        test_obj = TestClass()
+
+        LOG.debug(f"test_obj.test_string: {test_obj.test_string!r}")
+        self.assertIsInstance(test_obj.test_string, str)
+        self.assertEqual(test_obj.test_string, test_str_00)
+
+        LOG.debug("Test setting test_obj.test_string ...")
+        test_obj.test_string = test_str_01
+        LOG.debug(f"test_obj.test_string: {test_obj.test_string!r}")
+        self.assertEqual(test_obj.test_string, test_str_01)
+
+        LOG.debug(f"Test setting test_obj.test_string to a bytes object {test_bytes_03!r}")
+        test_obj.test_string = test_bytes_03
+        LOG.debug(f"test_obj.test_string: {test_obj.test_string!r}")
+        self.assertEqual(test_obj.test_string, test_str_03)
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Testing a lowcase and upcase StringDescriptor at the same time.")
+        with self.assertRaises((TypeError, ValueError)) as cm:
+
+            class TestClass01:
+
+                test_string = StringDescriptor(
+                    name="test_string",
+                    lowcase=True,
+                    upcase=True,
+                )
+
+                def __init__(myself):
+                    """Init TestClass01."""
+                    myself.test_string = test_str_00
+
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Testing lowcase StringDescriptors ...")
+        lc_data = (
+            ("ABC", "abc"),
+            ("Abc", "abc"),
+            ("A1", "a1"),
+            ("ÄÖÜß", "äöüß"),
+        )
+
+        class TestClass02:
+
+            test_string = StringDescriptor(name="test_string", lowcase=True)
+
+            def __init__(myself):
+                """Init StringDescriptor."""
+                myself.test_string = ""
+
+        test_obj02 = TestClass02()
+
+        for pair in lc_data:
+            src_value = pair[0]
+            exp_value = pair[1]
+
+            LOG.debug(f"Testing {src_value!r} => {exp_value!r}.")
+            test_obj02.test_string = src_value
+            LOG.debug(f"test_obj02.test_string: {test_obj02.test_string!r}")
+            self.assertEqual(test_obj02.test_string, test_obj02.test_string)
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -559,6 +647,7 @@ if __name__ == "__main__":
     suite.addTest(TestDescriptors("test_integer_descriptor", verbose))
     suite.addTest(TestDescriptors("test_float_descriptor", verbose))
     suite.addTest(TestDescriptors("test_path_descriptor", verbose))
+    suite.addTest(TestDescriptors("test_string_descriptor", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
@@ -567,4 +656,4 @@ if __name__ == "__main__":
 
 # =============================================================================
 
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 list

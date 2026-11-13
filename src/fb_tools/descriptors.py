@@ -36,7 +36,7 @@ from .common import is_sequence
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.9.0"
+__version__ = "0.9.1"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -368,7 +368,7 @@ class StringDescriptor:
             msg = _(
                 "The properties {lc!r} and {uc!r} of attribute {a!r} must not be set to {w} "
                 "at the same time."
-            ).format(lc="lowcase", uc="upcase", a=self.public_name, r="True")
+            ).format(lc="lowcase", uc="upcase", a=self.public_name, w="True")
             raise ValueError(msg)
 
     # -------------------------------------------------------------------------
@@ -398,7 +398,8 @@ class StringDescriptor:
             val = value.decode(encoding=self.encoding, errors=self.error_handler)
         elif self.raise_on_non_str:
             msg = _("Invalid type {typ} of {v!r} given for attribute {a!r}.").format(
-                typ=value.__class__.__name__, v=value, a=self.public_name)
+                typ=value.__class__.__name__, v=value, a=self.public_name
+            )
             raise TypeError(msg)
         else:
             val = str(value)
@@ -501,7 +502,8 @@ class StringArrayDescriptor:
 
             if self.raise_on_non_str:
                 msg = _("Invalid type {typ} of {v!r} given for attribute {a!r}.").format(
-                    typ=v.__class__.__name__, v=v, a=self.public_name)
+                    typ=v.__class__.__name__, v=v, a=self.public_name
+                )
                 raise TypeError(msg)
 
             return str(v)
