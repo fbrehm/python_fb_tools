@@ -102,6 +102,31 @@ class TestDescriptors(FbToolsTestcase):
 
         if self.verbose > 1:
             print()
+        LOG.debug("Testing a readonly BooleanDescriptor.")
+
+        class TestClassReadonlyDescriptor:
+
+            test_bool = BooleanDescriptor(
+                name="test_bool",
+                default_value=False,
+                readonly=True,
+            )
+
+            def __init__(myself):
+                """Init TestClassReadonlyDescriptor."""
+                myself._test_bool = True
+
+        test_obj_ro = TestClassReadonlyDescriptor()
+        LOG.debug(f"test_obj_ro.test_bool: {test_obj_ro.test_bool!r}")
+        self.assertTrue(test_obj_ro.test_bool)
+
+        with self.assertRaises((TypeError, ValueError, AttributeError)) as cm:
+            test_obj_ro.test_bool = False
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        if self.verbose > 1:
+            print()
         LOG.debug("Test setting true values ...")
         true_values = (True, 1, 1.0, -1, "yes", "YES", "Yes", "y", "true", "True", "On", "Uhu")
 
