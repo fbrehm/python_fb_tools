@@ -13,6 +13,7 @@ These descriptors may be used for data properties in classes.
 from __future__ import absolute_import
 
 # Standard modules
+import codecs
 import logging
 from pathlib import Path
 from pathlib import PurePath
@@ -27,11 +28,15 @@ except ImportError:
 
 
 # Own modules
+from . import DEFAULT_CODING_ERROR_HANDLER
+from . import DEFAULT_ENCODING
+from . import VALID_DECODE_ERROR_HANDLERS
+# from . import VALID_ENCODE_ERROR_HANDLERS
 from .common import is_sequence
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -315,6 +320,9 @@ class PathDescriptor:
 class StringDescriptor:
     """Descriptor for a string field."""
 
+    default_encoding = DEFAULT_ENCODING
+    default_coding_error_handler = DEFAULT_CODING_ERROR_HANDLER
+
     # -------------------------------------------------------------------------
     def __init__(
         self,
@@ -324,6 +332,9 @@ class StringDescriptor:
         stripped=False,
         maybe_none=False,
         not_empty=False,
+        raise_on_non_str=False,
+        encoding=None,
+        error_handler=None,
     ):
         """Initialize the StringDescriptor descriptor."""
         self.public_name = name
@@ -334,6 +345,24 @@ class StringDescriptor:
         self.stripped = to_bool(stripped)
         self.maybe_none = to_bool(maybe_none)
         self.not_empty = to_bool(not_empty)
+        self.raise_on_non_str = to_bool(raise_on_non_str)
+
+        if encoding is None:
+            encoding = self.default_encoding
+        codec_info = codecs.lookup(str(encoding))
+        self.encoding = codec_info.name
+
+        given_error_handler = error_handler
+        if error_handler is None:
+            given_error_handler = self.default_coding_error_handler
+        given_error_handler = str(given_error_handler).strip().lower()
+        if given_error_handler in VALID_DECODE_ERROR_HANDLERS:
+            self.error_handler = given_error_handler
+        else:
+            msg = _(
+                "Invalid coding error handler {hdlr!r} given on init of a {cls} object."
+            ).format(hdlr=error_handler, cls=self.__class__.__name__)
+            raise LookupError(msg)
 
         if self.lowcase and self.upcase:
             msg = _(
@@ -363,7 +392,17 @@ class StringDescriptor:
             msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
             raise TypeError(msg)
 
-        val = str(value)
+        if isinstance(value, str):
+            val = value
+        elif isinstance(value, (bytes, bytearray)):
+            val = value.decode(encoding=self.encoding, errors=self.error_handler)
+        elif self.raise_on_non_str:
+            msg = _("Invalid type {typ} of {v!r} given for attribute {a!r}.").format(
+                typ=value.__class__.__name__, v=value, a=self.public_name)
+            raise TypeError(msg)
+        else:
+            val = str(value)
+
         if self.lowcase:
             val = val.lower()
         elif self.upcase:
@@ -380,6 +419,9 @@ class StringDescriptor:
 class StringArrayDescriptor:
     """Descriptor for an field of an array of strings."""
 
+    default_encoding = DEFAULT_ENCODING
+    default_coding_error_handler = DEFAULT_CODING_ERROR_HANDLER
+
     # -------------------------------------------------------------------------
     def __init__(
         self,
@@ -389,6 +431,9 @@ class StringArrayDescriptor:
         stripped=False,
         not_empty=False,
         maybe_none=False,
+        raise_on_non_str=False,
+        encoding=None,
+        error_handler=None,
     ):
         """Initialize the StringDescriptor descriptor."""
         self.public_name = name
@@ -399,6 +444,24 @@ class StringArrayDescriptor:
         self.stripped = to_bool(stripped)
         self.not_empty = to_bool(not_empty)
         self.maybe_none = to_bool(maybe_none)
+        self.raise_on_non_str = to_bool(raise_on_non_str)
+
+        if encoding is None:
+            encoding = self.default_encoding
+        codec_info = codecs.lookup(str(encoding))
+        self.encoding = codec_info.name
+
+        given_error_handler = error_handler
+        if error_handler is None:
+            given_error_handler = self.default_coding_error_handler
+        given_error_handler = str(given_error_handler).strip().lower()
+        if given_error_handler in VALID_DECODE_ERROR_HANDLERS:
+            self.error_handler = given_error_handler
+        else:
+            msg = _(
+                "Invalid coding error handler {hdlr!r} given on init of a {cls} object."
+            ).format(hdlr=error_handler, cls=self.__class__.__name__)
+            raise LookupError(msg)
 
         if self.lowcase and self.upcase:
             msg = _(
@@ -428,34 +491,47 @@ class StringArrayDescriptor:
             msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
             raise TypeError(msg)
 
-        array = []
-        if is_sequence(value):
-            for val in value:
-                if self.lowcase:
-                    val = val.lower()
-                elif self.upcase:
-                    val = val.upper()
-                if self.stripped:
-                    val = val.strip()
-                if self.not_empty and val == "":
-                    msg = _("The attribute {a!r} must not contain empty strings.").format(
-                        a=self.public_name
-                    )
-                    raise ValueError(msg)
-                array.append(str(val))
-        else:
+        def val2str(v):
+            """Convert the value into a str object."""
+            if isinstance(v, str):
+                return v
+
+            if isinstance(v, (bytes, bytearray)):
+                return v.decode(encoding=self.encoding, errors=self.error_handler)
+
+            if self.raise_on_non_str:
+                msg = _("Invalid type {typ} of {v!r} given for attribute {a!r}.").format(
+                    typ=v.__class__.__name__, v=v, a=self.public_name)
+                raise TypeError(msg)
+
+            return str(v)
+
+        def check_value(v):
+            """Check the given value for validity."""
             if self.lowcase:
-                value = value.lower()
+                v = v.lower()
             elif self.upcase:
-                value = value.upper()
+                v = v.upper()
+
             if self.stripped:
-                value = value.strip()
-            if self.not_empty and value == "":
+                v = v.strip()
+
+            if self.not_empty and v == "":
                 msg = _("The attribute {a!r} must not contain empty strings.").format(
                     a=self.public_name
                 )
                 raise ValueError(msg)
-            array.append(str(value))
+
+            return v
+
+        array = []
+        if is_sequence(value):
+            for val in value:
+                item = check_value(val2str(val))
+                array.append(item)
+        else:
+            val = check_value(val2str(value))
+            array.append(val)
 
         setattr(instance, self.private_name, array)
 

@@ -29,6 +29,17 @@ MAX_INDENT = 12
 
 PROJECT_NAME = "fb-tools"
 
+VALID_DECODE_ERROR_HANDLERS = (
+    'strict',
+    'ignore',
+    'replace',
+    'backslashreplace',
+    'surrogateescape'
+)
+
+VALID_ENCODE_ERROR_HANDLERS = VALID_DECODE_ERROR_HANDLERS[:] + ('xmlcharrefreplace', 'namereplace')
+DEFAULT_CODING_ERROR_HANDLER = 'strict'
+
 # Own modules
 
 from .mailaddress import MailAddress, MailAddressList, QualifiedMailAddress  # noqa: F401
