@@ -36,7 +36,7 @@ from .common import is_sequence
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.9.1"
+__version__ = "0.10.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -226,12 +226,17 @@ class BooleanDescriptor:
     """Descriptor for a boolean field."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, name, maybe_none=False):
+    def __init__(self, name, maybe_none=False, default_value=False, readonly=False):
         """Initialize the BooleanDescriptor descriptor."""
         self.public_name = name
         self.private_name = "_" + name
 
         self.maybe_none = to_bool(maybe_none)
+        if default_value is None:
+            self.default_value = None
+        else:
+            self.default_value = to_bool(default_value)
+        self.readonly = to_bool(readonly)
 
     # -------------------------------------------------------------------------
     def __set_name__(self, owner, name):
@@ -242,11 +247,15 @@ class BooleanDescriptor:
     # -------------------------------------------------------------------------
     def __get__(self, instance, owner):
         """Get the data from instance object by the private name."""
-        return getattr(instance, self.private_name, "")
+        return getattr(instance, self.private_name, self.default_value)
 
     # -------------------------------------------------------------------------
     def __set__(self, instance, value):
         """Set the data in the instance object by the private name as a string value."""
+        if self.readonly:
+            msg = _("The attribute {!r} is set to readonly.").format(self.public_name)
+            raise AttributeError(msg)
+
         if value is None:
             if self.maybe_none:
                 setattr(instance, self.private_name, None)
