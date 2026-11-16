@@ -33,12 +33,12 @@ except ImportError:
 from . import DEFAULT_CODING_ERROR_HANDLER
 from . import DEFAULT_ENCODING
 from . import VALID_DECODE_ERROR_HANDLERS
-# from . import VALID_ENCODE_ERROR_HANDLERS
 from .common import is_sequence
+# from .common import pp
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.11.0"
+__version__ = "0.11.2"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -137,16 +137,16 @@ class BaseDescriptor:
 
 
 # =============================================================================
-class IntegerDescriptor:
-    """Descriptor for an integer field."""
+class IntegerDescriptor(BaseDescriptor):
+    """Descriptor for an integer attribute."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, name, lower_limit=None, upper_limit=None, maybe_none=False):
+    def __init__(self, default_value=0, lower_limit=None, upper_limit=None, **kwargs):
         """Initialize the IntegerDescriptor descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
+        kwargs["default_value"] = int(default_value)
 
-        self.maybe_none = to_bool(maybe_none)
+        self.lower_limit_msg = "Invalid value {v}, must be greater or equal than the lower limit."
+        self.upper_limit_msg = "Invalid value {v}, must be less or equal than the upper limit."
 
         if lower_limit is None:
             self.lower_limit = None
@@ -168,66 +168,59 @@ class IntegerDescriptor:
             ).format(self.__class__.__name__)
             raise ValueError(msg)
 
+        # LOG.debug("kwargs: " + pp(kwargs))
+        super(IntegerDescriptor, self).__init__(**kwargs)
+
         self.lower_limit_msg = _(
             "Invalid value {{v}} of attribute {a}, must be greater or equal to {m}."
         ).format(a=self.public_name, m=self.lower_limit)
+
         self.upper_limit_msg = _(
             "Invalid value {{v}} of attribute {a}, must be less or equal to {m}."
         ).format(a=self.public_name, m=self.upper_limit)
 
     # -------------------------------------------------------------------------
-    def __set_name__(self, owner, name):
-        """Keep the name of the descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
+    def check_value(self, value):
+        """Check the given value."""
+        val = super(IntegerDescriptor, self).check_value(value)
 
-    # -------------------------------------------------------------------------
-    def __get__(self, instance, owner):
-        """Get the data from instance object by the private name."""
-        return getattr(instance, self.private_name, 0)
+        int_val = int(val)
 
-    # -------------------------------------------------------------------------
-    def __set__(self, instance, value):
-        """Set the data in the instance object by the private name as an integer value."""
-        if value is None:
-            if self.maybe_none:
-                setattr(instance, self.private_name, None)
-                return
-            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
-            raise TypeError(msg)
-
-        val = int(value)
-
-        if self.lower_limit is not None and val < self.lower_limit:
-            msg = self.lower_limit_msg.format(v=val)
+        if (
+            hasattr(self, "lower_limit")
+            and self.lower_limit is not None
+            and int_val < self.lower_limit
+        ):
+            msg = self.lower_limit_msg.format(v=int_val)
             raise ValueError(msg)
 
-        if self.upper_limit is not None and val > self.upper_limit:
-            msg = self.upper_limit_msg.format(v=value)
+        if (
+            hasattr(self, "upper_limit")
+            and self.upper_limit is not None
+            and int_val > self.upper_limit
+        ):
+            msg = self.upper_limit_msg.format(v=int_val)
             raise ValueError(msg)
 
-        setattr(instance, self.private_name, val)
+        return int_val
 
 
 # =============================================================================
-class FloatDescriptor:
+class FloatDescriptor(BaseDescriptor):
     """Descriptor for an float field."""
 
     # -------------------------------------------------------------------------
     def __init__(
         self,
-        name,
+        default_value=0.0,
         lower_limit=None,
         include_lower_limit=True,
         upper_limit=None,
         include_upper_limit=True,
-        maybe_none=False,
+        **kwargs,
     ):
         """Initialize the FloatDescriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
-
-        self.maybe_none = to_bool(maybe_none)
+        kwargs["default_value"] = float(default_value)
 
         if lower_limit is None:
             self.lower_limit = None
@@ -243,6 +236,18 @@ class FloatDescriptor:
 
         self.include_upper_limit = to_bool(include_upper_limit)
 
+        if self.include_lower_limit:
+            self.lower_limit_msg = (
+                "Invalid value {v}, must be greater or equal than the lower limit."
+            )
+        else:
+            self.lower_limit_msg = "Invalid value {v}, must be greater than the lower limit."
+
+        if self.include_upper_limit:
+            self.upper_limit_msg = "Invalid value {v}, must be less or equal than the upper limit."
+        else:
+            self.upper_limit_msg = "Invalid value {v}, must be less than the upper limit."
+
         if (
             self.lower_limit is not None
             and self.upper_limit is not None
@@ -252,6 +257,9 @@ class FloatDescriptor:
                 "The upper limit of an {} must be greater or equal to its lower_limit."
             ).format(self.__class__.__name__)
             raise ValueError(msg)
+
+        # LOG.debug("kwargs: " + pp(kwargs))
+        super(FloatDescriptor, self).__init__(**kwargs)
 
         if self.include_lower_limit:
             self.lower_limit_msg = _(
@@ -274,45 +282,29 @@ class FloatDescriptor:
         self.upper_limit_msg = self.upper_limit_msg.format(a=self.public_name, m=self.upper_limit)
 
     # -------------------------------------------------------------------------
-    def __set_name__(self, owner, name):
-        """Keep the name of the descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
+    def check_value(self, value):
+        """Check the given value."""
+        val = super(FloatDescriptor, self).check_value(value)
 
-    # -------------------------------------------------------------------------
-    def __get__(self, instance, owner):
-        """Get the data from instance object by the private name."""
-        return getattr(instance, self.private_name, 0)
+        float_val = float(val)
 
-    # -------------------------------------------------------------------------
-    def __set__(self, instance, value):
-        """Set the data in the instance object by the private name as an float value."""
-        if value is None:
-            if self.maybe_none:
-                setattr(instance, self.private_name, None)
-                return
-            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
-            raise TypeError(msg)
-
-        val = float(value)
-
-        if self.lower_limit is not None:
-            if self.include_lower_limit and val < self.lower_limit:
-                msg = self.lower_limit_msg.format(v=val)
+        if (hasattr(self, "lower_limit") and self.lower_limit is not None):
+            if self.include_lower_limit and float_val < self.lower_limit:
+                msg = self.lower_limit_msg.format(v=float_val)
                 raise ValueError(msg)
-            if not self.include_lower_limit and val <= self.lower_limit:
-                msg = self.lower_limit_msg.format(v=val)
+            if not self.include_lower_limit and float_val <= self.lower_limit:
+                msg = self.lower_limit_msg.format(v=float_val)
                 raise ValueError(msg)
 
-        if self.upper_limit is not None:
-            if self.include_upper_limit and val > self.upper_limit:
-                msg = self.upper_limit_msg.format(v=value)
+        if (hasattr(self, "upper_limit") and self.upper_limit is not None):
+            if self.include_upper_limit and float_val > self.upper_limit:
+                msg = self.upper_limit_msg.format(v=float_val)
                 raise ValueError(msg)
-            if not self.include_upper_limit and val >= self.upper_limit:
-                msg = self.upper_limit_msg.format(v=value)
+            if not self.include_upper_limit and float_val >= self.upper_limit:
+                msg = self.upper_limit_msg.format(v=float_val)
                 raise ValueError(msg)
 
-        setattr(instance, self.private_name, val)
+        return float_val
 
 
 # =============================================================================
@@ -322,7 +314,8 @@ class BooleanDescriptor(BaseDescriptor):
     # -------------------------------------------------------------------------
     def __init__(self, default_value=False, **kwargs):
         """Initialize the BooleanDescriptor descriptor."""
-        super(BooleanDescriptor, self).__init__(default_value, **kwargs)
+        kwargs["default_value"] = default_value
+        super(BooleanDescriptor, self).__init__(**kwargs)
 
     # -------------------------------------------------------------------------
     def check_value(self, value):
