@@ -15,11 +15,13 @@ from __future__ import absolute_import
 # Standard modules
 import codecs
 import logging
+from abc import ABCMeta, abstractmethod
 from pathlib import Path
 from pathlib import PurePath
 from pathlib import PurePosixPath
 
 # Third party modules
+from six import add_metaclass
 
 try:
     from semver import Version
@@ -36,10 +38,102 @@ from .common import is_sequence
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.10.0"
+__version__ = "0.11.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
+
+
+# =============================================================================
+@add_metaclass(ABCMeta)
+class BaseDescriptor:
+    """
+    Base descriptor as the parent of all following descriptors in this module.
+
+    Descriptors let objects customize attribute lookup, storage, and deletion.
+    (See https://docs.python.org/3/howto/descriptor.html#descriptorhowto)
+
+    It provides the following properties:
+
+    * name          - the name of the attribute of a class, which will will be
+                      provided by the descriptor.
+                      This is a mandatory option for __imit__.
+                      Unfortunately I found no way to detect the name of the
+                      provided class attribute.
+    * _name         - identical with 'name', but with an additional leading underscrore.
+                      Will be set automatically wth setting 'name'.
+                      This property will be used for the underlaying attribute storing
+                      the value.
+    * maybe_none    - may the provided attributed be a None value.
+    * readonly      - Is the provided property write protected or not.
+                      To set the value of the attribute either set a proper
+                      default value (if possible), or set the attribute
+                      '_name' of the parent object.
+    * default_value - The value of the provided attribute, als long as the value
+                      of the attribute was not set before.
+                      This is a mandatory option for __imit__.
+
+    """
+
+    # -------------------------------------------------------------------------
+    def __init__(self, name, default_value, maybe_none=False, readonly=False):
+        """Initialize the descriptor."""
+        self.public_name = name
+        self.private_name = "_" + name
+
+        self.readonly = to_bool(readonly)
+        self.maybe_none = to_bool(maybe_none)
+
+        self.default_value = self.check_value(default_value)
+
+    # -------------------------------------------------------------------------
+    def __set_name__(self, owner, name):
+        """Keep the name of the descriptor."""
+        self.public_name = name
+        self.private_name = "_" + name
+
+    # -------------------------------------------------------------------------
+    @abstractmethod
+    def check_value(self, value):
+        """
+        Check the given value according to the destination of the current descriptor.
+
+        This is an abstract method and hhas to be overridden by all derived classes.
+        But it may be called as a super method.
+        """
+        if value is None and not self.maybe_none:
+            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
+            raise TypeError(msg)
+
+        return value
+
+    # -------------------------------------------------------------------------
+    def __get__(self, instance, owner):
+        """Get the data from instance object by the private name."""
+        return getattr(instance, self.private_name, self.default_value)
+
+    # -------------------------------------------------------------------------
+    def __set__(self, instance, value):
+        """Set the data in the instance object by the private name as a string value."""
+        if self.readonly:
+            msg = _("The attribute {!r} is set to readonly.").format(self.public_name)
+            raise AttributeError(msg)
+
+        if value is None:
+            if self.maybe_none:
+                setattr(instance, self.private_name, None)
+                return
+            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
+            raise TypeError(msg)
+
+        val = self.check_value(value)
+        setattr(instance, self.private_name, val)
+
+    # -------------------------------------------------------------------------
+    def __delete__(self, instance):
+        """Call to delete the attribute on an instance instance of the owner class."""
+        if hasattr(instance, self.private_name):
+            delattr(instance, self.private_name)
 
 
 # =============================================================================
@@ -222,48 +316,20 @@ class FloatDescriptor:
 
 
 # =============================================================================
-class BooleanDescriptor:
-    """Descriptor for a boolean field."""
+class BooleanDescriptor(BaseDescriptor):
+    """Descriptor for a boolean attribute."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, name, maybe_none=False, default_value=False, readonly=False):
+    def __init__(self, default_value=False, **kwargs):
         """Initialize the BooleanDescriptor descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
-
-        self.maybe_none = to_bool(maybe_none)
-        if default_value is None:
-            self.default_value = None
-        else:
-            self.default_value = to_bool(default_value)
-        self.readonly = to_bool(readonly)
+        super(BooleanDescriptor, self).__init__(default_value, **kwargs)
 
     # -------------------------------------------------------------------------
-    def __set_name__(self, owner, name):
-        """Keep the name of teh descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
+    def check_value(self, value):
+        """Check the given value."""
+        val = super(BooleanDescriptor, self).check_value(value)
 
-    # -------------------------------------------------------------------------
-    def __get__(self, instance, owner):
-        """Get the data from instance object by the private name."""
-        return getattr(instance, self.private_name, self.default_value)
-
-    # -------------------------------------------------------------------------
-    def __set__(self, instance, value):
-        """Set the data in the instance object by the private name as a string value."""
-        if self.readonly:
-            msg = _("The attribute {!r} is set to readonly.").format(self.public_name)
-            raise AttributeError(msg)
-
-        if value is None:
-            if self.maybe_none:
-                setattr(instance, self.private_name, None)
-                return
-            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
-            raise TypeError(msg)
-
-        setattr(instance, self.private_name, to_bool(value))
+        return to_bool(val)
 
 
 # =============================================================================
