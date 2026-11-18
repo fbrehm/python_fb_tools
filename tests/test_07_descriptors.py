@@ -508,7 +508,7 @@ class TestDescriptors(FbToolsTestcase):
 
         class TestClass1:
 
-            test_path = PathDescriptor(name="test_path", must_absolute=True)
+            test_path = PathDescriptor(name="test_path", must_absolute=True, default_value="/tmp")
 
             def __init__(myself):
                 """Init TestClass."""
@@ -523,38 +523,22 @@ class TestDescriptors(FbToolsTestcase):
 
         if self.verbose > 1:
             print()
-        LOG.debug(f"Test relative path {self.testsdir_rel}, if a absolute one is demanded ...")
-
-        class TestClass1:
-
-            test_path = PathDescriptor(name="test_path", must_absolute=True)
-
-            def __init__(myself):
-                """Init TestClass1."""
-                myself.test_path = __file__
-
-        test_obj1 = TestClass1()
+        LOG.debug("Testing a PathDescriptor, which may not be None ...")
 
         with self.assertRaises((TypeError, ValueError)) as cm:
-            test_obj1.test_path = self.testsdir_rel
+            class TestClass2:
+
+                test_path = PathDescriptor(name="test_path", maybe_none=False)
+
+                def __init__(myself):
+                    """Init TestClass2."""
+                    myself.test_path = None
+
+            test_obj2 = TestClass2()
+            LOG.debug(f"test_obj.test_path: {test_obj2.test_path!r}")
+
         e = cm.exception
         LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
-
-        if self.verbose > 1:
-            print()
-        LOG.debug("Test PathDescriptor, which may be set to None ...")
-
-        class TestClass2:
-
-            test_path = PathDescriptor(name="test_path", maybe_none=True)
-
-            def __init__(myself):
-                """Init TestClass2."""
-                myself.test_path = None
-
-        test_obj2 = TestClass2()
-        LOG.debug(f"test_obj2.test_path: {test_obj2.test_path!r}")
-        self.assertIsNone(test_obj2.test_path)
 
         if self.verbose > 1:
             print()
@@ -678,7 +662,7 @@ if __name__ == "__main__":
     suite.addTest(TestDescriptors("test_boolean_descriptor", verbose))
     suite.addTest(TestDescriptors("test_integer_descriptor", verbose))
     suite.addTest(TestDescriptors("test_float_descriptor", verbose))
-    # suite.addTest(TestDescriptors("test_path_descriptor", verbose))
+    suite.addTest(TestDescriptors("test_path_descriptor", verbose))
     # suite.addTest(TestDescriptors("test_string_descriptor", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)

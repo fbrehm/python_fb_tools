@@ -38,7 +38,7 @@ from .common import is_sequence
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.11.2"
+__version__ = "0.11.3"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -84,7 +84,7 @@ class BaseDescriptor:
         self.readonly = to_bool(readonly)
         self.maybe_none = to_bool(maybe_none)
 
-        self.default_value = self.check_value(default_value)
+        self.default_value = self.check_value(default_value, for_default=True)
 
     # -------------------------------------------------------------------------
     def __set_name__(self, owner, name):
@@ -94,7 +94,7 @@ class BaseDescriptor:
 
     # -------------------------------------------------------------------------
     @abstractmethod
-    def check_value(self, value):
+    def check_value(self, value, for_default=False):
         """
         Check the given value according to the destination of the current descriptor.
 
@@ -102,7 +102,12 @@ class BaseDescriptor:
         But it may be called as a super method.
         """
         if value is None and not self.maybe_none:
-            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
+            if for_default:
+                msg = _("The default value of attribute {a!r} must not be None.").format(
+                    a=self.public_name
+                )
+            else:
+                msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
             raise TypeError(msg)
 
         return value
@@ -143,7 +148,7 @@ class IntegerDescriptor(BaseDescriptor):
     # -------------------------------------------------------------------------
     def __init__(self, default_value=0, lower_limit=None, upper_limit=None, **kwargs):
         """Initialize the IntegerDescriptor descriptor."""
-        kwargs["default_value"] = int(default_value)
+        kwargs["default_value"] = default_value
 
         self.lower_limit_msg = "Invalid value {v}, must be greater or equal than the lower limit."
         self.upper_limit_msg = "Invalid value {v}, must be less or equal than the upper limit."
@@ -180,9 +185,11 @@ class IntegerDescriptor(BaseDescriptor):
         ).format(a=self.public_name, m=self.upper_limit)
 
     # -------------------------------------------------------------------------
-    def check_value(self, value):
+    def check_value(self, value, for_default=False):
         """Check the given value."""
-        val = super(IntegerDescriptor, self).check_value(value)
+        val = super(IntegerDescriptor, self).check_value(value, for_default=for_default)
+        if val is None:
+            return None
 
         int_val = int(val)
 
@@ -220,7 +227,7 @@ class FloatDescriptor(BaseDescriptor):
         **kwargs,
     ):
         """Initialize the FloatDescriptor."""
-        kwargs["default_value"] = float(default_value)
+        kwargs["default_value"] = default_value
 
         if lower_limit is None:
             self.lower_limit = None
@@ -282,13 +289,15 @@ class FloatDescriptor(BaseDescriptor):
         self.upper_limit_msg = self.upper_limit_msg.format(a=self.public_name, m=self.upper_limit)
 
     # -------------------------------------------------------------------------
-    def check_value(self, value):
+    def check_value(self, value, for_default=False):
         """Check the given value."""
-        val = super(FloatDescriptor, self).check_value(value)
+        val = super(FloatDescriptor, self).check_value(value, for_default=for_default)
+        if val is None:
+            return None
 
         float_val = float(val)
 
-        if (hasattr(self, "lower_limit") and self.lower_limit is not None):
+        if hasattr(self, "lower_limit") and self.lower_limit is not None:
             if self.include_lower_limit and float_val < self.lower_limit:
                 msg = self.lower_limit_msg.format(v=float_val)
                 raise ValueError(msg)
@@ -296,7 +305,7 @@ class FloatDescriptor(BaseDescriptor):
                 msg = self.lower_limit_msg.format(v=float_val)
                 raise ValueError(msg)
 
-        if (hasattr(self, "upper_limit") and self.upper_limit is not None):
+        if hasattr(self, "upper_limit") and self.upper_limit is not None:
             if self.include_upper_limit and float_val > self.upper_limit:
                 msg = self.upper_limit_msg.format(v=float_val)
                 raise ValueError(msg)
@@ -318,54 +327,56 @@ class BooleanDescriptor(BaseDescriptor):
         super(BooleanDescriptor, self).__init__(**kwargs)
 
     # -------------------------------------------------------------------------
-    def check_value(self, value):
+    def check_value(self, value, for_default=False):
         """Check the given value."""
-        val = super(BooleanDescriptor, self).check_value(value)
+        val = super(BooleanDescriptor, self).check_value(value, for_default=for_default)
+        if val is None:
+            return None
 
         return to_bool(val)
 
 
 # =============================================================================
-class PathDescriptor:
+class PathDescriptor(BaseDescriptor):
     """Descriptor for a field containing a common file path."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, name, must_absolute=False, maybe_none=False, posix=False, pure_path=False):
+    def __init__(
+        self,
+        default_value="",
+        must_absolute=False,
+        posix=False,
+        pure_path=False,
+        **kwargs,
+    ):
         """Initialize the PathDescriptor descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
+        kwargs["default_value"] = Path(default_value)
 
         self.must_absolute = to_bool(must_absolute)
-        self.maybe_none = to_bool(maybe_none)
         self.posix = to_bool(posix)
         self.pure_path = to_bool(pure_path)
 
-    # -------------------------------------------------------------------------
-    def __set_name__(self, owner, name):
-        """Keep the name of teh descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
+        super(PathDescriptor, self).__init__(**kwargs)
 
     # -------------------------------------------------------------------------
-    def __get__(self, instance, owner):
-        """Get the data from instance object by the private name."""
-        return getattr(instance, self.private_name, "")
+    def check_value(self, value, for_default=False):
+        """Check the given value."""
+        val = super(PathDescriptor, self).check_value(value, for_default=for_default)
+        if val is None:
+            return None
 
-    # -------------------------------------------------------------------------
-    def __set__(self, instance, value):
-        """Set the data in the instance object by the private name as a string value."""
-        if value is None:
-            if self.maybe_none:
-                setattr(instance, self.private_name, None)
-                return
-            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
-            raise TypeError(msg)
-
-        if isinstance(value, PurePath):
-            if self.posix and not isinstance(value, PurePosixPath):
-                msg = _(
-                    "The given path {!r} is a WindowsPath, but a PosixPath is required."
-                ).format(str(value))
+        if isinstance(val, PurePath):
+            if self.posix and not isinstance(val, PurePosixPath):
+                if for_default:
+                    msg = _(
+                        "The default value of {a!r} {p!r} is a WindowsPath, "
+                        "but a PosixPath is required."
+                    ).format(a=self.public_name, p=str(val))
+                else:
+                    msg = _(
+                        "The given path of {a!r} {p!r} is a WindowsPath, "
+                        "but a PosixPath is required."
+                    ).format(a=self.public_name, p=str(val))
                 raise ValueError(msg)
             path = value
         else:
@@ -376,12 +387,17 @@ class PathDescriptor:
 
         if self.must_absolute:
             if not path.is_absolute():
-                mdg = _("The attribute {a!r} must be an absolute path, given {p!r}.").format(
-                    a=self.public_name, p=str(path)
-                )
-                raise ValueError(mdg)
+                if for_default:
+                    msg = _(
+                        "The default value of {a!r} must be an absolute path, given {p!r}."
+                    ).format(a=self.public_name, p=str(path))
+                else:
+                    msg = _("The attribute {a!r} must be an absolute path, given {p!r}.").format(
+                        a=self.public_name, p=str(path)
+                    )
+                raise ValueError(msg)
 
-        setattr(instance, self.private_name, path)
+        return path
 
 
 # =============================================================================
