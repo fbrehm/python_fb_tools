@@ -631,7 +631,7 @@ class TestDescriptors(FbToolsTestcase):
             test_string = StringDescriptor(name="test_string", lowcase=True)
 
             def __init__(myself):
-                """Init StringDescriptor."""
+                """Init TestClass02."""
                 myself.test_string = ""
 
         test_obj02 = TestClass02()
@@ -644,6 +644,39 @@ class TestDescriptors(FbToolsTestcase):
             test_obj02.test_string = src_value
             LOG.debug(f"test_obj02.test_string: {test_obj02.test_string!r}")
             self.assertEqual(test_obj02.test_string, test_obj02.test_string)
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Testing lchoices with StringDescriptors ...")
+
+        choices = ("one", "two", "three")
+
+        class TestClass03:
+
+            test_string = StringDescriptor(
+                name="test_string",
+                lowcase=True,
+                choices=choices,
+                default_value="one"
+            )
+
+            def __init__(myself):
+                """Init TestClass03."""
+                myself.test_string = "two"
+
+        test_obj03 = TestClass03()
+
+        LOG.debug(f"test_obj03.test_string: {test_obj03.test_string!r}")
+        self.assertEqual(test_obj03.test_string, "two")
+
+        test_obj03.test_string = "three"
+        LOG.debug(f"test_obj03.test_string: {test_obj03.test_string!r}")
+        self.assertEqual(test_obj03.test_string, "three")
+
+        with self.assertRaises((TypeError, ValueError)) as cm:
+            test_obj03.test_string = "four"
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
 
 
 # =============================================================================

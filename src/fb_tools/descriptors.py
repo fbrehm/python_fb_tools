@@ -37,7 +37,7 @@ from .common import is_sequence
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.11.4"
+__version__ = "0.11.5"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -415,6 +415,7 @@ class StringDescriptor(BaseDescriptor):
         stripped=False,
         not_empty=False,
         raise_on_non_str=False,
+        choices=None,
         encoding=None,
         error_handler=None,
         **kwargs,
@@ -445,6 +446,9 @@ class StringDescriptor(BaseDescriptor):
             ).format(hdlr=error_handler, cls=self.__class__.__name__)
             raise LookupError(msg)
 
+        self._check_choices(choices)
+        self.choices = choices
+
         super(StringDescriptor, self).__init__(**kwargs)
 
         if self.lowcase and self.upcase:
@@ -453,6 +457,42 @@ class StringDescriptor(BaseDescriptor):
                 "at the same time."
             ).format(lc="lowcase", uc="upcase", a=self.public_name, w="True")
             raise ValueError(msg)
+
+    # -------------------------------------------------------------------------
+    def _check_choices(self, choices):
+        """Check the choices attribute for validity."""
+        if choices is None:
+            return
+
+        if not is_sequence(choices):
+            msg = _("Invalid {c} given (not a sequence): {v!r}.").format(c="choices", v=choices)
+            raise TypeError(msg)
+
+        if not choices:
+            msg = _("Invalid {} given - empty squence.").format("choices")
+            raise ValueError(msg)
+
+        for item in choices:
+            if not isinstance(item, str):
+                msg = _("Invalid {c} given - item {i!r} is not a {o} object.").format(
+                    c="choices", i=item, o="str"
+                )
+                raise TypeError(msg)
+
+        if self.lowcase:
+            for item in choices:
+                if item != item.lower():
+                    msg = _("Invalid {c} given - item {i!r} has non lowcase characters.").format(
+                        c="choices", i=item
+                    )
+                    raise ValueError(msg)
+        elif self.upcase:
+            for item in choices:
+                if item != item.upper():
+                    msg = _("Invalid {c} given - item {i!r} has non upcase characters.").format(
+                        c="choices", i=item
+                    )
+                    raise ValueError(msg)
 
     # -------------------------------------------------------------------------
     def check_value(self, value, for_default=False):
@@ -491,6 +531,13 @@ class StringDescriptor(BaseDescriptor):
                 )
             else:
                 msg = _("The attribute {a!r} must not be empty.").format(a=self.public_name)
+            raise ValueError(msg)
+
+        if self.choices and val not in self.choices:
+            if for_default:
+                msg = _("The default value {!r} must be included in choices.").format(val)
+            else:
+                msg = _("The given value {!r} must be included in choices.").format(val)
             raise ValueError(msg)
 
         return val
