@@ -663,7 +663,7 @@ if __name__ == "__main__":
     suite.addTest(TestDescriptors("test_integer_descriptor", verbose))
     suite.addTest(TestDescriptors("test_float_descriptor", verbose))
     suite.addTest(TestDescriptors("test_path_descriptor", verbose))
-    # suite.addTest(TestDescriptors("test_string_descriptor", verbose))
+    suite.addTest(TestDescriptors("test_string_descriptor", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

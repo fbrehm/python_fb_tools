@@ -34,11 +34,10 @@ from . import DEFAULT_CODING_ERROR_HANDLER
 from . import DEFAULT_ENCODING
 from . import VALID_DECODE_ERROR_HANDLERS
 from .common import is_sequence
-# from .common import pp
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.11.3"
+__version__ = "0.11.4"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -350,7 +349,7 @@ class PathDescriptor(BaseDescriptor):
         **kwargs,
     ):
         """Initialize the PathDescriptor descriptor."""
-        kwargs["default_value"] = Path(default_value)
+        kwargs["default_value"] = default_value
 
         self.must_absolute = to_bool(must_absolute)
         self.posix = to_bool(posix)
@@ -401,7 +400,7 @@ class PathDescriptor(BaseDescriptor):
 
 
 # =============================================================================
-class StringDescriptor:
+class StringDescriptor(BaseDescriptor):
     """Descriptor for a string field."""
 
     default_encoding = DEFAULT_ENCODING
@@ -410,24 +409,22 @@ class StringDescriptor:
     # -------------------------------------------------------------------------
     def __init__(
         self,
-        name,
+        default_value="",
         lowcase=False,
         upcase=False,
         stripped=False,
-        maybe_none=False,
         not_empty=False,
         raise_on_non_str=False,
         encoding=None,
         error_handler=None,
+        **kwargs,
     ):
         """Initialize the StringDescriptor descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
+        kwargs["default_value"] = default_value
 
         self.lowcase = to_bool(lowcase)
         self.upcase = to_bool(upcase)
         self.stripped = to_bool(stripped)
-        self.maybe_none = to_bool(maybe_none)
         self.not_empty = to_bool(not_empty)
         self.raise_on_non_str = to_bool(raise_on_non_str)
 
@@ -448,6 +445,8 @@ class StringDescriptor:
             ).format(hdlr=error_handler, cls=self.__class__.__name__)
             raise LookupError(msg)
 
+        super(StringDescriptor, self).__init__(**kwargs)
+
         if self.lowcase and self.upcase:
             msg = _(
                 "The properties {lc!r} and {uc!r} of attribute {a!r} must not be set to {w} "
@@ -456,34 +455,25 @@ class StringDescriptor:
             raise ValueError(msg)
 
     # -------------------------------------------------------------------------
-    def __set_name__(self, owner, name):
-        """Keep the name of teh descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
-
-    # -------------------------------------------------------------------------
-    def __get__(self, instance, owner):
-        """Get the data from instance object by the private name."""
-        return getattr(instance, self.private_name, "")
-
-    # -------------------------------------------------------------------------
-    def __set__(self, instance, value):
-        """Set the data in the instance object by the private name as a string value."""
-        if value is None:
-            if self.maybe_none:
-                setattr(instance, self.private_name, None)
-                return
-            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
-            raise TypeError(msg)
+    def check_value(self, value, for_default=False):
+        """Check the given value."""
+        val = super(StringDescriptor, self).check_value(value, for_default=for_default)
+        if val is None:
+            return None
 
         if isinstance(value, str):
             val = value
         elif isinstance(value, (bytes, bytearray)):
             val = value.decode(encoding=self.encoding, errors=self.error_handler)
         elif self.raise_on_non_str:
-            msg = _("Invalid type {typ} of {v!r} given for attribute {a!r}.").format(
-                typ=value.__class__.__name__, v=value, a=self.public_name
-            )
+            if for_default:
+                msg = _(
+                    "Invalid type {typ} of {v!r} as default value for attribute {a!r}."
+                ).format(typ=value.__class__.__name__, v=value, a=self.public_name)
+            else:
+                msg = _("Invalid type {typ} of {v!r} given for attribute {a!r}.").format(
+                    typ=value.__class__.__name__, v=value, a=self.public_name
+                )
             raise TypeError(msg)
         else:
             val = str(value)
@@ -495,9 +485,15 @@ class StringDescriptor:
         if self.stripped:
             val = val.strip()
         if self.not_empty and val == "":
-            msg = _("The attribute {a!r} must not be empty.").format(a=self.public_name)
+            if for_default:
+                msg = _("The default value of ttribute {a!r} must not be empty.").format(
+                    a=self.public_name
+                )
+            else:
+                msg = _("The attribute {a!r} must not be empty.").format(a=self.public_name)
             raise ValueError(msg)
-        setattr(instance, self.private_name, val)
+
+        return val
 
 
 # =============================================================================
