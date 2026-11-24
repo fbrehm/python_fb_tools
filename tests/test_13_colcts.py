@@ -49,7 +49,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_init_frozenset(self):
         """Test init of a FrozenCIStringSet object."""
-        LOG.info("Testing init of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongItemTypeError
@@ -150,7 +150,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_real_value(self):
         """Test method real_value() of a FrozenCIStringSet object."""
-        LOG.info("Testing method real_value() of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongItemTypeError
@@ -200,7 +200,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_len(self):
         """Test len() of a FrozenCIStringSet object."""
-        LOG.info("Testing len() of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
 
@@ -225,7 +225,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_bool(self):
         """Test bool() of a FrozenCIStringSet object."""
-        LOG.info("Testing bool() of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
 
@@ -250,7 +250,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_in(self):
         """Test operator 'in' of a FrozenCIStringSet object."""
-        LOG.info("Testing operator 'in' of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongItemTypeError
@@ -289,7 +289,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_le(self):
         """Test operator le ('<=', issubset()) of a FrozenCIStringSet object."""
-        LOG.info("Testing operator le ('<=', issubset()) of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError
@@ -330,7 +330,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_lt(self):
         """Test operator lt ('<') of a FrozenCIStringSet object."""
-        LOG.info("Testing operator lt ('<') of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError
@@ -371,7 +371,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_eq(self):
         """Test operator eq ('==') of a FrozenCIStringSet object."""
-        LOG.info("Testing operator eq ('==') of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError  # noqa
@@ -411,7 +411,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_ne(self):
         """Test operator ne ('!=') of a FrozenCIStringSet object."""
-        LOG.info("Testing operator ne ('!=') of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError  # noqa
@@ -451,7 +451,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_gt(self):
         """Test operator gt ('>') of a FrozenCIStringSet object."""
-        LOG.info("Testing operator gt ('>') of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError
@@ -492,7 +492,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_ge(self):
         """Test operator ge ('>=') of a FrozenCIStringSet object."""
-        LOG.info("Testing operator ge ('>=') of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError
@@ -533,7 +533,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_or(self):
         """Test operator ge ('|', union()) of a FrozenCIStringSet object."""
-        LOG.info("Testing operator ge ('|', union()) of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError
@@ -565,7 +565,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_and(self):
         """Test operator and ('&', intersection()) of a FrozenCIStringSet object."""
-        LOG.info("Testing operator and ('&', intersection()) of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError  # noqa
@@ -597,7 +597,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_sub(self):
         """Test operator sub ('-', difference()) of a FrozenCIStringSet object."""
-        LOG.info("Testing operator sub ('-', difference()) of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError
@@ -634,9 +634,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_operator_xor(self):
         """Test operator xor ('^', symmetric_difference()) of a FrozenCIStringSet object."""
-        LOG.info(
-            "Testing operator xor ('^', symmetric_difference()) of a FrozenCIStringSet object."
-        )
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError
@@ -669,7 +667,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozenset_method_isdisjoint(self):
         """Test method isdisjoint() of a FrozenCIStringSet object."""
-        LOG.info("Testing method isdisjoint() of a FrozenCIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import WrongCompareSetClassError
@@ -707,7 +705,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_init_set(self):
         """Test init of a CIStringSet object."""
-        LOG.info("Testing init of a CIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import CIStringSet
@@ -799,7 +797,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_set_add(self):
         """Test method add() of a CIStringSet object."""
-        LOG.info("Testing method add() of a CIStringSet object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIStringSet
         from fb_tools.colcts import CIStringSet
@@ -854,9 +852,128 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
+    def test_init_frozenarray(self):
+        """Test init of a FrozenStringArray."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.colcts import FrozenStringArray
+
+        LOG.debug("Testing init of an empty frozen string array.")
+        my_array = FrozenStringArray()
+
+        LOG.debug("FrozenStringArray %r: {!r}".format(my_array))
+        LOG.debug("FrozenStringArray %s: {}".format(my_array))
+        self.assertEqual(my_array.list(), [])
+
+        LOG.debug("Trying to append data to a FrozenStringArray ...")
+        with self.assertRaises(AttributeError) as cm:
+            my_array.append("Bla")
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        correct_iterables = (
+            (("a",), ["a"]),
+            (["a"], ["a"]),
+            (["A"], ["A"]),
+            (["a", "b"], ["a", "b"]),
+            (["a", "B"], ["a", "B"]),
+            (FrozenStringArray(["a", "b"]), ["a", "b"]),
+        )
+
+        for test_tuple in correct_iterables:
+            src = test_tuple[0]
+            expected = test_tuple[1]
+            LOG.debug("Testing init of a FrozenStringArray from {!r}.".format(src))
+            my_array = FrozenStringArray(src)
+            if self.verbose > 2:
+                LOG.debug("FrozenStringArray %s: {}".format(my_array))
+            result = my_array.list()
+            LOG.debug(
+                "FrozenStringArray as a list: {r!r} (expeced: {ex!r})".format(
+                    r=result, ex=expected
+                )
+            )
+            self.assertEqual(result, expected)
+
+        class Tobj(object):
+
+            def uhu(self):
+                return "banane"
+
+        tobj = Tobj()
+
+        wrong_iterables = ("a", 1, {"uhu": "banane"}, tobj, tobj.uhu)
+
+        for obj in wrong_iterables:
+
+            msg = "Trying to init a FrozenStringArray from {!r} ..."
+            LOG.debug(msg.format(obj))
+            with self.assertRaises(TypeError) as cm:
+                my_array = FrozenStringArray(obj, not_empty=True)
+            e = cm.exception
+            LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        iterables_with_wrong_values = (
+            [None],
+            [1],
+            ["a", 1],
+            [{"uhu": "banane"}],
+            [tobj],
+            [tobj.uhu],
+        )
+
+        iterables_with_wrong_values = (
+            [None],
+            [1],
+            [""],
+            ["  "],
+            ["a", 1],
+            [{"uhu": "banane"}],
+            [tobj],
+            [tobj.uhu],
+        )
+
+        for obj in iterables_with_wrong_values:
+
+            msg = "Trying to init a FrozenStringArray from {!r} ..."
+            LOG.debug(msg.format(obj))
+            with self.assertRaises((TypeError, ValueError)) as cm:
+                my_set = FrozenStringArray(obj, stripped=True, not_empty=True, raise_on_non_str=True)
+            e = cm.exception
+            LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        if self.verbose > 1:
+            print()
+
+        LOG.info("Test operator 'in' of a FrozenStringArray object.")
+
+        my_array = FrozenStringArray(["a", "b", "C"])
+
+        valid_items = ("a", "b")
+        wrong_items = ("c", "aA", "bb", "%")
+        invalid_items = (None, ["a"], 2, True)
+
+        for item in valid_items:
+            LOG.debug("Testing, that {i!r} is a member of {a!r}.".format(i=item, a=my_array))
+            self.assertIn(item, my_array)
+
+        for item in wrong_items:
+            LOG.debug("Testing, that {i!r} is not a member of {a!r}.".format(i=item, a=my_array))
+            self.assertNotIn(item, my_array)
+
+        for item in invalid_items:
+            LOG.debug("Testing, that {i!r} has the wrong type to be a member of {a!r}.".format(
+                i=item, a=my_array))
+            with self.assertRaises((TypeError, ValueError)) as cm:
+                if item in my_array:
+                    LOG.debug("You may not see that!")
+            e = cm.exception
+            LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+    # -------------------------------------------------------------------------
     def test_init_frozendict(self):
         """Test init of a FrozenCIDict object."""
-        LOG.info("Testing init of a FrozenCIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIDict
         from fb_tools.colcts import FbCollectionsError
@@ -995,7 +1112,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozendict_copy(self):
         """Test copying a FrozenCIDict object."""
-        LOG.info("Testing copying a FrozenCIDict object.")
+        LOG.info(self.get_method_doc())
 
         import copy
         from fb_tools.colcts import FrozenCIDict
@@ -1018,7 +1135,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozendict_real_key(self):
         """Test method real_key() of a FrozenCIDict object."""
-        LOG.info("Testing method real_key() of a FrozenCIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIDict
         from fb_tools.colcts import FbCollectionsError
@@ -1068,7 +1185,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozendict_get(self):
         """Test methods get() and __getitem__() of a FrozenCIDict object."""
-        LOG.info("Testing methods get() and __getitem__() of a FrozenCIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIDict
         from fb_tools.colcts import FbCollectionsError
@@ -1153,7 +1270,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozendict_keys(self):
         """Test methods keys() and __iter__() of a FrozenCIDict object."""
-        LOG.info("Testing methods keys() and __iter__() of a FrozenCIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIDict
 
@@ -1180,7 +1297,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozendict_contains(self):
         """Test method __contains__() (operator 'in') of a FrozenCIDict object."""
-        LOG.info("Testing method __contains__() (operator 'in') of a FrozenCIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIDict
         from fb_tools.colcts import FbCollectionsError
@@ -1234,7 +1351,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozendict_items(self):
         """Test methods items() and values() of a FrozenCIDict object."""
-        LOG.info("Testing methods items() and values() of a FrozenCIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIDict
 
@@ -1258,7 +1375,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_frozendict_operator_eq(self):
         """Test operator eq ('==') and ne (!=) of a FrozenCIDict object."""
-        LOG.info("Testing operator eq ('==') and ne (!=) of a FrozenCIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenCIDict
         from fb_tools.colcts import CIDict
@@ -1303,7 +1420,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_init_dict(self):
         """Test init of a CIDict object."""
-        LOG.info("Testing init of a CIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import CIDict
         from fb_tools.colcts import FbCollectionsError
@@ -1440,7 +1557,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_dict_set(self):
         """Test methods set() and __setitem__() of a CIDict object."""
-        LOG.info("Testing methods set() and __setitem__() of a CIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import CIDict
         from fb_tools.colcts import FbCollectionsError
@@ -1557,7 +1674,7 @@ class TestFbCollections(FbToolsTestcase):
     # -------------------------------------------------------------------------
     def test_dict_del(self):
         """Test method __del__() of a CIDict object."""
-        LOG.info("Testing method __del__() of a CIDict object.")
+        LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import CIDict
         from fb_tools.colcts import FbCollectionsError
@@ -1634,6 +1751,7 @@ if __name__ == "__main__":
     suite.addTest(TestFbCollections("test_frozenset_method_isdisjoint", verbose))
     suite.addTest(TestFbCollections("test_init_set", verbose))
     suite.addTest(TestFbCollections("test_set_add", verbose))
+    suite.addTest(TestFbCollections("test_init_frozenarray", verbose))
     suite.addTest(TestFbCollections("test_init_frozendict", verbose))
     suite.addTest(TestFbCollections("test_frozendict_copy", verbose))
     suite.addTest(TestFbCollections("test_frozendict_real_key", verbose))

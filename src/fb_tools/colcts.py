@@ -13,24 +13,28 @@ They are providing alternatives to Python's general purpose built-in frozen_set,
 from __future__ import absolute_import
 
 # Standard modules
+import codecs
 import logging
-
-try:
-    from collections.abc import Mapping, MutableMapping
-    from collections.abc import MutableSet, Set
-except ImportError:
-    from collections import Mapping, MutableMapping
-    from collections import MutableSet, Set
+from collections.abc import Mapping
+from collections.abc import MutableMapping
+from collections.abc import MutableSequence
+from collections.abc import MutableSet
+from collections.abc import Sequence
+from collections.abc import Set
 
 # Third party modules
 
 # Own modules
+from . import DEFAULT_CODING_ERROR_HANDLER
+from . import DEFAULT_ENCODING
+from . import VALID_DECODE_ERROR_HANDLERS
 from .common import is_sequence
+from .common import to_bool
 from .errors import FbError
 from .obj import FbGenericBaseObject
 from .xlate import XLATOR
 
-__version__ = "2.0.3"
+__version__ = "2.1.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -692,6 +696,217 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
     def clear(self):
         """Remove all elements from the set."""
         self._items = {}
+
+
+# =============================================================================
+class FrozenStringArray(Sequence, FbGenericBaseObject):
+    """A list, where all items are strings."""
+
+    default_encoding = DEFAULT_ENCODING
+    default_coding_error_handler = DEFAULT_CODING_ERROR_HANDLER
+
+    # -------------------------------------------------------------------------
+    def __init__(
+        self,
+        iterable=None,
+        /,
+        lowcase=False,
+        upcase=False,
+        stripped=False,
+        not_empty=False,
+        raise_on_non_str=False,
+        encoding=None,
+        error_handler=None,
+    ):
+        """Initialise a FrozenStringArray object."""
+        self._array = []
+
+        self.lowcase = to_bool(lowcase)
+        self.upcase = to_bool(upcase)
+        self.stripped = to_bool(stripped)
+        self.not_empty = to_bool(not_empty)
+        self.raise_on_non_str = to_bool(raise_on_non_str)
+
+        if encoding is None:
+            encoding = self.default_encoding
+        codec_info = codecs.lookup(str(encoding))
+        self.encoding = codec_info.name
+
+        given_error_handler = error_handler
+        if error_handler is None:
+            given_error_handler = self.default_coding_error_handler
+        given_error_handler = str(given_error_handler).strip().lower()
+        if given_error_handler in VALID_DECODE_ERROR_HANDLERS:
+            self.error_handler = given_error_handler
+        else:
+            msg = _(
+                "Invalid coding error handler {hdlr!r} given on init of a {cls} object."
+            ).format(hdlr=error_handler, cls=self.__class__.__name__)
+            raise LookupError(msg)
+
+        if self.lowcase and self.upcase:
+            msg = _(
+                "The properties {lc!r} and {uc!r} of the {c} object must not be set to {w} "
+                "at the same time."
+            ).format(lc="lowcase", uc="upcase", c=self.__class__.__qualname__, r="True")
+            raise ValueError(msg)
+
+        if iterable is not None:
+            if not is_sequence(iterable):
+                msg = _("Parameter {p!r} is not a sequence type, but a {c!r} object instead.")
+                msg = msg.format(p="iterable", c=iterable.__class__.__qualname__)
+                raise TypeError(msg)
+
+            for item in iterable:
+                value = self._check_item(item)
+                self._array.append(value)
+
+    # -------------------------------------------------------------------------
+    def __repr__(self):
+        """Typecast into string for reproduction."""
+        out = "<%s(" % (self.__class__.__name__)
+
+        fields = []
+
+        fields.append(f"{self._array!r}")
+
+        if self.lowcase is not False:
+            fields.append(f"lowcase={self.lowcase!r}")
+        if self.upcase is not False:
+            fields.append(f"upcase={self.upcase!r}")
+        if self.stripped is not False:
+            fields.append(f"stripped={self.stripped!r}")
+        if self.not_empty is not False:
+            fields.append(f"not_empty={self.not_empty!r}")
+        if self.raise_on_non_str is not False:
+            fields.append(f"raise_on_non_str={self.raise_on_non_str!r}")
+        if self.encoding is not None:
+            fields.append(f"encoding={self.encoding!r}")
+        if self.error_handler is not None:
+            fields.append(f"error_handler={self.error_handler!r}")
+
+        out += ", ".join(fields) + ")>"
+
+        return out
+
+    # -------------------------------------------------------------------------
+    def _val2str(self, value, raise_always=False):
+        """Convert the value into a str object."""
+        if isinstance(value, str):
+            return value
+
+        if isinstance(value, (bytes, bytearray)):
+            return value.decode(encoding=self.encoding, errors=self.error_handler)
+
+        if self.raise_on_non_str or raise_always:
+            msg = _("Invalid type {typ} of {v!r} given for a {c}.").format(
+                typ=value.__class__.__name__, v=value, c=self.__class__.__qualname__
+            )
+            raise TypeError(msg)
+
+        return str(value)
+
+    # -------------------------------------------------------------------------
+    def _check_item(self, item, raise_always=False):
+        """Check the given item for a usable value."""
+        value = self._val2str(item, raise_always=raise_always)
+
+        if self.lowcase:
+            value = value.lower()
+        elif self.upcase:
+            value = value.upper()
+
+        if self.stripped:
+            value = value.strip()
+
+        if self.not_empty and value == "":
+            msg = _("The {c} object must not contain empty strings.").format(
+                c=self.__class__.__qualname__
+            )
+            raise ValueError(msg)
+
+        return value
+
+    # -------------------------------------------------------------------------
+    def __len__(self):
+        """Return the the nuber of entries (keys) in this list/array."""
+        return len(self._array)
+
+    # -------------------------------------------------------------------------
+    def _get_item(self, index):
+        """Return an arbitrary item by the index."""
+        idx = int(index)
+        if idx >= len(self) or idx < (len(self) * -1):
+            msg = _("Index {i} os out of range of the {c} object.").format(
+                i=idx, c=self.__class__.__qualname__)
+            raise IndexError(msg)
+        return self._array[idx]
+
+    # -------------------------------------------------------------------------
+    def __getitem__(self, index):
+        """Return an arbitrary item by the index."""
+        return self._get_item(index)
+
+    # -------------------------------------------------------------------------
+    def __iter__(self):
+        """Return an iterator over all items."""
+        for item in self._array:
+            yield item
+
+    # -------------------------------------------------------------------------
+    def __contains__(self, item):
+        """Return, whether the given item exists (the 'in'-operator)."""
+        check_item = self._check_item(item, raise_always=True)
+
+        if check_item in self._array:
+            return True
+
+        return False
+
+    # -------------------------------------------------------------------------
+    def __reversed__(self):
+        """Return a (Frozen)StringArray with reversed items."""
+        new = self.__class__(
+            lowcase=self.lowcase,
+            upcase=self.upcase,
+            stripped=self.stripped,
+            not_empty=self.not_empty,
+            raise_on_non_str=self.raise_on_non_str,
+            encoding=self.encoding,
+            error_handler=self.error_handler
+        )
+
+        new._array = reversed(self._array)
+
+        return new
+
+    # -------------------------------------------------------------------------
+    def index(self, item):
+        """Return the index of the given item."""
+        check_item = self._check_item(item, raise_always=True)
+
+        index = 0
+        while index < len(self):
+            if self[index] == check_item:
+                return index
+            index += 1
+
+        msg = _("Item {!r} is not in array.").format(item)
+        raise ValueError(msg)
+
+    # -------------------------------------------------------------------------
+    def as_list(self):
+        """Typecast into a list."""
+        ret = []
+        for item in self:
+            ret.append(item)
+
+        return ret
+
+    # -------------------------------------------------------------------------
+    def list(self):
+        """Typecast into a list."""
+        return self.as_list()
 
 
 # =============================================================================
