@@ -42,6 +42,12 @@ DEFAULT_CODING_ERROR_HANDLER = 'strict'
 
 # Own modules
 
+from .colcts import CIDict  # noqa: F401
+from .colcts import CIStringSet  # noqa: F401
+from .colcts import FrozenCIDict  # noqa: F401
+from .colcts import FrozenCIStringSet  # noqa: F401
+from .colcts import FrozenStringArray  # noqa: F401
+from .colcts import StringArray  # noqa: F401
 from .mailaddress import MailAddress, MailAddressList, QualifiedMailAddress  # noqa: F401
 from .multi_config import BaseMultiConfig  # noqa: F401
 
