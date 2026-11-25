@@ -32,12 +32,14 @@ except ImportError:
 # Own modules
 from . import DEFAULT_CODING_ERROR_HANDLER
 from . import DEFAULT_ENCODING
+from . import FrozenStringArray
+from . import StringArray
 from . import VALID_DECODE_ERROR_HANDLERS
 from .common import is_sequence
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.11.5"
+__version__ = "0.11.6"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -544,125 +546,44 @@ class StringDescriptor(BaseDescriptor):
 
 
 # =============================================================================
-class StringArrayDescriptor:
+class StringArrayDescriptor(BaseDescriptor):
     """Descriptor for an field of an array of strings."""
 
-    default_encoding = DEFAULT_ENCODING
-    default_coding_error_handler = DEFAULT_CODING_ERROR_HANDLER
+    class_params = StringArray.class_param_names
 
     # -------------------------------------------------------------------------
     def __init__(
         self,
-        name,
-        lowcase=False,
-        upcase=False,
-        stripped=False,
-        not_empty=False,
-        maybe_none=False,
-        raise_on_non_str=False,
-        encoding=None,
-        error_handler=None,
+        **kwargs,
     ):
         """Initialize the StringDescriptor descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
+        self._array_params = {}
+        parent_params = {}
+        for param in kwargs.keys():
+            value = kwargs[param]
+            if param in self.class_params:
+                self._array_params[param] = value
+            else:
+                parent_params[param] = value
 
-        self.lowcase = to_bool(lowcase)
-        self.upcase = to_bool(upcase)
-        self.stripped = to_bool(stripped)
-        self.not_empty = to_bool(not_empty)
-        self.maybe_none = to_bool(maybe_none)
-        self.raise_on_non_str = to_bool(raise_on_non_str)
+        if "default_value" not in parent_params:
+            parent_params["default_value"] = []
 
-        if encoding is None:
-            encoding = self.default_encoding
-        codec_info = codecs.lookup(str(encoding))
-        self.encoding = codec_info.name
+        super(StringArrayDescriptor, self).__init__(**parent_params)
 
-        given_error_handler = error_handler
-        if error_handler is None:
-            given_error_handler = self.default_coding_error_handler
-        given_error_handler = str(given_error_handler).strip().lower()
-        if given_error_handler in VALID_DECODE_ERROR_HANDLERS:
-            self.error_handler = given_error_handler
+    # -------------------------------------------------------------------------
+    def check_value(self, value, for_default=False):
+        """Check the given value."""
+        val = super(StringArrayDescriptor, self).check_value(value, for_default=for_default)
+        if val is None:
+            return None
+
+        if self.readonly:
+            array = FrozenStringArray(value, **self._array_params)
         else:
-            msg = _(
-                "Invalid coding error handler {hdlr!r} given on init of a {cls} object."
-            ).format(hdlr=error_handler, cls=self.__class__.__name__)
-            raise LookupError(msg)
+            array = StringArray(value, **self._array_params)
 
-        if self.lowcase and self.upcase:
-            msg = _(
-                "The properties {lc!r} and {uc!r} of attribute {a!r} must not be set to {w} "
-                "at the same time."
-            ).format(lc="lowcase", uc="upcase", a=self.public_name, r="True")
-            raise ValueError(msg)
-
-    # -------------------------------------------------------------------------
-    def __set_name__(self, owner, name):
-        """Keep the name of teh descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
-
-    # -------------------------------------------------------------------------
-    def __get__(self, instance, owner):
-        """Get the data from instance object by the private name."""
-        return getattr(instance, self.private_name, [])
-
-    # -------------------------------------------------------------------------
-    def __set__(self, instance, value):
-        """Set the data in the instance object by the private name as an array of strings."""
-        if value is None:
-            if self.maybe_none:
-                setattr(instance, self.private_name, None)
-                return
-            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
-            raise TypeError(msg)
-
-        def val2str(v):
-            """Convert the value into a str object."""
-            if isinstance(v, str):
-                return v
-
-            if isinstance(v, (bytes, bytearray)):
-                return v.decode(encoding=self.encoding, errors=self.error_handler)
-
-            if self.raise_on_non_str:
-                msg = _("Invalid type {typ} of {v!r} given for attribute {a!r}.").format(
-                    typ=v.__class__.__name__, v=v, a=self.public_name
-                )
-                raise TypeError(msg)
-
-            return str(v)
-
-        def check_value(v):
-            """Check the given value for validity."""
-            if self.lowcase:
-                v = v.lower()
-            elif self.upcase:
-                v = v.upper()
-
-            if self.stripped:
-                v = v.strip()
-
-            if self.not_empty and v == "":
-                msg = _("The attribute {a!r} must not contain empty strings.").format(
-                    a=self.public_name
-                )
-                raise ValueError(msg)
-
-            return v
-
-        array = []
-        if is_sequence(value):
-            for val in value:
-                item = check_value(val2str(val))
-                array.append(item)
-        else:
-            val = check_value(val2str(value))
-            array.append(val)
-
-        setattr(instance, self.private_name, array)
+        return array
 
 
 # =============================================================================

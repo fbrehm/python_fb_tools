@@ -526,6 +526,7 @@ class TestDescriptors(FbToolsTestcase):
         LOG.debug("Testing a PathDescriptor, which may not be None ...")
 
         with self.assertRaises((TypeError, ValueError)) as cm:
+
             class TestClass2:
 
                 test_path = PathDescriptor(name="test_path", maybe_none=False)
@@ -654,10 +655,7 @@ class TestDescriptors(FbToolsTestcase):
         class TestClass03:
 
             test_string = StringDescriptor(
-                name="test_string",
-                lowcase=True,
-                choices=choices,
-                default_value="one"
+                name="test_string", lowcase=True, choices=choices, default_value="one"
             )
 
             def __init__(myself):
@@ -675,6 +673,70 @@ class TestDescriptors(FbToolsTestcase):
 
         with self.assertRaises((TypeError, ValueError)) as cm:
             test_obj03.test_string = "four"
+        e = cm.exception
+        LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+    # -------------------------------------------------------------------------
+    def test_string_array_descriptor(self):
+        """Test object with a StringArrayDescriptor."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools import FrozenStringArray
+        from fb_tools import StringArray
+        from fb_tools.descriptors import StringArrayDescriptor
+
+        used_encoding = "windows-1252"
+        test_str_00 = "Uhu Banane"
+        test_str_01 = "Bla blub"
+        test_str_03 = "Schöner scheißen!"
+        test_bytes_03 = test_str_03.encode(encoding=used_encoding)
+
+        class TestClass01:
+
+            test_array = StringArrayDescriptor(name="test_array", encoding=used_encoding)
+
+            def __init__(myself):
+                """Init StringArrayDescriptor."""
+                myself.test_array = [test_str_00]
+
+        test_obj01 = TestClass01()
+
+        LOG.debug(f"test_obj01.test_array: {test_obj01.test_array!r}")
+        self.assertIsInstance(test_obj01.test_array, (FrozenStringArray, StringArray))
+        self.assertEqual(test_obj01.test_array.list(), [test_str_00])
+
+        LOG.debug("Test appending item to test_obj01.test_array ...")
+        test_obj01.test_array.append(test_str_01)
+        LOG.debug(f"test_obj01.test_array: {test_obj01.test_array!r}")
+        self.assertEqual(test_obj01.test_array.list(), [test_str_00, test_str_01])
+        test_obj01.test_array.append(test_bytes_03)
+        LOG.debug(f"test_obj01.test_array: {test_obj01.test_array!r}")
+        self.assertEqual(test_obj01.test_array.list(), [test_str_00, test_str_01, test_str_03])
+
+        if self.verbose > 1:
+            print()
+        LOG.debug("Testing a readonly StringArrayDescriptor ...")
+
+        test_list = ["a", "b", "C"]
+
+        class TestClassRo:
+
+            test_array = StringArrayDescriptor(
+                name="test_array",
+                readonly=True,
+                default_value=test_list,
+            )
+
+            def __init__(myself):
+                """Init StringArrayDescriptor."""
+                pass
+
+        test_obj_ro = TestClassRo()
+        LOG.debug(f"test_obj_ro.test_array: {test_obj_ro.test_array!r}")
+
+        LOG.debug("Test appending item to test_obj_ro.test_array ...")
+        with self.assertRaises(AttributeError) as cm:
+            test_obj_ro.test_array.append(test_str_01)
         e = cm.exception
         LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
 
@@ -697,6 +759,7 @@ if __name__ == "__main__":
     suite.addTest(TestDescriptors("test_float_descriptor", verbose))
     suite.addTest(TestDescriptors("test_path_descriptor", verbose))
     suite.addTest(TestDescriptors("test_string_descriptor", verbose))
+    suite.addTest(TestDescriptors("test_string_array_descriptor", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 
