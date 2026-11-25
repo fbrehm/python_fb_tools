@@ -14,6 +14,7 @@ from __future__ import absolute_import
 
 # Standard modules
 import codecs
+import copy
 import logging
 from collections.abc import Mapping
 from collections.abc import MutableMapping
@@ -34,7 +35,7 @@ from .errors import FbError
 from .obj import FbGenericBaseObject
 from .xlate import XLATOR
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -700,49 +701,58 @@ class CIStringSet(MutableSet, FrozenCIStringSet):
 
 # =============================================================================
 class FrozenStringArray(Sequence, FbGenericBaseObject):
-    """A list, where all items are strings."""
+    """A readonly list, where all items are strings."""
 
     default_encoding = DEFAULT_ENCODING
     default_coding_error_handler = DEFAULT_CODING_ERROR_HANDLER
+
+    class_param_names = (
+        "lowcase",
+        "upcase",
+        "stripped",
+        "not_empty",
+        "raise_on_non_str",
+        "encoding",
+        "error_handler",
+    )
+
+    class_param_defaults = {
+        "lowcase": False,
+        "upcase": False,
+        "stripped": False,
+        "not_empty": False,
+        "raise_on_non_str": False,
+        "encoding": default_encoding,
+        "error_handler": default_coding_error_handler,
+    }
+
+    class_param_types = {
+        "lowcase": "bool",
+        "upcase": "bool",
+        "stripped": "bool",
+        "not_empty": "bool",
+        "raise_on_non_str": "bool",
+        "encoding": "str",
+        "error_handler": "str",
+    }
 
     # -------------------------------------------------------------------------
     def __init__(
         self,
         iterable=None,
         /,
-        lowcase=False,
-        upcase=False,
-        stripped=False,
-        not_empty=False,
-        raise_on_non_str=False,
-        encoding=None,
-        error_handler=None,
+        **kwargs
     ):
         """Initialise a FrozenStringArray object."""
         self._array = []
 
-        self.lowcase = to_bool(lowcase)
-        self.upcase = to_bool(upcase)
-        self.stripped = to_bool(stripped)
-        self.not_empty = to_bool(not_empty)
-        self.raise_on_non_str = to_bool(raise_on_non_str)
+        for param in self.class_param_defaults.keys():
+            value = self.class_param_defaults[param]
+            setattr(self, param, value)
 
-        if encoding is None:
-            encoding = self.default_encoding
-        codec_info = codecs.lookup(str(encoding))
-        self.encoding = codec_info.name
-
-        given_error_handler = error_handler
-        if error_handler is None:
-            given_error_handler = self.default_coding_error_handler
-        given_error_handler = str(given_error_handler).strip().lower()
-        if given_error_handler in VALID_DECODE_ERROR_HANDLERS:
-            self.error_handler = given_error_handler
-        else:
-            msg = _(
-                "Invalid coding error handler {hdlr!r} given on init of a {cls} object."
-            ).format(hdlr=error_handler, cls=self.__class__.__name__)
-            raise LookupError(msg)
+        for param in kwargs.keys():
+            value = self._check_param_value(param, kwargs[param])
+            setattr(self, param, value)
 
         if self.lowcase and self.upcase:
             msg = _(
@@ -762,6 +772,46 @@ class FrozenStringArray(Sequence, FbGenericBaseObject):
                 self._array.append(value)
 
     # -------------------------------------------------------------------------
+    def _check_param_value(self, param, value):
+
+        if param not in self.class_param_names:
+            msg = _("Unknown parameter {p!r} on init of a {c} given.").formt(
+                p=param, c=self.__class__.__qualname__)
+            raise AttributeError(msg)
+
+        param_type = self.class_param_types[param]
+
+        if param_type == "bool":
+            return to_bool(value)
+
+        if param_type != "str":
+            msg = _("Unhandled parameter type {!r}.").formmat(param_type)
+            raise RuntimeError(msg)
+
+        if not isinstance(value, str):
+            msg = _("Invalid parameter {p!r}: {v!r}.").format(
+                p=param, v=value)
+            raise AttributeError(msg)
+
+        if param == "encoding":
+            codec_info = codecs.lookup(value)
+            return codec_info.name
+
+        if param == "error_handler":
+            given_error_handler = value.strip().lower()
+
+            if given_error_handler in VALID_DECODE_ERROR_HANDLERS:
+                return given_error_handler
+            else:
+                msg = _(
+                    "Invalid coding error handler {hdlr!r} given on init of a {cls} object."
+                ).format(hdlr=value, cls=self.__class__.__name__)
+                raise LookupError(msg)
+
+        msg = _("Unknown parameter {p!r}: {v!r}.").format(p=param, v=value)
+        raise AttributeError(msg)
+
+    # -------------------------------------------------------------------------
     def __repr__(self):
         """Typecast into string for reproduction."""
         out = "<%s(" % (self.__class__.__name__)
@@ -770,20 +820,12 @@ class FrozenStringArray(Sequence, FbGenericBaseObject):
 
         fields.append(f"{self._array!r}")
 
-        if self.lowcase is not False:
-            fields.append(f"lowcase={self.lowcase!r}")
-        if self.upcase is not False:
-            fields.append(f"upcase={self.upcase!r}")
-        if self.stripped is not False:
-            fields.append(f"stripped={self.stripped!r}")
-        if self.not_empty is not False:
-            fields.append(f"not_empty={self.not_empty!r}")
-        if self.raise_on_non_str is not False:
-            fields.append(f"raise_on_non_str={self.raise_on_non_str!r}")
-        if self.encoding is not None:
-            fields.append(f"encoding={self.encoding!r}")
-        if self.error_handler is not None:
-            fields.append(f"error_handler={self.error_handler!r}")
+        for param in self.class_param_names:
+            default_value = self.class_param_defaults[param]
+            cur_value = getattr(self, param)
+
+            if default_value != cur_value:
+                fields.append(f"{param}={cur_value!r}")
 
         out += ", ".join(fields) + ")>"
 
@@ -828,24 +870,45 @@ class FrozenStringArray(Sequence, FbGenericBaseObject):
         return value
 
     # -------------------------------------------------------------------------
+    def __copy__(self):
+        """Return a copy of the current array."""
+        params = {}
+        for param in self.class_param_names:
+            value = getattr(self, param)
+            params[param] = value
+
+        new_array = self.__class__(**params)
+        new_array._array = copy.copy(self._array)
+
+        return new_array
+
+    # -------------------------------------------------------------------------
+    def copy(self):
+        """Return a copy of the current set."""
+        return self.__copy__()
+
+    # -------------------------------------------------------------------------
     def __len__(self):
         """Return the the nuber of entries (keys) in this list/array."""
         return len(self._array)
 
     # -------------------------------------------------------------------------
-    def _get_item(self, index):
+    def _get_item(self, subscript):
         """Return an arbitrary item by the index."""
-        idx = int(index)
-        if idx >= len(self) or idx < (len(self) * -1):
+        if isinstance(subscript, slice):
+            return self._array[subscript]
+
+        index = int(subscript)
+        if index >= len(self) or index < (len(self) * -1):
             msg = _("Index {i} os out of range of the {c} object.").format(
-                i=idx, c=self.__class__.__qualname__)
+                i=index, c=self.__class__.__qualname__)
             raise IndexError(msg)
-        return self._array[idx]
+        return self._array[index]
 
     # -------------------------------------------------------------------------
-    def __getitem__(self, index):
+    def __getitem__(self, subscript):
         """Return an arbitrary item by the index."""
-        return self._get_item(index)
+        return self._get_item(subscript)
 
     # -------------------------------------------------------------------------
     def __iter__(self):
@@ -866,16 +929,7 @@ class FrozenStringArray(Sequence, FbGenericBaseObject):
     # -------------------------------------------------------------------------
     def __reversed__(self):
         """Return a (Frozen)StringArray with reversed items."""
-        new = self.__class__(
-            lowcase=self.lowcase,
-            upcase=self.upcase,
-            stripped=self.stripped,
-            not_empty=self.not_empty,
-            raise_on_non_str=self.raise_on_non_str,
-            encoding=self.encoding,
-            error_handler=self.error_handler
-        )
-
+        new = self.copy()
         new._array = reversed(self._array)
 
         return new
@@ -895,6 +949,13 @@ class FrozenStringArray(Sequence, FbGenericBaseObject):
         raise ValueError(msg)
 
     # -------------------------------------------------------------------------
+    def count(self, item):
+        """Return the total number of occurrences of item in sequence."""
+        check_item = self._check_item(item, raise_always=True)
+
+        return self._array.count(check_item)
+
+    # -------------------------------------------------------------------------
     def as_list(self):
         """Typecast into a list."""
         ret = []
@@ -904,10 +965,114 @@ class FrozenStringArray(Sequence, FbGenericBaseObject):
         return ret
 
     # -------------------------------------------------------------------------
-    def list(self):
+    def list(self):                         # noqa: A003
         """Typecast into a list."""
         return self.as_list()
 
+    # -------------------------------------------------------------------------
+    def __eq__(self, other):
+        """Implement the '==' operator."""
+        if not isinstance(other, self.__class__):
+            return False
+        if self.__class__.__qualname__ != other.__class__.__qualname__:
+            return False
+        for param in self.class_param_names:
+            val_self = getattr(self, param)
+            val_other = getattr(other, param)
+            if val_self != val_other:
+                return False
+
+        return self.list() == other.list()
+
+
+# =============================================================================
+class StringArray(MutableSequence, FrozenStringArray):
+    """A list, where all items are strings."""
+
+    # -------------------------------------------------------------------------
+    def __setitem__(self, index, item):
+        """Set the value of the given index."""
+        idx = int(index)
+
+        if idx >= len(self) or idx < (len(self) * -1):
+            msg = _("Index {i} os out of range of the {c} object.").format(
+                i=idx, c=self.__class__.__qualname__)
+            raise IndexError(msg)
+        self._array[idx] = self._check_item(item)
+
+    # -------------------------------------------------------------------------
+    def __delitem__(self, subscript):
+        """Remove the item(s) iat the given index."""
+        if isinstance(subscript, slice):
+            del self._array[subscript]
+
+        index = int(subscript)
+        if index >= len(self) or index < (len(self) * -1):
+            msg = _("Index {i} os out of range of the {c} object.").format(
+                i=index, c=self.__class__.__qualname__)
+            raise IndexError(msg)
+        del self._array[index]
+
+    # -------------------------------------------------------------------------
+    def insert(self, index, item):
+        """Insert item into sequence at the given index."""
+        value = self._check_item(item)
+
+        self._array.insert(index, value)
+
+    # -------------------------------------------------------------------------
+    def append(self, item):
+        """Append item at the sequence."""
+        value = self._check_item(item)
+        self._array.append(value)
+
+    # -------------------------------------------------------------------------
+    def clear(self):
+        """Remove all items from sequence."""
+        self._array = []
+
+    # -------------------------------------------------------------------------
+    def reverse(self):
+        """Reverse the order of items in the array."""
+        self._array.reverse()
+        return None
+
+    # -------------------------------------------------------------------------
+    def extend(self, iterable):
+        """Extend sequence with the contents of iterable."""
+        if not is_sequence(iterable):
+            msg = _("The {c} object is not a sequence object.").format(
+                c=iterable.__class__.__qualname__)
+            raise TypeError(msg)
+
+        for item in iterable:
+            self.append(item)
+
+    # -------------------------------------------------------------------------
+    def pop(self, index=-1):
+        """Retrieve the item at index and also remove it from sequence."""
+        return self._array.pop(index)
+
+    # -------------------------------------------------------------------------
+    def remove(self, item):
+        """Remove the first item from sequence where sequence[i] == item."""
+        if item not in self:
+            msg = _("{!r} is not in the array.").format(item)
+            raise ValueError(msg)
+
+        value = self._check_item(item)
+        self._array.remove(value)
+
+    # -------------------------------------------------------------------------
+    def __iadd__(self, other):
+        """Implement the operator '+=', which executes the method self.extend()."""
+        if not is_sequence(other):
+            msg = _("The {c} object is not a sequence object.").format(
+                c=other.__class__.__qualname__)
+            raise TypeError(msg)
+
+        self.extend(other)
+        return self
 
 # =============================================================================
 class FrozenCIDict(Mapping, FbGenericBaseObject):

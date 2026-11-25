@@ -9,6 +9,7 @@
 @license: GPL3
 """
 
+import copy
 import logging
 import os
 import sys
@@ -852,14 +853,14 @@ class TestFbCollections(FbToolsTestcase):
             LOG.debug(msg)
 
     # -------------------------------------------------------------------------
-    def test_init_frozenarray(self):
+    def test_init_frozenstringarray(self):
         """Test init of a FrozenStringArray."""
         LOG.info(self.get_method_doc())
 
         from fb_tools.colcts import FrozenStringArray
 
         LOG.debug("Testing init of an empty frozen string array.")
-        my_array = FrozenStringArray()
+        my_array = FrozenStringArray(not_empty=True, raise_on_non_str=True)
 
         LOG.debug("FrozenStringArray %r: {!r}".format(my_array))
         LOG.debug("FrozenStringArray %s: {}".format(my_array))
@@ -870,6 +871,40 @@ class TestFbCollections(FbToolsTestcase):
             my_array.append("Bla")
         e = cm.exception
         LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+        copy_array = copy.copy(my_array)
+        LOG.debug("Copied FrozenStringArray: {!r}".format(copy_array))
+        self.assertEqual(copy_array, my_array)
+        self.assertIsNot(copy_array, my_array)
+        self.assertIsNot(copy_array._array, my_array._array)
+
+        my_array = FrozenStringArray(["a", "b", "c"], not_empty=True, raise_on_non_str=True)
+        LOG.debug("my_array: {!r}".format(my_array))
+        exp_rev_array = FrozenStringArray(["c", "b", "a"], not_empty=True, raise_on_non_str=True)
+        LOG.debug("Expected reverse array: {!r}".format(exp_rev_array))
+        got_rev_array = reversed(my_array)
+        LOG.debug("Got reverse array: {!r}".format(exp_rev_array))
+        self.assertEqual(exp_rev_array, got_rev_array)
+
+        LOG.debug("Testing FrozenStringArray.count() ...")
+
+        my_tuple = ("A", "a", "b", "a", "A", "A", "aa")
+        test_data = (
+            ("A", 3),
+            ("a", 2),
+            ("b", 1),
+            ("c", 0),
+        )
+
+        my_array = FrozenStringArray(my_tuple)
+        for test_tuple in test_data:
+            search_str = test_tuple[0]
+            expected_count = test_tuple[1]
+
+            LOG.debug(f"Counting {search_str!r} in array, expecting {expected_count}.")
+            got_count = my_array.count(search_str)
+            LOG.debug(f"Got {got_count}.")
+            self.assertEqual(got_count, expected_count)
 
         correct_iterables = (
             (("a",), ["a"]),
@@ -934,11 +969,13 @@ class TestFbCollections(FbToolsTestcase):
         )
 
         for obj in iterables_with_wrong_values:
-
             msg = "Trying to init a FrozenStringArray from {!r} ..."
             LOG.debug(msg.format(obj))
             with self.assertRaises((TypeError, ValueError)) as cm:
-                my_set = FrozenStringArray(obj, stripped=True, not_empty=True, raise_on_non_str=True)
+                my_array = FrozenStringArray(
+                    obj, stripped=True, not_empty=True, raise_on_non_str=True
+                )
+                LOG.debug("FrozenStringArray %r: {!r}".format(my_array))
             e = cm.exception
             LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
 
@@ -962,13 +999,46 @@ class TestFbCollections(FbToolsTestcase):
             self.assertNotIn(item, my_array)
 
         for item in invalid_items:
-            LOG.debug("Testing, that {i!r} has the wrong type to be a member of {a!r}.".format(
-                i=item, a=my_array))
+            LOG.debug(
+                "Testing, that {i!r} has the wrong type to be a member of {a!r}.".format(
+                    i=item, a=my_array
+                )
+            )
             with self.assertRaises((TypeError, ValueError)) as cm:
                 if item in my_array:
                     LOG.debug("You may not see that!")
             e = cm.exception
             LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
+
+    # -------------------------------------------------------------------------
+    def test_init_stringarray(self):
+        """Test init of a StringArray."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.colcts import StringArray
+
+        LOG.debug("Testing init of an empty string array.")
+        my_array = StringArray(not_empty=True, raise_on_non_str=True)
+
+        LOG.debug("StringArray %r: {!r}".format(my_array))
+        LOG.debug("StringArray %s: {}".format(my_array))
+        self.assertEqual(my_array.list(), [])
+
+        LOG.debug("Trying to append data to a StringArray ...")
+        my_array.append("Bla")
+        LOG.debug("StringArray %r: {!r}".format(my_array))
+        self.assertEqual(my_array[0], "Bla")
+
+        copy_array = copy.copy(my_array)
+        LOG.debug("Copied StringArray: {!r}".format(copy_array))
+        self.assertEqual(copy_array, my_array)
+        self.assertIsNot(copy_array, my_array)
+        self.assertIsNot(copy_array._array, my_array._array)
+
+        LOG.debug("Trying to remove item from a StringArray ...")
+        del copy_array[0]
+        LOG.debug("Changed StringArray: {!r}".format(copy_array))
+        self.assertNotEqual(copy_array, my_array)
 
     # -------------------------------------------------------------------------
     def test_init_frozendict(self):
@@ -1751,7 +1821,8 @@ if __name__ == "__main__":
     suite.addTest(TestFbCollections("test_frozenset_method_isdisjoint", verbose))
     suite.addTest(TestFbCollections("test_init_set", verbose))
     suite.addTest(TestFbCollections("test_set_add", verbose))
-    suite.addTest(TestFbCollections("test_init_frozenarray", verbose))
+    suite.addTest(TestFbCollections("test_init_frozenstringarray", verbose))
+    suite.addTest(TestFbCollections("test_init_stringarray", verbose))
     suite.addTest(TestFbCollections("test_init_frozendict", verbose))
     suite.addTest(TestFbCollections("test_frozendict_copy", verbose))
     suite.addTest(TestFbCollections("test_frozendict_real_key", verbose))
