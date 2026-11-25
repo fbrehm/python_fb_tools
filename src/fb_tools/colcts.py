@@ -29,10 +29,10 @@ from collections.abc import Set
 from . import DEFAULT_CODING_ERROR_HANDLER
 from . import DEFAULT_ENCODING
 from . import VALID_DECODE_ERROR_HANDLERS
+from .base_obj import FbGenericBaseObject
 from .common import is_sequence
 from .common import to_bool
 from .errors import FbError
-from .obj import FbGenericBaseObject
 from .xlate import XLATOR
 
 __version__ = "2.2.0"
