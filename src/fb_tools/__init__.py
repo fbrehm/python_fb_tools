@@ -48,6 +48,13 @@ from .colcts import FrozenCIDict  # noqa: F401
 from .colcts import FrozenCIStringSet  # noqa: F401
 from .colcts import FrozenStringArray  # noqa: F401
 from .colcts import StringArray  # noqa: F401
+from .descriptors import BooleanDescriptor  # noqa: F401
+from .descriptors import FloatDescriptor  # noqa: F401
+from .descriptors import IntegerDescriptor  # noqa: F401
+from .descriptors import PathDescriptor  # noqa: F401
+from .descriptors import StringArrayDescriptor  # noqa: F401
+from .descriptors import StringDescriptor  # noqa: F401
+from .descriptors import VersionDescriptor  # noqa: F401
 from .mailaddress import MailAddress, MailAddressList, QualifiedMailAddress  # noqa: F401
 from .multi_config import BaseMultiConfig  # noqa: F401
 
