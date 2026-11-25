@@ -20,6 +20,11 @@ try:
 except ImportError:
     import unittest
 
+try:
+    from semver import Version
+except ImportError:
+    from semver import VersionInfo as Version
+
 libdir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, libdir)
 
@@ -740,6 +745,37 @@ class TestDescriptors(FbToolsTestcase):
         e = cm.exception
         LOG.debug("{cls} raised: {e}".format(cls=e.__class__.__name__, e=e))
 
+    # -------------------------------------------------------------------------
+    def test_version_descriptor(self):
+        """Test object with a VersionDescriptor."""
+        LOG.info(self.get_method_doc())
+
+        from fb_tools.descriptors import VersionDescriptor
+
+        LOG.debug("Testing an VersionDescriptor.")
+
+        version01 = "1.2.3"
+        version02 = "3.4.5-pre.2+build.4"
+
+        class TestClass01:
+
+            test_version = VersionDescriptor(name="test_version")
+
+            def __init__(myself):
+                """Init TestClass01."""
+                myself.test_version = version01
+
+        test_obj = TestClass01()
+
+        LOG.debug(f"test_obj.test_version: {test_obj.test_version!r}")
+        self.assertEqual(str(test_obj.test_version), version01)
+        self.assertIsInstance(test_obj.test_version, Version)
+
+        LOG.debug("Test setting test_obj.test_version ...")
+        test_obj.test_version = version02
+        LOG.debug(f"test_obj.test_version: {test_obj.test_version!r}")
+        self.assertEqual(str(test_obj.test_version), version02)
+
 
 # =============================================================================
 if __name__ == "__main__":
@@ -760,6 +796,7 @@ if __name__ == "__main__":
     suite.addTest(TestDescriptors("test_path_descriptor", verbose))
     suite.addTest(TestDescriptors("test_string_descriptor", verbose))
     suite.addTest(TestDescriptors("test_string_array_descriptor", verbose))
+    suite.addTest(TestDescriptors("test_version_descriptor", verbose))
 
     runner = unittest.TextTestRunner(verbosity=verbose)
 

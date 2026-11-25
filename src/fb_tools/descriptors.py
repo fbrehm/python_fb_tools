@@ -39,7 +39,7 @@ from .common import is_sequence
 from .common import to_bool
 from .xlate import XLATOR
 
-__version__ = "0.11.6"
+__version__ = "0.11.7"
 LOG = logging.getLogger(__name__)
 
 _ = XLATOR.gettext
@@ -547,7 +547,7 @@ class StringDescriptor(BaseDescriptor):
 
 # =============================================================================
 class StringArrayDescriptor(BaseDescriptor):
-    """Descriptor for an field of an array of strings."""
+    """Descriptor for an attribute of an array of strings."""
 
     class_params = StringArray.class_param_names
 
@@ -587,41 +587,26 @@ class StringArrayDescriptor(BaseDescriptor):
 
 
 # =============================================================================
-class VersionDescriptor:
-    """Descriptor for a version field."""
+class VersionDescriptor(BaseDescriptor):
+    """Descriptor for a version attribute."""
 
     # -------------------------------------------------------------------------
-    def __init__(self, name, maybe_none=False):
-        """Initialize the VersionDescriptor: descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
-
-        self.maybe_none = to_bool(maybe_none)
+    def __init__(self, default_value="0.0.0", **kwargs):
+        """Initialize the VersionDescriptor."""
+        kwargs["default_value"] = default_value
+        super(VersionDescriptor, self).__init__(**kwargs)
 
     # -------------------------------------------------------------------------
-    def __set_name__(self, owner, name):
-        """Keep the name of teh descriptor."""
-        self.public_name = name
-        self.private_name = "_" + name
+    def check_value(self, value, for_default=False):
+        """Check the given value."""
+        val = super(VersionDescriptor, self).check_value(value, for_default=for_default)
+        if val is None:
+            return None
 
-    # -------------------------------------------------------------------------
-    def __get__(self, instance, owner):
-        """Get the data from instance object by the private name."""
-        return getattr(instance, self.private_name, None)
+        if isinstance(val, Version):
+            return val
 
-    # -------------------------------------------------------------------------
-    def __set__(self, instance, value):
-        """Set the data in the instance object by the private name as an semver.Version object."""
-        if value is None:
-            if self.maybe_none:
-                setattr(instance, self.private_name, None)
-                return
-            msg = _("The attribute {a!r} must not be None.").format(a=self.public_name)
-            raise TypeError(msg)
-
-        version = Version.parse(value)
-
-        setattr(instance, self.private_name, version)
+        return Version.parse(val)
 
 
 # =============================================================================
