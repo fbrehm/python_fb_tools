@@ -471,7 +471,7 @@ class StringDescriptor(BaseDescriptor):
             raise TypeError(msg)
 
         if not choices:
-            msg = _("Invalid {} given - empty squence.").format("choices")
+            msg = _("Invalid {} given - empty sequence.").format("choices")
             raise ValueError(msg)
 
         for item in choices:

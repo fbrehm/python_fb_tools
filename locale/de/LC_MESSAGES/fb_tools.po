@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fb_tools 3.3.1\n"
 "Report-Msgid-Bugs-To: frank@brehm-online.com\n"
-"POT-Creation-Date: 2026-11-13 17:53+0100\n"
-"PO-Revision-Date: 2026-11-13 18:00+0100\n"
+"POT-Creation-Date: 2026-11-25 18:03+0100\n"
+"PO-Revision-Date: 2026-11-25 18:00+0100\n"
 "Last-Translator: Frank Brehm <frank@brehm-online.com>\n"
 "Language: de\n"
 "Language-Team: de <frank@brehm-online.com>\n"
@@ -967,6 +967,14 @@ msgstr "Ein Timeout muss größer als Null und kleiner oder gleich {} sein."
 msgid "Wrong timeout {!r}:"
 msgstr "Ungültiger Timeout {!r}:"
 
+#: src/fb_tools/base_obj.py:111
+msgid "undefined error."
+msgstr "unbestimmter Fehler."
+
+#: src/fb_tools/base_obj.py:120
+msgid "Exception happened"
+msgstr "Aufgetretene Ausnahme"
+
 #: src/fb_tools/cfg_app.py:159
 #, python-brace-format
 msgid "Parameter {cls!r} must be a subclass of {clinfo!r}."
@@ -1222,45 +1230,111 @@ msgstr ""
 "Die maximale Breite der generierten YAML-Datei darf höchstens {m} Zeichen groß sein, {v!r} "
 "wurden übergeben."
 
-#: src/fb_tools/colcts.py:61 src/fb_tools/collections.py:61
+#: src/fb_tools/colcts.py:66 src/fb_tools/collections.py:66
 #, python-brace-format
 msgid "Item {item!r} must be of type {must!r}, but is of type {cls!r} instead."
 msgstr "Der Eintrag {item!r} muss vom Typ {must!r} sein, ist aber statt dessen vom Typ {cls!r}."
 
-#: src/fb_tools/colcts.py:79 src/fb_tools/collections.py:79
+#: src/fb_tools/colcts.py:84 src/fb_tools/collections.py:84
 #, python-brace-format
 msgid "Object {o!r} is not a {e} object."
 msgstr "Das Objekt {o!r} ist kein {e}-Objekt."
 
-#: src/fb_tools/colcts.py:97 src/fb_tools/collections.py:97
+#: src/fb_tools/colcts.py:102 src/fb_tools/collections.py:102
 #, python-brace-format
 msgid "Key {key!r} must be of type {must!r}, but is of type {cls!r} instead."
 msgstr "Der Schlüssel muss vom Typ {must!r} sein, ist aber statt dessen vom Typ {cls!r}."
 
-#: src/fb_tools/colcts.py:115 src/fb_tools/collections.py:115
+#: src/fb_tools/colcts.py:120 src/fb_tools/collections.py:120
 #, python-brace-format
 msgid "Object is neither a {m} object, nor a sequential object, but a {o!r} object instead."
 msgstr ""
 "Das Objekt ist weder ein {m}-Objekt noch ein sequentielles Objekt, aber statt dessen vom Typ "
 "{o!r}."
 
-#: src/fb_tools/colcts.py:134 src/fb_tools/collections.py:134
+#: src/fb_tools/colcts.py:139 src/fb_tools/collections.py:139
 #, python-brace-format
 msgid "Key {!r} is not existing."
 msgstr "Der Schlüssel {!r} existiert nicht."
 
-#: src/fb_tools/colcts.py:153 src/fb_tools/colcts.py:172 src/fb_tools/collections.py:153
-#: src/fb_tools/collections.py:172
+#: src/fb_tools/colcts.py:158 src/fb_tools/colcts.py:177 src/fb_tools/collections.py:158
+#: src/fb_tools/collections.py:177
 #, python-brace-format
 msgid "Could update {ex} with {i!r}: {m}"
 msgstr "Konnte {ex} nicht mit {i!r} updaten: {m}"
 
-#: src/fb_tools/colcts.py:196 src/fb_tools/collections.py:196
+#: src/fb_tools/colcts.py:201 src/fb_tools/colcts.py:766 src/fb_tools/collections.py:201
+#: src/fb_tools/collections.py:766
 #, python-brace-format
 msgid "Parameter {p!r} is not a sequence type, but a {c!r} object instead."
 msgstr "Der Parameter {p!r} ist kein sequentieller Typ, aber statt dessen vom Typ {c!r}."
 
-#: src/fb_tools/colcts.py:1009 src/fb_tools/collections.py:1009
+#: src/fb_tools/colcts.py:759 src/fb_tools/collections.py:759
+#, python-brace-format
+msgid "The properties {lc!r} and {uc!r} of the {c} object must not be set to {w} at the same time."
+msgstr "Die Eigenschaften {lc!r} und {uc!r} des {c}-Objekts dürfen nicht zugleich auf {w} gesetzt werden."
+
+#: src/fb_tools/colcts.py:778 src/fb_tools/collections.py:778
+#, python-brace-format
+msgid "Unknown parameter {p!r} on init of a {c} given."
+msgstr "Unbekannter Parameter {p!r} bei der Initialisierung eines {c}-Objekts angegeben."
+
+#: src/fb_tools/colcts.py:788 src/fb_tools/collections.py:788
+#, python-brace-format
+msgid "Unhandled parameter type {!r}."
+msgstr "Nicht behandeleter Parameter-Typ {!r}."
+
+# | msgid "Invalid spinner {!r} given."
+#: src/fb_tools/colcts.py:792 src/fb_tools/collections.py:792
+#, python-brace-format
+msgid "Invalid parameter {p!r}: {v!r}."
+msgstr "Ungültiger Parameter {p!r}: {v!r}."
+
+#: src/fb_tools/colcts.py:807 src/fb_tools/collections.py:807 src/fb_tools/descriptors.py:447
+#, python-brace-format
+msgid "Invalid coding error handler {hdlr!r} given on init of a {cls} object."
+msgstr ""
+"Ungültiger Handler für Kodierungsfehler {hdlr!r} be der Initialisierung eines {cls}-Objekts "
+"angegeben."
+
+#: src/fb_tools/colcts.py:811 src/fb_tools/collections.py:811
+#, python-brace-format
+msgid "Unknown parameter {p!r}: {v!r}."
+msgstr "Unbekannter Parameter {p!r}: {v!r}."
+
+#: src/fb_tools/colcts.py:844 src/fb_tools/collections.py:844
+#, python-brace-format
+msgid "Invalid type {typ} of {v!r} given for a {c}."
+msgstr "Ungültiger Typ {typ} von {v!r} für ein {c} angegeben."
+
+#: src/fb_tools/colcts.py:865 src/fb_tools/collections.py:865
+#, python-brace-format
+msgid "The {c} object must not contain empty strings."
+msgstr "Das {c}-Objekt darf keine leeren Zeichenketten enthalten."
+
+#: src/fb_tools/colcts.py:903 src/fb_tools/colcts.py:998 src/fb_tools/colcts.py:1011
+#: src/fb_tools/collections.py:903 src/fb_tools/collections.py:998 src/fb_tools/collections.py:1011
+#, python-brace-format
+msgid "Index {i} os out of range of the {c} object."
+msgstr "Der Index {!r} ist außerhalb des Gültigkeitsbereichs des {c}-Objekts."
+
+#: src/fb_tools/colcts.py:948 src/fb_tools/collections.py:948
+#, python-brace-format
+msgid "Item {!r} is not in array."
+msgstr "Der Eintrag {!r} befindet sich nicht im Array."
+
+#: src/fb_tools/colcts.py:1044 src/fb_tools/colcts.py:1070 src/fb_tools/collections.py:1044
+#: src/fb_tools/collections.py:1070
+#, python-brace-format
+msgid "The {c} object is not a sequence object."
+msgstr "Das {c}-Objekt ist keine Sequenz."
+
+#: src/fb_tools/colcts.py:1060 src/fb_tools/collections.py:1060
+#, python-brace-format
+msgid "{!r} is not in the array."
+msgstr "{!r} befindet sich nicht im Array."
+
+#: src/fb_tools/colcts.py:1389 src/fb_tools/collections.py:1389
 #, python-brace-format
 msgid "The method {met}() expected at most {max} arguments, got {got}."
 msgstr "Die Methode {met}() erwartet höchstens {max} Argumente, hat aber {got} erhalten."
@@ -1345,79 +1419,129 @@ msgstr "Fehler beim Parsen der Konfiguration"
 msgid "Checking config section {!r} ..."
 msgstr "Überprüfe Konfigurationsabschnitt {!r} …"
 
-#: src/fb_tools/descriptors.py:73 src/fb_tools/descriptors.py:158
+#: src/fb_tools/descriptors.py:107
 #, python-brace-format
-msgid "The upper limit of an {} must be greater or equal to its lower_limit."
-msgstr "Die obere Grenze eines {} muss größer oder gleich seiner unteren Grenze sein."
+msgid "The default value of attribute {a!r} must not be None."
+msgstr "Der Vorgabewert des Attributs {a!r} darf nicht None sein."
 
-#: src/fb_tools/descriptors.py:78 src/fb_tools/descriptors.py:164
-#, python-brace-format
-msgid "Invalid value {{v}} of attribute {a}, must be greater or equal to {m}."
-msgstr "Ungültiger Wert {{v}} des Attributs {a}, er muss größer oder gleich {m} sein."
-
-#: src/fb_tools/descriptors.py:81 src/fb_tools/descriptors.py:175
-#, python-brace-format
-msgid "Invalid value {{v}} of attribute {a}, must be less or equal to {m}."
-msgstr "Ungültiger Wert {{v}} des Attributs {a}, er muss kleiner oder gleich {m} sein."
-
-#: src/fb_tools/descriptors.py:102 src/fb_tools/descriptors.py:200 src/fb_tools/descriptors.py:263
-#: src/fb_tools/descriptors.py:302 src/fb_tools/descriptors.py:401 src/fb_tools/descriptors.py:501
-#: src/fb_tools/descriptors.py:580
+#: src/fb_tools/descriptors.py:111 src/fb_tools/descriptors.py:132
 #, python-brace-format
 msgid "The attribute {a!r} must not be None."
 msgstr "Das Attribut {a!r} darf nicht None sein."
 
-#: src/fb_tools/descriptors.py:168
-#, python-brace-format
-msgid "Invalid value {{v}} of attribute {a}, must be greater to {m}."
-msgstr "Ungültiger Wert {{v}} des Attributs {a}, er muss größer als {m} sein."
-
-#: src/fb_tools/descriptors.py:178
-#, python-brace-format
-msgid "Invalid value {{v}} of attribute {a}, must be less to {m}."
-msgstr "Ungültiger Wert {{v}} des Attributs {a}, er muss kleiner als {m} sein."
-
-#: src/fb_tools/descriptors.py:256
+#: src/fb_tools/descriptors.py:125
 #, python-brace-format
 msgid "The attribute {!r} is set to readonly."
 msgstr "Das Attribut {!r} is readonly."
 
-#: src/fb_tools/descriptors.py:308
+#: src/fb_tools/descriptors.py:173 src/fb_tools/descriptors.py:265
 #, python-brace-format
-msgid "The given path {!r} is a WindowsPath, but a PosixPath is required."
-msgstr "Der angegebene Pfad {!r} ist ein Windows-Pfad, es ist aber ein Posix-Pfad erforderlich."
+msgid "The upper limit of an {} must be greater or equal to its lower_limit."
+msgstr "Die obere Grenze eines {} muss größer oder gleich seiner unteren Grenze sein."
 
-#: src/fb_tools/descriptors.py:320
+#: src/fb_tools/descriptors.py:181 src/fb_tools/descriptors.py:274
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be greater or equal to {m}."
+msgstr "Ungültiger Wert {{v}} des Attributs {a}, er muss größer oder gleich {m} sein."
+
+#: src/fb_tools/descriptors.py:185 src/fb_tools/descriptors.py:285
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be less or equal to {m}."
+msgstr "Ungültiger Wert {{v}} des Attributs {a}, er muss kleiner oder gleich {m} sein."
+
+#: src/fb_tools/descriptors.py:278
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be greater to {m}."
+msgstr "Ungültiger Wert {{v}} des Attributs {a}, er muss größer als {m} sein."
+
+#: src/fb_tools/descriptors.py:288
+#, python-brace-format
+msgid "Invalid value {{v}} of attribute {a}, must be less to {m}."
+msgstr "Ungültiger Wert {{v}} des Attributs {a}, er muss kleiner als {m} sein."
+
+#: src/fb_tools/descriptors.py:373
+#, python-brace-format
+msgid "The default value of {a!r} {p!r} is a WindowsPath, but a PosixPath is required."
+msgstr "Der Vorgabewert von {a!r} {p!r} ist ein Windows-Pfad, es ist aber ein Posix-Pfad erforderlich."
+
+#: src/fb_tools/descriptors.py:378
+#, python-brace-format
+msgid "The given path of {a!r} {p!r} is a WindowsPath, but a PosixPath is required."
+msgstr ""
+"Der angegebene Pfad von {a!r} {p!r} ist ein Windows-Pfad, es ist aber ein Posix-Pfad "
+"erforderlich."
+
+#: src/fb_tools/descriptors.py:393
+#, python-brace-format
+msgid "The default value of {a!r} must be an absolute path, given {p!r}."
+msgstr "Der Vorgabewert von {a!r} muss ein absoluter Pfad sein, gegeben wurde {p!r}."
+
+#: src/fb_tools/descriptors.py:396
 #, python-brace-format
 msgid "The attribute {a!r} must be an absolute path, given {p!r}."
 msgstr "Das Attribut {a!r} muss ein absoluter Pfad sein, gegeben wurde {p!r}."
 
-#: src/fb_tools/descriptors.py:372 src/fb_tools/descriptors.py:472
-#, python-brace-format
-msgid "Invalid coding error handler {hdlr!r} given on init of a {cls} object."
-msgstr "Ungültiger Fehlerhandler {hdlr!r} bei der Initialisierung eines {cls}-Objektes angegeben."
-
-#: src/fb_tools/descriptors.py:378 src/fb_tools/descriptors.py:478
+#: src/fb_tools/descriptors.py:458
 #, python-brace-format
 msgid "The properties {lc!r} and {uc!r} of attribute {a!r} must not be set to {w} at the same time."
 msgstr ""
 "Die Eigenschaften {lc!r} und {uc!r} des Attributs {a!r} dürfen nicht zugleich auf {w} gesetzt "
 "werden."
 
-#: src/fb_tools/descriptors.py:409 src/fb_tools/descriptors.py:513
+#: src/fb_tools/descriptors.py:470
+#, python-brace-format
+msgid "Invalid {c} given (not a sequence): {v!r}."
+msgstr "Ungültiges {c}-Objekt gegeben (keine Sequenz): {v!r}."
+
+#: src/fb_tools/descriptors.py:474
+#, python-brace-format
+msgid "Invalid {} given - empty sequence."
+msgstr "Ungültiges {}-Objekt gegeben - leere Sequenz."
+
+#: src/fb_tools/descriptors.py:479
+#, python-brace-format
+msgid "Invalid {c} given - item {i!r} is not a {o} object."
+msgstr "Ungültiges {c}-Objekt übergeben - der Eintrag {i!r} ist kein {o}-Objekt.."
+
+#: src/fb_tools/descriptors.py:487
+#, python-brace-format
+msgid "Invalid {c} given - item {i!r} has non lowcase characters."
+msgstr "Ungültiges {c}-Objekt übergeben - der Eintrag {i!r} besitzt Kleinbuchstaben."
+
+#: src/fb_tools/descriptors.py:494
+#, python-brace-format
+msgid "Invalid {c} given - item {i!r} has non upcase characters."
+msgstr "Ungültiges {c}-Objekt übergeben - der Eintrag {i!r} besitzt Großbuchstaben."
+
+#: src/fb_tools/descriptors.py:513
+#, python-brace-format
+msgid "Invalid type {typ} of {v!r} as default value for attribute {a!r}."
+msgstr "Ungültiger Typ {typ} von {v!r} für den Vorgabewert des Attributs {a!r}."
+
+#: src/fb_tools/descriptors.py:516
 #, python-brace-format
 msgid "Invalid type {typ} of {v!r} given for attribute {a!r}."
 msgstr "Ungültiger Typ {typ} von {v!r} für das Attribut {a!r} angegeben."
 
-#: src/fb_tools/descriptors.py:423
+#: src/fb_tools/descriptors.py:531
+#, python-brace-format
+msgid "The default value of ttribute {a!r} must not be empty."
+msgstr "Der Vorgabewert des Attributs {a!r} darf nicht leer sein."
+
+#: src/fb_tools/descriptors.py:535
 #, python-brace-format
 msgid "The attribute {a!r} must not be empty."
 msgstr "Das Attribut {a!r} darf nicht leer sein."
 
-#: src/fb_tools/descriptors.py:531
+#: src/fb_tools/descriptors.py:540
 #, python-brace-format
-msgid "The attribute {a!r} must not contain empty strings."
-msgstr "Das Attribut {a!r} darf keine leeren Zeichenketten enthalten."
+msgid "The default value {!r} must be included in choices."
+msgstr "Der Vorgabewert {!r} muss in der Auswahl enthalten sein."
+
+#: src/fb_tools/descriptors.py:542
+#, python-brace-format
+msgid "The given value {!r} must be included in choices."
+msgstr "Der angegebene Wert {!r} muss in der Auswahl enthalten sein."
 
 #: src/fb_tools/errors.py:70
 #, python-brace-format
@@ -2058,7 +2182,7 @@ msgstr "Ungültiger Nutzer- bzw. Postfachname."
 msgid "Invalid domain."
 msgstr "Ungültige Domäne."
 
-#: src/fb_tools/mailaddress.py:211 src/fb_tools/obj.py:255 src/fb_tools/obj.py:300
+#: src/fb_tools/mailaddress.py:211
 #, python-brace-format
 msgid "Wrong verbose level {!r}, must be >= 0"
 msgstr "Falsches Ausführlichkeits-Niveau, muss größer als oder gleich Null sein"
@@ -2320,28 +2444,10 @@ msgstr "der Konfigurations-Namens-Stamm {!r} ist ungültig."
 msgid "Invalid configuration type {t!r} - not found in {w!r}."
 msgstr "Ungültiger Konfigurationstyp {t!r} - wurde nicht in {w!r} gefunden."
 
-#: src/fb_tools/obj.py:60
+#: src/fb_tools/obj.py:55
 #, python-brace-format
 msgid "The base directory {!r} is not existing or not a directory."
 msgstr "Das Basis-Verzeichnis {!r} existiert nicht oder ist kein Verzeichnis."
-
-#: src/fb_tools/obj.py:142
-msgid "undefined error."
-msgstr "unbestimmter Fehler."
-
-#: src/fb_tools/obj.py:151
-msgid "Exception happened"
-msgstr "Aufgetretene Ausnahme"
-
-#: src/fb_tools/obj.py:324
-#, python-brace-format
-msgid "Base directory {!r} does not exists."
-msgstr "Das Basis-Verzeichnis {!r} existiert nicht."
-
-#: src/fb_tools/obj.py:327
-#, python-brace-format
-msgid "Path for base directory {!r} is not a directory."
-msgstr "Der Pfad zum Basis-Verzeichnis {!r} is kein Verzeichnis"
 
 #: src/fb_tools/pidfile.py:70
 #, python-brace-format
